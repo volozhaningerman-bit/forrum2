@@ -22,39 +22,28 @@ jobs:
         run: |
           python3 <<'PY'
           from pathlib import Path
+          import re
 
           path = Path("apps/web/app/p/[slug]/page.tsx")
           text = path.read_text(encoding="utf-8")
 
-          publication_start = text.find("type Publication = {")
-          if publication_start == -1:
-              raise SystemExit("type Publication was not found")
+          match = re.search(
+              r"(type Publication = \{.*?author:\s*\{\s*username:\s*string;\s*displayName:\s*string;\s*)(forrumId:\s*number;)",
+              text,
+              flags=re.DOTALL,
+          )
 
-          publication_end = text.find("const reactions =", publication_start)
-          if publication_end == -1:
-              raise SystemExit("End of Publication type was not found")
-
-          before = text[:publication_start]
-          publication = text[publication_start:publication_end]
-          after = text[publication_end:]
-
-          if "avatarUrl?: string | null;" not in publication:
-              old = """  author: {
-                username: string;
-                displayName: string;
-                forrumId: number;"""
-              new = """  author: {
-                username: string;
-                displayName: string;
-                avatarUrl?: string | null;
-                forrumId: number;"""
-              if old not in publication:
-                  raise SystemExit("Publication author type fragment was not found")
-              publication = publication.replace(old, new, 1)
-              path.write_text(before + publication + after, encoding="utf-8")
-              print("Added avatarUrl to Publication.author")
+          if not match:
+              publication = re.search(r"type Publication = \{.*?\n\};", text, flags=re.DOTALL)
+              if publication and "avatarUrl?: string | null;" in publication.group(0):
+                  print("Publication.author already contains avatarUrl")
+              else:
+                  raise SystemExit("Publication.author type block was not found")
           else:
-              print("Publication.author already contains avatarUrl")
+              replacement = match.group(1) + "avatarUrl?: string | null;\n    " + match.group(2)
+              text = text[:match.start()] + replacement + text[match.end():]
+              path.write_text(text, encoding="utf-8")
+              print("Added avatarUrl to Publication.author")
           PY
 
       - name: Commit fix
