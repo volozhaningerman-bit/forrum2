@@ -1,6 +1,7 @@
 FROM node:24-bookworm-slim AS build
 WORKDIR /app
 ENV CI=true
+ARG DATABASE_URL=postgresql://forrum:forrum@localhost:5432/forrum
 RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 COPY package.json ./
 COPY apps/api/package.json apps/api/package.json
