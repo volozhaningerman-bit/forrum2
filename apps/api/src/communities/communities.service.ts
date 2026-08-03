@@ -122,7 +122,7 @@ export class CommunitiesService {
       ownPublicationCount: community._count.publications,
       publicationCount: publications.length,
       isSubscribed: community.subscriptions.length > 0,
-      canManage: isGlobalManager || managedCommunityIds.has(community.id),
+      canManage,
       notifyLevel: community.subscriptions[0]?.notifyLevel ?? null,
       children: community.children.map((child) => ({ slug: child.slug, name: child.name, subscriberCount: child._count.subscriptions })),
       team: community.roles.map((role) => ({ role: role.role, user: { username: role.user.username, displayName: role.user.displayName } })),
