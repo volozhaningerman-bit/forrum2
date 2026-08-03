@@ -1,0 +1,199 @@
+name: Fix FORRUM Railway build
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/fix-railway-build.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply-fixes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Apply TypeScript and Railway fixes
+        shell: bash
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          root = Path('.')
+
+          def replace(rel: str, old: str, new: str) -> None:
+              path = root / rel
+              text = path.read_text(encoding='utf-8')
+              if new in text:
+                  return
+              if old not in text:
+                  raise RuntimeError(f'Expected fragment not found in {rel}')
+              path.write_text(text.replace(old, new), encoding='utf-8')
+
+          # Railway: Prisma needs DATABASE_URL while the API image is being built.
+          docker = root / 'Dockerfile.api'
+          text = docker.read_text(encoding='utf-8')
+          arg_line = 'ARG DATABASE_URL=postgresql://forrum:forrum@localhost:5432/forrum\n'
+          if arg_line not in text:
+              text = text.replace('ENV CI=true\n', 'ENV CI=true\n' + arg_line)
+              docker.write_text(text, encoding='utf-8')
+
+          # Web build: Avatar uses url, not src.
+          replace(
+              'apps/web/app/events/[id]/page.tsx',
+              '<Avatar name={item.user.displayName} src={item.user.avatarUrl} size={36}/>',
+              '<Avatar name={item.user.displayName} url={item.user.avatarUrl} size={36}/>',
+          )
+
+          # Admin: DTO class instances are not Prisma JSON objects.
+          replace(
+              'apps/api/src/admin/admin.service.ts',
+              "import { PublicationStatus, ReportStatus, RoleEventType } from '../generated/prisma/client.js';",
+              "import { PublicationStatus, ReportStatus, RoleEventType, type Prisma } from '../generated/prisma/client.js';",
+          )
+          replace(
+              'apps/api/src/admin/admin.service.ts',
+              """  async updatePromotionSettings(actorId: string, dto: PromotionSettingsDto) {
+              await this.prisma.$transaction([
+                this.prisma.platformSetting.upsert({
+                  where: { key: 'promotion.pricing' }, update: { value: dto }, create: { key: 'promotion.pricing', value: dto },
+                }),
+                this.prisma.auditLog.create({
+                  data: { actorId, action: 'promotion.settings.update', entityType: 'PlatformSetting', entityId: 'promotion.pricing', metadata: dto },
+                }),
+              ]);
+              return dto;
+            }""",
+              """  async updatePromotionSettings(actorId: string, dto: PromotionSettingsDto) {
+              const value: Prisma.InputJsonObject = {
+                pinLimit: dto.pinLimit,
+                pinBasePricePerDay: dto.pinBasePricePerDay,
+                pinDemandPercentPerOccupied: dto.pinDemandPercentPerOccupied,
+                boostLimit: dto.boostLimit,
+                boostBasePricePerDay: dto.boostBasePricePerDay,
+                boostDemandPercentPerOccupied: dto.boostDemandPercentPerOccupied,
+              };
+              await this.prisma.$transaction([
+                this.prisma.platformSetting.upsert({
+                  where: { key: 'promotion.pricing' }, update: { value }, create: { key: 'promotion.pricing', value },
+                }),
+                this.prisma.auditLog.create({
+                  data: { actorId, action: 'promotion.settings.update', entityType: 'PlatformSetting', entityId: 'promotion.pricing', metadata: value },
+                }),
+              ]);
+              return dto;
+            }""",
+          )
+
+          # Communities: canManage was referenced before declaration; enum comparisons were too narrow.
+          communities = root / 'apps/api/src/communities/communities.service.ts'
+          text = communities.read_text(encoding='utf-8')
+          marker = "    const recentByCommunity = new Map(recentRows.map((row) => [row.communityId, row._count._all]));\n"
+          block = """    const recentByCommunity = new Map(recentRows.map((row) => [row.communityId, row._count._all]));
+              let isGlobalManager = false;
+              let manageableCommunityIds = new Set<string>();
+              if (userId) {
+                const [viewer, roles] = await Promise.all([
+                  this.prisma.user.findUnique({ where: { id: userId }, select: { role: true } }),
+                  this.prisma.communityRole.findMany({ where: { userId, endedAt: null }, select: { communityId: true } }),
+                ]);
+                isGlobalManager = viewer?.role === GlobalRole.ADMIN || viewer?.role === GlobalRole.OWNER;
+                if (!isGlobalManager && roles.length) {
+                  manageableCommunityIds = expandCommunityIds(
+                    communities.map((item) => ({ id: item.id, parentId: item.parentId })),
+                    roles.map((role) => role.communityId),
+                  );
+                }
+              }
+          """
+          if 'let isGlobalManager = false;' not in text:
+              if marker not in text:
+                  raise RuntimeError('Expected communities marker not found')
+              text = text.replace(marker, block)
+          text = text.replace('      canManage,\n', '      canManage: isGlobalManager || manageableCommunityIds.has(community.id),\n', 1)
+          text = text.replace(
+              '      if (viewer && [GlobalRole.ADMIN, GlobalRole.OWNER].includes(viewer.role)) canManage = true;',
+              '      if (viewer && (viewer.role === GlobalRole.ADMIN || viewer.role === GlobalRole.OWNER)) canManage = true;',
+          )
+          communities.write_text(text, encoding='utf-8')
+
+          # Community management: Prisma JSON metadata and enum comparisons.
+          cm = root / 'apps/api/src/community-management/community-management.service.ts'
+          text = cm.read_text(encoding='utf-8')
+          if '  type Prisma,\n' not in text:
+              text = text.replace('  TeamInviteStatus,\n  type User,', '  TeamInviteStatus,\n  type Prisma,\n  type User,')
+          text = text.replace(
+              'if ([GlobalRole.OWNER, GlobalRole.ADMIN].includes(user.role))',
+              'if (user.role === GlobalRole.OWNER || user.role === GlobalRole.ADMIN)',
+          )
+          text = text.replace(
+              'if (![TeamInviteStatus.ACCEPTED, TeamInviteStatus.DECLINED].includes(status))',
+              'if (status !== TeamInviteStatus.ACCEPTED && status !== TeamInviteStatus.DECLINED)',
+          )
+          text = text.replace(
+              'let metadata: Record<string, unknown> | undefined;',
+              'let metadata: Prisma.InputJsonObject | undefined;',
+          )
+          cm.write_text(text, encoding='utf-8')
+
+          replacements = {
+              'apps/api/src/events/events.service.ts': [
+                  ('if ([GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role))', 'if (user.role === GlobalRole.ADMIN || user.role === GlobalRole.OWNER)'),
+                  ('if ([CommunityEventStatus.CANCELLED, CommunityEventStatus.COMPLETED].includes(event.status))', 'if (event.status === CommunityEventStatus.CANCELLED || event.status === CommunityEventStatus.COMPLETED)'),
+              ],
+              'apps/api/src/governance/governance.service.ts': [
+                  ('if (![ProposalStatus.APPROVED, ProposalStatus.REJECTED].includes(status))', 'if (status !== ProposalStatus.APPROVED && status !== ProposalStatus.REJECTED)'),
+                  ('if ([GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role))', 'if (user.role === GlobalRole.ADMIN || user.role === GlobalRole.OWNER)'),
+                  ('privileged: [GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role),', 'privileged: user.role === GlobalRole.ADMIN || user.role === GlobalRole.OWNER,'),
+              ],
+              'apps/api/src/media/media.service.ts': [
+                  ('![GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role)', 'user.role !== GlobalRole.ADMIN && user.role !== GlobalRole.OWNER'),
+              ],
+              'apps/api/src/moderation/moderation.service.ts': [
+                  ('if (![AppealStatus.ACCEPTED, AppealStatus.REJECTED].includes(status))', 'if (status !== AppealStatus.ACCEPTED && status !== AppealStatus.REJECTED)'),
+              ],
+              'apps/api/src/portfolio/portfolio.service.ts': [
+                  ('![GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role)', 'user.role !== GlobalRole.ADMIN && user.role !== GlobalRole.OWNER'),
+              ],
+              'apps/api/src/users/achievements.ts': [
+                  ('metadata?: Record<string, unknown>;', 'metadata?: Record<string, string | number | boolean | null>;'),
+              ],
+              'apps/api/src/workshop/workshop.service.ts': [
+                  ('if (![WorkshopItemStatus.PUBLISHED, WorkshopItemStatus.REJECTED].includes(status))', 'if (status !== WorkshopItemStatus.PUBLISHED && status !== WorkshopItemStatus.REJECTED)'),
+              ],
+          }
+          for rel, pairs in replacements.items():
+              path = root / rel
+              text = path.read_text(encoding='utf-8')
+              for old, new in pairs:
+                  text = text.replace(old, new)
+              path.write_text(text, encoding='utf-8')
+
+          # Wallet: force the publication id set to remain string-typed.
+          replace(
+              'apps/api/src/wallet/wallet.service.ts',
+              """    for (const publicationId of new Set(expiredPins.map((item: { publicationId: string }) => item.publicationId))) {
+              await this.refreshPinnedUntil(client, publicationId, now);
+            }""",
+              """    const publicationIds = new Set<string>((expiredPins as Array<{ publicationId: string }>).map((item) => item.publicationId));
+              for (const publicationId of publicationIds) {
+                await this.refreshPinnedUntil(client, publicationId, now);
+              }""",
+          )
+          PY
+
+      - name: Commit fixes
+        shell: bash
+        run: |
+          git config user.name "FORRUM build fixer"
+          git config user.email "actions@users.noreply.github.com"
+          git add Dockerfile.api apps/api apps/web
+          if git diff --cached --quiet; then
+            echo "Nothing to change"
+            exit 0
+          fi
+          git commit -m "Fix Railway production builds"
+          git push
