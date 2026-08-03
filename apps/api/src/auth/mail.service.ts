@@ -1,0 +1,38 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import nodemailer from 'nodemailer';
+
+@Injectable()
+export class MailService {
+  private readonly transporter;
+
+  constructor(private readonly config: ConfigService) {
+    this.transporter = nodemailer.createTransport({
+      host: config.get('SMTP_HOST', 'localhost'),
+      port: Number(config.get('SMTP_PORT', 1025)),
+      secure: false,
+    });
+  }
+
+  async sendVerification(email: string, token: string) {
+    const url = `${this.config.get('WEB_URL', 'http://localhost:3000')}/verify-email?token=${encodeURIComponent(token)}`;
+    await this.transporter.sendMail({
+      from: this.config.get('SMTP_FROM', 'FORRUM <noreply@forrum.local>'),
+      to: email,
+      subject: 'Подтвердите почту FORRUM',
+      text: `Подтвердите почту: ${url}\n\nБез подтверждения аккаунт может только читать.`,
+      html: `<h2>Подтвердите почту FORRUM</h2><p>После подтверждения можно публиковать, отвечать, подписываться и голосовать.</p><p><a href="${url}">Подтвердить почту</a></p><p>Без подтверждения аккаунт может только читать.</p>`,
+    });
+  }
+  async sendPasswordReset(email: string, token: string) {
+    const url = `${this.config.get('WEB_URL', 'http://localhost:3000')}/reset-password?token=${encodeURIComponent(token)}`;
+    await this.transporter.sendMail({
+      from: this.config.get('SMTP_FROM', 'FORRUM <noreply@forrum.local>'),
+      to: email,
+      subject: 'Восстановление пароля FORRUM',
+      text: `Ссылка для смены пароля: ${url}\n\nОна действует 60 минут. Если запрос сделали не вы, ничего не предпринимайте.`,
+      html: `<h2>Восстановление пароля FORRUM</h2><p><a href="${url}">Создать новый пароль</a></p><p>Ссылка действует 60 минут. Если запрос сделали не вы, ничего не предпринимайте.</p>`,
+    });
+  }
+
+}

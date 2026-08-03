@@ -1,0 +1,48 @@
+{
+  "name": "@forrum/api",
+  "version": "0.20.2-rc4",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nest start --watch",
+    "build": "nest build",
+    "start": "node dist/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test --import tsx test/*.test.ts",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "prisma db seed",
+    "db:validate": "prisma validate"
+  },
+  "dependencies": {
+    "@nestjs/common": "11.1.28",
+    "@nestjs/config": "4.0.2",
+    "@nestjs/core": "11.1.28",
+    "@nestjs/platform-express": "11.1.28",
+    "@nestjs/swagger": "11.2.1",
+    "@prisma/adapter-pg": "7.2.0",
+    "@prisma/client": "7.2.0",
+    "argon2": "0.45.1",
+    "class-transformer": "0.5.1",
+    "class-validator": "0.14.2",
+    "cookie-parser": "1.4.7",
+    "dotenv": "17.2.3",
+    "nodemailer": "7.0.11",
+    "pg": "8.16.3",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2",
+    "helmet": "8.3.0",
+    "sharp": "0.35.3"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "11.0.10",
+    "@nestjs/testing": "11.1.28",
+    "@types/cookie-parser": "1.4.9",
+    "@types/express": "5.0.5",
+    "@types/node": "24.10.4",
+    "@types/nodemailer": "7.0.11",
+    "prisma": "7.2.0",
+    "tsx": "4.21.0",
+    "typescript": "5.9.3"
+  }
+}
