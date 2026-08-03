@@ -1,4 +1,4 @@
-name: Fix FORRUM publication avatar type
+name: Fix FORRUM subscriptions buttons
 
 on:
   workflow_dispatch:
@@ -17,33 +17,43 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Fix publication author type
+      - name: Remove duplicate button attributes
         shell: bash
         run: |
           python3 <<'PY'
           from pathlib import Path
-          import re
 
-          path = Path("apps/web/app/p/[slug]/page.tsx")
+          path = Path("apps/web/app/subscriptions/page.tsx")
           text = path.read_text(encoding="utf-8")
 
-          match = re.search(
-              r"(type Publication = \{.*?author:\s*\{\s*username:\s*string;\s*displayName:\s*string;\s*)(forrumId:\s*number;)",
-              text,
-              flags=re.DOTALL,
-          )
+          old_authors = """<button type="button" className={tab === 'authors' ? 'active' : ''} onClick={() => setTab('authors')} type="button">"""
+          new_authors = """<button type="button" className={tab === 'authors' ? 'active' : ''} onClick={() => setTab('authors')}>"""
 
-          if not match:
-              publication = re.search(r"type Publication = \{.*?\n\};", text, flags=re.DOTALL)
-              if publication and "avatarUrl?: string | null;" in publication.group(0):
-                  print("Publication.author already contains avatarUrl")
-              else:
-                  raise SystemExit("Publication.author type block was not found")
+          old_tags = """<button type="button" className={tab === 'tags' ? 'active' : ''} onClick={() => setTab('tags')} type="button">"""
+          new_tags = """<button type="button" className={tab === 'tags' ? 'active' : ''} onClick={() => setTab('tags')}>"""
+
+          changed = False
+
+          if old_authors in text:
+              text = text.replace(old_authors, new_authors, 1)
+              changed = True
+              print("Fixed authors tab button")
+          elif new_authors in text:
+              print("Authors tab button already fixed")
           else:
-              replacement = match.group(1) + "avatarUrl?: string | null;\n    " + match.group(2)
-              text = text[:match.start()] + replacement + text[match.end():]
+              raise SystemExit("Authors tab button fragment was not found")
+
+          if old_tags in text:
+              text = text.replace(old_tags, new_tags, 1)
+              changed = True
+              print("Fixed tags tab button")
+          elif new_tags in text:
+              print("Tags tab button already fixed")
+          else:
+              raise SystemExit("Tags tab button fragment was not found")
+
+          if changed:
               path.write_text(text, encoding="utf-8")
-              print("Added avatarUrl to Publication.author")
           PY
 
       - name: Commit fix
@@ -55,8 +65,8 @@ jobs:
           else
             git config user.name "FORRUM build fixer"
             git config user.email "actions@users.noreply.github.com"
-            git add 'apps/web/app/p/[slug]/page.tsx'
-            git commit -m "Fix publication author avatar type"
+            git add apps/web/app/subscriptions/page.tsx
+            git commit -m "Fix duplicate subscription button attributes"
             git push
           fi
 
