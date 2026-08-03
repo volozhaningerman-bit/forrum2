@@ -84,7 +84,7 @@ export class PortfolioService {
   async update(user: User, id: string, dto: UpdatePortfolioItemDto) {
     const item = await this.prisma.portfolioItem.findUnique({ where: { id } });
     if (!item) throw new NotFoundException('Материал портфолио не найден');
-    if (item.ownerId !== user.id && ![GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role)) throw new ForbiddenException('Редактировать может только автор');
+    if (item.ownerId !== user.id && user.role !== GlobalRole.ADMIN && user.role !== GlobalRole.OWNER) throw new ForbiddenException('Редактировать может только автор');
     const { community, publication } = await this.relations(item.ownerId, dto);
     await this.prisma.$transaction([
       this.prisma.portfolioItem.update({ where: { id }, data: {
@@ -101,7 +101,7 @@ export class PortfolioService {
   async archive(user: User, id: string) {
     const item = await this.prisma.portfolioItem.findUnique({ where: { id } });
     if (!item) throw new NotFoundException('Материал портфолио не найден');
-    if (item.ownerId !== user.id && ![GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role)) throw new ForbiddenException('Архивировать может только автор');
+    if (item.ownerId !== user.id && user.role !== GlobalRole.ADMIN && user.role !== GlobalRole.OWNER) throw new ForbiddenException('Архивировать может только автор');
     await this.prisma.$transaction([
       this.prisma.portfolioItem.update({ where: { id }, data: { status: PortfolioItemStatus.ARCHIVED } }),
       this.prisma.auditLog.create({ data: { actorId: user.id, action: 'portfolio.archive', entityType: 'PortfolioItem', entityId: id, metadata: { title: item.title } } }),

@@ -31,7 +31,8 @@ export class WalletService {
       where: { status: PromotionOrderStatus.ACTIVE, endsAt: { lte: now } },
       data: { status: PromotionOrderStatus.EXPIRED },
     });
-    for (const publicationId of new Set(expiredPins.map((item: { publicationId: string }) => item.publicationId))) {
+    const expiredPublicationIds = new Set<string>((expiredPins as Array<{ publicationId: string }>).map((item) => item.publicationId));
+    for (const publicationId of expiredPublicationIds) {
       await this.refreshPinnedUntil(client, publicationId, now);
     }
   }

@@ -100,7 +100,7 @@ export class MediaService {
   async remove(id: string, user: User) {
     const asset = await this.prisma.mediaAsset.findUnique({ where: { id } });
     if (!asset) throw new NotFoundException('Изображение не найдено');
-    if (asset.ownerId !== user.id && ![GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role)) throw new ForbiddenException('Нет доступа');
+    if (asset.ownerId !== user.id && user.role !== GlobalRole.ADMIN && user.role !== GlobalRole.OWNER) throw new ForbiddenException('Нет доступа');
     throw new BadRequestException('Удаление изображений временно отключено, чтобы не ломать опубликованные материалы');
   }
 }

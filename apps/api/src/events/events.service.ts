@@ -14,7 +14,7 @@ export class EventsService {
   private async communityWithPermission(user: User, slug: string) {
     const community = await this.prisma.community.findUnique({ where: { slug } });
     if (!community) throw new NotFoundException('Сообщество не найдено');
-    if ([GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role)) return community;
+    if (user.role === GlobalRole.ADMIN || user.role === GlobalRole.OWNER) return community;
     const scope = [community.id];
     let parentId = community.parentId;
     let guard = 0;
@@ -106,7 +106,7 @@ export class EventsService {
     const event = await this.prisma.communityEvent.findUnique({ where: { id: eventId }, include: { community: true } });
     if (!event) throw new NotFoundException('Событие не найдено');
     await this.communityWithPermission(user, event.community.slug);
-    if ([CommunityEventStatus.CANCELLED, CommunityEventStatus.COMPLETED].includes(event.status)) throw new BadRequestException('Событие уже завершено');
+    if (event.status === CommunityEventStatus.CANCELLED || event.status === CommunityEventStatus.COMPLETED) throw new BadRequestException('Событие уже завершено');
     await this.prisma.$transaction([
       this.prisma.communityEvent.update({ where: { id: eventId }, data: { status: CommunityEventStatus.CANCELLED } }),
       this.prisma.auditLog.create({ data: { actorId: user.id, action: 'community.event.cancel', entityType: 'CommunityEvent', entityId: eventId, metadata: { reason: reason.trim(), title: event.title } } }),

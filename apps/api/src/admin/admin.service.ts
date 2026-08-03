@@ -131,12 +131,13 @@ export class AdminService {
   }
 
   async updatePromotionSettings(actorId: string, dto: PromotionSettingsDto) {
+    const value: Record<string, number> = { ...dto };
     await this.prisma.$transaction([
       this.prisma.platformSetting.upsert({
-        where: { key: 'promotion.pricing' }, update: { value: dto }, create: { key: 'promotion.pricing', value: dto },
+        where: { key: 'promotion.pricing' }, update: { value }, create: { key: 'promotion.pricing', value },
       }),
       this.prisma.auditLog.create({
-        data: { actorId, action: 'promotion.settings.update', entityType: 'PlatformSetting', entityId: 'promotion.pricing', metadata: dto },
+        data: { actorId, action: 'promotion.settings.update', entityType: 'PlatformSetting', entityId: 'promotion.pricing', metadata: value },
       }),
     ]);
     return dto;

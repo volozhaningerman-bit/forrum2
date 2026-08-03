@@ -27,6 +27,11 @@ export class CommunitiesService {
     ]);
     const activityByCommunity = new Map(activityRows.map((row) => [row.communityId, row._max.lastActivityAt]));
     const recentByCommunity = new Map(recentRows.map((row) => [row.communityId, row._count._all]));
+    const viewer = userId ? await this.prisma.user.findUnique({ where: { id: userId }, select: { role: true } }) : null;
+    const managedCommunityIds = userId
+      ? new Set((await this.prisma.communityRole.findMany({ where: { userId, endedAt: null }, select: { communityId: true } })).map((role) => role.communityId))
+      : new Set<string>();
+    const isGlobalManager = viewer?.role === GlobalRole.ADMIN || viewer?.role === GlobalRole.OWNER;
     return communities.map((community) => ({
       id: community.id,
       slug: community.slug,
@@ -41,7 +46,7 @@ export class CommunitiesService {
       lastActivityAt: activityByCommunity.get(community.id) ?? null,
       childCount: community._count.children,
       isSubscribed: community.subscriptions.length > 0,
-      canManage,
+      canManage: isGlobalManager || managedCommunityIds.has(community.id),
       notifyLevel: community.subscriptions[0]?.notifyLevel ?? null,
       curator: community.roles[0] ? { username: community.roles[0].user.username, displayName: community.roles[0].user.displayName } : null,
     }));
@@ -93,7 +98,7 @@ export class CommunitiesService {
     let canManage = false;
     if (userId) {
       const viewer = await this.prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
-      if (viewer && [GlobalRole.ADMIN, GlobalRole.OWNER].includes(viewer.role)) canManage = true;
+      if (viewer && (viewer.role === GlobalRole.ADMIN || viewer.role === GlobalRole.OWNER)) canManage = true;
       else {
         const allNodes = await this.prisma.community.findMany({ select: { id: true, parentId: true } });
         const parentById = new Map(allNodes.map((item) => [item.id, item.parentId]));
@@ -117,7 +122,7 @@ export class CommunitiesService {
       ownPublicationCount: community._count.publications,
       publicationCount: publications.length,
       isSubscribed: community.subscriptions.length > 0,
-      canManage,
+      canManage: isGlobalManager || managedCommunityIds.has(community.id),
       notifyLevel: community.subscriptions[0]?.notifyLevel ?? null,
       children: community.children.map((child) => ({ slug: child.slug, name: child.name, subscriberCount: child._count.subscriptions })),
       team: community.roles.map((role) => ({ role: role.role, user: { username: role.user.username, displayName: role.user.displayName } })),

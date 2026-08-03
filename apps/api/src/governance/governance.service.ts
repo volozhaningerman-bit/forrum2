@@ -42,7 +42,7 @@ export class GovernanceService {
   }
 
   async resolveProposal(actorId: string, proposalId: string, status: ProposalStatus, note: string) {
-    if (![ProposalStatus.APPROVED, ProposalStatus.REJECTED].includes(status)) throw new BadRequestException('Недопустимый результат');
+    if (status !== ProposalStatus.APPROVED && status !== ProposalStatus.REJECTED) throw new BadRequestException('Недопустимый результат');
     const proposal = await this.prisma.communityProposal.findUnique({ where: { id: proposalId }, include: { suggestedParent: true } });
     if (!proposal || proposal.status !== ProposalStatus.OPEN) throw new NotFoundException('Открытое предложение не найдено');
     let community: { slug: string } | null = null;
@@ -57,7 +57,7 @@ export class GovernanceService {
   }
 
   private async canCreatePoll(user: User, communityId: string) {
-    if ([GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role)) return true;
+    if (user.role === GlobalRole.ADMIN || user.role === GlobalRole.OWNER) return true;
     return Boolean(await this.prisma.communityRole.findFirst({ where: { userId: user.id, communityId, endedAt: null, role: { in: [CommunityRoleType.CURATOR, CommunityRoleType.ASSISTANT] } } }));
   }
 
@@ -112,7 +112,7 @@ export class GovernanceService {
     if (!poll.options.some((option) => option.id === optionId)) throw new BadRequestException('Вариант не относится к этому опросу');
     const subscribed = await this.prisma.communitySubscription.findUnique({ where: { userId_communityId: { userId: user.id, communityId: poll.communityId } } });
     const voteClass = determineVoteClass({
-      privileged: [GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role),
+      privileged: user.role === GlobalRole.ADMIN || user.role === GlobalRole.OWNER,
       directlySubscribed: poll.requireSubscription ? Boolean(subscribed) : true,
       accountCreatedAt: user.createdAt,
       minimumAgeDays: poll.minAccountAgeDays,

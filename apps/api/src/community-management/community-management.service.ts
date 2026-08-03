@@ -40,7 +40,7 @@ export class CommunityManagementService {
   }
 
   private async permission(user: User, communityId: string) {
-    if ([GlobalRole.OWNER, GlobalRole.ADMIN].includes(user.role)) return { level: 'ADMIN' as const, role: null };
+    if (user.role === GlobalRole.OWNER || user.role === GlobalRole.ADMIN) return { level: 'ADMIN' as const, role: null };
     const scopeIds = await this.ancestorIds(communityId);
     const role = await this.prisma.communityRole.findFirst({
       where: { userId: user.id, communityId: { in: scopeIds }, endedAt: null, role: { in: teamRoles } },
@@ -194,7 +194,7 @@ export class CommunityManagementService {
   }
 
   async respondInvite(userId: string, inviteId: string, status: TeamInviteStatus) {
-    if (![TeamInviteStatus.ACCEPTED, TeamInviteStatus.DECLINED].includes(status)) throw new BadRequestException('Недопустимый ответ');
+    if (status !== TeamInviteStatus.ACCEPTED && status !== TeamInviteStatus.DECLINED) throw new BadRequestException('Недопустимый ответ');
     const invite = await this.prisma.communityRoleInvite.findFirst({ where: { id: inviteId, invitedUserId: userId, status: TeamInviteStatus.PENDING }, include: { community: true } });
     if (!invite) throw new NotFoundException('Активное приглашение не найдено');
     if (invite.expiresAt <= new Date()) {
@@ -222,7 +222,7 @@ export class CommunityManagementService {
     if (!publication || publication.status !== PublicationStatus.PUBLISHED || publication.communityId !== community.id) throw new NotFoundException('Публикация в этом сообществе не найдена');
     const now = new Date();
     let update: Record<string, unknown> = {};
-    let metadata: Record<string, unknown> | undefined;
+    let metadata: Record<string, string | number | boolean | null> | undefined;
     switch (dto.action) {
       case CommunityContentActionType.PIN: {
         const days = dto.durationDays ?? 7;

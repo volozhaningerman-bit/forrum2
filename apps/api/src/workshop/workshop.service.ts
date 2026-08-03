@@ -49,7 +49,7 @@ export class WorkshopService {
   }
 
   async review(actor: User, itemId: string, status: WorkshopItemStatus, note: string) {
-    if (![WorkshopItemStatus.PUBLISHED, WorkshopItemStatus.REJECTED].includes(status)) throw new BadRequestException('Недопустимый статус');
+    if (status !== WorkshopItemStatus.PUBLISHED && status !== WorkshopItemStatus.REJECTED) throw new BadRequestException('Недопустимый статус');
     const item = await this.prisma.workshopItem.findUnique({ where: { id: itemId } });
     if (!item) throw new NotFoundException('Работа не найдена');
     await this.prisma.$transaction([

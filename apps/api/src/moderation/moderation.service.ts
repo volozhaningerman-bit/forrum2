@@ -62,7 +62,7 @@ export class ModerationService {
   }
 
   async resolveAppeal(actorId: string, appealId: string, status: AppealStatus, note: string) {
-    if (![AppealStatus.ACCEPTED, AppealStatus.REJECTED].includes(status)) throw new BadRequestException('Недопустимый результат');
+    if (status !== AppealStatus.ACCEPTED && status !== AppealStatus.REJECTED) throw new BadRequestException('Недопустимый результат');
     const appeal = await this.prisma.moderationAppeal.findUnique({ where: { id: appealId }, include: { action: true } });
     if (!appeal) throw new NotFoundException('Апелляция не найдена');
     if (appeal.status !== AppealStatus.OPEN) throw new BadRequestException('Апелляция уже рассмотрена');

@@ -21,7 +21,7 @@ export type AchievementCandidate = {
   communityId?: string;
   sourceType: string;
   sourceId?: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, string | number | boolean | null>;
 };
 
 export function automaticAchievementCandidates(facts: AchievementFacts): AchievementCandidate[] {
