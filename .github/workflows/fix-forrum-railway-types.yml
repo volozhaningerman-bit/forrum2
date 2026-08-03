@@ -76,10 +76,8 @@ jobs:
           )
           replace(
               "apps/api/src/communities/communities.service.ts",
-              """      canManage,
-              notifyLevel:""",
-              """      canManage: isGlobalManager || managedCommunityIds.has(community.id),
-              notifyLevel:"""
+              "      canManage,",
+              "      canManage: isGlobalManager || managedCommunityIds.has(community.id),"
           )
           replace(
               "apps/api/src/communities/communities.service.ts",
