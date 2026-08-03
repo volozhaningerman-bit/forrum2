@@ -1,0 +1,240 @@
+name: Fix FORRUM Railway TypeScript build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix-and-check:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://forrum:forrum@localhost:5432/forrum
+      NEXT_PUBLIC_API_URL: http://localhost:4000/v1
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Apply build fixes
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          def replace(path: str, old: str, new: str) -> None:
+              file = Path(path)
+              text = file.read_text(encoding="utf-8")
+              if old in text:
+                  file.write_text(text.replace(old, new), encoding="utf-8")
+                  print(f"fixed: {path}")
+                  return
+              if new in text:
+                  print(f"already fixed: {path}")
+                  return
+              raise SystemExit(f"Expected fragment not found in {path}")
+
+          replace(
+              "apps/api/src/admin/admin.service.ts",
+              """  async updatePromotionSettings(actorId: string, dto: PromotionSettingsDto) {
+              await this.prisma.$transaction([
+                this.prisma.platformSetting.upsert({
+                  where: { key: 'promotion.pricing' }, update: { value: dto }, create: { key: 'promotion.pricing', value: dto },
+                }),
+                this.prisma.auditLog.create({
+                  data: { actorId, action: 'promotion.settings.update', entityType: 'PlatformSetting', entityId: 'promotion.pricing', metadata: dto },
+                }),
+              ]);
+              return dto;
+            }""",
+              """  async updatePromotionSettings(actorId: string, dto: PromotionSettingsDto) {
+              const value: Record<string, number> = { ...dto };
+              await this.prisma.$transaction([
+                this.prisma.platformSetting.upsert({
+                  where: { key: 'promotion.pricing' }, update: { value }, create: { key: 'promotion.pricing', value },
+                }),
+                this.prisma.auditLog.create({
+                  data: { actorId, action: 'promotion.settings.update', entityType: 'PlatformSetting', entityId: 'promotion.pricing', metadata: value },
+                }),
+              ]);
+              return dto;
+            }"""
+          )
+
+          replace(
+              "apps/api/src/communities/communities.service.ts",
+              """    const recentByCommunity = new Map(recentRows.map((row) => [row.communityId, row._count._all]));
+              return communities.map((community) => ({""",
+              """    const recentByCommunity = new Map(recentRows.map((row) => [row.communityId, row._count._all]));
+              const viewer = userId ? await this.prisma.user.findUnique({ where: { id: userId }, select: { role: true } }) : null;
+              const managedCommunityIds = userId
+                ? new Set((await this.prisma.communityRole.findMany({ where: { userId, endedAt: null }, select: { communityId: true } })).map((role) => role.communityId))
+                : new Set<string>();
+              const isGlobalManager = viewer?.role === GlobalRole.ADMIN || viewer?.role === GlobalRole.OWNER;
+              return communities.map((community) => ({"""
+          )
+          replace(
+              "apps/api/src/communities/communities.service.ts",
+              """      canManage,
+              notifyLevel:""",
+              """      canManage: isGlobalManager || managedCommunityIds.has(community.id),
+              notifyLevel:"""
+          )
+          replace(
+              "apps/api/src/communities/communities.service.ts",
+              """      if (viewer && [GlobalRole.ADMIN, GlobalRole.OWNER].includes(viewer.role)) canManage = true;""",
+              """      if (viewer && (viewer.role === GlobalRole.ADMIN || viewer.role === GlobalRole.OWNER)) canManage = true;"""
+          )
+
+          replace(
+              "apps/api/src/community-management/community-management.service.ts",
+              """    if ([GlobalRole.OWNER, GlobalRole.ADMIN].includes(user.role)) return { level: 'ADMIN' as const, role: null };""",
+              """    if (user.role === GlobalRole.OWNER || user.role === GlobalRole.ADMIN) return { level: 'ADMIN' as const, role: null };"""
+          )
+          replace(
+              "apps/api/src/community-management/community-management.service.ts",
+              """    if (![TeamInviteStatus.ACCEPTED, TeamInviteStatus.DECLINED].includes(status)) throw new BadRequestException('Недопустимый ответ');""",
+              """    if (status !== TeamInviteStatus.ACCEPTED && status !== TeamInviteStatus.DECLINED) throw new BadRequestException('Недопустимый ответ');"""
+          )
+          replace(
+              "apps/api/src/community-management/community-management.service.ts",
+              """    let metadata: Record<string, unknown> | undefined;""",
+              """    let metadata: Record<string, string | number | boolean | null> | undefined;"""
+          )
+
+          replace(
+              "apps/api/src/events/events.service.ts",
+              """    if ([GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role)) return community;""",
+              """    if (user.role === GlobalRole.ADMIN || user.role === GlobalRole.OWNER) return community;"""
+          )
+          replace(
+              "apps/api/src/events/events.service.ts",
+              """    if ([CommunityEventStatus.CANCELLED, CommunityEventStatus.COMPLETED].includes(event.status)) throw new BadRequestException('Событие уже завершено');""",
+              """    if (event.status === CommunityEventStatus.CANCELLED || event.status === CommunityEventStatus.COMPLETED) throw new BadRequestException('Событие уже завершено');"""
+          )
+
+          replace(
+              "apps/api/src/governance/governance.service.ts",
+              """    if (![ProposalStatus.APPROVED, ProposalStatus.REJECTED].includes(status)) throw new BadRequestException('Недопустимый результат');""",
+              """    if (status !== ProposalStatus.APPROVED && status !== ProposalStatus.REJECTED) throw new BadRequestException('Недопустимый результат');"""
+          )
+          replace(
+              "apps/api/src/governance/governance.service.ts",
+              """    if ([GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role)) return true;""",
+              """    if (user.role === GlobalRole.ADMIN || user.role === GlobalRole.OWNER) return true;"""
+          )
+          replace(
+              "apps/api/src/governance/governance.service.ts",
+              """      privileged: [GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role),""",
+              """      privileged: user.role === GlobalRole.ADMIN || user.role === GlobalRole.OWNER,"""
+          )
+
+          replace(
+              "apps/api/src/media/media.service.ts",
+              """    if (asset.ownerId !== user.id && ![GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role)) throw new ForbiddenException('Нет доступа');""",
+              """    if (asset.ownerId !== user.id && user.role !== GlobalRole.ADMIN && user.role !== GlobalRole.OWNER) throw new ForbiddenException('Нет доступа');"""
+          )
+
+          replace(
+              "apps/api/src/moderation/moderation.service.ts",
+              """    if (![AppealStatus.ACCEPTED, AppealStatus.REJECTED].includes(status)) throw new BadRequestException('Недопустимый результат');""",
+              """    if (status !== AppealStatus.ACCEPTED && status !== AppealStatus.REJECTED) throw new BadRequestException('Недопустимый результат');"""
+          )
+
+          replace(
+              "apps/api/src/portfolio/portfolio.service.ts",
+              """    if (item.ownerId !== user.id && ![GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role)) throw new ForbiddenException('Редактировать может только автор');""",
+              """    if (item.ownerId !== user.id && user.role !== GlobalRole.ADMIN && user.role !== GlobalRole.OWNER) throw new ForbiddenException('Редактировать может только автор');"""
+          )
+          replace(
+              "apps/api/src/portfolio/portfolio.service.ts",
+              """    if (item.ownerId !== user.id && ![GlobalRole.ADMIN, GlobalRole.OWNER].includes(user.role)) throw new ForbiddenException('Архивировать может только автор');""",
+              """    if (item.ownerId !== user.id && user.role !== GlobalRole.ADMIN && user.role !== GlobalRole.OWNER) throw new ForbiddenException('Архивировать может только автор');"""
+          )
+
+          replace(
+              "apps/api/src/users/achievements.ts",
+              """  metadata?: Record<string, unknown>;""",
+              """  metadata?: Record<string, string | number | boolean | null>;"""
+          )
+
+          replace(
+              "apps/api/src/wallet/wallet.service.ts",
+              """    for (const publicationId of new Set(expiredPins.map((item: { publicationId: string }) => item.publicationId))) {""",
+              """    const expiredPublicationIds = new Set<string>((expiredPins as Array<{ publicationId: string }>).map((item) => item.publicationId));
+              for (const publicationId of expiredPublicationIds) {"""
+          )
+
+          replace(
+              "apps/api/src/workshop/workshop.service.ts",
+              """    if (![WorkshopItemStatus.PUBLISHED, WorkshopItemStatus.REJECTED].includes(status)) throw new BadRequestException('Недопустимый статус');""",
+              """    if (status !== WorkshopItemStatus.PUBLISHED && status !== WorkshopItemStatus.REJECTED) throw new BadRequestException('Недопустимый статус');"""
+          )
+
+          page = Path("apps/web/app/events/[id]/page.tsx")
+          text = page.read_text(encoding="utf-8")
+          if "src={item.user.avatarUrl}" in text:
+              page.write_text(text.replace("src={item.user.avatarUrl}", "url={item.user.avatarUrl}"), encoding="utf-8")
+              print("fixed: web event Avatar prop")
+          else:
+              print("already fixed: web event Avatar prop")
+
+          dockerfile = Path("Dockerfile.api")
+          text = dockerfile.read_text(encoding="utf-8")
+          arg_line = "ARG DATABASE_URL=postgresql://forrum:forrum@localhost:5432/forrum"
+          if arg_line not in text:
+              text = text.replace("ENV CI=true", f"ENV CI=true\n{arg_line}")
+              dockerfile.write_text(text, encoding="utf-8")
+              print("fixed: Dockerfile.api build-time DATABASE_URL")
+          else:
+              print("already fixed: Dockerfile.api build-time DATABASE_URL")
+          PY
+
+      - name: Commit fixes
+        shell: bash
+        run: |
+          git diff --check
+          if git diff --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "FORRUM build fixer"
+          git config user.email "actions@users.noreply.github.com"
+          git add \
+            Dockerfile.api \
+            apps/api/src/admin/admin.service.ts \
+            apps/api/src/communities/communities.service.ts \
+            apps/api/src/community-management/community-management.service.ts \
+            apps/api/src/events/events.service.ts \
+            apps/api/src/governance/governance.service.ts \
+            apps/api/src/media/media.service.ts \
+            apps/api/src/moderation/moderation.service.ts \
+            apps/api/src/portfolio/portfolio.service.ts \
+            apps/api/src/users/achievements.ts \
+            apps/api/src/wallet/wallet.service.ts \
+            apps/api/src/workshop/workshop.service.ts \
+            'apps/web/app/events/[id]/page.tsx'
+          git commit -m "Fix Railway TypeScript builds"
+          git push
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Generate Prisma client
+        run: npm run db:generate -w @forrum/api
+
+      - name: Build contracts
+        run: npm run build -w @forrum/contracts
+
+      - name: Build API
+        run: npm run build -w @forrum/api
+
+      - name: Build web
+        run: npm run build -w @forrum/web
