@@ -54,6 +54,7 @@ type Publication = {
   author: {
     username: string;
     displayName: string;
+    avatarUrl?: string | null;
     forrumId: number;
     bio?: string | null;
     emailVerified?: boolean;
