@@ -1,4 +1,4 @@
-name: Repair FORRUM community build
+name: Fix FORRUM publication avatar type
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ permissions:
   contents: write
 
 jobs:
-  repair-and-build:
+  fix-and-build:
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: postgresql://forrum:forrum@localhost:5432/forrum
@@ -17,41 +17,47 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Repair communities service
+      - name: Fix publication author type
         shell: bash
         run: |
           python3 <<'PY'
           from pathlib import Path
 
-          path = Path("apps/api/src/communities/communities.service.ts")
+          path = Path("apps/web/app/p/[slug]/page.tsx")
           text = path.read_text(encoding="utf-8")
 
-          marker = "  async get("
-          before, separator, after = text.partition(marker)
-          if not separator:
-              raise SystemExit("Method async get() was not found")
+          publication_start = text.find("type Publication = {")
+          if publication_start == -1:
+              raise SystemExit("type Publication was not found")
 
-          managed_value = "      canManage: isGlobalManager || managedCommunityIds.has(community.id),"
-          plain_value = "      canManage,"
+          publication_end = text.find("const reactions =", publication_start)
+          if publication_end == -1:
+              raise SystemExit("End of Publication type was not found")
 
-          # list(): use the calculated global/community management flags.
-          if managed_value not in before:
-              if plain_value not in before:
-                  raise SystemExit("The canManage field in list() was not found")
-              before = before.replace(plain_value, managed_value, 1)
+          before = text[:publication_start]
+          publication = text[publication_start:publication_end]
+          after = text[publication_end:]
 
-          # get(): use the local canManage variable calculated inside get().
-          if managed_value in after:
-              after = after.replace(managed_value, plain_value, 1)
-          elif plain_value not in after:
-              raise SystemExit("The canManage field in get() was not found")
-
-          fixed = before + separator + after
-          path.write_text(fixed, encoding="utf-8")
-          print("communities.service.ts repaired")
+          if "avatarUrl?: string | null;" not in publication:
+              old = """  author: {
+                username: string;
+                displayName: string;
+                forrumId: number;"""
+              new = """  author: {
+                username: string;
+                displayName: string;
+                avatarUrl?: string | null;
+                forrumId: number;"""
+              if old not in publication:
+                  raise SystemExit("Publication author type fragment was not found")
+              publication = publication.replace(old, new, 1)
+              path.write_text(before + publication + after, encoding="utf-8")
+              print("Added avatarUrl to Publication.author")
+          else:
+              print("Publication.author already contains avatarUrl")
           PY
 
-      - name: Commit repair
+      - name: Commit fix
         shell: bash
         run: |
           git diff --check
@@ -60,8 +66,8 @@ jobs:
           else
             git config user.name "FORRUM build fixer"
             git config user.email "actions@users.noreply.github.com"
-            git add apps/api/src/communities/communities.service.ts
-            git commit -m "Fix community management scope"
+            git add 'apps/web/app/p/[slug]/page.tsx'
+            git commit -m "Fix publication author avatar type"
             git push
           fi
 
