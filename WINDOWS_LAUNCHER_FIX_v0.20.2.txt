@@ -1,0 +1,10 @@
+FORRUM v0.20.2-rc4 - Windows launcher encoding fix
+
+Fixed:
+- all BAT launchers are ASCII-only and use Windows CRLF line endings;
+- PowerShell scripts use UTF-8 with BOM for Windows PowerShell 5.1;
+- PRECHECK, INSTALL, START, TEST, BACKUP, RESTORE, RESET and diagnostics launchers are covered;
+- inline PowerShell loops no longer depend on CMD percent/pipe escaping where avoidable.
+
+Reason:
+The previous UTF-8/LF BAT files could be parsed incorrectly by Windows CMD, causing fragments of Russian text to be executed as commands.

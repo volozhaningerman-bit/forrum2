@@ -1,0 +1,58 @@
+FORRUM v0.20.2-rc4 — COMMUNITY RELEASE CANDIDATE
+
+This release completes four sequential product stages and then audits them together.
+
+v0.17 — Community workspace
+- Contextual management workspace inside a community.
+- Real activity and health indicators without fabricated online numbers.
+- Downward-only inherited permissions.
+- Team invitations and auditable role lifecycle.
+- Official reports as permanent topics.
+- Content actions: pin, official, solved, close, reopen and move, all with reasons.
+- Structural changes remain proposals until central approval.
+
+v0.18 — Events and governance
+- Public events/polls hub without creation forms mixed into reading.
+- Separate event creation workflow for eligible community teams.
+- Online, offline and hybrid events; capacity and attendance states.
+- Poll purpose, quorum, minimum account age, subscription requirement and advisory policy.
+- Explicit poll closing and published result note.
+
+v0.19 — Projects and services
+- One portfolio system for projects and services instead of parallel duplicate modules.
+- Draft, active, paused, completed and archived lifecycle.
+- Only active/completed cards are public.
+- Link to owner publication, community and confirmed interaction.
+- Project/service directories are contextual and were not added to global navigation.
+
+v0.20 — Promotion and internal points
+- Transparent quote: base price, duration, occupied places, demand surcharge and total.
+- Configurable hard limits and dynamic-price formula.
+- Duplicate active orders blocked.
+- Active/history promotion view in wallet.
+- 10-minute full-refund grace window; later stop without automatic refund.
+- Administrative refund only with a recorded reason.
+- No real payments, withdrawals or automatic payouts.
+
+Final integration work
+- Demo data for an event, structured poll and portfolio project.
+- Smoke test expanded to 47 stages.
+- Static required-route and UX regression checks expanded.
+- All literal internal links were checked against existing Next.js routes.
+- Native browser prompt/confirm dialogs were removed from remaining account-session actions.
+
+
+FINAL AUDIT v0.20.2-rc4
+- Added PRECHECK_PC.bat for WSL, Docker, disk and Compose validation.
+- Added keyboard skip link and visible focus indicators.
+- Added explicit type=button to non-submit action buttons.
+- Added validate:a11y and integrated it into TEST_FORRUM.bat.
+- Installer/start scripts now wait for both API and web readiness.
+- Added web healthcheck and stable Docker project name.
+- Expanded novice Windows instructions and Lighthouse/keyboard testing.
+
+WINDOWS LAUNCHER FIX v0.20.2-rc4
+- Fixed real Windows CMD parsing failure in UTF-8/LF BAT launchers.
+- All BAT launchers are now ASCII-only with CRLF line endings.
+- PowerShell scripts now use UTF-8 BOM with CRLF for Windows PowerShell 5.1.
+- Updated beginner instructions to match the new English console success messages.

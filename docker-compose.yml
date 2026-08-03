@@ -1,0 +1,104 @@
+name: forrum
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: forrum
+      POSTGRES_USER: forrum
+      POSTGRES_PASSWORD: forrum
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U forrum -d forrum"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    volumes:
+      - forrum_postgres:/var/lib/postgresql
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://forrum:forrum@postgres:5432/forrum?schema=public
+      SMTP_HOST: mailpit
+      WEB_ORIGIN: http://localhost:3000
+      WEB_URL: http://localhost:3000
+      PUBLIC_API_URL: http://localhost:4000
+      UPLOAD_DIR: /app/uploads
+      BACKUP_STATUS_FILE: /app/backups/backup-status.json
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    ports:
+      - "4000:4000"
+    volumes:
+      - forrum_uploads:/app/uploads
+      - ./backups:/app/backups:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:4000/v1/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  backup:
+    build:
+      context: .
+      dockerfile: Dockerfile.backup
+    environment:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGDATABASE: forrum
+      PGUSER: forrum
+      PGPASSWORD: forrum
+      BACKUP_DIR: /backups/automatic
+      BACKUP_STATUS_FILE: /backups/backup-status.json
+      UPLOAD_SOURCE_DIR: /source/uploads
+      AUTO_BACKUP_INTERVAL_HOURS: ${AUTO_BACKUP_INTERVAL_HOURS:-12}
+      AUTO_BACKUP_RETENTION_COUNT: ${AUTO_BACKUP_RETENTION_COUNT:-28}
+      AUTO_BACKUP_ON_START: ${AUTO_BACKUP_ON_START:-true}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backups:/backups
+      - forrum_uploads:/source/uploads:ro
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:4000/v1
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:4000/v1
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+volumes:
+  forrum_postgres:
+  forrum_uploads:

@@ -1,0 +1,31 @@
+{
+  "name": "forrum",
+  "version": "0.20.2-rc4",
+  "private": true,
+  "description": "FORRUM test-ready release candidate without AI, real payments or FORRUM Games",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=24 <27"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "npm run build -w @forrum/contracts && npm run build -w @forrum/api && npm run build -w @forrum/web",
+    "typecheck": "npm run typecheck -w @forrum/contracts && npm run typecheck -w @forrum/api && npm run typecheck -w @forrum/web",
+    "test": "npm run test -w @forrum/api",
+    "db:generate": "npm run db:generate -w @forrum/api",
+    "db:push": "npm run db:push -w @forrum/api",
+    "db:seed": "npm run db:seed -w @forrum/api",
+    "setup": "npm run db:generate && npm run db:push && npm run db:seed",
+    "validate:static": "node scripts/static-check.mjs",
+    "test:pure": "node --experimental-strip-types --experimental-loader ./scripts/local-ts-loader.mjs --test apps/api/test/*.test.ts",
+    "db:validate": "npm run db:validate -w @forrum/api",
+    "validate:ux": "node scripts/ux-check.mjs",
+    "validate:a11y": "node scripts/accessibility-check.mjs"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

@@ -1,0 +1,4 @@
+FROM postgres:18-alpine
+COPY scripts/auto-backup.sh /usr/local/bin/auto-backup.sh
+RUN chmod +x /usr/local/bin/auto-backup.sh
+ENTRYPOINT ["/usr/local/bin/auto-backup.sh"]
