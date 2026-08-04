@@ -13,8 +13,11 @@ import { PublicationsService } from './publications.service.js';
 export class PublicationsController {
   constructor(private readonly service: PublicationsService) {}
 
-  @Get('news')
-  news() { return this.service.listNews(); }
+    @Get('news')
+    news() { return this.service.listNews(); }
+
+    @Get('announcements')
+    announcements() { return this.service.listAnnouncements(); }
 
   @Post('communities/:slug/publications') @UseGuards(SessionGuard, VerifiedGuard)
   create(@Param('slug') slug: string, @CurrentUser() user: User, @Body() dto: CreatePublicationDto) {

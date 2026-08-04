@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/interactions/layout,_N_T_/interactions/page,_N_T_/interactions"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/interactions/__PAGE__",
+    "/interactions",
+    "/_index",
+    "/_head"
+  ]
+}

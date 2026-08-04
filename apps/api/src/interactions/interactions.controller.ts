@@ -12,10 +12,34 @@ import { InteractionsService } from './interactions.service.js';
 @UseGuards(SessionGuard, VerifiedGuard)
 export class InteractionsController {
   constructor(private readonly service: InteractionsService) {}
-  @Get() list(@CurrentUser() user: User) { return this.service.list(user.id); }
-  @Post() create(@CurrentUser() user: User, @Body() dto: CreateInteractionDto) { return this.service.create(user.id, dto); }
-  @Post(':id/confirm') confirm(@Param('id') id: string, @CurrentUser() user: User) { return this.service.confirm(id, user.id); }
-  @Post(':id/complete') complete(@Param('id') id: string, @CurrentUser() user: User) { return this.service.complete(id, user.id); }
-  @Post(':id/cancel') cancel(@Param('id') id: string, @CurrentUser() user: User, @Body() dto: CancelInteractionDto) { return this.service.cancel(id, user.id, dto.reason); }
-  @Post(':id/reviews') review(@Param('id') id: string, @CurrentUser() user: User, @Body() dto: CreateProfileReviewDto) { return this.service.review(id, user.id, dto.verdict, dto.body); }
+
+  @Get()
+  list(@CurrentUser() user: User) {
+    return this.service.list(user.id);
+  }
+
+  @Post()
+  create(@CurrentUser() user: User, @Body() dto: CreateInteractionDto) {
+    return this.service.create(user.id, dto);
+  }
+
+  @Post(':id/confirm')
+  confirm(@Param('id') id: string, @CurrentUser() user: User) {
+    return this.service.confirm(id, user.id);
+  }
+
+  @Post(':id/complete')
+  complete(@Param('id') id: string, @CurrentUser() user: User) {
+    return this.service.complete(id, user.id);
+  }
+
+  @Post(':id/cancel')
+  cancel(@Param('id') id: string, @CurrentUser() user: User, @Body() dto: CancelInteractionDto) {
+    return this.service.cancel(id, user.id, dto.reason);
+  }
+
+  @Post(':id/reviews')
+  review(@Param('id') id: string, @CurrentUser() user: User, @Body() dto: CreateProfileReviewDto) {
+    return this.service.review(id, user.id, dto.verdict, dto.body, dto.evidenceMediaId);
+  }
 }

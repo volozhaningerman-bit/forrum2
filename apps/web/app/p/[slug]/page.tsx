@@ -9,6 +9,7 @@ import { Avatar } from '@/components/avatar';
 import { TagList } from '@/components/tag-list';
 import { BbcodeContent } from '@/components/bbcode-content';
 import { BbcodeEditor } from '@/components/bbcode-editor';
+import { TelegramShareButton } from '@/components/telegram-share-button';
 import {
   BookmarkIcon,
   CommentIcon,
@@ -343,6 +344,7 @@ export default function PublicationPage() {
                 <BookmarkIcon/> {item.isBookmarked ? 'Сохранено' : 'Сохранить'}
               </button>
               <button type="button" className="plain-action" onClick={sharePublication}>Поделиться</button>
+              <TelegramShareButton slug={item.slug}/>
               {item.canEdit && <button type="button" className="plain-action" onClick={beginEdit}>Редактировать</button>}
               {item.canDelete && <button type="button" className="plain-action danger-text" onClick={() => setDeleteOpen(true)}>Удалить</button>}
             </div>

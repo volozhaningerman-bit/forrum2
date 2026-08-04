@@ -149,6 +149,7 @@ export class UsersService {
       this.prisma.profileReview.findMany({
         where: { targetId: user.id }, orderBy: { createdAt: 'desc' }, take: 30,
         include: {
+          evidenceMedia: { select: { id: true } },
           author: { select: { username: true, displayName: true, avatarUrl: true } },
           interaction: { include: { community: { select: { slug: true, name: true } }, publication: { select: { slug: true, title: true } }, portfolioItem: { select: { id: true, kind: true, title: true } } } },
         },
@@ -201,7 +202,8 @@ export class UsersService {
       })),
       reviews: reviews.map((review) => ({
         id: review.id, verdict: review.verdict, body: review.body, createdAt: review.createdAt,
-        author: review.author,
+          evidenceAttached: Boolean(review.evidenceMedia),
+          author: review.author,
         interaction: { id: review.interaction.id, type: review.interaction.type, title: review.interaction.title, completedAt: review.interaction.completedAt, community: review.interaction.community, publication: review.interaction.publication, portfolioItem: review.interaction.portfolioItem },
       })),
       reviewSummary,

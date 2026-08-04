@@ -6,6 +6,7 @@ import type { PublicationCardData } from '@/lib/types';
 import { api } from '@/lib/api';
 import { Avatar } from './avatar';
 import { TagList } from './tag-list';
+import { TelegramShareButton } from './telegram-share-button';
 import { BookmarkIcon, CommentIcon, EyeIcon, HeartIcon } from './icons';
 
 const typeNames: Record<string, string> = { DISCUSSION: 'Обсуждение', QUESTION: 'Вопрос', NEWS: 'Новость', GUIDE: 'Гайд', PROJECT: 'Проект', SERVICE: 'Услуга', CASE: 'Кейс', ANNOUNCEMENT: 'Объявление' };
@@ -69,7 +70,7 @@ export function PublicationCard({ item, onFeedback }: {
         <div className="publication-author-inline"><Link href={`/u/${item.author.username}`}><strong>{item.author.displayName}</strong></Link><span>{relativeDate(item.createdAt)}</span></div>
         <Link className="publication-main" href={`/p/${item.slug}`}>{item.title && <h2>{item.title}</h2>}<p>{item.excerpt}</p></Link>
         <TagList tags={item.tags}/>
-        <div className="publication-bottom"><div className="publication-stats" aria-label="Статистика публикации"><span title="Ответы"><CommentIcon/> {item.commentCount}</span><span title="Просмотры"><EyeIcon/> {item.viewCount ?? 0}</span><span title="Реакции"><HeartIcon/> {item.reactionCount}</span>{Boolean(item.bookmarkCount && item.bookmarkCount > 0) && <span title="Сохранения"><BookmarkIcon/> {item.bookmarkCount}</span>}</div>{item.reason && <span className="feed-reason">{item.reason}</span>}</div>
+        <div className="publication-bottom"><TelegramShareButton slug={item.slug} compact/><div className="publication-stats" aria-label="Статистика публикации"><span title="Ответы"><CommentIcon/> {item.commentCount}</span><span title="Просмотры"><EyeIcon/> {item.viewCount ?? 0}</span><span title="Реакции"><HeartIcon/> {item.reactionCount}</span>{Boolean(item.bookmarkCount && item.bookmarkCount > 0) && <span title="Сохранения"><BookmarkIcon/> {item.bookmarkCount}</span>}</div>{item.reason && <span className="feed-reason">{item.reason}</span>}</div>
       </div>
     </div>
   </article>;

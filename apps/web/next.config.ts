@@ -8,8 +8,6 @@ const securityHeaders = [
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=()' },
 ];
 
-const apiBase = (process.env.API_INTERNAL_URL ?? 'https://api-production-37ce.up.railway.app/v1').replace(/\/$/, '');
-
 const nextConfig: NextConfig = {
   output: 'standalone',
   poweredByHeader: false,
@@ -18,14 +16,6 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [{ source: '/(.*)', headers: securityHeaders }];
-  },
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${apiBase}/:path*`,
-      },
-    ];
   },
 };
 

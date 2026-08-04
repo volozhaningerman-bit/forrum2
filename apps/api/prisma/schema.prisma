@@ -330,6 +330,8 @@ model User {
   mediaAssets        MediaAsset[]
   telegramLink       TelegramLink?
   telegramLinkCodes  TelegramLinkCode[]
+  telegramChannels   TelegramChannel[]
+  telegramShares     TelegramShare[]
   moderationActions  ModerationAction[] @relation("ModerationSubject")
   moderationActionsMade ModerationAction[] @relation("ModerationActor")
   moderationAppeals  ModerationAppeal[] @relation("AppealAuthor")
@@ -549,6 +551,7 @@ model Publication {
   contentActions CommunityContentAction[]
   communityReport CommunityReport?
   portfolioItems PortfolioItem[]
+  telegramShares TelegramShare[]
 
   @@index([communityId, lastActivityAt(sort: Desc)])
   @@index([authorId, createdAt(sort: Desc)])
@@ -822,9 +825,9 @@ model MediaAsset {
   height       Int?
   createdAt    DateTime  @default(now())
   owner        User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  workshopPreviews WorkshopItem[]
-
-  @@index([ownerId, createdAt(sort: Desc)])
+    workshopPreviews WorkshopItem[]
+    reviewEvidence   ProfileReview[]
+    @@index([ownerId, createdAt(sort: Desc)])
   @@index([kind, createdAt(sort: Desc)])
 }
 
@@ -849,6 +852,41 @@ model TelegramLinkCode {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, expiresAt])
+}
+
+
+model TelegramChannel {
+  id             String   @id @default(uuid()) @db.Uuid
+  ownerUserId    String   @db.Uuid
+  chatId         String   @unique
+  title          String
+  username       String?
+  enabled        Boolean  @default(true)
+  canPost        Boolean  @default(true)
+  linkedAt       DateTime @default(now())
+  lastCheckedAt  DateTime?
+  updatedAt      DateTime @updatedAt
+  owner          User     @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+  shares         TelegramShare[]
+
+  @@index([ownerUserId, enabled, updatedAt(sort: Desc)])
+}
+
+model TelegramShare {
+  id                String   @id @default(uuid()) @db.Uuid
+  userId            String   @db.Uuid
+  channelId         String   @db.Uuid
+  publicationId     String   @db.Uuid
+  includeImage      Boolean  @default(true)
+  telegramMessageId Int?
+  createdAt         DateTime @default(now())
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channel           TelegramChannel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  publication       Publication @relation(fields: [publicationId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([channelId, createdAt(sort: Desc)])
+  @@index([publicationId, createdAt(sort: Desc)])
 }
 
 model ModerationAction {
@@ -1086,21 +1124,23 @@ model ConfirmedInteraction {
 }
 
 model ProfileReview {
-  id            String          @id @default(uuid()) @db.Uuid
-  interactionId String          @db.Uuid
-  authorId      String          @db.Uuid
-  targetId      String          @db.Uuid
-  verdict       ReviewVerdict
-  body          String
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  interaction   ConfirmedInteraction @relation(fields: [interactionId], references: [id], onDelete: Cascade)
-  author        User            @relation("ReviewAuthor", fields: [authorId], references: [id], onDelete: Cascade)
-  target        User            @relation("ReviewTarget", fields: [targetId], references: [id], onDelete: Cascade)
-
+  id              String          @id @default(uuid()) @db.Uuid
+  interactionId   String          @db.Uuid
+  authorId        String          @db.Uuid
+  targetId        String          @db.Uuid
+  evidenceMediaId String?         @db.Uuid
+  verdict         ReviewVerdict
+  body            String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  interaction     ConfirmedInteraction @relation(fields: [interactionId], references: [id], onDelete: Cascade)
+  author          User            @relation("ReviewAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  target          User            @relation("ReviewTarget", fields: [targetId], references: [id], onDelete: Cascade)
+  evidenceMedia   MediaAsset?      @relation(fields: [evidenceMediaId], references: [id], onDelete: SetNull)
   @@unique([interactionId, authorId])
   @@index([targetId, createdAt(sort: Desc)])
   @@index([authorId, createdAt(sort: Desc)])
+  @@index([evidenceMediaId])
 }
 
 model CommunityReport {

@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { InteractionStatus, NotificationType, type InteractionType, type ReviewVerdict } from '../generated/prisma/client.js';
+import { InteractionStatus, MediaKind, NotificationType, type InteractionType, type ReviewVerdict } from '../generated/prisma/client.js';
 import { excerpt } from '../common/text.js';
 import { NotificationsService } from '../notifications/notifications.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -24,7 +24,7 @@ export class InteractionsService {
         publication: { select: { slug: true, title: true } },
         community: { select: { slug: true, name: true } },
         portfolioItem: { select: { id: true, kind: true, title: true } },
-        reviews: { where: { authorId: userId }, select: { id: true, verdict: true, body: true, createdAt: true } },
+        reviews: { where: { authorId: userId }, select: { id: true, verdict: true, body: true, evidenceMediaId: true, createdAt: true } },
       },
     });
     return rows.map((row) => ({
@@ -133,26 +133,71 @@ export class InteractionsService {
     return { ok: true };
   }
 
-  async review(id: string, actorId: string, verdict: ReviewVerdict, bodyInput: string) {
-    const row = await this.prisma.confirmedInteraction.findUnique({ where: { id } });
-    if (!row) throw new NotFoundException('Взаимодействие не найдено');
-    const participant = row.createdById === actorId || row.counterpartId === actorId;
-    const alreadyReviewed = Boolean(await this.prisma.profileReview.findUnique({ where: { interactionId_authorId: { interactionId: id, authorId: actorId } }, select: { id: true } }));
-    if (!reviewAllowed({ status: row.status, participant, alreadyReviewed })) {
-      if (!participant) throw new ForbiddenException('Нет доступа к этому взаимодействию');
-      if (alreadyReviewed) throw new BadRequestException('Вы уже оставили отзыв по этому взаимодействию');
-      throw new BadRequestException('Отзыв доступен только после подтверждённого завершения');
-    }
-    const targetId = row.createdById === actorId ? row.counterpartId : row.createdById;
-    const review = await this.prisma.$transaction(async (tx) => {
-      const result = await tx.profileReview.create({ data: { interactionId: id, authorId: actorId, targetId, verdict, body: bodyInput.trim() } });
-      await tx.auditLog.create({ data: { actorId, action: 'review.create', entityType: 'ProfileReview', entityId: result.id, metadata: { interactionId: id, verdict } } });
-      await this.notifications.deliver({ userId: targetId, actorId, type: NotificationType.SYSTEM, title: 'Новый подтверждённый отзыв', body: excerpt(bodyInput, 120), href: '/interactions' }, tx);
-      return result;
-    }).catch((error: { code?: string }) => {
-      if (error?.code === 'P2002') throw new BadRequestException('Вы уже оставили отзыв по этому взаимодействию');
-      throw error;
-    });
-    return { id: review.id };
+  async review(id: string, actorId: string, verdict: ReviewVerdict, bodyInput: string, evidenceMediaId?: string) {
+  const row = await this.prisma.confirmedInteraction.findUnique({ where: { id } });
+  if (!row) throw new NotFoundException('Взаимодействие не найдено');
+
+  const participant = row.createdById === actorId || row.counterpartId === actorId;
+  const alreadyReviewed = Boolean(await this.prisma.profileReview.findUnique({
+    where: { interactionId_authorId: { interactionId: id, authorId: actorId } },
+    select: { id: true },
+  }));
+
+  if (!reviewAllowed({ status: row.status, participant, alreadyReviewed })) {
+    if (!participant) throw new ForbiddenException('Нет доступа к этому взаимодействию');
+    if (alreadyReviewed) throw new BadRequestException('Вы уже оставили отзыв по этому взаимодействию');
+    throw new BadRequestException('Отзыв доступен только после подтверждённого завершения');
   }
+
+  const evidence = evidenceMediaId
+    ? await this.prisma.mediaAsset.findFirst({
+        where: { id: evidenceMediaId, ownerId: actorId, kind: MediaKind.POST_IMAGE },
+        select: { id: true },
+      })
+    : null;
+
+  if (evidenceMediaId && !evidence) {
+    throw new BadRequestException('Приложенное изображение недоступно или принадлежит другому пользователю');
+  }
+
+  const targetId = row.createdById === actorId ? row.counterpartId : row.createdById;
+  const review = await this.prisma.$transaction(async (tx) => {
+    const result = await tx.profileReview.create({
+      data: {
+        interactionId: id,
+        authorId: actorId,
+        targetId,
+        verdict,
+        body: bodyInput.trim(),
+        evidenceMediaId: evidence?.id ?? null,
+      },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        actorId,
+        action: 'review.create',
+        entityType: 'ProfileReview',
+        entityId: result.id,
+        metadata: { interactionId: id, verdict, evidenceAttached: Boolean(evidence) },
+      },
+    });
+
+    await this.notifications.deliver({
+      userId: targetId,
+      actorId,
+      type: NotificationType.SYSTEM,
+      title: 'Новый подтверждённый отзыв',
+      body: excerpt(bodyInput, 120),
+      href: '/interactions',
+    }, tx);
+
+    return result;
+  }).catch((error: { code?: string }) => {
+    if (error?.code === 'P2002') throw new BadRequestException('Вы уже оставили отзыв по этому взаимодействию');
+    throw error;
+  });
+
+  return { id: review.id };
+}
 }

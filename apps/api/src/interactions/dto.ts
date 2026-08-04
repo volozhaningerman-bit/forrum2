@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString, Length } from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsUUID, Length } from 'class-validator';
 import { InteractionType, ReviewVerdict } from '../generated/prisma/client.js';
 
 export class CreateInteractionDto {
@@ -19,4 +19,5 @@ export class CancelInteractionDto {
 export class CreateProfileReviewDto {
   @ApiProperty({ enum: ReviewVerdict }) @IsEnum(ReviewVerdict) verdict!: ReviewVerdict;
   @ApiProperty() @IsString() @Length(10, 2000) body!: string;
+  @ApiPropertyOptional() @IsOptional() @IsUUID() evidenceMediaId?: string;
 }

@@ -1,0 +1,70 @@
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsBoolean, IsOptional } from 'class-validator';
+export class UpdateNotificationPreferencesDto {
+    publicationReplies;
+    commentReplies;
+    reactions;
+    follows;
+    wallPosts;
+    messages;
+    system;
+    emailDigest;
+}
+__decorate([
+    ApiPropertyOptional(),
+    IsOptional(),
+    IsBoolean(),
+    __metadata("design:type", Boolean)
+], UpdateNotificationPreferencesDto.prototype, "publicationReplies", void 0);
+__decorate([
+    ApiPropertyOptional(),
+    IsOptional(),
+    IsBoolean(),
+    __metadata("design:type", Boolean)
+], UpdateNotificationPreferencesDto.prototype, "commentReplies", void 0);
+__decorate([
+    ApiPropertyOptional(),
+    IsOptional(),
+    IsBoolean(),
+    __metadata("design:type", Boolean)
+], UpdateNotificationPreferencesDto.prototype, "reactions", void 0);
+__decorate([
+    ApiPropertyOptional(),
+    IsOptional(),
+    IsBoolean(),
+    __metadata("design:type", Boolean)
+], UpdateNotificationPreferencesDto.prototype, "follows", void 0);
+__decorate([
+    ApiPropertyOptional(),
+    IsOptional(),
+    IsBoolean(),
+    __metadata("design:type", Boolean)
+], UpdateNotificationPreferencesDto.prototype, "wallPosts", void 0);
+__decorate([
+    ApiPropertyOptional(),
+    IsOptional(),
+    IsBoolean(),
+    __metadata("design:type", Boolean)
+], UpdateNotificationPreferencesDto.prototype, "messages", void 0);
+__decorate([
+    ApiPropertyOptional(),
+    IsOptional(),
+    IsBoolean(),
+    __metadata("design:type", Boolean)
+], UpdateNotificationPreferencesDto.prototype, "system", void 0);
+__decorate([
+    ApiPropertyOptional(),
+    IsOptional(),
+    IsBoolean(),
+    __metadata("design:type", Boolean)
+], UpdateNotificationPreferencesDto.prototype, "emailDigest", void 0);
+//# sourceMappingURL=dto.js.map

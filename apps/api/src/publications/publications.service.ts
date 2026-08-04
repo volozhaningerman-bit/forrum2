@@ -54,13 +54,21 @@ export class PublicationsService {
     };
   }
 
-  async listNews() {
-    const publications = await this.prisma.publication.findMany({
-      where: { status: PublicationStatus.PUBLISHED, type: PublicationType.NEWS },
-      orderBy: [{ pinnedUntil: 'desc' }, { createdAt: 'desc' }], take: 100, include: publicationInclude,
-    });
-    return publications.map((publication) => this.card(publication));
-  }
+    async listNews() {
+      const publications = await this.prisma.publication.findMany({
+        where: { status: PublicationStatus.PUBLISHED, type: PublicationType.NEWS },
+        orderBy: [{ pinnedUntil: 'desc' }, { createdAt: 'desc' }], take: 100, include: publicationInclude,
+      });
+      return publications.map((publication) => this.card(publication));
+    }
+
+    async listAnnouncements() {
+      const publications = await this.prisma.publication.findMany({
+        where: { status: PublicationStatus.PUBLISHED, type: PublicationType.ANNOUNCEMENT },
+        orderBy: [{ pinnedUntil: 'desc' }, { createdAt: 'desc' }], take: 100, include: publicationInclude,
+      });
+      return publications.map((publication) => this.card(publication));
+    }
 
   async create(communitySlug: string, userId: string, dto: CreatePublicationDto) {
     const community = await this.prisma.community.findUnique({ where: { slug: communitySlug } });
