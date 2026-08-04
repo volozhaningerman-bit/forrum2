@@ -14,6 +14,9 @@ export type ProfileReviewMinAggregateOutputType = {
     targetId: string | null;
     evidenceMediaId: string | null;
     verdict: $Enums.ReviewVerdict | null;
+    moderationStatus: $Enums.ReviewModerationStatus | null;
+    moderationNote: string | null;
+    moderatedAt: Date | null;
     body: string | null;
     createdAt: Date | null;
     updatedAt: Date | null;
@@ -25,6 +28,9 @@ export type ProfileReviewMaxAggregateOutputType = {
     targetId: string | null;
     evidenceMediaId: string | null;
     verdict: $Enums.ReviewVerdict | null;
+    moderationStatus: $Enums.ReviewModerationStatus | null;
+    moderationNote: string | null;
+    moderatedAt: Date | null;
     body: string | null;
     createdAt: Date | null;
     updatedAt: Date | null;
@@ -36,6 +42,9 @@ export type ProfileReviewCountAggregateOutputType = {
     targetId: number;
     evidenceMediaId: number;
     verdict: number;
+    moderationStatus: number;
+    moderationNote: number;
+    moderatedAt: number;
     body: number;
     createdAt: number;
     updatedAt: number;
@@ -48,6 +57,9 @@ export type ProfileReviewMinAggregateInputType = {
     targetId?: true;
     evidenceMediaId?: true;
     verdict?: true;
+    moderationStatus?: true;
+    moderationNote?: true;
+    moderatedAt?: true;
     body?: true;
     createdAt?: true;
     updatedAt?: true;
@@ -59,6 +71,9 @@ export type ProfileReviewMaxAggregateInputType = {
     targetId?: true;
     evidenceMediaId?: true;
     verdict?: true;
+    moderationStatus?: true;
+    moderationNote?: true;
+    moderatedAt?: true;
     body?: true;
     createdAt?: true;
     updatedAt?: true;
@@ -70,6 +85,9 @@ export type ProfileReviewCountAggregateInputType = {
     targetId?: true;
     evidenceMediaId?: true;
     verdict?: true;
+    moderationStatus?: true;
+    moderationNote?: true;
+    moderatedAt?: true;
     body?: true;
     createdAt?: true;
     updatedAt?: true;
@@ -106,6 +124,9 @@ export type ProfileReviewGroupByOutputType = {
     targetId: string;
     evidenceMediaId: string | null;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus: $Enums.ReviewModerationStatus;
+    moderationNote: string | null;
+    moderatedAt: Date | null;
     body: string;
     createdAt: Date;
     updatedAt: Date;
@@ -126,6 +147,9 @@ export type ProfileReviewWhereInput = {
     targetId?: Prisma.UuidFilter<"ProfileReview"> | string;
     evidenceMediaId?: Prisma.UuidNullableFilter<"ProfileReview"> | string | null;
     verdict?: Prisma.EnumReviewVerdictFilter<"ProfileReview"> | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFilter<"ProfileReview"> | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.StringNullableFilter<"ProfileReview"> | string | null;
+    moderatedAt?: Prisma.DateTimeNullableFilter<"ProfileReview"> | Date | string | null;
     body?: Prisma.StringFilter<"ProfileReview"> | string;
     createdAt?: Prisma.DateTimeFilter<"ProfileReview"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"ProfileReview"> | Date | string;
@@ -141,6 +165,9 @@ export type ProfileReviewOrderByWithRelationInput = {
     targetId?: Prisma.SortOrder;
     evidenceMediaId?: Prisma.SortOrderInput | Prisma.SortOrder;
     verdict?: Prisma.SortOrder;
+    moderationStatus?: Prisma.SortOrder;
+    moderationNote?: Prisma.SortOrderInput | Prisma.SortOrder;
+    moderatedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
     body?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
@@ -160,6 +187,9 @@ export type ProfileReviewWhereUniqueInput = Prisma.AtLeast<{
     targetId?: Prisma.UuidFilter<"ProfileReview"> | string;
     evidenceMediaId?: Prisma.UuidNullableFilter<"ProfileReview"> | string | null;
     verdict?: Prisma.EnumReviewVerdictFilter<"ProfileReview"> | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFilter<"ProfileReview"> | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.StringNullableFilter<"ProfileReview"> | string | null;
+    moderatedAt?: Prisma.DateTimeNullableFilter<"ProfileReview"> | Date | string | null;
     body?: Prisma.StringFilter<"ProfileReview"> | string;
     createdAt?: Prisma.DateTimeFilter<"ProfileReview"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"ProfileReview"> | Date | string;
@@ -175,6 +205,9 @@ export type ProfileReviewOrderByWithAggregationInput = {
     targetId?: Prisma.SortOrder;
     evidenceMediaId?: Prisma.SortOrderInput | Prisma.SortOrder;
     verdict?: Prisma.SortOrder;
+    moderationStatus?: Prisma.SortOrder;
+    moderationNote?: Prisma.SortOrderInput | Prisma.SortOrder;
+    moderatedAt?: Prisma.SortOrderInput | Prisma.SortOrder;
     body?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
@@ -192,6 +225,9 @@ export type ProfileReviewScalarWhereWithAggregatesInput = {
     targetId?: Prisma.UuidWithAggregatesFilter<"ProfileReview"> | string;
     evidenceMediaId?: Prisma.UuidNullableWithAggregatesFilter<"ProfileReview"> | string | null;
     verdict?: Prisma.EnumReviewVerdictWithAggregatesFilter<"ProfileReview"> | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusWithAggregatesFilter<"ProfileReview"> | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.StringNullableWithAggregatesFilter<"ProfileReview"> | string | null;
+    moderatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ProfileReview"> | Date | string | null;
     body?: Prisma.StringWithAggregatesFilter<"ProfileReview"> | string;
     createdAt?: Prisma.DateTimeWithAggregatesFilter<"ProfileReview"> | Date | string;
     updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ProfileReview"> | Date | string;
@@ -199,6 +235,9 @@ export type ProfileReviewScalarWhereWithAggregatesInput = {
 export type ProfileReviewCreateInput = {
     id?: string;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -214,6 +253,9 @@ export type ProfileReviewUncheckedCreateInput = {
     targetId: string;
     evidenceMediaId?: string | null;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -221,6 +263,9 @@ export type ProfileReviewUncheckedCreateInput = {
 export type ProfileReviewUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -236,6 +281,9 @@ export type ProfileReviewUncheckedUpdateInput = {
     targetId?: Prisma.StringFieldUpdateOperationsInput | string;
     evidenceMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -247,6 +295,9 @@ export type ProfileReviewCreateManyInput = {
     targetId: string;
     evidenceMediaId?: string | null;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -254,6 +305,9 @@ export type ProfileReviewCreateManyInput = {
 export type ProfileReviewUpdateManyMutationInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -265,6 +319,9 @@ export type ProfileReviewUncheckedUpdateManyInput = {
     targetId?: Prisma.StringFieldUpdateOperationsInput | string;
     evidenceMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -288,6 +345,9 @@ export type ProfileReviewCountOrderByAggregateInput = {
     targetId?: Prisma.SortOrder;
     evidenceMediaId?: Prisma.SortOrder;
     verdict?: Prisma.SortOrder;
+    moderationStatus?: Prisma.SortOrder;
+    moderationNote?: Prisma.SortOrder;
+    moderatedAt?: Prisma.SortOrder;
     body?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
@@ -299,6 +359,9 @@ export type ProfileReviewMaxOrderByAggregateInput = {
     targetId?: Prisma.SortOrder;
     evidenceMediaId?: Prisma.SortOrder;
     verdict?: Prisma.SortOrder;
+    moderationStatus?: Prisma.SortOrder;
+    moderationNote?: Prisma.SortOrder;
+    moderatedAt?: Prisma.SortOrder;
     body?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
@@ -310,6 +373,9 @@ export type ProfileReviewMinOrderByAggregateInput = {
     targetId?: Prisma.SortOrder;
     evidenceMediaId?: Prisma.SortOrder;
     verdict?: Prisma.SortOrder;
+    moderationStatus?: Prisma.SortOrder;
+    moderationNote?: Prisma.SortOrder;
+    moderatedAt?: Prisma.SortOrder;
     body?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
@@ -469,9 +535,15 @@ export type ProfileReviewUncheckedUpdateManyWithoutInteractionNestedInput = {
 export type EnumReviewVerdictFieldUpdateOperationsInput = {
     set?: $Enums.ReviewVerdict;
 };
+export type EnumReviewModerationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ReviewModerationStatus;
+};
 export type ProfileReviewCreateWithoutAuthorInput = {
     id?: string;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -485,6 +557,9 @@ export type ProfileReviewUncheckedCreateWithoutAuthorInput = {
     targetId: string;
     evidenceMediaId?: string | null;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -500,6 +575,9 @@ export type ProfileReviewCreateManyAuthorInputEnvelope = {
 export type ProfileReviewCreateWithoutTargetInput = {
     id?: string;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -513,6 +591,9 @@ export type ProfileReviewUncheckedCreateWithoutTargetInput = {
     authorId: string;
     evidenceMediaId?: string | null;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -548,6 +629,9 @@ export type ProfileReviewScalarWhereInput = {
     targetId?: Prisma.UuidFilter<"ProfileReview"> | string;
     evidenceMediaId?: Prisma.UuidNullableFilter<"ProfileReview"> | string | null;
     verdict?: Prisma.EnumReviewVerdictFilter<"ProfileReview"> | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFilter<"ProfileReview"> | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.StringNullableFilter<"ProfileReview"> | string | null;
+    moderatedAt?: Prisma.DateTimeNullableFilter<"ProfileReview"> | Date | string | null;
     body?: Prisma.StringFilter<"ProfileReview"> | string;
     createdAt?: Prisma.DateTimeFilter<"ProfileReview"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"ProfileReview"> | Date | string;
@@ -568,6 +652,9 @@ export type ProfileReviewUpdateManyWithWhereWithoutTargetInput = {
 export type ProfileReviewCreateWithoutEvidenceMediaInput = {
     id?: string;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -581,6 +668,9 @@ export type ProfileReviewUncheckedCreateWithoutEvidenceMediaInput = {
     authorId: string;
     targetId: string;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -609,6 +699,9 @@ export type ProfileReviewUpdateManyWithWhereWithoutEvidenceMediaInput = {
 export type ProfileReviewCreateWithoutInteractionInput = {
     id?: string;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -622,6 +715,9 @@ export type ProfileReviewUncheckedCreateWithoutInteractionInput = {
     targetId: string;
     evidenceMediaId?: string | null;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -653,6 +749,9 @@ export type ProfileReviewCreateManyAuthorInput = {
     targetId: string;
     evidenceMediaId?: string | null;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -663,6 +762,9 @@ export type ProfileReviewCreateManyTargetInput = {
     authorId: string;
     evidenceMediaId?: string | null;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -670,6 +772,9 @@ export type ProfileReviewCreateManyTargetInput = {
 export type ProfileReviewUpdateWithoutAuthorInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -683,6 +788,9 @@ export type ProfileReviewUncheckedUpdateWithoutAuthorInput = {
     targetId?: Prisma.StringFieldUpdateOperationsInput | string;
     evidenceMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -693,6 +801,9 @@ export type ProfileReviewUncheckedUpdateManyWithoutAuthorInput = {
     targetId?: Prisma.StringFieldUpdateOperationsInput | string;
     evidenceMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -700,6 +811,9 @@ export type ProfileReviewUncheckedUpdateManyWithoutAuthorInput = {
 export type ProfileReviewUpdateWithoutTargetInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -713,6 +827,9 @@ export type ProfileReviewUncheckedUpdateWithoutTargetInput = {
     authorId?: Prisma.StringFieldUpdateOperationsInput | string;
     evidenceMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -723,6 +840,9 @@ export type ProfileReviewUncheckedUpdateManyWithoutTargetInput = {
     authorId?: Prisma.StringFieldUpdateOperationsInput | string;
     evidenceMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -733,6 +853,9 @@ export type ProfileReviewCreateManyEvidenceMediaInput = {
     authorId: string;
     targetId: string;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -740,6 +863,9 @@ export type ProfileReviewCreateManyEvidenceMediaInput = {
 export type ProfileReviewUpdateWithoutEvidenceMediaInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -753,6 +879,9 @@ export type ProfileReviewUncheckedUpdateWithoutEvidenceMediaInput = {
     authorId?: Prisma.StringFieldUpdateOperationsInput | string;
     targetId?: Prisma.StringFieldUpdateOperationsInput | string;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -763,6 +892,9 @@ export type ProfileReviewUncheckedUpdateManyWithoutEvidenceMediaInput = {
     authorId?: Prisma.StringFieldUpdateOperationsInput | string;
     targetId?: Prisma.StringFieldUpdateOperationsInput | string;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -773,6 +905,9 @@ export type ProfileReviewCreateManyInteractionInput = {
     targetId: string;
     evidenceMediaId?: string | null;
     verdict: $Enums.ReviewVerdict;
+    moderationStatus?: $Enums.ReviewModerationStatus;
+    moderationNote?: string | null;
+    moderatedAt?: Date | string | null;
     body: string;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -780,6 +915,9 @@ export type ProfileReviewCreateManyInteractionInput = {
 export type ProfileReviewUpdateWithoutInteractionInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -793,6 +931,9 @@ export type ProfileReviewUncheckedUpdateWithoutInteractionInput = {
     targetId?: Prisma.StringFieldUpdateOperationsInput | string;
     evidenceMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -803,6 +944,9 @@ export type ProfileReviewUncheckedUpdateManyWithoutInteractionInput = {
     targetId?: Prisma.StringFieldUpdateOperationsInput | string;
     evidenceMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     verdict?: Prisma.EnumReviewVerdictFieldUpdateOperationsInput | $Enums.ReviewVerdict;
+    moderationStatus?: Prisma.EnumReviewModerationStatusFieldUpdateOperationsInput | $Enums.ReviewModerationStatus;
+    moderationNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    moderatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
     body?: Prisma.StringFieldUpdateOperationsInput | string;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
@@ -814,6 +958,9 @@ export type ProfileReviewSelect<ExtArgs extends runtime.Types.Extensions.Interna
     targetId?: boolean;
     evidenceMediaId?: boolean;
     verdict?: boolean;
+    moderationStatus?: boolean;
+    moderationNote?: boolean;
+    moderatedAt?: boolean;
     body?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
@@ -829,6 +976,9 @@ export type ProfileReviewSelectCreateManyAndReturn<ExtArgs extends runtime.Types
     targetId?: boolean;
     evidenceMediaId?: boolean;
     verdict?: boolean;
+    moderationStatus?: boolean;
+    moderationNote?: boolean;
+    moderatedAt?: boolean;
     body?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
@@ -844,6 +994,9 @@ export type ProfileReviewSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
     targetId?: boolean;
     evidenceMediaId?: boolean;
     verdict?: boolean;
+    moderationStatus?: boolean;
+    moderationNote?: boolean;
+    moderatedAt?: boolean;
     body?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
@@ -859,11 +1012,14 @@ export type ProfileReviewSelectScalar = {
     targetId?: boolean;
     evidenceMediaId?: boolean;
     verdict?: boolean;
+    moderationStatus?: boolean;
+    moderationNote?: boolean;
+    moderatedAt?: boolean;
     body?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
 };
-export type ProfileReviewOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "interactionId" | "authorId" | "targetId" | "evidenceMediaId" | "verdict" | "body" | "createdAt" | "updatedAt", ExtArgs["result"]["profileReview"]>;
+export type ProfileReviewOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "interactionId" | "authorId" | "targetId" | "evidenceMediaId" | "verdict" | "moderationStatus" | "moderationNote" | "moderatedAt" | "body" | "createdAt" | "updatedAt", ExtArgs["result"]["profileReview"]>;
 export type ProfileReviewInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     interaction?: boolean | Prisma.ConfirmedInteractionDefaultArgs<ExtArgs>;
     author?: boolean | Prisma.UserDefaultArgs<ExtArgs>;
@@ -897,6 +1053,9 @@ export type $ProfileReviewPayload<ExtArgs extends runtime.Types.Extensions.Inter
         targetId: string;
         evidenceMediaId: string | null;
         verdict: $Enums.ReviewVerdict;
+        moderationStatus: $Enums.ReviewModerationStatus;
+        moderationNote: string | null;
+        moderatedAt: Date | null;
         body: string;
         createdAt: Date;
         updatedAt: Date;
@@ -967,6 +1126,9 @@ export interface ProfileReviewFieldRefs {
     readonly targetId: Prisma.FieldRef<"ProfileReview", 'String'>;
     readonly evidenceMediaId: Prisma.FieldRef<"ProfileReview", 'String'>;
     readonly verdict: Prisma.FieldRef<"ProfileReview", 'ReviewVerdict'>;
+    readonly moderationStatus: Prisma.FieldRef<"ProfileReview", 'ReviewModerationStatus'>;
+    readonly moderationNote: Prisma.FieldRef<"ProfileReview", 'String'>;
+    readonly moderatedAt: Prisma.FieldRef<"ProfileReview", 'DateTime'>;
     readonly body: Prisma.FieldRef<"ProfileReview", 'String'>;
     readonly createdAt: Prisma.FieldRef<"ProfileReview", 'DateTime'>;
     readonly updatedAt: Prisma.FieldRef<"ProfileReview", 'DateTime'>;

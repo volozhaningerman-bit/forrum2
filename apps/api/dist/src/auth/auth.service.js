@@ -216,6 +216,8 @@ let AuthService = class AuthService {
                 website: dto.website?.trim() || null,
                 location: dto.location?.trim() || null,
                 wallPrivacy: dto.wallPrivacy,
+                showFavorites: dto.showFavorites,
+                showSubscriptions: dto.showSubscriptions,
             },
         });
         return { user: this.publicUser(user) };
@@ -233,6 +235,8 @@ let AuthService = class AuthService {
             avatarUrl: user.avatarUrl ?? null,
             coverUrl: user.coverUrl ?? null,
             wallPrivacy: user.wallPrivacy ?? 'EVERYONE',
+            showFavorites: user.showFavorites ?? true,
+            showSubscriptions: user.showSubscriptions ?? true,
             emailVerified: Boolean(user.emailVerifiedAt),
             onboardingCompleted: Boolean(user.onboardingCompletedAt),
             state: user.state,

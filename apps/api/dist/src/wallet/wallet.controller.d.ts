@@ -1,6 +1,20 @@
 import type { User } from '../generated/prisma/client.js';
 import { CancelPromotionDto, PromotionQuoteDto, PurchasePromotionDto } from './dto.js';
 import { WalletService } from './wallet.service.js';
+export declare class PromotionPublicController {
+    private readonly service;
+    constructor(service: WalletService);
+    terms(): Promise<{
+        durations: number[];
+        refundGraceMinutes: number;
+        pinLimit: number;
+        pinBasePricePerDay: number;
+        pinDemandPercentPerOccupied: number;
+        boostLimit: number;
+        boostBasePricePerDay: number;
+        boostDemandPercentPerOccupied: number;
+    }>;
+}
 export declare class WalletController {
     private readonly service;
     constructor(service: WalletService);

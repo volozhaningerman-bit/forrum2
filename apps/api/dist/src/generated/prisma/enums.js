@@ -130,6 +130,17 @@ export const WorkshopItemStatus = {
     PUBLISHED: 'PUBLISHED',
     REJECTED: 'REJECTED'
 };
+export const MediaPartnerStatus = {
+    REVIEW: 'REVIEW',
+    ACTIVE: 'ACTIVE',
+    REJECTED: 'REJECTED'
+};
+export const MediaPartnerType = {
+    STREAMER: 'STREAMER',
+    VIDEO_CREATOR: 'VIDEO_CREATOR',
+    BLOGGER: 'BLOGGER',
+    CHANNEL: 'CHANNEL'
+};
 export const AchievementCategory = {
     ACCOUNT: 'ACCOUNT',
     CONTRIBUTION: 'CONTRIBUTION',
@@ -156,6 +167,11 @@ export const ReviewVerdict = {
     POSITIVE: 'POSITIVE',
     NEUTRAL: 'NEUTRAL',
     NEGATIVE: 'NEGATIVE'
+};
+export const ReviewModerationStatus = {
+    REVIEW: 'REVIEW',
+    PUBLISHED: 'PUBLISHED',
+    REJECTED: 'REJECTED'
 };
 export const CommunityContentActionType = {
     PIN: 'PIN',

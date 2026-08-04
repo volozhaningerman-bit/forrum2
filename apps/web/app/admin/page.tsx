@@ -170,7 +170,7 @@ export default function AdminPage() {
   return <div className="control-center-page">
     <div className="control-center-hero">
       <div><span className="eyebrow">Управление платформой</span><h1>FORRUM Control Center</h1><p>Основные показатели, сообщества, продвижение, модерация и состояние резервных копий.</p></div>
-      <div className="control-center-links"><Link href="/admin/governance">Голосования</Link><Link href="/admin/moderation">Апелляции</Link><Link href="/admin/workshop">Мастерская</Link></div>
+      <div className="control-center-links"><Link href="/admin/governance">Голосования</Link><Link href="/admin/moderation">Апелляции</Link><Link href="/admin/workshop">Мастерская</Link><Link href="/admin/reviews">Отзывы</Link><Link href="/admin/media">Медиа</Link></div>
     </div>
 
     {message && <div className="success-box" role="status">{message}</div>}

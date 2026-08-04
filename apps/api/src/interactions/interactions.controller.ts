@@ -4,7 +4,8 @@ import type { User } from '../generated/prisma/client.js';
 import { CurrentUser } from '../auth/current-user.js';
 import { SessionGuard } from '../auth/session.guard.js';
 import { VerifiedGuard } from '../auth/verified.guard.js';
-import { CancelInteractionDto, CreateInteractionDto, CreateProfileReviewDto } from './dto.js';
+import { AdminGuard } from '../auth/admin.guard.js';
+import { CancelInteractionDto, CreateInteractionDto, CreateProfileReviewDto, ModerateProfileReviewDto } from './dto.js';
 import { InteractionsService } from './interactions.service.js';
 
 @ApiTags('interactions')
@@ -41,5 +42,27 @@ export class InteractionsController {
   @Post(':id/reviews')
   review(@Param('id') id: string, @CurrentUser() user: User, @Body() dto: CreateProfileReviewDto) {
     return this.service.review(id, user.id, dto.verdict, dto.body, dto.evidenceMediaId);
+  }
+}
+
+
+@ApiTags('admin-reviews')
+@Controller('admin/reviews')
+@UseGuards(SessionGuard, VerifiedGuard, AdminGuard)
+export class InteractionsAdminController {
+  constructor(private readonly service: InteractionsService) {}
+
+  @Get()
+  list() {
+    return this.service.reviewsForModeration();
+  }
+
+  @Post(':id/moderate')
+  moderate(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+    @Body() dto: ModerateProfileReviewDto,
+  ) {
+    return this.service.moderateReview(id, user.id, dto.status, dto.note);
   }
 }

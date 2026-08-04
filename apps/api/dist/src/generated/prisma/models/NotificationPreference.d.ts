@@ -348,9 +348,6 @@ export type NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput = {
     connect?: Prisma.NotificationPreferenceWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.NotificationPreferenceUpdateToOneWithWhereWithoutUserInput, Prisma.NotificationPreferenceUpdateWithoutUserInput>, Prisma.NotificationPreferenceUncheckedUpdateWithoutUserInput>;
 };
-export type BoolFieldUpdateOperationsInput = {
-    set?: boolean;
-};
 export type NotificationPreferenceCreateWithoutUserInput = {
     publicationReplies?: boolean;
     commentReplies?: boolean;

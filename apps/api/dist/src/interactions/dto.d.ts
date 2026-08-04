@@ -16,3 +16,7 @@ export declare class CreateProfileReviewDto {
     body: string;
     evidenceMediaId?: string;
 }
+export declare class ModerateProfileReviewDto {
+    status: 'PUBLISHED' | 'REJECTED';
+    note?: string;
+}

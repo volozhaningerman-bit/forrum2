@@ -6,7 +6,7 @@ import { api } from '@/lib/api';
 import { Avatar } from '@/components/avatar';
 import type { Me } from '@/lib/types';
 
-type FullMe = Me & { user: Me['user'] & { bio: string | null; website: string | null; location: string | null; avatarUrl: string | null; coverUrl: string | null; wallPrivacy: 'EVERYONE' | 'FOLLOWERS' | 'ONLY_ME' } };
+type FullMe = Me & { user: Me['user'] & { bio: string | null; website: string | null; location: string | null; avatarUrl: string | null; coverUrl: string | null; wallPrivacy: 'EVERYONE' | 'FOLLOWERS' | 'ONLY_ME'; showFavorites: boolean; showSubscriptions: boolean } };
 type Preferences = { publicationReplies: boolean; commentReplies: boolean; reactions: boolean; follows: boolean; wallPosts: boolean; messages: boolean; system: boolean; emailDigest: boolean; telegramEnabled: boolean };
 type Session = { id: string; userAgent: string | null; ipAddress: string | null; createdAt: string; lastSeenAt: string; expiresAt: string; current: boolean };
 
@@ -53,7 +53,10 @@ export default function SettingsPage() {
     const form = new FormData(event.currentTarget);
     setSavingSection('profile');
     try {
-      await api('/auth/me', { method: 'PATCH', body: JSON.stringify(Object.fromEntries(form)) });
+      const payload: Record<string, unknown> = Object.fromEntries(form);
+      payload.showFavorites = form.get('showFavorites') === 'on';
+      payload.showSubscriptions = form.get('showSubscriptions') === 'on';
+      await api('/auth/me', { method: 'PATCH', body: JSON.stringify(payload) });
       setMessage('Профиль сохранён'); await load(); window.dispatchEvent(new Event('forrum-auth-changed'));
     } catch (cause) { setError(cause instanceof Error ? cause.message : 'Ошибка'); }
     finally { setSavingSection(null); }
@@ -133,6 +136,8 @@ export default function SettingsPage() {
           <label>Сайт <span className="optional-label">необязательно</span><input name="website" type="url" placeholder="https://example.com" defaultValue={me.user.website ?? ''} maxLength={200}/></label>
           <label>Город / страна<input name="location" defaultValue={me.user.location ?? ''} maxLength={100}/></label>
           <label>Кто может видеть и писать на стене<select name="wallPrivacy" defaultValue={me.user.wallPrivacy}><option value="EVERYONE">Все подтверждённые пользователи</option><option value="FOLLOWERS">Только мои подписчики</option><option value="ONLY_ME">Только я</option></select></label>
+          <label className="settings-toggle"><input type="checkbox" name="showFavorites" defaultChecked={me.user.showFavorites}/><span>Показывать Избранное в моём профиле</span></label>
+          <label className="settings-toggle"><input type="checkbox" name="showSubscriptions" defaultChecked={me.user.showSubscriptions}/><span>Показывать мои подписки в профиле</span></label>
           <button className="button" disabled={savingSection === 'profile' || !me.user.emailVerified}>{savingSection === 'profile' ? 'Сохраняем…' : 'Сохранить профиль'}</button>
         </form>
       </section>

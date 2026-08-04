@@ -210,6 +210,8 @@ export class AuthService {
         website: dto.website?.trim() || null,
         location: dto.location?.trim() || null,
         wallPrivacy: dto.wallPrivacy,
+        showFavorites: dto.showFavorites,
+        showSubscriptions: dto.showSubscriptions,
       },
     });
     return { user: this.publicUser(user) };
@@ -217,7 +219,7 @@ export class AuthService {
 
   publicUser(user: {
     id: string; forrumId: number; username: string; displayName: string; bio?: string | null;
-    website?: string | null; location?: string | null; avatarUrl?: string | null; coverUrl?: string | null; wallPrivacy?: string;
+    website?: string | null; location?: string | null; avatarUrl?: string | null; coverUrl?: string | null; wallPrivacy?: string; showFavorites?: boolean; showSubscriptions?: boolean;
     email: string; emailVerifiedAt: Date | null; onboardingCompletedAt?: Date | null; state: AccountState; role: GlobalRole; createdAt?: Date;
   }) {
     return {
@@ -232,6 +234,8 @@ export class AuthService {
       avatarUrl: user.avatarUrl ?? null,
       coverUrl: user.coverUrl ?? null,
       wallPrivacy: user.wallPrivacy ?? 'EVERYONE',
+      showFavorites: user.showFavorites ?? true,
+      showSubscriptions: user.showSubscriptions ?? true,
       emailVerified: Boolean(user.emailVerifiedAt),
       onboardingCompleted: Boolean(user.onboardingCompletedAt),
       state: user.state,

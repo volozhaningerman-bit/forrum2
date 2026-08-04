@@ -53,8 +53,10 @@ export declare const ModelName: {
     readonly CommunityPoll: "CommunityPoll";
     readonly PollOption: "PollOption";
     readonly PollVote: "PollVote";
+    readonly MediaPartner: "MediaPartner";
     readonly WorkshopItem: "WorkshopItem";
     readonly WorkshopLike: "WorkshopLike";
+    readonly UserGift: "UserGift";
     readonly AchievementDefinition: "AchievementDefinition";
     readonly UserAchievement: "UserAchievement";
     readonly CommunityRoleEvent: "CommunityRoleEvent";
@@ -87,6 +89,8 @@ export declare const UserScalarFieldEnum: {
     readonly avatarUrl: "avatarUrl";
     readonly coverUrl: "coverUrl";
     readonly wallPrivacy: "wallPrivacy";
+    readonly showFavorites: "showFavorites";
+    readonly showSubscriptions: "showSubscriptions";
     readonly website: "website";
     readonly location: "location";
     readonly passwordHash: "passwordHash";
@@ -517,6 +521,21 @@ export declare const PollVoteScalarFieldEnum: {
     readonly createdAt: "createdAt";
 };
 export type PollVoteScalarFieldEnum = (typeof PollVoteScalarFieldEnum)[keyof typeof PollVoteScalarFieldEnum];
+export declare const MediaPartnerScalarFieldEnum: {
+    readonly id: "id";
+    readonly userId: "userId";
+    readonly type: "type";
+    readonly status: "status";
+    readonly displayName: "displayName";
+    readonly platform: "platform";
+    readonly channelUrl: "channelUrl";
+    readonly audienceText: "audienceText";
+    readonly description: "description";
+    readonly resolutionNote: "resolutionNote";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type MediaPartnerScalarFieldEnum = (typeof MediaPartnerScalarFieldEnum)[keyof typeof MediaPartnerScalarFieldEnum];
 export declare const WorkshopItemScalarFieldEnum: {
     readonly id: "id";
     readonly authorId: "authorId";
@@ -537,6 +556,15 @@ export declare const WorkshopLikeScalarFieldEnum: {
     readonly createdAt: "createdAt";
 };
 export type WorkshopLikeScalarFieldEnum = (typeof WorkshopLikeScalarFieldEnum)[keyof typeof WorkshopLikeScalarFieldEnum];
+export declare const UserGiftScalarFieldEnum: {
+    readonly id: "id";
+    readonly recipientId: "recipientId";
+    readonly senderId: "senderId";
+    readonly giftId: "giftId";
+    readonly message: "message";
+    readonly createdAt: "createdAt";
+};
+export type UserGiftScalarFieldEnum = (typeof UserGiftScalarFieldEnum)[keyof typeof UserGiftScalarFieldEnum];
 export declare const AchievementDefinitionScalarFieldEnum: {
     readonly id: "id";
     readonly code: "code";
@@ -601,6 +629,9 @@ export declare const ProfileReviewScalarFieldEnum: {
     readonly targetId: "targetId";
     readonly evidenceMediaId: "evidenceMediaId";
     readonly verdict: "verdict";
+    readonly moderationStatus: "moderationStatus";
+    readonly moderationNote: "moderationNote";
+    readonly moderatedAt: "moderatedAt";
     readonly body: "body";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";

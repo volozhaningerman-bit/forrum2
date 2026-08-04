@@ -164,6 +164,19 @@ enum WorkshopItemStatus {
 }
 
 
+enum MediaPartnerStatus {
+  REVIEW
+  ACTIVE
+  REJECTED
+}
+
+enum MediaPartnerType {
+  STREAMER
+  VIDEO_CREATOR
+  BLOGGER
+  CHANNEL
+}
+
 enum AchievementCategory {
   ACCOUNT
   CONTRIBUTION
@@ -194,6 +207,12 @@ enum ReviewVerdict {
   POSITIVE
   NEUTRAL
   NEGATIVE
+}
+
+enum ReviewModerationStatus {
+  REVIEW
+  PUBLISHED
+  REJECTED
 }
 
 enum CommunityContentActionType {
@@ -287,6 +306,8 @@ model User {
   avatarUrl          String?
   coverUrl           String?
   wallPrivacy        WallPrivacy  @default(EVERYONE)
+  showFavorites      Boolean      @default(true)
+  showSubscriptions  Boolean      @default(true)
   website            String?
   location           String?
   passwordHash       String
@@ -332,6 +353,7 @@ model User {
   telegramLinkCodes  TelegramLinkCode[]
   telegramChannels   TelegramChannel[]
   telegramShares     TelegramShare[]
+  mediaPartners      MediaPartner[]
   moderationActions  ModerationAction[] @relation("ModerationSubject")
   moderationActionsMade ModerationAction[] @relation("ModerationActor")
   moderationAppeals  ModerationAppeal[] @relation("AppealAuthor")
@@ -341,6 +363,8 @@ model User {
   pollsCreated       CommunityPoll[] @relation("PollCreator")
   pollVotes          PollVote[]
   workshopItems      WorkshopItem[] @relation("WorkshopAuthor")
+  giftsReceived      UserGift[] @relation("GiftRecipient")
+  giftsSent          UserGift[] @relation("GiftSender")
   workshopReviews    WorkshopItem[] @relation("WorkshopReviewer")
   workshopLikes      WorkshopLike[]
   achievements       UserAchievement[]
@@ -1007,6 +1031,26 @@ model PollVote {
   @@index([optionId, voteClass])
 }
 
+model MediaPartner {
+  id             String             @id @default(uuid()) @db.Uuid
+  userId         String             @db.Uuid
+  type           MediaPartnerType
+  status         MediaPartnerStatus @default(REVIEW)
+  displayName    String
+  platform       String
+  channelUrl     String
+  audienceText   String?
+  description    String
+  resolutionNote String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, channelUrl])
+  @@index([status, createdAt(sort: Desc)])
+  @@index([type, status])
+}
+
 model WorkshopItem {
   id             String             @id @default(uuid()) @db.Uuid
   authorId       String             @db.Uuid
@@ -1023,6 +1067,7 @@ model WorkshopItem {
   reviewedBy     User?              @relation("WorkshopReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
   previewMedia   MediaAsset?        @relation(fields: [previewMediaId], references: [id], onDelete: SetNull)
   likes          WorkshopLike[]
+  userGifts      UserGift[]
 
   @@index([status, createdAt(sort: Desc)])
 }
@@ -1038,6 +1083,22 @@ model WorkshopLike {
   @@index([userId])
 }
 
+
+model UserGift {
+  id          String   @id @default(uuid()) @db.Uuid
+  recipientId String   @db.Uuid
+  senderId    String   @db.Uuid
+  giftId      String   @db.Uuid
+  message     String?
+  createdAt   DateTime @default(now())
+  recipient   User     @relation("GiftRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  sender      User     @relation("GiftSender", fields: [senderId], references: [id], onDelete: Cascade)
+  gift        WorkshopItem @relation(fields: [giftId], references: [id], onDelete: Cascade)
+
+  @@index([recipientId, createdAt(sort: Desc)])
+  @@index([senderId, createdAt(sort: Desc)])
+  @@index([giftId])
+}
 
 model AchievementDefinition {
   id          String              @id @default(uuid()) @db.Uuid
@@ -1130,6 +1191,9 @@ model ProfileReview {
   targetId        String          @db.Uuid
   evidenceMediaId String?         @db.Uuid
   verdict         ReviewVerdict
+  moderationStatus ReviewModerationStatus @default(PUBLISHED)
+  moderationNote   String?
+  moderatedAt      DateTime?
   body            String
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
@@ -1140,6 +1204,7 @@ model ProfileReview {
   @@unique([interactionId, authorId])
   @@index([targetId, createdAt(sort: Desc)])
   @@index([authorId, createdAt(sort: Desc)])
+  @@index([moderationStatus, createdAt(sort: Asc)])
   @@index([evidenceMediaId])
 }
 

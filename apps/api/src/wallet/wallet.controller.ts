@@ -7,6 +7,13 @@ import { VerifiedGuard } from '../auth/verified.guard.js';
 import { CancelPromotionDto, PromotionQuoteDto, PurchasePromotionDto } from './dto.js';
 import { WalletService } from './wallet.service.js';
 
+@ApiTags('promotion')
+@Controller('promotion')
+export class PromotionPublicController {
+  constructor(private readonly service: WalletService) {}
+  @Get('terms') terms() { return this.service.terms(); }
+}
+
 @ApiTags('wallet')
 @Controller()
 @UseGuards(SessionGuard, VerifiedGuard)

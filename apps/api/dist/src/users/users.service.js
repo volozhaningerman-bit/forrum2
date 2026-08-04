@@ -139,7 +139,7 @@ let UsersService = class UsersService {
         if (!user)
             throw new NotFoundException('Пользователь не найден');
         await this.syncAutomaticAchievements(user.id);
-        const [publicationCount, commentCount, publications, achievements, localTrust, reviews, reviewCounts, completedInteractions, portfolioItems] = await Promise.all([
+        const [publicationCount, commentCount, publications, achievements, localTrust, reviews, reviewCounts, completedInteractions, portfolioItems, favoriteRows, workshopPortfolio, gifts] = await Promise.all([
             this.prisma.publication.count({ where: { authorId: user.id, status: 'PUBLISHED' } }),
             this.prisma.comment.count({ where: { authorId: user.id, hiddenAt: null, publication: { status: 'PUBLISHED' } } }),
             this.prisma.publication.findMany({
@@ -156,18 +156,50 @@ let UsersService = class UsersService {
             }),
             this.localTrust(user.id, Boolean(user.emailVerifiedAt)),
             this.prisma.profileReview.findMany({
-                where: { targetId: user.id }, orderBy: { createdAt: 'desc' }, take: 30,
+                where: { targetId: user.id, moderationStatus: 'PUBLISHED' }, orderBy: { createdAt: 'desc' }, take: 30,
                 include: {
                     evidenceMedia: { select: { id: true } },
                     author: { select: { username: true, displayName: true, avatarUrl: true } },
                     interaction: { include: { community: { select: { slug: true, name: true } }, publication: { select: { slug: true, title: true } }, portfolioItem: { select: { id: true, kind: true, title: true } } } },
                 },
             }),
-            this.prisma.profileReview.groupBy({ by: ['verdict'], where: { targetId: user.id }, _count: { _all: true } }),
+            this.prisma.profileReview.groupBy({ by: ['verdict'], where: { targetId: user.id, moderationStatus: 'PUBLISHED' }, _count: { _all: true } }),
             this.prisma.confirmedInteraction.count({ where: { OR: [{ createdById: user.id }, { counterpartId: user.id }], status: 'COMPLETED' } }),
             this.prisma.portfolioItem.findMany({
                 where: { ownerId: user.id, status: { in: ['ACTIVE', 'COMPLETED'] } }, orderBy: [{ lookingForTeam: 'desc' }, { updatedAt: 'desc' }], take: 12,
                 include: { community: { select: { slug: true, name: true, accentColor: true } }, publication: { select: { slug: true, title: true } }, _count: { select: { interactions: { where: { status: 'COMPLETED' } } } } },
+            }),
+            this.prisma.publication.findMany({
+                where: {
+                    status: 'PUBLISHED',
+                    OR: [
+                        { reactions: { some: { userId: user.id } } },
+                        { bookmarks: { some: { userId: user.id } } },
+                    ],
+                },
+                orderBy: { lastActivityAt: 'desc' },
+                take: 60,
+                include: {
+                    author: { select: { username: true, displayName: true, avatarUrl: true, forrumId: true } },
+                    community: true,
+                    tags: { include: { tag: true } },
+                    _count: { select: { comments: { where: { hiddenAt: null } }, reactions: true, bookmarks: true } },
+                },
+            }),
+            this.prisma.workshopItem.findMany({
+                where: { authorId: user.id, status: 'PUBLISHED' },
+                orderBy: { createdAt: 'desc' },
+                take: 24,
+                select: { id: true, type: true, title: true, description: true, previewMediaId: true, createdAt: true },
+            }),
+            this.prisma.userGift.findMany({
+                where: { recipientId: user.id },
+                orderBy: { createdAt: 'desc' },
+                take: 50,
+                include: {
+                    sender: { select: { username: true, displayName: true, avatarUrl: true } },
+                    gift: { select: { id: true, title: true, description: true, previewMediaId: true } },
+                },
             }),
         ]);
         const mappedPublications = publications.map((publication) => ({
@@ -179,11 +211,18 @@ let UsersService = class UsersService {
             helpfulReactionCount: publication.reactions.length,
             tags: publication.tags.map((item) => item.tag),
         }));
-        const usefulPublications = mappedPublications
-            .filter((item) => item.helpfulReactionCount > 0 || item.bookmarkCount > 0)
-            .sort((a, b) => (b.helpfulReactionCount * 4 + b.bookmarkCount * 2 + b.commentCount) - (a.helpfulReactionCount * 4 + a.bookmarkCount * 2 + a.commentCount))
-            .slice(0, 6);
+        const usefulPublications = favoriteRows.map((publication) => ({
+            id: publication.id, slug: publication.slug, format: publication.format, type: publication.type, title: publication.title,
+            excerpt: excerpt(publication.body), createdAt: publication.createdAt, lastActivityAt: publication.lastActivityAt, viewCount: publication.viewCount,
+            author: publication.author,
+            community: { slug: publication.community.slug, name: publication.community.name, accentColor: publication.community.accentColor },
+            commentCount: publication._count.comments, reactionCount: publication._count.reactions, bookmarkCount: publication._count.bookmarks,
+            helpfulReactionCount: 0,
+            tags: publication.tags.map((item) => item.tag),
+        }));
         const isSelf = viewerId === user.id;
+        const canSeeFavorites = isSelf || user.showFavorites;
+        const canSeeSubscriptions = isSelf || user.showSubscriptions;
         const viewerFollows = user.followers.length > 0;
         const canViewWall = isSelf || user.wallPrivacy === WallPrivacy.EVERYONE || (user.wallPrivacy === WallPrivacy.FOLLOWERS && viewerFollows);
         const canWriteWall = Boolean(viewerId) && (isSelf || user.wallPrivacy === WallPrivacy.EVERYONE || (user.wallPrivacy === WallPrivacy.FOLLOWERS && viewerFollows));
@@ -195,14 +234,14 @@ let UsersService = class UsersService {
             id: user.id, forrumId: user.forrumId, username: user.username, displayName: user.displayName, bio: user.bio,
             avatarUrl: user.avatarUrl, coverUrl: user.coverUrl, website: user.website, location: user.location, role: user.role,
             emailVerified: Boolean(user.emailVerifiedAt), createdAt: user.createdAt, isFollowing: viewerFollows, isSelf,
-            wallPrivacy: user.wallPrivacy, wallRestricted: !canViewWall, canWriteWall, canStartInteraction: Boolean(viewerId && !isSelf),
+            wallPrivacy: user.wallPrivacy, showFavorites: user.showFavorites, showSubscriptions: user.showSubscriptions, wallRestricted: !canViewWall, canWriteWall, canStartInteraction: Boolean(viewerId && !isSelf),
             counts: { followers: await this.prisma.userFollow.count({ where: { followingId: user.id } }), following: await this.prisma.userFollow.count({ where: { followerId: user.id } }), publications: publicationCount, comments: commentCount, completedInteractions },
             trustSummary: strongestTrust ? { level: strongestTrust.level, label: strongestTrust.label, detail: strongestTrust.detail, community: strongestTrust.community } : { level: 'NEW', label: user.emailVerifiedAt ? 'Базовое на FORRUM' : 'Новое', detail: user.emailVerifiedAt ? 'Аккаунт подтверждён, но локальная история ещё формируется.' : 'Пока недостаточно подтверждённой истории.', community: null },
             localTrust,
             roles: user.communityRoles.filter((role) => !role.endedAt).map((role) => ({ id: role.id, role: role.role, note: role.note, startedAt: role.createdAt, community: { slug: role.community.slug, name: role.community.name } })),
             roleHistory: user.communityRoles.flatMap((role) => role.events.map((event) => ({ id: event.id, type: event.type, role: role.role, note: event.note, createdAt: event.createdAt, community: { slug: role.community.slug, name: role.community.name }, actor: event.actor }))).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()).slice(0, 30),
-            communities: user.subscriptions.map((subscription) => ({ slug: subscription.community.slug, name: subscription.community.name })),
-            publications: mappedPublications.slice(0, 12), usefulPublications,
+            communities: canSeeSubscriptions ? user.subscriptions.map((subscription) => ({ slug: subscription.community.slug, name: subscription.community.name })) : [],
+            publications: mappedPublications, usefulPublications: canSeeFavorites ? usefulPublications : [],
             achievements: achievements.map((award) => ({
                 id: award.id, code: award.achievement.code, title: award.achievement.title, description: award.achievement.description,
                 icon: award.achievement.icon, category: award.achievement.category, earnedAt: award.earnedAt, community: award.community,
@@ -214,6 +253,8 @@ let UsersService = class UsersService {
                 interaction: { id: review.interaction.id, type: review.interaction.type, title: review.interaction.title, completedAt: review.interaction.completedAt, community: review.interaction.community, publication: review.interaction.publication, portfolioItem: review.interaction.portfolioItem },
             })),
             reviewSummary,
+            workshopPortfolio,
+            gifts: gifts.map((item) => ({ id: item.id, message: item.message, createdAt: item.createdAt, sender: item.sender, gift: item.gift })),
             portfolio: portfolioItems.map((item) => ({
                 id: item.id, kind: item.kind, status: item.status, title: item.title, summary: item.summary, coverUrl: item.coverUrl, lookingForTeam: item.lookingForTeam, priceText: item.priceText, updatedAt: item.updatedAt,
                 community: item.community, publication: item.publication, completedInteractionCount: item._count.interactions,
@@ -274,6 +315,36 @@ let UsersService = class UsersService {
             return created;
         });
         return { id: post.id };
+    }
+    async sendGift(usernameInput, senderId, workshopItemId, messageInput) {
+        const recipient = await this.prisma.user.findUnique({
+            where: { username: usernameInput.toLowerCase() },
+            select: { id: true, username: true },
+        });
+        if (!recipient)
+            throw new NotFoundException('Пользователь не найден');
+        if (recipient.id === senderId)
+            throw new BadRequestException('Нельзя отправить подарок самому себе');
+        const gift = await this.prisma.workshopItem.findFirst({
+            where: { id: workshopItemId, type: 'GIFT', status: 'PUBLISHED' },
+            select: { id: true, title: true },
+        });
+        if (!gift)
+            throw new NotFoundException('Подарок не найден или ещё не опубликован');
+        const created = await this.prisma.$transaction(async (tx) => {
+            const row = await tx.userGift.create({
+                data: { recipientId: recipient.id, senderId, giftId: gift.id, message: messageInput?.trim() || null },
+            });
+            await this.notifications.deliver({
+                userId: recipient.id, actorId: senderId, type: NotificationType.SYSTEM,
+                title: 'Новый подарок', body: gift.title, href: `/u/${recipient.username}`,
+            }, tx);
+            await tx.auditLog.create({
+                data: { actorId: senderId, action: 'user.gift.send', entityType: 'UserGift', entityId: row.id, metadata: { recipientUsername: recipient.username, giftId: gift.id } },
+            });
+            return row;
+        });
+        return { id: created.id };
     }
     async deleteWallPost(usernameInput, postId, actorId) {
         const profile = await this.prisma.user.findUnique({ where: { username: usernameInput.toLowerCase() }, select: { id: true } });

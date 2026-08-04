@@ -7,15 +7,31 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString, Length } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString, IsUUID, Length } from 'class-validator';
 export class CreateWallPostDto {
     body;
 }
 __decorate([
     ApiProperty(),
     IsString(),
-    Length(2, 2000),
+    Length(2, 5000),
     __metadata("design:type", String)
 ], CreateWallPostDto.prototype, "body", void 0);
+export class SendGiftDto {
+    workshopItemId;
+    message;
+}
+__decorate([
+    ApiProperty(),
+    IsUUID(),
+    __metadata("design:type", String)
+], SendGiftDto.prototype, "workshopItemId", void 0);
+__decorate([
+    ApiPropertyOptional(),
+    IsOptional(),
+    IsString(),
+    Length(0, 300),
+    __metadata("design:type", String)
+], SendGiftDto.prototype, "message", void 0);
 //# sourceMappingURL=dto.js.map

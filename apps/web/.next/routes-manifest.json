@@ -164,10 +164,22 @@
       "namedRegex": "^/admin/governance(?:/)?$"
     },
     {
+      "page": "/admin/media",
+      "regex": "^/admin/media(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/media(?:/)?$"
+    },
+    {
       "page": "/admin/moderation",
       "regex": "^/admin/moderation(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/admin/moderation(?:/)?$"
+    },
+    {
+      "page": "/admin/reviews",
+      "regex": "^/admin/reviews(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/reviews(?:/)?$"
     },
     {
       "page": "/admin/workshop",
@@ -258,6 +270,12 @@
       "regex": "^/projects(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/projects(?:/)?$"
+    },
+    {
+      "page": "/promotion",
+      "regex": "^/promotion(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/promotion(?:/)?$"
     },
     {
       "page": "/register",

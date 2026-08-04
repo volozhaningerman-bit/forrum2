@@ -21,3 +21,16 @@ export class CreateProfileReviewDto {
   @ApiProperty() @IsString() @Length(10, 2000) body!: string;
   @ApiPropertyOptional() @IsOptional() @IsUUID() evidenceMediaId?: string;
 }
+
+
+export class ModerateProfileReviewDto {
+  @ApiProperty({ enum: ['PUBLISHED', 'REJECTED'] })
+  @IsString()
+  status!: 'PUBLISHED' | 'REJECTED';
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @Length(0, 1000)
+  note?: string;
+}

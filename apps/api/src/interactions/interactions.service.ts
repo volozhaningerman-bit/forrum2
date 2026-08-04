@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import { InteractionStatus, MediaKind, NotificationType, type InteractionType, type ReviewVerdict } from '../generated/prisma/client.js';
+import { InteractionStatus, MediaKind, NotificationType, ReviewModerationStatus, type InteractionType, type ReviewVerdict } from '../generated/prisma/client.js';
 import { excerpt } from '../common/text.js';
 import { NotificationsService } from '../notifications/notifications.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -24,7 +24,7 @@ export class InteractionsService {
         publication: { select: { slug: true, title: true } },
         community: { select: { slug: true, name: true } },
         portfolioItem: { select: { id: true, kind: true, title: true } },
-        reviews: { where: { authorId: userId }, select: { id: true, verdict: true, body: true, evidenceMediaId: true, createdAt: true } },
+        reviews: { where: { authorId: userId }, select: { id: true, verdict: true, body: true, evidenceMediaId: true, moderationStatus: true, moderationNote: true, createdAt: true } },
       },
     });
     return rows.map((row) => ({
@@ -168,6 +168,7 @@ export class InteractionsService {
         authorId: actorId,
         targetId,
         verdict,
+        moderationStatus: evidence ? ReviewModerationStatus.REVIEW : ReviewModerationStatus.PUBLISHED,
         body: bodyInput.trim(),
         evidenceMediaId: evidence?.id ?? null,
       },
@@ -187,7 +188,7 @@ export class InteractionsService {
       userId: targetId,
       actorId,
       type: NotificationType.SYSTEM,
-      title: 'Новый подтверждённый отзыв',
+      title: evidence ? 'Отзыв отправлен на модерацию' : 'Новый подтверждённый отзыв',
       body: excerpt(bodyInput, 120),
       href: '/interactions',
     }, tx);
@@ -198,6 +199,33 @@ export class InteractionsService {
     throw error;
   });
 
-  return { id: review.id };
+  return { id: review.id, moderationStatus: review.moderationStatus };
 }
+
+  async reviewsForModeration() {
+    return this.prisma.profileReview.findMany({
+      where: { moderationStatus: ReviewModerationStatus.REVIEW },
+      orderBy: { createdAt: 'asc' },
+      take: 100,
+      include: {
+        author: { select: { username: true, displayName: true, avatarUrl: true } },
+        target: { select: { username: true, displayName: true, avatarUrl: true } },
+        evidenceMedia: { select: { id: true } },
+        interaction: { select: { id: true, type: true, title: true } },
+      },
+    });
+  }
+
+  async moderateReview(id: string, actorId: string, status: 'PUBLISHED' | 'REJECTED', noteInput?: string) {
+    const review = await this.prisma.profileReview.findUnique({ where: { id } });
+    if (!review) throw new NotFoundException('Отзыв не найден');
+    if (review.moderationStatus !== ReviewModerationStatus.REVIEW) throw new BadRequestException('Отзыв уже обработан');
+    const moderationStatus = status === 'PUBLISHED' ? ReviewModerationStatus.PUBLISHED : ReviewModerationStatus.REJECTED;
+    await this.prisma.$transaction(async (tx) => {
+      await tx.profileReview.update({ where: { id }, data: { moderationStatus, moderationNote: noteInput?.trim() || null, moderatedAt: new Date() } });
+      await tx.auditLog.create({ data: { actorId, action: 'review.moderate', entityType: 'ProfileReview', entityId: id, metadata: { status: moderationStatus, note: noteInput?.trim() || null } } });
+      await this.notifications.deliver({ userId: review.authorId, actorId, type: NotificationType.SYSTEM, title: moderationStatus === ReviewModerationStatus.PUBLISHED ? 'Отзыв прошёл модерацию' : 'Отзыв не прошёл модерацию', body: noteInput?.trim() || 'Решение модерации доступно в разделе взаимодействий.', href: '/interactions' }, tx);
+    });
+    return { ok: true, moderationStatus };
+  }
 }

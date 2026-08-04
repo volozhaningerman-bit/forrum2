@@ -3,6 +3,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { api } from '@/lib/api';
 
 type TelegramChannel = {
@@ -26,6 +27,7 @@ export function TelegramShareButton({
   slug: string;
   compact?: boolean;
 }) {
+  const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [channels, setChannels] = useState<TelegramChannel[]>([]);
   const [preview, setPreview] = useState<TelegramPreview | null>(null);
@@ -36,15 +38,23 @@ export function TelegramShareButton({
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  useEffect(() => { setMounted(true); }, []);
+
   useEffect(() => {
     if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') setOpen(false);
     }
 
     window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
   }, [open]);
 
   async function showDialog() {
@@ -114,12 +124,12 @@ export function TelegramShareButton({
     <button
       type="button"
       className={compact ? 'telegram-share-trigger compact' : 'plain-action telegram-share-trigger'}
-      onClick={showDialog}
+      onClick={(event) => { event.preventDefault(); event.stopPropagation(); void showDialog(); }}
     >
       В Telegram
     </button>
 
-    {open && <div
+    {mounted && open ? createPortal(<div
       className="telegram-share-backdrop"
       role="presentation"
       onMouseDown={(event) => {
@@ -199,6 +209,6 @@ export function TelegramShareButton({
         {error && <div className="error-box" role="alert">{error}</div>}
         {success && <div className="success-box" role="status">{success}</div>}
       </section>
-    </div>}
+    </div>, document.body) : null}
   </>;
 }

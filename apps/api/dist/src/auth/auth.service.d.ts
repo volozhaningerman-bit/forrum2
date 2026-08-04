@@ -32,6 +32,8 @@ export declare class AuthService {
             avatarUrl: string | null;
             coverUrl: string | null;
             wallPrivacy: string;
+            showFavorites: boolean;
+            showSubscriptions: boolean;
             emailVerified: boolean;
             onboardingCompleted: boolean;
             state: AccountState;
@@ -72,6 +74,8 @@ export declare class AuthService {
             avatarUrl: string | null;
             coverUrl: string | null;
             wallPrivacy: string;
+            showFavorites: boolean;
+            showSubscriptions: boolean;
             emailVerified: boolean;
             onboardingCompleted: boolean;
             state: AccountState;
@@ -92,6 +96,8 @@ export declare class AuthService {
         avatarUrl: string | null;
         coverUrl: string | null;
         wallPrivacy: import("../generated/prisma/enums.js").WallPrivacy;
+        showFavorites: boolean;
+        showSubscriptions: boolean;
         website: string | null;
         location: string | null;
         passwordHash: string;
@@ -133,6 +139,8 @@ export declare class AuthService {
             avatarUrl: string | null;
             coverUrl: string | null;
             wallPrivacy: string;
+            showFavorites: boolean;
+            showSubscriptions: boolean;
             emailVerified: boolean;
             onboardingCompleted: boolean;
             state: AccountState;
@@ -151,6 +159,8 @@ export declare class AuthService {
         avatarUrl?: string | null;
         coverUrl?: string | null;
         wallPrivacy?: string;
+        showFavorites?: boolean;
+        showSubscriptions?: boolean;
         email: string;
         emailVerifiedAt: Date | null;
         onboardingCompletedAt?: Date | null;
@@ -169,6 +179,8 @@ export declare class AuthService {
         avatarUrl: string | null;
         coverUrl: string | null;
         wallPrivacy: string;
+        showFavorites: boolean;
+        showSubscriptions: boolean;
         emailVerified: boolean;
         onboardingCompleted: boolean;
         state: AccountState;

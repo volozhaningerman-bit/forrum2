@@ -16,7 +16,7 @@ import { CurrentUser, OptionalUser } from '../auth/current-user.js';
 import { OptionalSessionGuard } from '../auth/optional-session.guard.js';
 import { SessionGuard } from '../auth/session.guard.js';
 import { VerifiedGuard } from '../auth/verified.guard.js';
-import { CreateWallPostDto } from './dto.js';
+import { CreateWallPostDto, SendGiftDto } from './dto.js';
 import { UsersService } from './users.service.js';
 let UsersController = class UsersController {
     service;
@@ -32,6 +32,9 @@ let UsersController = class UsersController {
     unfollow(username, user) { return this.service.unfollow(username, user.id); }
     wall(username, user, dto) {
         return this.service.createWallPost(username, user.id, dto.body);
+    }
+    gift(username, user, dto) {
+        return this.service.sendGift(username, user.id, dto.workshopItemId, dto.message);
     }
     deleteWallPost(username, postId, user) {
         return this.service.deleteWallPost(username, postId, user.id);
@@ -90,6 +93,16 @@ __decorate([
     __metadata("design:paramtypes", [String, Object, CreateWallPostDto]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "wall", null);
+__decorate([
+    Post(':username/gifts'),
+    UseGuards(SessionGuard, VerifiedGuard),
+    __param(0, Param('username')),
+    __param(1, CurrentUser()),
+    __param(2, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, SendGiftDto]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "gift", null);
 __decorate([
     Delete(':username/wall/:postId'),
     UseGuards(SessionGuard, VerifiedGuard),

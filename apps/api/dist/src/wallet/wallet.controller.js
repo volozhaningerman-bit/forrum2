@@ -17,6 +17,25 @@ import { SessionGuard } from '../auth/session.guard.js';
 import { VerifiedGuard } from '../auth/verified.guard.js';
 import { CancelPromotionDto, PromotionQuoteDto, PurchasePromotionDto } from './dto.js';
 import { WalletService } from './wallet.service.js';
+let PromotionPublicController = class PromotionPublicController {
+    service;
+    constructor(service) {
+        this.service = service;
+    }
+    terms() { return this.service.terms(); }
+};
+__decorate([
+    Get('terms'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], PromotionPublicController.prototype, "terms", null);
+PromotionPublicController = __decorate([
+    ApiTags('promotion'),
+    Controller('promotion'),
+    __metadata("design:paramtypes", [WalletService])
+], PromotionPublicController);
+export { PromotionPublicController };
 let WalletController = class WalletController {
     service;
     constructor(service) {

@@ -5,7 +5,7 @@ import { CurrentUser, OptionalUser } from '../auth/current-user.js';
 import { OptionalSessionGuard } from '../auth/optional-session.guard.js';
 import { SessionGuard } from '../auth/session.guard.js';
 import { VerifiedGuard } from '../auth/verified.guard.js';
-import { CreateWallPostDto } from './dto.js';
+import { CreateWallPostDto, SendGiftDto } from './dto.js';
 import { UsersService } from './users.service.js';
 
 @ApiTags('users')
@@ -33,6 +33,11 @@ export class UsersController {
   @Post(':username/wall') @UseGuards(SessionGuard, VerifiedGuard)
   wall(@Param('username') username: string, @CurrentUser() user: User, @Body() dto: CreateWallPostDto) {
     return this.service.createWallPost(username, user.id, dto.body);
+  }
+
+  @Post(':username/gifts') @UseGuards(SessionGuard, VerifiedGuard)
+  gift(@Param('username') username: string, @CurrentUser() user: User, @Body() dto: SendGiftDto) {
+    return this.service.sendGift(username, user.id, dto.workshopItemId, dto.message);
   }
 
   @Delete(':username/wall/:postId') @UseGuards(SessionGuard, VerifiedGuard)

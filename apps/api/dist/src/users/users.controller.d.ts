@@ -1,5 +1,5 @@
 import type { User } from '../generated/prisma/client.js';
-import { CreateWallPostDto } from './dto.js';
+import { CreateWallPostDto, SendGiftDto } from './dto.js';
 import { UsersService } from './users.service.js';
 export declare class UsersController {
     private readonly service;
@@ -39,6 +39,8 @@ export declare class UsersController {
         isFollowing: boolean;
         isSelf: boolean;
         wallPrivacy: import("../generated/prisma/enums.js").WallPrivacy;
+        showFavorites: boolean;
+        showSubscriptions: boolean;
         wallRestricted: boolean;
         canWriteWall: boolean;
         canStartInteraction: boolean;
@@ -158,10 +160,10 @@ export declare class UsersController {
             lastActivityAt: Date;
             viewCount: number;
             author: {
+                forrumId: number;
                 username: string;
                 displayName: string;
                 avatarUrl: string | null;
-                forrumId: number;
             };
             community: {
                 slug: string;
@@ -232,6 +234,30 @@ export declare class UsersController {
             neutral: number;
             negative: number;
         };
+        workshopPortfolio: {
+            id: string;
+            createdAt: Date;
+            description: string;
+            type: import("../generated/prisma/enums.js").WorkshopItemType;
+            title: string;
+            previewMediaId: string | null;
+        }[];
+        gifts: {
+            id: string;
+            message: string | null;
+            createdAt: Date;
+            sender: {
+                username: string;
+                displayName: string;
+                avatarUrl: string | null;
+            };
+            gift: {
+                id: string;
+                description: string;
+                title: string;
+                previewMediaId: string | null;
+            };
+        }[];
         portfolio: {
             id: string;
             kind: import("../generated/prisma/enums.js").PortfolioItemKind;
@@ -272,6 +298,9 @@ export declare class UsersController {
         ok: boolean;
     }>;
     wall(username: string, user: User, dto: CreateWallPostDto): Promise<{
+        id: string;
+    }>;
+    gift(username: string, user: User, dto: SendGiftDto): Promise<{
         id: string;
     }>;
     deleteWallPost(username: string, postId: string, user: User): Promise<{

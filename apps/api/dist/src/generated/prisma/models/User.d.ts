@@ -25,6 +25,8 @@ export type UserMinAggregateOutputType = {
     avatarUrl: string | null;
     coverUrl: string | null;
     wallPrivacy: $Enums.WallPrivacy | null;
+    showFavorites: boolean | null;
+    showSubscriptions: boolean | null;
     website: string | null;
     location: string | null;
     passwordHash: string | null;
@@ -46,6 +48,8 @@ export type UserMaxAggregateOutputType = {
     avatarUrl: string | null;
     coverUrl: string | null;
     wallPrivacy: $Enums.WallPrivacy | null;
+    showFavorites: boolean | null;
+    showSubscriptions: boolean | null;
     website: string | null;
     location: string | null;
     passwordHash: string | null;
@@ -67,6 +71,8 @@ export type UserCountAggregateOutputType = {
     avatarUrl: number;
     coverUrl: number;
     wallPrivacy: number;
+    showFavorites: number;
+    showSubscriptions: number;
     website: number;
     location: number;
     passwordHash: number;
@@ -95,6 +101,8 @@ export type UserMinAggregateInputType = {
     avatarUrl?: true;
     coverUrl?: true;
     wallPrivacy?: true;
+    showFavorites?: true;
+    showSubscriptions?: true;
     website?: true;
     location?: true;
     passwordHash?: true;
@@ -116,6 +124,8 @@ export type UserMaxAggregateInputType = {
     avatarUrl?: true;
     coverUrl?: true;
     wallPrivacy?: true;
+    showFavorites?: true;
+    showSubscriptions?: true;
     website?: true;
     location?: true;
     passwordHash?: true;
@@ -137,6 +147,8 @@ export type UserCountAggregateInputType = {
     avatarUrl?: true;
     coverUrl?: true;
     wallPrivacy?: true;
+    showFavorites?: true;
+    showSubscriptions?: true;
     website?: true;
     location?: true;
     passwordHash?: true;
@@ -187,6 +199,8 @@ export type UserGroupByOutputType = {
     avatarUrl: string | null;
     coverUrl: string | null;
     wallPrivacy: $Enums.WallPrivacy;
+    showFavorites: boolean;
+    showSubscriptions: boolean;
     website: string | null;
     location: string | null;
     passwordHash: string;
@@ -219,6 +233,8 @@ export type UserWhereInput = {
     avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null;
     coverUrl?: Prisma.StringNullableFilter<"User"> | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFilter<"User"> | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFilter<"User"> | boolean;
+    showSubscriptions?: Prisma.BoolFilter<"User"> | boolean;
     website?: Prisma.StringNullableFilter<"User"> | string | null;
     location?: Prisma.StringNullableFilter<"User"> | string | null;
     passwordHash?: Prisma.StringFilter<"User"> | string;
@@ -263,6 +279,7 @@ export type UserWhereInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeListRelationFilter;
     telegramChannels?: Prisma.TelegramChannelListRelationFilter;
     telegramShares?: Prisma.TelegramShareListRelationFilter;
+    mediaPartners?: Prisma.MediaPartnerListRelationFilter;
     moderationActions?: Prisma.ModerationActionListRelationFilter;
     moderationActionsMade?: Prisma.ModerationActionListRelationFilter;
     moderationAppeals?: Prisma.ModerationAppealListRelationFilter;
@@ -272,6 +289,8 @@ export type UserWhereInput = {
     pollsCreated?: Prisma.CommunityPollListRelationFilter;
     pollVotes?: Prisma.PollVoteListRelationFilter;
     workshopItems?: Prisma.WorkshopItemListRelationFilter;
+    giftsReceived?: Prisma.UserGiftListRelationFilter;
+    giftsSent?: Prisma.UserGiftListRelationFilter;
     workshopReviews?: Prisma.WorkshopItemListRelationFilter;
     workshopLikes?: Prisma.WorkshopLikeListRelationFilter;
     achievements?: Prisma.UserAchievementListRelationFilter;
@@ -301,6 +320,8 @@ export type UserOrderByWithRelationInput = {
     avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder;
     coverUrl?: Prisma.SortOrderInput | Prisma.SortOrder;
     wallPrivacy?: Prisma.SortOrder;
+    showFavorites?: Prisma.SortOrder;
+    showSubscriptions?: Prisma.SortOrder;
     website?: Prisma.SortOrderInput | Prisma.SortOrder;
     location?: Prisma.SortOrderInput | Prisma.SortOrder;
     passwordHash?: Prisma.SortOrder;
@@ -345,6 +366,7 @@ export type UserOrderByWithRelationInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeOrderByRelationAggregateInput;
     telegramChannels?: Prisma.TelegramChannelOrderByRelationAggregateInput;
     telegramShares?: Prisma.TelegramShareOrderByRelationAggregateInput;
+    mediaPartners?: Prisma.MediaPartnerOrderByRelationAggregateInput;
     moderationActions?: Prisma.ModerationActionOrderByRelationAggregateInput;
     moderationActionsMade?: Prisma.ModerationActionOrderByRelationAggregateInput;
     moderationAppeals?: Prisma.ModerationAppealOrderByRelationAggregateInput;
@@ -354,6 +376,8 @@ export type UserOrderByWithRelationInput = {
     pollsCreated?: Prisma.CommunityPollOrderByRelationAggregateInput;
     pollVotes?: Prisma.PollVoteOrderByRelationAggregateInput;
     workshopItems?: Prisma.WorkshopItemOrderByRelationAggregateInput;
+    giftsReceived?: Prisma.UserGiftOrderByRelationAggregateInput;
+    giftsSent?: Prisma.UserGiftOrderByRelationAggregateInput;
     workshopReviews?: Prisma.WorkshopItemOrderByRelationAggregateInput;
     workshopLikes?: Prisma.WorkshopLikeOrderByRelationAggregateInput;
     achievements?: Prisma.UserAchievementOrderByRelationAggregateInput;
@@ -386,6 +410,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
     avatarUrl?: Prisma.StringNullableFilter<"User"> | string | null;
     coverUrl?: Prisma.StringNullableFilter<"User"> | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFilter<"User"> | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFilter<"User"> | boolean;
+    showSubscriptions?: Prisma.BoolFilter<"User"> | boolean;
     website?: Prisma.StringNullableFilter<"User"> | string | null;
     location?: Prisma.StringNullableFilter<"User"> | string | null;
     passwordHash?: Prisma.StringFilter<"User"> | string;
@@ -430,6 +456,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
     telegramLinkCodes?: Prisma.TelegramLinkCodeListRelationFilter;
     telegramChannels?: Prisma.TelegramChannelListRelationFilter;
     telegramShares?: Prisma.TelegramShareListRelationFilter;
+    mediaPartners?: Prisma.MediaPartnerListRelationFilter;
     moderationActions?: Prisma.ModerationActionListRelationFilter;
     moderationActionsMade?: Prisma.ModerationActionListRelationFilter;
     moderationAppeals?: Prisma.ModerationAppealListRelationFilter;
@@ -439,6 +466,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
     pollsCreated?: Prisma.CommunityPollListRelationFilter;
     pollVotes?: Prisma.PollVoteListRelationFilter;
     workshopItems?: Prisma.WorkshopItemListRelationFilter;
+    giftsReceived?: Prisma.UserGiftListRelationFilter;
+    giftsSent?: Prisma.UserGiftListRelationFilter;
     workshopReviews?: Prisma.WorkshopItemListRelationFilter;
     workshopLikes?: Prisma.WorkshopLikeListRelationFilter;
     achievements?: Prisma.UserAchievementListRelationFilter;
@@ -468,6 +497,8 @@ export type UserOrderByWithAggregationInput = {
     avatarUrl?: Prisma.SortOrderInput | Prisma.SortOrder;
     coverUrl?: Prisma.SortOrderInput | Prisma.SortOrder;
     wallPrivacy?: Prisma.SortOrder;
+    showFavorites?: Prisma.SortOrder;
+    showSubscriptions?: Prisma.SortOrder;
     website?: Prisma.SortOrderInput | Prisma.SortOrder;
     location?: Prisma.SortOrderInput | Prisma.SortOrder;
     passwordHash?: Prisma.SortOrder;
@@ -497,6 +528,8 @@ export type UserScalarWhereWithAggregatesInput = {
     avatarUrl?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null;
     coverUrl?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyWithAggregatesFilter<"User"> | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolWithAggregatesFilter<"User"> | boolean;
+    showSubscriptions?: Prisma.BoolWithAggregatesFilter<"User"> | boolean;
     website?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null;
     location?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null;
     passwordHash?: Prisma.StringWithAggregatesFilter<"User"> | string;
@@ -518,6 +551,8 @@ export type UserCreateInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -562,6 +597,7 @@ export type UserCreateInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -571,6 +607,8 @@ export type UserCreateInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -600,6 +638,8 @@ export type UserUncheckedCreateInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -644,6 +684,7 @@ export type UserUncheckedCreateInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -653,6 +694,8 @@ export type UserUncheckedCreateInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -681,6 +724,8 @@ export type UserUpdateInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -725,6 +770,7 @@ export type UserUpdateInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -734,6 +780,8 @@ export type UserUpdateInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -763,6 +811,8 @@ export type UserUncheckedUpdateInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -807,6 +857,7 @@ export type UserUncheckedUpdateInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -816,6 +867,8 @@ export type UserUncheckedUpdateInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -845,6 +898,8 @@ export type UserCreateManyInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -865,6 +920,8 @@ export type UserUpdateManyMutationInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -886,6 +943,8 @@ export type UserUncheckedUpdateManyInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -907,6 +966,8 @@ export type UserCountOrderByAggregateInput = {
     avatarUrl?: Prisma.SortOrder;
     coverUrl?: Prisma.SortOrder;
     wallPrivacy?: Prisma.SortOrder;
+    showFavorites?: Prisma.SortOrder;
+    showSubscriptions?: Prisma.SortOrder;
     website?: Prisma.SortOrder;
     location?: Prisma.SortOrder;
     passwordHash?: Prisma.SortOrder;
@@ -931,6 +992,8 @@ export type UserMaxOrderByAggregateInput = {
     avatarUrl?: Prisma.SortOrder;
     coverUrl?: Prisma.SortOrder;
     wallPrivacy?: Prisma.SortOrder;
+    showFavorites?: Prisma.SortOrder;
+    showSubscriptions?: Prisma.SortOrder;
     website?: Prisma.SortOrder;
     location?: Prisma.SortOrder;
     passwordHash?: Prisma.SortOrder;
@@ -952,6 +1015,8 @@ export type UserMinOrderByAggregateInput = {
     avatarUrl?: Prisma.SortOrder;
     coverUrl?: Prisma.SortOrder;
     wallPrivacy?: Prisma.SortOrder;
+    showFavorites?: Prisma.SortOrder;
+    showSubscriptions?: Prisma.SortOrder;
     website?: Prisma.SortOrder;
     location?: Prisma.SortOrder;
     passwordHash?: Prisma.SortOrder;
@@ -982,6 +1047,9 @@ export type NullableStringFieldUpdateOperationsInput = {
 };
 export type EnumWallPrivacyFieldUpdateOperationsInput = {
     set?: $Enums.WallPrivacy;
+};
+export type BoolFieldUpdateOperationsInput = {
+    set?: boolean;
 };
 export type EnumAccountStateFieldUpdateOperationsInput = {
     set?: $Enums.AccountState;
@@ -1516,6 +1584,18 @@ export type UserUpdateOneRequiredWithoutPollVotesNestedInput = {
     connect?: Prisma.UserWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPollVotesInput, Prisma.UserUpdateWithoutPollVotesInput>, Prisma.UserUncheckedUpdateWithoutPollVotesInput>;
 };
+export type UserCreateNestedOneWithoutMediaPartnersInput = {
+    create?: Prisma.XOR<Prisma.UserCreateWithoutMediaPartnersInput, Prisma.UserUncheckedCreateWithoutMediaPartnersInput>;
+    connectOrCreate?: Prisma.UserCreateOrConnectWithoutMediaPartnersInput;
+    connect?: Prisma.UserWhereUniqueInput;
+};
+export type UserUpdateOneRequiredWithoutMediaPartnersNestedInput = {
+    create?: Prisma.XOR<Prisma.UserCreateWithoutMediaPartnersInput, Prisma.UserUncheckedCreateWithoutMediaPartnersInput>;
+    connectOrCreate?: Prisma.UserCreateOrConnectWithoutMediaPartnersInput;
+    upsert?: Prisma.UserUpsertWithoutMediaPartnersInput;
+    connect?: Prisma.UserWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMediaPartnersInput, Prisma.UserUpdateWithoutMediaPartnersInput>, Prisma.UserUncheckedUpdateWithoutMediaPartnersInput>;
+};
 export type UserCreateNestedOneWithoutWorkshopItemsInput = {
     create?: Prisma.XOR<Prisma.UserCreateWithoutWorkshopItemsInput, Prisma.UserUncheckedCreateWithoutWorkshopItemsInput>;
     connectOrCreate?: Prisma.UserCreateOrConnectWithoutWorkshopItemsInput;
@@ -1553,6 +1633,30 @@ export type UserUpdateOneRequiredWithoutWorkshopLikesNestedInput = {
     upsert?: Prisma.UserUpsertWithoutWorkshopLikesInput;
     connect?: Prisma.UserWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutWorkshopLikesInput, Prisma.UserUpdateWithoutWorkshopLikesInput>, Prisma.UserUncheckedUpdateWithoutWorkshopLikesInput>;
+};
+export type UserCreateNestedOneWithoutGiftsReceivedInput = {
+    create?: Prisma.XOR<Prisma.UserCreateWithoutGiftsReceivedInput, Prisma.UserUncheckedCreateWithoutGiftsReceivedInput>;
+    connectOrCreate?: Prisma.UserCreateOrConnectWithoutGiftsReceivedInput;
+    connect?: Prisma.UserWhereUniqueInput;
+};
+export type UserCreateNestedOneWithoutGiftsSentInput = {
+    create?: Prisma.XOR<Prisma.UserCreateWithoutGiftsSentInput, Prisma.UserUncheckedCreateWithoutGiftsSentInput>;
+    connectOrCreate?: Prisma.UserCreateOrConnectWithoutGiftsSentInput;
+    connect?: Prisma.UserWhereUniqueInput;
+};
+export type UserUpdateOneRequiredWithoutGiftsReceivedNestedInput = {
+    create?: Prisma.XOR<Prisma.UserCreateWithoutGiftsReceivedInput, Prisma.UserUncheckedCreateWithoutGiftsReceivedInput>;
+    connectOrCreate?: Prisma.UserCreateOrConnectWithoutGiftsReceivedInput;
+    upsert?: Prisma.UserUpsertWithoutGiftsReceivedInput;
+    connect?: Prisma.UserWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGiftsReceivedInput, Prisma.UserUpdateWithoutGiftsReceivedInput>, Prisma.UserUncheckedUpdateWithoutGiftsReceivedInput>;
+};
+export type UserUpdateOneRequiredWithoutGiftsSentNestedInput = {
+    create?: Prisma.XOR<Prisma.UserCreateWithoutGiftsSentInput, Prisma.UserUncheckedCreateWithoutGiftsSentInput>;
+    connectOrCreate?: Prisma.UserCreateOrConnectWithoutGiftsSentInput;
+    upsert?: Prisma.UserUpsertWithoutGiftsSentInput;
+    connect?: Prisma.UserWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGiftsSentInput, Prisma.UserUpdateWithoutGiftsSentInput>, Prisma.UserUncheckedUpdateWithoutGiftsSentInput>;
 };
 export type UserCreateNestedOneWithoutAchievementsInput = {
     create?: Prisma.XOR<Prisma.UserCreateWithoutAchievementsInput, Prisma.UserUncheckedCreateWithoutAchievementsInput>;
@@ -1760,6 +1864,8 @@ export type UserCreateWithoutVerificationTokensInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -1803,6 +1909,7 @@ export type UserCreateWithoutVerificationTokensInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -1812,6 +1919,8 @@ export type UserCreateWithoutVerificationTokensInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -1841,6 +1950,8 @@ export type UserUncheckedCreateWithoutVerificationTokensInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -1884,6 +1995,7 @@ export type UserUncheckedCreateWithoutVerificationTokensInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -1893,6 +2005,8 @@ export type UserUncheckedCreateWithoutVerificationTokensInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -1934,6 +2048,8 @@ export type UserUpdateWithoutVerificationTokensInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1977,6 +2093,7 @@ export type UserUpdateWithoutVerificationTokensInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -1986,6 +2103,8 @@ export type UserUpdateWithoutVerificationTokensInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -2015,6 +2134,8 @@ export type UserUncheckedUpdateWithoutVerificationTokensInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -2058,6 +2179,7 @@ export type UserUncheckedUpdateWithoutVerificationTokensInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -2067,6 +2189,8 @@ export type UserUncheckedUpdateWithoutVerificationTokensInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -2096,6 +2220,8 @@ export type UserCreateWithoutResetTokensInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -2139,6 +2265,7 @@ export type UserCreateWithoutResetTokensInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -2148,6 +2275,8 @@ export type UserCreateWithoutResetTokensInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -2177,6 +2306,8 @@ export type UserUncheckedCreateWithoutResetTokensInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -2220,6 +2351,7 @@ export type UserUncheckedCreateWithoutResetTokensInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -2229,6 +2361,8 @@ export type UserUncheckedCreateWithoutResetTokensInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -2270,6 +2404,8 @@ export type UserUpdateWithoutResetTokensInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -2313,6 +2449,7 @@ export type UserUpdateWithoutResetTokensInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -2322,6 +2459,8 @@ export type UserUpdateWithoutResetTokensInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -2351,6 +2490,8 @@ export type UserUncheckedUpdateWithoutResetTokensInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -2394,6 +2535,7 @@ export type UserUncheckedUpdateWithoutResetTokensInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -2403,6 +2545,8 @@ export type UserUncheckedUpdateWithoutResetTokensInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -2432,6 +2576,8 @@ export type UserCreateWithoutSessionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -2475,6 +2621,7 @@ export type UserCreateWithoutSessionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -2484,6 +2631,8 @@ export type UserCreateWithoutSessionsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -2513,6 +2662,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -2556,6 +2707,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -2565,6 +2717,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -2606,6 +2760,8 @@ export type UserUpdateWithoutSessionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -2649,6 +2805,7 @@ export type UserUpdateWithoutSessionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -2658,6 +2815,8 @@ export type UserUpdateWithoutSessionsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -2687,6 +2846,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -2730,6 +2891,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -2739,6 +2901,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -2768,6 +2932,8 @@ export type UserCreateWithoutNotificationPreferenceInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -2811,6 +2977,7 @@ export type UserCreateWithoutNotificationPreferenceInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -2820,6 +2987,8 @@ export type UserCreateWithoutNotificationPreferenceInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -2849,6 +3018,8 @@ export type UserUncheckedCreateWithoutNotificationPreferenceInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -2892,6 +3063,7 @@ export type UserUncheckedCreateWithoutNotificationPreferenceInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -2901,6 +3073,8 @@ export type UserUncheckedCreateWithoutNotificationPreferenceInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -2942,6 +3116,8 @@ export type UserUpdateWithoutNotificationPreferenceInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -2985,6 +3161,7 @@ export type UserUpdateWithoutNotificationPreferenceInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -2994,6 +3171,8 @@ export type UserUpdateWithoutNotificationPreferenceInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -3023,6 +3202,8 @@ export type UserUncheckedUpdateWithoutNotificationPreferenceInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -3066,6 +3247,7 @@ export type UserUncheckedUpdateWithoutNotificationPreferenceInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -3075,6 +3257,8 @@ export type UserUncheckedUpdateWithoutNotificationPreferenceInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -3104,6 +3288,8 @@ export type UserCreateWithoutFeedPreferenceInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -3147,6 +3333,7 @@ export type UserCreateWithoutFeedPreferenceInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -3156,6 +3343,8 @@ export type UserCreateWithoutFeedPreferenceInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -3185,6 +3374,8 @@ export type UserUncheckedCreateWithoutFeedPreferenceInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -3228,6 +3419,7 @@ export type UserUncheckedCreateWithoutFeedPreferenceInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -3237,6 +3429,8 @@ export type UserUncheckedCreateWithoutFeedPreferenceInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -3278,6 +3472,8 @@ export type UserUpdateWithoutFeedPreferenceInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -3321,6 +3517,7 @@ export type UserUpdateWithoutFeedPreferenceInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -3330,6 +3527,8 @@ export type UserUpdateWithoutFeedPreferenceInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -3359,6 +3558,8 @@ export type UserUncheckedUpdateWithoutFeedPreferenceInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -3402,6 +3603,7 @@ export type UserUncheckedUpdateWithoutFeedPreferenceInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -3411,6 +3613,8 @@ export type UserUncheckedUpdateWithoutFeedPreferenceInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -3440,6 +3644,8 @@ export type UserCreateWithoutHiddenCommunitiesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -3483,6 +3689,7 @@ export type UserCreateWithoutHiddenCommunitiesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -3492,6 +3699,8 @@ export type UserCreateWithoutHiddenCommunitiesInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -3521,6 +3730,8 @@ export type UserUncheckedCreateWithoutHiddenCommunitiesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -3564,6 +3775,7 @@ export type UserUncheckedCreateWithoutHiddenCommunitiesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -3573,6 +3785,8 @@ export type UserUncheckedCreateWithoutHiddenCommunitiesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -3614,6 +3828,8 @@ export type UserUpdateWithoutHiddenCommunitiesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -3657,6 +3873,7 @@ export type UserUpdateWithoutHiddenCommunitiesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -3666,6 +3883,8 @@ export type UserUpdateWithoutHiddenCommunitiesInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -3695,6 +3914,8 @@ export type UserUncheckedUpdateWithoutHiddenCommunitiesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -3738,6 +3959,7 @@ export type UserUncheckedUpdateWithoutHiddenCommunitiesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -3747,6 +3969,8 @@ export type UserUncheckedUpdateWithoutHiddenCommunitiesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -3776,6 +4000,8 @@ export type UserCreateWithoutHiddenPublicationsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -3819,6 +4045,7 @@ export type UserCreateWithoutHiddenPublicationsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -3828,6 +4055,8 @@ export type UserCreateWithoutHiddenPublicationsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -3857,6 +4086,8 @@ export type UserUncheckedCreateWithoutHiddenPublicationsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -3900,6 +4131,7 @@ export type UserUncheckedCreateWithoutHiddenPublicationsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -3909,6 +4141,8 @@ export type UserUncheckedCreateWithoutHiddenPublicationsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -3950,6 +4184,8 @@ export type UserUpdateWithoutHiddenPublicationsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -3993,6 +4229,7 @@ export type UserUpdateWithoutHiddenPublicationsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -4002,6 +4239,8 @@ export type UserUpdateWithoutHiddenPublicationsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -4031,6 +4270,8 @@ export type UserUncheckedUpdateWithoutHiddenPublicationsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -4074,6 +4315,7 @@ export type UserUncheckedUpdateWithoutHiddenPublicationsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -4083,6 +4325,8 @@ export type UserUncheckedUpdateWithoutHiddenPublicationsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -4112,6 +4356,8 @@ export type UserCreateWithoutCreatedCommunitiesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -4155,6 +4401,7 @@ export type UserCreateWithoutCreatedCommunitiesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -4164,6 +4411,8 @@ export type UserCreateWithoutCreatedCommunitiesInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -4193,6 +4442,8 @@ export type UserUncheckedCreateWithoutCreatedCommunitiesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -4236,6 +4487,7 @@ export type UserUncheckedCreateWithoutCreatedCommunitiesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -4245,6 +4497,8 @@ export type UserUncheckedCreateWithoutCreatedCommunitiesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -4286,6 +4540,8 @@ export type UserUpdateWithoutCreatedCommunitiesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -4329,6 +4585,7 @@ export type UserUpdateWithoutCreatedCommunitiesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -4338,6 +4595,8 @@ export type UserUpdateWithoutCreatedCommunitiesInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -4367,6 +4626,8 @@ export type UserUncheckedUpdateWithoutCreatedCommunitiesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -4410,6 +4671,7 @@ export type UserUncheckedUpdateWithoutCreatedCommunitiesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -4419,6 +4681,8 @@ export type UserUncheckedUpdateWithoutCreatedCommunitiesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -4448,6 +4712,8 @@ export type UserCreateWithoutCommunityRolesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -4491,6 +4757,7 @@ export type UserCreateWithoutCommunityRolesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -4500,6 +4767,8 @@ export type UserCreateWithoutCommunityRolesInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -4529,6 +4798,8 @@ export type UserUncheckedCreateWithoutCommunityRolesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -4572,6 +4843,7 @@ export type UserUncheckedCreateWithoutCommunityRolesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -4581,6 +4853,8 @@ export type UserUncheckedCreateWithoutCommunityRolesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -4614,6 +4888,8 @@ export type UserCreateWithoutCommunityRolesGrantedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -4657,6 +4933,7 @@ export type UserCreateWithoutCommunityRolesGrantedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -4666,6 +4943,8 @@ export type UserCreateWithoutCommunityRolesGrantedInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -4695,6 +4974,8 @@ export type UserUncheckedCreateWithoutCommunityRolesGrantedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -4738,6 +5019,7 @@ export type UserUncheckedCreateWithoutCommunityRolesGrantedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -4747,6 +5029,8 @@ export type UserUncheckedCreateWithoutCommunityRolesGrantedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -4788,6 +5072,8 @@ export type UserUpdateWithoutCommunityRolesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -4831,6 +5117,7 @@ export type UserUpdateWithoutCommunityRolesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -4840,6 +5127,8 @@ export type UserUpdateWithoutCommunityRolesInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -4869,6 +5158,8 @@ export type UserUncheckedUpdateWithoutCommunityRolesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -4912,6 +5203,7 @@ export type UserUncheckedUpdateWithoutCommunityRolesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -4921,6 +5213,8 @@ export type UserUncheckedUpdateWithoutCommunityRolesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -4958,6 +5252,8 @@ export type UserUpdateWithoutCommunityRolesGrantedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -5001,6 +5297,7 @@ export type UserUpdateWithoutCommunityRolesGrantedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -5010,6 +5307,8 @@ export type UserUpdateWithoutCommunityRolesGrantedInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -5039,6 +5338,8 @@ export type UserUncheckedUpdateWithoutCommunityRolesGrantedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -5082,6 +5383,7 @@ export type UserUncheckedUpdateWithoutCommunityRolesGrantedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -5091,6 +5393,8 @@ export type UserUncheckedUpdateWithoutCommunityRolesGrantedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -5120,6 +5424,8 @@ export type UserCreateWithoutSubscriptionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -5163,6 +5469,7 @@ export type UserCreateWithoutSubscriptionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -5172,6 +5479,8 @@ export type UserCreateWithoutSubscriptionsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -5201,6 +5510,8 @@ export type UserUncheckedCreateWithoutSubscriptionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -5244,6 +5555,7 @@ export type UserUncheckedCreateWithoutSubscriptionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -5253,6 +5565,8 @@ export type UserUncheckedCreateWithoutSubscriptionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -5294,6 +5608,8 @@ export type UserUpdateWithoutSubscriptionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -5337,6 +5653,7 @@ export type UserUpdateWithoutSubscriptionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -5346,6 +5663,8 @@ export type UserUpdateWithoutSubscriptionsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -5375,6 +5694,8 @@ export type UserUncheckedUpdateWithoutSubscriptionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -5418,6 +5739,7 @@ export type UserUncheckedUpdateWithoutSubscriptionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -5427,6 +5749,8 @@ export type UserUncheckedUpdateWithoutSubscriptionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -5456,6 +5780,8 @@ export type UserCreateWithoutPublicationsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -5499,6 +5825,7 @@ export type UserCreateWithoutPublicationsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -5508,6 +5835,8 @@ export type UserCreateWithoutPublicationsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -5537,6 +5866,8 @@ export type UserUncheckedCreateWithoutPublicationsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -5580,6 +5911,7 @@ export type UserUncheckedCreateWithoutPublicationsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -5589,6 +5921,8 @@ export type UserUncheckedCreateWithoutPublicationsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -5630,6 +5964,8 @@ export type UserUpdateWithoutPublicationsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -5673,6 +6009,7 @@ export type UserUpdateWithoutPublicationsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -5682,6 +6019,8 @@ export type UserUpdateWithoutPublicationsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -5711,6 +6050,8 @@ export type UserUncheckedUpdateWithoutPublicationsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -5754,6 +6095,7 @@ export type UserUncheckedUpdateWithoutPublicationsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -5763,6 +6105,8 @@ export type UserUncheckedUpdateWithoutPublicationsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -5792,6 +6136,8 @@ export type UserCreateWithoutCommentsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -5835,6 +6181,7 @@ export type UserCreateWithoutCommentsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -5844,6 +6191,8 @@ export type UserCreateWithoutCommentsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -5873,6 +6222,8 @@ export type UserUncheckedCreateWithoutCommentsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -5916,6 +6267,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -5925,6 +6277,8 @@ export type UserUncheckedCreateWithoutCommentsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -5966,6 +6320,8 @@ export type UserUpdateWithoutCommentsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -6009,6 +6365,7 @@ export type UserUpdateWithoutCommentsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -6018,6 +6375,8 @@ export type UserUpdateWithoutCommentsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -6047,6 +6406,8 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -6090,6 +6451,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -6099,6 +6461,8 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -6128,6 +6492,8 @@ export type UserCreateWithoutTagSubscriptionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -6171,6 +6537,7 @@ export type UserCreateWithoutTagSubscriptionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -6180,6 +6547,8 @@ export type UserCreateWithoutTagSubscriptionsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -6209,6 +6578,8 @@ export type UserUncheckedCreateWithoutTagSubscriptionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -6252,6 +6623,7 @@ export type UserUncheckedCreateWithoutTagSubscriptionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -6261,6 +6633,8 @@ export type UserUncheckedCreateWithoutTagSubscriptionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -6302,6 +6676,8 @@ export type UserUpdateWithoutTagSubscriptionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -6345,6 +6721,7 @@ export type UserUpdateWithoutTagSubscriptionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -6354,6 +6731,8 @@ export type UserUpdateWithoutTagSubscriptionsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -6383,6 +6762,8 @@ export type UserUncheckedUpdateWithoutTagSubscriptionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -6426,6 +6807,7 @@ export type UserUncheckedUpdateWithoutTagSubscriptionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -6435,6 +6817,8 @@ export type UserUncheckedUpdateWithoutTagSubscriptionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -6464,6 +6848,8 @@ export type UserCreateWithoutPublicationReactionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -6507,6 +6893,7 @@ export type UserCreateWithoutPublicationReactionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -6516,6 +6903,8 @@ export type UserCreateWithoutPublicationReactionsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -6545,6 +6934,8 @@ export type UserUncheckedCreateWithoutPublicationReactionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -6588,6 +6979,7 @@ export type UserUncheckedCreateWithoutPublicationReactionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -6597,6 +6989,8 @@ export type UserUncheckedCreateWithoutPublicationReactionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -6638,6 +7032,8 @@ export type UserUpdateWithoutPublicationReactionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -6681,6 +7077,7 @@ export type UserUpdateWithoutPublicationReactionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -6690,6 +7087,8 @@ export type UserUpdateWithoutPublicationReactionsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -6719,6 +7118,8 @@ export type UserUncheckedUpdateWithoutPublicationReactionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -6762,6 +7163,7 @@ export type UserUncheckedUpdateWithoutPublicationReactionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -6771,6 +7173,8 @@ export type UserUncheckedUpdateWithoutPublicationReactionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -6800,6 +7204,8 @@ export type UserCreateWithoutCommentReactionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -6843,6 +7249,7 @@ export type UserCreateWithoutCommentReactionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -6852,6 +7259,8 @@ export type UserCreateWithoutCommentReactionsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -6881,6 +7290,8 @@ export type UserUncheckedCreateWithoutCommentReactionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -6924,6 +7335,7 @@ export type UserUncheckedCreateWithoutCommentReactionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -6933,6 +7345,8 @@ export type UserUncheckedCreateWithoutCommentReactionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -6974,6 +7388,8 @@ export type UserUpdateWithoutCommentReactionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -7017,6 +7433,7 @@ export type UserUpdateWithoutCommentReactionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -7026,6 +7443,8 @@ export type UserUpdateWithoutCommentReactionsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -7055,6 +7474,8 @@ export type UserUncheckedUpdateWithoutCommentReactionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -7098,6 +7519,7 @@ export type UserUncheckedUpdateWithoutCommentReactionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -7107,6 +7529,8 @@ export type UserUncheckedUpdateWithoutCommentReactionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -7136,6 +7560,8 @@ export type UserCreateWithoutBookmarksInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -7179,6 +7605,7 @@ export type UserCreateWithoutBookmarksInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -7188,6 +7615,8 @@ export type UserCreateWithoutBookmarksInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -7217,6 +7646,8 @@ export type UserUncheckedCreateWithoutBookmarksInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -7260,6 +7691,7 @@ export type UserUncheckedCreateWithoutBookmarksInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -7269,6 +7701,8 @@ export type UserUncheckedCreateWithoutBookmarksInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -7310,6 +7744,8 @@ export type UserUpdateWithoutBookmarksInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -7353,6 +7789,7 @@ export type UserUpdateWithoutBookmarksInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -7362,6 +7799,8 @@ export type UserUpdateWithoutBookmarksInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -7391,6 +7830,8 @@ export type UserUncheckedUpdateWithoutBookmarksInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -7434,6 +7875,7 @@ export type UserUncheckedUpdateWithoutBookmarksInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -7443,6 +7885,8 @@ export type UserUncheckedUpdateWithoutBookmarksInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -7472,6 +7916,8 @@ export type UserCreateWithoutFollowingInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -7515,6 +7961,7 @@ export type UserCreateWithoutFollowingInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -7524,6 +7971,8 @@ export type UserCreateWithoutFollowingInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -7553,6 +8002,8 @@ export type UserUncheckedCreateWithoutFollowingInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -7596,6 +8047,7 @@ export type UserUncheckedCreateWithoutFollowingInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -7605,6 +8057,8 @@ export type UserUncheckedCreateWithoutFollowingInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -7638,6 +8092,8 @@ export type UserCreateWithoutFollowersInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -7681,6 +8137,7 @@ export type UserCreateWithoutFollowersInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -7690,6 +8147,8 @@ export type UserCreateWithoutFollowersInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -7719,6 +8178,8 @@ export type UserUncheckedCreateWithoutFollowersInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -7762,6 +8223,7 @@ export type UserUncheckedCreateWithoutFollowersInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -7771,6 +8233,8 @@ export type UserUncheckedCreateWithoutFollowersInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -7812,6 +8276,8 @@ export type UserUpdateWithoutFollowingInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -7855,6 +8321,7 @@ export type UserUpdateWithoutFollowingInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -7864,6 +8331,8 @@ export type UserUpdateWithoutFollowingInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -7893,6 +8362,8 @@ export type UserUncheckedUpdateWithoutFollowingInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -7936,6 +8407,7 @@ export type UserUncheckedUpdateWithoutFollowingInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -7945,6 +8417,8 @@ export type UserUncheckedUpdateWithoutFollowingInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -7982,6 +8456,8 @@ export type UserUpdateWithoutFollowersInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -8025,6 +8501,7 @@ export type UserUpdateWithoutFollowersInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -8034,6 +8511,8 @@ export type UserUpdateWithoutFollowersInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -8063,6 +8542,8 @@ export type UserUncheckedUpdateWithoutFollowersInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -8106,6 +8587,7 @@ export type UserUncheckedUpdateWithoutFollowersInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -8115,6 +8597,8 @@ export type UserUncheckedUpdateWithoutFollowersInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -8144,6 +8628,8 @@ export type UserCreateWithoutWallReceivedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -8187,6 +8673,7 @@ export type UserCreateWithoutWallReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -8196,6 +8683,8 @@ export type UserCreateWithoutWallReceivedInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -8225,6 +8714,8 @@ export type UserUncheckedCreateWithoutWallReceivedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -8268,6 +8759,7 @@ export type UserUncheckedCreateWithoutWallReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -8277,6 +8769,8 @@ export type UserUncheckedCreateWithoutWallReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -8310,6 +8804,8 @@ export type UserCreateWithoutWallAuthoredInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -8353,6 +8849,7 @@ export type UserCreateWithoutWallAuthoredInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -8362,6 +8859,8 @@ export type UserCreateWithoutWallAuthoredInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -8391,6 +8890,8 @@ export type UserUncheckedCreateWithoutWallAuthoredInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -8434,6 +8935,7 @@ export type UserUncheckedCreateWithoutWallAuthoredInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -8443,6 +8945,8 @@ export type UserUncheckedCreateWithoutWallAuthoredInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -8484,6 +8988,8 @@ export type UserUpdateWithoutWallReceivedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -8527,6 +9033,7 @@ export type UserUpdateWithoutWallReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -8536,6 +9043,8 @@ export type UserUpdateWithoutWallReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -8565,6 +9074,8 @@ export type UserUncheckedUpdateWithoutWallReceivedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -8608,6 +9119,7 @@ export type UserUncheckedUpdateWithoutWallReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -8617,6 +9129,8 @@ export type UserUncheckedUpdateWithoutWallReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -8654,6 +9168,8 @@ export type UserUpdateWithoutWallAuthoredInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -8697,6 +9213,7 @@ export type UserUpdateWithoutWallAuthoredInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -8706,6 +9223,8 @@ export type UserUpdateWithoutWallAuthoredInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -8735,6 +9254,8 @@ export type UserUncheckedUpdateWithoutWallAuthoredInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -8778,6 +9299,7 @@ export type UserUncheckedUpdateWithoutWallAuthoredInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -8787,6 +9309,8 @@ export type UserUncheckedUpdateWithoutWallAuthoredInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -8816,6 +9340,8 @@ export type UserCreateWithoutNotificationsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -8859,6 +9385,7 @@ export type UserCreateWithoutNotificationsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -8868,6 +9395,8 @@ export type UserCreateWithoutNotificationsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -8897,6 +9426,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -8940,6 +9471,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -8949,6 +9481,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -8982,6 +9516,8 @@ export type UserCreateWithoutNotificationActionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -9025,6 +9561,7 @@ export type UserCreateWithoutNotificationActionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -9034,6 +9571,8 @@ export type UserCreateWithoutNotificationActionsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -9063,6 +9602,8 @@ export type UserUncheckedCreateWithoutNotificationActionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -9106,6 +9647,7 @@ export type UserUncheckedCreateWithoutNotificationActionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -9115,6 +9657,8 @@ export type UserUncheckedCreateWithoutNotificationActionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -9156,6 +9700,8 @@ export type UserUpdateWithoutNotificationsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -9199,6 +9745,7 @@ export type UserUpdateWithoutNotificationsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -9208,6 +9755,8 @@ export type UserUpdateWithoutNotificationsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -9237,6 +9786,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -9280,6 +9831,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -9289,6 +9841,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -9326,6 +9880,8 @@ export type UserUpdateWithoutNotificationActionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -9369,6 +9925,7 @@ export type UserUpdateWithoutNotificationActionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -9378,6 +9935,8 @@ export type UserUpdateWithoutNotificationActionsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -9407,6 +9966,8 @@ export type UserUncheckedUpdateWithoutNotificationActionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -9450,6 +10011,7 @@ export type UserUncheckedUpdateWithoutNotificationActionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -9459,6 +10021,8 @@ export type UserUncheckedUpdateWithoutNotificationActionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -9488,6 +10052,8 @@ export type UserCreateWithoutConversationMembershipsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -9531,6 +10097,7 @@ export type UserCreateWithoutConversationMembershipsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -9540,6 +10107,8 @@ export type UserCreateWithoutConversationMembershipsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -9569,6 +10138,8 @@ export type UserUncheckedCreateWithoutConversationMembershipsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -9612,6 +10183,7 @@ export type UserUncheckedCreateWithoutConversationMembershipsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -9621,6 +10193,8 @@ export type UserUncheckedCreateWithoutConversationMembershipsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -9662,6 +10236,8 @@ export type UserUpdateWithoutConversationMembershipsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -9705,6 +10281,7 @@ export type UserUpdateWithoutConversationMembershipsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -9714,6 +10291,8 @@ export type UserUpdateWithoutConversationMembershipsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -9743,6 +10322,8 @@ export type UserUncheckedUpdateWithoutConversationMembershipsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -9786,6 +10367,7 @@ export type UserUncheckedUpdateWithoutConversationMembershipsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -9795,6 +10377,8 @@ export type UserUncheckedUpdateWithoutConversationMembershipsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -9824,6 +10408,8 @@ export type UserCreateWithoutMessagesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -9867,6 +10453,7 @@ export type UserCreateWithoutMessagesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -9876,6 +10463,8 @@ export type UserCreateWithoutMessagesInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -9905,6 +10494,8 @@ export type UserUncheckedCreateWithoutMessagesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -9948,6 +10539,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -9957,6 +10549,8 @@ export type UserUncheckedCreateWithoutMessagesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -9998,6 +10592,8 @@ export type UserUpdateWithoutMessagesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -10041,6 +10637,7 @@ export type UserUpdateWithoutMessagesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -10050,6 +10647,8 @@ export type UserUpdateWithoutMessagesInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -10079,6 +10678,8 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -10122,6 +10723,7 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -10131,6 +10733,8 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -10160,6 +10764,8 @@ export type UserCreateWithoutReportsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -10203,6 +10809,7 @@ export type UserCreateWithoutReportsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -10212,6 +10819,8 @@ export type UserCreateWithoutReportsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -10241,6 +10850,8 @@ export type UserUncheckedCreateWithoutReportsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -10284,6 +10895,7 @@ export type UserUncheckedCreateWithoutReportsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -10293,6 +10905,8 @@ export type UserUncheckedCreateWithoutReportsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -10334,6 +10948,8 @@ export type UserUpdateWithoutReportsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -10377,6 +10993,7 @@ export type UserUpdateWithoutReportsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -10386,6 +11003,8 @@ export type UserUpdateWithoutReportsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -10415,6 +11034,8 @@ export type UserUncheckedUpdateWithoutReportsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -10458,6 +11079,7 @@ export type UserUncheckedUpdateWithoutReportsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -10467,6 +11089,8 @@ export type UserUncheckedUpdateWithoutReportsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -10496,6 +11120,8 @@ export type UserCreateWithoutAuditLogsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -10539,6 +11165,7 @@ export type UserCreateWithoutAuditLogsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -10548,6 +11175,8 @@ export type UserCreateWithoutAuditLogsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -10577,6 +11206,8 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -10620,6 +11251,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -10629,6 +11261,8 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -10670,6 +11304,8 @@ export type UserUpdateWithoutAuditLogsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -10713,6 +11349,7 @@ export type UserUpdateWithoutAuditLogsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -10722,6 +11359,8 @@ export type UserUpdateWithoutAuditLogsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -10751,6 +11390,8 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -10794,6 +11435,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -10803,6 +11445,8 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -10832,6 +11476,8 @@ export type UserCreateWithoutWalletInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -10875,6 +11521,7 @@ export type UserCreateWithoutWalletInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -10884,6 +11531,8 @@ export type UserCreateWithoutWalletInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -10913,6 +11562,8 @@ export type UserUncheckedCreateWithoutWalletInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -10956,6 +11607,7 @@ export type UserUncheckedCreateWithoutWalletInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -10965,6 +11617,8 @@ export type UserUncheckedCreateWithoutWalletInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -11006,6 +11660,8 @@ export type UserUpdateWithoutWalletInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -11049,6 +11705,7 @@ export type UserUpdateWithoutWalletInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -11058,6 +11715,8 @@ export type UserUpdateWithoutWalletInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -11087,6 +11746,8 @@ export type UserUncheckedUpdateWithoutWalletInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -11130,6 +11791,7 @@ export type UserUncheckedUpdateWithoutWalletInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -11139,6 +11801,8 @@ export type UserUncheckedUpdateWithoutWalletInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -11168,6 +11832,8 @@ export type UserCreateWithoutPromotionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -11211,6 +11877,7 @@ export type UserCreateWithoutPromotionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -11220,6 +11887,8 @@ export type UserCreateWithoutPromotionsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -11249,6 +11918,8 @@ export type UserUncheckedCreateWithoutPromotionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -11292,6 +11963,7 @@ export type UserUncheckedCreateWithoutPromotionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -11301,6 +11973,8 @@ export type UserUncheckedCreateWithoutPromotionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -11342,6 +12016,8 @@ export type UserUpdateWithoutPromotionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -11385,6 +12061,7 @@ export type UserUpdateWithoutPromotionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -11394,6 +12071,8 @@ export type UserUpdateWithoutPromotionsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -11423,6 +12102,8 @@ export type UserUncheckedUpdateWithoutPromotionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -11466,6 +12147,7 @@ export type UserUncheckedUpdateWithoutPromotionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -11475,6 +12157,8 @@ export type UserUncheckedUpdateWithoutPromotionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -11504,6 +12188,8 @@ export type UserCreateWithoutMediaAssetsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -11547,6 +12233,7 @@ export type UserCreateWithoutMediaAssetsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -11556,6 +12243,8 @@ export type UserCreateWithoutMediaAssetsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -11585,6 +12274,8 @@ export type UserUncheckedCreateWithoutMediaAssetsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -11628,6 +12319,7 @@ export type UserUncheckedCreateWithoutMediaAssetsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -11637,6 +12329,8 @@ export type UserUncheckedCreateWithoutMediaAssetsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -11678,6 +12372,8 @@ export type UserUpdateWithoutMediaAssetsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -11721,6 +12417,7 @@ export type UserUpdateWithoutMediaAssetsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -11730,6 +12427,8 @@ export type UserUpdateWithoutMediaAssetsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -11759,6 +12458,8 @@ export type UserUncheckedUpdateWithoutMediaAssetsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -11802,6 +12503,7 @@ export type UserUncheckedUpdateWithoutMediaAssetsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -11811,6 +12513,8 @@ export type UserUncheckedUpdateWithoutMediaAssetsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -11840,6 +12544,8 @@ export type UserCreateWithoutTelegramLinkInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -11883,6 +12589,7 @@ export type UserCreateWithoutTelegramLinkInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -11892,6 +12599,8 @@ export type UserCreateWithoutTelegramLinkInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -11921,6 +12630,8 @@ export type UserUncheckedCreateWithoutTelegramLinkInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -11964,6 +12675,7 @@ export type UserUncheckedCreateWithoutTelegramLinkInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -11973,6 +12685,8 @@ export type UserUncheckedCreateWithoutTelegramLinkInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -12014,6 +12728,8 @@ export type UserUpdateWithoutTelegramLinkInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -12057,6 +12773,7 @@ export type UserUpdateWithoutTelegramLinkInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -12066,6 +12783,8 @@ export type UserUpdateWithoutTelegramLinkInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -12095,6 +12814,8 @@ export type UserUncheckedUpdateWithoutTelegramLinkInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -12138,6 +12859,7 @@ export type UserUncheckedUpdateWithoutTelegramLinkInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -12147,6 +12869,8 @@ export type UserUncheckedUpdateWithoutTelegramLinkInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -12176,6 +12900,8 @@ export type UserCreateWithoutTelegramLinkCodesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -12219,6 +12945,7 @@ export type UserCreateWithoutTelegramLinkCodesInput = {
     telegramLink?: Prisma.TelegramLinkCreateNestedOneWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -12228,6 +12955,8 @@ export type UserCreateWithoutTelegramLinkCodesInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -12257,6 +12986,8 @@ export type UserUncheckedCreateWithoutTelegramLinkCodesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -12300,6 +13031,7 @@ export type UserUncheckedCreateWithoutTelegramLinkCodesInput = {
     telegramLink?: Prisma.TelegramLinkUncheckedCreateNestedOneWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -12309,6 +13041,8 @@ export type UserUncheckedCreateWithoutTelegramLinkCodesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -12350,6 +13084,8 @@ export type UserUpdateWithoutTelegramLinkCodesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -12393,6 +13129,7 @@ export type UserUpdateWithoutTelegramLinkCodesInput = {
     telegramLink?: Prisma.TelegramLinkUpdateOneWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -12402,6 +13139,8 @@ export type UserUpdateWithoutTelegramLinkCodesInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -12431,6 +13170,8 @@ export type UserUncheckedUpdateWithoutTelegramLinkCodesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -12474,6 +13215,7 @@ export type UserUncheckedUpdateWithoutTelegramLinkCodesInput = {
     telegramLink?: Prisma.TelegramLinkUncheckedUpdateOneWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -12483,6 +13225,8 @@ export type UserUncheckedUpdateWithoutTelegramLinkCodesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -12512,6 +13256,8 @@ export type UserCreateWithoutTelegramChannelsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -12555,6 +13301,7 @@ export type UserCreateWithoutTelegramChannelsInput = {
     telegramLink?: Prisma.TelegramLinkCreateNestedOneWithoutUserInput;
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -12564,6 +13311,8 @@ export type UserCreateWithoutTelegramChannelsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -12593,6 +13342,8 @@ export type UserUncheckedCreateWithoutTelegramChannelsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -12636,6 +13387,7 @@ export type UserUncheckedCreateWithoutTelegramChannelsInput = {
     telegramLink?: Prisma.TelegramLinkUncheckedCreateNestedOneWithoutUserInput;
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -12645,6 +13397,8 @@ export type UserUncheckedCreateWithoutTelegramChannelsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -12686,6 +13440,8 @@ export type UserUpdateWithoutTelegramChannelsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -12729,6 +13485,7 @@ export type UserUpdateWithoutTelegramChannelsInput = {
     telegramLink?: Prisma.TelegramLinkUpdateOneWithoutUserNestedInput;
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -12738,6 +13495,8 @@ export type UserUpdateWithoutTelegramChannelsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -12767,6 +13526,8 @@ export type UserUncheckedUpdateWithoutTelegramChannelsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -12810,6 +13571,7 @@ export type UserUncheckedUpdateWithoutTelegramChannelsInput = {
     telegramLink?: Prisma.TelegramLinkUncheckedUpdateOneWithoutUserNestedInput;
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -12819,6 +13581,8 @@ export type UserUncheckedUpdateWithoutTelegramChannelsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -12848,6 +13612,8 @@ export type UserCreateWithoutTelegramSharesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -12891,6 +13657,7 @@ export type UserCreateWithoutTelegramSharesInput = {
     telegramLink?: Prisma.TelegramLinkCreateNestedOneWithoutUserInput;
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -12900,6 +13667,8 @@ export type UserCreateWithoutTelegramSharesInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -12929,6 +13698,8 @@ export type UserUncheckedCreateWithoutTelegramSharesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -12972,6 +13743,7 @@ export type UserUncheckedCreateWithoutTelegramSharesInput = {
     telegramLink?: Prisma.TelegramLinkUncheckedCreateNestedOneWithoutUserInput;
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -12981,6 +13753,8 @@ export type UserUncheckedCreateWithoutTelegramSharesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -13022,6 +13796,8 @@ export type UserUpdateWithoutTelegramSharesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -13065,6 +13841,7 @@ export type UserUpdateWithoutTelegramSharesInput = {
     telegramLink?: Prisma.TelegramLinkUpdateOneWithoutUserNestedInput;
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -13074,6 +13851,8 @@ export type UserUpdateWithoutTelegramSharesInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -13103,6 +13882,8 @@ export type UserUncheckedUpdateWithoutTelegramSharesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -13146,6 +13927,7 @@ export type UserUncheckedUpdateWithoutTelegramSharesInput = {
     telegramLink?: Prisma.TelegramLinkUncheckedUpdateOneWithoutUserNestedInput;
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -13155,6 +13937,8 @@ export type UserUncheckedUpdateWithoutTelegramSharesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -13184,6 +13968,8 @@ export type UserCreateWithoutModerationActionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -13228,6 +14014,7 @@ export type UserCreateWithoutModerationActionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
@@ -13236,6 +14023,8 @@ export type UserCreateWithoutModerationActionsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -13265,6 +14054,8 @@ export type UserUncheckedCreateWithoutModerationActionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -13309,6 +14100,7 @@ export type UserUncheckedCreateWithoutModerationActionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
@@ -13317,6 +14109,8 @@ export type UserUncheckedCreateWithoutModerationActionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -13350,6 +14144,8 @@ export type UserCreateWithoutModerationActionsMadeInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -13394,6 +14190,7 @@ export type UserCreateWithoutModerationActionsMadeInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
@@ -13402,6 +14199,8 @@ export type UserCreateWithoutModerationActionsMadeInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -13431,6 +14230,8 @@ export type UserUncheckedCreateWithoutModerationActionsMadeInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -13475,6 +14276,7 @@ export type UserUncheckedCreateWithoutModerationActionsMadeInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
@@ -13483,6 +14285,8 @@ export type UserUncheckedCreateWithoutModerationActionsMadeInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -13524,6 +14328,8 @@ export type UserUpdateWithoutModerationActionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -13568,6 +14374,7 @@ export type UserUpdateWithoutModerationActionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
@@ -13576,6 +14383,8 @@ export type UserUpdateWithoutModerationActionsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -13605,6 +14414,8 @@ export type UserUncheckedUpdateWithoutModerationActionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -13649,6 +14460,7 @@ export type UserUncheckedUpdateWithoutModerationActionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
@@ -13657,6 +14469,8 @@ export type UserUncheckedUpdateWithoutModerationActionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -13694,6 +14508,8 @@ export type UserUpdateWithoutModerationActionsMadeInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -13738,6 +14554,7 @@ export type UserUpdateWithoutModerationActionsMadeInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
@@ -13746,6 +14563,8 @@ export type UserUpdateWithoutModerationActionsMadeInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -13775,6 +14594,8 @@ export type UserUncheckedUpdateWithoutModerationActionsMadeInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -13819,6 +14640,7 @@ export type UserUncheckedUpdateWithoutModerationActionsMadeInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
@@ -13827,6 +14649,8 @@ export type UserUncheckedUpdateWithoutModerationActionsMadeInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -13856,6 +14680,8 @@ export type UserCreateWithoutModerationAppealsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -13900,6 +14726,7 @@ export type UserCreateWithoutModerationAppealsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
@@ -13908,6 +14735,8 @@ export type UserCreateWithoutModerationAppealsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -13937,6 +14766,8 @@ export type UserUncheckedCreateWithoutModerationAppealsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -13981,6 +14812,7 @@ export type UserUncheckedCreateWithoutModerationAppealsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
@@ -13989,6 +14821,8 @@ export type UserUncheckedCreateWithoutModerationAppealsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -14022,6 +14856,8 @@ export type UserCreateWithoutModerationAppealsResolvedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -14066,6 +14902,7 @@ export type UserCreateWithoutModerationAppealsResolvedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -14074,6 +14911,8 @@ export type UserCreateWithoutModerationAppealsResolvedInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -14103,6 +14942,8 @@ export type UserUncheckedCreateWithoutModerationAppealsResolvedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -14147,6 +14988,7 @@ export type UserUncheckedCreateWithoutModerationAppealsResolvedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -14155,6 +14997,8 @@ export type UserUncheckedCreateWithoutModerationAppealsResolvedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -14196,6 +15040,8 @@ export type UserUpdateWithoutModerationAppealsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -14240,6 +15086,7 @@ export type UserUpdateWithoutModerationAppealsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
@@ -14248,6 +15095,8 @@ export type UserUpdateWithoutModerationAppealsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -14277,6 +15126,8 @@ export type UserUncheckedUpdateWithoutModerationAppealsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -14321,6 +15172,7 @@ export type UserUncheckedUpdateWithoutModerationAppealsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
@@ -14329,6 +15181,8 @@ export type UserUncheckedUpdateWithoutModerationAppealsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -14366,6 +15220,8 @@ export type UserUpdateWithoutModerationAppealsResolvedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -14410,6 +15266,7 @@ export type UserUpdateWithoutModerationAppealsResolvedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -14418,6 +15275,8 @@ export type UserUpdateWithoutModerationAppealsResolvedInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -14447,6 +15306,8 @@ export type UserUncheckedUpdateWithoutModerationAppealsResolvedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -14491,6 +15352,7 @@ export type UserUncheckedUpdateWithoutModerationAppealsResolvedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -14499,6 +15361,8 @@ export type UserUncheckedUpdateWithoutModerationAppealsResolvedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -14528,6 +15392,8 @@ export type UserCreateWithoutCommunityProposalsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -14572,6 +15438,7 @@ export type UserCreateWithoutCommunityProposalsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -14580,6 +15447,8 @@ export type UserCreateWithoutCommunityProposalsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -14609,6 +15478,8 @@ export type UserUncheckedCreateWithoutCommunityProposalsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -14653,6 +15524,7 @@ export type UserUncheckedCreateWithoutCommunityProposalsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -14661,6 +15533,8 @@ export type UserUncheckedCreateWithoutCommunityProposalsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -14702,6 +15576,8 @@ export type UserUpdateWithoutCommunityProposalsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -14746,6 +15622,7 @@ export type UserUpdateWithoutCommunityProposalsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -14754,6 +15631,8 @@ export type UserUpdateWithoutCommunityProposalsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -14783,6 +15662,8 @@ export type UserUncheckedUpdateWithoutCommunityProposalsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -14827,6 +15708,7 @@ export type UserUncheckedUpdateWithoutCommunityProposalsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -14835,6 +15717,8 @@ export type UserUncheckedUpdateWithoutCommunityProposalsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -14864,6 +15748,8 @@ export type UserCreateWithoutProposalSupportsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -14908,6 +15794,7 @@ export type UserCreateWithoutProposalSupportsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -14916,6 +15803,8 @@ export type UserCreateWithoutProposalSupportsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -14945,6 +15834,8 @@ export type UserUncheckedCreateWithoutProposalSupportsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -14989,6 +15880,7 @@ export type UserUncheckedCreateWithoutProposalSupportsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -14997,6 +15889,8 @@ export type UserUncheckedCreateWithoutProposalSupportsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -15038,6 +15932,8 @@ export type UserUpdateWithoutProposalSupportsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -15082,6 +15978,7 @@ export type UserUpdateWithoutProposalSupportsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -15090,6 +15987,8 @@ export type UserUpdateWithoutProposalSupportsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -15119,6 +16018,8 @@ export type UserUncheckedUpdateWithoutProposalSupportsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -15163,6 +16064,7 @@ export type UserUncheckedUpdateWithoutProposalSupportsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -15171,6 +16073,8 @@ export type UserUncheckedUpdateWithoutProposalSupportsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -15200,6 +16104,8 @@ export type UserCreateWithoutPollsCreatedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -15244,6 +16150,7 @@ export type UserCreateWithoutPollsCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -15252,6 +16159,8 @@ export type UserCreateWithoutPollsCreatedInput = {
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -15281,6 +16190,8 @@ export type UserUncheckedCreateWithoutPollsCreatedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -15325,6 +16236,7 @@ export type UserUncheckedCreateWithoutPollsCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -15333,6 +16245,8 @@ export type UserUncheckedCreateWithoutPollsCreatedInput = {
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -15374,6 +16288,8 @@ export type UserUpdateWithoutPollsCreatedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -15418,6 +16334,7 @@ export type UserUpdateWithoutPollsCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -15426,6 +16343,8 @@ export type UserUpdateWithoutPollsCreatedInput = {
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -15455,6 +16374,8 @@ export type UserUncheckedUpdateWithoutPollsCreatedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -15499,6 +16420,7 @@ export type UserUncheckedUpdateWithoutPollsCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -15507,6 +16429,8 @@ export type UserUncheckedUpdateWithoutPollsCreatedInput = {
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -15536,6 +16460,8 @@ export type UserCreateWithoutPollVotesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -15580,6 +16506,7 @@ export type UserCreateWithoutPollVotesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -15588,6 +16515,8 @@ export type UserCreateWithoutPollVotesInput = {
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -15617,6 +16546,8 @@ export type UserUncheckedCreateWithoutPollVotesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -15661,6 +16592,7 @@ export type UserUncheckedCreateWithoutPollVotesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -15669,6 +16601,8 @@ export type UserUncheckedCreateWithoutPollVotesInput = {
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -15710,6 +16644,8 @@ export type UserUpdateWithoutPollVotesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -15754,6 +16690,7 @@ export type UserUpdateWithoutPollVotesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -15762,6 +16699,8 @@ export type UserUpdateWithoutPollVotesInput = {
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -15791,6 +16730,8 @@ export type UserUncheckedUpdateWithoutPollVotesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -15835,6 +16776,7 @@ export type UserUncheckedUpdateWithoutPollVotesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -15843,6 +16785,8 @@ export type UserUncheckedUpdateWithoutPollVotesInput = {
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -15862,7 +16806,7 @@ export type UserUncheckedUpdateWithoutPollVotesInput = {
     eventAttendances?: Prisma.CommunityEventAttendanceUncheckedUpdateManyWithoutUserNestedInput;
     portfolioItems?: Prisma.PortfolioItemUncheckedUpdateManyWithoutOwnerNestedInput;
 };
-export type UserCreateWithoutWorkshopItemsInput = {
+export type UserCreateWithoutMediaPartnersInput = {
     id?: string;
     forrumId?: number;
     email: string;
@@ -15872,172 +16816,8 @@ export type UserCreateWithoutWorkshopItemsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
-    website?: string | null;
-    location?: string | null;
-    passwordHash: string;
-    state?: $Enums.AccountState;
-    role?: $Enums.GlobalRole;
-    emailVerifiedAt?: Date | string | null;
-    onboardingCompletedAt?: Date | string | null;
-    lastSeenAt?: Date | string | null;
-    createdAt?: Date | string;
-    updatedAt?: Date | string;
-    sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
-    notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput;
-    verificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput;
-    resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput;
-    createdCommunities?: Prisma.CommunityCreateNestedManyWithoutCreatedByInput;
-    communityRoles?: Prisma.CommunityRoleCreateNestedManyWithoutUserInput;
-    communityRolesGranted?: Prisma.CommunityRoleCreateNestedManyWithoutGrantedByInput;
-    subscriptions?: Prisma.CommunitySubscriptionCreateNestedManyWithoutUserInput;
-    tagSubscriptions?: Prisma.TagSubscriptionCreateNestedManyWithoutUserInput;
-    feedPreference?: Prisma.FeedPreferenceCreateNestedOneWithoutUserInput;
-    hiddenCommunities?: Prisma.HiddenCommunityCreateNestedManyWithoutUserInput;
-    hiddenPublications?: Prisma.HiddenPublicationCreateNestedManyWithoutUserInput;
-    publications?: Prisma.PublicationCreateNestedManyWithoutAuthorInput;
-    comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput;
-    publicationReactions?: Prisma.PublicationReactionCreateNestedManyWithoutUserInput;
-    commentReactions?: Prisma.CommentReactionCreateNestedManyWithoutUserInput;
-    bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput;
-    following?: Prisma.UserFollowCreateNestedManyWithoutFollowerInput;
-    followers?: Prisma.UserFollowCreateNestedManyWithoutFollowingInput;
-    wallAuthored?: Prisma.WallPostCreateNestedManyWithoutAuthorInput;
-    wallReceived?: Prisma.WallPostCreateNestedManyWithoutProfileUserInput;
-    notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput;
-    notificationActions?: Prisma.NotificationCreateNestedManyWithoutActorInput;
-    conversationMemberships?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput;
-    messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput;
-    reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput;
-    auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput;
-    wallet?: Prisma.WalletCreateNestedOneWithoutUserInput;
-    promotions?: Prisma.PromotionOrderCreateNestedManyWithoutUserInput;
-    mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutOwnerInput;
-    telegramLink?: Prisma.TelegramLinkCreateNestedOneWithoutUserInput;
-    telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
-    telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
-    telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
-    moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
-    moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
-    moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
-    moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
-    communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
-    proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
-    pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
-    pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
-    workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
-    workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
-    achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
-    roleEventsReceived?: Prisma.CommunityRoleEventCreateNestedManyWithoutUserInput;
-    roleEventsCreated?: Prisma.CommunityRoleEventCreateNestedManyWithoutActorInput;
-    interactionsCreated?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCreatedByInput;
-    interactionsReceived?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCounterpartInput;
-    interactionReviewsWritten?: Prisma.ProfileReviewCreateNestedManyWithoutAuthorInput;
-    interactionReviewsReceived?: Prisma.ProfileReviewCreateNestedManyWithoutTargetInput;
-    communityReports?: Prisma.CommunityReportCreateNestedManyWithoutAuthorInput;
-    contentActions?: Prisma.CommunityContentActionCreateNestedManyWithoutActorInput;
-    structureProposals?: Prisma.CommunityStructureProposalCreateNestedManyWithoutCreatedByInput;
-    structureResolutions?: Prisma.CommunityStructureProposalCreateNestedManyWithoutResolvedByInput;
-    roleInvitesReceived?: Prisma.CommunityRoleInviteCreateNestedManyWithoutInvitedUserInput;
-    roleInvitesCreated?: Prisma.CommunityRoleInviteCreateNestedManyWithoutInvitedByInput;
-    communityEvents?: Prisma.CommunityEventCreateNestedManyWithoutCreatedByInput;
-    eventAttendances?: Prisma.CommunityEventAttendanceCreateNestedManyWithoutUserInput;
-    portfolioItems?: Prisma.PortfolioItemCreateNestedManyWithoutOwnerInput;
-};
-export type UserUncheckedCreateWithoutWorkshopItemsInput = {
-    id?: string;
-    forrumId?: number;
-    email: string;
-    username: string;
-    displayName: string;
-    bio?: string | null;
-    avatarUrl?: string | null;
-    coverUrl?: string | null;
-    wallPrivacy?: $Enums.WallPrivacy;
-    website?: string | null;
-    location?: string | null;
-    passwordHash: string;
-    state?: $Enums.AccountState;
-    role?: $Enums.GlobalRole;
-    emailVerifiedAt?: Date | string | null;
-    onboardingCompletedAt?: Date | string | null;
-    lastSeenAt?: Date | string | null;
-    createdAt?: Date | string;
-    updatedAt?: Date | string;
-    sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
-    notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput;
-    verificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput;
-    resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput;
-    createdCommunities?: Prisma.CommunityUncheckedCreateNestedManyWithoutCreatedByInput;
-    communityRoles?: Prisma.CommunityRoleUncheckedCreateNestedManyWithoutUserInput;
-    communityRolesGranted?: Prisma.CommunityRoleUncheckedCreateNestedManyWithoutGrantedByInput;
-    subscriptions?: Prisma.CommunitySubscriptionUncheckedCreateNestedManyWithoutUserInput;
-    tagSubscriptions?: Prisma.TagSubscriptionUncheckedCreateNestedManyWithoutUserInput;
-    feedPreference?: Prisma.FeedPreferenceUncheckedCreateNestedOneWithoutUserInput;
-    hiddenCommunities?: Prisma.HiddenCommunityUncheckedCreateNestedManyWithoutUserInput;
-    hiddenPublications?: Prisma.HiddenPublicationUncheckedCreateNestedManyWithoutUserInput;
-    publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutAuthorInput;
-    comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput;
-    publicationReactions?: Prisma.PublicationReactionUncheckedCreateNestedManyWithoutUserInput;
-    commentReactions?: Prisma.CommentReactionUncheckedCreateNestedManyWithoutUserInput;
-    bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput;
-    following?: Prisma.UserFollowUncheckedCreateNestedManyWithoutFollowerInput;
-    followers?: Prisma.UserFollowUncheckedCreateNestedManyWithoutFollowingInput;
-    wallAuthored?: Prisma.WallPostUncheckedCreateNestedManyWithoutAuthorInput;
-    wallReceived?: Prisma.WallPostUncheckedCreateNestedManyWithoutProfileUserInput;
-    notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput;
-    notificationActions?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput;
-    conversationMemberships?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput;
-    messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput;
-    reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput;
-    auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput;
-    wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutUserInput;
-    promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutUserInput;
-    mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutOwnerInput;
-    telegramLink?: Prisma.TelegramLinkUncheckedCreateNestedOneWithoutUserInput;
-    telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
-    telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
-    telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
-    moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
-    moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
-    moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
-    moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
-    communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
-    proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
-    pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
-    pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
-    workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
-    workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
-    achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
-    roleEventsReceived?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutUserInput;
-    roleEventsCreated?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutActorInput;
-    interactionsCreated?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCreatedByInput;
-    interactionsReceived?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCounterpartInput;
-    interactionReviewsWritten?: Prisma.ProfileReviewUncheckedCreateNestedManyWithoutAuthorInput;
-    interactionReviewsReceived?: Prisma.ProfileReviewUncheckedCreateNestedManyWithoutTargetInput;
-    communityReports?: Prisma.CommunityReportUncheckedCreateNestedManyWithoutAuthorInput;
-    contentActions?: Prisma.CommunityContentActionUncheckedCreateNestedManyWithoutActorInput;
-    structureProposals?: Prisma.CommunityStructureProposalUncheckedCreateNestedManyWithoutCreatedByInput;
-    structureResolutions?: Prisma.CommunityStructureProposalUncheckedCreateNestedManyWithoutResolvedByInput;
-    roleInvitesReceived?: Prisma.CommunityRoleInviteUncheckedCreateNestedManyWithoutInvitedUserInput;
-    roleInvitesCreated?: Prisma.CommunityRoleInviteUncheckedCreateNestedManyWithoutInvitedByInput;
-    communityEvents?: Prisma.CommunityEventUncheckedCreateNestedManyWithoutCreatedByInput;
-    eventAttendances?: Prisma.CommunityEventAttendanceUncheckedCreateNestedManyWithoutUserInput;
-    portfolioItems?: Prisma.PortfolioItemUncheckedCreateNestedManyWithoutOwnerInput;
-};
-export type UserCreateOrConnectWithoutWorkshopItemsInput = {
-    where: Prisma.UserWhereUniqueInput;
-    create: Prisma.XOR<Prisma.UserCreateWithoutWorkshopItemsInput, Prisma.UserUncheckedCreateWithoutWorkshopItemsInput>;
-};
-export type UserCreateWithoutWorkshopReviewsInput = {
-    id?: string;
-    forrumId?: number;
-    email: string;
-    username: string;
-    displayName: string;
-    bio?: string | null;
-    avatarUrl?: string | null;
-    coverUrl?: string | null;
-    wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -16091,6 +16871,9 @@ export type UserCreateWithoutWorkshopReviewsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
+    workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
     roleEventsReceived?: Prisma.CommunityRoleEventCreateNestedManyWithoutUserInput;
@@ -16109,7 +16892,7 @@ export type UserCreateWithoutWorkshopReviewsInput = {
     eventAttendances?: Prisma.CommunityEventAttendanceCreateNestedManyWithoutUserInput;
     portfolioItems?: Prisma.PortfolioItemCreateNestedManyWithoutOwnerInput;
 };
-export type UserUncheckedCreateWithoutWorkshopReviewsInput = {
+export type UserUncheckedCreateWithoutMediaPartnersInput = {
     id?: string;
     forrumId?: number;
     email: string;
@@ -16119,6 +16902,8 @@ export type UserUncheckedCreateWithoutWorkshopReviewsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -16172,6 +16957,541 @@ export type UserUncheckedCreateWithoutWorkshopReviewsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
+    workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
+    workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
+    achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutUserInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutActorInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCreatedByInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCounterpartInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewUncheckedCreateNestedManyWithoutAuthorInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewUncheckedCreateNestedManyWithoutTargetInput;
+    communityReports?: Prisma.CommunityReportUncheckedCreateNestedManyWithoutAuthorInput;
+    contentActions?: Prisma.CommunityContentActionUncheckedCreateNestedManyWithoutActorInput;
+    structureProposals?: Prisma.CommunityStructureProposalUncheckedCreateNestedManyWithoutCreatedByInput;
+    structureResolutions?: Prisma.CommunityStructureProposalUncheckedCreateNestedManyWithoutResolvedByInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteUncheckedCreateNestedManyWithoutInvitedUserInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteUncheckedCreateNestedManyWithoutInvitedByInput;
+    communityEvents?: Prisma.CommunityEventUncheckedCreateNestedManyWithoutCreatedByInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceUncheckedCreateNestedManyWithoutUserInput;
+    portfolioItems?: Prisma.PortfolioItemUncheckedCreateNestedManyWithoutOwnerInput;
+};
+export type UserCreateOrConnectWithoutMediaPartnersInput = {
+    where: Prisma.UserWhereUniqueInput;
+    create: Prisma.XOR<Prisma.UserCreateWithoutMediaPartnersInput, Prisma.UserUncheckedCreateWithoutMediaPartnersInput>;
+};
+export type UserUpsertWithoutMediaPartnersInput = {
+    update: Prisma.XOR<Prisma.UserUpdateWithoutMediaPartnersInput, Prisma.UserUncheckedUpdateWithoutMediaPartnersInput>;
+    create: Prisma.XOR<Prisma.UserCreateWithoutMediaPartnersInput, Prisma.UserUncheckedCreateWithoutMediaPartnersInput>;
+    where?: Prisma.UserWhereInput;
+};
+export type UserUpdateToOneWithWhereWithoutMediaPartnersInput = {
+    where?: Prisma.UserWhereInput;
+    data: Prisma.XOR<Prisma.UserUpdateWithoutMediaPartnersInput, Prisma.UserUncheckedUpdateWithoutMediaPartnersInput>;
+};
+export type UserUpdateWithoutMediaPartnersInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    email?: Prisma.StringFieldUpdateOperationsInput | string;
+    username?: Prisma.StringFieldUpdateOperationsInput | string;
+    displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+    bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+    state?: Prisma.EnumAccountStateFieldUpdateOperationsInput | $Enums.AccountState;
+    role?: Prisma.EnumGlobalRoleFieldUpdateOperationsInput | $Enums.GlobalRole;
+    emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    onboardingCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput;
+    notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput;
+    verificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput;
+    resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput;
+    createdCommunities?: Prisma.CommunityUpdateManyWithoutCreatedByNestedInput;
+    communityRoles?: Prisma.CommunityRoleUpdateManyWithoutUserNestedInput;
+    communityRolesGranted?: Prisma.CommunityRoleUpdateManyWithoutGrantedByNestedInput;
+    subscriptions?: Prisma.CommunitySubscriptionUpdateManyWithoutUserNestedInput;
+    tagSubscriptions?: Prisma.TagSubscriptionUpdateManyWithoutUserNestedInput;
+    feedPreference?: Prisma.FeedPreferenceUpdateOneWithoutUserNestedInput;
+    hiddenCommunities?: Prisma.HiddenCommunityUpdateManyWithoutUserNestedInput;
+    hiddenPublications?: Prisma.HiddenPublicationUpdateManyWithoutUserNestedInput;
+    publications?: Prisma.PublicationUpdateManyWithoutAuthorNestedInput;
+    comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput;
+    publicationReactions?: Prisma.PublicationReactionUpdateManyWithoutUserNestedInput;
+    commentReactions?: Prisma.CommentReactionUpdateManyWithoutUserNestedInput;
+    bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput;
+    following?: Prisma.UserFollowUpdateManyWithoutFollowerNestedInput;
+    followers?: Prisma.UserFollowUpdateManyWithoutFollowingNestedInput;
+    wallAuthored?: Prisma.WallPostUpdateManyWithoutAuthorNestedInput;
+    wallReceived?: Prisma.WallPostUpdateManyWithoutProfileUserNestedInput;
+    notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput;
+    notificationActions?: Prisma.NotificationUpdateManyWithoutActorNestedInput;
+    conversationMemberships?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput;
+    messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput;
+    reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput;
+    auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput;
+    wallet?: Prisma.WalletUpdateOneWithoutUserNestedInput;
+    promotions?: Prisma.PromotionOrderUpdateManyWithoutUserNestedInput;
+    mediaAssets?: Prisma.MediaAssetUpdateManyWithoutOwnerNestedInput;
+    telegramLink?: Prisma.TelegramLinkUpdateOneWithoutUserNestedInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
+    telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
+    telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
+    moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
+    moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
+    communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
+    pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
+    pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
+    workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
+    workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
+    workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
+    achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventUpdateManyWithoutUserNestedInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventUpdateManyWithoutActorNestedInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionUpdateManyWithoutCreatedByNestedInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionUpdateManyWithoutCounterpartNestedInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewUpdateManyWithoutAuthorNestedInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewUpdateManyWithoutTargetNestedInput;
+    communityReports?: Prisma.CommunityReportUpdateManyWithoutAuthorNestedInput;
+    contentActions?: Prisma.CommunityContentActionUpdateManyWithoutActorNestedInput;
+    structureProposals?: Prisma.CommunityStructureProposalUpdateManyWithoutCreatedByNestedInput;
+    structureResolutions?: Prisma.CommunityStructureProposalUpdateManyWithoutResolvedByNestedInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteUpdateManyWithoutInvitedUserNestedInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteUpdateManyWithoutInvitedByNestedInput;
+    communityEvents?: Prisma.CommunityEventUpdateManyWithoutCreatedByNestedInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceUpdateManyWithoutUserNestedInput;
+    portfolioItems?: Prisma.PortfolioItemUpdateManyWithoutOwnerNestedInput;
+};
+export type UserUncheckedUpdateWithoutMediaPartnersInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    forrumId?: Prisma.IntFieldUpdateOperationsInput | number;
+    email?: Prisma.StringFieldUpdateOperationsInput | string;
+    username?: Prisma.StringFieldUpdateOperationsInput | string;
+    displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+    bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+    state?: Prisma.EnumAccountStateFieldUpdateOperationsInput | $Enums.AccountState;
+    role?: Prisma.EnumGlobalRoleFieldUpdateOperationsInput | $Enums.GlobalRole;
+    emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    onboardingCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput;
+    notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput;
+    verificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput;
+    resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput;
+    createdCommunities?: Prisma.CommunityUncheckedUpdateManyWithoutCreatedByNestedInput;
+    communityRoles?: Prisma.CommunityRoleUncheckedUpdateManyWithoutUserNestedInput;
+    communityRolesGranted?: Prisma.CommunityRoleUncheckedUpdateManyWithoutGrantedByNestedInput;
+    subscriptions?: Prisma.CommunitySubscriptionUncheckedUpdateManyWithoutUserNestedInput;
+    tagSubscriptions?: Prisma.TagSubscriptionUncheckedUpdateManyWithoutUserNestedInput;
+    feedPreference?: Prisma.FeedPreferenceUncheckedUpdateOneWithoutUserNestedInput;
+    hiddenCommunities?: Prisma.HiddenCommunityUncheckedUpdateManyWithoutUserNestedInput;
+    hiddenPublications?: Prisma.HiddenPublicationUncheckedUpdateManyWithoutUserNestedInput;
+    publications?: Prisma.PublicationUncheckedUpdateManyWithoutAuthorNestedInput;
+    comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput;
+    publicationReactions?: Prisma.PublicationReactionUncheckedUpdateManyWithoutUserNestedInput;
+    commentReactions?: Prisma.CommentReactionUncheckedUpdateManyWithoutUserNestedInput;
+    bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput;
+    following?: Prisma.UserFollowUncheckedUpdateManyWithoutFollowerNestedInput;
+    followers?: Prisma.UserFollowUncheckedUpdateManyWithoutFollowingNestedInput;
+    wallAuthored?: Prisma.WallPostUncheckedUpdateManyWithoutAuthorNestedInput;
+    wallReceived?: Prisma.WallPostUncheckedUpdateManyWithoutProfileUserNestedInput;
+    notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput;
+    notificationActions?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput;
+    conversationMemberships?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput;
+    messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput;
+    reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput;
+    auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput;
+    wallet?: Prisma.WalletUncheckedUpdateOneWithoutUserNestedInput;
+    promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutUserNestedInput;
+    mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutOwnerNestedInput;
+    telegramLink?: Prisma.TelegramLinkUncheckedUpdateOneWithoutUserNestedInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
+    telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
+    telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
+    moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
+    moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
+    communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
+    pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
+    pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
+    workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
+    workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
+    workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
+    achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventUncheckedUpdateManyWithoutUserNestedInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventUncheckedUpdateManyWithoutActorNestedInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCreatedByNestedInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCounterpartNestedInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewUncheckedUpdateManyWithoutAuthorNestedInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewUncheckedUpdateManyWithoutTargetNestedInput;
+    communityReports?: Prisma.CommunityReportUncheckedUpdateManyWithoutAuthorNestedInput;
+    contentActions?: Prisma.CommunityContentActionUncheckedUpdateManyWithoutActorNestedInput;
+    structureProposals?: Prisma.CommunityStructureProposalUncheckedUpdateManyWithoutCreatedByNestedInput;
+    structureResolutions?: Prisma.CommunityStructureProposalUncheckedUpdateManyWithoutResolvedByNestedInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteUncheckedUpdateManyWithoutInvitedUserNestedInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteUncheckedUpdateManyWithoutInvitedByNestedInput;
+    communityEvents?: Prisma.CommunityEventUncheckedUpdateManyWithoutCreatedByNestedInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceUncheckedUpdateManyWithoutUserNestedInput;
+    portfolioItems?: Prisma.PortfolioItemUncheckedUpdateManyWithoutOwnerNestedInput;
+};
+export type UserCreateWithoutWorkshopItemsInput = {
+    id?: string;
+    forrumId?: number;
+    email: string;
+    username: string;
+    displayName: string;
+    bio?: string | null;
+    avatarUrl?: string | null;
+    coverUrl?: string | null;
+    wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
+    website?: string | null;
+    location?: string | null;
+    passwordHash: string;
+    state?: $Enums.AccountState;
+    role?: $Enums.GlobalRole;
+    emailVerifiedAt?: Date | string | null;
+    onboardingCompletedAt?: Date | string | null;
+    lastSeenAt?: Date | string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
+    notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput;
+    verificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput;
+    resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput;
+    createdCommunities?: Prisma.CommunityCreateNestedManyWithoutCreatedByInput;
+    communityRoles?: Prisma.CommunityRoleCreateNestedManyWithoutUserInput;
+    communityRolesGranted?: Prisma.CommunityRoleCreateNestedManyWithoutGrantedByInput;
+    subscriptions?: Prisma.CommunitySubscriptionCreateNestedManyWithoutUserInput;
+    tagSubscriptions?: Prisma.TagSubscriptionCreateNestedManyWithoutUserInput;
+    feedPreference?: Prisma.FeedPreferenceCreateNestedOneWithoutUserInput;
+    hiddenCommunities?: Prisma.HiddenCommunityCreateNestedManyWithoutUserInput;
+    hiddenPublications?: Prisma.HiddenPublicationCreateNestedManyWithoutUserInput;
+    publications?: Prisma.PublicationCreateNestedManyWithoutAuthorInput;
+    comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput;
+    publicationReactions?: Prisma.PublicationReactionCreateNestedManyWithoutUserInput;
+    commentReactions?: Prisma.CommentReactionCreateNestedManyWithoutUserInput;
+    bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput;
+    following?: Prisma.UserFollowCreateNestedManyWithoutFollowerInput;
+    followers?: Prisma.UserFollowCreateNestedManyWithoutFollowingInput;
+    wallAuthored?: Prisma.WallPostCreateNestedManyWithoutAuthorInput;
+    wallReceived?: Prisma.WallPostCreateNestedManyWithoutProfileUserInput;
+    notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput;
+    notificationActions?: Prisma.NotificationCreateNestedManyWithoutActorInput;
+    conversationMemberships?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput;
+    messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput;
+    reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput;
+    auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput;
+    wallet?: Prisma.WalletCreateNestedOneWithoutUserInput;
+    promotions?: Prisma.PromotionOrderCreateNestedManyWithoutUserInput;
+    mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutOwnerInput;
+    telegramLink?: Prisma.TelegramLinkCreateNestedOneWithoutUserInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
+    telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
+    telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
+    moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
+    moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
+    moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
+    communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
+    pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
+    pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
+    workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
+    workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
+    achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventCreateNestedManyWithoutUserInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventCreateNestedManyWithoutActorInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCreatedByInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCounterpartInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewCreateNestedManyWithoutAuthorInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewCreateNestedManyWithoutTargetInput;
+    communityReports?: Prisma.CommunityReportCreateNestedManyWithoutAuthorInput;
+    contentActions?: Prisma.CommunityContentActionCreateNestedManyWithoutActorInput;
+    structureProposals?: Prisma.CommunityStructureProposalCreateNestedManyWithoutCreatedByInput;
+    structureResolutions?: Prisma.CommunityStructureProposalCreateNestedManyWithoutResolvedByInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteCreateNestedManyWithoutInvitedUserInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteCreateNestedManyWithoutInvitedByInput;
+    communityEvents?: Prisma.CommunityEventCreateNestedManyWithoutCreatedByInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceCreateNestedManyWithoutUserInput;
+    portfolioItems?: Prisma.PortfolioItemCreateNestedManyWithoutOwnerInput;
+};
+export type UserUncheckedCreateWithoutWorkshopItemsInput = {
+    id?: string;
+    forrumId?: number;
+    email: string;
+    username: string;
+    displayName: string;
+    bio?: string | null;
+    avatarUrl?: string | null;
+    coverUrl?: string | null;
+    wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
+    website?: string | null;
+    location?: string | null;
+    passwordHash: string;
+    state?: $Enums.AccountState;
+    role?: $Enums.GlobalRole;
+    emailVerifiedAt?: Date | string | null;
+    onboardingCompletedAt?: Date | string | null;
+    lastSeenAt?: Date | string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
+    notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput;
+    verificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput;
+    resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput;
+    createdCommunities?: Prisma.CommunityUncheckedCreateNestedManyWithoutCreatedByInput;
+    communityRoles?: Prisma.CommunityRoleUncheckedCreateNestedManyWithoutUserInput;
+    communityRolesGranted?: Prisma.CommunityRoleUncheckedCreateNestedManyWithoutGrantedByInput;
+    subscriptions?: Prisma.CommunitySubscriptionUncheckedCreateNestedManyWithoutUserInput;
+    tagSubscriptions?: Prisma.TagSubscriptionUncheckedCreateNestedManyWithoutUserInput;
+    feedPreference?: Prisma.FeedPreferenceUncheckedCreateNestedOneWithoutUserInput;
+    hiddenCommunities?: Prisma.HiddenCommunityUncheckedCreateNestedManyWithoutUserInput;
+    hiddenPublications?: Prisma.HiddenPublicationUncheckedCreateNestedManyWithoutUserInput;
+    publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutAuthorInput;
+    comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput;
+    publicationReactions?: Prisma.PublicationReactionUncheckedCreateNestedManyWithoutUserInput;
+    commentReactions?: Prisma.CommentReactionUncheckedCreateNestedManyWithoutUserInput;
+    bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput;
+    following?: Prisma.UserFollowUncheckedCreateNestedManyWithoutFollowerInput;
+    followers?: Prisma.UserFollowUncheckedCreateNestedManyWithoutFollowingInput;
+    wallAuthored?: Prisma.WallPostUncheckedCreateNestedManyWithoutAuthorInput;
+    wallReceived?: Prisma.WallPostUncheckedCreateNestedManyWithoutProfileUserInput;
+    notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput;
+    notificationActions?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput;
+    conversationMemberships?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput;
+    messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput;
+    reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput;
+    auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput;
+    wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutUserInput;
+    promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutUserInput;
+    mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutOwnerInput;
+    telegramLink?: Prisma.TelegramLinkUncheckedCreateNestedOneWithoutUserInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
+    telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
+    telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
+    moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
+    moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
+    moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
+    communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
+    pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
+    pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
+    workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
+    workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
+    achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutUserInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutActorInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCreatedByInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCounterpartInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewUncheckedCreateNestedManyWithoutAuthorInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewUncheckedCreateNestedManyWithoutTargetInput;
+    communityReports?: Prisma.CommunityReportUncheckedCreateNestedManyWithoutAuthorInput;
+    contentActions?: Prisma.CommunityContentActionUncheckedCreateNestedManyWithoutActorInput;
+    structureProposals?: Prisma.CommunityStructureProposalUncheckedCreateNestedManyWithoutCreatedByInput;
+    structureResolutions?: Prisma.CommunityStructureProposalUncheckedCreateNestedManyWithoutResolvedByInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteUncheckedCreateNestedManyWithoutInvitedUserInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteUncheckedCreateNestedManyWithoutInvitedByInput;
+    communityEvents?: Prisma.CommunityEventUncheckedCreateNestedManyWithoutCreatedByInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceUncheckedCreateNestedManyWithoutUserInput;
+    portfolioItems?: Prisma.PortfolioItemUncheckedCreateNestedManyWithoutOwnerInput;
+};
+export type UserCreateOrConnectWithoutWorkshopItemsInput = {
+    where: Prisma.UserWhereUniqueInput;
+    create: Prisma.XOR<Prisma.UserCreateWithoutWorkshopItemsInput, Prisma.UserUncheckedCreateWithoutWorkshopItemsInput>;
+};
+export type UserCreateWithoutWorkshopReviewsInput = {
+    id?: string;
+    forrumId?: number;
+    email: string;
+    username: string;
+    displayName: string;
+    bio?: string | null;
+    avatarUrl?: string | null;
+    coverUrl?: string | null;
+    wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
+    website?: string | null;
+    location?: string | null;
+    passwordHash: string;
+    state?: $Enums.AccountState;
+    role?: $Enums.GlobalRole;
+    emailVerifiedAt?: Date | string | null;
+    onboardingCompletedAt?: Date | string | null;
+    lastSeenAt?: Date | string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
+    notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput;
+    verificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput;
+    resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput;
+    createdCommunities?: Prisma.CommunityCreateNestedManyWithoutCreatedByInput;
+    communityRoles?: Prisma.CommunityRoleCreateNestedManyWithoutUserInput;
+    communityRolesGranted?: Prisma.CommunityRoleCreateNestedManyWithoutGrantedByInput;
+    subscriptions?: Prisma.CommunitySubscriptionCreateNestedManyWithoutUserInput;
+    tagSubscriptions?: Prisma.TagSubscriptionCreateNestedManyWithoutUserInput;
+    feedPreference?: Prisma.FeedPreferenceCreateNestedOneWithoutUserInput;
+    hiddenCommunities?: Prisma.HiddenCommunityCreateNestedManyWithoutUserInput;
+    hiddenPublications?: Prisma.HiddenPublicationCreateNestedManyWithoutUserInput;
+    publications?: Prisma.PublicationCreateNestedManyWithoutAuthorInput;
+    comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput;
+    publicationReactions?: Prisma.PublicationReactionCreateNestedManyWithoutUserInput;
+    commentReactions?: Prisma.CommentReactionCreateNestedManyWithoutUserInput;
+    bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput;
+    following?: Prisma.UserFollowCreateNestedManyWithoutFollowerInput;
+    followers?: Prisma.UserFollowCreateNestedManyWithoutFollowingInput;
+    wallAuthored?: Prisma.WallPostCreateNestedManyWithoutAuthorInput;
+    wallReceived?: Prisma.WallPostCreateNestedManyWithoutProfileUserInput;
+    notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput;
+    notificationActions?: Prisma.NotificationCreateNestedManyWithoutActorInput;
+    conversationMemberships?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput;
+    messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput;
+    reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput;
+    auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput;
+    wallet?: Prisma.WalletCreateNestedOneWithoutUserInput;
+    promotions?: Prisma.PromotionOrderCreateNestedManyWithoutUserInput;
+    mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutOwnerInput;
+    telegramLink?: Prisma.TelegramLinkCreateNestedOneWithoutUserInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
+    telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
+    telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
+    moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
+    moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
+    moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
+    communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
+    pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
+    pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
+    workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
+    workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
+    achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventCreateNestedManyWithoutUserInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventCreateNestedManyWithoutActorInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCreatedByInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCounterpartInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewCreateNestedManyWithoutAuthorInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewCreateNestedManyWithoutTargetInput;
+    communityReports?: Prisma.CommunityReportCreateNestedManyWithoutAuthorInput;
+    contentActions?: Prisma.CommunityContentActionCreateNestedManyWithoutActorInput;
+    structureProposals?: Prisma.CommunityStructureProposalCreateNestedManyWithoutCreatedByInput;
+    structureResolutions?: Prisma.CommunityStructureProposalCreateNestedManyWithoutResolvedByInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteCreateNestedManyWithoutInvitedUserInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteCreateNestedManyWithoutInvitedByInput;
+    communityEvents?: Prisma.CommunityEventCreateNestedManyWithoutCreatedByInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceCreateNestedManyWithoutUserInput;
+    portfolioItems?: Prisma.PortfolioItemCreateNestedManyWithoutOwnerInput;
+};
+export type UserUncheckedCreateWithoutWorkshopReviewsInput = {
+    id?: string;
+    forrumId?: number;
+    email: string;
+    username: string;
+    displayName: string;
+    bio?: string | null;
+    avatarUrl?: string | null;
+    coverUrl?: string | null;
+    wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
+    website?: string | null;
+    location?: string | null;
+    passwordHash: string;
+    state?: $Enums.AccountState;
+    role?: $Enums.GlobalRole;
+    emailVerifiedAt?: Date | string | null;
+    onboardingCompletedAt?: Date | string | null;
+    lastSeenAt?: Date | string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
+    notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput;
+    verificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput;
+    resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput;
+    createdCommunities?: Prisma.CommunityUncheckedCreateNestedManyWithoutCreatedByInput;
+    communityRoles?: Prisma.CommunityRoleUncheckedCreateNestedManyWithoutUserInput;
+    communityRolesGranted?: Prisma.CommunityRoleUncheckedCreateNestedManyWithoutGrantedByInput;
+    subscriptions?: Prisma.CommunitySubscriptionUncheckedCreateNestedManyWithoutUserInput;
+    tagSubscriptions?: Prisma.TagSubscriptionUncheckedCreateNestedManyWithoutUserInput;
+    feedPreference?: Prisma.FeedPreferenceUncheckedCreateNestedOneWithoutUserInput;
+    hiddenCommunities?: Prisma.HiddenCommunityUncheckedCreateNestedManyWithoutUserInput;
+    hiddenPublications?: Prisma.HiddenPublicationUncheckedCreateNestedManyWithoutUserInput;
+    publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutAuthorInput;
+    comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput;
+    publicationReactions?: Prisma.PublicationReactionUncheckedCreateNestedManyWithoutUserInput;
+    commentReactions?: Prisma.CommentReactionUncheckedCreateNestedManyWithoutUserInput;
+    bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput;
+    following?: Prisma.UserFollowUncheckedCreateNestedManyWithoutFollowerInput;
+    followers?: Prisma.UserFollowUncheckedCreateNestedManyWithoutFollowingInput;
+    wallAuthored?: Prisma.WallPostUncheckedCreateNestedManyWithoutAuthorInput;
+    wallReceived?: Prisma.WallPostUncheckedCreateNestedManyWithoutProfileUserInput;
+    notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput;
+    notificationActions?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput;
+    conversationMemberships?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput;
+    messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput;
+    reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput;
+    auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput;
+    wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutUserInput;
+    promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutUserInput;
+    mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutOwnerInput;
+    telegramLink?: Prisma.TelegramLinkUncheckedCreateNestedOneWithoutUserInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
+    telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
+    telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
+    moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
+    moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
+    moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
+    communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
+    pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
+    pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
+    workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
     roleEventsReceived?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutUserInput;
@@ -16212,6 +17532,8 @@ export type UserUpdateWithoutWorkshopItemsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -16256,6 +17578,7 @@ export type UserUpdateWithoutWorkshopItemsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -16264,6 +17587,8 @@ export type UserUpdateWithoutWorkshopItemsInput = {
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -16293,6 +17618,8 @@ export type UserUncheckedUpdateWithoutWorkshopItemsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -16337,6 +17664,7 @@ export type UserUncheckedUpdateWithoutWorkshopItemsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -16345,6 +17673,8 @@ export type UserUncheckedUpdateWithoutWorkshopItemsInput = {
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -16382,6 +17712,8 @@ export type UserUpdateWithoutWorkshopReviewsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -16426,6 +17758,7 @@ export type UserUpdateWithoutWorkshopReviewsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -16435,6 +17768,8 @@ export type UserUpdateWithoutWorkshopReviewsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
     roleEventsReceived?: Prisma.CommunityRoleEventUpdateManyWithoutUserNestedInput;
@@ -16463,6 +17798,8 @@ export type UserUncheckedUpdateWithoutWorkshopReviewsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -16507,6 +17844,7 @@ export type UserUncheckedUpdateWithoutWorkshopReviewsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -16516,6 +17854,8 @@ export type UserUncheckedUpdateWithoutWorkshopReviewsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
     roleEventsReceived?: Prisma.CommunityRoleEventUncheckedUpdateManyWithoutUserNestedInput;
@@ -16544,6 +17884,8 @@ export type UserCreateWithoutWorkshopLikesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -16588,6 +17930,7 @@ export type UserCreateWithoutWorkshopLikesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -16597,6 +17940,8 @@ export type UserCreateWithoutWorkshopLikesInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
     roleEventsReceived?: Prisma.CommunityRoleEventCreateNestedManyWithoutUserInput;
@@ -16625,6 +17970,8 @@ export type UserUncheckedCreateWithoutWorkshopLikesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -16669,6 +18016,7 @@ export type UserUncheckedCreateWithoutWorkshopLikesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -16678,6 +18026,8 @@ export type UserUncheckedCreateWithoutWorkshopLikesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
     roleEventsReceived?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutUserInput;
@@ -16718,6 +18068,8 @@ export type UserUpdateWithoutWorkshopLikesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -16762,6 +18114,7 @@ export type UserUpdateWithoutWorkshopLikesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -16771,6 +18124,8 @@ export type UserUpdateWithoutWorkshopLikesInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
     roleEventsReceived?: Prisma.CommunityRoleEventUpdateManyWithoutUserNestedInput;
@@ -16799,6 +18154,8 @@ export type UserUncheckedUpdateWithoutWorkshopLikesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -16843,6 +18200,7 @@ export type UserUncheckedUpdateWithoutWorkshopLikesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -16852,6 +18210,8 @@ export type UserUncheckedUpdateWithoutWorkshopLikesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
     roleEventsReceived?: Prisma.CommunityRoleEventUncheckedUpdateManyWithoutUserNestedInput;
@@ -16870,7 +18230,7 @@ export type UserUncheckedUpdateWithoutWorkshopLikesInput = {
     eventAttendances?: Prisma.CommunityEventAttendanceUncheckedUpdateManyWithoutUserNestedInput;
     portfolioItems?: Prisma.PortfolioItemUncheckedUpdateManyWithoutOwnerNestedInput;
 };
-export type UserCreateWithoutAchievementsInput = {
+export type UserCreateWithoutGiftsReceivedInput = {
     id?: string;
     forrumId?: number;
     email: string;
@@ -16880,6 +18240,8 @@ export type UserCreateWithoutAchievementsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -16924,6 +18286,7 @@ export type UserCreateWithoutAchievementsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -16933,8 +18296,10 @@ export type UserCreateWithoutAchievementsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
+    achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
     roleEventsReceived?: Prisma.CommunityRoleEventCreateNestedManyWithoutUserInput;
     roleEventsCreated?: Prisma.CommunityRoleEventCreateNestedManyWithoutActorInput;
     interactionsCreated?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCreatedByInput;
@@ -16951,7 +18316,7 @@ export type UserCreateWithoutAchievementsInput = {
     eventAttendances?: Prisma.CommunityEventAttendanceCreateNestedManyWithoutUserInput;
     portfolioItems?: Prisma.PortfolioItemCreateNestedManyWithoutOwnerInput;
 };
-export type UserUncheckedCreateWithoutAchievementsInput = {
+export type UserUncheckedCreateWithoutGiftsReceivedInput = {
     id?: string;
     forrumId?: number;
     email: string;
@@ -16961,6 +18326,8 @@ export type UserUncheckedCreateWithoutAchievementsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -17005,6 +18372,7 @@ export type UserUncheckedCreateWithoutAchievementsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -17014,6 +18382,720 @@ export type UserUncheckedCreateWithoutAchievementsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
+    workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
+    workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
+    achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutUserInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutActorInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCreatedByInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCounterpartInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewUncheckedCreateNestedManyWithoutAuthorInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewUncheckedCreateNestedManyWithoutTargetInput;
+    communityReports?: Prisma.CommunityReportUncheckedCreateNestedManyWithoutAuthorInput;
+    contentActions?: Prisma.CommunityContentActionUncheckedCreateNestedManyWithoutActorInput;
+    structureProposals?: Prisma.CommunityStructureProposalUncheckedCreateNestedManyWithoutCreatedByInput;
+    structureResolutions?: Prisma.CommunityStructureProposalUncheckedCreateNestedManyWithoutResolvedByInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteUncheckedCreateNestedManyWithoutInvitedUserInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteUncheckedCreateNestedManyWithoutInvitedByInput;
+    communityEvents?: Prisma.CommunityEventUncheckedCreateNestedManyWithoutCreatedByInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceUncheckedCreateNestedManyWithoutUserInput;
+    portfolioItems?: Prisma.PortfolioItemUncheckedCreateNestedManyWithoutOwnerInput;
+};
+export type UserCreateOrConnectWithoutGiftsReceivedInput = {
+    where: Prisma.UserWhereUniqueInput;
+    create: Prisma.XOR<Prisma.UserCreateWithoutGiftsReceivedInput, Prisma.UserUncheckedCreateWithoutGiftsReceivedInput>;
+};
+export type UserCreateWithoutGiftsSentInput = {
+    id?: string;
+    forrumId?: number;
+    email: string;
+    username: string;
+    displayName: string;
+    bio?: string | null;
+    avatarUrl?: string | null;
+    coverUrl?: string | null;
+    wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
+    website?: string | null;
+    location?: string | null;
+    passwordHash: string;
+    state?: $Enums.AccountState;
+    role?: $Enums.GlobalRole;
+    emailVerifiedAt?: Date | string | null;
+    onboardingCompletedAt?: Date | string | null;
+    lastSeenAt?: Date | string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
+    notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput;
+    verificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput;
+    resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput;
+    createdCommunities?: Prisma.CommunityCreateNestedManyWithoutCreatedByInput;
+    communityRoles?: Prisma.CommunityRoleCreateNestedManyWithoutUserInput;
+    communityRolesGranted?: Prisma.CommunityRoleCreateNestedManyWithoutGrantedByInput;
+    subscriptions?: Prisma.CommunitySubscriptionCreateNestedManyWithoutUserInput;
+    tagSubscriptions?: Prisma.TagSubscriptionCreateNestedManyWithoutUserInput;
+    feedPreference?: Prisma.FeedPreferenceCreateNestedOneWithoutUserInput;
+    hiddenCommunities?: Prisma.HiddenCommunityCreateNestedManyWithoutUserInput;
+    hiddenPublications?: Prisma.HiddenPublicationCreateNestedManyWithoutUserInput;
+    publications?: Prisma.PublicationCreateNestedManyWithoutAuthorInput;
+    comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput;
+    publicationReactions?: Prisma.PublicationReactionCreateNestedManyWithoutUserInput;
+    commentReactions?: Prisma.CommentReactionCreateNestedManyWithoutUserInput;
+    bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput;
+    following?: Prisma.UserFollowCreateNestedManyWithoutFollowerInput;
+    followers?: Prisma.UserFollowCreateNestedManyWithoutFollowingInput;
+    wallAuthored?: Prisma.WallPostCreateNestedManyWithoutAuthorInput;
+    wallReceived?: Prisma.WallPostCreateNestedManyWithoutProfileUserInput;
+    notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput;
+    notificationActions?: Prisma.NotificationCreateNestedManyWithoutActorInput;
+    conversationMemberships?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput;
+    messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput;
+    reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput;
+    auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput;
+    wallet?: Prisma.WalletCreateNestedOneWithoutUserInput;
+    promotions?: Prisma.PromotionOrderCreateNestedManyWithoutUserInput;
+    mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutOwnerInput;
+    telegramLink?: Prisma.TelegramLinkCreateNestedOneWithoutUserInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
+    telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
+    telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
+    moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
+    moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
+    moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
+    communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
+    pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
+    pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
+    workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
+    workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
+    achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventCreateNestedManyWithoutUserInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventCreateNestedManyWithoutActorInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCreatedByInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCounterpartInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewCreateNestedManyWithoutAuthorInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewCreateNestedManyWithoutTargetInput;
+    communityReports?: Prisma.CommunityReportCreateNestedManyWithoutAuthorInput;
+    contentActions?: Prisma.CommunityContentActionCreateNestedManyWithoutActorInput;
+    structureProposals?: Prisma.CommunityStructureProposalCreateNestedManyWithoutCreatedByInput;
+    structureResolutions?: Prisma.CommunityStructureProposalCreateNestedManyWithoutResolvedByInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteCreateNestedManyWithoutInvitedUserInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteCreateNestedManyWithoutInvitedByInput;
+    communityEvents?: Prisma.CommunityEventCreateNestedManyWithoutCreatedByInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceCreateNestedManyWithoutUserInput;
+    portfolioItems?: Prisma.PortfolioItemCreateNestedManyWithoutOwnerInput;
+};
+export type UserUncheckedCreateWithoutGiftsSentInput = {
+    id?: string;
+    forrumId?: number;
+    email: string;
+    username: string;
+    displayName: string;
+    bio?: string | null;
+    avatarUrl?: string | null;
+    coverUrl?: string | null;
+    wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
+    website?: string | null;
+    location?: string | null;
+    passwordHash: string;
+    state?: $Enums.AccountState;
+    role?: $Enums.GlobalRole;
+    emailVerifiedAt?: Date | string | null;
+    onboardingCompletedAt?: Date | string | null;
+    lastSeenAt?: Date | string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
+    notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput;
+    verificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput;
+    resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput;
+    createdCommunities?: Prisma.CommunityUncheckedCreateNestedManyWithoutCreatedByInput;
+    communityRoles?: Prisma.CommunityRoleUncheckedCreateNestedManyWithoutUserInput;
+    communityRolesGranted?: Prisma.CommunityRoleUncheckedCreateNestedManyWithoutGrantedByInput;
+    subscriptions?: Prisma.CommunitySubscriptionUncheckedCreateNestedManyWithoutUserInput;
+    tagSubscriptions?: Prisma.TagSubscriptionUncheckedCreateNestedManyWithoutUserInput;
+    feedPreference?: Prisma.FeedPreferenceUncheckedCreateNestedOneWithoutUserInput;
+    hiddenCommunities?: Prisma.HiddenCommunityUncheckedCreateNestedManyWithoutUserInput;
+    hiddenPublications?: Prisma.HiddenPublicationUncheckedCreateNestedManyWithoutUserInput;
+    publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutAuthorInput;
+    comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput;
+    publicationReactions?: Prisma.PublicationReactionUncheckedCreateNestedManyWithoutUserInput;
+    commentReactions?: Prisma.CommentReactionUncheckedCreateNestedManyWithoutUserInput;
+    bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput;
+    following?: Prisma.UserFollowUncheckedCreateNestedManyWithoutFollowerInput;
+    followers?: Prisma.UserFollowUncheckedCreateNestedManyWithoutFollowingInput;
+    wallAuthored?: Prisma.WallPostUncheckedCreateNestedManyWithoutAuthorInput;
+    wallReceived?: Prisma.WallPostUncheckedCreateNestedManyWithoutProfileUserInput;
+    notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput;
+    notificationActions?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput;
+    conversationMemberships?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput;
+    messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput;
+    reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput;
+    auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput;
+    wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutUserInput;
+    promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutUserInput;
+    mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutOwnerInput;
+    telegramLink?: Prisma.TelegramLinkUncheckedCreateNestedOneWithoutUserInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
+    telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
+    telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
+    moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
+    moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
+    moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
+    communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
+    pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
+    pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
+    workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
+    workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
+    achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutUserInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutActorInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCreatedByInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCounterpartInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewUncheckedCreateNestedManyWithoutAuthorInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewUncheckedCreateNestedManyWithoutTargetInput;
+    communityReports?: Prisma.CommunityReportUncheckedCreateNestedManyWithoutAuthorInput;
+    contentActions?: Prisma.CommunityContentActionUncheckedCreateNestedManyWithoutActorInput;
+    structureProposals?: Prisma.CommunityStructureProposalUncheckedCreateNestedManyWithoutCreatedByInput;
+    structureResolutions?: Prisma.CommunityStructureProposalUncheckedCreateNestedManyWithoutResolvedByInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteUncheckedCreateNestedManyWithoutInvitedUserInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteUncheckedCreateNestedManyWithoutInvitedByInput;
+    communityEvents?: Prisma.CommunityEventUncheckedCreateNestedManyWithoutCreatedByInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceUncheckedCreateNestedManyWithoutUserInput;
+    portfolioItems?: Prisma.PortfolioItemUncheckedCreateNestedManyWithoutOwnerInput;
+};
+export type UserCreateOrConnectWithoutGiftsSentInput = {
+    where: Prisma.UserWhereUniqueInput;
+    create: Prisma.XOR<Prisma.UserCreateWithoutGiftsSentInput, Prisma.UserUncheckedCreateWithoutGiftsSentInput>;
+};
+export type UserUpsertWithoutGiftsReceivedInput = {
+    update: Prisma.XOR<Prisma.UserUpdateWithoutGiftsReceivedInput, Prisma.UserUncheckedUpdateWithoutGiftsReceivedInput>;
+    create: Prisma.XOR<Prisma.UserCreateWithoutGiftsReceivedInput, Prisma.UserUncheckedCreateWithoutGiftsReceivedInput>;
+    where?: Prisma.UserWhereInput;
+};
+export type UserUpdateToOneWithWhereWithoutGiftsReceivedInput = {
+    where?: Prisma.UserWhereInput;
+    data: Prisma.XOR<Prisma.UserUpdateWithoutGiftsReceivedInput, Prisma.UserUncheckedUpdateWithoutGiftsReceivedInput>;
+};
+export type UserUpdateWithoutGiftsReceivedInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    email?: Prisma.StringFieldUpdateOperationsInput | string;
+    username?: Prisma.StringFieldUpdateOperationsInput | string;
+    displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+    bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+    state?: Prisma.EnumAccountStateFieldUpdateOperationsInput | $Enums.AccountState;
+    role?: Prisma.EnumGlobalRoleFieldUpdateOperationsInput | $Enums.GlobalRole;
+    emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    onboardingCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput;
+    notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput;
+    verificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput;
+    resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput;
+    createdCommunities?: Prisma.CommunityUpdateManyWithoutCreatedByNestedInput;
+    communityRoles?: Prisma.CommunityRoleUpdateManyWithoutUserNestedInput;
+    communityRolesGranted?: Prisma.CommunityRoleUpdateManyWithoutGrantedByNestedInput;
+    subscriptions?: Prisma.CommunitySubscriptionUpdateManyWithoutUserNestedInput;
+    tagSubscriptions?: Prisma.TagSubscriptionUpdateManyWithoutUserNestedInput;
+    feedPreference?: Prisma.FeedPreferenceUpdateOneWithoutUserNestedInput;
+    hiddenCommunities?: Prisma.HiddenCommunityUpdateManyWithoutUserNestedInput;
+    hiddenPublications?: Prisma.HiddenPublicationUpdateManyWithoutUserNestedInput;
+    publications?: Prisma.PublicationUpdateManyWithoutAuthorNestedInput;
+    comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput;
+    publicationReactions?: Prisma.PublicationReactionUpdateManyWithoutUserNestedInput;
+    commentReactions?: Prisma.CommentReactionUpdateManyWithoutUserNestedInput;
+    bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput;
+    following?: Prisma.UserFollowUpdateManyWithoutFollowerNestedInput;
+    followers?: Prisma.UserFollowUpdateManyWithoutFollowingNestedInput;
+    wallAuthored?: Prisma.WallPostUpdateManyWithoutAuthorNestedInput;
+    wallReceived?: Prisma.WallPostUpdateManyWithoutProfileUserNestedInput;
+    notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput;
+    notificationActions?: Prisma.NotificationUpdateManyWithoutActorNestedInput;
+    conversationMemberships?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput;
+    messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput;
+    reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput;
+    auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput;
+    wallet?: Prisma.WalletUpdateOneWithoutUserNestedInput;
+    promotions?: Prisma.PromotionOrderUpdateManyWithoutUserNestedInput;
+    mediaAssets?: Prisma.MediaAssetUpdateManyWithoutOwnerNestedInput;
+    telegramLink?: Prisma.TelegramLinkUpdateOneWithoutUserNestedInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
+    telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
+    telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
+    moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
+    moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
+    moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
+    communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
+    pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
+    pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
+    workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
+    workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
+    workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
+    achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventUpdateManyWithoutUserNestedInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventUpdateManyWithoutActorNestedInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionUpdateManyWithoutCreatedByNestedInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionUpdateManyWithoutCounterpartNestedInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewUpdateManyWithoutAuthorNestedInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewUpdateManyWithoutTargetNestedInput;
+    communityReports?: Prisma.CommunityReportUpdateManyWithoutAuthorNestedInput;
+    contentActions?: Prisma.CommunityContentActionUpdateManyWithoutActorNestedInput;
+    structureProposals?: Prisma.CommunityStructureProposalUpdateManyWithoutCreatedByNestedInput;
+    structureResolutions?: Prisma.CommunityStructureProposalUpdateManyWithoutResolvedByNestedInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteUpdateManyWithoutInvitedUserNestedInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteUpdateManyWithoutInvitedByNestedInput;
+    communityEvents?: Prisma.CommunityEventUpdateManyWithoutCreatedByNestedInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceUpdateManyWithoutUserNestedInput;
+    portfolioItems?: Prisma.PortfolioItemUpdateManyWithoutOwnerNestedInput;
+};
+export type UserUncheckedUpdateWithoutGiftsReceivedInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    forrumId?: Prisma.IntFieldUpdateOperationsInput | number;
+    email?: Prisma.StringFieldUpdateOperationsInput | string;
+    username?: Prisma.StringFieldUpdateOperationsInput | string;
+    displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+    bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+    state?: Prisma.EnumAccountStateFieldUpdateOperationsInput | $Enums.AccountState;
+    role?: Prisma.EnumGlobalRoleFieldUpdateOperationsInput | $Enums.GlobalRole;
+    emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    onboardingCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput;
+    notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput;
+    verificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput;
+    resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput;
+    createdCommunities?: Prisma.CommunityUncheckedUpdateManyWithoutCreatedByNestedInput;
+    communityRoles?: Prisma.CommunityRoleUncheckedUpdateManyWithoutUserNestedInput;
+    communityRolesGranted?: Prisma.CommunityRoleUncheckedUpdateManyWithoutGrantedByNestedInput;
+    subscriptions?: Prisma.CommunitySubscriptionUncheckedUpdateManyWithoutUserNestedInput;
+    tagSubscriptions?: Prisma.TagSubscriptionUncheckedUpdateManyWithoutUserNestedInput;
+    feedPreference?: Prisma.FeedPreferenceUncheckedUpdateOneWithoutUserNestedInput;
+    hiddenCommunities?: Prisma.HiddenCommunityUncheckedUpdateManyWithoutUserNestedInput;
+    hiddenPublications?: Prisma.HiddenPublicationUncheckedUpdateManyWithoutUserNestedInput;
+    publications?: Prisma.PublicationUncheckedUpdateManyWithoutAuthorNestedInput;
+    comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput;
+    publicationReactions?: Prisma.PublicationReactionUncheckedUpdateManyWithoutUserNestedInput;
+    commentReactions?: Prisma.CommentReactionUncheckedUpdateManyWithoutUserNestedInput;
+    bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput;
+    following?: Prisma.UserFollowUncheckedUpdateManyWithoutFollowerNestedInput;
+    followers?: Prisma.UserFollowUncheckedUpdateManyWithoutFollowingNestedInput;
+    wallAuthored?: Prisma.WallPostUncheckedUpdateManyWithoutAuthorNestedInput;
+    wallReceived?: Prisma.WallPostUncheckedUpdateManyWithoutProfileUserNestedInput;
+    notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput;
+    notificationActions?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput;
+    conversationMemberships?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput;
+    messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput;
+    reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput;
+    auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput;
+    wallet?: Prisma.WalletUncheckedUpdateOneWithoutUserNestedInput;
+    promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutUserNestedInput;
+    mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutOwnerNestedInput;
+    telegramLink?: Prisma.TelegramLinkUncheckedUpdateOneWithoutUserNestedInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
+    telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
+    telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
+    moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
+    moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
+    moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
+    communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
+    pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
+    pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
+    workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
+    workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
+    workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
+    achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventUncheckedUpdateManyWithoutUserNestedInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventUncheckedUpdateManyWithoutActorNestedInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCreatedByNestedInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCounterpartNestedInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewUncheckedUpdateManyWithoutAuthorNestedInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewUncheckedUpdateManyWithoutTargetNestedInput;
+    communityReports?: Prisma.CommunityReportUncheckedUpdateManyWithoutAuthorNestedInput;
+    contentActions?: Prisma.CommunityContentActionUncheckedUpdateManyWithoutActorNestedInput;
+    structureProposals?: Prisma.CommunityStructureProposalUncheckedUpdateManyWithoutCreatedByNestedInput;
+    structureResolutions?: Prisma.CommunityStructureProposalUncheckedUpdateManyWithoutResolvedByNestedInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteUncheckedUpdateManyWithoutInvitedUserNestedInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteUncheckedUpdateManyWithoutInvitedByNestedInput;
+    communityEvents?: Prisma.CommunityEventUncheckedUpdateManyWithoutCreatedByNestedInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceUncheckedUpdateManyWithoutUserNestedInput;
+    portfolioItems?: Prisma.PortfolioItemUncheckedUpdateManyWithoutOwnerNestedInput;
+};
+export type UserUpsertWithoutGiftsSentInput = {
+    update: Prisma.XOR<Prisma.UserUpdateWithoutGiftsSentInput, Prisma.UserUncheckedUpdateWithoutGiftsSentInput>;
+    create: Prisma.XOR<Prisma.UserCreateWithoutGiftsSentInput, Prisma.UserUncheckedCreateWithoutGiftsSentInput>;
+    where?: Prisma.UserWhereInput;
+};
+export type UserUpdateToOneWithWhereWithoutGiftsSentInput = {
+    where?: Prisma.UserWhereInput;
+    data: Prisma.XOR<Prisma.UserUpdateWithoutGiftsSentInput, Prisma.UserUncheckedUpdateWithoutGiftsSentInput>;
+};
+export type UserUpdateWithoutGiftsSentInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    email?: Prisma.StringFieldUpdateOperationsInput | string;
+    username?: Prisma.StringFieldUpdateOperationsInput | string;
+    displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+    bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+    state?: Prisma.EnumAccountStateFieldUpdateOperationsInput | $Enums.AccountState;
+    role?: Prisma.EnumGlobalRoleFieldUpdateOperationsInput | $Enums.GlobalRole;
+    emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    onboardingCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput;
+    notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput;
+    verificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput;
+    resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput;
+    createdCommunities?: Prisma.CommunityUpdateManyWithoutCreatedByNestedInput;
+    communityRoles?: Prisma.CommunityRoleUpdateManyWithoutUserNestedInput;
+    communityRolesGranted?: Prisma.CommunityRoleUpdateManyWithoutGrantedByNestedInput;
+    subscriptions?: Prisma.CommunitySubscriptionUpdateManyWithoutUserNestedInput;
+    tagSubscriptions?: Prisma.TagSubscriptionUpdateManyWithoutUserNestedInput;
+    feedPreference?: Prisma.FeedPreferenceUpdateOneWithoutUserNestedInput;
+    hiddenCommunities?: Prisma.HiddenCommunityUpdateManyWithoutUserNestedInput;
+    hiddenPublications?: Prisma.HiddenPublicationUpdateManyWithoutUserNestedInput;
+    publications?: Prisma.PublicationUpdateManyWithoutAuthorNestedInput;
+    comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput;
+    publicationReactions?: Prisma.PublicationReactionUpdateManyWithoutUserNestedInput;
+    commentReactions?: Prisma.CommentReactionUpdateManyWithoutUserNestedInput;
+    bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput;
+    following?: Prisma.UserFollowUpdateManyWithoutFollowerNestedInput;
+    followers?: Prisma.UserFollowUpdateManyWithoutFollowingNestedInput;
+    wallAuthored?: Prisma.WallPostUpdateManyWithoutAuthorNestedInput;
+    wallReceived?: Prisma.WallPostUpdateManyWithoutProfileUserNestedInput;
+    notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput;
+    notificationActions?: Prisma.NotificationUpdateManyWithoutActorNestedInput;
+    conversationMemberships?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput;
+    messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput;
+    reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput;
+    auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput;
+    wallet?: Prisma.WalletUpdateOneWithoutUserNestedInput;
+    promotions?: Prisma.PromotionOrderUpdateManyWithoutUserNestedInput;
+    mediaAssets?: Prisma.MediaAssetUpdateManyWithoutOwnerNestedInput;
+    telegramLink?: Prisma.TelegramLinkUpdateOneWithoutUserNestedInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
+    telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
+    telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
+    moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
+    moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
+    moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
+    communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
+    pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
+    pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
+    workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
+    workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
+    achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventUpdateManyWithoutUserNestedInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventUpdateManyWithoutActorNestedInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionUpdateManyWithoutCreatedByNestedInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionUpdateManyWithoutCounterpartNestedInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewUpdateManyWithoutAuthorNestedInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewUpdateManyWithoutTargetNestedInput;
+    communityReports?: Prisma.CommunityReportUpdateManyWithoutAuthorNestedInput;
+    contentActions?: Prisma.CommunityContentActionUpdateManyWithoutActorNestedInput;
+    structureProposals?: Prisma.CommunityStructureProposalUpdateManyWithoutCreatedByNestedInput;
+    structureResolutions?: Prisma.CommunityStructureProposalUpdateManyWithoutResolvedByNestedInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteUpdateManyWithoutInvitedUserNestedInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteUpdateManyWithoutInvitedByNestedInput;
+    communityEvents?: Prisma.CommunityEventUpdateManyWithoutCreatedByNestedInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceUpdateManyWithoutUserNestedInput;
+    portfolioItems?: Prisma.PortfolioItemUpdateManyWithoutOwnerNestedInput;
+};
+export type UserUncheckedUpdateWithoutGiftsSentInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    forrumId?: Prisma.IntFieldUpdateOperationsInput | number;
+    email?: Prisma.StringFieldUpdateOperationsInput | string;
+    username?: Prisma.StringFieldUpdateOperationsInput | string;
+    displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+    bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+    state?: Prisma.EnumAccountStateFieldUpdateOperationsInput | $Enums.AccountState;
+    role?: Prisma.EnumGlobalRoleFieldUpdateOperationsInput | $Enums.GlobalRole;
+    emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    onboardingCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput;
+    notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput;
+    verificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput;
+    resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput;
+    createdCommunities?: Prisma.CommunityUncheckedUpdateManyWithoutCreatedByNestedInput;
+    communityRoles?: Prisma.CommunityRoleUncheckedUpdateManyWithoutUserNestedInput;
+    communityRolesGranted?: Prisma.CommunityRoleUncheckedUpdateManyWithoutGrantedByNestedInput;
+    subscriptions?: Prisma.CommunitySubscriptionUncheckedUpdateManyWithoutUserNestedInput;
+    tagSubscriptions?: Prisma.TagSubscriptionUncheckedUpdateManyWithoutUserNestedInput;
+    feedPreference?: Prisma.FeedPreferenceUncheckedUpdateOneWithoutUserNestedInput;
+    hiddenCommunities?: Prisma.HiddenCommunityUncheckedUpdateManyWithoutUserNestedInput;
+    hiddenPublications?: Prisma.HiddenPublicationUncheckedUpdateManyWithoutUserNestedInput;
+    publications?: Prisma.PublicationUncheckedUpdateManyWithoutAuthorNestedInput;
+    comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput;
+    publicationReactions?: Prisma.PublicationReactionUncheckedUpdateManyWithoutUserNestedInput;
+    commentReactions?: Prisma.CommentReactionUncheckedUpdateManyWithoutUserNestedInput;
+    bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput;
+    following?: Prisma.UserFollowUncheckedUpdateManyWithoutFollowerNestedInput;
+    followers?: Prisma.UserFollowUncheckedUpdateManyWithoutFollowingNestedInput;
+    wallAuthored?: Prisma.WallPostUncheckedUpdateManyWithoutAuthorNestedInput;
+    wallReceived?: Prisma.WallPostUncheckedUpdateManyWithoutProfileUserNestedInput;
+    notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput;
+    notificationActions?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput;
+    conversationMemberships?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput;
+    messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput;
+    reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput;
+    auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput;
+    wallet?: Prisma.WalletUncheckedUpdateOneWithoutUserNestedInput;
+    promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutUserNestedInput;
+    mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutOwnerNestedInput;
+    telegramLink?: Prisma.TelegramLinkUncheckedUpdateOneWithoutUserNestedInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
+    telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
+    telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
+    moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
+    moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
+    moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
+    communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
+    pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
+    pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
+    workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
+    workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
+    achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventUncheckedUpdateManyWithoutUserNestedInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventUncheckedUpdateManyWithoutActorNestedInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCreatedByNestedInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCounterpartNestedInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewUncheckedUpdateManyWithoutAuthorNestedInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewUncheckedUpdateManyWithoutTargetNestedInput;
+    communityReports?: Prisma.CommunityReportUncheckedUpdateManyWithoutAuthorNestedInput;
+    contentActions?: Prisma.CommunityContentActionUncheckedUpdateManyWithoutActorNestedInput;
+    structureProposals?: Prisma.CommunityStructureProposalUncheckedUpdateManyWithoutCreatedByNestedInput;
+    structureResolutions?: Prisma.CommunityStructureProposalUncheckedUpdateManyWithoutResolvedByNestedInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteUncheckedUpdateManyWithoutInvitedUserNestedInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteUncheckedUpdateManyWithoutInvitedByNestedInput;
+    communityEvents?: Prisma.CommunityEventUncheckedUpdateManyWithoutCreatedByNestedInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceUncheckedUpdateManyWithoutUserNestedInput;
+    portfolioItems?: Prisma.PortfolioItemUncheckedUpdateManyWithoutOwnerNestedInput;
+};
+export type UserCreateWithoutAchievementsInput = {
+    id?: string;
+    forrumId?: number;
+    email: string;
+    username: string;
+    displayName: string;
+    bio?: string | null;
+    avatarUrl?: string | null;
+    coverUrl?: string | null;
+    wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
+    website?: string | null;
+    location?: string | null;
+    passwordHash: string;
+    state?: $Enums.AccountState;
+    role?: $Enums.GlobalRole;
+    emailVerifiedAt?: Date | string | null;
+    onboardingCompletedAt?: Date | string | null;
+    lastSeenAt?: Date | string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
+    notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput;
+    verificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput;
+    resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput;
+    createdCommunities?: Prisma.CommunityCreateNestedManyWithoutCreatedByInput;
+    communityRoles?: Prisma.CommunityRoleCreateNestedManyWithoutUserInput;
+    communityRolesGranted?: Prisma.CommunityRoleCreateNestedManyWithoutGrantedByInput;
+    subscriptions?: Prisma.CommunitySubscriptionCreateNestedManyWithoutUserInput;
+    tagSubscriptions?: Prisma.TagSubscriptionCreateNestedManyWithoutUserInput;
+    feedPreference?: Prisma.FeedPreferenceCreateNestedOneWithoutUserInput;
+    hiddenCommunities?: Prisma.HiddenCommunityCreateNestedManyWithoutUserInput;
+    hiddenPublications?: Prisma.HiddenPublicationCreateNestedManyWithoutUserInput;
+    publications?: Prisma.PublicationCreateNestedManyWithoutAuthorInput;
+    comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput;
+    publicationReactions?: Prisma.PublicationReactionCreateNestedManyWithoutUserInput;
+    commentReactions?: Prisma.CommentReactionCreateNestedManyWithoutUserInput;
+    bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput;
+    following?: Prisma.UserFollowCreateNestedManyWithoutFollowerInput;
+    followers?: Prisma.UserFollowCreateNestedManyWithoutFollowingInput;
+    wallAuthored?: Prisma.WallPostCreateNestedManyWithoutAuthorInput;
+    wallReceived?: Prisma.WallPostCreateNestedManyWithoutProfileUserInput;
+    notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput;
+    notificationActions?: Prisma.NotificationCreateNestedManyWithoutActorInput;
+    conversationMemberships?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput;
+    messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput;
+    reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput;
+    auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput;
+    wallet?: Prisma.WalletCreateNestedOneWithoutUserInput;
+    promotions?: Prisma.PromotionOrderCreateNestedManyWithoutUserInput;
+    mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutOwnerInput;
+    telegramLink?: Prisma.TelegramLinkCreateNestedOneWithoutUserInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
+    telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
+    telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
+    moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
+    moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
+    moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
+    communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
+    pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
+    pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
+    workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
+    workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
+    workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventCreateNestedManyWithoutUserInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventCreateNestedManyWithoutActorInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCreatedByInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCounterpartInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewCreateNestedManyWithoutAuthorInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewCreateNestedManyWithoutTargetInput;
+    communityReports?: Prisma.CommunityReportCreateNestedManyWithoutAuthorInput;
+    contentActions?: Prisma.CommunityContentActionCreateNestedManyWithoutActorInput;
+    structureProposals?: Prisma.CommunityStructureProposalCreateNestedManyWithoutCreatedByInput;
+    structureResolutions?: Prisma.CommunityStructureProposalCreateNestedManyWithoutResolvedByInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteCreateNestedManyWithoutInvitedUserInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteCreateNestedManyWithoutInvitedByInput;
+    communityEvents?: Prisma.CommunityEventCreateNestedManyWithoutCreatedByInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceCreateNestedManyWithoutUserInput;
+    portfolioItems?: Prisma.PortfolioItemCreateNestedManyWithoutOwnerInput;
+};
+export type UserUncheckedCreateWithoutAchievementsInput = {
+    id?: string;
+    forrumId?: number;
+    email: string;
+    username: string;
+    displayName: string;
+    bio?: string | null;
+    avatarUrl?: string | null;
+    coverUrl?: string | null;
+    wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
+    website?: string | null;
+    location?: string | null;
+    passwordHash: string;
+    state?: $Enums.AccountState;
+    role?: $Enums.GlobalRole;
+    emailVerifiedAt?: Date | string | null;
+    onboardingCompletedAt?: Date | string | null;
+    lastSeenAt?: Date | string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
+    notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput;
+    verificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput;
+    resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput;
+    createdCommunities?: Prisma.CommunityUncheckedCreateNestedManyWithoutCreatedByInput;
+    communityRoles?: Prisma.CommunityRoleUncheckedCreateNestedManyWithoutUserInput;
+    communityRolesGranted?: Prisma.CommunityRoleUncheckedCreateNestedManyWithoutGrantedByInput;
+    subscriptions?: Prisma.CommunitySubscriptionUncheckedCreateNestedManyWithoutUserInput;
+    tagSubscriptions?: Prisma.TagSubscriptionUncheckedCreateNestedManyWithoutUserInput;
+    feedPreference?: Prisma.FeedPreferenceUncheckedCreateNestedOneWithoutUserInput;
+    hiddenCommunities?: Prisma.HiddenCommunityUncheckedCreateNestedManyWithoutUserInput;
+    hiddenPublications?: Prisma.HiddenPublicationUncheckedCreateNestedManyWithoutUserInput;
+    publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutAuthorInput;
+    comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput;
+    publicationReactions?: Prisma.PublicationReactionUncheckedCreateNestedManyWithoutUserInput;
+    commentReactions?: Prisma.CommentReactionUncheckedCreateNestedManyWithoutUserInput;
+    bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput;
+    following?: Prisma.UserFollowUncheckedCreateNestedManyWithoutFollowerInput;
+    followers?: Prisma.UserFollowUncheckedCreateNestedManyWithoutFollowingInput;
+    wallAuthored?: Prisma.WallPostUncheckedCreateNestedManyWithoutAuthorInput;
+    wallReceived?: Prisma.WallPostUncheckedCreateNestedManyWithoutProfileUserInput;
+    notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput;
+    notificationActions?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput;
+    conversationMemberships?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput;
+    messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput;
+    reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput;
+    auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput;
+    wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutUserInput;
+    promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutUserInput;
+    mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutOwnerInput;
+    telegramLink?: Prisma.TelegramLinkUncheckedCreateNestedOneWithoutUserInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
+    telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
+    telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
+    moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
+    moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
+    moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
+    communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
+    pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
+    pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
+    workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     roleEventsReceived?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutUserInput;
@@ -17054,6 +19136,8 @@ export type UserUpdateWithoutAchievementsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -17098,6 +19182,7 @@ export type UserUpdateWithoutAchievementsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -17107,6 +19192,8 @@ export type UserUpdateWithoutAchievementsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     roleEventsReceived?: Prisma.CommunityRoleEventUpdateManyWithoutUserNestedInput;
@@ -17135,6 +19222,8 @@ export type UserUncheckedUpdateWithoutAchievementsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -17179,6 +19268,7 @@ export type UserUncheckedUpdateWithoutAchievementsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -17188,6 +19278,8 @@ export type UserUncheckedUpdateWithoutAchievementsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     roleEventsReceived?: Prisma.CommunityRoleEventUncheckedUpdateManyWithoutUserNestedInput;
@@ -17216,6 +19308,8 @@ export type UserCreateWithoutRoleEventsReceivedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -17260,6 +19354,7 @@ export type UserCreateWithoutRoleEventsReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -17269,6 +19364,8 @@ export type UserCreateWithoutRoleEventsReceivedInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -17297,6 +19394,8 @@ export type UserUncheckedCreateWithoutRoleEventsReceivedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -17341,6 +19440,7 @@ export type UserUncheckedCreateWithoutRoleEventsReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -17350,6 +19450,8 @@ export type UserUncheckedCreateWithoutRoleEventsReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -17382,6 +19484,8 @@ export type UserCreateWithoutRoleEventsCreatedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -17426,6 +19530,7 @@ export type UserCreateWithoutRoleEventsCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -17435,6 +19540,8 @@ export type UserCreateWithoutRoleEventsCreatedInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -17463,6 +19570,8 @@ export type UserUncheckedCreateWithoutRoleEventsCreatedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -17507,6 +19616,7 @@ export type UserUncheckedCreateWithoutRoleEventsCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -17516,6 +19626,8 @@ export type UserUncheckedCreateWithoutRoleEventsCreatedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -17556,6 +19668,8 @@ export type UserUpdateWithoutRoleEventsReceivedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -17600,6 +19714,7 @@ export type UserUpdateWithoutRoleEventsReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -17609,6 +19724,8 @@ export type UserUpdateWithoutRoleEventsReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -17637,6 +19754,8 @@ export type UserUncheckedUpdateWithoutRoleEventsReceivedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -17681,6 +19800,7 @@ export type UserUncheckedUpdateWithoutRoleEventsReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -17690,6 +19810,8 @@ export type UserUncheckedUpdateWithoutRoleEventsReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -17726,6 +19848,8 @@ export type UserUpdateWithoutRoleEventsCreatedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -17770,6 +19894,7 @@ export type UserUpdateWithoutRoleEventsCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -17779,6 +19904,8 @@ export type UserUpdateWithoutRoleEventsCreatedInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -17807,6 +19934,8 @@ export type UserUncheckedUpdateWithoutRoleEventsCreatedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -17851,6 +19980,7 @@ export type UserUncheckedUpdateWithoutRoleEventsCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -17860,6 +19990,8 @@ export type UserUncheckedUpdateWithoutRoleEventsCreatedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -17888,6 +20020,8 @@ export type UserCreateWithoutInteractionsCreatedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -17932,6 +20066,7 @@ export type UserCreateWithoutInteractionsCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -17941,6 +20076,8 @@ export type UserCreateWithoutInteractionsCreatedInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -17969,6 +20106,8 @@ export type UserUncheckedCreateWithoutInteractionsCreatedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -18013,6 +20152,7 @@ export type UserUncheckedCreateWithoutInteractionsCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -18022,6 +20162,8 @@ export type UserUncheckedCreateWithoutInteractionsCreatedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -18054,6 +20196,8 @@ export type UserCreateWithoutInteractionsReceivedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -18098,6 +20242,7 @@ export type UserCreateWithoutInteractionsReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -18107,6 +20252,8 @@ export type UserCreateWithoutInteractionsReceivedInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -18135,6 +20282,8 @@ export type UserUncheckedCreateWithoutInteractionsReceivedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -18179,6 +20328,7 @@ export type UserUncheckedCreateWithoutInteractionsReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -18188,6 +20338,8 @@ export type UserUncheckedCreateWithoutInteractionsReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -18228,6 +20380,8 @@ export type UserUpdateWithoutInteractionsCreatedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -18272,6 +20426,7 @@ export type UserUpdateWithoutInteractionsCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -18281,6 +20436,8 @@ export type UserUpdateWithoutInteractionsCreatedInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -18309,6 +20466,8 @@ export type UserUncheckedUpdateWithoutInteractionsCreatedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -18353,6 +20512,7 @@ export type UserUncheckedUpdateWithoutInteractionsCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -18362,6 +20522,8 @@ export type UserUncheckedUpdateWithoutInteractionsCreatedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -18398,6 +20560,8 @@ export type UserUpdateWithoutInteractionsReceivedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -18442,6 +20606,7 @@ export type UserUpdateWithoutInteractionsReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -18451,6 +20616,8 @@ export type UserUpdateWithoutInteractionsReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -18479,6 +20646,8 @@ export type UserUncheckedUpdateWithoutInteractionsReceivedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -18523,6 +20692,7 @@ export type UserUncheckedUpdateWithoutInteractionsReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -18532,6 +20702,8 @@ export type UserUncheckedUpdateWithoutInteractionsReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -18560,6 +20732,8 @@ export type UserCreateWithoutInteractionReviewsWrittenInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -18604,6 +20778,7 @@ export type UserCreateWithoutInteractionReviewsWrittenInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -18613,6 +20788,8 @@ export type UserCreateWithoutInteractionReviewsWrittenInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -18641,6 +20818,8 @@ export type UserUncheckedCreateWithoutInteractionReviewsWrittenInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -18685,6 +20864,7 @@ export type UserUncheckedCreateWithoutInteractionReviewsWrittenInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -18694,6 +20874,8 @@ export type UserUncheckedCreateWithoutInteractionReviewsWrittenInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -18726,6 +20908,8 @@ export type UserCreateWithoutInteractionReviewsReceivedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -18770,6 +20954,7 @@ export type UserCreateWithoutInteractionReviewsReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -18779,6 +20964,8 @@ export type UserCreateWithoutInteractionReviewsReceivedInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -18807,6 +20994,8 @@ export type UserUncheckedCreateWithoutInteractionReviewsReceivedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -18851,6 +21040,7 @@ export type UserUncheckedCreateWithoutInteractionReviewsReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -18860,6 +21050,8 @@ export type UserUncheckedCreateWithoutInteractionReviewsReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -18900,6 +21092,8 @@ export type UserUpdateWithoutInteractionReviewsWrittenInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -18944,6 +21138,7 @@ export type UserUpdateWithoutInteractionReviewsWrittenInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -18953,6 +21148,8 @@ export type UserUpdateWithoutInteractionReviewsWrittenInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -18981,6 +21178,8 @@ export type UserUncheckedUpdateWithoutInteractionReviewsWrittenInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -19025,6 +21224,7 @@ export type UserUncheckedUpdateWithoutInteractionReviewsWrittenInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -19034,6 +21234,8 @@ export type UserUncheckedUpdateWithoutInteractionReviewsWrittenInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -19070,6 +21272,8 @@ export type UserUpdateWithoutInteractionReviewsReceivedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -19114,6 +21318,7 @@ export type UserUpdateWithoutInteractionReviewsReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -19123,6 +21328,8 @@ export type UserUpdateWithoutInteractionReviewsReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -19151,6 +21358,8 @@ export type UserUncheckedUpdateWithoutInteractionReviewsReceivedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -19195,6 +21404,7 @@ export type UserUncheckedUpdateWithoutInteractionReviewsReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -19204,6 +21414,8 @@ export type UserUncheckedUpdateWithoutInteractionReviewsReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -19232,6 +21444,8 @@ export type UserCreateWithoutCommunityReportsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -19276,6 +21490,7 @@ export type UserCreateWithoutCommunityReportsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -19285,6 +21500,8 @@ export type UserCreateWithoutCommunityReportsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -19313,6 +21530,8 @@ export type UserUncheckedCreateWithoutCommunityReportsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -19357,6 +21576,7 @@ export type UserUncheckedCreateWithoutCommunityReportsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -19366,6 +21586,8 @@ export type UserUncheckedCreateWithoutCommunityReportsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -19406,6 +21628,8 @@ export type UserUpdateWithoutCommunityReportsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -19450,6 +21674,7 @@ export type UserUpdateWithoutCommunityReportsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -19459,6 +21684,8 @@ export type UserUpdateWithoutCommunityReportsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -19487,6 +21714,8 @@ export type UserUncheckedUpdateWithoutCommunityReportsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -19531,6 +21760,7 @@ export type UserUncheckedUpdateWithoutCommunityReportsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -19540,6 +21770,8 @@ export type UserUncheckedUpdateWithoutCommunityReportsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -19568,6 +21800,8 @@ export type UserCreateWithoutContentActionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -19612,6 +21846,7 @@ export type UserCreateWithoutContentActionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -19621,6 +21856,8 @@ export type UserCreateWithoutContentActionsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -19649,6 +21886,8 @@ export type UserUncheckedCreateWithoutContentActionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -19693,6 +21932,7 @@ export type UserUncheckedCreateWithoutContentActionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -19702,6 +21942,8 @@ export type UserUncheckedCreateWithoutContentActionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -19742,6 +21984,8 @@ export type UserUpdateWithoutContentActionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -19786,6 +22030,7 @@ export type UserUpdateWithoutContentActionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -19795,6 +22040,8 @@ export type UserUpdateWithoutContentActionsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -19823,6 +22070,8 @@ export type UserUncheckedUpdateWithoutContentActionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -19867,6 +22116,7 @@ export type UserUncheckedUpdateWithoutContentActionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -19876,6 +22126,8 @@ export type UserUncheckedUpdateWithoutContentActionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -19904,6 +22156,8 @@ export type UserCreateWithoutStructureProposalsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -19948,6 +22202,7 @@ export type UserCreateWithoutStructureProposalsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -19957,6 +22212,8 @@ export type UserCreateWithoutStructureProposalsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -19985,6 +22242,8 @@ export type UserUncheckedCreateWithoutStructureProposalsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -20029,6 +22288,7 @@ export type UserUncheckedCreateWithoutStructureProposalsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -20038,6 +22298,8 @@ export type UserUncheckedCreateWithoutStructureProposalsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -20070,6 +22332,8 @@ export type UserCreateWithoutStructureResolutionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -20114,6 +22378,7 @@ export type UserCreateWithoutStructureResolutionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -20123,6 +22388,8 @@ export type UserCreateWithoutStructureResolutionsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -20151,6 +22418,8 @@ export type UserUncheckedCreateWithoutStructureResolutionsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -20195,6 +22464,7 @@ export type UserUncheckedCreateWithoutStructureResolutionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -20204,6 +22474,8 @@ export type UserUncheckedCreateWithoutStructureResolutionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -20244,6 +22516,8 @@ export type UserUpdateWithoutStructureProposalsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -20288,6 +22562,7 @@ export type UserUpdateWithoutStructureProposalsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -20297,6 +22572,8 @@ export type UserUpdateWithoutStructureProposalsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -20325,6 +22602,8 @@ export type UserUncheckedUpdateWithoutStructureProposalsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -20369,6 +22648,7 @@ export type UserUncheckedUpdateWithoutStructureProposalsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -20378,6 +22658,8 @@ export type UserUncheckedUpdateWithoutStructureProposalsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -20414,6 +22696,8 @@ export type UserUpdateWithoutStructureResolutionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -20458,6 +22742,7 @@ export type UserUpdateWithoutStructureResolutionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -20467,6 +22752,8 @@ export type UserUpdateWithoutStructureResolutionsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -20495,6 +22782,8 @@ export type UserUncheckedUpdateWithoutStructureResolutionsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -20539,6 +22828,7 @@ export type UserUncheckedUpdateWithoutStructureResolutionsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -20548,6 +22838,8 @@ export type UserUncheckedUpdateWithoutStructureResolutionsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -20576,6 +22868,8 @@ export type UserCreateWithoutRoleInvitesReceivedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -20620,6 +22914,7 @@ export type UserCreateWithoutRoleInvitesReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -20629,6 +22924,8 @@ export type UserCreateWithoutRoleInvitesReceivedInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -20657,6 +22954,8 @@ export type UserUncheckedCreateWithoutRoleInvitesReceivedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -20701,6 +23000,7 @@ export type UserUncheckedCreateWithoutRoleInvitesReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -20710,6 +23010,8 @@ export type UserUncheckedCreateWithoutRoleInvitesReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -20742,6 +23044,8 @@ export type UserCreateWithoutRoleInvitesCreatedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -20786,6 +23090,7 @@ export type UserCreateWithoutRoleInvitesCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -20795,6 +23100,8 @@ export type UserCreateWithoutRoleInvitesCreatedInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -20823,6 +23130,8 @@ export type UserUncheckedCreateWithoutRoleInvitesCreatedInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -20867,6 +23176,7 @@ export type UserUncheckedCreateWithoutRoleInvitesCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -20876,6 +23186,8 @@ export type UserUncheckedCreateWithoutRoleInvitesCreatedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -20916,6 +23228,8 @@ export type UserUpdateWithoutRoleInvitesReceivedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -20960,6 +23274,7 @@ export type UserUpdateWithoutRoleInvitesReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -20969,6 +23284,8 @@ export type UserUpdateWithoutRoleInvitesReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -20997,6 +23314,8 @@ export type UserUncheckedUpdateWithoutRoleInvitesReceivedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -21041,6 +23360,7 @@ export type UserUncheckedUpdateWithoutRoleInvitesReceivedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -21050,6 +23370,8 @@ export type UserUncheckedUpdateWithoutRoleInvitesReceivedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -21086,6 +23408,8 @@ export type UserUpdateWithoutRoleInvitesCreatedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -21130,6 +23454,7 @@ export type UserUpdateWithoutRoleInvitesCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -21139,6 +23464,8 @@ export type UserUpdateWithoutRoleInvitesCreatedInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -21167,6 +23494,8 @@ export type UserUncheckedUpdateWithoutRoleInvitesCreatedInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -21211,6 +23540,7 @@ export type UserUncheckedUpdateWithoutRoleInvitesCreatedInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -21220,6 +23550,8 @@ export type UserUncheckedUpdateWithoutRoleInvitesCreatedInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -21248,6 +23580,8 @@ export type UserCreateWithoutCommunityEventsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -21292,6 +23626,7 @@ export type UserCreateWithoutCommunityEventsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -21301,6 +23636,8 @@ export type UserCreateWithoutCommunityEventsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -21329,6 +23666,8 @@ export type UserUncheckedCreateWithoutCommunityEventsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -21373,6 +23712,7 @@ export type UserUncheckedCreateWithoutCommunityEventsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -21382,6 +23722,8 @@ export type UserUncheckedCreateWithoutCommunityEventsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -21422,6 +23764,8 @@ export type UserUpdateWithoutCommunityEventsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -21466,6 +23810,7 @@ export type UserUpdateWithoutCommunityEventsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -21475,6 +23820,8 @@ export type UserUpdateWithoutCommunityEventsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -21503,6 +23850,8 @@ export type UserUncheckedUpdateWithoutCommunityEventsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -21547,6 +23896,7 @@ export type UserUncheckedUpdateWithoutCommunityEventsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -21556,6 +23906,8 @@ export type UserUncheckedUpdateWithoutCommunityEventsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -21584,6 +23936,8 @@ export type UserCreateWithoutEventAttendancesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -21628,6 +23982,7 @@ export type UserCreateWithoutEventAttendancesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -21637,6 +23992,8 @@ export type UserCreateWithoutEventAttendancesInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -21665,6 +24022,8 @@ export type UserUncheckedCreateWithoutEventAttendancesInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -21709,6 +24068,7 @@ export type UserUncheckedCreateWithoutEventAttendancesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -21718,6 +24078,8 @@ export type UserUncheckedCreateWithoutEventAttendancesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -21758,6 +24120,8 @@ export type UserUpdateWithoutEventAttendancesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -21802,6 +24166,7 @@ export type UserUpdateWithoutEventAttendancesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -21811,6 +24176,8 @@ export type UserUpdateWithoutEventAttendancesInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -21839,6 +24206,8 @@ export type UserUncheckedUpdateWithoutEventAttendancesInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -21883,6 +24252,7 @@ export type UserUncheckedUpdateWithoutEventAttendancesInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -21892,6 +24262,8 @@ export type UserUncheckedUpdateWithoutEventAttendancesInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -21920,6 +24292,8 @@ export type UserCreateWithoutPortfolioItemsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -21964,6 +24338,7 @@ export type UserCreateWithoutPortfolioItemsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
@@ -21973,6 +24348,8 @@ export type UserCreateWithoutPortfolioItemsInput = {
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
@@ -22001,6 +24378,8 @@ export type UserUncheckedCreateWithoutPortfolioItemsInput = {
     avatarUrl?: string | null;
     coverUrl?: string | null;
     wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: string | null;
     location?: string | null;
     passwordHash: string;
@@ -22045,6 +24424,7 @@ export type UserUncheckedCreateWithoutPortfolioItemsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
     telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
     moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
@@ -22054,6 +24434,8 @@ export type UserUncheckedCreateWithoutPortfolioItemsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
@@ -22094,6 +24476,8 @@ export type UserUpdateWithoutPortfolioItemsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -22138,6 +24522,7 @@ export type UserUpdateWithoutPortfolioItemsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
@@ -22147,6 +24532,8 @@ export type UserUpdateWithoutPortfolioItemsInput = {
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
@@ -22175,6 +24562,8 @@ export type UserUncheckedUpdateWithoutPortfolioItemsInput = {
     avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -22219,6 +24608,7 @@ export type UserUncheckedUpdateWithoutPortfolioItemsInput = {
     telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
     telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
     telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
     moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
@@ -22228,6 +24618,8 @@ export type UserUncheckedUpdateWithoutPortfolioItemsInput = {
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
     workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
     workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
@@ -22277,6 +24669,7 @@ export type UserCountOutputType = {
     telegramLinkCodes: number;
     telegramChannels: number;
     telegramShares: number;
+    mediaPartners: number;
     moderationActions: number;
     moderationActionsMade: number;
     moderationAppeals: number;
@@ -22286,6 +24679,8 @@ export type UserCountOutputType = {
     pollsCreated: number;
     pollVotes: number;
     workshopItems: number;
+    giftsReceived: number;
+    giftsSent: number;
     workshopReviews: number;
     workshopLikes: number;
     achievements: number;
@@ -22336,6 +24731,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
     telegramLinkCodes?: boolean | UserCountOutputTypeCountTelegramLinkCodesArgs;
     telegramChannels?: boolean | UserCountOutputTypeCountTelegramChannelsArgs;
     telegramShares?: boolean | UserCountOutputTypeCountTelegramSharesArgs;
+    mediaPartners?: boolean | UserCountOutputTypeCountMediaPartnersArgs;
     moderationActions?: boolean | UserCountOutputTypeCountModerationActionsArgs;
     moderationActionsMade?: boolean | UserCountOutputTypeCountModerationActionsMadeArgs;
     moderationAppeals?: boolean | UserCountOutputTypeCountModerationAppealsArgs;
@@ -22345,6 +24741,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
     pollsCreated?: boolean | UserCountOutputTypeCountPollsCreatedArgs;
     pollVotes?: boolean | UserCountOutputTypeCountPollVotesArgs;
     workshopItems?: boolean | UserCountOutputTypeCountWorkshopItemsArgs;
+    giftsReceived?: boolean | UserCountOutputTypeCountGiftsReceivedArgs;
+    giftsSent?: boolean | UserCountOutputTypeCountGiftsSentArgs;
     workshopReviews?: boolean | UserCountOutputTypeCountWorkshopReviewsArgs;
     workshopLikes?: boolean | UserCountOutputTypeCountWorkshopLikesArgs;
     achievements?: boolean | UserCountOutputTypeCountAchievementsArgs;
@@ -22457,6 +24855,9 @@ export type UserCountOutputTypeCountTelegramChannelsArgs<ExtArgs extends runtime
 export type UserCountOutputTypeCountTelegramSharesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.TelegramShareWhereInput;
 };
+export type UserCountOutputTypeCountMediaPartnersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.MediaPartnerWhereInput;
+};
 export type UserCountOutputTypeCountModerationActionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.ModerationActionWhereInput;
 };
@@ -22483,6 +24884,12 @@ export type UserCountOutputTypeCountPollVotesArgs<ExtArgs extends runtime.Types.
 };
 export type UserCountOutputTypeCountWorkshopItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.WorkshopItemWhereInput;
+};
+export type UserCountOutputTypeCountGiftsReceivedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.UserGiftWhereInput;
+};
+export type UserCountOutputTypeCountGiftsSentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.UserGiftWhereInput;
 };
 export type UserCountOutputTypeCountWorkshopReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.WorkshopItemWhereInput;
@@ -22548,6 +24955,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
     avatarUrl?: boolean;
     coverUrl?: boolean;
     wallPrivacy?: boolean;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: boolean;
     location?: boolean;
     passwordHash?: boolean;
@@ -22592,6 +25001,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
     telegramLinkCodes?: boolean | Prisma.User$telegramLinkCodesArgs<ExtArgs>;
     telegramChannels?: boolean | Prisma.User$telegramChannelsArgs<ExtArgs>;
     telegramShares?: boolean | Prisma.User$telegramSharesArgs<ExtArgs>;
+    mediaPartners?: boolean | Prisma.User$mediaPartnersArgs<ExtArgs>;
     moderationActions?: boolean | Prisma.User$moderationActionsArgs<ExtArgs>;
     moderationActionsMade?: boolean | Prisma.User$moderationActionsMadeArgs<ExtArgs>;
     moderationAppeals?: boolean | Prisma.User$moderationAppealsArgs<ExtArgs>;
@@ -22601,6 +25011,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
     pollsCreated?: boolean | Prisma.User$pollsCreatedArgs<ExtArgs>;
     pollVotes?: boolean | Prisma.User$pollVotesArgs<ExtArgs>;
     workshopItems?: boolean | Prisma.User$workshopItemsArgs<ExtArgs>;
+    giftsReceived?: boolean | Prisma.User$giftsReceivedArgs<ExtArgs>;
+    giftsSent?: boolean | Prisma.User$giftsSentArgs<ExtArgs>;
     workshopReviews?: boolean | Prisma.User$workshopReviewsArgs<ExtArgs>;
     workshopLikes?: boolean | Prisma.User$workshopLikesArgs<ExtArgs>;
     achievements?: boolean | Prisma.User$achievementsArgs<ExtArgs>;
@@ -22631,6 +25043,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
     avatarUrl?: boolean;
     coverUrl?: boolean;
     wallPrivacy?: boolean;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: boolean;
     location?: boolean;
     passwordHash?: boolean;
@@ -22652,6 +25066,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
     avatarUrl?: boolean;
     coverUrl?: boolean;
     wallPrivacy?: boolean;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: boolean;
     location?: boolean;
     passwordHash?: boolean;
@@ -22673,6 +25089,8 @@ export type UserSelectScalar = {
     avatarUrl?: boolean;
     coverUrl?: boolean;
     wallPrivacy?: boolean;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
     website?: boolean;
     location?: boolean;
     passwordHash?: boolean;
@@ -22684,7 +25102,7 @@ export type UserSelectScalar = {
     createdAt?: boolean;
     updatedAt?: boolean;
 };
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "forrumId" | "email" | "username" | "displayName" | "bio" | "avatarUrl" | "coverUrl" | "wallPrivacy" | "website" | "location" | "passwordHash" | "state" | "role" | "emailVerifiedAt" | "onboardingCompletedAt" | "lastSeenAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>;
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "forrumId" | "email" | "username" | "displayName" | "bio" | "avatarUrl" | "coverUrl" | "wallPrivacy" | "showFavorites" | "showSubscriptions" | "website" | "location" | "passwordHash" | "state" | "role" | "emailVerifiedAt" | "onboardingCompletedAt" | "lastSeenAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>;
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>;
     notificationPreference?: boolean | Prisma.User$notificationPreferenceArgs<ExtArgs>;
@@ -22720,6 +25138,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     telegramLinkCodes?: boolean | Prisma.User$telegramLinkCodesArgs<ExtArgs>;
     telegramChannels?: boolean | Prisma.User$telegramChannelsArgs<ExtArgs>;
     telegramShares?: boolean | Prisma.User$telegramSharesArgs<ExtArgs>;
+    mediaPartners?: boolean | Prisma.User$mediaPartnersArgs<ExtArgs>;
     moderationActions?: boolean | Prisma.User$moderationActionsArgs<ExtArgs>;
     moderationActionsMade?: boolean | Prisma.User$moderationActionsMadeArgs<ExtArgs>;
     moderationAppeals?: boolean | Prisma.User$moderationAppealsArgs<ExtArgs>;
@@ -22729,6 +25148,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     pollsCreated?: boolean | Prisma.User$pollsCreatedArgs<ExtArgs>;
     pollVotes?: boolean | Prisma.User$pollVotesArgs<ExtArgs>;
     workshopItems?: boolean | Prisma.User$workshopItemsArgs<ExtArgs>;
+    giftsReceived?: boolean | Prisma.User$giftsReceivedArgs<ExtArgs>;
+    giftsSent?: boolean | Prisma.User$giftsSentArgs<ExtArgs>;
     workshopReviews?: boolean | Prisma.User$workshopReviewsArgs<ExtArgs>;
     workshopLikes?: boolean | Prisma.User$workshopLikesArgs<ExtArgs>;
     achievements?: boolean | Prisma.User$achievementsArgs<ExtArgs>;
@@ -22788,6 +25209,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
         telegramLinkCodes: Prisma.$TelegramLinkCodePayload<ExtArgs>[];
         telegramChannels: Prisma.$TelegramChannelPayload<ExtArgs>[];
         telegramShares: Prisma.$TelegramSharePayload<ExtArgs>[];
+        mediaPartners: Prisma.$MediaPartnerPayload<ExtArgs>[];
         moderationActions: Prisma.$ModerationActionPayload<ExtArgs>[];
         moderationActionsMade: Prisma.$ModerationActionPayload<ExtArgs>[];
         moderationAppeals: Prisma.$ModerationAppealPayload<ExtArgs>[];
@@ -22797,6 +25219,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
         pollsCreated: Prisma.$CommunityPollPayload<ExtArgs>[];
         pollVotes: Prisma.$PollVotePayload<ExtArgs>[];
         workshopItems: Prisma.$WorkshopItemPayload<ExtArgs>[];
+        giftsReceived: Prisma.$UserGiftPayload<ExtArgs>[];
+        giftsSent: Prisma.$UserGiftPayload<ExtArgs>[];
         workshopReviews: Prisma.$WorkshopItemPayload<ExtArgs>[];
         workshopLikes: Prisma.$WorkshopLikePayload<ExtArgs>[];
         achievements: Prisma.$UserAchievementPayload<ExtArgs>[];
@@ -22826,6 +25250,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
         avatarUrl: string | null;
         coverUrl: string | null;
         wallPrivacy: $Enums.WallPrivacy;
+        showFavorites: boolean;
+        showSubscriptions: boolean;
         website: string | null;
         location: string | null;
         passwordHash: string;
@@ -22922,6 +25348,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
     telegramLinkCodes<T extends Prisma.User$telegramLinkCodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$telegramLinkCodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TelegramLinkCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     telegramChannels<T extends Prisma.User$telegramChannelsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$telegramChannelsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TelegramChannelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     telegramShares<T extends Prisma.User$telegramSharesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$telegramSharesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TelegramSharePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    mediaPartners<T extends Prisma.User$mediaPartnersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$mediaPartnersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MediaPartnerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     moderationActions<T extends Prisma.User$moderationActionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$moderationActionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ModerationActionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     moderationActionsMade<T extends Prisma.User$moderationActionsMadeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$moderationActionsMadeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ModerationActionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     moderationAppeals<T extends Prisma.User$moderationAppealsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$moderationAppealsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ModerationAppealPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
@@ -22931,6 +25358,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
     pollsCreated<T extends Prisma.User$pollsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pollsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityPollPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     pollVotes<T extends Prisma.User$pollVotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pollVotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PollVotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     workshopItems<T extends Prisma.User$workshopItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$workshopItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkshopItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    giftsReceived<T extends Prisma.User$giftsReceivedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$giftsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserGiftPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    giftsSent<T extends Prisma.User$giftsSentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$giftsSentArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserGiftPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     workshopReviews<T extends Prisma.User$workshopReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$workshopReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkshopItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     workshopLikes<T extends Prisma.User$workshopLikesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$workshopLikesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkshopLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     achievements<T extends Prisma.User$achievementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$achievementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
@@ -22963,6 +25392,8 @@ export interface UserFieldRefs {
     readonly avatarUrl: Prisma.FieldRef<"User", 'String'>;
     readonly coverUrl: Prisma.FieldRef<"User", 'String'>;
     readonly wallPrivacy: Prisma.FieldRef<"User", 'WallPrivacy'>;
+    readonly showFavorites: Prisma.FieldRef<"User", 'Boolean'>;
+    readonly showSubscriptions: Prisma.FieldRef<"User", 'Boolean'>;
     readonly website: Prisma.FieldRef<"User", 'String'>;
     readonly location: Prisma.FieldRef<"User", 'String'>;
     readonly passwordHash: Prisma.FieldRef<"User", 'String'>;
@@ -23426,6 +25857,17 @@ export type User$telegramSharesArgs<ExtArgs extends runtime.Types.Extensions.Int
     skip?: number;
     distinct?: Prisma.TelegramShareScalarFieldEnum | Prisma.TelegramShareScalarFieldEnum[];
 };
+export type User$mediaPartnersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.MediaPartnerSelect<ExtArgs> | null;
+    omit?: Prisma.MediaPartnerOmit<ExtArgs> | null;
+    include?: Prisma.MediaPartnerInclude<ExtArgs> | null;
+    where?: Prisma.MediaPartnerWhereInput;
+    orderBy?: Prisma.MediaPartnerOrderByWithRelationInput | Prisma.MediaPartnerOrderByWithRelationInput[];
+    cursor?: Prisma.MediaPartnerWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.MediaPartnerScalarFieldEnum | Prisma.MediaPartnerScalarFieldEnum[];
+};
 export type User$moderationActionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.ModerationActionSelect<ExtArgs> | null;
     omit?: Prisma.ModerationActionOmit<ExtArgs> | null;
@@ -23524,6 +25966,28 @@ export type User$workshopItemsArgs<ExtArgs extends runtime.Types.Extensions.Inte
     take?: number;
     skip?: number;
     distinct?: Prisma.WorkshopItemScalarFieldEnum | Prisma.WorkshopItemScalarFieldEnum[];
+};
+export type User$giftsReceivedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.UserGiftSelect<ExtArgs> | null;
+    omit?: Prisma.UserGiftOmit<ExtArgs> | null;
+    include?: Prisma.UserGiftInclude<ExtArgs> | null;
+    where?: Prisma.UserGiftWhereInput;
+    orderBy?: Prisma.UserGiftOrderByWithRelationInput | Prisma.UserGiftOrderByWithRelationInput[];
+    cursor?: Prisma.UserGiftWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.UserGiftScalarFieldEnum | Prisma.UserGiftScalarFieldEnum[];
+};
+export type User$giftsSentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.UserGiftSelect<ExtArgs> | null;
+    omit?: Prisma.UserGiftOmit<ExtArgs> | null;
+    include?: Prisma.UserGiftInclude<ExtArgs> | null;
+    where?: Prisma.UserGiftWhereInput;
+    orderBy?: Prisma.UserGiftOrderByWithRelationInput | Prisma.UserGiftOrderByWithRelationInput[];
+    cursor?: Prisma.UserGiftWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.UserGiftScalarFieldEnum | Prisma.UserGiftScalarFieldEnum[];
 };
 export type User$workshopReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.WorkshopItemSelect<ExtArgs> | null;

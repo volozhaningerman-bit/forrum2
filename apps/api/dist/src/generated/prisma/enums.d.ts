@@ -154,6 +154,19 @@ export declare const WorkshopItemStatus: {
     readonly REJECTED: "REJECTED";
 };
 export type WorkshopItemStatus = (typeof WorkshopItemStatus)[keyof typeof WorkshopItemStatus];
+export declare const MediaPartnerStatus: {
+    readonly REVIEW: "REVIEW";
+    readonly ACTIVE: "ACTIVE";
+    readonly REJECTED: "REJECTED";
+};
+export type MediaPartnerStatus = (typeof MediaPartnerStatus)[keyof typeof MediaPartnerStatus];
+export declare const MediaPartnerType: {
+    readonly STREAMER: "STREAMER";
+    readonly VIDEO_CREATOR: "VIDEO_CREATOR";
+    readonly BLOGGER: "BLOGGER";
+    readonly CHANNEL: "CHANNEL";
+};
+export type MediaPartnerType = (typeof MediaPartnerType)[keyof typeof MediaPartnerType];
 export declare const AchievementCategory: {
     readonly ACCOUNT: "ACCOUNT";
     readonly CONTRIBUTION: "CONTRIBUTION";
@@ -186,6 +199,12 @@ export declare const ReviewVerdict: {
     readonly NEGATIVE: "NEGATIVE";
 };
 export type ReviewVerdict = (typeof ReviewVerdict)[keyof typeof ReviewVerdict];
+export declare const ReviewModerationStatus: {
+    readonly REVIEW: "REVIEW";
+    readonly PUBLISHED: "PUBLISHED";
+    readonly REJECTED: "REJECTED";
+};
+export type ReviewModerationStatus = (typeof ReviewModerationStatus)[keyof typeof ReviewModerationStatus];
 export declare const CommunityContentActionType: {
     readonly PIN: "PIN";
     readonly UNPIN: "UNPIN";

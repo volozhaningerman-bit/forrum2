@@ -66,8 +66,10 @@ export const ModelName = {
     CommunityPoll: 'CommunityPoll',
     PollOption: 'PollOption',
     PollVote: 'PollVote',
+    MediaPartner: 'MediaPartner',
     WorkshopItem: 'WorkshopItem',
     WorkshopLike: 'WorkshopLike',
+    UserGift: 'UserGift',
     AchievementDefinition: 'AchievementDefinition',
     UserAchievement: 'UserAchievement',
     CommunityRoleEvent: 'CommunityRoleEvent',
@@ -98,6 +100,8 @@ export const UserScalarFieldEnum = {
     avatarUrl: 'avatarUrl',
     coverUrl: 'coverUrl',
     wallPrivacy: 'wallPrivacy',
+    showFavorites: 'showFavorites',
+    showSubscriptions: 'showSubscriptions',
     website: 'website',
     location: 'location',
     passwordHash: 'passwordHash',
@@ -486,6 +490,20 @@ export const PollVoteScalarFieldEnum = {
     voteClass: 'voteClass',
     createdAt: 'createdAt'
 };
+export const MediaPartnerScalarFieldEnum = {
+    id: 'id',
+    userId: 'userId',
+    type: 'type',
+    status: 'status',
+    displayName: 'displayName',
+    platform: 'platform',
+    channelUrl: 'channelUrl',
+    audienceText: 'audienceText',
+    description: 'description',
+    resolutionNote: 'resolutionNote',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
 export const WorkshopItemScalarFieldEnum = {
     id: 'id',
     authorId: 'authorId',
@@ -502,6 +520,14 @@ export const WorkshopItemScalarFieldEnum = {
 export const WorkshopLikeScalarFieldEnum = {
     itemId: 'itemId',
     userId: 'userId',
+    createdAt: 'createdAt'
+};
+export const UserGiftScalarFieldEnum = {
+    id: 'id',
+    recipientId: 'recipientId',
+    senderId: 'senderId',
+    giftId: 'giftId',
+    message: 'message',
     createdAt: 'createdAt'
 };
 export const AchievementDefinitionScalarFieldEnum = {
@@ -564,6 +590,9 @@ export const ProfileReviewScalarFieldEnum = {
     targetId: 'targetId',
     evidenceMediaId: 'evidenceMediaId',
     verdict: 'verdict',
+    moderationStatus: 'moderationStatus',
+    moderationNote: 'moderationNote',
+    moderatedAt: 'moderatedAt',
     body: 'body',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'

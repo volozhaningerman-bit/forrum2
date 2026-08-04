@@ -15,7 +15,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../auth/current-user.js';
 import { SessionGuard } from '../auth/session.guard.js';
 import { VerifiedGuard } from '../auth/verified.guard.js';
-import { CancelInteractionDto, CreateInteractionDto, CreateProfileReviewDto } from './dto.js';
+import { AdminGuard } from '../auth/admin.guard.js';
+import { CancelInteractionDto, CreateInteractionDto, CreateProfileReviewDto, ModerateProfileReviewDto } from './dto.js';
 import { InteractionsService } from './interactions.service.js';
 let InteractionsController = class InteractionsController {
     service;
@@ -97,4 +98,38 @@ InteractionsController = __decorate([
     __metadata("design:paramtypes", [InteractionsService])
 ], InteractionsController);
 export { InteractionsController };
+let InteractionsAdminController = class InteractionsAdminController {
+    service;
+    constructor(service) {
+        this.service = service;
+    }
+    list() {
+        return this.service.reviewsForModeration();
+    }
+    moderate(id, user, dto) {
+        return this.service.moderateReview(id, user.id, dto.status, dto.note);
+    }
+};
+__decorate([
+    Get(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], InteractionsAdminController.prototype, "list", null);
+__decorate([
+    Post(':id/moderate'),
+    __param(0, Param('id')),
+    __param(1, CurrentUser()),
+    __param(2, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, ModerateProfileReviewDto]),
+    __metadata("design:returntype", void 0)
+], InteractionsAdminController.prototype, "moderate", null);
+InteractionsAdminController = __decorate([
+    ApiTags('admin-reviews'),
+    Controller('admin/reviews'),
+    UseGuards(SessionGuard, VerifiedGuard, AdminGuard),
+    __metadata("design:paramtypes", [InteractionsService])
+], InteractionsAdminController);
+export { InteractionsAdminController };
 //# sourceMappingURL=interactions.controller.js.map

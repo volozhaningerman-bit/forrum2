@@ -154,10 +154,16 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
     get pollVote(): Prisma.PollVoteDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
+    get mediaPartner(): Prisma.MediaPartnerDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
     get workshopItem(): Prisma.WorkshopItemDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
     get workshopLike(): Prisma.WorkshopLikeDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    get userGift(): Prisma.UserGiftDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
     get achievementDefinition(): Prisma.AchievementDefinitionDelegate<ExtArgs, {

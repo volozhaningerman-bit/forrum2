@@ -1,5 +1,5 @@
 import type { User } from '../generated/prisma/client.js';
-import { CancelInteractionDto, CreateInteractionDto, CreateProfileReviewDto } from './dto.js';
+import { CancelInteractionDto, CreateInteractionDto, CreateProfileReviewDto, ModerateProfileReviewDto } from './dto.js';
 import { InteractionsService } from './interactions.service.js';
 export declare class InteractionsController {
     private readonly service;
@@ -21,6 +21,8 @@ export declare class InteractionsController {
             body: string;
             evidenceMediaId: string | null;
             verdict: import("../generated/prisma/enums.js").ReviewVerdict;
+            moderationStatus: import("../generated/prisma/enums.js").ReviewModerationStatus;
+            moderationNote: string | null;
         };
         community: {
             slug: string;
@@ -51,6 +53,8 @@ export declare class InteractionsController {
             body: string;
             evidenceMediaId: string | null;
             verdict: import("../generated/prisma/enums.js").ReviewVerdict;
+            moderationStatus: import("../generated/prisma/enums.js").ReviewModerationStatus;
+            moderationNote: string | null;
         }[];
         id: string;
         createdAt: Date;
@@ -87,5 +91,47 @@ export declare class InteractionsController {
     }>;
     review(id: string, user: User, dto: CreateProfileReviewDto): Promise<{
         id: string;
+        moderationStatus: import("../generated/prisma/enums.js").ReviewModerationStatus;
+    }>;
+}
+export declare class InteractionsAdminController {
+    private readonly service;
+    constructor(service: InteractionsService);
+    list(): Promise<({
+        author: {
+            username: string;
+            displayName: string;
+            avatarUrl: string | null;
+        };
+        interaction: {
+            id: string;
+            type: import("../generated/prisma/enums.js").InteractionType;
+            title: string;
+        };
+        target: {
+            username: string;
+            displayName: string;
+            avatarUrl: string | null;
+        };
+        evidenceMedia: {
+            id: string;
+        } | null;
+    } & {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        body: string;
+        authorId: string;
+        interactionId: string;
+        targetId: string;
+        evidenceMediaId: string | null;
+        verdict: import("../generated/prisma/enums.js").ReviewVerdict;
+        moderationStatus: import("../generated/prisma/enums.js").ReviewModerationStatus;
+        moderationNote: string | null;
+        moderatedAt: Date | null;
+    })[]>;
+    moderate(id: string, user: User, dto: ModerateProfileReviewDto): Promise<{
+        ok: boolean;
+        moderationStatus: "PUBLISHED" | "REJECTED";
     }>;
 }

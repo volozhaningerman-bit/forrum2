@@ -42,6 +42,8 @@ export declare class AuthController {
             avatarUrl: string | null;
             coverUrl: string | null;
             wallPrivacy: string;
+            showFavorites: boolean;
+            showSubscriptions: boolean;
             emailVerified: boolean;
             onboardingCompleted: boolean;
             state: import("../generated/prisma/enums.js").AccountState;
@@ -82,6 +84,8 @@ export declare class AuthController {
             avatarUrl: string | null;
             coverUrl: string | null;
             wallPrivacy: string;
+            showFavorites: boolean;
+            showSubscriptions: boolean;
             emailVerified: boolean;
             onboardingCompleted: boolean;
             state: import("../generated/prisma/enums.js").AccountState;
@@ -103,6 +107,8 @@ export declare class AuthController {
             avatarUrl: string | null;
             coverUrl: string | null;
             wallPrivacy: string;
+            showFavorites: boolean;
+            showSubscriptions: boolean;
             emailVerified: boolean;
             onboardingCompleted: boolean;
             state: import("../generated/prisma/enums.js").AccountState;
@@ -123,6 +129,8 @@ export declare class AuthController {
             avatarUrl: string | null;
             coverUrl: string | null;
             wallPrivacy: string;
+            showFavorites: boolean;
+            showSubscriptions: boolean;
             emailVerified: boolean;
             onboardingCompleted: boolean;
             state: import("../generated/prisma/enums.js").AccountState;

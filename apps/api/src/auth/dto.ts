@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsEmail, IsEnum, IsOptional, IsString, Length, Matches } from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString, Length, Matches } from 'class-validator';
 import { WallPrivacy } from '../generated/prisma/client.js';
 
 const passwordPattern = /^(?=.*[A-Za-zА-Яа-яЁё])(?=.*\d).+$/u;
@@ -33,6 +33,8 @@ export class UpdateProfileDto {
   @ApiPropertyOptional() @Transform(trimOptional) @IsOptional() @IsString() @Length(0, 200, { message: 'Адрес сайта не должен превышать 200 символов' }) website?: string;
   @ApiPropertyOptional() @Transform(trimOptional) @IsOptional() @IsString() @Length(0, 100, { message: 'Местоположение не должно превышать 100 символов' }) location?: string;
   @ApiPropertyOptional({ enum: WallPrivacy }) @IsOptional() @IsEnum(WallPrivacy, { message: 'Неизвестный режим приватности стены' }) wallPrivacy?: WallPrivacy;
+  @ApiPropertyOptional() @IsOptional() @IsBoolean() showFavorites?: boolean;
+  @ApiPropertyOptional() @IsOptional() @IsBoolean() showSubscriptions?: boolean;
 }
 
 export class RequestPasswordResetDto {

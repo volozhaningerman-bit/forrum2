@@ -1,4 +1,4 @@
-import { InteractionStatus, type InteractionType, type ReviewVerdict } from '../generated/prisma/client.js';
+import { InteractionStatus, ReviewModerationStatus, type InteractionType, type ReviewVerdict } from '../generated/prisma/client.js';
 import { NotificationsService } from '../notifications/notifications.service.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import type { CreateInteractionDto } from './dto.js';
@@ -24,6 +24,8 @@ export declare class InteractionsService {
             body: string;
             evidenceMediaId: string | null;
             verdict: ReviewVerdict;
+            moderationStatus: ReviewModerationStatus;
+            moderationNote: string | null;
         };
         community: {
             slug: string;
@@ -54,6 +56,8 @@ export declare class InteractionsService {
             body: string;
             evidenceMediaId: string | null;
             verdict: ReviewVerdict;
+            moderationStatus: ReviewModerationStatus;
+            moderationNote: string | null;
         }[];
         id: string;
         createdAt: Date;
@@ -90,5 +94,43 @@ export declare class InteractionsService {
     }>;
     review(id: string, actorId: string, verdict: ReviewVerdict, bodyInput: string, evidenceMediaId?: string): Promise<{
         id: string;
+        moderationStatus: ReviewModerationStatus;
+    }>;
+    reviewsForModeration(): Promise<({
+        author: {
+            username: string;
+            displayName: string;
+            avatarUrl: string | null;
+        };
+        interaction: {
+            id: string;
+            type: InteractionType;
+            title: string;
+        };
+        target: {
+            username: string;
+            displayName: string;
+            avatarUrl: string | null;
+        };
+        evidenceMedia: {
+            id: string;
+        } | null;
+    } & {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        body: string;
+        authorId: string;
+        interactionId: string;
+        targetId: string;
+        evidenceMediaId: string | null;
+        verdict: ReviewVerdict;
+        moderationStatus: ReviewModerationStatus;
+        moderationNote: string | null;
+        moderatedAt: Date | null;
+    })[]>;
+    moderateReview(id: string, actorId: string, status: 'PUBLISHED' | 'REJECTED', noteInput?: string): Promise<{
+        ok: boolean;
+        moderationStatus: "PUBLISHED" | "REJECTED";
     }>;
 }

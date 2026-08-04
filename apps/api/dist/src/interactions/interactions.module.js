@@ -7,12 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module.js';
 import { NotificationsModule } from '../notifications/notifications.module.js';
-import { InteractionsController } from './interactions.controller.js';
+import { InteractionsAdminController, InteractionsController } from './interactions.controller.js';
 import { InteractionsService } from './interactions.service.js';
 let InteractionsModule = class InteractionsModule {
 };
 InteractionsModule = __decorate([
-    Module({ imports: [AuthModule, NotificationsModule], controllers: [InteractionsController], providers: [InteractionsService], exports: [InteractionsService] })
+    Module({ imports: [AuthModule, NotificationsModule], controllers: [InteractionsController, InteractionsAdminController], providers: [InteractionsService], exports: [InteractionsService] })
 ], InteractionsModule);
 export { InteractionsModule };
 //# sourceMappingURL=interactions.module.js.map

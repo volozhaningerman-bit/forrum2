@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsEmail, IsEnum, IsOptional, IsString, Length, Matches } from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsOptional, IsString, Length, Matches } from 'class-validator';
 import { WallPrivacy } from '../generated/prisma/client.js';
 const passwordPattern = /^(?=.*[A-Za-zА-Яа-яЁё])(?=.*\d).+$/u;
 const passwordMessage = 'Пароль должен содержать хотя бы одну букву и одну цифру';
@@ -89,6 +89,8 @@ export class UpdateProfileDto {
     website;
     location;
     wallPrivacy;
+    showFavorites;
+    showSubscriptions;
 }
 __decorate([
     ApiPropertyOptional(),
@@ -128,6 +130,18 @@ __decorate([
     IsEnum(WallPrivacy, { message: 'Неизвестный режим приватности стены' }),
     __metadata("design:type", String)
 ], UpdateProfileDto.prototype, "wallPrivacy", void 0);
+__decorate([
+    ApiPropertyOptional(),
+    IsOptional(),
+    IsBoolean(),
+    __metadata("design:type", Boolean)
+], UpdateProfileDto.prototype, "showFavorites", void 0);
+__decorate([
+    ApiPropertyOptional(),
+    IsOptional(),
+    IsBoolean(),
+    __metadata("design:type", Boolean)
+], UpdateProfileDto.prototype, "showSubscriptions", void 0);
 export class RequestPasswordResetDto {
     email;
 }

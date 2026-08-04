@@ -29,6 +29,7 @@ import { InteractionsModule } from './interactions/interactions.module.js';
 import { CommunityManagementModule } from './community-management/community-management.module.js';
 import { EventsModule } from './events/events.module.js';
 import { PortfolioModule } from './portfolio/portfolio.module.js';
+import { MediaPartnersModule } from './media-partners/media-partners.module.js';
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -57,6 +58,7 @@ AppModule = __decorate([
             CommunityManagementModule,
             EventsModule,
             PortfolioModule,
+            MediaPartnersModule,
         ],
         controllers: [HealthController],
     })

@@ -149,6 +149,7 @@ export type WorkshopItemWhereInput = {
     reviewedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null;
     previewMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null;
     likes?: Prisma.WorkshopLikeListRelationFilter;
+    userGifts?: Prisma.UserGiftListRelationFilter;
 };
 export type WorkshopItemOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -166,6 +167,7 @@ export type WorkshopItemOrderByWithRelationInput = {
     reviewedBy?: Prisma.UserOrderByWithRelationInput;
     previewMedia?: Prisma.MediaAssetOrderByWithRelationInput;
     likes?: Prisma.WorkshopLikeOrderByRelationAggregateInput;
+    userGifts?: Prisma.UserGiftOrderByRelationAggregateInput;
 };
 export type WorkshopItemWhereUniqueInput = Prisma.AtLeast<{
     id?: string;
@@ -186,6 +188,7 @@ export type WorkshopItemWhereUniqueInput = Prisma.AtLeast<{
     reviewedBy?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null;
     previewMedia?: Prisma.XOR<Prisma.MediaAssetNullableScalarRelationFilter, Prisma.MediaAssetWhereInput> | null;
     likes?: Prisma.WorkshopLikeListRelationFilter;
+    userGifts?: Prisma.UserGiftListRelationFilter;
 }, "id">;
 export type WorkshopItemOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -232,6 +235,7 @@ export type WorkshopItemCreateInput = {
     reviewedBy?: Prisma.UserCreateNestedOneWithoutWorkshopReviewsInput;
     previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutWorkshopPreviewsInput;
     likes?: Prisma.WorkshopLikeCreateNestedManyWithoutItemInput;
+    userGifts?: Prisma.UserGiftCreateNestedManyWithoutGiftInput;
 };
 export type WorkshopItemUncheckedCreateInput = {
     id?: string;
@@ -246,6 +250,7 @@ export type WorkshopItemUncheckedCreateInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     likes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutItemInput;
+    userGifts?: Prisma.UserGiftUncheckedCreateNestedManyWithoutGiftInput;
 };
 export type WorkshopItemUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -260,6 +265,7 @@ export type WorkshopItemUpdateInput = {
     reviewedBy?: Prisma.UserUpdateOneWithoutWorkshopReviewsNestedInput;
     previewMedia?: Prisma.MediaAssetUpdateOneWithoutWorkshopPreviewsNestedInput;
     likes?: Prisma.WorkshopLikeUpdateManyWithoutItemNestedInput;
+    userGifts?: Prisma.UserGiftUpdateManyWithoutGiftNestedInput;
 };
 export type WorkshopItemUncheckedUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -274,6 +280,7 @@ export type WorkshopItemUncheckedUpdateInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     likes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutItemNestedInput;
+    userGifts?: Prisma.UserGiftUncheckedUpdateManyWithoutGiftNestedInput;
 };
 export type WorkshopItemCreateManyInput = {
     id?: string;
@@ -494,6 +501,18 @@ export type WorkshopItemUpdateOneRequiredWithoutLikesNestedInput = {
     connect?: Prisma.WorkshopItemWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.WorkshopItemUpdateToOneWithWhereWithoutLikesInput, Prisma.WorkshopItemUpdateWithoutLikesInput>, Prisma.WorkshopItemUncheckedUpdateWithoutLikesInput>;
 };
+export type WorkshopItemCreateNestedOneWithoutUserGiftsInput = {
+    create?: Prisma.XOR<Prisma.WorkshopItemCreateWithoutUserGiftsInput, Prisma.WorkshopItemUncheckedCreateWithoutUserGiftsInput>;
+    connectOrCreate?: Prisma.WorkshopItemCreateOrConnectWithoutUserGiftsInput;
+    connect?: Prisma.WorkshopItemWhereUniqueInput;
+};
+export type WorkshopItemUpdateOneRequiredWithoutUserGiftsNestedInput = {
+    create?: Prisma.XOR<Prisma.WorkshopItemCreateWithoutUserGiftsInput, Prisma.WorkshopItemUncheckedCreateWithoutUserGiftsInput>;
+    connectOrCreate?: Prisma.WorkshopItemCreateOrConnectWithoutUserGiftsInput;
+    upsert?: Prisma.WorkshopItemUpsertWithoutUserGiftsInput;
+    connect?: Prisma.WorkshopItemWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.WorkshopItemUpdateToOneWithWhereWithoutUserGiftsInput, Prisma.WorkshopItemUpdateWithoutUserGiftsInput>, Prisma.WorkshopItemUncheckedUpdateWithoutUserGiftsInput>;
+};
 export type WorkshopItemCreateWithoutAuthorInput = {
     id?: string;
     type: $Enums.WorkshopItemType;
@@ -506,6 +525,7 @@ export type WorkshopItemCreateWithoutAuthorInput = {
     reviewedBy?: Prisma.UserCreateNestedOneWithoutWorkshopReviewsInput;
     previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutWorkshopPreviewsInput;
     likes?: Prisma.WorkshopLikeCreateNestedManyWithoutItemInput;
+    userGifts?: Prisma.UserGiftCreateNestedManyWithoutGiftInput;
 };
 export type WorkshopItemUncheckedCreateWithoutAuthorInput = {
     id?: string;
@@ -519,6 +539,7 @@ export type WorkshopItemUncheckedCreateWithoutAuthorInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     likes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutItemInput;
+    userGifts?: Prisma.UserGiftUncheckedCreateNestedManyWithoutGiftInput;
 };
 export type WorkshopItemCreateOrConnectWithoutAuthorInput = {
     where: Prisma.WorkshopItemWhereUniqueInput;
@@ -540,6 +561,7 @@ export type WorkshopItemCreateWithoutReviewedByInput = {
     author: Prisma.UserCreateNestedOneWithoutWorkshopItemsInput;
     previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutWorkshopPreviewsInput;
     likes?: Prisma.WorkshopLikeCreateNestedManyWithoutItemInput;
+    userGifts?: Prisma.UserGiftCreateNestedManyWithoutGiftInput;
 };
 export type WorkshopItemUncheckedCreateWithoutReviewedByInput = {
     id?: string;
@@ -553,6 +575,7 @@ export type WorkshopItemUncheckedCreateWithoutReviewedByInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     likes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutItemInput;
+    userGifts?: Prisma.UserGiftUncheckedCreateNestedManyWithoutGiftInput;
 };
 export type WorkshopItemCreateOrConnectWithoutReviewedByInput = {
     where: Prisma.WorkshopItemWhereUniqueInput;
@@ -616,6 +639,7 @@ export type WorkshopItemCreateWithoutPreviewMediaInput = {
     author: Prisma.UserCreateNestedOneWithoutWorkshopItemsInput;
     reviewedBy?: Prisma.UserCreateNestedOneWithoutWorkshopReviewsInput;
     likes?: Prisma.WorkshopLikeCreateNestedManyWithoutItemInput;
+    userGifts?: Prisma.UserGiftCreateNestedManyWithoutGiftInput;
 };
 export type WorkshopItemUncheckedCreateWithoutPreviewMediaInput = {
     id?: string;
@@ -629,6 +653,7 @@ export type WorkshopItemUncheckedCreateWithoutPreviewMediaInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     likes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutItemInput;
+    userGifts?: Prisma.UserGiftUncheckedCreateNestedManyWithoutGiftInput;
 };
 export type WorkshopItemCreateOrConnectWithoutPreviewMediaInput = {
     where: Prisma.WorkshopItemWhereUniqueInput;
@@ -663,6 +688,7 @@ export type WorkshopItemCreateWithoutLikesInput = {
     author: Prisma.UserCreateNestedOneWithoutWorkshopItemsInput;
     reviewedBy?: Prisma.UserCreateNestedOneWithoutWorkshopReviewsInput;
     previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutWorkshopPreviewsInput;
+    userGifts?: Prisma.UserGiftCreateNestedManyWithoutGiftInput;
 };
 export type WorkshopItemUncheckedCreateWithoutLikesInput = {
     id?: string;
@@ -676,6 +702,7 @@ export type WorkshopItemUncheckedCreateWithoutLikesInput = {
     resolutionNote?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    userGifts?: Prisma.UserGiftUncheckedCreateNestedManyWithoutGiftInput;
 };
 export type WorkshopItemCreateOrConnectWithoutLikesInput = {
     where: Prisma.WorkshopItemWhereUniqueInput;
@@ -702,6 +729,7 @@ export type WorkshopItemUpdateWithoutLikesInput = {
     author?: Prisma.UserUpdateOneRequiredWithoutWorkshopItemsNestedInput;
     reviewedBy?: Prisma.UserUpdateOneWithoutWorkshopReviewsNestedInput;
     previewMedia?: Prisma.MediaAssetUpdateOneWithoutWorkshopPreviewsNestedInput;
+    userGifts?: Prisma.UserGiftUpdateManyWithoutGiftNestedInput;
 };
 export type WorkshopItemUncheckedUpdateWithoutLikesInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -715,6 +743,76 @@ export type WorkshopItemUncheckedUpdateWithoutLikesInput = {
     resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    userGifts?: Prisma.UserGiftUncheckedUpdateManyWithoutGiftNestedInput;
+};
+export type WorkshopItemCreateWithoutUserGiftsInput = {
+    id?: string;
+    type: $Enums.WorkshopItemType;
+    status?: $Enums.WorkshopItemStatus;
+    title: string;
+    description: string;
+    resolutionNote?: string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    author: Prisma.UserCreateNestedOneWithoutWorkshopItemsInput;
+    reviewedBy?: Prisma.UserCreateNestedOneWithoutWorkshopReviewsInput;
+    previewMedia?: Prisma.MediaAssetCreateNestedOneWithoutWorkshopPreviewsInput;
+    likes?: Prisma.WorkshopLikeCreateNestedManyWithoutItemInput;
+};
+export type WorkshopItemUncheckedCreateWithoutUserGiftsInput = {
+    id?: string;
+    authorId: string;
+    reviewedById?: string | null;
+    previewMediaId?: string | null;
+    type: $Enums.WorkshopItemType;
+    status?: $Enums.WorkshopItemStatus;
+    title: string;
+    description: string;
+    resolutionNote?: string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    likes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutItemInput;
+};
+export type WorkshopItemCreateOrConnectWithoutUserGiftsInput = {
+    where: Prisma.WorkshopItemWhereUniqueInput;
+    create: Prisma.XOR<Prisma.WorkshopItemCreateWithoutUserGiftsInput, Prisma.WorkshopItemUncheckedCreateWithoutUserGiftsInput>;
+};
+export type WorkshopItemUpsertWithoutUserGiftsInput = {
+    update: Prisma.XOR<Prisma.WorkshopItemUpdateWithoutUserGiftsInput, Prisma.WorkshopItemUncheckedUpdateWithoutUserGiftsInput>;
+    create: Prisma.XOR<Prisma.WorkshopItemCreateWithoutUserGiftsInput, Prisma.WorkshopItemUncheckedCreateWithoutUserGiftsInput>;
+    where?: Prisma.WorkshopItemWhereInput;
+};
+export type WorkshopItemUpdateToOneWithWhereWithoutUserGiftsInput = {
+    where?: Prisma.WorkshopItemWhereInput;
+    data: Prisma.XOR<Prisma.WorkshopItemUpdateWithoutUserGiftsInput, Prisma.WorkshopItemUncheckedUpdateWithoutUserGiftsInput>;
+};
+export type WorkshopItemUpdateWithoutUserGiftsInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    type?: Prisma.EnumWorkshopItemTypeFieldUpdateOperationsInput | $Enums.WorkshopItemType;
+    status?: Prisma.EnumWorkshopItemStatusFieldUpdateOperationsInput | $Enums.WorkshopItemStatus;
+    title?: Prisma.StringFieldUpdateOperationsInput | string;
+    description?: Prisma.StringFieldUpdateOperationsInput | string;
+    resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    author?: Prisma.UserUpdateOneRequiredWithoutWorkshopItemsNestedInput;
+    reviewedBy?: Prisma.UserUpdateOneWithoutWorkshopReviewsNestedInput;
+    previewMedia?: Prisma.MediaAssetUpdateOneWithoutWorkshopPreviewsNestedInput;
+    likes?: Prisma.WorkshopLikeUpdateManyWithoutItemNestedInput;
+};
+export type WorkshopItemUncheckedUpdateWithoutUserGiftsInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    authorId?: Prisma.StringFieldUpdateOperationsInput | string;
+    reviewedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    previewMediaId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    type?: Prisma.EnumWorkshopItemTypeFieldUpdateOperationsInput | $Enums.WorkshopItemType;
+    status?: Prisma.EnumWorkshopItemStatusFieldUpdateOperationsInput | $Enums.WorkshopItemStatus;
+    title?: Prisma.StringFieldUpdateOperationsInput | string;
+    description?: Prisma.StringFieldUpdateOperationsInput | string;
+    resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    likes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutItemNestedInput;
 };
 export type WorkshopItemCreateManyAuthorInput = {
     id?: string;
@@ -752,6 +850,7 @@ export type WorkshopItemUpdateWithoutAuthorInput = {
     reviewedBy?: Prisma.UserUpdateOneWithoutWorkshopReviewsNestedInput;
     previewMedia?: Prisma.MediaAssetUpdateOneWithoutWorkshopPreviewsNestedInput;
     likes?: Prisma.WorkshopLikeUpdateManyWithoutItemNestedInput;
+    userGifts?: Prisma.UserGiftUpdateManyWithoutGiftNestedInput;
 };
 export type WorkshopItemUncheckedUpdateWithoutAuthorInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -765,6 +864,7 @@ export type WorkshopItemUncheckedUpdateWithoutAuthorInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     likes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutItemNestedInput;
+    userGifts?: Prisma.UserGiftUncheckedUpdateManyWithoutGiftNestedInput;
 };
 export type WorkshopItemUncheckedUpdateManyWithoutAuthorInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -790,6 +890,7 @@ export type WorkshopItemUpdateWithoutReviewedByInput = {
     author?: Prisma.UserUpdateOneRequiredWithoutWorkshopItemsNestedInput;
     previewMedia?: Prisma.MediaAssetUpdateOneWithoutWorkshopPreviewsNestedInput;
     likes?: Prisma.WorkshopLikeUpdateManyWithoutItemNestedInput;
+    userGifts?: Prisma.UserGiftUpdateManyWithoutGiftNestedInput;
 };
 export type WorkshopItemUncheckedUpdateWithoutReviewedByInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -803,6 +904,7 @@ export type WorkshopItemUncheckedUpdateWithoutReviewedByInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     likes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutItemNestedInput;
+    userGifts?: Prisma.UserGiftUncheckedUpdateManyWithoutGiftNestedInput;
 };
 export type WorkshopItemUncheckedUpdateManyWithoutReviewedByInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -840,6 +942,7 @@ export type WorkshopItemUpdateWithoutPreviewMediaInput = {
     author?: Prisma.UserUpdateOneRequiredWithoutWorkshopItemsNestedInput;
     reviewedBy?: Prisma.UserUpdateOneWithoutWorkshopReviewsNestedInput;
     likes?: Prisma.WorkshopLikeUpdateManyWithoutItemNestedInput;
+    userGifts?: Prisma.UserGiftUpdateManyWithoutGiftNestedInput;
 };
 export type WorkshopItemUncheckedUpdateWithoutPreviewMediaInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -853,6 +956,7 @@ export type WorkshopItemUncheckedUpdateWithoutPreviewMediaInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     likes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutItemNestedInput;
+    userGifts?: Prisma.UserGiftUncheckedUpdateManyWithoutGiftNestedInput;
 };
 export type WorkshopItemUncheckedUpdateManyWithoutPreviewMediaInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -868,15 +972,20 @@ export type WorkshopItemUncheckedUpdateManyWithoutPreviewMediaInput = {
 };
 export type WorkshopItemCountOutputType = {
     likes: number;
+    userGifts: number;
 };
 export type WorkshopItemCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     likes?: boolean | WorkshopItemCountOutputTypeCountLikesArgs;
+    userGifts?: boolean | WorkshopItemCountOutputTypeCountUserGiftsArgs;
 };
 export type WorkshopItemCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.WorkshopItemCountOutputTypeSelect<ExtArgs> | null;
 };
 export type WorkshopItemCountOutputTypeCountLikesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.WorkshopLikeWhereInput;
+};
+export type WorkshopItemCountOutputTypeCountUserGiftsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.UserGiftWhereInput;
 };
 export type WorkshopItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -894,6 +1003,7 @@ export type WorkshopItemSelect<ExtArgs extends runtime.Types.Extensions.Internal
     reviewedBy?: boolean | Prisma.WorkshopItem$reviewedByArgs<ExtArgs>;
     previewMedia?: boolean | Prisma.WorkshopItem$previewMediaArgs<ExtArgs>;
     likes?: boolean | Prisma.WorkshopItem$likesArgs<ExtArgs>;
+    userGifts?: boolean | Prisma.WorkshopItem$userGiftsArgs<ExtArgs>;
     _count?: boolean | Prisma.WorkshopItemCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["workshopItem"]>;
 export type WorkshopItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -947,6 +1057,7 @@ export type WorkshopItemInclude<ExtArgs extends runtime.Types.Extensions.Interna
     reviewedBy?: boolean | Prisma.WorkshopItem$reviewedByArgs<ExtArgs>;
     previewMedia?: boolean | Prisma.WorkshopItem$previewMediaArgs<ExtArgs>;
     likes?: boolean | Prisma.WorkshopItem$likesArgs<ExtArgs>;
+    userGifts?: boolean | Prisma.WorkshopItem$userGiftsArgs<ExtArgs>;
     _count?: boolean | Prisma.WorkshopItemCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type WorkshopItemIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -966,6 +1077,7 @@ export type $WorkshopItemPayload<ExtArgs extends runtime.Types.Extensions.Intern
         reviewedBy: Prisma.$UserPayload<ExtArgs> | null;
         previewMedia: Prisma.$MediaAssetPayload<ExtArgs> | null;
         likes: Prisma.$WorkshopLikePayload<ExtArgs>[];
+        userGifts: Prisma.$UserGiftPayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: string;
@@ -1035,6 +1147,7 @@ export interface Prisma__WorkshopItemClient<T, Null = never, ExtArgs extends run
     reviewedBy<T extends Prisma.WorkshopItem$reviewedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkshopItem$reviewedByArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     previewMedia<T extends Prisma.WorkshopItem$previewMediaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkshopItem$previewMediaArgs<ExtArgs>>): Prisma.Prisma__MediaAssetClient<runtime.Types.Result.GetResult<Prisma.$MediaAssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     likes<T extends Prisma.WorkshopItem$likesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkshopItem$likesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WorkshopLikePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    userGifts<T extends Prisma.WorkshopItem$userGiftsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WorkshopItem$userGiftsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserGiftPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
     finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;
@@ -1174,6 +1287,17 @@ export type WorkshopItem$likesArgs<ExtArgs extends runtime.Types.Extensions.Inte
     take?: number;
     skip?: number;
     distinct?: Prisma.WorkshopLikeScalarFieldEnum | Prisma.WorkshopLikeScalarFieldEnum[];
+};
+export type WorkshopItem$userGiftsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.UserGiftSelect<ExtArgs> | null;
+    omit?: Prisma.UserGiftOmit<ExtArgs> | null;
+    include?: Prisma.UserGiftInclude<ExtArgs> | null;
+    where?: Prisma.UserGiftWhereInput;
+    orderBy?: Prisma.UserGiftOrderByWithRelationInput | Prisma.UserGiftOrderByWithRelationInput[];
+    cursor?: Prisma.UserGiftWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.UserGiftScalarFieldEnum | Prisma.UserGiftScalarFieldEnum[];
 };
 export type WorkshopItemDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.WorkshopItemSelect<ExtArgs> | null;

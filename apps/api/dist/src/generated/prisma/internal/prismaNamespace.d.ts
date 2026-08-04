@@ -199,8 +199,10 @@ export declare const ModelName: {
     readonly CommunityPoll: "CommunityPoll";
     readonly PollOption: "PollOption";
     readonly PollVote: "PollVote";
+    readonly MediaPartner: "MediaPartner";
     readonly WorkshopItem: "WorkshopItem";
     readonly WorkshopLike: "WorkshopLike";
+    readonly UserGift: "UserGift";
     readonly AchievementDefinition: "AchievementDefinition";
     readonly UserAchievement: "UserAchievement";
     readonly CommunityRoleEvent: "CommunityRoleEvent";
@@ -226,7 +228,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         omit: GlobalOmitOptions;
     };
     meta: {
-        modelProps: "user" | "emailVerificationToken" | "passwordResetToken" | "session" | "notificationPreference" | "feedPreference" | "hiddenCommunity" | "hiddenPublication" | "community" | "communityRole" | "communitySubscription" | "publication" | "comment" | "tag" | "publicationTag" | "tagSubscription" | "publicationReaction" | "commentReaction" | "bookmark" | "userFollow" | "wallPost" | "notification" | "conversation" | "conversationMember" | "message" | "report" | "auditLog" | "wallet" | "walletTransaction" | "promotionOrder" | "mediaAsset" | "telegramLink" | "telegramLinkCode" | "telegramChannel" | "telegramShare" | "moderationAction" | "moderationAppeal" | "communityProposal" | "proposalSupport" | "communityPoll" | "pollOption" | "pollVote" | "workshopItem" | "workshopLike" | "achievementDefinition" | "userAchievement" | "communityRoleEvent" | "confirmedInteraction" | "profileReview" | "communityReport" | "communityContentAction" | "communityStructureProposal" | "communityRoleInvite" | "communityEvent" | "communityEventAttendance" | "portfolioItem" | "platformSetting";
+        modelProps: "user" | "emailVerificationToken" | "passwordResetToken" | "session" | "notificationPreference" | "feedPreference" | "hiddenCommunity" | "hiddenPublication" | "community" | "communityRole" | "communitySubscription" | "publication" | "comment" | "tag" | "publicationTag" | "tagSubscription" | "publicationReaction" | "commentReaction" | "bookmark" | "userFollow" | "wallPost" | "notification" | "conversation" | "conversationMember" | "message" | "report" | "auditLog" | "wallet" | "walletTransaction" | "promotionOrder" | "mediaAsset" | "telegramLink" | "telegramLinkCode" | "telegramChannel" | "telegramShare" | "moderationAction" | "moderationAppeal" | "communityProposal" | "proposalSupport" | "communityPoll" | "pollOption" | "pollVote" | "mediaPartner" | "workshopItem" | "workshopLike" | "userGift" | "achievementDefinition" | "userAchievement" | "communityRoleEvent" | "confirmedInteraction" | "profileReview" | "communityReport" | "communityContentAction" | "communityStructureProposal" | "communityRoleInvite" | "communityEvent" | "communityEventAttendance" | "portfolioItem" | "platformSetting";
         txIsolationLevel: TransactionIsolationLevel;
     };
     model: {
@@ -3338,6 +3340,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 };
             };
         };
+        MediaPartner: {
+            payload: Prisma.$MediaPartnerPayload<ExtArgs>;
+            fields: Prisma.MediaPartnerFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.MediaPartnerFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPartnerPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.MediaPartnerFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPartnerPayload>;
+                };
+                findFirst: {
+                    args: Prisma.MediaPartnerFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPartnerPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.MediaPartnerFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPartnerPayload>;
+                };
+                findMany: {
+                    args: Prisma.MediaPartnerFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPartnerPayload>[];
+                };
+                create: {
+                    args: Prisma.MediaPartnerCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPartnerPayload>;
+                };
+                createMany: {
+                    args: Prisma.MediaPartnerCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.MediaPartnerCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPartnerPayload>[];
+                };
+                delete: {
+                    args: Prisma.MediaPartnerDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPartnerPayload>;
+                };
+                update: {
+                    args: Prisma.MediaPartnerUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPartnerPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.MediaPartnerDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.MediaPartnerUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.MediaPartnerUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPartnerPayload>[];
+                };
+                upsert: {
+                    args: Prisma.MediaPartnerUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$MediaPartnerPayload>;
+                };
+                aggregate: {
+                    args: Prisma.MediaPartnerAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateMediaPartner>;
+                };
+                groupBy: {
+                    args: Prisma.MediaPartnerGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.MediaPartnerGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.MediaPartnerCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.MediaPartnerCountAggregateOutputType> | number;
+                };
+            };
+        };
         WorkshopItem: {
             payload: Prisma.$WorkshopItemPayload<ExtArgs>;
             fields: Prisma.WorkshopItemFieldRefs;
@@ -3483,6 +3559,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 count: {
                     args: Prisma.WorkshopLikeCountArgs<ExtArgs>;
                     result: runtime.Types.Utils.Optional<Prisma.WorkshopLikeCountAggregateOutputType> | number;
+                };
+            };
+        };
+        UserGift: {
+            payload: Prisma.$UserGiftPayload<ExtArgs>;
+            fields: Prisma.UserGiftFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.UserGiftFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGiftPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.UserGiftFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGiftPayload>;
+                };
+                findFirst: {
+                    args: Prisma.UserGiftFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGiftPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.UserGiftFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGiftPayload>;
+                };
+                findMany: {
+                    args: Prisma.UserGiftFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGiftPayload>[];
+                };
+                create: {
+                    args: Prisma.UserGiftCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGiftPayload>;
+                };
+                createMany: {
+                    args: Prisma.UserGiftCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.UserGiftCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGiftPayload>[];
+                };
+                delete: {
+                    args: Prisma.UserGiftDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGiftPayload>;
+                };
+                update: {
+                    args: Prisma.UserGiftUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGiftPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.UserGiftDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.UserGiftUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.UserGiftUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGiftPayload>[];
+                };
+                upsert: {
+                    args: Prisma.UserGiftUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserGiftPayload>;
+                };
+                aggregate: {
+                    args: Prisma.UserGiftAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateUserGift>;
+                };
+                groupBy: {
+                    args: Prisma.UserGiftGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.UserGiftGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.UserGiftCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.UserGiftCountAggregateOutputType> | number;
                 };
             };
         };
@@ -4489,6 +4639,8 @@ export declare const UserScalarFieldEnum: {
     readonly avatarUrl: "avatarUrl";
     readonly coverUrl: "coverUrl";
     readonly wallPrivacy: "wallPrivacy";
+    readonly showFavorites: "showFavorites";
+    readonly showSubscriptions: "showSubscriptions";
     readonly website: "website";
     readonly location: "location";
     readonly passwordHash: "passwordHash";
@@ -4919,6 +5071,21 @@ export declare const PollVoteScalarFieldEnum: {
     readonly createdAt: "createdAt";
 };
 export type PollVoteScalarFieldEnum = (typeof PollVoteScalarFieldEnum)[keyof typeof PollVoteScalarFieldEnum];
+export declare const MediaPartnerScalarFieldEnum: {
+    readonly id: "id";
+    readonly userId: "userId";
+    readonly type: "type";
+    readonly status: "status";
+    readonly displayName: "displayName";
+    readonly platform: "platform";
+    readonly channelUrl: "channelUrl";
+    readonly audienceText: "audienceText";
+    readonly description: "description";
+    readonly resolutionNote: "resolutionNote";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type MediaPartnerScalarFieldEnum = (typeof MediaPartnerScalarFieldEnum)[keyof typeof MediaPartnerScalarFieldEnum];
 export declare const WorkshopItemScalarFieldEnum: {
     readonly id: "id";
     readonly authorId: "authorId";
@@ -4939,6 +5106,15 @@ export declare const WorkshopLikeScalarFieldEnum: {
     readonly createdAt: "createdAt";
 };
 export type WorkshopLikeScalarFieldEnum = (typeof WorkshopLikeScalarFieldEnum)[keyof typeof WorkshopLikeScalarFieldEnum];
+export declare const UserGiftScalarFieldEnum: {
+    readonly id: "id";
+    readonly recipientId: "recipientId";
+    readonly senderId: "senderId";
+    readonly giftId: "giftId";
+    readonly message: "message";
+    readonly createdAt: "createdAt";
+};
+export type UserGiftScalarFieldEnum = (typeof UserGiftScalarFieldEnum)[keyof typeof UserGiftScalarFieldEnum];
 export declare const AchievementDefinitionScalarFieldEnum: {
     readonly id: "id";
     readonly code: "code";
@@ -5003,6 +5179,9 @@ export declare const ProfileReviewScalarFieldEnum: {
     readonly targetId: "targetId";
     readonly evidenceMediaId: "evidenceMediaId";
     readonly verdict: "verdict";
+    readonly moderationStatus: "moderationStatus";
+    readonly moderationNote: "moderationNote";
+    readonly moderatedAt: "moderatedAt";
     readonly body: "body";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
@@ -5149,13 +5328,13 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>;
 export type EnumWallPrivacyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WallPrivacy'>;
 export type ListEnumWallPrivacyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WallPrivacy[]'>;
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>;
 export type EnumAccountStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountState'>;
 export type ListEnumAccountStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountState[]'>;
 export type EnumGlobalRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GlobalRole'>;
 export type ListEnumGlobalRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GlobalRole[]'>;
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>;
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>;
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>;
 export type EnumCommunityStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommunityStatus'>;
 export type ListEnumCommunityStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommunityStatus[]'>;
 export type EnumCommunityRoleTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommunityRoleType'>;
@@ -5200,6 +5379,10 @@ export type EnumPollStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
 export type ListEnumPollStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PollStatus[]'>;
 export type EnumVoteClassFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VoteClass'>;
 export type ListEnumVoteClassFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VoteClass[]'>;
+export type EnumMediaPartnerTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MediaPartnerType'>;
+export type ListEnumMediaPartnerTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MediaPartnerType[]'>;
+export type EnumMediaPartnerStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MediaPartnerStatus'>;
+export type ListEnumMediaPartnerStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MediaPartnerStatus[]'>;
 export type EnumWorkshopItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WorkshopItemType'>;
 export type ListEnumWorkshopItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WorkshopItemType[]'>;
 export type EnumWorkshopItemStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WorkshopItemStatus'>;
@@ -5214,6 +5397,8 @@ export type EnumInteractionStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 export type ListEnumInteractionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InteractionStatus[]'>;
 export type EnumReviewVerdictFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReviewVerdict'>;
 export type ListEnumReviewVerdictFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReviewVerdict[]'>;
+export type EnumReviewModerationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReviewModerationStatus'>;
+export type ListEnumReviewModerationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReviewModerationStatus[]'>;
 export type EnumCommunityContentActionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommunityContentActionType'>;
 export type ListEnumCommunityContentActionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommunityContentActionType[]'>;
 export type EnumCommunityStructureChangeTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CommunityStructureChangeType'>;
@@ -5300,8 +5485,10 @@ export type GlobalOmitConfig = {
     communityPoll?: Prisma.CommunityPollOmit;
     pollOption?: Prisma.PollOptionOmit;
     pollVote?: Prisma.PollVoteOmit;
+    mediaPartner?: Prisma.MediaPartnerOmit;
     workshopItem?: Prisma.WorkshopItemOmit;
     workshopLike?: Prisma.WorkshopLikeOmit;
+    userGift?: Prisma.UserGiftOmit;
     achievementDefinition?: Prisma.AchievementDefinitionOmit;
     userAchievement?: Prisma.UserAchievementOmit;
     communityRoleEvent?: Prisma.CommunityRoleEventOmit;

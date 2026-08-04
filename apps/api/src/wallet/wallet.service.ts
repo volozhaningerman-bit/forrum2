@@ -31,7 +31,12 @@ export class WalletService {
       where: { status: PromotionOrderStatus.ACTIVE, endsAt: { lte: now } },
       data: { status: PromotionOrderStatus.EXPIRED },
     });
-    const expiredPublicationIds = new Set<string>((expiredPins as Array<{ publicationId: string }>).map((item) => item.publicationId));
+    const expiredPublicationIds = new Set<string>(
+      (expiredPins as Array<{ publicationId: string }>).map(
+        (item) => item.publicationId,
+      ),
+    );
+
     for (const publicationId of expiredPublicationIds) {
       await this.refreshPinnedUntil(client, publicationId, now);
     }
@@ -44,6 +49,11 @@ export class WalletService {
       select: { endsAt: true },
     });
     await client.publication.update({ where: { id: publicationId }, data: { pinnedUntil: remaining?.endsAt ?? null } });
+  }
+
+  async terms() {
+    const pricing = await this.pricing();
+    return { ...pricing, durations: [1, 3, 7, 30], refundGraceMinutes: PROMOTION_REFUND_GRACE_MINUTES };
   }
 
   async get(userId: string) {

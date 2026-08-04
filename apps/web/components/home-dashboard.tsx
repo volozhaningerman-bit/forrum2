@@ -111,7 +111,7 @@ export function HomeDashboard() {
 
       {discovery.length > 0 && <section className="sidebar-card"><div className="compact-heading"><h3>Открыть новое</h3><Link href="/settings/interests">Настроить</Link></div>{discovery.map((item) => <Link className="mini-community" href={`/communities/${item.slug}`} key={item.id}><span style={{ background: item.accentColor }}>{item.name.slice(0, 1)}</span><div><strong>{item.name}</strong><small>{formatNumber(item.subscriberCount)} подписчиков</small></div><b aria-hidden="true">→</b></Link>)}</section>}
 
-      <section className="sidebar-card sponsor-card"><span className="ad-label">Продвижение</span><div className="sponsor-art">●</div><strong>Продвижение вашей темы</strong><p>Количество мест и цена задаются администрацией. Рекламные материалы всегда отмечаются.</p><Link href="/wallet">Узнать условия ↗</Link></section>
+      <section className="sidebar-card sponsor-card"><span className="ad-label">Продвижение</span><div className="sponsor-art">●</div><strong>Продвижение вашей темы</strong><p>Количество мест и цена задаются администрацией. Рекламные материалы всегда отмечаются.</p><Link href="/promotion">Узнать условия ↗</Link></section>
     </aside>
   </div>;
 }

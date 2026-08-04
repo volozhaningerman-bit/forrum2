@@ -94,4 +94,20 @@ __decorate([
     IsUUID(),
     __metadata("design:type", String)
 ], CreateProfileReviewDto.prototype, "evidenceMediaId", void 0);
+export class ModerateProfileReviewDto {
+    status;
+    note;
+}
+__decorate([
+    ApiProperty({ enum: ['PUBLISHED', 'REJECTED'] }),
+    IsString(),
+    __metadata("design:type", String)
+], ModerateProfileReviewDto.prototype, "status", void 0);
+__decorate([
+    ApiPropertyOptional(),
+    IsOptional(),
+    IsString(),
+    Length(0, 1000),
+    __metadata("design:type", String)
+], ModerateProfileReviewDto.prototype, "note", void 0);
 //# sourceMappingURL=dto.js.map

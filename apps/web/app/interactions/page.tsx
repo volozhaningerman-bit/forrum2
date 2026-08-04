@@ -25,7 +25,7 @@ type Interaction = {
   community: { slug: string; name: string } | null;
   publication: { slug: string; title: string | null } | null;
   portfolioItem: { id: string; kind: string; title: string } | null;
-  review: { id: string; verdict: string; body: string; evidenceMediaId: string | null; createdAt: string } | null;
+  review: { id: string; verdict: string; body: string; evidenceMediaId: string | null; moderationStatus: 'REVIEW' | 'PUBLISHED' | 'REJECTED'; moderationNote: string | null; createdAt: string } | null;
 };
 
 type UploadedMedia = {
@@ -139,7 +139,7 @@ export default function InteractionsPage() {
       });
 
       setReviewingId(null);
-      setNotice('Отзыв опубликован. Приложенное фото сохранено как подтверждение.');
+      setNotice(evidenceMediaId ? 'Отзыв с фото отправлен на модерацию.' : 'Отзыв опубликован.');
       await load();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Не удалось оставить отзыв');
@@ -205,7 +205,7 @@ export default function InteractionsPage() {
           {item.status === 'CONFIRMED' && !item.viewerCompleted && <button type="button" className="button small" onClick={() => action(item.id, 'complete')}>Подтвердить завершение</button>}
           {['PENDING', 'CONFIRMED'].includes(item.status) && <button type="button" className="button ghost small danger-text" onClick={() => action(item.id, 'cancel')}>Отменить</button>}
           {item.status === 'COMPLETED' && !item.review && <button type="button" className="button secondary small" onClick={() => setReviewingId(reviewingId === item.id ? null : item.id)}>Оставить отзыв</button>}
-          {item.review && <span className="verified-review-note">Ваш отзыв опубликован{item.review.evidenceMediaId ? ' · фото приложено' : ''}</span>}
+          {item.review && <span className="verified-review-note">{item.review.moderationStatus === 'REVIEW' ? 'Отзыв ожидает модерации' : item.review.moderationStatus === 'REJECTED' ? 'Отзыв отклонён модерацией' : 'Ваш отзыв опубликован'}{item.review.evidenceMediaId ? ' · фото приложено' : ''}</span>}
         </footer>
 
         {reviewingId === item.id && <form className="interaction-review-form" onSubmit={(event) => review(event, item)}>

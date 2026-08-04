@@ -43,6 +43,8 @@ export declare class UsersService {
         isFollowing: boolean;
         isSelf: boolean;
         wallPrivacy: WallPrivacy;
+        showFavorites: boolean;
+        showSubscriptions: boolean;
         wallRestricted: boolean;
         canWriteWall: boolean;
         canStartInteraction: boolean;
@@ -162,10 +164,10 @@ export declare class UsersService {
             lastActivityAt: Date;
             viewCount: number;
             author: {
+                forrumId: number;
                 username: string;
                 displayName: string;
                 avatarUrl: string | null;
-                forrumId: number;
             };
             community: {
                 slug: string;
@@ -236,6 +238,30 @@ export declare class UsersService {
             neutral: number;
             negative: number;
         };
+        workshopPortfolio: {
+            id: string;
+            createdAt: Date;
+            description: string;
+            type: import("../generated/prisma/enums.js").WorkshopItemType;
+            title: string;
+            previewMediaId: string | null;
+        }[];
+        gifts: {
+            id: string;
+            message: string | null;
+            createdAt: Date;
+            sender: {
+                username: string;
+                displayName: string;
+                avatarUrl: string | null;
+            };
+            gift: {
+                id: string;
+                description: string;
+                title: string;
+                previewMediaId: string | null;
+            };
+        }[];
         portfolio: {
             id: string;
             kind: import("../generated/prisma/enums.js").PortfolioItemKind;
@@ -276,6 +302,9 @@ export declare class UsersService {
         ok: boolean;
     }>;
     createWallPost(usernameInput: string, authorId: string, bodyInput: string): Promise<{
+        id: string;
+    }>;
+    sendGift(usernameInput: string, senderId: string, workshopItemId: string, messageInput?: string): Promise<{
         id: string;
     }>;
     deleteWallPost(usernameInput: string, postId: string, actorId: string): Promise<{

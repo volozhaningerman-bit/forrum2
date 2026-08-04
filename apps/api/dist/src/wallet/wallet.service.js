@@ -50,6 +50,10 @@ let WalletService = class WalletService {
         });
         await client.publication.update({ where: { id: publicationId }, data: { pinnedUntil: remaining?.endsAt ?? null } });
     }
+    async terms() {
+        const pricing = await this.pricing();
+        return { ...pricing, durations: [1, 3, 7, 30], refundGraceMinutes: PROMOTION_REFUND_GRACE_MINUTES };
+    }
     async get(userId) {
         await this.expireOrders();
         const [wallet, promotions] = await Promise.all([

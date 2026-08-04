@@ -21,6 +21,8 @@ export declare class UpdateProfileDto {
     website?: string;
     location?: string;
     wallPrivacy?: WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
 }
 export declare class RequestPasswordResetDto {
     email: string;

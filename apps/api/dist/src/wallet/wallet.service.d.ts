@@ -7,6 +7,16 @@ export declare class WalletService {
     private parameters;
     private expireOrders;
     private refreshPinnedUntil;
+    terms(): Promise<{
+        durations: number[];
+        refundGraceMinutes: number;
+        pinLimit: number;
+        pinBasePricePerDay: number;
+        pinDemandPercentPerOccupied: number;
+        boostLimit: number;
+        boostBasePricePerDay: number;
+        boostDemandPercentPerOccupied: number;
+    }>;
     get(userId: string): Promise<{
         balance: number;
         transactions: {
