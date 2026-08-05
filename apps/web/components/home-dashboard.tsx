@@ -1,117 +1,761 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { api } from '@/lib/api';
-import { FeedView } from './feed-view';
-import { FlameIcon, SearchIcon, UsersIcon } from './icons';
+import type { PublicationCardData } from '@/lib/types';
 
 type Community = {
   id: string;
   slug: string;
   name: string;
-  shortDescription?: string | null;
   description: string;
-  accentColor: string;
+  shortDescription?: string | null;
   subscriberCount: number;
   publicationCount: number;
+  recentPublicationCount?: number;
+  lastActivityAt?: string | null;
   isSubscribed?: boolean;
+  parent: {
+    slug: string;
+    name: string;
+  } | null;
 };
 
-type HomeOverview = {
-  stats: { verifiedUsers: number; activeUsers24h: number; publications: number; comments24h: number; communities: number };
-  poll: null | { id: string; title: string; closesAt: string; totalVotes: number; viewerVoted: boolean; community: { slug: string; name: string; accentColor: string } };
-  proposal: null | { id: string; name: string; description: string; supportCount: number; author: { username: string; displayName: string } };
+type EventItem = {
+  id: string;
+  title: string;
+  startsAt: string;
+  status: string;
+  community: {
+    slug: string;
+    name: string;
+  };
 };
 
-const preferred = ['gta-rp', 'telegram', 'promotion'];
-const symbols: Record<string, string> = { 'gta-rp': 'V', telegram: '➤', promotion: '↗', 'forrum-start': 'F', 'internet-projects': '◆' };
-const emptyOverview: HomeOverview = { stats: { verifiedUsers: 0, activeUsers24h: 0, publications: 0, comments24h: 0, communities: 0 }, poll: null, proposal: null };
+type PollItem = {
+  id: string;
+  title: string;
+  closesAt: string;
+  status: string;
+  community: {
+    slug: string;
+    name: string;
+  };
+};
 
-function formatNumber(value: number) { return new Intl.NumberFormat('ru-RU').format(value); }
-function formatDeadline(value: string) { return new Date(value).toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }); }
+type AnnouncementItem = {
+  id: string;
+  title?: string | null;
+  body?: string | null;
+  description?: string | null;
+  createdAt: string;
+  publishedAt?: string | null;
+  community?: {
+    slug: string;
+    name: string;
+  } | null;
+};
+
+type WorkshopItem = {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  type: string;
+  createdAt: string;
+  author: {
+    username: string;
+    displayName: string;
+  };
+};
+
+type FeedMode =
+  | 'subscriptions'
+  | 'new'
+  | 'popular'
+  | 'unanswered';
+
+const feedTabs: Array<{
+  key: FeedMode;
+  label: string;
+}> = [
+  { key: 'subscriptions', label: 'По подпискам' },
+  { key: 'new', label: 'Новое' },
+  { key: 'popular', label: 'Популярное' },
+  { key: 'unanswered', label: 'Без ответа' },
+];
+
+const formatNumber = (value: number) =>
+  new Intl.NumberFormat('ru-RU').format(value);
+
+function relativeDate(value: string) {
+  const time = new Date(value).getTime();
+
+  if (!Number.isFinite(time)) return '';
+
+  const difference = Date.now() - time;
+
+  if (difference < 60_000) return 'только что';
+
+  const minutes = Math.floor(difference / 60_000);
+  if (minutes < 60) return `${minutes} мин. назад`;
+
+  const hours = Math.floor(difference / 3_600_000);
+  if (hours < 24) return `${hours} ч. назад`;
+
+  const days = Math.floor(difference / 86_400_000);
+  if (days < 14) return `${days} дн. назад`;
+
+  return new Date(value).toLocaleDateString('ru-RU', {
+    day: 'numeric',
+    month: 'short',
+  });
+}
+
+function shortDate(value: string) {
+  return new Date(value).toLocaleString('ru-RU', {
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function typeLabel(type: string) {
+  const names: Record<string, string> = {
+    GIFT: 'Подарок',
+    REACTION: 'Реакция',
+    BADGE: 'Значок',
+    PROFILE_DECOR: 'Профиль',
+    COMMUNITY_DECOR: 'Сообщество',
+  };
+
+  return names[type] ?? type;
+}
 
 export function HomeDashboard() {
-  const [communities, setCommunities] = useState<Community[]>([]);
-  const [overview, setOverview] = useState<HomeOverview>(emptyOverview);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [communities, setCommunities] = useState<
+    Community[]
+  >([]);
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [polls, setPolls] = useState<PollItem[]>([]);
+  const [announcements, setAnnouncements] = useState<
+    AnnouncementItem[]
+  >([]);
+  const [workshop, setWorkshop] = useState<
+    WorkshopItem[]
+  >([]);
+  const [feed, setFeed] = useState<
+    PublicationCardData[]
+  >([]);
+
+  const [mode, setMode] = useState<FeedMode>('new');
+  const [feedLoading, setFeedLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(true);
+  const [feedError, setFeedError] = useState('');
+  const [pageError, setPageError] = useState('');
 
   useEffect(() => {
-    Promise.all([
-      api<Community[]>('/communities'),
-      api<HomeOverview>('/home/overview'),
-    ]).then(([communityItems, home]) => {
-      setCommunities(communityItems);
-      setOverview(home);
-      setError('');
-    }).catch((cause) => setError(cause instanceof Error ? cause.message : 'Не удалось загрузить главную')).finally(() => setLoading(false));
+    let cancelled = false;
+
+    async function loadPage() {
+      setPageLoading(true);
+
+      const results = await Promise.allSettled([
+        api<Community[]>('/communities'),
+        api<EventItem[]>('/events'),
+        api<PollItem[]>('/governance/polls'),
+        api<AnnouncementItem[]>('/announcements'),
+        api<WorkshopItem[]>('/workshop'),
+      ]);
+
+      if (cancelled) return;
+
+      const [
+        communityResult,
+        eventResult,
+        pollResult,
+        announcementResult,
+        workshopResult,
+      ] = results;
+
+      if (communityResult.status === 'fulfilled') {
+        setCommunities(communityResult.value);
+      } else {
+        setPageError(
+          communityResult.reason instanceof Error
+            ? communityResult.reason.message
+            : 'Не удалось загрузить структуру FORRUM',
+        );
+      }
+
+      if (eventResult.status === 'fulfilled') {
+        setEvents(eventResult.value);
+      }
+
+      if (pollResult.status === 'fulfilled') {
+        setPolls(pollResult.value);
+      }
+
+      if (announcementResult.status === 'fulfilled') {
+        setAnnouncements(announcementResult.value);
+      }
+
+      if (workshopResult.status === 'fulfilled') {
+        setWorkshop(workshopResult.value);
+      }
+
+      setPageLoading(false);
+    }
+
+    void loadPage();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const active = useMemo(() => {
-    const ranked = [...communities].sort((a, b) => {
-      const ai = preferred.indexOf(a.slug); const bi = preferred.indexOf(b.slug);
-      if (ai !== bi) return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
-      return b.publicationCount - a.publicationCount;
-    });
-    return ranked.slice(0, 3);
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadFeed() {
+      setFeedLoading(true);
+      setFeedError('');
+
+      const apiMode =
+        mode === 'unanswered' ? 'all' : mode;
+
+      try {
+        const items = await api<PublicationCardData[]>(
+          `/feed?mode=${encodeURIComponent(apiMode)}`,
+        );
+
+        if (cancelled) return;
+
+        setFeed(
+          mode === 'unanswered'
+            ? items.filter(
+                (item) => item.commentCount === 0,
+              )
+            : items,
+        );
+      } catch (cause) {
+        if (cancelled) return;
+
+        setFeed([]);
+        setFeedError(
+          cause instanceof Error
+            ? cause.message
+            : 'Не удалось загрузить обсуждения',
+        );
+      } finally {
+        if (!cancelled) setFeedLoading(false);
+      }
+    }
+
+    void loadFeed();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [mode]);
+
+  const childrenByParent = useMemo(() => {
+    const map = new Map<string, Community[]>();
+
+    for (const community of communities) {
+      if (!community.parent) continue;
+
+      map.set(community.parent.slug, [
+        ...(map.get(community.parent.slug) ?? []),
+        community,
+      ]);
+    }
+
+    return map;
   }, [communities]);
-  const discovery = useMemo(() => communities.filter((item) => !item.isSubscribed && !item.slug.includes('majestic')).sort((a, b) => b.publicationCount - a.publicationCount).slice(0, 3), [communities]);
 
-  return <div className="dashboard-grid">
-    <section className="dashboard-main">
-      <form className="home-search" action="/search">
-        <SearchIcon/>
-        <input name="q" aria-label="Поиск" placeholder="Ищите темы, людей, сообщества и хэштеги"/>
-      </form>
-      {error && <div className="error-box">{error}</div>}
+  const rootCommunities = useMemo(
+    () =>
+      communities
+        .filter((community) => !community.parent)
+        .sort(
+          (left, right) =>
+            (right.recentPublicationCount ?? 0) -
+              (left.recentPublicationCount ?? 0) ||
+            right.publicationCount -
+              left.publicationCount,
+        )
+        .slice(0, 6),
+    [communities],
+  );
 
-      <section className="surface-section active-communities" aria-labelledby="active-communities-title">
-        <div className="compact-heading"><h2 id="active-communities-title">Активные сообщества</h2><Link href="/communities">Смотреть все</Link></div>
-        {loading ? <div className="compact-loading">Загружаем сообщества…</div> : active.length > 0 ? <div className="active-community-grid">{active.map((item) => <Link className="active-community-card" href={`/communities/${item.slug}`} key={item.id}>
-          <span className={`community-art art-${item.slug}`} style={{ '--community-accent': item.accentColor } as React.CSSProperties}>{symbols[item.slug] ?? item.name.slice(0, 1)}</span>
-          <span className="active-community-copy"><strong>{item.name}</strong><small>{item.shortDescription || item.description}</small><span className="community-card-metrics"><span>{formatNumber(item.subscriberCount)} подписчиков</span><span>·</span><span>{formatNumber(item.publicationCount)} публикаций</span></span></span>
-        </Link>)}</div> : <div className="compact-empty">Сообщества появятся здесь после создания.</div>}
+  const newCommunities = useMemo(
+    () =>
+      [...communities]
+        .filter((community) => !community.parent)
+        .sort(
+          (left, right) =>
+            (right.recentPublicationCount ?? 0) -
+              (left.recentPublicationCount ?? 0) ||
+            right.subscriberCount -
+              left.subscriberCount,
+        )
+        .slice(0, 3),
+    [communities],
+  );
+
+  const workshopItems = useMemo(
+    () =>
+      workshop
+        .filter((item) => item.status === 'PUBLISHED')
+        .slice(0, 3),
+    [workshop],
+  );
+
+  const currentItems = useMemo(() => {
+    const now = Date.now();
+
+    const upcoming = events
+      .filter(
+        (item) =>
+          item.status === 'PUBLISHED' &&
+          new Date(item.startsAt).getTime() > now,
+      )
+      .slice(0, 2)
+      .map((item) => ({
+        id: `event-${item.id}`,
+        kind: 'Событие',
+        title: item.title,
+        meta: `${item.community.name} · ${shortDate(
+          item.startsAt,
+        )}`,
+        href: `/events/${item.id}`,
+        date: item.startsAt,
+      }));
+
+    const openPolls = polls
+      .filter((item) => item.status === 'OPEN')
+      .slice(0, 2)
+      .map((item) => ({
+        id: `poll-${item.id}`,
+        kind: 'Голосование',
+        title: item.title,
+        meta: `${item.community.name} · до ${shortDate(
+          item.closesAt,
+        )}`,
+        href: '/events',
+        date: item.closesAt,
+      }));
+
+    const latestAnnouncements = announcements
+      .slice(0, 2)
+      .map((item) => ({
+        id: `announcement-${item.id}`,
+        kind: 'Объявление',
+        title:
+          item.title ||
+          item.body?.slice(0, 90) ||
+          item.description?.slice(0, 90) ||
+          'Объявление FORRUM',
+        meta: `${
+          item.community?.name ?? 'FORRUM'
+        } · ${shortDate(
+          item.publishedAt ||
+            item.createdAt,
+        )}`,
+        href: '/events',
+        date:
+          item.publishedAt ||
+          item.createdAt,
+      }));
+
+    return [
+      ...upcoming,
+      ...openPolls,
+      ...latestAnnouncements,
+    ].slice(0, 4);
+  }, [announcements, events, polls]);
+
+  function renderChildren(
+    parentSlug: string,
+    depth = 0,
+  ): React.ReactNode {
+    const children = (
+      childrenByParent.get(parentSlug) ?? []
+    )
+      .slice()
+      .sort((left, right) =>
+        left.name.localeCompare(right.name, 'ru'),
+      )
+      .slice(0, 5);
+
+    if (!children.length || depth > 1) return null;
+
+    return (
+      <ul>
+        {children.map((child) => (
+          <li key={child.id}>
+            <Link
+              href={`/communities/${child.slug}`}
+            >
+              {child.name}
+            </Link>
+            {renderChildren(child.slug, depth + 1)}
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  return (
+    <div className="home-board">
+      <section className="home-titlebar">
+        <h1>Главная</h1>
+        <Link className="button" href="/create">
+          <span aria-hidden="true">＋</span>
+          Создать тему
+        </Link>
       </section>
 
-      <section className="today-strip" aria-labelledby="today-title">
-        <h2 id="today-title">FORRUM сейчас</h2>
-        <div className="today-metrics">
-          <div><UsersIcon/><span><strong>{formatNumber(overview.stats.verifiedUsers)}</strong><small>Подтверждённых аккаунтов</small></span></div>
-          <div><span className="metric-icon">◯</span><span><strong>{formatNumber(overview.stats.publications)}</strong><small>Опубликованных материалов</small></span></div>
-          <div><FlameIcon/><span><strong>{formatNumber(overview.stats.comments24h)}</strong><small>Ответов за 24 часа</small></span></div>
-          <div><span className="metric-icon">▦</span><span><strong>{formatNumber(overview.stats.communities)}</strong><small>Активных сообществ</small></span></div>
-        </div>
-        {overview.stats.activeUsers24h > 0 && <p className="today-note">За последние 24 часа заходили: {formatNumber(overview.stats.activeUsers24h)}</p>}
-      </section>
+      {pageError && (
+        <div className="error-box">{pageError}</div>
+      )}
 
-      <FeedView/>
-    </section>
+      <div className="home-layout">
+        <aside
+          className="home-community-tree"
+          aria-label="Категории и сообщества"
+        >
+          {pageLoading ? (
+            <div className="home-compact-loading">
+              Загружаем структуру…
+            </div>
+          ) : (
+            <>
+              {rootCommunities.map(
+                (community, index) => (
+                  <details
+                    key={community.id}
+                    open={index < 4}
+                  >
+                    <summary>
+                      <span className="home-tree-symbol">
+                        {community.name.slice(0, 1)}
+                      </span>
+                      <strong>{community.name}</strong>
+                      <span aria-hidden="true">⌄</span>
+                    </summary>
+                    {renderChildren(community.slug)}
+                  </details>
+                ),
+              )}
 
-    <aside className="dashboard-sidebar" aria-label="Дополнительная информация">
-      <section className="sidebar-card poll-card">
-        <div className="compact-heading"><h3>Голосование</h3><Link href="/events">Все</Link></div>
-        {overview.poll ? <>
-          <Link className="sidebar-context-link" href={`/communities/${overview.poll.community.slug}`}>{overview.poll.community.name}</Link>
-          <strong>{overview.poll.title}</strong>
-          <p className="sidebar-fact">До {formatDeadline(overview.poll.closesAt)} · {formatNumber(overview.poll.totalVotes)} голосов</p>
-          <Link className="button ghost small" href="/events">{overview.poll.viewerVoted ? 'Посмотреть результаты' : 'Проголосовать'}</Link>
-        </> : <div className="sidebar-empty"><p>Открытых голосований пока нет.</p><Link href="/events">Открыть события</Link></div>}
-      </section>
+              {!rootCommunities.length && (
+                <p className="muted small-text">
+                  Категории появятся после создания
+                  первых сообществ.
+                </p>
+              )}
 
-      <section className="sidebar-card">
-        <div className="compact-heading"><h3>Предложение сообщества</h3><Link href="/communities/proposals">Все</Link></div>
-        {overview.proposal ? <>
-          <strong>{overview.proposal.name}</strong>
-          <p className="sidebar-clamped">{overview.proposal.description}</p>
-          <p className="sidebar-fact">{formatNumber(overview.proposal.supportCount)} поддержали · автор @{overview.proposal.author.username}</p>
-          <Link className="button ghost small" href="/communities/proposals">Посмотреть предложение</Link>
-        </> : <div className="sidebar-empty"><p>Новых предложений пока нет.</p><Link href="/communities/proposals">Предложить сообщество</Link></div>}
-      </section>
+              <Link
+                className="home-panel-footer"
+                href="/communities"
+              >
+                Все категории
+                <span aria-hidden="true">→</span>
+              </Link>
+            </>
+          )}
+        </aside>
 
-      {discovery.length > 0 && <section className="sidebar-card"><div className="compact-heading"><h3>Открыть новое</h3><Link href="/settings/interests">Настроить</Link></div>{discovery.map((item) => <Link className="mini-community" href={`/communities/${item.slug}`} key={item.id}><span style={{ background: item.accentColor }}>{item.name.slice(0, 1)}</span><div><strong>{item.name}</strong><small>{formatNumber(item.subscriberCount)} подписчиков</small></div><b aria-hidden="true">→</b></Link>)}</section>}
+        <main className="home-discussion-panel">
+          <header className="home-panel-heading">
+            <h2>Лента обсуждений</h2>
+          </header>
 
-      <section className="sidebar-card sponsor-card"><span className="ad-label">Продвижение</span><div className="sponsor-art">●</div><strong>Продвижение вашей темы</strong><p>Количество мест и цена задаются администрацией. Рекламные материалы всегда отмечаются.</p><Link href="/promotion">Узнать условия ↗</Link></section>
-    </aside>
-  </div>;
+          <div
+            className="home-feed-tabs"
+            role="tablist"
+            aria-label="Режим ленты"
+          >
+            {feedTabs.map((tab) => (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={mode === tab.key}
+                className={
+                  mode === tab.key ? 'active' : ''
+                }
+                key={tab.key}
+                onClick={() => setMode(tab.key)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="home-feed-table">
+            <div
+              className="home-feed-head"
+              aria-hidden="true"
+            >
+              <span>Тема</span>
+              <span>Автор</span>
+              <span>Ответы</span>
+              <span>Просмотры</span>
+            </div>
+
+            {feedLoading ? (
+              <div className="home-feed-status">
+                Загружаем обсуждения…
+              </div>
+            ) : feedError ? (
+              <div className="home-feed-status error">
+                <strong>
+                  Не удалось загрузить ленту
+                </strong>
+                <span>{feedError}</span>
+                <button
+                  type="button"
+                  className="button ghost small"
+                  onClick={() =>
+                    setMode((current) => current)
+                  }
+                >
+                  Повторить
+                </button>
+              </div>
+            ) : feed.length ? (
+              feed.slice(0, 9).map((item) => (
+                <article
+                  className="home-topic-row"
+                  key={item.id}
+                >
+                  <span
+                    className="home-topic-icon"
+                    aria-hidden="true"
+                  >
+                    {item.type === 'QUESTION'
+                      ? '?'
+                      : item.format === 'TOPIC'
+                        ? '●'
+                        : '○'}
+                  </span>
+
+                  <div className="home-topic-copy">
+                    <div className="home-topic-path">
+                      <Link
+                        href={`/communities/${item.community.slug}`}
+                      >
+                        {item.community.name}
+                      </Link>
+                      {item.tags.slice(0, 2).map((tag) => (
+                        <span key={tag.id}>
+                          › {tag.label}
+                        </span>
+                      ))}
+                    </div>
+
+                    <Link
+                      className="home-topic-title"
+                      href={`/p/${item.slug}`}
+                    >
+                      {item.title ||
+                        item.excerpt.slice(0, 100)}
+                    </Link>
+
+                    <p>{item.excerpt}</p>
+                  </div>
+
+                  <div className="home-topic-author">
+                    <Link
+                      href={`/u/${item.author.username}`}
+                    >
+                      {item.author.displayName}
+                    </Link>
+                    <span>
+                      {relativeDate(
+                        item.lastActivityAt ||
+                          item.createdAt,
+                      )}
+                    </span>
+                  </div>
+
+                  <strong className="home-topic-count">
+                    {formatNumber(item.commentCount)}
+                  </strong>
+
+                  <strong className="home-topic-count">
+                    {formatNumber(item.viewCount ?? 0)}
+                  </strong>
+                </article>
+              ))
+            ) : (
+              <div className="home-feed-status">
+                <strong>
+                  В этой вкладке пока пусто
+                </strong>
+                <span>
+                  Выберите другой режим или создайте
+                  первую тему.
+                </span>
+              </div>
+            )}
+          </div>
+
+          <Link
+            className="home-panel-footer"
+            href="/search"
+          >
+            Перейти ко всем обсуждениям
+            <span aria-hidden="true">→</span>
+          </Link>
+        </main>
+
+        <aside className="home-current-panel">
+          <header className="home-panel-heading">
+            <h2>Актуальное</h2>
+          </header>
+
+          <div className="home-current-list">
+            {currentItems.map((item) => (
+              <Link
+                href={item.href}
+                className="home-current-item"
+                key={item.id}
+              >
+                <span className="home-current-icon">
+                  {item.kind === 'Событие'
+                    ? '□'
+                    : item.kind === 'Голосование'
+                      ? '▥'
+                      : '◁'}
+                </span>
+
+                <span>
+                  <small>{item.kind}</small>
+                  <strong>{item.title}</strong>
+                  <em>{item.meta}</em>
+                </span>
+              </Link>
+            ))}
+
+            {!pageLoading && !currentItems.length && (
+              <div className="home-current-empty">
+                Новых событий и объявлений пока нет.
+              </div>
+            )}
+          </div>
+
+          <Link
+            className="home-panel-footer"
+            href="/events"
+          >
+            Перейти ко всему актуальному
+            <span aria-hidden="true">→</span>
+          </Link>
+        </aside>
+      </div>
+
+      <div className="home-lower-grid">
+        <section className="home-list-panel">
+          <header className="home-panel-heading">
+            <h2>Новое в Мастерской</h2>
+            <Link href="/workshop">
+              Перейти в Мастерскую
+            </Link>
+          </header>
+
+          <div className="home-simple-list">
+            {workshopItems.map((item) => (
+              <Link href="/workshop" key={item.id}>
+                <span className="home-list-icon">
+                  □
+                </span>
+                <span>
+                  <strong>{item.title}</strong>
+                  <small>
+                    {typeLabel(item.type)} · @
+                    {item.author.username}
+                  </small>
+                </span>
+                <em>
+                  {relativeDate(item.createdAt)}
+                </em>
+              </Link>
+            ))}
+
+            {!pageLoading && !workshopItems.length && (
+              <div className="home-list-empty">
+                Новых опубликованных работ пока нет.
+              </div>
+            )}
+          </div>
+
+          <Link
+            className="home-panel-footer"
+            href="/workshop"
+          >
+            Смотреть все новинки
+            <span aria-hidden="true">→</span>
+          </Link>
+        </section>
+
+        <section className="home-list-panel">
+          <header className="home-panel-heading">
+            <h2>Новые сообщества</h2>
+            <Link href="/communities">
+              Все сообщества
+            </Link>
+          </header>
+
+          <div className="home-simple-list">
+            {newCommunities.map((community) => (
+              <Link
+                href={`/communities/${community.slug}`}
+                key={community.id}
+              >
+                <span className="home-list-icon">
+                  ○
+                </span>
+                <span>
+                  <strong>{community.name}</strong>
+                  <small>
+                    {community.shortDescription ||
+                      community.description}
+                  </small>
+                </span>
+                <em>
+                  {formatNumber(
+                    community.subscriberCount,
+                  )}{' '}
+                  участников
+                </em>
+              </Link>
+            ))}
+
+            {!pageLoading && !newCommunities.length && (
+              <div className="home-list-empty">
+                Новых сообществ пока нет.
+              </div>
+            )}
+          </div>
+
+          <Link
+            className="home-panel-footer"
+            href="/communities"
+          >
+            Перейти ко всем сообществам
+            <span aria-hidden="true">→</span>
+          </Link>
+        </section>
+      </div>
+    </div>
+  );
 }
