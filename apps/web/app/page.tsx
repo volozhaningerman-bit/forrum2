@@ -2,41 +2,36 @@ import {
   HomeDashboard,
   type HomeInitialData,
 } from '@/components/home-dashboard';
+import { resolveApiBase } from '@/lib/api-base';
 
 export const dynamic = 'force-dynamic';
 
-function apiBase() {
-  const raw =
-    process.env.API_INTERNAL_URL ??
-    process.env.PUBLIC_API_URL;
-
-  if (!raw) return null;
-
-  const normalized = raw.replace(/\/+$/, '');
-
-  return normalized.endsWith('/v1')
-    ? normalized
-    : `${normalized}/v1`;
-}
-
 async function publicApi<T>(path: string) {
-  const base = apiBase();
-
-  if (!base) return undefined;
+  const controller = new AbortController();
+  const timeout = setTimeout(
+    () => controller.abort(),
+    12_000,
+  );
 
   try {
-    const response = await fetch(`${base}${path}`, {
-      cache: 'no-store',
-      headers: {
-        Accept: 'application/json',
+    const response = await fetch(
+      `${resolveApiBase()}${path}`,
+      {
+        cache: 'no-store',
+        headers: {
+          Accept: 'application/json',
+        },
+        signal: controller.signal,
       },
-    });
+    );
 
     if (!response.ok) return undefined;
 
     return (await response.json()) as T;
   } catch {
     return undefined;
+  } finally {
+    clearTimeout(timeout);
   }
 }
 
