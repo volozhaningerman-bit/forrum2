@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import {
   useEffect,
   useMemo,
@@ -31,6 +32,7 @@ type EventItem = {
   title: string;
   startsAt: string;
   status: string;
+  createdAt: string;
   community: {
     slug: string;
     name: string;
@@ -42,23 +44,11 @@ type PollItem = {
   title: string;
   closesAt: string;
   status: string;
+  createdAt: string;
   community: {
     slug: string;
     name: string;
   };
-};
-
-type AnnouncementItem = {
-  id: string;
-  title?: string | null;
-  body?: string | null;
-  description?: string | null;
-  createdAt: string;
-  publishedAt?: string | null;
-  community?: {
-    slug: string;
-    name: string;
-  } | null;
 };
 
 type WorkshopItem = {
@@ -79,6 +69,15 @@ type FeedMode =
   | 'new'
   | 'popular'
   | 'unanswered';
+
+export type HomeInitialData = {
+  communities?: Community[];
+  events?: EventItem[];
+  polls?: PollItem[];
+  announcements?: PublicationCardData[];
+  workshop?: WorkshopItem[];
+  feed?: PublicationCardData[];
+};
 
 const feedTabs: Array<{
   key: FeedMode;
@@ -138,29 +137,80 @@ function typeLabel(type: string) {
   return names[type] ?? type;
 }
 
-export function HomeDashboard() {
+function TopicSkeleton() {
+  return (
+    <div
+      className="home-topic-row home-topic-skeleton"
+      aria-hidden="true"
+    >
+      <span className="skeleton-dot" />
+      <div>
+        <span className="skeleton-line short" />
+        <span className="skeleton-line long" />
+        <span className="skeleton-line medium" />
+      </div>
+      <span className="skeleton-line medium" />
+      <span className="skeleton-line short" />
+      <span className="skeleton-line short" />
+    </div>
+  );
+}
+
+export function HomeDashboard({
+  initialData = {},
+}: {
+  initialData?: HomeInitialData;
+}) {
   const [communities, setCommunities] = useState<
     Community[]
-  >([]);
-  const [events, setEvents] = useState<EventItem[]>([]);
-  const [polls, setPolls] = useState<PollItem[]>([]);
+  >(initialData.communities ?? []);
+  const [events, setEvents] = useState<EventItem[]>(
+    initialData.events ?? [],
+  );
+  const [polls, setPolls] = useState<PollItem[]>(
+    initialData.polls ?? [],
+  );
   const [announcements, setAnnouncements] = useState<
-    AnnouncementItem[]
-  >([]);
+    PublicationCardData[]
+  >(initialData.announcements ?? []);
   const [workshop, setWorkshop] = useState<
     WorkshopItem[]
-  >([]);
+  >(initialData.workshop ?? []);
   const [feed, setFeed] = useState<
     PublicationCardData[]
-  >([]);
+  >(initialData.feed ?? []);
 
   const [mode, setMode] = useState<FeedMode>('new');
-  const [feedLoading, setFeedLoading] = useState(true);
-  const [pageLoading, setPageLoading] = useState(true);
+  const [feedRequestVersion, setFeedRequestVersion] =
+    useState(0);
+  const [feedLoading, setFeedLoading] = useState(
+    initialData.feed === undefined,
+  );
+  const [pageLoading, setPageLoading] = useState(
+    [
+      initialData.communities,
+      initialData.events,
+      initialData.polls,
+      initialData.announcements,
+      initialData.workshop,
+    ].some((value) => value === undefined),
+  );
   const [feedError, setFeedError] = useState('');
   const [pageError, setPageError] = useState('');
 
+  const pageSeeded = [
+    initialData.communities,
+    initialData.events,
+    initialData.polls,
+    initialData.announcements,
+    initialData.workshop,
+  ].every((value) => value !== undefined);
+
+  const feedSeeded = initialData.feed !== undefined;
+
   useEffect(() => {
+    if (pageSeeded) return;
+
     let cancelled = false;
 
     async function loadPage() {
@@ -170,7 +220,7 @@ export function HomeDashboard() {
         api<Community[]>('/communities'),
         api<EventItem[]>('/events'),
         api<PollItem[]>('/governance/polls'),
-        api<AnnouncementItem[]>('/announcements'),
+        api<PublicationCardData[]>('/announcements'),
         api<WorkshopItem[]>('/workshop'),
       ]);
 
@@ -218,9 +268,18 @@ export function HomeDashboard() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [pageSeeded]);
 
   useEffect(() => {
+    if (
+      mode === 'new' &&
+      feedSeeded &&
+      feedRequestVersion === 0
+    ) {
+      setFeedLoading(false);
+      return;
+    }
+
     let cancelled = false;
 
     async function loadFeed() {
@@ -263,7 +322,7 @@ export function HomeDashboard() {
     return () => {
       cancelled = true;
     };
-  }, [mode]);
+  }, [feedRequestVersion, feedSeeded, mode]);
 
   const childrenByParent = useMemo(() => {
     const map = new Map<string, Community[]>();
@@ -291,7 +350,7 @@ export function HomeDashboard() {
             right.publicationCount -
               left.publicationCount,
         )
-        .slice(0, 6),
+        .slice(0, 7),
     [communities],
   );
 
@@ -336,7 +395,6 @@ export function HomeDashboard() {
           item.startsAt,
         )}`,
         href: `/events/${item.id}`,
-        date: item.startsAt,
       }));
 
     const openPolls = polls
@@ -350,7 +408,6 @@ export function HomeDashboard() {
           item.closesAt,
         )}`,
         href: '/events',
-        date: item.closesAt,
       }));
 
     const latestAnnouncements = announcements
@@ -360,19 +417,12 @@ export function HomeDashboard() {
         kind: 'Объявление',
         title:
           item.title ||
-          item.body?.slice(0, 90) ||
-          item.description?.slice(0, 90) ||
+          item.excerpt.slice(0, 90) ||
           'Объявление FORRUM',
-        meta: `${
-          item.community?.name ?? 'FORRUM'
-        } · ${shortDate(
-          item.publishedAt ||
-            item.createdAt,
+        meta: `${item.community.name} · ${shortDate(
+          item.lastActivityAt ?? item.createdAt,
         )}`,
-        href: '/events',
-        date:
-          item.publishedAt ||
-          item.createdAt,
+        href: `/p/${item.slug}`,
       }));
 
     return [
@@ -385,7 +435,7 @@ export function HomeDashboard() {
   function renderChildren(
     parentSlug: string,
     depth = 0,
-  ): React.ReactNode {
+  ): ReactNode {
     const children = (
       childrenByParent.get(parentSlug) ?? []
     )
@@ -393,7 +443,7 @@ export function HomeDashboard() {
       .sort((left, right) =>
         left.name.localeCompare(right.name, 'ru'),
       )
-      .slice(0, 5);
+      .slice(0, 6);
 
     if (!children.length || depth > 1) return null;
 
@@ -433,8 +483,15 @@ export function HomeDashboard() {
           aria-label="Категории и сообщества"
         >
           {pageLoading ? (
-            <div className="home-compact-loading">
-              Загружаем структуру…
+            <div
+              className="home-tree-skeleton"
+              aria-label="Загружаем структуру"
+            >
+              {Array.from({ length: 7 }).map(
+                (_, index) => (
+                  <span key={index} />
+                ),
+              )}
             </div>
           ) : (
             <>
@@ -442,7 +499,7 @@ export function HomeDashboard() {
                 (community, index) => (
                   <details
                     key={community.id}
-                    open={index < 4}
+                    open={index < 3}
                   >
                     <summary>
                       <span className="home-tree-symbol">
@@ -512,9 +569,11 @@ export function HomeDashboard() {
             </div>
 
             {feedLoading ? (
-              <div className="home-feed-status">
-                Загружаем обсуждения…
-              </div>
+              Array.from({ length: 8 }).map(
+                (_, index) => (
+                  <TopicSkeleton key={index} />
+                ),
+              )
             ) : feedError ? (
               <div className="home-feed-status error">
                 <strong>
@@ -525,14 +584,16 @@ export function HomeDashboard() {
                   type="button"
                   className="button ghost small"
                   onClick={() =>
-                    setMode((current) => current)
+                    setFeedRequestVersion(
+                      (current) => current + 1,
+                    )
                   }
                 >
                   Повторить
                 </button>
               </div>
             ) : feed.length ? (
-              feed.slice(0, 9).map((item) => (
+              feed.slice(0, 10).map((item) => (
                 <article
                   className="home-topic-row"
                   key={item.id}
@@ -624,27 +685,43 @@ export function HomeDashboard() {
           </header>
 
           <div className="home-current-list">
-            {currentItems.map((item) => (
-              <Link
-                href={item.href}
-                className="home-current-item"
-                key={item.id}
-              >
-                <span className="home-current-icon">
-                  {item.kind === 'Событие'
-                    ? '□'
-                    : item.kind === 'Голосование'
-                      ? '▥'
-                      : '◁'}
-                </span>
+            {pageLoading
+              ? Array.from({ length: 4 }).map(
+                  (_, index) => (
+                    <div
+                      className="home-current-skeleton"
+                      key={index}
+                    >
+                      <span />
+                      <div>
+                        <i />
+                        <i />
+                        <i />
+                      </div>
+                    </div>
+                  ),
+                )
+              : currentItems.map((item) => (
+                  <Link
+                    href={item.href}
+                    className="home-current-item"
+                    key={item.id}
+                  >
+                    <span className="home-current-icon">
+                      {item.kind === 'Событие'
+                        ? '□'
+                        : item.kind === 'Голосование'
+                          ? '▥'
+                          : '◁'}
+                    </span>
 
-                <span>
-                  <small>{item.kind}</small>
-                  <strong>{item.title}</strong>
-                  <em>{item.meta}</em>
-                </span>
-              </Link>
-            ))}
+                    <span>
+                      <small>{item.kind}</small>
+                      <strong>{item.title}</strong>
+                      <em>{item.meta}</em>
+                    </span>
+                  </Link>
+                ))}
 
             {!pageLoading && !currentItems.length && (
               <div className="home-current-empty">

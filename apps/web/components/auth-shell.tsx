@@ -14,23 +14,39 @@ export function AuthShell({
   children: ReactNode;
   footer?: ReactNode;
 }) {
-  return <div className="auth-layout">
-    <section className="auth-intro" aria-label="О FORRUM ID">
-      <Link className="auth-brand" href="/"><span className="brand-mark">F</span><span>FORRUM ID</span></Link>
-      <div>
-        <span className="auth-eyebrow">{eyebrow}</span>
-        <h1>{title}</h1>
-        <p>{description}</p>
-      </div>
-      <ul className="auth-benefits">
-        <li><strong>Один аккаунт</strong><span>Профиль, сообщества, сообщения и будущие сервисы FORRUM.</span></li>
-        <li><strong>Подтверждённая почта</strong><span>Защищает публикации и голосования от массовых пустых аккаунтов.</span></li>
-        <li><strong>Контроль входов</strong><span>Активные устройства можно просмотреть и завершить в настройках.</span></li>
-      </ul>
-    </section>
-    <section className="card auth-panel">
-      {children}
-      {footer && <div className="auth-footer">{footer}</div>}
-    </section>
-  </div>;
+  return (
+    <div className="compact-auth-page">
+      <section className="compact-auth-panel">
+        <Link
+          className="compact-auth-brand"
+          href="/"
+          aria-label="FORRUM"
+        >
+          <span
+            className="brand-mark"
+            aria-hidden="true"
+          >
+            F
+          </span>
+          <strong aria-hidden="true">FORRUM</strong>
+        </Link>
+
+        <header>
+          <span>{eyebrow}</span>
+          <h1>{title}</h1>
+          <p>{description}</p>
+        </header>
+
+        <div className="compact-auth-content">
+          {children}
+        </div>
+
+        {footer && (
+          <footer className="auth-footer">
+            {footer}
+          </footer>
+        )}
+      </section>
+    </div>
+  );
 }

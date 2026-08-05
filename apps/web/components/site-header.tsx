@@ -15,9 +15,18 @@ export function SiteHeader() {
     <>
       <header className="header">
         <div className="shell nav">
-          <Link className="brand" href="/">
-            <span className="brand-mark">F</span>
-            <span>FORRUM</span>
+          <Link
+            className="brand"
+            href="/"
+            aria-label="FORRUM"
+          >
+            <span
+              className="brand-mark"
+              aria-hidden="true"
+            >
+              F
+            </span>
+            <span aria-hidden="true">FORRUM</span>
           </Link>
 
           <MainNav />
