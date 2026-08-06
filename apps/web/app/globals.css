@@ -8010,3 +8010,233 @@ a.button:hover {
 }
 
 /* /FORRUM_HOME_STAGE_1_V9 */
+
+/* FORRUM_HOME_STAGE_1_HOTFIX_V9_2
+   Fixes confirmed issues after the first main-page refinement:
+   - simplified category tree without subscriber counters and new-count badges;
+   - lower blocks moved into the right rail;
+   - calmer publication-detail title header;
+   - neutral compact reply/editor shell.
+*/
+
+.home-stage-one .home-layout {
+  grid-template-columns: 248px minmax(0, 1fr) 320px;
+}
+
+.home-stage-one .home-community-tree {
+  padding: 8px 8px 0;
+}
+
+.home-stage-one .home-workshop-entry {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 7px 8px;
+}
+
+.home-stage-one .home-workshop-entry strong {
+  margin: 0;
+  font-size: 12.75px;
+  line-height: 1.2;
+  font-weight: 760;
+}
+
+.home-stage-one .home-workshop-entry small,
+.home-stage-one .home-tree-link small,
+.home-stage-one .home-tree-new-count {
+  display: none !important;
+}
+
+.home-stage-one .home-tree-link {
+  grid-template-columns: 24px minmax(0, 1fr) !important;
+  gap: 8px;
+  max-width: 100%;
+}
+
+.home-stage-one .home-tree-link .community-mark,
+.home-stage-one .home-list-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 23px !important;
+  height: 23px !important;
+  border: 1px solid #cfcec8 !important;
+  border-radius: 3px !important;
+  background: #fafaf8 !important;
+  color: #44433f;
+  box-shadow: none !important;
+}
+
+.home-stage-one .home-tree-copy strong {
+  font-size: 12px;
+}
+
+.home-stage-one .home-tree-row.active::before {
+  inset-block: 8px;
+}
+
+.home-stage-one .home-current-panel {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+
+.home-stage-one .home-rail-panel {
+  border-top: 1px solid #e0dfda;
+  padding-top: 10px;
+}
+
+.home-stage-one .home-panel-heading.compact {
+  min-height: auto;
+  padding-bottom: 2px;
+}
+
+.home-stage-one .home-panel-heading.compact h2 {
+  font-size: 14px;
+}
+
+.home-stage-one .home-rail-list {
+  display: grid;
+  gap: 0;
+}
+
+.home-stage-one .home-rail-list > a {
+  min-height: 56px;
+}
+
+.home-stage-one .home-rail-list .home-list-copy small {
+  display: block;
+  margin-bottom: 1px;
+}
+
+.home-stage-one .home-rail-list .home-list-copy strong {
+  display: block;
+}
+
+.home-stage-one .home-rail-list .home-list-copy em {
+  display: block;
+}
+
+.home-stage-one .home-lower-grid {
+  display: none !important;
+}
+
+/* Topic page: stop oversized hero titles and decorative duplicate text. */
+.publication-detail-topic .publication-detail-header {
+  min-height: 120px;
+  padding: 18px 22px;
+  background-position: center;
+}
+
+
+.publication-detail-topic .publication-detail-header::before {
+  content: none !important;
+  display: none !important;
+}
+
+.publication-detail-topic .publication-detail-header [class*="watermark"],
+.publication-detail-topic .publication-detail-header [class*="ghost"],
+.publication-detail-topic .publication-detail-header [class*="hero-word"],
+.publication-detail-topic .publication-detail-header [class*="display-word"] {
+  display: none !important;
+}
+
+.publication-detail-header h1 {
+  max-width: 100%;
+  margin: 10px 0 8px;
+  font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.publication-detail-author,
+.publication-detail-footer {
+  padding-inline: 16px;
+}
+
+.publication-rich-body {
+  padding: 20px 22px;
+}
+
+/* Neutral forum editor instead of a dark heavy ribbon. */
+:is(.reply-editor, .publication-reply-editor, .post-editor, .editor-shell, .editor-card, [class*="reply-editor"], [class*="post-editor"], [class*="bbcode-editor"], [class*="editor"]) {
+  box-shadow: none !important;
+}
+
+:is(.reply-editor, .publication-reply-editor, .post-editor, .editor-shell, .editor-card, [class*="reply-editor"], [class*="post-editor"], [class*="bbcode-editor"]) {
+  border: 1px solid #d8d7d1;
+  border-radius: 5px;
+  background: #fff;
+  overflow: hidden;
+}
+
+:is(.reply-editor, .publication-reply-editor, .post-editor, .editor-shell, .editor-card, [class*="reply-editor"], [class*="post-editor"], [class*="bbcode-editor"]) :is(.toolbar, [class*="toolbar"], [class*="controls"], [class*="menu"]) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  background: #f6f6f3 !important;
+  border-bottom: 1px solid #dfded8;
+  color: #2f2f2d;
+}
+
+:is(.reply-editor, .publication-reply-editor, .post-editor, .editor-shell, .editor-card, [class*="reply-editor"], [class*="post-editor"], [class*="bbcode-editor"]) :is(button, select) {
+  min-height: 28px;
+  border: 1px solid #d0cfc9;
+  border-radius: 4px;
+  background: #fff;
+  color: #2f2f2d;
+  box-shadow: none;
+}
+
+:is(.reply-editor, .publication-reply-editor, .post-editor, .editor-shell, .editor-card, [class*="reply-editor"], [class*="post-editor"], [class*="bbcode-editor"]) textarea {
+  min-height: 170px;
+  border: 0;
+  border-radius: 0;
+  padding: 14px 14px 18px;
+  background: #fff;
+  color: #242422;
+  resize: vertical;
+}
+
+:is(.reply-editor, .publication-reply-editor, .post-editor, .editor-shell, .editor-card, [class*="reply-editor"], [class*="post-editor"], [class*="bbcode-editor"]) textarea:focus {
+  outline: none;
+}
+
+:is(.reply-editor, .publication-reply-editor, .post-editor, .editor-shell, .editor-card, [class*="reply-editor"], [class*="post-editor"], [class*="bbcode-editor"]) :is(.submit-row, .editor-footer, .composer-footer, [class*="footer"]) {
+  padding: 10px 12px;
+  border-top: 1px solid #e3e2dc;
+  background: #fbfbf9;
+}
+
+:is(.reply-editor, .publication-reply-editor, .post-editor, .editor-shell, .editor-card, [class*="reply-editor"], [class*="post-editor"], [class*="bbcode-editor"]) button[type="submit"] {
+  min-width: 132px;
+  min-height: 34px;
+  border: 1px solid #c9c8c2;
+  border-radius: 4px;
+  background: #f1f1ee;
+  color: #242422;
+  font-weight: 600;
+}
+
+@media (max-width: 1180px) {
+  .home-stage-one .home-layout {
+    grid-template-columns: 236px minmax(0, 1fr) 286px;
+  }
+}
+
+@media (max-width: 960px) {
+  .home-stage-one .home-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .home-stage-one .home-current-panel {
+    order: 3;
+  }
+}
+
+/* /FORRUM_HOME_STAGE_1_HOTFIX_V9_2 */

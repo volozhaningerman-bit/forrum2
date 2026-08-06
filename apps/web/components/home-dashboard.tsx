@@ -513,8 +513,6 @@ export function HomeDashboard({
     const expandable = children.length > 0;
     const open = expanded.has(community.slug);
     const active = pathname === `/communities/${community.slug}`;
-    const newCount = Math.max(0, community.recentPublicationCount ?? 0);
-    const unread = newCount > 0;
     const toggleCurrent = () => toggle(community.slug);
 
     return (
@@ -526,7 +524,7 @@ export function HomeDashboard({
         <div
           className={`home-tree-row ${expandable ? 'expandable' : ''} ${
             open ? 'opened' : 'closed'
-          } ${active ? 'active' : ''} ${unread ? 'has-unread' : ''}`}
+          } ${active ? 'active' : ''}`}
         >
           <Link
             className="home-tree-link"
@@ -540,17 +538,7 @@ export function HomeDashboard({
             />
             <span className="home-tree-copy">
               <strong>{community.name}</strong>
-              {depth === 0 && (
-                <small>
-                  {formatNumber(community.subscriberCount)} подписчиков
-                </small>
-              )}
             </span>
-            {unread && (
-              <span className="home-tree-new-count" aria-label={`${newCount} новых`}>
-                {newCount > 99 ? '99+' : newCount}
-              </span>
-            )}
           </Link>
 
           {expandable ? (
@@ -614,10 +602,7 @@ export function HomeDashboard({
           <div className="home-tree-section home-tree-workshop-section">
             <Link className="home-workshop-entry" href="/workshop">
               <span className="home-workshop-icon" aria-hidden="true">⌁</span>
-              <span>
-                <strong>Мастерская</strong>
-                <small>Проекты, работы и решения</small>
-              </span>
+              <strong>Мастерская</strong>
               <span className="home-workshop-arrow" aria-hidden="true">→</span>
             </Link>
           </div>
@@ -885,64 +870,58 @@ export function HomeDashboard({
           <Link className="home-panel-footer" href="/events">
             Всё актуальное <span aria-hidden="true">→</span>
           </Link>
+
+          <section className="home-rail-panel">
+            <header className="home-panel-heading compact">
+              <h2>Новое в Мастерской</h2>
+              <Link href="/workshop">Открыть</Link>
+            </header>
+            <div className="home-simple-list home-rail-list">
+              {workshopItems.map((item) => (
+                <Link href="/workshop" key={item.id}>
+                  <span className="home-list-icon" aria-hidden="true">
+                    {workshopTypeSymbols[item.type] ?? 'W'}
+                  </span>
+                  <span className="home-list-copy">
+                    <small>{typeLabel(item.type)}</small>
+                    <strong>{item.title}</strong>
+                    <em>@{item.author.username} · {relativeDate(item.createdAt)}</em>
+                  </span>
+                </Link>
+              ))}
+              {!pageLoading && !workshopItems.length && (
+                <div className="home-list-empty">Новых опубликованных работ пока нет.</div>
+              )}
+            </div>
+          </section>
+
+          <section className="home-rail-panel">
+            <header className="home-panel-heading compact">
+              <h2>Новые сообщества</h2>
+              <Link href="/communities">Открыть</Link>
+            </header>
+            <div className="home-simple-list home-community-short-list home-rail-list">
+              {newCommunities.map((community) => (
+                <Link href={`/communities/${community.slug}`} key={community.id}>
+                  <span className="home-list-icon" aria-hidden="true">
+                    {community.name.charAt(0).toUpperCase()}
+                  </span>
+                  <span className="home-list-copy">
+                    <strong>{community.name}</strong>
+                    <small>{community.shortDescription || community.description}</small>
+                    <em>
+                      <i className="home-activity-dot" aria-hidden="true" />
+                      {formatNumber(community.subscriberCount)} подписчиков
+                    </em>
+                  </span>
+                </Link>
+              ))}
+              {!pageLoading && !newCommunities.length && (
+                <div className="home-list-empty">Новых сообществ пока нет.</div>
+              )}
+            </div>
+          </section>
         </aside>
-      </div>
-
-      <div className="home-lower-grid">
-        <section className="home-list-panel home-secondary-panel">
-          <header className="home-panel-heading">
-            <h2>Новое в Мастерской</h2>
-            <Link href="/workshop">Открыть</Link>
-          </header>
-          <div className="home-simple-list">
-            {workshopItems.map((item) => (
-              <Link href="/workshop" key={item.id}>
-                <span className="home-list-icon" aria-hidden="true">
-                  {workshopTypeSymbols[item.type] ?? 'W'}
-                </span>
-                <span className="home-list-copy">
-                  <small>{typeLabel(item.type)}</small>
-                  <strong>{item.title}</strong>
-                  <em>@{item.author.username} · {relativeDate(item.createdAt)}</em>
-                </span>
-                <span className="home-list-arrow" aria-hidden="true">→</span>
-              </Link>
-            ))}
-            {!pageLoading && !workshopItems.length && (
-              <div className="home-list-empty">Новых опубликованных работ пока нет.</div>
-            )}
-          </div>
-        </section>
-
-        <section className="home-list-panel home-secondary-panel">
-          <header className="home-panel-heading">
-            <h2>Новые сообщества</h2>
-            <Link href="/communities">Открыть</Link>
-          </header>
-          <div className="home-simple-list home-community-short-list">
-            {newCommunities.map((community) => (
-              <Link href={`/communities/${community.slug}`} key={community.id}>
-                <CommunityMark
-                  name={community.name}
-                  url={community.avatarUrl}
-                  size={30}
-                />
-                <span className="home-list-copy">
-                  <strong>{community.name}</strong>
-                  <small>{community.shortDescription || community.description}</small>
-                  <em>
-                    <i className="home-activity-dot" aria-hidden="true" />
-                    {formatNumber(community.subscriberCount)} подписчиков
-                  </em>
-                </span>
-                <span className="home-list-arrow" aria-hidden="true">→</span>
-              </Link>
-            ))}
-            {!pageLoading && !newCommunities.length && (
-              <div className="home-list-empty">Новых сообществ пока нет.</div>
-            )}
-          </div>
-        </section>
       </div>
     </div>
   );
