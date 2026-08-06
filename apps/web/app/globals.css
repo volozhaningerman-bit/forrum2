@@ -8338,132 +8338,64 @@ a.button:hover {
 
 /* /FORRUM_HOME_TREE_CLICK_V9_2_2 */
 
-/* FORRUM_HOME_TREE_REFERENCE_V9_2_3
-   Compact reference-faithful category navigation:
-   plain line icons, no card-like row fills, no hover underline,
-   category name is the only navigation link, the remaining parent row expands.
+/* FORRUM_HOME_TREE_REFERENCE_V9_2_4
+   Final compact tree pass based on the approved reference:
+   restrained typography, optically consistent line icons, subtle expansion feedback,
+   real nested guides, compact active state and an expandable Workshop section.
 */
 
+.home-stage-one .home-layout {
+  grid-template-columns: 264px minmax(0, 1fr) 320px;
+  gap: 12px;
+}
+
 .home-stage-one .home-community-tree {
-  padding: 10px 12px 0 !important;
-  border-color: #d9d9d4 !important;
+  padding: 11px 13px 0 !important;
+  border: 1px solid #d9d9d4 !important;
   border-radius: 5px !important;
   background: #fff !important;
+  overflow: hidden;
 }
 
-.home-stage-one .home-tree-workshop-section {
-  padding: 0 0 8px;
-}
-
-.home-stage-one .home-workshop-entry {
-  display: grid;
-  grid-template-columns: 22px minmax(0, 1fr) 18px;
-  align-items: center;
-  gap: 9px;
-  min-height: 34px;
-  padding: 2px 1px !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  color: #2d2d2a;
-  text-decoration: none !important;
-}
-
-.home-stage-one .home-workshop-entry:hover,
-.home-stage-one .home-workshop-entry:focus-visible {
-  background: transparent !important;
-  color: #11110f;
-  text-decoration: none !important;
-}
-
-.home-stage-one .home-workshop-entry:focus-visible {
-  outline: 1px solid #8d8d87;
-  outline-offset: 2px;
-}
-
-.home-stage-one .home-workshop-icon,
-.home-stage-one .home-workshop-arrow {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px !important;
-  height: 20px !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  color: #52524e;
-}
-
-.home-stage-one .home-workshop-icon svg {
-  width: 18px;
-  height: 18px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.55;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.home-stage-one .home-workshop-arrow svg {
-  width: 13px;
-  height: 13px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.home-stage-one .home-workshop-entry strong {
-  font-size: 12.5px;
-  line-height: 1.25;
-  font-weight: 720;
-}
-
-.home-stage-one .home-tree-separator {
-  height: 1px;
-  margin: 0 0 9px !important;
-  background: #e2e2de !important;
-}
-
+.home-stage-one .home-tree-workshop-section,
 .home-stage-one .home-tree-categories-section {
   display: grid;
   gap: 0;
 }
 
-.home-stage-one .home-tree-categories-section > .home-tree-node + .home-tree-node {
-  margin-top: 7px !important;
+.home-stage-one .home-tree-separator {
+  height: 1px;
+  margin: 9px 0 10px !important;
+  background: #e3e3df !important;
 }
 
-.home-stage-one .home-tree-node {
-  margin: 0 !important;
-}
-
-.home-stage-one .home-tree-row {
+/* Shared top-level row geometry. */
+.home-stage-one .home-tree-row,
+.home-stage-one .home-workshop-row {
   position: relative;
   display: grid !important;
-  grid-template-columns: 22px minmax(0, 1fr) 18px !important;
+  grid-template-columns: 21px minmax(0, 1fr) 17px !important;
   align-items: center;
-  min-height: 30px !important;
+  column-gap: 8px;
+  min-height: 31px !important;
   padding: 0 !important;
   border: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
 }
 
-.home-stage-one .home-tree-row::before,
-.home-stage-one .home-tree-row::after {
-  display: none !important;
+.home-stage-one .home-tree-categories-section > .home-tree-node + .home-tree-node {
+  margin-top: 6px !important;
 }
 
-.home-stage-one .home-tree-row:hover,
-.home-stage-one .home-tree-row:focus-within,
-.home-stage-one .home-tree-row.opened,
-.home-stage-one .home-tree-row.active,
-.home-stage-one .home-tree-row.has-unread {
-  background: transparent !important;
+.home-stage-one .home-tree-node,
+.home-stage-one .home-workshop-node {
+  margin: 0 !important;
 }
 
-.home-stage-one .home-tree-expand-surface {
+/* Entire non-name area expands. It never paints a card-like hover background. */
+.home-stage-one .home-tree-expand-surface,
+.home-stage-one .home-workshop-expand-surface {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -8479,39 +8411,59 @@ a.button:hover {
 }
 
 .home-stage-one .home-tree-expand-surface:hover,
-.home-stage-one .home-tree-expand-surface:active {
+.home-stage-one .home-tree-expand-surface:active,
+.home-stage-one .home-workshop-expand-surface:hover,
+.home-stage-one .home-workshop-expand-surface:active {
   background: transparent !important;
 }
 
-.home-stage-one .home-tree-expand-surface:focus-visible {
-  outline: 1px solid #a4a49e;
+.home-stage-one .home-tree-expand-surface:focus-visible,
+.home-stage-one .home-workshop-expand-surface:focus-visible {
+  outline: 1px solid #aaa9a3;
   outline-offset: 1px;
 }
 
-.home-stage-one .home-tree-reference-icon {
+/* Icons use one optical box and one stroke weight. */
+.home-stage-one .home-tree-reference-icon,
+.home-stage-one .home-workshop-icon {
   grid-column: 1;
   position: relative;
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  justify-content: flex-start;
-  width: 20px;
-  height: 20px;
-  color: #565651;
+  justify-content: center;
+  width: 18px !important;
+  height: 20px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #5f5f5a;
   pointer-events: none;
+  transition: color 110ms ease;
 }
 
-.home-stage-one .home-tree-reference-icon svg {
-  width: 17px;
-  height: 17px;
+.home-stage-one .home-tree-reference-icon svg,
+.home-stage-one .home-workshop-icon svg {
+  width: 16.5px;
+  height: 16.5px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.45;
   stroke-linecap: round;
   stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 
-.home-stage-one .home-tree-name-link {
+.home-stage-one .home-tree-row:hover .home-tree-reference-icon,
+.home-stage-one .home-tree-row:focus-within .home-tree-reference-icon,
+.home-stage-one .home-workshop-row:hover .home-workshop-icon,
+.home-stage-one .home-workshop-row:focus-within .home-workshop-icon {
+  color: #30302d;
+}
+
+/* Name is the only navigation link. */
+.home-stage-one .home-tree-name-link,
+.home-stage-one .home-workshop-name-link {
   grid-column: 2;
   position: relative;
   z-index: 2;
@@ -8521,67 +8473,97 @@ a.button:hover {
   min-height: auto !important;
   padding: 4px 0 !important;
   overflow: hidden;
-  color: #333330;
-  font-size: 12.25px;
+  color: #383835;
+  font-size: 12px;
   line-height: 1.25;
-  font-weight: 650;
+  font-weight: 600;
   text-decoration: none !important;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .home-stage-one .home-tree-name-link:hover,
-.home-stage-one .home-tree-name-link:hover strong,
 .home-stage-one .home-tree-name-link:active,
-.home-stage-one .home-tree-name-link:visited {
+.home-stage-one .home-tree-name-link:visited,
+.home-stage-one .home-workshop-name-link:hover,
+.home-stage-one .home-workshop-name-link:active,
+.home-stage-one .home-workshop-name-link:visited {
   color: #11110f;
   text-decoration: none !important;
 }
 
-.home-stage-one .home-tree-name-link:focus-visible {
+.home-stage-one .home-tree-name-link:focus-visible,
+.home-stage-one .home-workshop-name-link:focus-visible {
   border-radius: 1px;
-  outline: 1px solid #777771;
+  outline: 1px solid #7c7c76;
   outline-offset: 2px;
   text-decoration: none !important;
 }
 
-.home-stage-one .home-tree-row.active .home-tree-name-link {
-  color: #11110f;
-  font-weight: 760;
-}
-
-.home-stage-one .home-tree-reference-chevron {
+/* Chevron feedback replaces the unpleasant row fill. */
+.home-stage-one .home-tree-reference-chevron,
+.home-stage-one .home-workshop-chevron {
   grid-column: 3;
   position: relative;
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   width: 16px;
   height: 16px;
-  color: #5d5d58;
+  color: #777772;
   pointer-events: none;
-  transition: transform 120ms ease;
+  transition: color 110ms ease, transform 120ms ease;
 }
 
-.home-stage-one .home-tree-reference-chevron svg {
-  width: 13px;
-  height: 13px;
+.home-stage-one .home-tree-reference-chevron svg,
+.home-stage-one .home-workshop-chevron svg {
+  width: 12px;
+  height: 12px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.4;
+  stroke-width: 1.35;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.home-stage-one .home-tree-row.opened .home-tree-reference-chevron {
+.home-stage-one .home-tree-row:hover .home-tree-reference-chevron,
+.home-stage-one .home-tree-row:focus-within .home-tree-reference-chevron,
+.home-stage-one .home-workshop-row:hover .home-workshop-chevron,
+.home-stage-one .home-workshop-row:focus-within .home-workshop-chevron {
+  color: #2f2f2c;
+}
+
+.home-stage-one .home-tree-row.opened .home-tree-reference-chevron,
+.home-stage-one .home-workshop-node.opened .home-workshop-chevron {
   transform: rotate(180deg);
 }
 
-.home-stage-one .home-tree-children {
-  margin: 1px 0 0 10px !important;
+/* Active state: no grey slab, only a narrow marker and slightly stronger text. */
+.home-stage-one .home-tree-row.active::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 6px;
+  bottom: 6px;
+  left: -8px;
+  width: 2px;
+  border-radius: 1px;
+  background: #626f78;
+}
+
+.home-stage-one .home-tree-row.active .home-tree-name-link {
+  color: #171715;
+  font-weight: 700;
+}
+
+/* Nested hierarchy with restrained L-shaped guides. */
+.home-stage-one .home-tree-children,
+.home-stage-one .home-workshop-children {
+  position: relative;
+  margin: 2px 0 1px 8px !important;
   padding: 1px 0 2px 16px;
-  border-left: 1px solid #e1e1dd !important;
+  border-left: 1px solid #dededa !important;
 }
 
 .home-stage-one .home-tree-children .home-tree-node,
@@ -8590,33 +8572,43 @@ a.button:hover {
 }
 
 .home-stage-one .home-tree-children .home-tree-row {
-  grid-template-columns: 15px minmax(0, 1fr) 16px !important;
+  grid-template-columns: 13px minmax(0, 1fr) 15px !important;
   min-height: 25px !important;
 }
 
+.home-stage-one .home-tree-children .home-tree-row::before {
+  content: "";
+  position: absolute;
+  display: block !important;
+  top: 50%;
+  left: -16px;
+  width: 10px;
+  border-top: 1px solid #dededa;
+}
+
 .home-stage-one .home-tree-children .home-tree-reference-icon {
-  width: 13px;
-  height: 18px;
-  color: #73736e;
+  width: 12px !important;
+  height: 18px !important;
+  color: #777772;
 }
 
-.home-stage-one .home-tree-leaf-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 12px;
-  font-size: 11px;
-  line-height: 1;
-  font-weight: 400;
-}
-
+.home-stage-one .home-tree-leaf-mark,
 .home-stage-one .home-tree-branch-mark {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 12px;
-  font-size: 8px;
+  width: 11px;
+  color: currentColor;
   line-height: 1;
+  font-weight: 400;
+}
+
+.home-stage-one .home-tree-leaf-mark {
+  font-size: 11px;
+}
+
+.home-stage-one .home-tree-branch-mark {
+  font-size: 7px;
   transform: rotate(-90deg);
   transition: transform 120ms ease;
 }
@@ -8625,33 +8617,80 @@ a.button:hover {
   transform: rotate(0deg);
 }
 
+.home-stage-one .home-tree-children .home-tree-name-link,
+.home-stage-one .home-workshop-children a {
+  color: #5c5c57;
+  font-size: 11.5px;
+  line-height: 1.25;
+  font-weight: 450;
+}
+
 .home-stage-one .home-tree-children .home-tree-name-link {
   padding: 3px 0 !important;
-  color: #5d5d58;
-  font-size: 11.5px;
-  line-height: 1.2;
-  font-weight: 470;
 }
 
 .home-stage-one .home-tree-children .home-tree-row.active .home-tree-name-link {
-  color: #222220;
-  font-weight: 650;
+  color: #232320;
+  font-weight: 600;
 }
 
 .home-stage-one .home-tree-children .home-tree-children {
-  margin-left: 5px !important;
-  padding-left: 12px;
-  border-left-color: #e8e8e5 !important;
+  margin-left: 4px !important;
+  padding-left: 13px;
+  border-left-color: #e7e7e3 !important;
 }
 
+/* Workshop now behaves like the other expandable roots. */
+.home-stage-one .home-workshop-children {
+  display: grid;
+  gap: 0;
+}
+
+.home-stage-one .home-workshop-children a {
+  position: relative;
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  align-items: center;
+  gap: 5px;
+  min-height: 24px;
+  color: #5c5c57;
+  text-decoration: none !important;
+}
+
+.home-stage-one .home-workshop-children a::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -16px;
+  width: 10px;
+  border-top: 1px solid #dededa;
+}
+
+.home-stage-one .home-workshop-children a:hover,
+.home-stage-one .home-workshop-children a:focus-visible {
+  color: #1f1f1d;
+  text-decoration: none !important;
+}
+
+.home-stage-one .home-workshop-children a:focus-visible {
+  outline: 1px solid #85857f;
+  outline-offset: 1px;
+}
+
+.home-stage-one .home-workshop-children a > span {
+  color: #777772;
+  text-align: center;
+}
+
+/* Footer belongs to the navigation and stays visually quiet. */
 .home-stage-one .home-tree-all-link {
-  min-height: 34px;
-  margin: 8px -12px 0 !important;
-  padding: 8px 12px !important;
-  border-top: 1px solid #e2e2de;
+  min-height: 32px;
+  margin: 8px -13px 0 !important;
+  padding: 7px 13px !important;
+  border-top: 1px solid #e3e3df;
   border-radius: 0 0 5px 5px;
   background: transparent !important;
-  color: #4a4a46;
+  color: #5b5b56;
   font-size: 10.5px;
   text-decoration: none !important;
 }
@@ -8659,23 +8698,49 @@ a.button:hover {
 .home-stage-one .home-tree-all-link:hover,
 .home-stage-one .home-tree-all-link:focus-visible {
   background: transparent !important;
-  color: #11110f;
+  color: #1c1c1a;
   text-decoration: none !important;
 }
 
-/* Old V9.2.2 controls are intentionally absent after the markup update. */
+/* Remove all obsolete clickable layers and card-like states from prior passes. */
+.home-stage-one .home-tree-row:hover,
+.home-stage-one .home-tree-row:focus-within,
+.home-stage-one .home-tree-row.opened,
+.home-stage-one .home-tree-row.active,
+.home-stage-one .home-tree-row.has-unread,
+.home-stage-one .home-workshop-row:hover,
+.home-stage-one .home-workshop-row:focus-within {
+  background: transparent !important;
+}
+
+.home-stage-one .home-tree-row::before {
+  display: none !important;
+}
+
 .home-stage-one .home-tree-icon-toggle,
 .home-stage-one .home-tree-icon-static,
 .home-stage-one .home-tree-hitarea,
 .home-stage-one .home-tree-toggle,
-.home-stage-one .home-tree-spacer {
+.home-stage-one .home-tree-spacer,
+.home-stage-one .home-workshop-entry,
+.home-stage-one .home-workshop-arrow {
   display: none !important;
 }
 
 @media (max-width: 1180px) {
+  .home-stage-one .home-layout {
+    grid-template-columns: 252px minmax(0, 1fr) 292px;
+  }
+
   .home-stage-one .home-community-tree {
-    padding-inline: 10px !important;
+    padding-inline: 11px !important;
   }
 }
 
-/* /FORRUM_HOME_TREE_REFERENCE_V9_2_3 */
+@media (max-width: 960px) {
+  .home-stage-one .home-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* /FORRUM_HOME_TREE_REFERENCE_V9_2_4 */

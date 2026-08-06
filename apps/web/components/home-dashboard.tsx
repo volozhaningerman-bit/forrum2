@@ -76,6 +76,13 @@ const feedTabs: Array<{ key: FeedMode; label: string }> = [
   { key: 'unanswered', label: 'Без ответа' },
 ];
 
+// FORRUM_HOME_TREE_REFERENCE_V9_2_4
+const workshopNavigation = [
+  { label: 'Проекты и заказы', href: '/workshop?section=projects' },
+  { label: 'Готовые решения', href: '/workshop?section=solutions' },
+  { label: 'Команды и специалисты', href: '/workshop?section=teams' },
+] as const;
+
 const formatNumber = (value: number) =>
   new Intl.NumberFormat('ru-RU').format(value);
 
@@ -350,6 +357,7 @@ export function HomeDashboard({
   const [expanded, setExpanded] = useState<Set<string>>(
     () => new Set(['internet-projects']),
   );
+  const [workshopOpen, setWorkshopOpen] = useState(true);
   const [feedRequestVersion, setFeedRequestVersion] = useState(0);
   const [feedLoading, setFeedLoading] = useState(
     initialData.feed === undefined,
@@ -634,18 +642,48 @@ export function HomeDashboard({
       <div className="home-layout">
         <aside className="home-community-tree" aria-label="Категории и подразделы">
           <div className="home-tree-section home-tree-workshop-section">
-            <Link className="home-workshop-entry" href="/workshop">
-              <span className="home-workshop-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="m14 6 4-4 4 4-4 4M10 18l-4 4-4-4 4-4" />
-                  <path d="m8 8 8 8M5 5l14 14" />
-                </svg>
-              </span>
-              <strong>Мастерская</strong>
-              <span className="home-workshop-arrow" aria-hidden="true">
-                <svg viewBox="0 0 16 16"><path d="m4 9 4-4 4 4" /></svg>
-              </span>
-            </Link>
+            <div className={`home-workshop-node ${workshopOpen ? 'opened' : 'closed'}`}>
+              <div className="home-workshop-row">
+                <button
+                  type="button"
+                  className="home-workshop-expand-surface"
+                  aria-label={workshopOpen ? 'Свернуть Мастерскую' : 'Развернуть Мастерскую'}
+                  aria-expanded={workshopOpen}
+                  onClick={() => setWorkshopOpen((current) => !current)}
+                  onKeyDown={(event) =>
+                    treeKeyboard(event, workshopOpen, () =>
+                      setWorkshopOpen((current) => !current),
+                    )
+                  }
+                >
+                  <span className="visually-hidden">
+                    {workshopOpen ? 'Свернуть' : 'Развернуть'}
+                  </span>
+                </button>
+                <span className="home-workshop-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24">
+                    <path d="m14 6 4-4 4 4-4 4M10 18l-4 4-4-4 4-4" />
+                    <path d="m8 8 8 8M5 5l14 14" />
+                  </svg>
+                </span>
+                <Link className="home-workshop-name-link" href="/workshop">
+                  Мастерская
+                </Link>
+                <span className="home-workshop-chevron" aria-hidden="true">
+                  <svg viewBox="0 0 16 16"><path d="m4 6 4 4 4-4" /></svg>
+                </span>
+              </div>
+              {workshopOpen && (
+                <div className="home-workshop-children">
+                  {workshopNavigation.map((item) => (
+                    <Link href={item.href} key={item.label}>
+                      <span aria-hidden="true">−</span>
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="home-tree-separator" aria-hidden="true" />
