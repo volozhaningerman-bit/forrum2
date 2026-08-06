@@ -1,0 +1,3 @@
+module.exports=[34296,a=>{"use strict";var b=a.i(87924);a.s(["CommunityMark",0,function({name:a,url:c,size:d=38,className:e=""}){let f=a.trim().split(/\s+/).slice(0,2).map(a=>a[0]?.toUpperCase()).join("")||"?";return(0,b.jsx)("span",{className:`community-mark ${e}`.trim(),style:{width:d,height:d,fontSize:Math.max(10,.32*d)},"aria-hidden":"true",children:c?(0,b.jsx)("img",{src:c,alt:"",loading:"lazy",referrerPolicy:"no-referrer"}):f})}])}];
+
+//# sourceMappingURL=apps_web_components_community-mark_tsx_1u6j40v._.js.map

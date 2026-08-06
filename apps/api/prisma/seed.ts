@@ -81,6 +81,21 @@ async function main() {
     bio: 'Тестовый участник для проверки ответов, реакций и личных сообщений.',
   });
 
+  // FORRUM_DEMO_VISUALS_V7
+  await prisma.user.update({
+    where: { id: owner.id },
+    data: {
+      avatarUrl: '/forrum-assets/avatar-owner.svg',
+      coverUrl: '/forrum-assets/cover-forrum-start.svg',
+    },
+  });
+  await prisma.user.update({
+    where: { id: friend.id },
+    data: {
+      avatarUrl: '/forrum-assets/avatar-friend.svg',
+      coverUrl: '/forrum-assets/cover-internet-projects.svg',
+    },
+  });
   await prisma.platformSetting.upsert({
     where: { key: 'promotion.pricing' }, update: {},
     create: { key: 'promotion.pricing', value: { pinLimit: 3, pinBasePricePerDay: 500, pinDemandPercentPerOccupied: 35, boostLimit: 8, boostBasePricePerDay: 150, boostDemandPercentPerOccupied: 12 } },
@@ -98,44 +113,53 @@ async function main() {
     {
       slug: 'forrum-start',
       name: 'FORRUM Start',
-      shortDescription: 'Обсуждение и развитие закрытой альфы.',
-      description: 'Первое сообщество FORRUM. Здесь участники публикуют идеи, замечания, предложения и помогают улучшать платформу.',
-      accentColor: '#3157D5',
+      shortDescription: 'Обсуждение и развитие FORRUM.',
+      description: 'Рабочее сообщество проекта FORRUM. Здесь участники публикуют идеи, замечания, предложения и помогают улучшать платформу.',
+      avatarUrl: '/forrum-assets/icon-forrum-start.svg',
+      coverUrl: '/forrum-assets/cover-forrum-start.svg',
+      accentColor: '#4B4B4B',
     },
     {
       slug: 'internet-projects',
       name: 'Интернет-проекты',
       shortDescription: 'Проекты, команды, дневники разработки и поиск партнёров.',
       description: 'Сообщество для авторов интернет-проектов. Показывайте развитие продукта, собирайте команду, получайте обратную связь и находите первых пользователей.',
-      accentColor: '#7C3AED',
+      avatarUrl: '/forrum-assets/icon-internet-projects.svg',
+      coverUrl: '/forrum-assets/cover-internet-projects.svg',
+      accentColor: '#665C78',
     },
     {
       slug: 'promotion',
       name: 'Продвижение',
       shortDescription: 'Маркетинг, рассылки, органический трафик и практические кейсы.',
-      description: 'Обсуждение способов продвижения проектов, каналов и личного бренда. Только конкретика, прозрачные кейсы и нормальная дискуссия без обещаний лёгких результатов.',
-      accentColor: '#0F8A63',
+      description: 'Обсуждение способов продвижения проектов, каналов и личного бренда. Только конкретика, прозрачные кейсы и нормальная дискуссия.',
+      avatarUrl: '/forrum-assets/icon-promotion.svg',
+      coverUrl: '/forrum-assets/cover-promotion.svg',
+      accentColor: '#59685E',
     },
     {
       slug: 'gta-rp',
       name: 'GTA RP',
       shortDescription: 'Ролевые серверы GTA 5, гайды, команды и обсуждения.',
       description: 'Сообщество игроков GTA RP. Здесь обсуждают серверы, помогают новичкам, публикуют гайды, собирают команды и ведут постоянные темы проектов.',
-      accentColor: '#6D4AFF',
+      avatarUrl: '/forrum-assets/icon-gta-rp.svg',
+      coverUrl: '/forrum-assets/cover-gta-rp.svg',
+      accentColor: '#606176',
     },
     {
       slug: 'telegram',
       name: 'Telegram',
       shortDescription: 'Каналы, боты, Mini Apps, продвижение и обновления.',
       description: 'Сообщество авторов каналов, разработчиков ботов и пользователей Telegram. Новости, практические вопросы, проекты и постоянные темы.',
-      accentColor: '#229ED9',
+      avatarUrl: '/forrum-assets/icon-telegram.svg',
+      coverUrl: '/forrum-assets/cover-telegram.svg',
+      accentColor: '#526C78',
     },
   ];
-
   for (const data of communities) {
     const community = await prisma.community.upsert({
       where: { slug: data.slug },
-      update: { name: data.name, description: data.description, shortDescription: data.shortDescription, accentColor: data.accentColor },
+      update: { name: data.name, description: data.description, shortDescription: data.shortDescription, avatarUrl: data.avatarUrl, coverUrl: data.coverUrl, accentColor: data.accentColor },
       create: { ...data, createdById: owner.id },
     });
     await ensureRole({ userId: owner.id, communityId: community.id, role: CommunityRoleType.CURATOR, grantedById: owner.id, note: 'Куратор стартового сообщества' });
@@ -154,7 +178,9 @@ async function main() {
       name: 'Majestic RP',
       description: 'Дочернее сообщество GTA RP для игроков Majestic: новости, гайды, команды, поддержка и постоянные темы проектов.',
       shortDescription: 'Новости, гайды, команды и поддержка игроков Majestic RP.',
-      accentColor: '#8B5CF6',
+      avatarUrl: '/forrum-assets/icon-majestic-rp.svg',
+      coverUrl: '/forrum-assets/cover-gta-rp.svg',
+      accentColor: '#666277',
       parentId: gtaParent.id,
     },
     create: {
@@ -162,7 +188,9 @@ async function main() {
       name: 'Majestic RP',
       description: 'Дочернее сообщество GTA RP для игроков Majestic: новости, гайды, команды, поддержка и постоянные темы проектов.',
       shortDescription: 'Новости, гайды, команды и поддержка игроков Majestic RP.',
-      accentColor: '#8B5CF6',
+      avatarUrl: '/forrum-assets/icon-majestic-rp.svg',
+      coverUrl: '/forrum-assets/cover-gta-rp.svg',
+      accentColor: '#666277',
       parentId: gtaParent.id,
       createdById: owner.id,
     },
@@ -172,10 +200,165 @@ async function main() {
     where: { userId_communityId: { userId: owner.id, communityId: majestic.id } }, update: {}, create: { userId: owner.id, communityId: majestic.id },
   });
 
+  // FORRUM_DEMO_HIERARCHY_V7
+  const upsertDemoChild = async (input: {
+    slug: string;
+    name: string;
+    shortDescription: string;
+    description: string;
+    avatarUrl: string;
+    coverUrl: string;
+    accentColor: string;
+    parentSlug: string;
+  }) => {
+    const parent = await prisma.community.findUniqueOrThrow({
+      where: { slug: input.parentSlug },
+    });
+    const child = await prisma.community.upsert({
+      where: { slug: input.slug },
+      update: {
+        name: input.name,
+        shortDescription: input.shortDescription,
+        description: input.description,
+        avatarUrl: input.avatarUrl,
+        coverUrl: input.coverUrl,
+        accentColor: input.accentColor,
+        parentId: parent.id,
+      },
+      create: {
+        slug: input.slug,
+        name: input.name,
+        shortDescription: input.shortDescription,
+        description: input.description,
+        avatarUrl: input.avatarUrl,
+        coverUrl: input.coverUrl,
+        accentColor: input.accentColor,
+        parentId: parent.id,
+        createdById: owner.id,
+      },
+    });
+    await ensureRole({
+      userId: owner.id,
+      communityId: child.id,
+      role: CommunityRoleType.CURATOR,
+      grantedById: owner.id,
+      note: 'Куратор демонстрационного подраздела',
+    });
+    for (const user of [owner, friend]) {
+      await prisma.communitySubscription.upsert({
+        where: {
+          userId_communityId: {
+            userId: user.id,
+            communityId: child.id,
+          },
+        },
+        update: {},
+        create: {
+          userId: user.id,
+          communityId: child.id,
+        },
+      });
+    }
+    return child;
+  };
+
+  const feedbackChild = await upsertDemoChild({
+    slug: 'forrum-feedback',
+    name: 'Обратная связь',
+    shortDescription: 'Ошибки, идеи и решения по развитию FORRUM.',
+    description: 'Подраздел для конкретных замечаний по интерфейсу, функциям, логике и развитию платформы.',
+    avatarUrl: '/forrum-assets/icon-feedback.svg',
+    coverUrl: '/forrum-assets/cover-forrum-start.svg',
+    accentColor: '#5F5F5F',
+    parentSlug: 'forrum-start',
+  });
+  const launchesChild = await upsertDemoChild({
+    slug: 'launches-and-teams',
+    name: 'Запуски и команды',
+    shortDescription: 'Дневники запуска, поиск людей и первые пользователи.',
+    description: 'Подраздел для дневников разработки, поиска команды, партнёров и разбора первых запусков.',
+    avatarUrl: '/forrum-assets/icon-launches.svg',
+    coverUrl: '/forrum-assets/cover-internet-projects.svg',
+    accentColor: '#6A6077',
+    parentSlug: 'internet-projects',
+  });
+  const seoChild = await upsertDemoChild({
+    slug: 'seo-and-traffic',
+    name: 'SEO и трафик',
+    shortDescription: 'Поисковый трафик, аналитика и практические эксперименты.',
+    description: 'Подраздел для SEO, органического трафика, аналитики, контентных экспериментов и подтверждённых кейсов.',
+    avatarUrl: '/forrum-assets/icon-seo.svg',
+    coverUrl: '/forrum-assets/cover-promotion.svg',
+    accentColor: '#5C6A60',
+    parentSlug: 'promotion',
+  });
+  const telegramBotsChild = await upsertDemoChild({
+    slug: 'telegram-bots',
+    name: 'Боты и Mini Apps',
+    shortDescription: 'Разработка ботов, интеграций и Telegram Mini Apps.',
+    description: 'Подраздел для разработки, запуска и поддержки Telegram-ботов, интеграций и Mini Apps.',
+    avatarUrl: '/forrum-assets/icon-telegram-bots.svg',
+    coverUrl: '/forrum-assets/cover-telegram.svg',
+    accentColor: '#556E79',
+    parentSlug: 'telegram',
+  });
+
+  const childTopics = [
+    {
+      slug: 'forrum-interface-feedback',
+      title: 'Разбор интерфейса FORRUM: что мешает и что работает',
+      body: 'Собираем точные замечания по навигации, плотности, цветам и поведению элементов. Один комментарий — одна проблема или одно предложение.',
+      communityId: feedbackChild.id,
+      type: PublicationType.DISCUSSION,
+    },
+    {
+      slug: 'launch-diary-template',
+      title: 'Шаблон дневника запуска интернет-проекта',
+      body: 'Покажите идею, текущий этап, команду, ограничения и ближайший измеримый результат. Обновляйте тему по мере развития проекта.',
+      communityId: launchesChild.id,
+      type: PublicationType.PROJECT,
+    },
+    {
+      slug: 'seo-experiment-log',
+      title: 'Журнал SEO-экспериментов и изменений трафика',
+      body: 'Публикуйте гипотезу, исходные данные, внесённые изменения, период наблюдения и подтверждённый результат.',
+      communityId: seoChild.id,
+      type: PublicationType.CASE,
+    },
+    {
+      slug: 'telegram-bot-launch-checklist',
+      title: 'Чек-лист запуска Telegram-бота и Mini App',
+      body: 'Проверяем команды, ошибки, права бота, аналитику, уведомления, мобильное отображение и сценарии возврата пользователя.',
+      communityId: telegramBotsChild.id,
+      type: PublicationType.GUIDE,
+    },
+  ];
+  for (const topic of childTopics) {
+    await prisma.publication.upsert({
+      where: { slug: topic.slug },
+      update: {
+        format: PublicationFormat.TOPIC,
+        title: topic.title,
+        body: topic.body,
+        communityId: topic.communityId,
+        type: topic.type,
+      },
+      create: {
+        slug: topic.slug,
+        format: PublicationFormat.TOPIC,
+        type: topic.type,
+        title: topic.title,
+        body: topic.body,
+        authorId: owner.id,
+        communityId: topic.communityId,
+      },
+    });
+  }
+
   const tags = [
-    { slug: 'forrum', label: 'forrum', styleEnabled: true, backgroundColor: '#E9EEFF', textColor: '#2948B1', borderColor: '#BFCBFF' },
-    { slug: 'proekty', label: 'проекты', styleEnabled: true, backgroundColor: '#F1EAFE', textColor: '#6D28D9', borderColor: '#D8C5FA' },
-    { slug: 'prodvizhenie', label: 'продвижение', styleEnabled: true, backgroundColor: '#E6F6F0', textColor: '#087453', borderColor: '#AEE2D0' },
+    { slug: 'forrum', label: 'forrum', styleEnabled: true, backgroundColor: '#F1F1EF', textColor: '#303030', borderColor: '#CFCFCB' },
+    { slug: 'proekty', label: 'проекты', styleEnabled: true, backgroundColor: '#F0EEF2', textColor: '#51495D', borderColor: '#D2CDD7' },
+    { slug: 'prodvizhenie', label: 'продвижение', styleEnabled: true, backgroundColor: '#EEF1EE', textColor: '#455348', borderColor: '#CDD3CE' },
     { slug: 'idei', label: 'идеи', styleEnabled: false },
   ];
   for (const tag of tags) await prisma.tag.upsert({ where: { slug: tag.slug }, update: tag, create: tag });

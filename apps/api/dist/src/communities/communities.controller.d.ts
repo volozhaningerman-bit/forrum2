@@ -10,6 +10,8 @@ export declare class CommunitiesController {
         name: string;
         description: string;
         shortDescription: string | null;
+        avatarUrl: string | null;
+        coverUrl: string | null;
         accentColor: string;
         parent: {
             slug: string;
@@ -26,6 +28,7 @@ export declare class CommunitiesController {
         curator: {
             username: string;
             displayName: string;
+            avatarUrl: string | null;
         } | null;
     }[]>;
     get(slug: string, user: User | null): Promise<{
@@ -34,6 +37,8 @@ export declare class CommunitiesController {
         name: string;
         description: string;
         shortDescription: string | null;
+        avatarUrl: string | null;
+        coverUrl: string | null;
         accentColor: string;
         parent: {
             slug: string;
@@ -48,6 +53,9 @@ export declare class CommunitiesController {
         children: {
             slug: string;
             name: string;
+            shortDescription: string | null;
+            avatarUrl: string | null;
+            coverUrl: string | null;
             subscriberCount: number;
         }[];
         team: {
@@ -55,6 +63,7 @@ export declare class CommunitiesController {
             user: {
                 username: string;
                 displayName: string;
+                avatarUrl: string | null;
             };
         }[];
         popularTags: {

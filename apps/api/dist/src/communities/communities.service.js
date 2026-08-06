@@ -46,6 +46,8 @@ let CommunitiesService = class CommunitiesService {
             name: community.name,
             description: community.description,
             shortDescription: community.shortDescription,
+            avatarUrl: community.avatarUrl,
+            coverUrl: community.coverUrl,
             accentColor: community.accentColor,
             parent: community.parent ? { slug: community.parent.slug, name: community.parent.name } : null,
             subscriberCount: community._count.subscriptions,
@@ -56,7 +58,7 @@ let CommunitiesService = class CommunitiesService {
             isSubscribed: community.subscriptions.length > 0,
             canManage: isGlobalManager || managedCommunityIds.has(community.id),
             notifyLevel: community.subscriptions[0]?.notifyLevel ?? null,
-            curator: community.roles[0] ? { username: community.roles[0].user.username, displayName: community.roles[0].user.displayName } : null,
+            curator: community.roles[0] ? { username: community.roles[0].user.username, displayName: community.roles[0].user.displayName, avatarUrl: community.roles[0].user.avatarUrl } : null,
         }));
     }
     async get(slug, userId) {
@@ -127,6 +129,8 @@ let CommunitiesService = class CommunitiesService {
             name: community.name,
             description: community.description,
             shortDescription: community.shortDescription,
+            avatarUrl: community.avatarUrl,
+            coverUrl: community.coverUrl,
             accentColor: community.accentColor,
             parent: community.parent ? { slug: community.parent.slug, name: community.parent.name } : null,
             subscriberCount: community._count.subscriptions,
@@ -135,8 +139,8 @@ let CommunitiesService = class CommunitiesService {
             isSubscribed: community.subscriptions.length > 0,
             canManage,
             notifyLevel: community.subscriptions[0]?.notifyLevel ?? null,
-            children: community.children.map((child) => ({ slug: child.slug, name: child.name, subscriberCount: child._count.subscriptions })),
-            team: community.roles.map((role) => ({ role: role.role, user: { username: role.user.username, displayName: role.user.displayName } })),
+            children: community.children.map((child) => ({ slug: child.slug, name: child.name, shortDescription: child.shortDescription, avatarUrl: child.avatarUrl, coverUrl: child.coverUrl, subscriberCount: child._count.subscriptions })),
+            team: community.roles.map((role) => ({ role: role.role, user: { username: role.user.username, displayName: role.user.displayName, avatarUrl: role.user.avatarUrl } })),
             popularTags: tagCounts.flatMap((item) => {
                 const tag = tagById.get(item.tagId);
                 return tag ? [{ id: tag.id, slug: tag.slug, label: tag.label, publicationCount: item._count._all, styleEnabled: tag.styleEnabled, backgroundColor: tag.backgroundColor, textColor: tag.textColor, borderColor: tag.borderColor }] : [];

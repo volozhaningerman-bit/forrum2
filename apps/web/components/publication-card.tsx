@@ -46,7 +46,7 @@ export function PublicationCard({ item, onFeedback }: {
     } finally { setFeedbackState(null); }
   }
 
-  return <article className={`publication-card modern-publication ${isTopic ? 'permanent-topic' : 'short-post'}`} style={{ '--community-accent': item.community.accentColor ?? '#3157D5' } as React.CSSProperties}>
+  return <article className={`publication-card modern-publication ${isTopic ? 'permanent-topic' : 'short-post'}`} data-community={item.community.slug} style={{ '--community-accent': item.community.accentColor ?? '#4C4C4C' } as React.CSSProperties}>
     <div className="publication-topline">
       <Link className="community-link" href={`/communities/${item.community.slug}`}>{item.community.name}</Link>
       <span className={`format-label ${isTopic ? 'topic-label' : 'post-label'}`}>{isTopic ? 'Постоянная тема' : 'Пост'}</span>

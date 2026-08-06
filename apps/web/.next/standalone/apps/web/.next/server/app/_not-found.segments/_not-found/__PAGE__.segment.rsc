@@ -1,6 +1,6 @@
 1:"$Sreact.fragment"
-2:I[22016,["/_next/static/chunks/00nqwko7uqxe5.js","/_next/static/chunks/0-7lqrq6w10wv.js"],""]
-3:I[97367,["/_next/static/chunks/00nqwko7uqxe5.js","/_next/static/chunks/0-7lqrq6w10wv.js"],"OutletBoundary"]
+2:I[22016,["/_next/static/chunks/2qn4hqoggqgma.js","/_next/static/chunks/0-7lqrq6w10wv.js"],""]
+3:I[97367,["/_next/static/chunks/2qn4hqoggqgma.js","/_next/static/chunks/0-7lqrq6w10wv.js"],"OutletBoundary"]
 4:"$Sreact.suspense"
-0:{"rsc":["$","$1","c",{"children":[["$","section",null,{"className":"route-state","children":[["$","strong",null,{"children":"Страница не найдена"}],["$","p",null,{"children":"Материал мог быть удалён, перемещён или закрыт для просмотра."}],["$","$L2",null,{"className":"button","href":"/","children":"Вернуться на главную"}]]}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"07G2fBZ3tXzHbEPQQZOkW"}
+0:{"rsc":["$","$1","c",{"children":[["$","section",null,{"className":"route-state","children":[["$","strong",null,{"children":"Страница не найдена"}],["$","p",null,{"children":"Материал мог быть удалён, перемещён или закрыт для просмотра."}],["$","$L2",null,{"className":"button","href":"/","children":"Вернуться на главную"}]]}],null,["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"DsRrckGMXmo4P9lta5M6I"}
 5:null

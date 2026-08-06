@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360">
+  <rect width="1200" height="360" fill="#f8f8f6"/>
+  <path d="M0 0h14v360H0z" fill="#526c78"/>
+  <path d="M720 0h480v360H720z" fill="#f1f1ee"/>
+  <path d="M760 90h330M760 145h220M760 200h280" stroke="#d5d5d1" stroke-width="3"/>
+  <text x="48" y="84" font-family="Arial, sans-serif" font-size="18" letter-spacing="3" fill="#526c78">FORRUM / COMMUNITY</text>
+  <text x="48" y="154" font-family="Arial, sans-serif" font-size="44" font-weight="700" fill="#1d1d1d">Telegram</text>
+  <text x="48" y="204" font-family="Arial, sans-serif" font-size="20" fill="#666">Обсуждения, материалы и команда сообщества</text>
+</svg>

@@ -297,6 +297,7 @@ export function PublicationClient({
 
         <article
           className={`publication-detail ${isTopic ? 'publication-detail-topic' : 'publication-detail-post'}`}
+          data-community={item.community.slug}
           style={{ '--community-accent': item.community.accentColor } as CSSProperties}
         >
           <header className="publication-detail-header">

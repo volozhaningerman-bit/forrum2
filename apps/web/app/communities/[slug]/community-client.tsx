@@ -7,6 +7,7 @@ import { api } from '@/lib/api';
 import type { PublicationCardData, Tag } from '@/lib/types';
 import { PublicationCard } from '@/components/publication-card';
 import { Avatar } from '@/components/avatar';
+import { CommunityMark } from '@/components/community-mark';
 import { UsersIcon } from '@/components/icons';
 
 export type Community = {
@@ -15,6 +16,8 @@ export type Community = {
   name: string;
   description: string;
   shortDescription?: string | null;
+  avatarUrl?: string | null;
+  coverUrl?: string | null;
   accentColor: string;
   subscriberCount: number;
   publicationCount: number;
@@ -22,8 +25,8 @@ export type Community = {
   canManage: boolean;
   notifyLevel: 'NONE' | 'IMPORTANT' | 'ALL' | null;
   parent: { slug: string; name: string } | null;
-  children: Array<{ slug: string; name: string; subscriberCount: number }>;
-  team: Array<{ role: string; user: { username: string; displayName: string } }>;
+  children: Array<{ slug: string; name: string; shortDescription?: string | null; avatarUrl?: string | null; coverUrl?: string | null; subscriberCount: number }>;
+  team: Array<{ role: string; user: { username: string; displayName: string; avatarUrl?: string | null } }>;
   popularTags: Array<Tag & { publicationCount: number }>;
   activePoll: null | { id: string; title: string; closesAt: string; totalVotes: number };
   publications: PublicationCardData[];
@@ -91,7 +94,10 @@ export function CommunityClient({
 
   return <>
     <section className="community-profile" style={{ '--community-accent': data.accentColor } as React.CSSProperties}>
-      <div className={`community-cover cover-${data.slug}`}><span>{data.name.slice(0, 1)}</span></div>
+      <div className="community-cover">
+        {data.coverUrl && <img className="community-cover-image" src={data.coverUrl} alt="" />}
+        <CommunityMark name={data.name} url={data.avatarUrl} size={104} />
+      </div>
       <div className="community-profile-main">
         <div className="community-title-row">
           <div><h1>{data.name}</h1><p>{data.shortDescription || data.description}</p></div>
@@ -104,12 +110,12 @@ export function CommunityClient({
         <div className="community-utility-links"><a href="#team">Команда</a>{data.activePoll && <Link href="/events">Открытое голосование</Link>}{data.canManage && <Link href={`/communities/${data.slug}/manage`}>Кабинет команды</Link>}</div>
       </div>
       <div className="curator-panel">{curator ? <>
-        <div className="curator-person"><Avatar name={curator.user.displayName} size={52}/><div><span>{roleNames[curator.role] ?? 'Команда'}: <Link href={`/u/${curator.user.username}`}>@{curator.user.username}</Link></span><p>Отвечает за порядок и развитие сообщества.</p></div></div>
+        <div className="curator-person"><Avatar name={curator.user.displayName} size={52} url={curator.user.avatarUrl}/><div><span>{roleNames[curator.role] ?? 'Команда'}: <Link href={`/u/${curator.user.username}`}>@{curator.user.username}</Link></span><p>Отвечает за порядок и развитие сообщества.</p></div></div>
         <div className="curator-actions"><Link className="button" href={`/messages?to=${curator.user.username}`}>Написать</Link><a className="button ghost" href="#team">Вся команда</a></div>
       </> : <div className="sidebar-empty"><strong>Куратор ещё не назначен</strong><p>Сообщество пока управляется администрацией FORRUM.</p></div>}</div>
     </section>
 
-    {data.children.length > 0 && <section className="child-community-strip"><div><strong>Подразделы {data.name}</strong><span>Материалы из них автоматически появляются и в этой общей ленте.</span></div><nav>{data.children.map((child) => <Link key={child.slug} href={`/communities/${child.slug}`}><span>{child.name}</span><small>{formatNumber(child.subscriberCount)} подписчиков</small></Link>)}</nav></section>}
+    {data.children.length > 0 && <section className="child-community-strip"><div><strong>Подразделы {data.name}</strong><span>Материалы из них автоматически появляются и в этой общей ленте.</span></div><nav>{data.children.map((child) => <Link key={child.slug} href={`/communities/${child.slug}`}><CommunityMark name={child.name} url={child.avatarUrl} size={32}/><span>{child.name}</span><small>{formatNumber(child.subscriberCount)} подписчиков</small></Link>)}</nav></section>}
     {data.parent && <div className="parent-aggregation-note">Материалы подраздела <strong>{data.name}</strong> также показываются в общей ленте <Link href={`/communities/${data.parent.slug}`}>{data.parent.name}</Link>.</div>}
     {error && <div className="error-box" style={{ marginTop: 14 }}>{error}</div>}
 
@@ -125,9 +131,7 @@ export function CommunityClient({
 
         <section className="sidebar-card poll-card"><div className="compact-heading"><h3>Голосование</h3><Link href="/events">Все</Link></div>{data.activePoll ? <><strong>{data.activePoll.title}</strong><p className="sidebar-fact">До {formatDeadline(data.activePoll.closesAt)} · {formatNumber(data.activePoll.totalVotes)} голосов</p><Link className="button ghost small" href="/events">Перейти к голосованию</Link></> : <div className="sidebar-empty"><p>Открытых голосований в этом сообществе нет.</p></div>}</section>
 
-        <section className="sidebar-card" id="team"><h3>Команда сообщества</h3>{data.team.length ? data.team.map((member) => <Link className="team-member" href={`/u/${member.user.username}`} key={`${member.role}-${member.user.username}`}><Avatar name={member.user.displayName} size={38}/><div><strong>@{member.user.username}</strong><small>{roleNames[member.role] ?? member.role}</small></div>{member.role === 'CURATOR' && <span>Куратор</span>}</Link>) : <p className="muted">Команда ещё не сформирована.</p>}</section>
-
-        <section className="sidebar-card sponsor-card"><span className="ad-label">Продвижение</span><div className="sponsor-art megaphone">◖</div><strong>Продвижение вашей темы</strong><p>Лимит мест и рост цены настраиваются администрацией. Итоговая стоимость показывается до покупки.</p><Link href="/wallet">Узнать условия ↗</Link></section>
+        <section className="sidebar-card" id="team"><h3>Команда сообщества</h3>{data.team.length ? data.team.map((member) => <Link className="team-member" href={`/u/${member.user.username}`} key={`${member.role}-${member.user.username}`}><Avatar name={member.user.displayName} size={38} url={member.user.avatarUrl}/><div><strong>@{member.user.username}</strong><small>{roleNames[member.role] ?? member.role}</small></div>{member.role === 'CURATOR' && <span>Куратор</span>}</Link>) : <p className="muted">Команда ещё не сформирована.</p>}</section>
       </aside>
     </div>
   </>;

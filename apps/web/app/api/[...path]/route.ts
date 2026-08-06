@@ -30,6 +30,8 @@ function requestHeaders(request: NextRequest) {
   headers.delete('content-length');
   headers.delete('connection');
   headers.delete('accept-encoding');
+  headers.delete('origin');
+  headers.delete('referer');
 
   if (!headers.has('accept')) {
     headers.set('accept', 'application/json');

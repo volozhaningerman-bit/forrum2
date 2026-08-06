@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { CommunityMark } from '@/components/community-mark';
 import type {
   CSSProperties,
   KeyboardEvent,
@@ -21,6 +22,8 @@ export type Community = {
   name: string;
   description: string;
   shortDescription?: string | null;
+  avatarUrl?: string | null;
+  coverUrl?: string | null;
   accentColor: string;
   subscriberCount: number;
   publicationCount: number;
@@ -303,12 +306,11 @@ export function CommunitiesClient({
             keyboard(event, item.slug, expandable)
           }
         >
-          <span
-            className="community-browser-symbol"
-            aria-hidden="true"
-          >
-            {item.name.slice(0, 1)}
-          </span>
+          <CommunityMark
+            name={item.name}
+            url={item.avatarUrl}
+            size={34}
+          />
 
           <div className="community-browser-copy">
             <div className="community-browser-title">
