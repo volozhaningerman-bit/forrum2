@@ -68,8 +68,8 @@ for (const [relative, pattern, label] of authRequirements) {
 
 
 const libraryRequirements = [
-  ['apps/web/app/communities/page.tsx', /recentPublicationCount/, 'community directory does not show real recent activity'],
-  ['apps/web/app/communities/page.tsx', /collectDescendants/, 'community directory does not support nested subdivisions'],
+  ['apps/web/app/communities/communities-client.tsx', /recentPublicationCount/, 'community directory does not show real recent activity'],
+  ['apps/web/app/communities/communities-client.tsx', /collectDescendants/, 'community directory does not support nested subdivisions'],
   ['apps/web/app/subscriptions/page.tsx', /users\/me\/following/, 'author subscriptions page is not connected'],
   ['apps/web/app/subscriptions/page.tsx', /tags\/subscriptions/, 'tag subscriptions page is not connected'],
   ['apps/web/app/saved/page.tsx', /publications\/saved/, 'saved library is not connected'],
@@ -85,10 +85,10 @@ for (const [relative, pattern, label] of libraryRequirements) {
 }
 
 const profileTrustRequirements = [
-  ['apps/web/app/u/[username]/page.tsx', /localTrust/, 'profile does not show contextual local trust'],
-  ['apps/web/app/u/[username]/page.tsx', /usefulPublications/, 'profile does not show useful publications'],
-  ['apps/web/app/u/[username]/page.tsx', /achievements/, 'profile does not show verified achievements'],
-  ['apps/web/app/u/[username]/page.tsx', /reviews/, 'profile does not show verified reviews'],
+  ['apps/web/app/u/[username]/profile-client.tsx', /localTrust/, 'profile does not show contextual local trust'],
+  ['apps/web/app/u/[username]/profile-client.tsx', /usefulPublications/, 'profile does not show useful publications'],
+  ['apps/web/app/u/[username]/profile-client.tsx', /achievements/, 'profile does not show verified achievements'],
+  ['apps/web/app/u/[username]/profile-client.tsx', /reviews/, 'profile does not show verified reviews'],
   ['apps/web/app/interactions/page.tsx', /\/interactions\//, 'interaction manager is not connected to its API'],
   ['apps/web/app/admin/page.tsx', /community-roles/, 'Control Center cannot manage community role lifecycle'],
   ['apps/api/src/users/users.service.ts', /userId:\s*\{\s*not:\s*userId\s*\}/, 'self reactions or bookmarks can influence trust evidence'],
@@ -104,10 +104,10 @@ for (const [relative, pattern, label] of profileTrustRequirements) {
 
 const releaseCandidateRequirements = [
   ['apps/web/app/communities/[slug]/manage/page.tsx', /community-management/, 'community workspace is not connected'],
-  ['apps/web/app/events/page.tsx', /governance\/polls/, 'events hub does not show governance polls'],
+  ['apps/web/app/events/events-client.tsx', /governance\/polls/, 'events hub does not show governance polls'],
   ['apps/web/app/events/create/page.tsx', /\/events/, 'event creation workflow is not connected'],
   ['apps/web/app/portfolio/page.tsx', /\/portfolio\/me/, 'portfolio manager is not connected'],
-  ['apps/web/app/u/[username]/page.tsx', /portfolio/, 'profile does not show projects and services'],
+  ['apps/web/app/u/[username]/profile-client.tsx', /portfolio/, 'profile does not show projects and services'],
   ['apps/web/app/promote/[slug]/page.tsx', /baseDurationPrice/, 'promotion does not disclose its base price'],
   ['apps/web/app/promote/[slug]/page.tsx', /demandSurcharge/, 'promotion does not disclose demand surcharge'],
   ['apps/web/app/wallet/page.tsx', /promotions\/:id\/cancel|promotions\/\$\{id\}\/cancel/, 'wallet cannot stop active promotion'],
@@ -121,7 +121,7 @@ for (const [relative, pattern, label] of releaseCandidateRequirements) {
   } catch { failures.push(`missing release candidate interface: ${relative}`); }
 }
 
-const eventsPage = join(root, 'apps/web/app/events/page.tsx');
+const eventsPage = join(root, 'apps/web/app/events/events-client.tsx');
 try {
   const text = await readFile(eventsPage, 'utf8');
   if (/<form[\s>]/.test(text)) failures.push('public events hub contains a creation form');
@@ -135,7 +135,7 @@ for (const relative of globalNavFiles) {
   } catch {}
 }
 
-const profileFile = join(root, 'apps/web/app/u/[username]/page.tsx');
+const profileFile = join(root, 'apps/web/app/u/[username]/profile-client.tsx');
 try {
   const profileText = await readFile(profileFile, 'utf8');
   if (/trustScore|Доверие\s*\{?\s*\d+%/.test(profileText)) failures.push('profile reintroduced a global or percentage trust score');

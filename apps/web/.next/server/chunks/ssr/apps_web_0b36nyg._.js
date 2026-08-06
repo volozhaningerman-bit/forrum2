@@ -1,0 +1,3 @@
+module.exports=[7880,a=>{"use strict";a.s(["resolveApiBase",0,function(){var a;let b=(a=process.env.API_INTERNAL_URL?.trim()||process.env.PUBLIC_API_URL?.trim()||"https://api-production-37ce.up.railway.app",/^https?:\/\//i.test(a)?a:a.includes(".railway.internal")||a.startsWith("localhost")||a.startsWith("127.0.0.1")?`http://${a}`:`https://${a}`).replace(/\/+$/,"");return b.endsWith("/v1")?b:`${b}/v1`}])},2946,a=>{"use strict";a.i(70396);var b=a.i(73727),c=a.i(16490);async function d({children:a}){return["OWNER","ADMIN"].includes((await (0,c.requireUser)("/admin")).user.role)||(0,b.redirect)("/"),a}a.s(["default",0,d])},89186,a=>{a.n(a.i(2946))}];
+
+//# sourceMappingURL=apps_web_0b36nyg._.js.map

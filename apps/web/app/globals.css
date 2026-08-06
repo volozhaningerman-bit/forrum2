@@ -4961,3 +4961,69 @@ body {
     border-radius: 8px 8px 0 0;
   }
 }
+
+/* FORRUM SSR AND ROUTE STATES V6 */
+.brand-mark::before {
+  content: "F";
+}
+
+.route-state {
+  display: grid;
+  width: min(620px, 100%);
+  min-height: 220px;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  margin: 48px auto;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  text-align: center;
+}
+
+.route-state strong {
+  font-size: 20px;
+}
+
+.route-state p {
+  max-width: 460px;
+  margin: 0;
+  color: var(--muted);
+}
+
+.route-state small {
+  color: var(--muted);
+}
+
+.route-spinner {
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: forrum-route-spin .75s linear infinite;
+}
+
+.auth-required-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.auth-required-panel p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+@keyframes forrum-route-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-spinner {
+    animation: none;
+  }
+}

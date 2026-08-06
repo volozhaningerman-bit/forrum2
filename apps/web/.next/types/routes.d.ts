@@ -4,7 +4,7 @@
 type AppRoutes = "/" | "/activity" | "/admin" | "/admin/governance" | "/admin/media" | "/admin/moderation" | "/admin/reviews" | "/admin/workshop" | "/communities" | "/communities/[slug]" | "/communities/[slug]/manage" | "/communities/proposals" | "/create" | "/events" | "/events/[id]" | "/events/create" | "/forgot-password" | "/interactions" | "/login" | "/media" | "/messages" | "/messages/[id]" | "/news" | "/notifications" | "/p/[slug]" | "/portfolio" | "/portfolio/[id]" | "/projects" | "/promote/[slug]" | "/promotion" | "/register" | "/reset-password" | "/saved" | "/search" | "/services" | "/settings" | "/settings/interests" | "/settings/moderation" | "/settings/security" | "/settings/telegram" | "/subscriptions" | "/tags/[slug]" | "/u/[username]" | "/verify-email" | "/wallet" | "/welcome" | "/workshop"
 type AppRouteHandlerRoutes = "/api/[...path]"
 type PageRoutes = never
-type LayoutRoutes = "/"
+type LayoutRoutes = "/" | "/admin" | "/create" | "/interactions" | "/messages" | "/notifications" | "/portfolio" | "/saved" | "/settings" | "/subscriptions" | "/wallet"
 type RedirectRoutes = never
 type RewriteRoutes = never
 type Routes = AppRoutes | PageRoutes | LayoutRoutes | RedirectRoutes | RewriteRoutes | AppRouteHandlerRoutes
@@ -66,6 +66,16 @@ export type ParamsOf<Route extends Routes> = ParamMap[Route]
 
 interface LayoutSlotMap {
   "/": never
+  "/admin": never
+  "/create": never
+  "/interactions": never
+  "/messages": never
+  "/notifications": never
+  "/portfolio": never
+  "/saved": never
+  "/settings": never
+  "/subscriptions": never
+  "/wallet": never
 }
 
 

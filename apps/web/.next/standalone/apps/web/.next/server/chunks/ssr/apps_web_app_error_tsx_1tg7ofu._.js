@@ -1,0 +1,3 @@
+module.exports=[95309,a=>{"use strict";var b=a.i(87924),c=a.i(72131);a.s(["default",0,function({error:a,reset:d}){return(0,c.useEffect)(()=>{console.error(a)},[a]),(0,b.jsxs)("section",{className:"route-state route-state-error",children:[(0,b.jsx)("strong",{children:"Раздел не удалось открыть"}),(0,b.jsx)("p",{children:"Данные не потеряны. Повторите запрос или вернитесь на главную."}),(0,b.jsxs)("div",{className:"inline-actions",children:[(0,b.jsx)("button",{type:"button",className:"button",onClick:d,children:"Повторить"}),(0,b.jsx)("a",{className:"button ghost",href:"/",children:"На главную"})]}),a.digest&&(0,b.jsxs)("small",{children:["Код ошибки: ",a.digest]})]})}])}];
+
+//# sourceMappingURL=apps_web_app_error_tsx_1tg7ofu._.js.map

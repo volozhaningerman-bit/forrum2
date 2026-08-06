@@ -1,0 +1,3 @@
+module.exports=[93349,a=>{"use strict";var b=a.i(7997),c=a.i(95936);a.s(["default",0,function(){return(0,b.jsxs)("section",{className:"route-state",children:[(0,b.jsx)("strong",{children:"Страница не найдена"}),(0,b.jsx)("p",{children:"Материал мог быть удалён, перемещён или закрыт для просмотра."}),(0,b.jsx)(c.default,{className:"button",href:"/",children:"Вернуться на главную"})]})}])},30414,a=>{a.n(a.i(93349))}];
+
+//# sourceMappingURL=apps_web_app_not-found_tsx_08zv29o._.js.map

@@ -1,0 +1,3 @@
+module.exports=[83141,a=>{"use strict";var b=a.i(7997);a.s(["default",0,function(){return(0,b.jsxs)("section",{className:"route-state route-state-loading","aria-live":"polite","aria-busy":"true",children:[(0,b.jsx)("span",{className:"route-spinner","aria-hidden":"true"}),(0,b.jsx)("strong",{children:"Загружаем раздел"}),(0,b.jsx)("p",{children:"Обычно это занимает несколько секунд."})]})}])},25415,a=>{a.n(a.i(83141))}];
+
+//# sourceMappingURL=apps_web_app_loading_tsx_0uo9ok-._.js.map

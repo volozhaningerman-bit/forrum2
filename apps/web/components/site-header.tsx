@@ -23,9 +23,7 @@ export function SiteHeader() {
             <span
               className="brand-mark"
               aria-hidden="true"
-            >
-              F
-            </span>
+            />
             <span aria-hidden="true">FORRUM</span>
           </Link>
 
