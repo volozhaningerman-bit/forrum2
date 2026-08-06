@@ -32,6 +32,7 @@ export const config = {
   matcher: [
     '/messages/:path*',
     '/create',
+    '/events/create',
     '/notifications/:path*',
     '/settings/:path*',
     '/saved/:path*',

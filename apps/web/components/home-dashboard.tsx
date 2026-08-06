@@ -4,7 +4,6 @@ import Link from 'next/link';
 import type {
   CSSProperties,
   KeyboardEvent,
-  MouseEvent,
   ReactNode,
 } from 'react';
 import { useEffect, useMemo, useState } from 'react';
@@ -58,8 +57,7 @@ type WorkshopItem = {
 type FeedMode =
   | 'subscriptions'
   | 'new'
-  | 'popular'
-  | 'unanswered';
+  | 'popular';
 
 export type HomeInitialData = {
   communities?: Community[];
@@ -74,7 +72,6 @@ const feedTabs: Array<{ key: FeedMode; label: string }> = [
   { key: 'subscriptions', label: 'По подпискам' },
   { key: 'new', label: 'Новое' },
   { key: 'popular', label: 'Популярное' },
-  { key: 'unanswered', label: 'Без ответа' },
 ];
 
 const formatNumber = (value: number) =>
@@ -115,6 +112,56 @@ function typeLabel(type: string) {
     COMMUNITY_DECOR: 'Сообщество',
   };
   return names[type] ?? type;
+}
+
+const navigationIcons: Record<string, string> = {
+  'forrum-start': '/forrum-assets/nav-forrum.svg',
+  'forrum-feedback': '/forrum-assets/nav-feedback.svg',
+  'internet-projects': '/forrum-assets/nav-projects.svg',
+  'launches-and-teams': '/forrum-assets/nav-launches.svg',
+  promotion: '/forrum-assets/nav-promotion.svg',
+  'seo-and-traffic': '/forrum-assets/nav-seo.svg',
+  'gta-rp': '/forrum-assets/nav-gaming.svg',
+  'majestic-rp': '/forrum-assets/nav-majestic.svg',
+  telegram: '/forrum-assets/nav-telegram.svg',
+  'telegram-bots': '/forrum-assets/nav-bots.svg',
+};
+
+const topicVisuals: Record<string, string> = {
+  'forrum-start': '/forrum-assets/topic-forrum.svg',
+  'forrum-feedback': '/forrum-assets/topic-forrum.svg',
+  'internet-projects': '/forrum-assets/topic-projects.svg',
+  'launches-and-teams': '/forrum-assets/topic-projects.svg',
+  promotion: '/forrum-assets/topic-promotion.svg',
+  'seo-and-traffic': '/forrum-assets/topic-seo.svg',
+  'gta-rp': '/forrum-assets/topic-gta.svg',
+  'majestic-rp': '/forrum-assets/topic-gta.svg',
+  telegram: '/forrum-assets/topic-telegram.svg',
+  'telegram-bots': '/forrum-assets/topic-telegram.svg',
+};
+
+function navigationIcon(slug: string) {
+  return navigationIcons[slug] ?? '/forrum-assets/nav-default.svg';
+}
+
+function topicVisual(slug: string) {
+  return topicVisuals[slug] ?? '/forrum-assets/topic-default.svg';
+}
+
+function treeKeyboard(
+  event: KeyboardEvent<HTMLButtonElement>,
+  open: boolean,
+  toggleOpen: () => void,
+) {
+  if (
+    event.key === 'Enter' ||
+    event.key === ' ' ||
+    (event.key === 'ArrowRight' && !open) ||
+    (event.key === 'ArrowLeft' && open)
+  ) {
+    event.preventDefault();
+    toggleOpen();
+  }
 }
 
 function TopicSkeleton() {
@@ -237,17 +284,12 @@ export function HomeDashboard({
     async function loadFeed() {
       setFeedLoading(true);
       setFeedError('');
-      const apiMode = mode === 'unanswered' ? 'all' : mode;
       try {
         const items = await api<PublicationCardData[]>(
-          `/feed?mode=${encodeURIComponent(apiMode)}`,
+          `/feed?mode=${encodeURIComponent(mode)}`,
         );
         if (cancelled) return;
-        setFeed(
-          mode === 'unanswered'
-            ? items.filter((item) => item.commentCount === 0)
-            : items,
-        );
+        setFeed(items);
       } catch (cause) {
         if (cancelled) return;
         setFeed([]);
@@ -355,28 +397,13 @@ export function HomeDashboard({
     });
   }
 
-  function stop(event: MouseEvent<HTMLElement>) {
-    event.stopPropagation();
-  }
-
-  function keyboard(
-    event: KeyboardEvent<HTMLDivElement>,
-    slug: string,
-    expandable: boolean,
-  ) {
-    if (!expandable) return;
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      toggle(slug);
-    }
-  }
-
   function renderTree(community: Community, depth = 0): ReactNode {
     const children = (childrenByParent.get(community.slug) ?? [])
       .slice()
       .sort((left, right) => left.name.localeCompare(right.name, 'ru'));
     const expandable = children.length > 0;
     const open = expanded.has(community.slug);
+    const toggleCurrent = () => toggle(community.slug);
 
     return (
       <div
@@ -386,47 +413,67 @@ export function HomeDashboard({
       >
         <div
           className={`home-tree-row ${expandable ? 'expandable' : ''} ${
-            open ? 'opened' : ''
+            open ? 'opened' : 'closed'
           }`}
-          role={expandable ? 'button' : undefined}
-          tabIndex={expandable ? 0 : undefined}
-          aria-expanded={expandable ? open : undefined}
-          onClick={expandable ? () => toggle(community.slug) : undefined}
-          onKeyDown={(event) => keyboard(event, community.slug, expandable)}
         >
           <Link
             className="home-tree-link"
             href={`/communities/${community.slug}`}
-            onClick={stop}
           >
             <CommunityMark
               name={community.name}
-              url={community.avatarUrl}
+              url={navigationIcon(community.slug)}
               size={26}
             />
             <span>
               <strong>{community.name}</strong>
               {depth === 0 && (
-                <small>{formatNumber(community.subscriberCount)} подписчиков</small>
+                <small>
+                  {formatNumber(community.subscriberCount)} подписчиков
+                </small>
               )}
             </span>
           </Link>
-          {expandable && (
-            <button
-              type="button"
-              className="home-tree-toggle"
-              aria-label={
-                open
-                  ? `Свернуть подразделы ${community.name}`
-                  : `Показать подразделы ${community.name}`
-              }
-              onClick={(event) => {
-                event.stopPropagation();
-                toggle(community.slug);
-              }}
-            >
-              {open ? '−' : '+'}
-            </button>
+
+          {expandable ? (
+            <>
+              <button
+                type="button"
+                className="home-tree-hitarea"
+                aria-label={
+                  open
+                    ? `Свернуть подразделы ${community.name}`
+                    : `Показать подразделы ${community.name}`
+                }
+                aria-expanded={open}
+                onClick={toggleCurrent}
+                onKeyDown={(event) =>
+                  treeKeyboard(event, open, toggleCurrent)
+                }
+              >
+                <span className="visually-hidden">
+                  {open ? 'Свернуть' : 'Развернуть'}
+                </span>
+              </button>
+              <button
+                type="button"
+                className="home-tree-toggle"
+                aria-label={
+                  open
+                    ? `Свернуть подразделы ${community.name}`
+                    : `Показать подразделы ${community.name}`
+                }
+                aria-expanded={open}
+                onClick={toggleCurrent}
+                onKeyDown={(event) =>
+                  treeKeyboard(event, open, toggleCurrent)
+                }
+              >
+                <span aria-hidden="true">{open ? '−' : '+'}</span>
+              </button>
+            </>
+          ) : (
+            <span className="home-tree-spacer" aria-hidden="true" />
           )}
         </div>
         {expandable && open && (
@@ -476,9 +523,6 @@ export function HomeDashboard({
                   Категории появятся после создания первых сообществ.
                 </p>
               )}
-              <Link className="home-panel-footer" href="/communities">
-                Все категории <span aria-hidden="true">→</span>
-              </Link>
             </>
           )}
         </aside>
@@ -525,26 +569,43 @@ export function HomeDashboard({
                 </button>
               </div>
             ) : feed.length ? (
-              feed.slice(0, 12).map((item) => (
+              feed.slice(0, 12).map((item, index) => (
                 <article
                   className={`home-topic-row ${
                     item.format === 'TOPIC' ? 'home-topic-permanent' : ''
+                  } ${
+                    item.type === 'NEWS' || index < 3
+                      ? 'home-topic-with-preview'
+                      : ''
                   }`}
                   data-community={item.community.slug}
                   key={item.id}
                 >
-                  <Avatar
-                    name={item.author.displayName}
-                    size={34}
-                    url={item.author.avatarUrl}
-                  />
+                  <div className="home-topic-visual">
+                    <img
+                      src={topicVisual(item.community.slug)}
+                      alt=""
+                      aria-hidden="true"
+                    />
+                    <Avatar
+                      name={item.author.displayName}
+                      size={22}
+                      url={item.author.avatarUrl}
+                    />
+                  </div>
                   <div className="home-topic-copy">
                     <div className="home-topic-path">
                       <Link href={`/communities/${item.community.slug}`}>
                         {item.community.name}
                       </Link>
-                      {item.tags.slice(0, 2).map((tag) => (
-                        <span key={tag.id}>› {tag.label}</span>
+                      {item.tags.slice(0, 3).map((tag) => (
+                        <Link
+                          className="home-topic-hashtag"
+                          href={`/tags/${tag.slug}`}
+                          key={tag.id}
+                        >
+                          #{tag.label}
+                        </Link>
                       ))}
                     </div>
                     <Link className="home-topic-title" href={`/p/${item.slug}`}>
@@ -553,7 +614,11 @@ export function HomeDashboard({
                     <p>{item.excerpt}</p>
                   </div>
                   <div className="home-topic-author">
-                    <Link href={`/u/${item.author.username}`}>
+                    <Link
+                      className="home-topic-author-link"
+                      data-username={item.author.username}
+                      href={`/u/${item.author.username}`}
+                    >
                       {item.author.displayName}
                     </Link>
                     <span>{relativeDate(item.lastActivityAt || item.createdAt)}</span>

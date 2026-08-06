@@ -5,6 +5,7 @@ export interface FeedScoreInput {
     lastActivityAtMs: number;
     nowMs: number;
     commentCount: number;
+    recentCommentCount?: number;
     reactionCount: number;
     bookmarkCount: number;
     viewCount: number;

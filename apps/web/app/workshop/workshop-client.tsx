@@ -10,6 +10,7 @@ import {
   useState,
 } from 'react';
 import { api } from '@/lib/api';
+import { Avatar } from '@/components/avatar';
 
 export type Item = {
   id: string;
@@ -24,7 +25,7 @@ export type Item = {
   author: {
     username: string;
     displayName: string;
-    forrumId: number;
+    forrumId: number; avatarUrl?: string | null;
   };
 };
 
@@ -50,6 +51,14 @@ const typeOptions = [
   ['PROFILE_DECOR', 'Профили'],
   ['COMMUNITY_DECOR', 'Сообщества'],
 ] as const;
+// FORRUM_WORKSHOP_PREVIEWS_V8
+const workshopPreviewByType: Record<string, string> = {
+  GIFT: '/forrum-assets/workshop-gift.svg',
+  REACTION: '/forrum-assets/workshop-reaction.svg',
+  BADGE: '/forrum-assets/workshop-badge.svg',
+  PROFILE_DECOR: '/forrum-assets/workshop-profile.svg',
+  COMMUNITY_DECOR: '/forrum-assets/workshop-community.svg',
+};
 
 export function WorkshopClient({
   initialItems,
@@ -294,20 +303,16 @@ export function WorkshopClient({
               className="workshop-compact-card"
               key={item.id}
             >
-              {item.thumbnailUrl ? (
+              <div className="workshop-preview">
                 <img
-                  src={item.thumbnailUrl}
+                  src={
+                    item.thumbnailUrl ||
+                    workshopPreviewByType[item.type] ||
+                    '/forrum-assets/workshop-badge.svg'
+                  }
                   alt={`Превью работы «${item.title}»`}
                 />
-              ) : (
-                <div
-                  className="workshop-compact-placeholder"
-                  aria-hidden="true"
-                >
-                  {(typeNames[item.type] ?? item.type)
-                    .slice(0, 1)}
-                </div>
-              )}
+              </div>
 
               <div className="workshop-compact-copy">
                 <div>
@@ -326,10 +331,17 @@ export function WorkshopClient({
 
                 <h2>{item.title}</h2>
                 <p>{item.description}</p>
-                <small>
-                  @{item.author.username} · ID{' '}
-                  {item.author.forrumId}
-                </small>
+                <div className="workshop-author-line">
+                  <Avatar
+                    name={item.author.displayName}
+                    size={24}
+                    url={item.author.avatarUrl}
+                  />
+                  <small>
+                    @{item.author.username} · ID{' '}
+                    {item.author.forrumId}
+                  </small>
+                </div>
               </div>
 
               {item.status === 'PUBLISHED' && (

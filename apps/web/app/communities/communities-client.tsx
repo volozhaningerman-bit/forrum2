@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { CommunityMark } from '@/components/community-mark';
+// FORRUM_TREE_INTERACTION_V8
 import type {
   CSSProperties,
   KeyboardEvent,
@@ -46,6 +47,27 @@ type Sort = 'active' | 'subscribers' | 'name';
 
 const formatNumber = (value: number) =>
   new Intl.NumberFormat('ru-RU').format(value);
+
+
+const navigationIcons: Record<string, string> = {
+  'forrum-start': '/forrum-assets/nav-forrum.svg',
+  'forrum-feedback': '/forrum-assets/nav-feedback.svg',
+  'internet-projects': '/forrum-assets/nav-projects.svg',
+  'launches-and-teams': '/forrum-assets/nav-launches.svg',
+  promotion: '/forrum-assets/nav-promotion.svg',
+  'seo-and-traffic': '/forrum-assets/nav-seo.svg',
+  'gta-rp': '/forrum-assets/nav-gaming.svg',
+  'majestic-rp': '/forrum-assets/nav-majestic.svg',
+  telegram: '/forrum-assets/nav-telegram.svg',
+  'telegram-bots': '/forrum-assets/nav-bots.svg',
+};
+
+function navigationIcon(slug: string) {
+  return (
+    navigationIcons[slug] ||
+    '/forrum-assets/nav-default.svg'
+  );
+}
 
 export function CommunitiesClient({
   initialItems,
@@ -228,17 +250,32 @@ export function CommunitiesClient({
 
   function keyboard(
     event: KeyboardEvent<HTMLElement>,
-    slug: string,
+    open: boolean,
     expandable: boolean,
+    toggleCurrent: () => void,
   ) {
     if (!expandable) return;
 
-    if (event.key === 'Enter' || event.key === ' ') {
+    if (
+      event.key === 'Enter' ||
+      event.key === ' '
+    ) {
       event.preventDefault();
-      toggleOpen(slug);
+      toggleCurrent();
+      return;
+    }
+
+    if (event.key === 'ArrowRight' && !open) {
+      event.preventDefault();
+      toggleCurrent();
+      return;
+    }
+
+    if (event.key === 'ArrowLeft' && open) {
+      event.preventDefault();
+      toggleCurrent();
     }
   }
-
   async function changeSubscription(
     item: Community,
     event: MouseEvent<HTMLButtonElement>,
@@ -276,6 +313,7 @@ export function CommunitiesClient({
     const expandable = children.length > 0;
     const open =
       Boolean(normalized) || expanded.has(item.slug);
+    const toggleCurrent = () => toggleOpen(item.slug);
 
     return (
       <section
@@ -286,111 +324,127 @@ export function CommunitiesClient({
           id={`community-${item.slug}`}
           className={`community-browser-row ${
             expandable ? 'expandable' : ''
-          } ${open ? 'opened' : ''}`}
+          } ${open ? 'opened' : 'closed'}`}
           style={
             {
               '--tree-depth': Math.min(depth, 4),
             } as CSSProperties
           }
-          role={expandable ? 'button' : undefined}
-          tabIndex={expandable ? 0 : undefined}
-          aria-expanded={
-            expandable ? open : undefined
-          }
-          onClick={
-            expandable
-              ? () => toggleOpen(item.slug)
-              : undefined
-          }
-          onKeyDown={(event) =>
-            keyboard(event, item.slug, expandable)
-          }
         >
-          <CommunityMark
-            name={item.name}
-            url={item.avatarUrl}
-            size={34}
-          />
+          <Link
+            className="community-browser-main-link"
+            href={`/communities/${item.slug}`}
+          >
+            <CommunityMark
+              name={item.name}
+              url={navigationIcon(item.slug)}
+              size={34}
+            />
+            <div className="community-browser-copy">
+              <div className="community-browser-title">
+                <strong>{item.name}</strong>
+                {item.isSubscribed && (
+                  <span className="community-followed">
+                    Вы подписаны
+                  </span>
+                )}
+              </div>
 
-          <div className="community-browser-copy">
-            <div className="community-browser-title">
-              {expandable && (
-                <button
-                  type="button"
-                  className="community-browser-chevron"
-                  aria-label={
-                    open
-                      ? 'Свернуть подразделы'
-                      : 'Показать подразделы'
-                  }
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    toggleOpen(item.slug);
-                  }}
-                >
-                  {open ? '⌄' : '›'}
-                </button>
-              )}
+              <p>
+                {item.shortDescription ||
+                  item.description}
+              </p>
 
-              <Link
-                href={`/communities/${item.slug}`}
-                onClick={stop}
+              <div className="community-browser-meta">
+                <span>
+                  {formatNumber(item.subscriberCount)}{' '}
+                  подписчиков
+                </span>
+                <span>
+                  {formatNumber(item.publicationCount)}{' '}
+                  публикаций
+                </span>
+                {item.lastActivityAt && (
+                  <span>
+                    Активность{' '}
+                    {formatRelativeTime(
+                      item.lastActivityAt,
+                    )}
+                  </span>
+                )}
+                {item.curator && (
+                  <span>
+                    Куратор: {item.curator.displayName}
+                  </span>
+                )}
+              </div>
+            </div>
+          </Link>
+
+          {expandable ? (
+            <>
+              <button
+                type="button"
+                className="community-browser-hitarea"
+                aria-label={
+                  open
+                    ? `Свернуть подразделы ${item.name}`
+                    : `Показать подразделы ${item.name}`
+                }
+                aria-expanded={open}
+                onClick={toggleCurrent}
+                onKeyDown={(event) =>
+                  keyboard(
+                    event,
+                    open,
+                    expandable,
+                    toggleCurrent,
+                  )
+                }
               >
-                {item.name}
-              </Link>
-
-              {item.isSubscribed && (
-                <span className="community-followed">
-                  Вы подписаны
+                <span className="visually-hidden">
+                  {open ? 'Свернуть' : 'Развернуть'}
                 </span>
-              )}
-            </div>
+              </button>
 
-            <p>
-              {item.shortDescription ||
-                item.description}
-            </p>
-
-            <div className="community-browser-meta">
-              <span>
-                {formatNumber(item.subscriberCount)}{' '}
-                подписчиков
-              </span>
-              <span>
-                {formatNumber(item.publicationCount)}{' '}
-                публикаций
-              </span>
-              {item.lastActivityAt && (
-                <span>
-                  Активность{' '}
-                  {formatRelativeTime(
-                    item.lastActivityAt,
-                  )}
+              <button
+                type="button"
+                className="community-browser-chevron"
+                aria-label={
+                  open
+                    ? `Свернуть подразделы ${item.name}`
+                    : `Показать подразделы ${item.name}`
+                }
+                aria-expanded={open}
+                onClick={toggleCurrent}
+                onKeyDown={(event) =>
+                  keyboard(
+                    event,
+                    open,
+                    expandable,
+                    toggleCurrent,
+                  )
+                }
+              >
+                <span aria-hidden="true">
+                  {open ? '−' : '+'}
                 </span>
-              )}
-              {item.curator && (
-                <span>
-                  Куратор:{' '}
-                  <Link
-                    href={`/u/${item.curator.username}`}
-                    onClick={stop}
-                  >
-                    {item.curator.displayName}
-                  </Link>
-                </span>
-              )}
-            </div>
-          </div>
+              </button>
+            </>
+          ) : (
+            <span
+              className="community-browser-spacer"
+              aria-hidden="true"
+            />
+          )}
 
           <div className="community-browser-actions">
             <Link
               className="button ghost small"
               href={`/communities/${item.slug}`}
-              onClick={stop}
             >
               Открыть
             </Link>
-
             <button
               type="button"
               className={`button small ${
@@ -420,7 +474,6 @@ export function CommunitiesClient({
       </section>
     );
   }
-
   return (
     <div className="community-browser-page">
       <header className="compact-page-heading">

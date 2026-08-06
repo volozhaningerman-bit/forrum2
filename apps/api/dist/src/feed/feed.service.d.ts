@@ -61,8 +61,11 @@ export declare class FeedService {
             slug: string;
             name: string;
             accentColor: string;
+            avatarUrl: string | null;
+            coverUrl: string | null;
         };
         commentCount: number;
+        recentCommentCount: number;
         reactionCount: number;
         bookmarkCount: number;
         viewerReaction: import("../generated/prisma/enums.js").ReactionType;

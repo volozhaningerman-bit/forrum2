@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { api } from '@/lib/api';
 import type { PublicationCardData } from '@/lib/types';
+import { Avatar } from '@/components/avatar';
 
 export type Partner = {
   id: string;
@@ -279,11 +280,12 @@ export function MediaClient({
                   className="media-partner-row"
                   key={partner.id}
                 >
-                  <span
-                    className="media-partner-avatar"
-                    aria-hidden="true"
-                  >
-                    {partner.displayName.slice(0, 1)}
+                  <span className="media-partner-avatar">
+                    <Avatar
+                      name={partner.displayName}
+                      size={38}
+                      url={partner.user.avatarUrl}
+                    />
                   </span>
 
                   <div className="media-partner-copy">

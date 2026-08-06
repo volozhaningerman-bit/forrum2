@@ -11,6 +11,8 @@ import {
   PublicationType,
   WorkshopItemStatus,
   WorkshopItemType,
+  MediaPartnerStatus,
+  MediaPartnerType,
   AchievementCategory,
   InteractionStatus,
   InteractionType,
@@ -81,6 +83,28 @@ async function main() {
     bio: 'Тестовый участник для проверки ответов, реакций и личных сообщений.',
   });
 
+  // FORRUM_DEMO_USERS_V8
+  const nora = await upsertUser({
+    email: 'nora@forrum.local',
+    username: 'nora',
+    displayName: 'Нора Веб',
+    password: 'Nora12345!',
+    bio: 'Автор разборов интерфейсов и цифровых продуктов.',
+  });
+  const maxstream = await upsertUser({
+    email: 'maxstream@forrum.local',
+    username: 'maxstream',
+    displayName: 'Макс Стрим',
+    password: 'MaxStream12345!',
+    bio: 'Стример и автор практических материалов о сообществах.',
+  });
+  const pixel = await upsertUser({
+    email: 'pixel@forrum.local',
+    username: 'pixel',
+    displayName: 'Pixel Lab',
+    password: 'Pixel12345!',
+    bio: 'Небольшая команда дизайна, оформления и Mini Apps.',
+  });
   // FORRUM_DEMO_VISUALS_V7
   await prisma.user.update({
     where: { id: owner.id },
@@ -488,6 +512,272 @@ async function main() {
       title: 'Значок первого участника', description: 'Спокойный коллекционный значок для людей, которые помогали тестировать FORRUM до публичного запуска.',
       resolutionNote: 'Опубликовано как демонстрационная работа закрытого теста.',
     } });
+  }
+
+  // FORRUM_DEMO_CONTENT_V8
+  await Promise.all([
+    prisma.user.update({
+      where: { id: nora.id },
+      data: {
+        avatarUrl: '/forrum-assets/avatar-nora.svg',
+        coverUrl: '/forrum-assets/topic-projects.svg',
+      },
+    }),
+    prisma.user.update({
+      where: { id: maxstream.id },
+      data: {
+        avatarUrl: '/forrum-assets/avatar-maxstream.svg',
+        coverUrl: '/forrum-assets/topic-gta.svg',
+      },
+    }),
+    prisma.user.update({
+      where: { id: pixel.id },
+      data: {
+        avatarUrl: '/forrum-assets/avatar-pixel.svg',
+        coverUrl: '/forrum-assets/topic-telegram.svg',
+      },
+    }),
+  ]);
+
+  const mediaPartners = [
+    {
+      userId: maxstream.id,
+      type: MediaPartnerType.STREAMER,
+      displayName: 'Max Stream',
+      platform: 'Twitch',
+      channelUrl: 'https://example.com/max-stream',
+      audienceText: '18 тыс. подписчиков',
+      description: 'Стримы о запуске сообществ, играх и работе с аудиторией.',
+    },
+    {
+      userId: nora.id,
+      type: MediaPartnerType.VIDEO_CREATOR,
+      displayName: 'Нора разбирает',
+      platform: 'YouTube',
+      channelUrl: 'https://example.com/nora-video',
+      audienceText: '42 тыс. подписчиков',
+      description: 'Разборы интерфейсов, сервисов и цифровых продуктов.',
+    },
+    {
+      userId: pixel.id,
+      type: MediaPartnerType.CHANNEL,
+      displayName: 'Pixel Lab',
+      platform: 'Telegram',
+      channelUrl: 'https://example.com/pixel-lab',
+      audienceText: '11 тыс. подписчиков',
+      description: 'Канал о дизайне, Mini Apps, оформлении и полезных инструментах.',
+    },
+    {
+      userId: friend.id,
+      type: MediaPartnerType.BLOGGER,
+      displayName: 'Первый участник',
+      platform: 'VK Видео',
+      channelUrl: 'https://example.com/first-member',
+      audienceText: '6 тыс. подписчиков',
+      description: 'Небольшой авторский блог о тестировании новых интернет-проектов.',
+    },
+  ];
+
+  for (const partner of mediaPartners) {
+    await prisma.mediaPartner.upsert({
+      where: {
+        userId_channelUrl: {
+          userId: partner.userId,
+          channelUrl: partner.channelUrl,
+        },
+      },
+      update: {
+        type: partner.type,
+        status: MediaPartnerStatus.ACTIVE,
+        displayName: partner.displayName,
+        platform: partner.platform,
+        audienceText: partner.audienceText,
+        description: partner.description,
+        resolutionNote: 'Одобрено для демонстрации каталога.',
+      },
+      create: {
+        ...partner,
+        status: MediaPartnerStatus.ACTIVE,
+        resolutionNote: 'Одобрено для демонстрации каталога.',
+      },
+    });
+  }
+
+  const workshopExamples = [
+    {
+      authorId: pixel.id,
+      type: WorkshopItemType.GIFT,
+      title: 'Набор подарков «Первый запуск»',
+      description: 'Пять спокойных подарков для авторов, которые впервые опубликовали проект.',
+    },
+    {
+      authorId: friend.id,
+      type: WorkshopItemType.BADGE,
+      title: 'Значок первого участника',
+      description: 'Коллекционный знак для людей, которые помогали тестировать FORRUM.',
+    },
+    {
+      authorId: nora.id,
+      type: WorkshopItemType.REACTION,
+      title: 'Реакции для конструктивного обсуждения',
+      description: 'Набор реакций для полезного ответа, аргумента, идеи и найденной ошибки.',
+    },
+    {
+      authorId: maxstream.id,
+      type: WorkshopItemType.PROFILE_DECOR,
+      title: 'Оформление профиля «Прямой эфир»',
+      description: 'Компактная обложка и акценты для стримеров и авторов живого контента.',
+    },
+    {
+      authorId: pixel.id,
+      type: WorkshopItemType.COMMUNITY_DECOR,
+      title: 'Обложка сообщества «Цифровая мастерская»',
+      description: 'Светлая редакционная обложка для раздела о разработке и дизайне.',
+    },
+  ];
+
+  for (const item of workshopExamples) {
+    const existing = await prisma.workshopItem.findFirst({
+      where: { title: item.title },
+    });
+    if (!existing) {
+      await prisma.workshopItem.create({
+        data: {
+          ...item,
+          reviewedById: owner.id,
+          status: WorkshopItemStatus.PUBLISHED,
+          resolutionNote: 'Опубликовано как демонстрационная работа FORRUM.',
+        },
+      });
+    }
+  }
+
+  const activeTopics = [
+    {
+      slug: 'telegram-update-discussion',
+      authors: [nora.id, maxstream.id, friend.id, pixel.id],
+      bodies: [
+        'За последние сутки особенно полезно было бы собрать изменения API каналов в одном сообщении.',
+        'Добавил бы отдельный блок с реальными сценариями возврата пользователя в Mini App.',
+        'Проверил на мобильном: компактная навигация нужна сильнее, чем ещё одна большая карточка.',
+        'Поддерживаю. Могу собрать небольшой визуальный пример для постоянной темы.',
+      ],
+    },
+    {
+      slug: 'seo-experiment-log',
+      authors: [nora.id, friend.id, pixel.id],
+      bodies: [
+        'Предлагаю фиксировать не только позиции, но и дату изменения сниппета.',
+        'На небольшом проекте сильнее всего сработала переработка структуры, а не новые тексты.',
+        'Добавил бы шаблон таблицы до и после эксперимента.',
+      ],
+    },
+    {
+      slug: 'launch-diary-template',
+      authors: [maxstream.id, nora.id],
+      bodies: [
+        'В дневнике запуска важно отделить проверенную гипотезу от следующего предположения.',
+        'Нужен короткий блок: что изменилось за сутки и какой следующий измеримый шаг.',
+      ],
+    },
+  ];
+
+  for (const topic of activeTopics) {
+    const publication = await prisma.publication.findUnique({
+      where: { slug: topic.slug },
+    });
+    if (!publication) continue;
+
+    for (let index = 0; index < topic.bodies.length; index += 1) {
+      const body = topic.bodies[index];
+      const authorId = topic.authors[index];
+      const existing = await prisma.comment.findFirst({
+        where: {
+          publicationId: publication.id,
+          authorId,
+          body,
+        },
+      });
+      if (!existing) {
+        await prisma.comment.create({
+          data: {
+            publicationId: publication.id,
+            authorId,
+            body,
+            createdAt: new Date(
+              Date.now() - (index + 1) * 70 * 60 * 1000,
+            ),
+          },
+        });
+      }
+    }
+
+    await prisma.publication.update({
+      where: { id: publication.id },
+      data: { lastActivityAt: new Date() },
+    });
+  }
+
+  const extraTags = [
+    { slug: 'telegram', label: 'telegram' },
+    { slug: 'seo', label: 'seo' },
+    { slug: 'startup', label: 'стартап' },
+    { slug: 'gta-rp', label: 'gta-rp' },
+  ];
+
+  for (const tag of extraTags) {
+    await prisma.tag.upsert({
+      where: { slug: tag.slug },
+      update: {
+        label: tag.label,
+        styleEnabled: true,
+        backgroundColor: '#F4F4F1',
+        textColor: '#333331',
+        borderColor: '#CFCFCA',
+      },
+      create: {
+        ...tag,
+        styleEnabled: true,
+        backgroundColor: '#F4F4F1',
+        textColor: '#333331',
+        borderColor: '#CFCFCA',
+      },
+    });
+  }
+
+  const publicationTags = [
+    ['telegram-update-discussion', 'telegram'],
+    ['telegram-bot-launch-checklist', 'telegram'],
+    ['seo-experiment-log', 'seo'],
+    ['launch-diary-template', 'startup'],
+    ['gta-rp-new-player-start', 'gta-rp'],
+  ] as const;
+
+  for (const [publicationSlug, tagSlug] of publicationTags) {
+    const [publication, tag] = await Promise.all([
+      prisma.publication.findUnique({
+        where: { slug: publicationSlug },
+      }),
+      prisma.tag.findUnique({
+        where: { slug: tagSlug },
+      }),
+    ]);
+
+    if (!publication || !tag) continue;
+
+    await prisma.publicationTag.upsert({
+      where: {
+        publicationId_tagId: {
+          publicationId: publication.id,
+          tagId: tag.id,
+        },
+      },
+      update: {},
+      create: {
+        publicationId: publication.id,
+        tagId: tag.id,
+      },
+    });
   }
 
   const ownerWallCount = await prisma.wallPost.count({ where: { profileUserId: owner.id } });

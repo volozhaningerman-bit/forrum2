@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="112" viewBox="0 0 160 112" role="img" aria-label="Telegram">
+  <rect width="160" height="112" rx="14" fill="#0284C7"/>
+  <circle cx="132" cy="24" r="26" fill="#38BDF8" opacity=".75"/>
+  <path d="M18 82h124M18 68h78M18 54h98" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity=".92"/>
+  <text x="20" y="38" font-family="Arial, sans-serif" font-size="24" font-weight="800" fill="#fff">TG</text>
+</svg>

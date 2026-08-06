@@ -86,6 +86,10 @@ export class FeedService {
   async get(mode: string, userId?: string) {
     if ((mode === 'subscriptions' || mode === 'saved') && !userId) return [];
     const now = Date.now();
+    // FORRUM_POPULAR_24H_V8
+    const recentCommentSince = new Date(
+      now - 24 * 60 * 60 * 1000,
+    );
     const viewer = userId ? await this.prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -134,6 +138,13 @@ export class FeedService {
         author: true,
         community: true,
         tags: { include: { tag: true } },
+        comments: {
+          where: {
+            hiddenAt: null,
+            createdAt: { gte: recentCommentSince },
+          },
+          select: { id: true },
+        },
         _count: { select: { comments: { where: { hiddenAt: null } }, reactions: true, bookmarks: true } },
         reactions: { where: { userId: userId ?? emptyViewerId }, take: 1 },
         bookmarks: { where: { userId: userId ?? emptyViewerId }, take: 1 },
@@ -148,6 +159,7 @@ export class FeedService {
         lastActivityAtMs: publication.lastActivityAt.getTime(),
         nowMs: now,
         commentCount: publication._count.comments,
+        recentCommentCount: publication.comments.length,
         reactionCount: publication._count.reactions,
         bookmarkCount: publication._count.bookmarks,
         viewCount: publication.viewCount,
@@ -187,8 +199,15 @@ export class FeedService {
       reason: showReasons ? reason : null,
       feedbackEnabled: Boolean(userId && ['for-you', 'all', 'popular', 'new'].includes(mode)),
       author: { username: publication.author.username, displayName: publication.author.displayName, avatarUrl: publication.author.avatarUrl },
-      community: { slug: publication.community.slug, name: publication.community.name, accentColor: publication.community.accentColor },
+      community: {
+        slug: publication.community.slug,
+        name: publication.community.name,
+        accentColor: publication.community.accentColor,
+        avatarUrl: publication.community.avatarUrl,
+        coverUrl: publication.community.coverUrl,
+      },
       commentCount: publication._count.comments,
+      recentCommentCount: publication.comments.length,
       reactionCount: publication._count.reactions,
       bookmarkCount: publication._count.bookmarks,
       viewerReaction: publication.reactions[0]?.type ?? null,
