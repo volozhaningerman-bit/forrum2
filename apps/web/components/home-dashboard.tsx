@@ -488,7 +488,7 @@ export function HomeDashboard({
   return (
     <div className="home-board final-home-v7">
       <section className="home-commandbar">
-        <h1>Главная</h1>
+        <h1 className="visually-hidden">Главная</h1>
         <Link className="button" href="/create">
           <span aria-hidden="true">＋</span>
           Создать тему

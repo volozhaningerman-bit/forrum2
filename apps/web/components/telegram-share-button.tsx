@@ -144,8 +144,7 @@ export function TelegramShareButton({
       >
         <header>
           <div>
-            <span className="eyebrow">Telegram Share</span>
-            <h2 id={`telegram-share-title-${slug}`}>Опубликовать в Telegram</h2>
+                        <h2 id={`telegram-share-title-${slug}`}>Опубликовать в Telegram</h2>
           </div>
           <button
             type="button"
