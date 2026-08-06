@@ -526,19 +526,43 @@ export function HomeDashboard({
             open ? 'opened' : 'closed'
           } ${active ? 'active' : ''}`}
         >
+          {expandable ? (
+            <button
+              type="button"
+              className="home-tree-icon-toggle"
+              aria-label={
+                open
+                  ? `Свернуть подразделы ${community.name}`
+                  : `Показать подразделы ${community.name}`
+              }
+              aria-expanded={open}
+              onClick={toggleCurrent}
+              onKeyDown={(event) =>
+                treeKeyboard(event, open, toggleCurrent)
+              }
+            >
+              <CommunityMark
+                name={community.name}
+                url={navigationIcon(community.slug)}
+                size={24}
+              />
+            </button>
+          ) : (
+            <span className="home-tree-icon-static" aria-hidden="true">
+              <CommunityMark
+                name={community.name}
+                url={navigationIcon(community.slug)}
+                size={24}
+              />
+            </span>
+          )}
+
           <Link
-            className="home-tree-link"
+            className="home-tree-link home-tree-name-link"
             href={`/communities/${community.slug}`}
             aria-current={active ? 'page' : undefined}
           >
-            <CommunityMark
-              name={community.name}
-              url={navigationIcon(community.slug)}
-              size={24}
-            />
-            <span className="home-tree-copy">
-              <strong>{community.name}</strong>
-            </span>
+            <strong>{community.name}</strong>
           </Link>
 
           {expandable ? (

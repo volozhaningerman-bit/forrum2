@@ -8240,3 +8240,100 @@ a.button:hover {
 }
 
 /* /FORRUM_HOME_STAGE_1_HOTFIX_V9_2 */
+
+/* FORRUM_HOME_TREE_CLICK_V9_2_2
+   Only the category name navigates. Icon, blank row area and chevron expand/collapse.
+*/
+
+.home-stage-one .home-tree-row {
+  grid-template-columns: 28px minmax(0, auto) minmax(12px, 1fr) 28px !important;
+}
+
+.home-stage-one .home-tree-icon-toggle,
+.home-stage-one .home-tree-icon-static {
+  grid-column: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  min-width: 28px;
+  min-height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: inherit;
+}
+
+.home-stage-one .home-tree-icon-toggle {
+  cursor: pointer;
+}
+
+.home-stage-one .home-tree-icon-toggle:hover,
+.home-stage-one .home-tree-icon-toggle:focus-visible {
+  background: #eeeeeb;
+  outline: none;
+}
+
+.home-stage-one .home-tree-icon-toggle:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--focus);
+}
+
+.home-stage-one .home-tree-icon-toggle .community-mark,
+.home-stage-one .home-tree-icon-static .community-mark {
+  pointer-events: none;
+}
+
+.home-stage-one .home-tree-name-link {
+  grid-column: 2;
+  display: inline-flex !important;
+  align-items: center;
+  width: max-content !important;
+  max-width: min(100%, 168px) !important;
+  min-height: 34px;
+  padding: 4px 2px !important;
+  overflow: hidden;
+  color: #262624;
+  text-decoration: none;
+}
+
+.home-stage-one .home-tree-name-link strong {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-stage-one .home-tree-name-link:hover strong {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.home-stage-one .home-tree-name-link:focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--focus);
+  outline-offset: -1px;
+}
+
+.home-stage-one .home-tree-hitarea {
+  grid-column: 3;
+  width: 100%;
+  min-width: 12px;
+}
+
+.home-stage-one .home-tree-toggle {
+  grid-column: 4;
+}
+
+.home-stage-one .home-tree-spacer {
+  grid-column: 3 / 5;
+}
+
+.home-stage-one .home-tree-children .home-tree-name-link {
+  max-width: min(100%, 145px) !important;
+}
+
+/* /FORRUM_HOME_TREE_CLICK_V9_2_2 */
