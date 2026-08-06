@@ -25,12 +25,12 @@ const feed = read('apps/api/src/feed/feed.service.ts');
 const css = read('apps/web/app/globals.css');
 
 for (const marker of [
-  'home-tree-link',
-  'home-tree-hitarea',
-  'home-tree-toggle',
+  'home-tree-name-link',
+  'home-tree-expand-surface',
+  'home-tree-reference-chevron',
   "event.key === 'ArrowRight'",
   "event.key === 'ArrowLeft'",
-  'navigationIcon(community.slug)',
+  'CategoryTreeIcon',
 ]) {
   requireMarker(home, marker, 'home tree');
 }
@@ -71,7 +71,7 @@ requireMarker(
 
 for (const marker of [
   'FORRUM_CANONICAL_INTERFACE_V8',
-  '.home-tree-hitarea',
+  '.home-tree-expand-surface',
   '.community-browser-hitarea',
   '.home-topic-visual',
   '.publication-preview',

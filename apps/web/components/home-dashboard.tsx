@@ -11,7 +11,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { api } from '@/lib/api';
 import type { PublicationCardData } from '@/lib/types';
 import { Avatar } from '@/components/avatar';
-import { CommunityMark } from '@/components/community-mark';
 
 type Community = {
   id: string;
@@ -117,19 +116,6 @@ function typeLabel(type: string) {
   return names[type] ?? type;
 }
 
-const navigationIcons: Record<string, string> = {
-  'forrum-start': '/forrum-assets/nav-forrum.svg',
-  'forrum-feedback': '/forrum-assets/nav-feedback.svg',
-  'internet-projects': '/forrum-assets/nav-projects.svg',
-  'launches-and-teams': '/forrum-assets/nav-launches.svg',
-  promotion: '/forrum-assets/nav-promotion.svg',
-  'seo-and-traffic': '/forrum-assets/nav-seo.svg',
-  'gta-rp': '/forrum-assets/nav-gaming.svg',
-  'majestic-rp': '/forrum-assets/nav-majestic.svg',
-  telegram: '/forrum-assets/nav-telegram.svg',
-  'telegram-bots': '/forrum-assets/nav-bots.svg',
-};
-
 const topicVisuals: Record<string, string> = {
   'forrum-start': '/forrum-assets/topic-forrum.svg',
   'forrum-feedback': '/forrum-assets/topic-forrum.svg',
@@ -142,10 +128,6 @@ const topicVisuals: Record<string, string> = {
   telegram: '/forrum-assets/topic-telegram.svg',
   'telegram-bots': '/forrum-assets/topic-telegram.svg',
 };
-
-function navigationIcon(slug: string) {
-  return navigationIcons[slug] ?? '/forrum-assets/nav-default.svg';
-}
 
 function topicVisual(slug: string) {
   return topicVisuals[slug] ?? '/forrum-assets/topic-default.svg';
@@ -209,6 +191,69 @@ function deadlineState(value: string, kind: 'event' | 'poll') {
     return 'заканчивается';
   }
   return '';
+}
+
+function CategoryTreeIcon({
+  slug,
+  depth,
+  expandable,
+}: {
+  slug: string;
+  depth: number;
+  expandable: boolean;
+}) {
+  if (depth > 0) {
+    return (
+      <span
+        className={expandable ? 'home-tree-branch-mark' : 'home-tree-leaf-mark'}
+        aria-hidden="true"
+      >
+        {expandable ? '▾' : '−'}
+      </span>
+    );
+  }
+
+  if (slug.includes('promotion') || slug.includes('seo')) {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 13h3l8 4V7l-8 4H4v2Z" />
+        <path d="M7 13l1.5 5M18 9.5c1 .8 1.5 1.6 1.5 2.5S19 13.7 18 14.5" />
+      </svg>
+    );
+  }
+
+  if (slug.includes('telegram')) {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m3 11 17-7-5 16-4-6-8-3Z" />
+        <path d="m11 14 4-4" />
+      </svg>
+    );
+  }
+
+  if (slug.includes('gta') || slug.includes('game')) {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 9h10a4 4 0 0 1 3.7 5.5l-1 2.5a2 2 0 0 1-3.2.8L14.5 16h-5l-2 1.8a2 2 0 0 1-3.2-.8l-1-2.5A4 4 0 0 1 7 9Z" />
+        <path d="M8 12v3M6.5 13.5h3M16.5 12.5h.01M18 14h.01" />
+      </svg>
+    );
+  }
+
+  if (slug.includes('forrum')) {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 5h14v10H9l-4 4V5Z" />
+        <path d="M8 9h8M8 12h5" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m8 5-5 7 5 7M16 5l5 7-5 7M14 3l-4 18" />
+    </svg>
+  );
 }
 
 function TopicTypeMark({ type }: { type: string }) {
@@ -522,14 +567,14 @@ export function HomeDashboard({
         style={{ '--tree-depth': Math.min(depth, 3) } as CSSProperties}
       >
         <div
-          className={`home-tree-row ${expandable ? 'expandable' : ''} ${
+          className={`home-tree-row ${expandable ? 'expandable' : 'leaf' } ${
             open ? 'opened' : 'closed'
           } ${active ? 'active' : ''}`}
         >
-          {expandable ? (
+          {expandable && (
             <button
               type="button"
-              className="home-tree-icon-toggle"
+              className="home-tree-expand-surface"
               aria-label={
                 open
                   ? `Свернуть подразделы ${community.name}`
@@ -541,69 +586,34 @@ export function HomeDashboard({
                 treeKeyboard(event, open, toggleCurrent)
               }
             >
-              <CommunityMark
-                name={community.name}
-                url={navigationIcon(community.slug)}
-                size={24}
-              />
+              <span className="visually-hidden">
+                {open ? 'Свернуть' : 'Развернуть'}
+              </span>
             </button>
-          ) : (
-            <span className="home-tree-icon-static" aria-hidden="true">
-              <CommunityMark
-                name={community.name}
-                url={navigationIcon(community.slug)}
-                size={24}
-              />
-            </span>
           )}
 
+          <span className="home-tree-reference-icon" aria-hidden="true">
+            <CategoryTreeIcon
+              slug={community.slug}
+              depth={depth}
+              expandable={expandable}
+            />
+          </span>
+
           <Link
-            className="home-tree-link home-tree-name-link"
+            className="home-tree-name-link"
             href={`/communities/${community.slug}`}
             aria-current={active ? 'page' : undefined}
           >
-            <strong>{community.name}</strong>
+            {community.name}
           </Link>
 
-          {expandable ? (
-            <>
-              <button
-                type="button"
-                className="home-tree-hitarea"
-                aria-label={
-                  open
-                    ? `Свернуть подразделы ${community.name}`
-                    : `Показать подразделы ${community.name}`
-                }
-                aria-expanded={open}
-                onClick={toggleCurrent}
-                onKeyDown={(event) =>
-                  treeKeyboard(event, open, toggleCurrent)
-                }
-              >
-                <span className="visually-hidden">
-                  {open ? 'Свернуть' : 'Развернуть'}
-                </span>
-              </button>
-              <button
-                type="button"
-                className="home-tree-toggle"
-                aria-label={
-                  open
-                    ? `Свернуть подразделы ${community.name}`
-                    : `Показать подразделы ${community.name}`
-                }
-                aria-expanded={open}
-                onClick={toggleCurrent}
-                onKeyDown={(event) =>
-                  treeKeyboard(event, open, toggleCurrent)
-                }
-              >
-                <span className="home-tree-chevron" aria-hidden="true">›</span>
-              </button>
-            </>
-          ) : (
-            <span className="home-tree-spacer" aria-hidden="true" />
+          {expandable && (
+            <span className="home-tree-reference-chevron" aria-hidden="true">
+              <svg viewBox="0 0 16 16">
+                <path d="m4 6 4 4 4-4" />
+              </svg>
+            </span>
           )}
         </div>
         {expandable && open && (
@@ -625,9 +635,16 @@ export function HomeDashboard({
         <aside className="home-community-tree" aria-label="Категории и подразделы">
           <div className="home-tree-section home-tree-workshop-section">
             <Link className="home-workshop-entry" href="/workshop">
-              <span className="home-workshop-icon" aria-hidden="true">⌁</span>
+              <span className="home-workshop-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="m14 6 4-4 4 4-4 4M10 18l-4 4-4-4 4-4" />
+                  <path d="m8 8 8 8M5 5l14 14" />
+                </svg>
+              </span>
               <strong>Мастерская</strong>
-              <span className="home-workshop-arrow" aria-hidden="true">→</span>
+              <span className="home-workshop-arrow" aria-hidden="true">
+                <svg viewBox="0 0 16 16"><path d="m4 9 4-4 4 4" /></svg>
+              </span>
             </Link>
           </div>
 
