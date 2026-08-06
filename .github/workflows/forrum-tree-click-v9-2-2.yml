@@ -1,0 +1,169 @@
+name: FORRUM Tree Click Behavior V9.2.2
+on:
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: forrum-tree-click-v9-2-2
+  cancel-in-progress: false
+env:
+  NODE_ENV: test
+  DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/forrum?schema=public
+  JWT_SECRET: forrum-github-actions-secret
+  WEB_URL: http://127.0.0.1:3000
+  API_INTERNAL_URL: http://127.0.0.1:4000/v1
+  PUBLIC_API_URL: http://127.0.0.1:4000
+  API_PORT: '4000'
+  PORT: '3000'
+jobs:
+  tree-click-verify-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: forrum
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d forrum"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - name: Check out canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify clean V9.2.1 baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f apps/web/components/home-dashboard.tsx
+          test -f apps/web/app/globals.css
+          test -f scripts/ui-interaction-check.mjs
+          grep -q 'home-tree-hitarea' apps/web/components/home-dashboard.tsx
+          grep -q 'home-tree-toggle' apps/web/components/home-dashboard.tsx
+          if ! git diff --quiet || ! git diff --cached --quiet; then
+            echo "Repository is not clean before applying the tree behavior patch."
+            git status --short
+            exit 1
+          fi
+
+      - name: Apply name-only navigation and row expansion
+        shell: bash
+        env:
+          CSS_B64: LyogRk9SUlVNX0hPTUVfVFJFRV9DTElDS19WOV8yXzIKICAgT25seSB0aGUgY2F0ZWdvcnkgbmFtZSBuYXZpZ2F0ZXMuIEljb24sIGJsYW5rIHJvdyBhcmVhIGFuZCBjaGV2cm9uIGV4cGFuZC9jb2xsYXBzZS4KKi8KCi5ob21lLXN0YWdlLW9uZSAuaG9tZS10cmVlLXJvdyB7CiAgZ3JpZC10ZW1wbGF0ZS1jb2x1bW5zOiAyOHB4IG1pbm1heCgwLCBhdXRvKSBtaW5tYXgoMTJweCwgMWZyKSAyOHB4ICFpbXBvcnRhbnQ7Cn0KCi5ob21lLXN0YWdlLW9uZSAuaG9tZS10cmVlLWljb24tdG9nZ2xlLAouaG9tZS1zdGFnZS1vbmUgLmhvbWUtdHJlZS1pY29uLXN0YXRpYyB7CiAgZ3JpZC1jb2x1bW46IDE7CiAgZGlzcGxheTogaW5saW5lLWZsZXg7CiAgYWxpZ24taXRlbXM6IGNlbnRlcjsKICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjsKICBhbGlnbi1zZWxmOiBzdHJldGNoOwogIG1pbi13aWR0aDogMjhweDsKICBtaW4taGVpZ2h0OiAxMDAlOwogIHBhZGRpbmc6IDA7CiAgYm9yZGVyOiAwOwogIGJvcmRlci1yYWRpdXM6IDJweDsKICBiYWNrZ3JvdW5kOiB0cmFuc3BhcmVudDsKICBjb2xvcjogaW5oZXJpdDsKfQoKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtaWNvbi10b2dnbGUgewogIGN1cnNvcjogcG9pbnRlcjsKfQoKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtaWNvbi10b2dnbGU6aG92ZXIsCi5ob21lLXN0YWdlLW9uZSAuaG9tZS10cmVlLWljb24tdG9nZ2xlOmZvY3VzLXZpc2libGUgewogIGJhY2tncm91bmQ6ICNlZWVlZWI7CiAgb3V0bGluZTogbm9uZTsKfQoKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtaWNvbi10b2dnbGU6Zm9jdXMtdmlzaWJsZSB7CiAgYm94LXNoYWRvdzogaW5zZXQgMCAwIDAgMnB4IHZhcigtLWZvY3VzKTsKfQoKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtaWNvbi10b2dnbGUgLmNvbW11bml0eS1tYXJrLAouaG9tZS1zdGFnZS1vbmUgLmhvbWUtdHJlZS1pY29uLXN0YXRpYyAuY29tbXVuaXR5LW1hcmsgewogIHBvaW50ZXItZXZlbnRzOiBub25lOwp9CgouaG9tZS1zdGFnZS1vbmUgLmhvbWUtdHJlZS1uYW1lLWxpbmsgewogIGdyaWQtY29sdW1uOiAyOwogIGRpc3BsYXk6IGlubGluZS1mbGV4ICFpbXBvcnRhbnQ7CiAgYWxpZ24taXRlbXM6IGNlbnRlcjsKICB3aWR0aDogbWF4LWNvbnRlbnQgIWltcG9ydGFudDsKICBtYXgtd2lkdGg6IG1pbigxMDAlLCAxNjhweCkgIWltcG9ydGFudDsKICBtaW4taGVpZ2h0OiAzNHB4OwogIHBhZGRpbmc6IDRweCAycHggIWltcG9ydGFudDsKICBvdmVyZmxvdzogaGlkZGVuOwogIGNvbG9yOiAjMjYyNjI0OwogIHRleHQtZGVjb3JhdGlvbjogbm9uZTsKfQoKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtbmFtZS1saW5rIHN0cm9uZyB7CiAgZGlzcGxheTogYmxvY2s7CiAgbWluLXdpZHRoOiAwOwogIG92ZXJmbG93OiBoaWRkZW47CiAgZm9udC1zaXplOiAxMnB4OwogIGxpbmUtaGVpZ2h0OiAxLjI1OwogIHRleHQtb3ZlcmZsb3c6IGVsbGlwc2lzOwogIHdoaXRlLXNwYWNlOiBub3dyYXA7Cn0KCi5ob21lLXN0YWdlLW9uZSAuaG9tZS10cmVlLW5hbWUtbGluazpob3ZlciBzdHJvbmcgewogIHRleHQtZGVjb3JhdGlvbjogdW5kZXJsaW5lOwogIHRleHQtdW5kZXJsaW5lLW9mZnNldDogMnB4Owp9CgouaG9tZS1zdGFnZS1vbmUgLmhvbWUtdHJlZS1uYW1lLWxpbms6Zm9jdXMtdmlzaWJsZSB7CiAgYm9yZGVyLXJhZGl1czogMnB4OwogIG91dGxpbmU6IDJweCBzb2xpZCB2YXIoLS1mb2N1cyk7CiAgb3V0bGluZS1vZmZzZXQ6IC0xcHg7Cn0KCi5ob21lLXN0YWdlLW9uZSAuaG9tZS10cmVlLWhpdGFyZWEgewogIGdyaWQtY29sdW1uOiAzOwogIHdpZHRoOiAxMDAlOwogIG1pbi13aWR0aDogMTJweDsKfQoKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtdG9nZ2xlIHsKICBncmlkLWNvbHVtbjogNDsKfQoKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtc3BhY2VyIHsKICBncmlkLWNvbHVtbjogMyAvIDU7Cn0KCi5ob21lLXN0YWdlLW9uZSAuaG9tZS10cmVlLWNoaWxkcmVuIC5ob21lLXRyZWUtbmFtZS1saW5rIHsKICBtYXgtd2lkdGg6IG1pbigxMDAlLCAxNDVweCkgIWltcG9ydGFudDsKfQoKLyogL0ZPUlJVTV9IT01FX1RSRUVfQ0xJQ0tfVjlfMl8yICovCg==
+          CHECK_B64: aW1wb3J0IHsgcmVhZEZpbGVTeW5jIH0gZnJvbSAnbm9kZTpmcyc7Cgpjb25zdCBob21lID0gcmVhZEZpbGVTeW5jKCdhcHBzL3dlYi9jb21wb25lbnRzL2hvbWUtZGFzaGJvYXJkLnRzeCcsICd1dGY4Jyk7CmNvbnN0IGNzcyA9IHJlYWRGaWxlU3luYygnYXBwcy93ZWIvYXBwL2dsb2JhbHMuY3NzJywgJ3V0ZjgnKTsKCmZ1bmN0aW9uIHJlcXVpcmVNYXJrZXIoc291cmNlLCBtYXJrZXIsIGxhYmVsKSB7CiAgaWYgKCFzb3VyY2UuaW5jbHVkZXMobWFya2VyKSkgewogICAgdGhyb3cgbmV3IEVycm9yKGAke2xhYmVsfTogbWlzc2luZyAke21hcmtlcn1gKTsKICB9Cn0KCnJlcXVpcmVNYXJrZXIoaG9tZSwgJ2hvbWUtdHJlZS1pY29uLXRvZ2dsZScsICd0cmVlIGljb24gZXhwYW5kIGNvbnRyb2wnKTsKcmVxdWlyZU1hcmtlcihob21lLCAnaG9tZS10cmVlLWljb24tc3RhdGljJywgJ3RyZWUgbGVhZiBpY29uJyk7CnJlcXVpcmVNYXJrZXIoaG9tZSwgJ2hvbWUtdHJlZS1saW5rIGhvbWUtdHJlZS1uYW1lLWxpbmsnLCAnbmFtZS1vbmx5IG5hdmlnYXRpb24gbGluaycpOwpyZXF1aXJlTWFya2VyKGhvbWUsICdob21lLXRyZWUtaGl0YXJlYScsICdibGFuayBleHBhbmQgYXJlYScpOwpyZXF1aXJlTWFya2VyKGhvbWUsICdob21lLXRyZWUtdG9nZ2xlJywgJ2NoZXZyb24gZXhwYW5kIGNvbnRyb2wnKTsKcmVxdWlyZU1hcmtlcihjc3MsICdGT1JSVU1fSE9NRV9UUkVFX0NMSUNLX1Y5XzJfMicsICd0cmVlIGNsaWNrIENTUyBjb250cmFjdCcpOwoKY29uc3QgbmFtZUxpbmsgPSBob21lLm1hdGNoKAogIC88TGlua1xzK1tcc1xTXSo/Y2xhc3NOYW1lPSJob21lLXRyZWUtbGluayBob21lLXRyZWUtbmFtZS1saW5rIltcc1xTXSo/PFwvTGluaz4vLAopPy5bMF07CgppZiAoIW5hbWVMaW5rKSB7CiAgdGhyb3cgbmV3IEVycm9yKCduYW1lLW9ubHkgbmF2aWdhdGlvbiBsaW5rIGJsb2NrIHdhcyBub3QgZm91bmQnKTsKfQoKaWYgKG5hbWVMaW5rLmluY2x1ZGVzKCdDb21tdW5pdHlNYXJrJykpIHsKICB0aHJvdyBuZXcgRXJyb3IoJ2NhdGVnb3J5IGljb24gbXVzdCBub3QgYmUgaW5zaWRlIHRoZSBuYXZpZ2F0aW9uIGxpbmsnKTsKfQoKaWYgKCFuYW1lTGluay5pbmNsdWRlcygnPHN0cm9uZz57Y29tbXVuaXR5Lm5hbWV9PC9zdHJvbmc+JykpIHsKICB0aHJvdyBuZXcgRXJyb3IoJ2NhdGVnb3J5IG5hbWUgaXMgbWlzc2luZyBmcm9tIHRoZSBuYXZpZ2F0aW9uIGxpbmsnKTsKfQoKY29uc3QgaWNvblRvZ2dsZSA9IGhvbWUubWF0Y2goCiAgLzxidXR0b25ccytbXHNcU10qP2NsYXNzTmFtZT0iaG9tZS10cmVlLWljb24tdG9nZ2xlIltcc1xTXSo/PFwvYnV0dG9uPi8sCik/LlswXTsKCmlmICghaWNvblRvZ2dsZT8uaW5jbHVkZXMoJ0NvbW11bml0eU1hcmsnKSB8fCAhaWNvblRvZ2dsZS5pbmNsdWRlcygnb25DbGljaz17dG9nZ2xlQ3VycmVudH0nKSkgewogIHRocm93IG5ldyBFcnJvcignY2F0ZWdvcnkgaWNvbiBtdXN0IGV4cGFuZCBvciBjb2xsYXBzZSB0aGUgYnJhbmNoJyk7Cn0KCmNvbnNvbGUubG9nKCdGT1JSVU0gdHJlZSBjbGljayBiZWhhdmlvciBWOS4yLjIgY29udHJhY3QgcGFzc2VkLicpOwo=
+          APPLY_B64: ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCmltcG9ydCBiYXNlNjQKaW1wb3J0IG9zCgpob21lX3BhdGggPSBQYXRoKCdhcHBzL3dlYi9jb21wb25lbnRzL2hvbWUtZGFzaGJvYXJkLnRzeCcpCmNzc19wYXRoID0gUGF0aCgnYXBwcy93ZWIvYXBwL2dsb2JhbHMuY3NzJykKY2hlY2tfcGF0aCA9IFBhdGgoJ3NjcmlwdHMvaG9tZS10cmVlLWNsaWNrLWNoZWNrLXY5LTItMi5tanMnKQoKaG9tZSA9IGhvbWVfcGF0aC5yZWFkX3RleHQoZW5jb2Rpbmc9J3V0Zi04JykKCm9sZCA9ICcnJyAgICAgICAgICA8TGluawogICAgICAgICAgICBjbGFzc05hbWU9ImhvbWUtdHJlZS1saW5rIgogICAgICAgICAgICBocmVmPXtgL2NvbW11bml0aWVzLyR7Y29tbXVuaXR5LnNsdWd9YH0KICAgICAgICAgICAgYXJpYS1jdXJyZW50PXthY3RpdmUgPyAncGFnZScgOiB1bmRlZmluZWR9CiAgICAgICAgICA+CiAgICAgICAgICAgIDxDb21tdW5pdHlNYXJrCiAgICAgICAgICAgICAgbmFtZT17Y29tbXVuaXR5Lm5hbWV9CiAgICAgICAgICAgICAgdXJsPXtuYXZpZ2F0aW9uSWNvbihjb21tdW5pdHkuc2x1Zyl9CiAgICAgICAgICAgICAgc2l6ZT17MjR9CiAgICAgICAgICAgIC8+CiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iaG9tZS10cmVlLWNvcHkiPgogICAgICAgICAgICAgIDxzdHJvbmc+e2NvbW11bml0eS5uYW1lfTwvc3Ryb25nPgogICAgICAgICAgICA8L3NwYW4+CiAgICAgICAgICA8L0xpbms+CgogICAgICAgICAge2V4cGFuZGFibGUgPyAoCiAgICAgICAgICAgIDw+CicnJwoKbmV3ID0gJycnICAgICAgICAgIHtleHBhbmRhYmxlID8gKAogICAgICAgICAgICA8YnV0dG9uCiAgICAgICAgICAgICAgdHlwZT0iYnV0dG9uIgogICAgICAgICAgICAgIGNsYXNzTmFtZT0iaG9tZS10cmVlLWljb24tdG9nZ2xlIgogICAgICAgICAgICAgIGFyaWEtbGFiZWw9ewogICAgICAgICAgICAgICAgb3BlbgogICAgICAgICAgICAgICAgICA/IGDQodCy0LXRgNC90YPRgtGMINC/0L7QtNGA0LDQt9C00LXQu9GLICR7Y29tbXVuaXR5Lm5hbWV9YAogICAgICAgICAgICAgICAgICA6IGDQn9C+0LrQsNC30LDRgtGMINC/0L7QtNGA0LDQt9C00LXQu9GLICR7Y29tbXVuaXR5Lm5hbWV9YAogICAgICAgICAgICAgIH0KICAgICAgICAgICAgICBhcmlhLWV4cGFuZGVkPXtvcGVufQogICAgICAgICAgICAgIG9uQ2xpY2s9e3RvZ2dsZUN1cnJlbnR9CiAgICAgICAgICAgICAgb25LZXlEb3duPXsoZXZlbnQpID0+CiAgICAgICAgICAgICAgICB0cmVlS2V5Ym9hcmQoZXZlbnQsIG9wZW4sIHRvZ2dsZUN1cnJlbnQpCiAgICAgICAgICAgICAgfQogICAgICAgICAgICA+CiAgICAgICAgICAgICAgPENvbW11bml0eU1hcmsKICAgICAgICAgICAgICAgIG5hbWU9e2NvbW11bml0eS5uYW1lfQogICAgICAgICAgICAgICAgdXJsPXtuYXZpZ2F0aW9uSWNvbihjb21tdW5pdHkuc2x1Zyl9CiAgICAgICAgICAgICAgICBzaXplPXsyNH0KICAgICAgICAgICAgICAvPgogICAgICAgICAgICA8L2J1dHRvbj4KICAgICAgICAgICkgOiAoCiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iaG9tZS10cmVlLWljb24tc3RhdGljIiBhcmlhLWhpZGRlbj0idHJ1ZSI+CiAgICAgICAgICAgICAgPENvbW11bml0eU1hcmsKICAgICAgICAgICAgICAgIG5hbWU9e2NvbW11bml0eS5uYW1lfQogICAgICAgICAgICAgICAgdXJsPXtuYXZpZ2F0aW9uSWNvbihjb21tdW5pdHkuc2x1Zyl9CiAgICAgICAgICAgICAgICBzaXplPXsyNH0KICAgICAgICAgICAgICAvPgogICAgICAgICAgICA8L3NwYW4+CiAgICAgICAgICApfQoKICAgICAgICAgIDxMaW5rCiAgICAgICAgICAgIGNsYXNzTmFtZT0iaG9tZS10cmVlLWxpbmsgaG9tZS10cmVlLW5hbWUtbGluayIKICAgICAgICAgICAgaHJlZj17YC9jb21tdW5pdGllcy8ke2NvbW11bml0eS5zbHVnfWB9CiAgICAgICAgICAgIGFyaWEtY3VycmVudD17YWN0aXZlID8gJ3BhZ2UnIDogdW5kZWZpbmVkfQogICAgICAgICAgPgogICAgICAgICAgICA8c3Ryb25nPntjb21tdW5pdHkubmFtZX08L3N0cm9uZz4KICAgICAgICAgIDwvTGluaz4KCiAgICAgICAgICB7ZXhwYW5kYWJsZSA/ICgKICAgICAgICAgICAgPD4KJycnCgppZiBvbGQgaW4gaG9tZToKICAgIGhvbWUgPSBob21lLnJlcGxhY2Uob2xkLCBuZXcsIDEpCmVsaWYgJ2hvbWUtdHJlZS1saW5rIGhvbWUtdHJlZS1uYW1lLWxpbmsnIG5vdCBpbiBob21lOgogICAgcmFpc2UgUnVudGltZUVycm9yKCdUaGUgY3VycmVudCBjYXRlZ29yeS10cmVlIG1hcmt1cCBubyBsb25nZXIgbWF0Y2hlcyBWOS4yLjEnKQoKaG9tZV9wYXRoLndyaXRlX3RleHQoaG9tZSwgZW5jb2Rpbmc9J3V0Zi04JykKCnN0YWdlX2NzcyA9IGJhc2U2NC5iNjRkZWNvZGUob3MuZW52aXJvblsnQ1NTX0I2NCddKS5kZWNvZGUoJ3V0Zi04Jykuc3RyaXAoKSArICdcbicKY3NzID0gY3NzX3BhdGgucmVhZF90ZXh0KGVuY29kaW5nPSd1dGYtOCcpCnN0YXJ0ID0gJy8qIEZPUlJVTV9IT01FX1RSRUVfQ0xJQ0tfVjlfMl8yJwplbmQgPSAnLyogL0ZPUlJVTV9IT01FX1RSRUVfQ0xJQ0tfVjlfMl8yICovJwoKaWYgc3RhcnQgaW4gY3NzOgogICAgcHJlZml4LCByZW1haW5kZXIgPSBjc3Muc3BsaXQoc3RhcnQsIDEpCiAgICBpZiBlbmQgbm90IGluIHJlbWFpbmRlcjoKICAgICAgICByYWlzZSBSdW50aW1lRXJyb3IoJ0V4aXN0aW5nIFY5LjIuMiBDU1MgbWFya2VyIGhhcyBubyBjbG9zaW5nIG1hcmtlcicpCiAgICBfLCBzdWZmaXggPSByZW1haW5kZXIuc3BsaXQoZW5kLCAxKQogICAgY3NzID0gcHJlZml4LnJzdHJpcCgpICsgJ1xuXG4nICsgc3RhZ2VfY3NzICsgc3VmZml4LmxzdHJpcCgnXG4nKQplbHNlOgogICAgY3NzID0gY3NzLnJzdHJpcCgpICsgJ1xuXG4nICsgc3RhZ2VfY3NzCgpjc3NfcGF0aC53cml0ZV90ZXh0KGNzcywgZW5jb2Rpbmc9J3V0Zi04JykKY2hlY2tfcGF0aC53cml0ZV90ZXh0KAogICAgYmFzZTY0LmI2NGRlY29kZShvcy5lbnZpcm9uWydDSEVDS19CNjQnXSkuZGVjb2RlKCd1dGYtOCcpLAogICAgZW5jb2Rpbmc9J3V0Zi04JywKKQoKcHJpbnQoJ0ZPUlJVTSB0cmVlIGNsaWNrIGJlaGF2aW9yIFY5LjIuMiBhcHBsaWVkLicpCg==
+        run: |
+          set -euo pipefail
+          printf '%s' "$APPLY_B64" | base64 --decode > /tmp/apply-tree-click-v9-2-2.py
+          python3 /tmp/apply-tree-click-v9-2-2.py
+
+      - name: Verify click behavior and patch scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/home-tree-click-check-v9-2-2.mjs
+          node scripts/ui-interaction-check.mjs
+          git diff --check
+          allowed='^(apps/web/app/globals\.css|apps/web/components/home-dashboard\.tsx|scripts/home-tree-click-check-v9-2-2\.mjs)$'
+          unexpected="$(git diff --name-only | grep -Ev "$allowed" || true)"
+          if [ -n "$unexpected" ]; then
+            echo "Unexpected files were changed:"
+            echo "$unexpected"
+            exit 1
+          fi
+
+      - name: Create isolated local V9.2.2 commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "FORRUM QA updater"
+          git config user.email "actions@users.noreply.github.com"
+          git add --             apps/web/app/globals.css             apps/web/components/home-dashboard.tsx             scripts/home-tree-click-check-v9-2-2.mjs
+          unexpected="$(git status --porcelain | grep -Ev '^(M |A |D |R |C |\?\?) (apps/web/app/globals\.css|apps/web/components/home-dashboard\.tsx|scripts/home-tree-click-check-v9-2-2\.mjs)$' || true)"
+          if [ -n "$unexpected" ]; then
+            echo "Unexpected repository changes exist before the local commit:"
+            echo "$unexpected"
+            exit 1
+          fi
+          if git diff --cached --quiet; then
+            echo "FORRUM Tree Click Behavior V9.2.2 is already present."
+          else
+            git commit -m "Make category names the only navigation links"
+          fi
+          test -z "$(git status --porcelain)"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: npm install --include=dev --no-audit --no-fund --package-lock=false
+
+      - name: Generate validate sync and seed Prisma
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run db:generate
+          npm run db:validate
+          npm run db:push
+          npm run db:seed
+
+      - name: Static UX and accessibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          node scripts/home-tree-click-check-v9-2-2.mjs
+          node scripts/ui-interaction-check.mjs
+
+      - name: Typecheck every workspace
+        run: npm run typecheck
+
+      - name: Run API tests
+        run: npm run test -w @forrum/api
+
+      - name: Clean production build
+        shell: bash
+        env:
+          NODE_ENV: production
+        run: |
+          set -euo pipefail
+          rm -rf apps/web/.next apps/api/dist packages/contracts/dist
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/api
+          npm run build -w @forrum/web
+
+      - name: Remove generated build noise
+        shell: bash
+        run: |
+          set -euo pipefail
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+      - name: Push verified V9.2.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+
+      - name: Verify remote main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
