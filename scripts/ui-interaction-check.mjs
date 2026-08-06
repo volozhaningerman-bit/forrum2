@@ -46,9 +46,12 @@ for (const marker of [
   requireMarker(catalogue, marker, 'community catalogue tree');
 }
 
-forbidMarker(home, "'unanswered'", 'home feed');
-forbidMarker(home, 'Без ответа', 'home feed');
-forbidMarker(home, 'Все категории', 'home tree');
+// FORRUM_HOME_STAGE_1_V9_INTERACTION_CONTRACT
+requireMarker(home, "'unanswered'", 'home feed');
+requireMarker(home, 'Без ответа', 'home feed');
+requireMarker(home, 'home-feed-toolbar', 'home feed');
+requireMarker(home, 'Все категории', 'home tree');
+requireMarker(home, 'home-tree-all-link', 'home tree');
 
 requireMarker(
   ranking,

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import type {
   CSSProperties,
   KeyboardEvent,
@@ -57,7 +58,8 @@ type WorkshopItem = {
 type FeedMode =
   | 'subscriptions'
   | 'new'
-  | 'popular';
+  | 'popular'
+  | 'unanswered';
 
 export type HomeInitialData = {
   communities?: Community[];
@@ -72,6 +74,7 @@ const feedTabs: Array<{ key: FeedMode; label: string }> = [
   { key: 'subscriptions', label: 'По подпискам' },
   { key: 'new', label: 'Новое' },
   { key: 'popular', label: 'Популярное' },
+  { key: 'unanswered', label: 'Без ответа' },
 ];
 
 const formatNumber = (value: number) =>
@@ -148,6 +151,100 @@ function topicVisual(slug: string) {
   return topicVisuals[slug] ?? '/forrum-assets/topic-default.svg';
 }
 
+
+const topicTypeLabels: Record<string, string> = {
+  DISCUSSION: 'Обсуждение',
+  QUESTION: 'Вопрос',
+  NEWS: 'Новость',
+  GUIDE: 'Гайд',
+  PROJECT: 'Проект',
+  SERVICE: 'Услуга',
+  CASE: 'Кейс',
+  ANNOUNCEMENT: 'Объявление',
+};
+
+const topicTypeSymbols: Record<string, string> = {
+  DISCUSSION: '↔',
+  QUESTION: '?',
+  NEWS: 'N',
+  GUIDE: 'G',
+  PROJECT: 'P',
+  SERVICE: 'S',
+  CASE: 'C',
+  ANNOUNCEMENT: '!',
+};
+
+const workshopTypeSymbols: Record<string, string> = {
+  GIFT: 'G',
+  REACTION: 'R',
+  BADGE: 'B',
+  PROFILE_DECOR: 'P',
+  COMMUNITY_DECOR: 'C',
+};
+
+function nameTone(username: string) {
+  let value = 0;
+  for (const character of username) {
+    value = (value * 31 + character.charCodeAt(0)) % 10;
+  }
+  return value;
+}
+
+function isCurrentDay(value: string) {
+  const date = new Date(value);
+  const now = new Date();
+  return (
+    date.getFullYear() === now.getFullYear() &&
+    date.getMonth() === now.getMonth() &&
+    date.getDate() === now.getDate()
+  );
+}
+
+function deadlineState(value: string, kind: 'event' | 'poll') {
+  const time = new Date(value).getTime();
+  const difference = time - Date.now();
+  if (!Number.isFinite(time)) return '';
+  if (kind === 'event' && isCurrentDay(value)) return 'сегодня';
+  if (kind === 'poll' && difference > 0 && difference <= 86_400_000) {
+    return 'заканчивается';
+  }
+  return '';
+}
+
+function TopicTypeMark({ type }: { type: string }) {
+  return (
+    <span
+      className="home-topic-type-mark"
+      title={topicTypeLabels[type] ?? type}
+      aria-label={topicTypeLabels[type] ?? type}
+    >
+      {topicTypeSymbols[type] ?? '•'}
+    </span>
+  );
+}
+
+function CurrentTypeIcon({ kind }: { kind: 'event' | 'poll' | 'notice' }) {
+  if (kind === 'event') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 3v3M18 3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v13H4V6a1 1 0 0 1 1-1Z" />
+      </svg>
+    );
+  }
+  if (kind === 'poll') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 19V9M12 19V5M19 19v-7" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 18h14M7 18V9l5-4 5 4v9M10 12h4" />
+    </svg>
+  );
+}
+
 function treeKeyboard(
   event: KeyboardEvent<HTMLButtonElement>,
   open: boolean,
@@ -185,6 +282,7 @@ export function HomeDashboard({
 }: {
   initialData?: HomeInitialData;
 }) {
+  const pathname = usePathname();
   const [communities, setCommunities] = useState<Community[]>(
     initialData.communities ?? [],
   );
@@ -205,7 +303,7 @@ export function HomeDashboard({
   );
   const [mode, setMode] = useState<FeedMode>('new');
   const [expanded, setExpanded] = useState<Set<string>>(
-    () => new Set(),
+    () => new Set(['internet-projects']),
   );
   const [feedRequestVersion, setFeedRequestVersion] = useState(0);
   const [feedLoading, setFeedLoading] = useState(
@@ -285,11 +383,16 @@ export function HomeDashboard({
       setFeedLoading(true);
       setFeedError('');
       try {
+        const apiMode = mode === 'unanswered' ? 'new' : mode;
         const items = await api<PublicationCardData[]>(
-          `/feed?mode=${encodeURIComponent(mode)}`,
+          `/feed?mode=${encodeURIComponent(apiMode)}`,
         );
         if (cancelled) return;
-        setFeed(items);
+        setFeed(
+          mode === 'unanswered'
+            ? items.filter((item) => item.commentCount === 0)
+            : items,
+        );
       } catch (cause) {
         if (cancelled) return;
         setFeed([]);
@@ -359,9 +462,10 @@ export function HomeDashboard({
       .map((item) => ({
         id: `event-${item.id}`,
         kind: 'Событие',
-        symbol: 'С',
+        kindKey: 'event' as const,
         title: item.title,
         meta: `${item.community.name} · ${shortDate(item.startsAt)}`,
+        state: deadlineState(item.startsAt, 'event'),
         href: `/events/${item.id}`,
       }));
     const openPolls = polls
@@ -370,19 +474,24 @@ export function HomeDashboard({
       .map((item) => ({
         id: `poll-${item.id}`,
         kind: 'Голосование',
-        symbol: 'Г',
+        kindKey: 'poll' as const,
         title: item.title,
         meta: `${item.community.name} · до ${shortDate(item.closesAt)}`,
+        state: deadlineState(item.closesAt, 'poll'),
         href: '/events?tab=polls',
       }));
     const latestAnnouncements = announcements.slice(0, 2).map((item) => ({
       id: `announcement-${item.id}`,
       kind: 'Объявление',
-      symbol: 'О',
+      kindKey: 'notice' as const,
       title: item.title || item.excerpt.slice(0, 90) || 'Объявление FORRUM',
       meta: `${item.community.name} · ${shortDate(
         item.lastActivityAt ?? item.createdAt,
       )}`,
+      state:
+        item.pinnedUntil && new Date(item.pinnedUntil).getTime() > now
+          ? 'важно'
+          : '',
       href: `/p/${item.slug}`,
     }));
     return [...upcoming, ...openPolls, ...latestAnnouncements].slice(0, 5);
@@ -403,6 +512,9 @@ export function HomeDashboard({
       .sort((left, right) => left.name.localeCompare(right.name, 'ru'));
     const expandable = children.length > 0;
     const open = expanded.has(community.slug);
+    const active = pathname === `/communities/${community.slug}`;
+    const newCount = Math.max(0, community.recentPublicationCount ?? 0);
+    const unread = newCount > 0;
     const toggleCurrent = () => toggle(community.slug);
 
     return (
@@ -414,18 +526,19 @@ export function HomeDashboard({
         <div
           className={`home-tree-row ${expandable ? 'expandable' : ''} ${
             open ? 'opened' : 'closed'
-          }`}
+          } ${active ? 'active' : ''} ${unread ? 'has-unread' : ''}`}
         >
           <Link
             className="home-tree-link"
             href={`/communities/${community.slug}`}
+            aria-current={active ? 'page' : undefined}
           >
             <CommunityMark
               name={community.name}
               url={navigationIcon(community.slug)}
-              size={26}
+              size={24}
             />
-            <span>
+            <span className="home-tree-copy">
               <strong>{community.name}</strong>
               {depth === 0 && (
                 <small>
@@ -433,6 +546,11 @@ export function HomeDashboard({
                 </small>
               )}
             </span>
+            {unread && (
+              <span className="home-tree-new-count" aria-label={`${newCount} новых`}>
+                {newCount > 99 ? '99+' : newCount}
+              </span>
+            )}
           </Link>
 
           {expandable ? (
@@ -469,7 +587,7 @@ export function HomeDashboard({
                   treeKeyboard(event, open, toggleCurrent)
                 }
               >
-                <span aria-hidden="true">{open ? '−' : '+'}</span>
+                <span className="home-tree-chevron" aria-hidden="true">›</span>
               </button>
             </>
           ) : (
@@ -486,51 +604,72 @@ export function HomeDashboard({
   }
 
   return (
-    <div className="home-board final-home-v7">
-      <section className="home-commandbar">
-        <h1 className="visually-hidden">Главная</h1>
-        <Link className="button" href="/create">
-          <span aria-hidden="true">＋</span>
-          Создать тему
-        </Link>
-      </section>
+    <div className="home-board home-stage-one">
+      <h1 className="visually-hidden">Главная</h1>
 
       {pageError && <div className="error-box">{pageError}</div>}
 
       <div className="home-layout">
         <aside className="home-community-tree" aria-label="Категории и подразделы">
-          <Link className="home-workshop-entry" href="/workshop">
-            <span className="home-workshop-icon">М</span>
-            <span>
-              <strong>Мастерская</strong>
-              <small>Работы и решения участников</small>
-            </span>
-            <span aria-hidden="true">→</span>
-          </Link>
+          <div className="home-tree-section home-tree-workshop-section">
+            <Link className="home-workshop-entry" href="/workshop">
+              <span className="home-workshop-icon" aria-hidden="true">⌁</span>
+              <span>
+                <strong>Мастерская</strong>
+                <small>Проекты, работы и решения</small>
+              </span>
+              <span className="home-workshop-arrow" aria-hidden="true">→</span>
+            </Link>
+          </div>
+
           <div className="home-tree-separator" aria-hidden="true" />
 
-          {pageLoading ? (
-            <div className="home-tree-skeleton" aria-label="Загружаем структуру">
-              {Array.from({ length: 7 }).map((_, index) => (
-                <span key={index} />
-              ))}
-            </div>
-          ) : (
-            <>
-              {rootCommunities.map((community) => renderTree(community))}
-              {!rootCommunities.length && (
-                <p className="muted small-text">
-                  Категории появятся после создания первых сообществ.
-                </p>
-              )}
-            </>
-          )}
+          <div className="home-tree-section home-tree-categories-section">
+            {pageLoading ? (
+              <div className="home-tree-skeleton" aria-label="Загружаем структуру">
+                {Array.from({ length: 7 }).map((_, index) => (
+                  <span key={index} />
+                ))}
+              </div>
+            ) : (
+              <>
+                {rootCommunities.map((community) => renderTree(community))}
+                {!rootCommunities.length && (
+                  <p className="muted small-text">
+                    Категории появятся после создания первых сообществ.
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+
+          <Link className="home-tree-all-link" href="/communities">
+            Все категории <span aria-hidden="true">→</span>
+          </Link>
         </aside>
 
         <main className="home-discussion-panel">
-          <header className="home-panel-heading">
-            <h2>Лента обсуждений</h2>
+          <header className="home-feed-toolbar">
+            <div className="home-feed-title">
+              <h2>Лента обсуждений</h2>
+              {!feedLoading && mode === 'new' && feed.length > 0 && (
+                <span className="home-new-feed-count">
+                  {feed.length > 99 ? '99+' : feed.length} новых
+                </span>
+              )}
+            </div>
+            <div className="home-feed-actions">
+              <Link className="home-filter-button" href="/search" aria-label="Открыть фильтры обсуждений">
+                <span aria-hidden="true">≡</span>
+                Фильтры
+              </Link>
+              <Link className="button home-create-topic" href="/create">
+                <span aria-hidden="true">＋</span>
+                <span className="home-create-topic-label">Создать тему</span>
+              </Link>
+            </div>
           </header>
+
           <div className="home-feed-tabs" role="tablist" aria-label="Режим ленты">
             {feedTabs.map((tab) => (
               <button
@@ -542,15 +681,22 @@ export function HomeDashboard({
                 onClick={() => setMode(tab.key)}
               >
                 {tab.label}
+                {tab.key === 'new' && mode === 'new' && !feedLoading && feed.length > 0 && (
+                  <span className="home-tab-count" aria-label={`${feed.length} новых тем`}>
+                    {feed.length > 99 ? '99+' : feed.length}
+                  </span>
+                )}
               </button>
             ))}
           </div>
+
           <div className="home-feed-table">
             <div className="home-feed-head" aria-hidden="true">
               <span>Тема</span>
               <span>Автор</span>
               <span>Ответы</span>
               <span>Просмотры</span>
+              <span />
             </div>
             {feedLoading ? (
               Array.from({ length: 8 }).map((_, index) => (
@@ -569,68 +715,124 @@ export function HomeDashboard({
                 </button>
               </div>
             ) : feed.length ? (
-              feed.slice(0, 12).map((item, index) => (
-                <article
-                  className={`home-topic-row ${
-                    item.format === 'TOPIC' ? 'home-topic-permanent' : ''
-                  } ${
-                    item.type === 'NEWS' || index < 3
-                      ? 'home-topic-with-preview'
-                      : ''
-                  }`}
-                  data-community={item.community.slug}
-                  key={item.id}
-                >
-                  <div className="home-topic-visual">
-                    <img
-                      src={topicVisual(item.community.slug)}
-                      alt=""
-                      aria-hidden="true"
-                    />
-                    <Avatar
-                      name={item.author.displayName}
-                      size={22}
-                      url={item.author.avatarUrl}
-                    />
-                  </div>
-                  <div className="home-topic-copy">
-                    <div className="home-topic-path">
-                      <Link href={`/communities/${item.community.slug}`}>
-                        {item.community.name}
-                      </Link>
-                      {item.tags.slice(0, 3).map((tag) => (
-                        <Link
-                          className="home-topic-hashtag"
-                          href={`/tags/${tag.slug}`}
-                          key={tag.id}
-                        >
-                          #{tag.label}
-                        </Link>
-                      ))}
-                    </div>
-                    <Link className="home-topic-title" href={`/p/${item.slug}`}>
-                      {item.title || item.excerpt.slice(0, 100)}
-                    </Link>
-                    <p>{item.excerpt}</p>
-                  </div>
-                  <div className="home-topic-author">
+              feed.slice(0, 12).map((item, index) => {
+                const pinned = Boolean(
+                  item.pinnedUntil &&
+                    new Date(item.pinnedUntil).getTime() > Date.now(),
+                );
+                const unread = (item.recentCommentCount ?? 0) > 0;
+                const hot = (item.recentCommentCount ?? 0) >= 3 || item.commentCount >= 25;
+                const answered = item.type === 'QUESTION' && item.commentCount > 0;
+                const showCover =
+                  item.type === 'NEWS' ||
+                  item.type === 'GUIDE' ||
+                  item.type === 'PROJECT' ||
+                  index < 2;
+
+                return (
+                  <article
+                    className={`home-topic-row ${
+                      item.format === 'TOPIC' ? 'home-topic-permanent' : ''
+                    } ${unread ? 'home-topic-unread' : ''}`}
+                    data-community={item.community.slug}
+                    key={item.id}
+                  >
                     <Link
-                      className="home-topic-author-link"
-                      data-username={item.author.username}
-                      href={`/u/${item.author.username}`}
+                      className={`home-topic-visual ${showCover ? 'with-cover' : 'with-type-mark'}`}
+                      href={`/p/${item.slug}`}
+                      aria-label={`Открыть «${item.title || item.excerpt}»`}
                     >
-                      {item.author.displayName}
+                      {showCover ? (
+                        <img src={topicVisual(item.community.slug)} alt="" aria-hidden="true" />
+                      ) : (
+                        <TopicTypeMark type={item.type} />
+                      )}
                     </Link>
-                    <span>{relativeDate(item.lastActivityAt || item.createdAt)}</span>
-                  </div>
-                  <strong className="home-topic-count">
-                    {formatNumber(item.commentCount)}
-                  </strong>
-                  <strong className="home-topic-count">
-                    {formatNumber(item.viewCount ?? 0)}
-                  </strong>
-                </article>
-              ))
+
+                    <div className="home-topic-copy">
+                      <div className="home-topic-topline">
+                        <div className="home-topic-path">
+                          {unread && <span className="home-topic-unread-dot" title="Есть новые ответы" />}
+                          <Link href={`/communities/${item.community.slug}`}>
+                            {item.community.name}
+                          </Link>
+                        </div>
+                        <div className="home-topic-statuses" aria-label="Статусы темы">
+                          {pinned && <span className="home-topic-status pinned">Закреплено</span>}
+                          {hot && <span className="home-topic-status hot">Горячая</span>}
+                          {answered && <span className="home-topic-status answered">Есть ответ</span>}
+                        </div>
+                      </div>
+
+                      <Link className="home-topic-title" href={`/p/${item.slug}`}>
+                        {item.title || item.excerpt.slice(0, 100)}
+                      </Link>
+                      <p>{item.excerpt}</p>
+
+                      <div className="home-topic-hashtags">
+                        {item.tags.slice(0, 4).map((tag) => (
+                          <Link
+                            className="home-topic-hashtag"
+                            href={`/tags/${tag.slug}`}
+                            key={tag.id}
+                          >
+                            #{tag.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="home-topic-author">
+                      <Avatar
+                        name={item.author.displayName}
+                        size={28}
+                        url={item.author.avatarUrl}
+                      />
+                      <span className="home-topic-author-copy">
+                        <Link
+                          className="home-topic-author-link"
+                          data-username={item.author.username}
+                          data-user-tone={nameTone(item.author.username)}
+                          data-role={item.author.username === 'owner' ? 'owner' : undefined}
+                          href={`/u/${item.author.username}`}
+                        >
+                          {item.author.displayName}
+                        </Link>
+                        <span>{relativeDate(item.lastActivityAt || item.createdAt)}</span>
+                      </span>
+                    </div>
+
+                    <strong className="home-topic-count" title="Ответы">
+                      {formatNumber(item.commentCount)}
+                    </strong>
+                    <strong className="home-topic-count" title="Просмотры">
+                      {formatNumber(item.viewCount ?? 0)}
+                    </strong>
+
+                    <div className="home-topic-actions">
+                      {item.isBookmarked ? (
+                        <Link className="home-topic-action saved" href="/saved" title="Открыть сохранённое">
+                          <span aria-hidden="true">◆</span>
+                          <span className="visually-hidden">Сохранено</span>
+                        </Link>
+                      ) : (
+                        <Link className="home-topic-action" href={`/p/${item.slug}`} title="Сохранить на странице темы">
+                          <span aria-hidden="true">◇</span>
+                          <span className="visually-hidden">Сохранить тему</span>
+                        </Link>
+                      )}
+                      <details className="home-topic-more">
+                        <summary aria-label="Дополнительные действия">•••</summary>
+                        <div className="home-topic-more-menu">
+                          <Link href={`/p/${item.slug}`}>Открыть тему</Link>
+                          <Link href={`/communities/${item.community.slug}`}>Перейти в раздел</Link>
+                          <Link href={`/u/${item.author.username}`}>Профиль автора</Link>
+                        </div>
+                      </details>
+                    </div>
+                  </article>
+                );
+              })
             ) : (
               <div className="home-feed-status">
                 <strong>В этой вкладке пока пусто</strong>
@@ -656,10 +858,19 @@ export function HomeDashboard({
                   </div>
                 ))
               : currentItems.map((item) => (
-                  <Link href={item.href} className="home-current-item" key={item.id}>
-                    <span className="home-current-icon">{item.symbol}</span>
-                    <span>
-                      <small>{item.kind}</small>
+                  <Link
+                    href={item.href}
+                    className={`home-current-item is-${item.kindKey}`}
+                    key={item.id}
+                  >
+                    <span className="home-current-icon">
+                      <CurrentTypeIcon kind={item.kindKey} />
+                    </span>
+                    <span className="home-current-copy">
+                      <span className="home-current-kicker">
+                        <small>{item.kind}</small>
+                        {item.state && <b>{item.state}</b>}
+                      </span>
                       <strong>{item.title}</strong>
                       <em>{item.meta}</em>
                     </span>
@@ -672,43 +883,43 @@ export function HomeDashboard({
             )}
           </div>
           <Link className="home-panel-footer" href="/events">
-            Перейти ко всему актуальному <span aria-hidden="true">→</span>
+            Всё актуальное <span aria-hidden="true">→</span>
           </Link>
         </aside>
       </div>
 
       <div className="home-lower-grid">
-        <section className="home-list-panel">
+        <section className="home-list-panel home-secondary-panel">
           <header className="home-panel-heading">
             <h2>Новое в Мастерской</h2>
-            <Link href="/workshop">Перейти в Мастерскую</Link>
+            <Link href="/workshop">Открыть</Link>
           </header>
           <div className="home-simple-list">
             {workshopItems.map((item) => (
               <Link href="/workshop" key={item.id}>
-                <span className="home-list-icon">М</span>
-                <span>
-                  <strong>{item.title}</strong>
-                  <small>{typeLabel(item.type)} · @{item.author.username}</small>
+                <span className="home-list-icon" aria-hidden="true">
+                  {workshopTypeSymbols[item.type] ?? 'W'}
                 </span>
-                <em>{relativeDate(item.createdAt)}</em>
+                <span className="home-list-copy">
+                  <small>{typeLabel(item.type)}</small>
+                  <strong>{item.title}</strong>
+                  <em>@{item.author.username} · {relativeDate(item.createdAt)}</em>
+                </span>
+                <span className="home-list-arrow" aria-hidden="true">→</span>
               </Link>
             ))}
             {!pageLoading && !workshopItems.length && (
               <div className="home-list-empty">Новых опубликованных работ пока нет.</div>
             )}
           </div>
-          <Link className="home-panel-footer" href="/workshop">
-            Смотреть все новинки <span aria-hidden="true">→</span>
-          </Link>
         </section>
 
-        <section className="home-list-panel">
+        <section className="home-list-panel home-secondary-panel">
           <header className="home-panel-heading">
             <h2>Новые сообщества</h2>
-            <Link href="/communities">Все сообщества</Link>
+            <Link href="/communities">Открыть</Link>
           </header>
-          <div className="home-simple-list">
+          <div className="home-simple-list home-community-short-list">
             {newCommunities.map((community) => (
               <Link href={`/communities/${community.slug}`} key={community.id}>
                 <CommunityMark
@@ -716,20 +927,21 @@ export function HomeDashboard({
                   url={community.avatarUrl}
                   size={30}
                 />
-                <span>
+                <span className="home-list-copy">
                   <strong>{community.name}</strong>
                   <small>{community.shortDescription || community.description}</small>
+                  <em>
+                    <i className="home-activity-dot" aria-hidden="true" />
+                    {formatNumber(community.subscriberCount)} подписчиков
+                  </em>
                 </span>
-                <em>{formatNumber(community.subscriberCount)} подписчиков</em>
+                <span className="home-list-arrow" aria-hidden="true">→</span>
               </Link>
             ))}
             {!pageLoading && !newCommunities.length && (
               <div className="home-list-empty">Новых сообществ пока нет.</div>
             )}
           </div>
-          <Link className="home-panel-footer" href="/communities">
-            Перейти ко всем сообществам <span aria-hidden="true">→</span>
-          </Link>
         </section>
       </div>
     </div>
