@@ -1,0 +1,213 @@
+name: FORRUM Home Redesign V11.C.2.1
+on:
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: forrum-home-redesign
+  cancel-in-progress: false
+env:
+  NODE_ENV: test
+  DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/forrum?schema=public
+  JWT_SECRET: forrum-github-actions-secret
+  WEB_URL: http://127.0.0.1:3000
+  API_INTERNAL_URL: http://127.0.0.1:4000/v1
+  PUBLIC_API_URL: http://127.0.0.1:4000
+  API_PORT: '4000'
+  PORT: '3000'
+jobs:
+  stage-c-2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: forrum
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d forrum"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - name: Check out canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify Stage C baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f apps/web/app/globals.css
+          test -f apps/web/components/home-dashboard.tsx
+          grep -q 'FORRUM_HOME_REDESIGN_STAGE_C_V11' apps/web/app/globals.css
+          grep -q 'home-tree-panel-toggle' apps/web/components/home-dashboard.tsx
+          grep -q 'home-tree-icon-link' apps/web/components/home-dashboard.tsx
+          test -z "$(git status --porcelain)"
+
+      - name: Ensure Stage C.1 alignment fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -q 'FORRUM_HOME_REDESIGN_STAGE_C_1_V11' apps/web/app/globals.css; then
+            cat >> apps/web/app/globals.css <<'CSS'
+
+          /* FORRUM_HOME_REDESIGN_STAGE_C_1_V11
+             Correct legacy sticky top offset after Stage C switched the tree to relative positioning.
+          */
+          .home-stage-one .home-community-tree {
+            top: auto !important;
+            align-self: start;
+            margin-top: 0 !important;
+          }
+          /* /FORRUM_HOME_REDESIGN_STAGE_C_1_V11 */
+          CSS
+          fi
+          grep -q 'FORRUM_HOME_REDESIGN_STAGE_C_1_V11' apps/web/app/globals.css
+          grep -q 'top: auto !important' apps/web/app/globals.css
+          grep -q 'align-self: start' apps/web/app/globals.css
+
+      - name: Apply new master-reference tree accents
+        shell: bash
+        env:
+          CSS_B64: LyogRk9SUlVNX0hPTUVfUkVERVNJR05fU1RBR0VfQ18yX1YxMQogICBBbGlnbiB0aGUgYWxyZWFkeS1hcHByb3ZlZCBjYXRlZ29yeSB0cmVlIHdpdGggdGhlIG5ldyBtYXN0ZXIgZGFyayByZWZlcmVuY2UuCiAgIFZpc3VhbCBvbmx5OiBncmVlbi10dXJxdW9pc2Ugc3lzdGVtIGljb25zLCBjaGV2cm9ucyBhbmQgbGVhZiBtYXJrZXJzLgogICBDbGljayBiZWhhdmlvdXIsIGNvbGxhcHNlIGJlaGF2aW91ciwgaGllcmFyY2h5IGFuZCBsYXlvdXQgYXJlIHVuY2hhbmdlZC4KKi8KCi5ob21lLXN0YWdlLW9uZSAuaG9tZS10cmVlLXBhbmVsLXRvZ2dsZSwKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtcmVmZXJlbmNlLWljb24sCi5ob21lLXN0YWdlLW9uZSAuaG9tZS13b3Jrc2hvcC1pY29uLAouaG9tZS1zdGFnZS1vbmUgLmhvbWUtdHJlZS1yZWZlcmVuY2UtY2hldnJvbiwKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXdvcmtzaG9wLWNoZXZyb24sCi5ob21lLXN0YWdlLW9uZSAuaG9tZS10cmVlLWJyYW5jaC1tYXJrIHsKICBjb2xvcjogdmFyKC0tZm9ycnVtLWhvbWUtYWNjZW50KSAhaW1wb3J0YW50Owp9CgouaG9tZS1zdGFnZS1vbmUgLmhvbWUtdHJlZS1yZWZlcmVuY2UtaWNvbiwKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXdvcmtzaG9wLWljb24gewogIG9wYWNpdHk6IDAuODg7Cn0KCi5ob21lLXN0YWdlLW9uZSAuaG9tZS10cmVlLXJlZmVyZW5jZS1jaGV2cm9uLAouaG9tZS1zdGFnZS1vbmUgLmhvbWUtd29ya3Nob3AtY2hldnJvbiwKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtcGFuZWwtdG9nZ2xlIHsKICBvcGFjaXR5OiAwLjgyOwp9CgouaG9tZS1zdGFnZS1vbmUgLmhvbWUtdHJlZS1yb3c6aG92ZXIgLmhvbWUtdHJlZS1yZWZlcmVuY2UtaWNvbiwKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtcm93OmZvY3VzLXdpdGhpbiAuaG9tZS10cmVlLXJlZmVyZW5jZS1pY29uLAouaG9tZS1zdGFnZS1vbmUgLmhvbWUtd29ya3Nob3Atcm93OmhvdmVyIC5ob21lLXdvcmtzaG9wLWljb24sCi5ob21lLXN0YWdlLW9uZSAuaG9tZS13b3Jrc2hvcC1yb3c6Zm9jdXMtd2l0aGluIC5ob21lLXdvcmtzaG9wLWljb24sCi5ob21lLXN0YWdlLW9uZSAuaG9tZS10cmVlLXJvdzpob3ZlciAuaG9tZS10cmVlLXJlZmVyZW5jZS1jaGV2cm9uLAouaG9tZS1zdGFnZS1vbmUgLmhvbWUtdHJlZS1yb3c6Zm9jdXMtd2l0aGluIC5ob21lLXRyZWUtcmVmZXJlbmNlLWNoZXZyb24sCi5ob21lLXN0YWdlLW9uZSAuaG9tZS13b3Jrc2hvcC1yb3c6aG92ZXIgLmhvbWUtd29ya3Nob3AtY2hldnJvbiwKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXdvcmtzaG9wLXJvdzpmb2N1cy13aXRoaW4gLmhvbWUtd29ya3Nob3AtY2hldnJvbiwKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtcGFuZWwtdG9nZ2xlOmhvdmVyLAouaG9tZS1zdGFnZS1vbmUgLmhvbWUtdHJlZS1wYW5lbC10b2dnbGU6Zm9jdXMtdmlzaWJsZSB7CiAgb3BhY2l0eTogMTsKfQoKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtbGVhZi1tYXJrIHsKICBwb3NpdGlvbjogcmVsYXRpdmU7CiAgd2lkdGg6IDEwcHg7CiAgaGVpZ2h0OiAxMHB4OwogIGRpc3BsYXk6IGlubGluZS1mbGV4OwogIGFsaWduLWl0ZW1zOiBjZW50ZXI7CiAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7CiAgb3ZlcmZsb3c6IGhpZGRlbjsKICBjb2xvcjogdHJhbnNwYXJlbnQgIWltcG9ydGFudDsKICBmb250LXNpemU6IDAgIWltcG9ydGFudDsKfQoKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtbGVhZi1tYXJrOjphZnRlciB7CiAgY29udGVudDogIiI7CiAgd2lkdGg6IDRweDsKICBoZWlnaHQ6IDRweDsKICBib3JkZXItcmFkaXVzOiA1MCU7CiAgYmFja2dyb3VuZDogdmFyKC0tZm9ycnVtLWhvbWUtYWNjZW50KTsKICBvcGFjaXR5OiAwLjg4Owp9CgouaG9tZS1zdGFnZS1vbmUgLmhvbWUtdHJlZS1icmFuY2gtbWFyayB7CiAgZm9udC1zaXplOiAxMHB4ICFpbXBvcnRhbnQ7CiAgb3BhY2l0eTogMC44MjsKfQoKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtY2hpbGRyZW4sCi5ob21lLXN0YWdlLW9uZSAuaG9tZS13b3Jrc2hvcC1jaGlsZHJlbiB7CiAgYm9yZGVyLWNvbG9yOiByZ2JhKDI1LCAyMTEsIDE1NCwgMC4yMCkgIWltcG9ydGFudDsKfQoKLmhvbWUtc3RhZ2Utb25lIC5ob21lLXRyZWUtcm93LmFjdGl2ZSAuaG9tZS10cmVlLXJlZmVyZW5jZS1pY29uLAouaG9tZS1zdGFnZS1vbmUgLmhvbWUtdHJlZS1pY29uLWxpbmtbYXJpYS1jdXJyZW50PSJwYWdlIl0gLmhvbWUtdHJlZS1yZWZlcmVuY2UtaWNvbiB7CiAgb3BhY2l0eTogMTsKfQoKLyogL0ZPUlJVTV9IT01FX1JFREVTSUdOX1NUQUdFX0NfMl9WMTEgKi8K
+          DOC_B64: IyBGT1JSVU0gSG9tZSBSZWRlc2lnbiDigJQgU3RhZ2UgQy4yCgrQndC10LHQvtC70YzRiNC+0Lkg0LLQuNC30YPQsNC70YzQvdGL0Lkg0L/RgNC+0YXQvtC0INC/0L4g0YPQttC1INCy0L3QtdC00YDRkdC90L3QvtC80YMg0LTQtdGA0LXQstGDINC60LDRgtC10LPQvtGA0LjQuSDQv9C+0YHQu9C1INGE0LjQutGB0LDRhtC40Lgg0L3QvtCy0L7Qs9C+INC+0YHQvdC+0LLQvdC+0LPQviDRgtGR0LzQvdC+0LPQviDRgNC10YTQtdGA0LXQvdGB0LAuCgrQmNC30LzQtdC90Y/QtdGC0YHRjyDRgtC+0LvRjNC60L4g0LLQuNC30YPQsNC70YzQvdGL0Lkg0Y/Qt9GL0Log0LTQtdGA0LXQstCwOgoKLSDRgdC40YHRgtC10LzQvdGL0LUg0LjQutC+0L3QutC4INCy0LXRgNGF0L3QtdCz0L4g0YPRgNC+0LLQvdGPIOKAlCDQt9C10LvRkdC90L4t0LHQuNGA0Y7Qt9C+0LLRi9C1OwotINGB0YLRgNC10LvQutC4INGA0LDRgdC60YDRi9GC0LjRjyDigJQg0LfQtdC70ZHQvdC+LdCx0LjRgNGO0LfQvtCy0YvQtTsKLSDQutC90L7Qv9C60LAg0YHQstC+0YDQsNGH0LjQstCw0L3QuNGPINC/0LDQvdC10LvQuCDigJQg0LfQtdC70ZHQvdC+LdCx0LjRgNGO0LfQvtCy0LDRjzsKLSDQutC+0L3QtdGH0L3Ri9C1INC00L7Rh9C10YDQvdC40LUg0Y3Qu9C10LzQtdC90YLRiyDQv9C+0LvRg9GH0LDRjtGCINC80LDQu9C10L3RjNC60LjQuSDQt9C10LvRkdC90YvQuSDQutGA0YPQs9C70YvQuSDQvNCw0YDQutC10YA7Ci0g0YHQvtC10LTQuNC90LjRgtC10LvRjNC90YvQtSDQu9C40L3QuNC4INC/0L7Qu9GD0YfQsNGO0YIg0L7Rh9C10L3RjCDRgdC70LDQsdGL0Lkg0LfQtdC70ZHQvdGL0Lkg0L7RgtGC0LXQvdC+0Lo7Ci0gaG92ZXIg0LvQuNGI0Ywg0L/QvtCy0YvRiNCw0LXRgiDRj9GA0LrQvtGB0YLRjCDRg9C20LUg0YHRg9GJ0LXRgdGC0LLRg9GO0YnQtdCz0L4g0LDQutGG0LXQvdGC0LAuCgrQndC1INC80LXQvdGP0Y7RgtGB0Y86CgotINGB0YLRgNGD0LrRgtGD0YDQsCDQtNC10YDQtdCy0LA7Ci0g0YHRgdGL0LvQutC4OwotINC30L7QvdGLINGA0LDRgdC60YDRi9GC0LjRjzsKLSDRgdCy0L7RgNCw0YfQuNCy0LDQvdC40LUg0LLRgdC10Lkg0L/QsNC90LXQu9C4OwotINGI0LjRgNC40L3QsCDQutC+0LvQvtC90L7QujsKLSBoZWFkZXI7Ci0g0YbQtdC90YLRgDsKLSDQv9GA0LDQstCw0Y8g0LrQvtC70L7QvdC60LA7Ci0gQVBJINC4INC00LDQvdC90YvQtS4K
+        run: |
+          set -euo pipefail
+          python3 <<'PYCODE'
+          from pathlib import Path
+          import base64
+          import os
+
+          css_path = Path('apps/web/app/globals.css')
+          doc_path = Path('docs/FORRUM_HOME_REDESIGN_STAGE_C_2_1_V11.md')
+          css = css_path.read_text(encoding='utf-8')
+          block = base64.b64decode(os.environ['CSS_B64']).decode('utf-8').strip() + '\n'
+          start = '/* FORRUM_HOME_REDESIGN_STAGE_C_2_V11'
+          end = '/* /FORRUM_HOME_REDESIGN_STAGE_C_2_V11 */'
+
+          if start in css:
+              prefix, rest = css.split(start, 1)
+              if end not in rest:
+                  raise RuntimeError('Stage C.2 CSS marker has no closing marker')
+              _, suffix = rest.split(end, 1)
+              css = prefix.rstrip() + '\n\n' + block + suffix.lstrip('\n')
+          else:
+              css = css.rstrip() + '\n\n' + block
+
+          css_path.write_text(css, encoding='utf-8')
+          doc_path.parent.mkdir(parents=True, exist_ok=True)
+          doc_path.write_text(base64.b64decode(os.environ['DOC_B64']).decode('utf-8'), encoding='utf-8')
+          print('Stage C.2.1 master-reference accents applied.')
+          PYCODE
+
+      - name: Verify Stage C.2.1 scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'FORRUM_HOME_REDESIGN_STAGE_C_2_V11' apps/web/app/globals.css
+          grep -q 'home-tree-leaf-mark::after' apps/web/app/globals.css
+          grep -q 'background: var(--forrum-home-accent)' apps/web/app/globals.css
+          grep -q 'home-tree-panel-toggle' apps/web/app/globals.css
+          git diff --check
+
+          allowed='^(apps/web/app/globals\.css|docs/FORRUM_HOME_REDESIGN_STAGE_C_2_1_V11\.md)$'
+          unexpected="$(git diff --name-only | grep -Ev "$allowed" || true)"
+          if [ -n "$unexpected" ]; then
+            echo 'Unexpected files were changed:'
+            echo "$unexpected"
+            exit 1
+          fi
+
+          if git diff -- apps/web/components/home-dashboard.tsx apps/web/components/site-header.tsx apps/web/components/main-nav.tsx apps/web/app/page.tsx apps/api | grep -q .; then
+            echo 'Stage C.2.1 must not change structure, header, center or backend.'
+            exit 1
+          fi
+
+      - name: Create isolated Stage C.2.1 commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "FORRUM QA updater"
+          git config user.email "actions@users.noreply.github.com"
+          git add apps/web/app/globals.css docs/FORRUM_HOME_REDESIGN_STAGE_C_2_1_V11.md
+          if git diff --cached --quiet; then
+            echo 'Stage C.2.1 is already present.'
+          else
+            git commit -m "Align FORRUM tree with dark master reference"
+          fi
+          test -z "$(git status --porcelain)"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: npm install --include=dev --no-audit --no-fund --package-lock=false
+
+      - name: Generate validate sync and seed Prisma
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run db:generate
+          npm run db:validate
+          npm run db:push
+          npm run db:seed
+
+      - name: Static UX accessibility and interaction checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          if [ -f scripts/ui-interaction-check.mjs ]; then
+            node scripts/ui-interaction-check.mjs
+          fi
+
+      - name: Typecheck every workspace
+        run: npm run typecheck
+
+      - name: Run API tests
+        run: npm run test -w @forrum/api
+
+      - name: Clean production build
+        shell: bash
+        env:
+          NODE_ENV: production
+        run: |
+          set -euo pipefail
+          rm -rf apps/web/.next apps/api/dist packages/contracts/dist
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/api
+          npm run build -w @forrum/web
+
+      - name: Remove generated build noise
+        shell: bash
+        run: |
+          set -euo pipefail
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+      - name: Push verified Stage C.2.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+
+      - name: Verify remote main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
