@@ -9950,3 +9950,90 @@ body:has(.home-stage-one) .header :is(a, button, input):focus-visible {
 }
 
 /* /FORRUM_HOME_REDESIGN_STAGE_C_V11 */
+
+/* FORRUM_HOME_REDESIGN_STAGE_C_1_V11
+   Correct legacy sticky top offset after Stage C switched the tree to relative positioning.
+*/
+.home-stage-one .home-community-tree {
+  top: auto !important;
+  align-self: start;
+  margin-top: 0 !important;
+}
+/* /FORRUM_HOME_REDESIGN_STAGE_C_1_V11 */
+
+/* FORRUM_HOME_REDESIGN_STAGE_C_2_V11
+   Align the already-approved category tree with the new master dark reference.
+   Visual only: green-turquoise system icons, chevrons and leaf markers.
+   Click behaviour, collapse behaviour, hierarchy and layout are unchanged.
+*/
+
+.home-stage-one .home-tree-panel-toggle,
+.home-stage-one .home-tree-reference-icon,
+.home-stage-one .home-workshop-icon,
+.home-stage-one .home-tree-reference-chevron,
+.home-stage-one .home-workshop-chevron,
+.home-stage-one .home-tree-branch-mark {
+  color: var(--forrum-home-accent) !important;
+}
+
+.home-stage-one .home-tree-reference-icon,
+.home-stage-one .home-workshop-icon {
+  opacity: 0.88;
+}
+
+.home-stage-one .home-tree-reference-chevron,
+.home-stage-one .home-workshop-chevron,
+.home-stage-one .home-tree-panel-toggle {
+  opacity: 0.82;
+}
+
+.home-stage-one .home-tree-row:hover .home-tree-reference-icon,
+.home-stage-one .home-tree-row:focus-within .home-tree-reference-icon,
+.home-stage-one .home-workshop-row:hover .home-workshop-icon,
+.home-stage-one .home-workshop-row:focus-within .home-workshop-icon,
+.home-stage-one .home-tree-row:hover .home-tree-reference-chevron,
+.home-stage-one .home-tree-row:focus-within .home-tree-reference-chevron,
+.home-stage-one .home-workshop-row:hover .home-workshop-chevron,
+.home-stage-one .home-workshop-row:focus-within .home-workshop-chevron,
+.home-stage-one .home-tree-panel-toggle:hover,
+.home-stage-one .home-tree-panel-toggle:focus-visible {
+  opacity: 1;
+}
+
+.home-stage-one .home-tree-leaf-mark {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: transparent !important;
+  font-size: 0 !important;
+}
+
+.home-stage-one .home-tree-leaf-mark::after {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--forrum-home-accent);
+  opacity: 0.88;
+}
+
+.home-stage-one .home-tree-branch-mark {
+  font-size: 10px !important;
+  opacity: 0.82;
+}
+
+.home-stage-one .home-tree-children,
+.home-stage-one .home-workshop-children {
+  border-color: rgba(25, 211, 154, 0.20) !important;
+}
+
+.home-stage-one .home-tree-row.active .home-tree-reference-icon,
+.home-stage-one .home-tree-icon-link[aria-current="page"] .home-tree-reference-icon {
+  opacity: 1;
+}
+
+/* /FORRUM_HOME_REDESIGN_STAGE_C_2_V11 */
