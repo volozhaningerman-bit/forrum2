@@ -25,8 +25,10 @@ import { EventsModule } from './events/events.module.js';
 import { PortfolioModule } from './portfolio/portfolio.module.js';
 import { MediaPartnersModule } from './media-partners/media-partners.module.js';
 
+import { InventoryModule } from './inventory/inventory.module.js';
 @Module({
   imports: [
+    InventoryModule,
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ['../../.env', '.env'] }),
     PrismaModule,
     AuthModule,

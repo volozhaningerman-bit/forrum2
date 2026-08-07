@@ -1354,3 +1354,83 @@ model PlatformSetting {
   value     Json
   updatedAt DateTime @updatedAt
 }
+
+// FORRUM_INVENTORY_V10
+
+enum InventoryItemType {
+  NICK_COLOR
+  HASHTAG_COLOR
+  PROFILE_BACKGROUND
+  AVATAR_FRAME
+  PROFILE_BADGE
+  REACTION_PACK
+}
+
+enum InventoryItemRarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+  UNIQUE
+}
+
+enum InventoryTransactionType {
+  GRANT
+  TRANSFER
+  EQUIP
+  UNEQUIP
+  DELETE
+}
+
+model InventoryItemDefinition {
+  id           String                  @id
+  slug         String                  @unique
+  name         String
+  description  String
+  type         InventoryItemType
+  rarity       InventoryItemRarity     @default(COMMON)
+  previewKey   String?
+  style        Json?
+  transferable Boolean                 @default(true)
+  deletable    Boolean                 @default(true)
+  equipable    Boolean                 @default(true)
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+  instances    UserInventoryItem[]
+}
+
+model UserInventoryItem {
+  id           String                 @id
+  definitionId String
+  ownerId      String
+  serialNumber Int?
+  sourceKey    String?                @unique
+  equipped     Boolean                @default(false)
+  acquiredAt   DateTime               @default(now())
+  equippedAt   DateTime?
+  deletedAt    DateTime?
+  definition   InventoryItemDefinition @relation(fields: [definitionId], references: [id], onDelete: Restrict)
+  transactions InventoryTransaction[]
+
+  @@index([ownerId, deletedAt])
+  @@index([definitionId])
+  @@index([ownerId, equipped])
+}
+
+model InventoryTransaction {
+  id         String                   @id
+  itemId     String
+  type       InventoryTransactionType
+  fromUserId String?
+  toUserId   String?
+  metadata   Json?
+  createdAt  DateTime                 @default(now())
+  item       UserInventoryItem        @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([itemId, createdAt])
+  @@index([fromUserId, createdAt])
+  @@index([toUserId, createdAt])
+}
+
+// /FORRUM_INVENTORY_V10

@@ -66,6 +66,175 @@ async function ensureRole(input: { userId: string; communityId: string; role: Co
   return role;
 }
 
+// FORRUM_INVENTORY_V10_SEED
+async function seedInventoryV10() {
+  const definitions = [
+    {
+      id: 'inventory-def-nick-azure',
+      slug: 'nick-azure',
+      name: 'Синий контур',
+      description: 'Спокойный синий цвет ника для светлой темы FORRUM.',
+      type: 'NICK_COLOR',
+      rarity: 'RARE',
+      previewKey: 'F',
+      style: { color: '#2d6ea6' },
+      transferable: true,
+      deletable: true,
+      equipable: true,
+    },
+    {
+      id: 'inventory-def-nick-amber',
+      slug: 'nick-amber',
+      name: 'Тёплый янтарь',
+      description: 'Тёплый контрастный оттенок ника без сходства с системными ошибками.',
+      type: 'NICK_COLOR',
+      rarity: 'UNCOMMON',
+      previewKey: 'F',
+      style: { color: '#8a5a18' },
+      transferable: true,
+      deletable: true,
+      equipable: true,
+    },
+    {
+      id: 'inventory-def-hashtag-sage',
+      slug: 'hashtag-sage',
+      name: 'Хэштег «Шалфей»',
+      description: 'Мягкое оформление авторских хэштегов в сообщениях и профиле.',
+      type: 'HASHTAG_COLOR',
+      rarity: 'UNCOMMON',
+      previewKey: '#',
+      style: {
+        color: '#3f7557',
+        background: '#edf5ef',
+        border: '#c5dbcb',
+      },
+      transferable: true,
+      deletable: true,
+      equipable: true,
+    },
+    {
+      id: 'inventory-def-profile-northern',
+      slug: 'profile-northern-light',
+      name: 'Северный свет',
+      description: 'Светлый редакционный фон профиля с холодным и тёплым переходом.',
+      type: 'PROFILE_BACKGROUND',
+      rarity: 'EPIC',
+      previewKey: 'BG',
+      style: {
+        background: 'linear-gradient(135deg, #eef4f6 0%, #f6f1e9 56%, #eef0f5 100%)',
+      },
+      transferable: true,
+      deletable: true,
+      equipable: true,
+    },
+    {
+      id: 'inventory-def-avatar-steel',
+      slug: 'avatar-steel-frame',
+      name: 'Стальная рамка',
+      description: 'Тонкая двойная рамка аватара для активных участников.',
+      type: 'AVATAR_FRAME',
+      rarity: 'RARE',
+      previewKey: 'O',
+      style: {
+        boxShadow: '0 0 0 3px #708397, 0 0 0 5px #e2e7eb',
+      },
+      transferable: true,
+      deletable: true,
+      equipable: true,
+    },
+    {
+      id: 'inventory-def-badge-first',
+      slug: 'badge-first-wave',
+      name: 'Первая волна',
+      description: 'Коллекционный знак ранних участников FORRUM.',
+      type: 'PROFILE_BADGE',
+      rarity: 'UNIQUE',
+      previewKey: 'I',
+      style: { symbol: 'I', color: '#6a4c91' },
+      transferable: false,
+      deletable: false,
+      equipable: true,
+    },
+    {
+      id: 'inventory-def-reactions-constructive',
+      slug: 'reactions-constructive',
+      name: 'Конструктивные реакции',
+      description: 'Набор спокойных реакций для полезных ответов и найденных решений.',
+      type: 'REACTION_PACK',
+      rarity: 'RARE',
+      previewKey: '✓',
+      style: { symbol: '✓', color: '#2c6f55' },
+      transferable: true,
+      deletable: true,
+      equipable: true,
+    },
+  ] as const;
+
+  for (const definition of definitions) {
+    await prisma.$executeRawUnsafe(
+      `INSERT INTO "InventoryItemDefinition"
+         ("id", "slug", "name", "description", "type", "rarity", "previewKey", "style", "transferable", "deletable", "equipable", "createdAt", "updatedAt")
+       VALUES ($1, $2, $3, $4, $5::"InventoryItemType", $6::"InventoryItemRarity", $7, $8::jsonb, $9, $10, $11, NOW(), NOW())
+       ON CONFLICT ("slug") DO UPDATE SET
+         "name" = EXCLUDED."name",
+         "description" = EXCLUDED."description",
+         "type" = EXCLUDED."type",
+         "rarity" = EXCLUDED."rarity",
+         "previewKey" = EXCLUDED."previewKey",
+         "style" = EXCLUDED."style",
+         "transferable" = EXCLUDED."transferable",
+         "deletable" = EXCLUDED."deletable",
+         "equipable" = EXCLUDED."equipable",
+         "updatedAt" = NOW()`,
+      definition.id,
+      definition.slug,
+      definition.name,
+      definition.description,
+      definition.type,
+      definition.rarity,
+      definition.previewKey,
+      JSON.stringify(definition.style),
+      definition.transferable,
+      definition.deletable,
+      definition.equipable,
+    );
+  }
+
+  const grants = [
+    ['owner', 'nick-azure', 1, true],
+    ['owner', 'hashtag-sage', 1, true],
+    ['owner', 'profile-northern-light', 1, true],
+    ['owner', 'avatar-steel-frame', 1, true],
+    ['owner', 'badge-first-wave', 1, true],
+    ['owner', 'reactions-constructive', 1, true],
+    ['friend', 'nick-amber', 7, true],
+    ['friend', 'hashtag-sage', 9, false],
+    ['nora', 'profile-northern-light', 14, true],
+    ['nora', 'avatar-steel-frame', 16, true],
+    ['pixel', 'reactions-constructive', 21, true],
+  ] as const;
+
+  for (const [username, slug, serialNumber, equipped] of grants) {
+    const sourceKey = `seed:${username}:${slug}`;
+    await prisma.$executeRawUnsafe(
+      `INSERT INTO "UserInventoryItem"
+         ("id", "definitionId", "ownerId", "serialNumber", "sourceKey", "equipped", "acquiredAt", "equippedAt", "deletedAt")
+       SELECT $1, d."id", u."id", $2, $3, $4, NOW(), CASE WHEN $4 THEN NOW() ELSE NULL END, NULL
+       FROM "InventoryItemDefinition" d
+       CROSS JOIN "User" u
+       WHERE d."slug" = $5 AND u."username" = $6
+       ON CONFLICT ("sourceKey") DO NOTHING`,
+      `inventory-item-${username}-${slug}`,
+      serialNumber,
+      sourceKey,
+      equipped,
+      slug,
+      username,
+    );
+  }
+}
+// /FORRUM_INVENTORY_V10_SEED
+
 async function main() {
   const owner = await upsertUser({
     email: process.env.OWNER_EMAIL ?? 'owner@forrum.local',
@@ -822,6 +991,7 @@ async function main() {
     where: { interactionId_authorId: { interactionId: interaction.id, authorId: owner.id } }, update: {},
     create: { interactionId: interaction.id, authorId: owner.id, targetId: friend.id, verdict: ReviewVerdict.POSITIVE, body: 'Внимательно прошёл тестовый сценарий и дал конкретную обратную связь по интерфейсу.' },
   });
+  await seedInventoryV10();
 }
 
 main().finally(() => prisma.$disconnect());
