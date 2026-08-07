@@ -9200,3 +9200,322 @@ a.button:hover {
 }
 
 /* /FORRUM_INVENTORY_V10 */
+
+/* FORRUM_HOME_REDESIGN_STAGE_A_V11
+   Stage A: homepage-only dark design tokens and base surfaces.
+   No header, layout structure, feed logic, navigation logic or right-rail content changes here.
+*/
+
+body:has(.home-stage-one) {
+  background: #091215;
+}
+
+.home-stage-one {
+  --forrum-home-bg: #091215;
+  --forrum-home-surface: #0f191c;
+  --forrum-home-surface-soft: #121e21;
+  --forrum-home-surface-hover: #162428;
+  --forrum-home-surface-selected: #102a25;
+  --forrum-home-text: #f1f5f4;
+  --forrum-home-text-soft: #c7d0ce;
+  --forrum-home-muted: #8d9a98;
+  --forrum-home-muted-strong: #a9b4b2;
+  --forrum-home-line: #26363a;
+  --forrum-home-line-soft: #1d2b2f;
+  --forrum-home-line-strong: #34484d;
+  --forrum-home-accent: #19d39a;
+  --forrum-home-accent-hover: #27e2aa;
+  --forrum-home-accent-soft: rgba(25, 211, 154, 0.10);
+  --forrum-home-danger: #ed6b6b;
+  --forrum-home-radius: 6px;
+
+  /* Keep legacy home components functional while replacing only their visual tokens. */
+  --bg: var(--forrum-home-bg);
+  --surface: var(--forrum-home-surface);
+  --surface-soft: var(--forrum-home-surface-soft);
+  --surface-strong: var(--forrum-home-surface-hover);
+  --text: var(--forrum-home-text);
+  --muted: var(--forrum-home-muted);
+  --muted-strong: var(--forrum-home-muted-strong);
+  --line: var(--forrum-home-line);
+  --line-strong: var(--forrum-home-line-strong);
+  --focus: var(--forrum-home-accent);
+  --danger: var(--forrum-home-danger);
+
+  color: var(--forrum-home-text);
+}
+
+.home-stage-one :is(h1, h2, h3) {
+  color: var(--forrum-home-text);
+}
+
+.home-stage-one :is(
+  .home-community-tree,
+  .home-discussion-panel,
+  .home-current-panel,
+  .home-list-panel
+) {
+  border-color: var(--forrum-home-line) !important;
+  border-radius: var(--forrum-home-radius) !important;
+  background: var(--forrum-home-surface) !important;
+  box-shadow: none !important;
+}
+
+.home-stage-one :is(
+  .home-feed-toolbar,
+  .home-feed-tabs,
+  .home-feed-head,
+  .home-panel-heading,
+  .home-panel-footer,
+  .home-rail-panel
+) {
+  border-color: var(--forrum-home-line) !important;
+  background: transparent;
+}
+
+.home-stage-one .home-feed-title h2,
+.home-stage-one .home-panel-heading h2 {
+  color: var(--forrum-home-text) !important;
+}
+
+.home-stage-one :is(
+  .home-feed-head,
+  .home-topic-path,
+  .home-topic-copy > p,
+  .home-topic-author-copy > span,
+  .home-current-kicker small,
+  .home-current-item em,
+  .home-simple-list small,
+  .home-simple-list em,
+  .home-current-empty,
+  .home-list-empty,
+  .home-feed-status
+) {
+  color: var(--forrum-home-muted) !important;
+}
+
+.home-stage-one .home-topic-row {
+  border-color: var(--forrum-home-line-soft) !important;
+  background: transparent !important;
+}
+
+.home-stage-one .home-topic-row:hover,
+.home-stage-one .home-topic-row:focus-within,
+.home-stage-one .home-topic-row.home-topic-unread:hover,
+.home-stage-one .home-topic-row.home-topic-unread:focus-within {
+  background: var(--forrum-home-surface-hover) !important;
+}
+
+.home-stage-one .home-topic-row.home-topic-unread {
+  background: rgba(25, 211, 154, 0.025) !important;
+}
+
+.home-stage-one .home-topic-title,
+.home-stage-one .home-current-item strong,
+.home-stage-one .home-simple-list strong,
+.home-stage-one .home-feed-status strong {
+  color: var(--forrum-home-text) !important;
+}
+
+.home-stage-one .home-topic-title:hover,
+.home-stage-one .home-topic-path a:hover,
+.home-stage-one .home-panel-footer:hover,
+.home-stage-one .home-simple-list > a:hover {
+  color: var(--forrum-home-text) !important;
+}
+
+.home-stage-one .home-topic-count {
+  color: var(--forrum-home-text-soft) !important;
+}
+
+.home-stage-one .home-topic-path a,
+.home-stage-one .home-topic-hashtags a {
+  color: var(--forrum-home-muted-strong) !important;
+}
+
+.home-stage-one .home-topic-unread-dot {
+  background: var(--forrum-home-accent) !important;
+}
+
+.home-stage-one .home-topic-visual {
+  border-color: var(--forrum-home-line-strong) !important;
+  background: var(--forrum-home-surface-soft) !important;
+}
+
+.home-stage-one .home-topic-visual.with-type-mark,
+.home-stage-one .home-topic-type-mark {
+  background: var(--forrum-home-surface-soft) !important;
+  color: var(--forrum-home-muted-strong) !important;
+}
+
+.home-stage-one .home-topic-status {
+  border-color: var(--forrum-home-line-strong) !important;
+  background: var(--forrum-home-surface-soft) !important;
+  color: var(--forrum-home-muted-strong) !important;
+}
+
+.home-stage-one .home-topic-status.answered {
+  border-color: rgba(25, 211, 154, 0.30) !important;
+  background: var(--forrum-home-accent-soft) !important;
+  color: #78e5c0 !important;
+}
+
+.home-stage-one :is(.home-filter-button, .button.home-create-topic) {
+  border-color: var(--forrum-home-line-strong) !important;
+  background: var(--forrum-home-surface-soft) !important;
+  color: var(--forrum-home-text-soft) !important;
+  box-shadow: none !important;
+}
+
+.home-stage-one :is(.home-filter-button, .button.home-create-topic):hover,
+.home-stage-one :is(.home-filter-button, .button.home-create-topic):focus-visible {
+  border-color: var(--forrum-home-accent) !important;
+  background: var(--forrum-home-surface-hover) !important;
+  color: var(--forrum-home-text) !important;
+}
+
+.home-stage-one .home-feed-tabs button {
+  color: var(--forrum-home-muted) !important;
+}
+
+.home-stage-one .home-feed-tabs button:hover {
+  background: transparent !important;
+  color: var(--forrum-home-text-soft) !important;
+}
+
+.home-stage-one .home-feed-tabs button.active {
+  border-bottom-color: var(--forrum-home-accent) !important;
+  color: var(--forrum-home-text) !important;
+}
+
+.home-stage-one :is(.home-new-feed-count, .home-tab-count) {
+  border-color: rgba(25, 211, 154, 0.26) !important;
+  background: var(--forrum-home-accent-soft) !important;
+  color: #78e5c0 !important;
+}
+
+.home-stage-one .home-panel-footer {
+  color: var(--forrum-home-muted-strong) !important;
+}
+
+.home-stage-one .home-panel-footer:hover,
+.home-stage-one .home-simple-list > a:hover,
+.home-stage-one .home-current-item:hover {
+  background: var(--forrum-home-surface-hover) !important;
+}
+
+.home-stage-one .home-current-item,
+.home-stage-one .home-simple-list > a {
+  border-color: var(--forrum-home-line-soft) !important;
+}
+
+.home-stage-one .home-current-icon,
+.home-stage-one .home-current-item.is-event .home-current-icon,
+.home-stage-one .home-current-item.is-poll .home-current-icon,
+.home-stage-one .home-current-item.is-notice .home-current-icon,
+.home-stage-one .home-list-icon {
+  border-color: var(--forrum-home-line-strong) !important;
+  background: var(--forrum-home-surface-soft) !important;
+  color: var(--forrum-home-muted-strong) !important;
+}
+
+.home-stage-one .home-current-kicker b {
+  color: #d6bd7b !important;
+}
+
+/* Tree surfaces inherit the same hierarchy without changing click behaviour. */
+.home-stage-one .home-community-tree {
+  border-color: var(--forrum-home-line) !important;
+  background: var(--forrum-home-surface) !important;
+}
+
+.home-stage-one .home-tree-separator,
+.home-stage-one .home-tree-children,
+.home-stage-one .home-workshop-children {
+  border-color: var(--forrum-home-line) !important;
+}
+
+.home-stage-one .home-tree-separator {
+  background: var(--forrum-home-line) !important;
+}
+
+.home-stage-one :is(
+  .home-tree-name-link,
+  .home-workshop-name-link,
+  .home-workshop-children a
+) {
+  color: var(--forrum-home-text-soft) !important;
+}
+
+.home-stage-one :is(
+  .home-tree-reference-icon,
+  .home-workshop-icon,
+  .home-tree-reference-chevron,
+  .home-workshop-chevron,
+  .home-tree-branch-mark,
+  .home-tree-leaf-mark
+) {
+  color: var(--forrum-home-muted) !important;
+}
+
+.home-stage-one .home-tree-row:hover :is(.home-tree-reference-icon, .home-tree-reference-chevron),
+.home-stage-one .home-tree-row:focus-within :is(.home-tree-reference-icon, .home-tree-reference-chevron),
+.home-stage-one .home-workshop-row:hover :is(.home-workshop-icon, .home-workshop-chevron),
+.home-stage-one .home-workshop-row:focus-within :is(.home-workshop-icon, .home-workshop-chevron) {
+  color: var(--forrum-home-accent) !important;
+}
+
+.home-stage-one .home-tree-row.active .home-tree-name-link {
+  color: var(--forrum-home-accent) !important;
+}
+
+.home-stage-one :is(.home-tree-expand-surface, .home-workshop-expand-surface):focus-visible,
+.home-stage-one :is(.home-tree-name-link, .home-workshop-name-link):focus-visible {
+  outline-color: var(--forrum-home-accent) !important;
+}
+
+.home-stage-one .home-topic-action,
+.home-stage-one .home-topic-more summary {
+  color: var(--forrum-home-muted) !important;
+}
+
+.home-stage-one .home-topic-action:hover,
+.home-stage-one .home-topic-action:focus-visible,
+.home-stage-one .home-topic-more summary:hover,
+.home-stage-one .home-topic-more summary:focus-visible {
+  border-color: var(--forrum-home-line-strong) !important;
+  background: var(--forrum-home-surface-hover) !important;
+  color: var(--forrum-home-text) !important;
+}
+
+.home-stage-one .home-topic-more-menu {
+  border-color: var(--forrum-home-line-strong) !important;
+  background: var(--forrum-home-surface-soft) !important;
+  box-shadow: none !important;
+}
+
+.home-stage-one .home-topic-more-menu a {
+  color: var(--forrum-home-text-soft) !important;
+}
+
+.home-stage-one .home-topic-more-menu a:hover {
+  background: var(--forrum-home-surface-hover) !important;
+  color: var(--forrum-home-text) !important;
+}
+
+.home-stage-one :is(.error-box, .warning-box, .success-box, .notice) {
+  border-color: var(--forrum-home-line-strong) !important;
+  background: var(--forrum-home-surface-soft) !important;
+  box-shadow: none !important;
+}
+
+.home-stage-one .error-box {
+  color: var(--forrum-home-danger) !important;
+}
+
+.home-stage-one :is(a, button):focus-visible {
+  outline-color: var(--forrum-home-accent) !important;
+}
+
+/* Stage A deliberately leaves the global header and navigation untouched. */
+/* /FORRUM_HOME_REDESIGN_STAGE_A_V11 */
