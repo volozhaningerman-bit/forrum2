@@ -77,6 +77,7 @@ const feedTabs: Array<{ key: FeedMode; label: string }> = [
 ];
 
 // FORRUM_HOME_TREE_REFERENCE_V9_2_4
+// FORRUM_HOME_REDESIGN_STAGE_C_V11
 const workshopNavigation = [
   { label: 'Проекты и заказы', href: '/workshop?section=projects' },
   { label: 'Готовые решения', href: '/workshop?section=solutions' },
@@ -198,6 +199,15 @@ function deadlineState(value: string, kind: 'event' | 'poll') {
     return 'заканчивается';
   }
   return '';
+}
+
+function WorkshopTreeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m14 6 4-4 4 4-4 4M10 18l-4 4-4-4 4-4" />
+      <path d="m8 8 8 8M5 5l14 14" />
+    </svg>
+  );
 }
 
 function CategoryTreeIcon({
@@ -358,6 +368,7 @@ export function HomeDashboard({
     () => new Set(['internet-projects']),
   );
   const [workshopOpen, setWorkshopOpen] = useState(true);
+  const [treeCollapsed, setTreeCollapsed] = useState(false);
   const [feedRequestVersion, setFeedRequestVersion] = useState(0);
   const [feedLoading, setFeedLoading] = useState(
     initialData.feed === undefined,
@@ -600,13 +611,20 @@ export function HomeDashboard({
             </button>
           )}
 
-          <span className="home-tree-reference-icon" aria-hidden="true">
-            <CategoryTreeIcon
-              slug={community.slug}
-              depth={depth}
-              expandable={expandable}
-            />
-          </span>
+          <Link
+            className="home-tree-icon-link"
+            href={`/communities/${community.slug}`}
+            aria-label={`Открыть ${community.name}`}
+            aria-current={active ? 'page' : undefined}
+          >
+            <span className="home-tree-reference-icon" aria-hidden="true">
+              <CategoryTreeIcon
+                slug={community.slug}
+                depth={depth}
+                expandable={expandable}
+              />
+            </span>
+          </Link>
 
           <Link
             className="home-tree-name-link"
@@ -639,8 +657,64 @@ export function HomeDashboard({
 
       {pageError && <div className="error-box">{pageError}</div>}
 
-      <div className="home-layout">
-        <aside className="home-community-tree" aria-label="Категории и подразделы">
+      <div
+        className={`home-layout ${treeCollapsed ? 'home-layout-tree-collapsed' : ''}`}
+      >
+        <aside
+          className={`home-community-tree ${treeCollapsed ? 'is-collapsed' : ''}`}
+          aria-label="Категории и подразделы"
+        >
+          <div className="home-tree-panel-controls">
+            <button
+              type="button"
+              className="home-tree-panel-toggle"
+              aria-label={treeCollapsed ? 'Развернуть навигацию' : 'Свернуть навигацию'}
+              aria-expanded={!treeCollapsed}
+              onClick={() => setTreeCollapsed((current) => !current)}
+            >
+              <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d={treeCollapsed ? 'm6 4 4 4-4 4' : 'm10 4-4 4 4 4'} />
+              </svg>
+            </button>
+          </div>
+
+          {treeCollapsed ? (
+            <nav className="home-tree-collapsed-list" aria-label="Основные разделы">
+              <Link
+                className="home-tree-collapsed-link"
+                href="/workshop"
+                aria-label="Мастерская"
+                title="Мастерская"
+              >
+                <span className="home-workshop-icon" aria-hidden="true">
+                  <WorkshopTreeIcon />
+                </span>
+              </Link>
+              {rootCommunities.map((community) => {
+                const active = pathname === `/communities/${community.slug}`;
+                const expandable = (childrenByParent.get(community.slug) ?? []).length > 0;
+                return (
+                  <Link
+                    className={`home-tree-collapsed-link ${active ? 'active' : ''}`}
+                    href={`/communities/${community.slug}`}
+                    aria-label={community.name}
+                    aria-current={active ? 'page' : undefined}
+                    title={community.name}
+                    key={community.id}
+                  >
+                    <span className="home-tree-reference-icon" aria-hidden="true">
+                      <CategoryTreeIcon
+                        slug={community.slug}
+                        depth={0}
+                        expandable={expandable}
+                      />
+                    </span>
+                  </Link>
+                );
+              })}
+            </nav>
+          ) : (
+            <>
           <div className="home-tree-section home-tree-workshop-section">
             <div className={`home-workshop-node ${workshopOpen ? 'opened' : 'closed'}`}>
               <div className="home-workshop-row">
@@ -660,12 +734,15 @@ export function HomeDashboard({
                     {workshopOpen ? 'Свернуть' : 'Развернуть'}
                   </span>
                 </button>
-                <span className="home-workshop-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path d="m14 6 4-4 4 4-4 4M10 18l-4 4-4-4 4-4" />
-                    <path d="m8 8 8 8M5 5l14 14" />
-                  </svg>
-                </span>
+                <Link
+                  className="home-workshop-icon-link"
+                  href="/workshop"
+                  aria-label="Открыть Мастерскую"
+                >
+                  <span className="home-workshop-icon" aria-hidden="true">
+                    <WorkshopTreeIcon />
+                  </span>
+                </Link>
                 <Link className="home-workshop-name-link" href="/workshop">
                   Мастерская
                 </Link>
@@ -707,9 +784,8 @@ export function HomeDashboard({
             )}
           </div>
 
-          <Link className="home-tree-all-link" href="/communities">
-            Все категории <span aria-hidden="true">→</span>
-          </Link>
+            </>
+          )}
         </aside>
 
         <main className="home-discussion-panel">

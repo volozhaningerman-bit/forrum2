@@ -9740,3 +9740,213 @@ body:has(.home-stage-one) .header :is(a, button, input):focus-visible {
 }
 
 /* /FORRUM_HOME_REDESIGN_STAGE_B_V11 */
+
+/* FORRUM_HOME_REDESIGN_STAGE_C_V11
+   Stage C: homepage category tree interaction and collapse behaviour only.
+   The central feed, right rail and shared header are intentionally untouched.
+*/
+
+.home-stage-one .home-layout {
+  grid-template-columns: 264px minmax(0, 1fr) 320px;
+}
+
+.home-stage-one .home-layout.home-layout-tree-collapsed {
+  grid-template-columns: 54px minmax(0, 1fr) 320px;
+}
+
+.home-stage-one .home-community-tree {
+  position: relative;
+  padding-top: 8px !important;
+}
+
+.home-stage-one .home-tree-panel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 22px;
+  margin: 0 0 3px;
+}
+
+.home-stage-one .home-tree-panel-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--forrum-home-muted);
+  cursor: pointer;
+}
+
+.home-stage-one .home-tree-panel-toggle svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.home-stage-one .home-tree-panel-toggle:hover {
+  background: transparent;
+  color: var(--forrum-home-accent);
+}
+
+.home-stage-one .home-tree-panel-toggle:focus-visible {
+  outline: 1px solid var(--forrum-home-accent);
+  outline-offset: 1px;
+}
+
+/* Icon and title are both navigation targets. The remaining row belongs to expansion. */
+.home-stage-one .home-tree-icon-link,
+.home-stage-one .home-workshop-icon-link {
+  grid-column: 1;
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 21px;
+  height: 27px;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: inherit;
+  text-decoration: none !important;
+}
+
+.home-stage-one .home-tree-icon-link:hover,
+.home-stage-one .home-tree-icon-link:focus-visible,
+.home-stage-one .home-workshop-icon-link:hover,
+.home-stage-one .home-workshop-icon-link:focus-visible {
+  background: transparent;
+  text-decoration: none !important;
+}
+
+.home-stage-one .home-tree-icon-link:hover .home-tree-reference-icon,
+.home-stage-one .home-tree-icon-link:focus-visible .home-tree-reference-icon,
+.home-stage-one .home-workshop-icon-link:hover .home-workshop-icon,
+.home-stage-one .home-workshop-icon-link:focus-visible .home-workshop-icon {
+  color: var(--forrum-home-accent) !important;
+}
+
+.home-stage-one .home-tree-icon-link:focus-visible,
+.home-stage-one .home-workshop-icon-link:focus-visible {
+  outline: 1px solid var(--forrum-home-accent);
+  outline-offset: 1px;
+}
+
+.home-stage-one .home-tree-name-link:hover,
+.home-stage-one .home-workshop-name-link:hover,
+.home-stage-one .home-workshop-children a:hover {
+  color: var(--forrum-home-accent) !important;
+  text-decoration: none !important;
+}
+
+.home-stage-one .home-tree-row.active {
+  border-radius: 3px !important;
+  background: var(--forrum-home-accent-soft) !important;
+}
+
+.home-stage-one .home-tree-row.active::after {
+  background: var(--forrum-home-accent) !important;
+}
+
+.home-stage-one .home-tree-row.active .home-tree-name-link,
+.home-stage-one .home-tree-row.active .home-tree-reference-icon,
+.home-stage-one .home-tree-icon-link[aria-current="page"] .home-tree-reference-icon {
+  color: var(--forrum-home-accent) !important;
+}
+
+.home-stage-one .home-tree-expand-surface:hover ~ .home-tree-reference-chevron,
+.home-stage-one .home-workshop-expand-surface:hover ~ .home-workshop-chevron {
+  color: var(--forrum-home-accent) !important;
+}
+
+/* The removed catalogue footer must not reappear through legacy styles. */
+.home-stage-one .home-tree-all-link {
+  display: none !important;
+}
+
+/* Collapsed navigation keeps only the main system icons. */
+.home-stage-one .home-community-tree.is-collapsed {
+  padding: 7px 6px 8px !important;
+}
+
+.home-stage-one .home-community-tree.is-collapsed .home-tree-panel-controls {
+  justify-content: center;
+  min-height: 28px;
+  margin: 0 0 5px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--forrum-home-line-soft);
+}
+
+.home-stage-one .home-tree-collapsed-list {
+  display: grid;
+  gap: 3px;
+  justify-items: center;
+}
+
+.home-stage-one .home-tree-collapsed-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 36px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--forrum-home-muted);
+  text-decoration: none !important;
+}
+
+.home-stage-one .home-tree-collapsed-link:hover,
+.home-stage-one .home-tree-collapsed-link:focus-visible {
+  border-color: var(--forrum-home-line);
+  background: var(--forrum-home-surface-hover);
+  color: var(--forrum-home-accent);
+  text-decoration: none !important;
+}
+
+.home-stage-one .home-tree-collapsed-link.active,
+.home-stage-one .home-tree-collapsed-link[aria-current="page"] {
+  border-color: rgba(25, 211, 154, .24);
+  background: var(--forrum-home-accent-soft);
+  color: var(--forrum-home-accent);
+}
+
+.home-stage-one .home-tree-collapsed-link .home-tree-reference-icon,
+.home-stage-one .home-tree-collapsed-link .home-workshop-icon {
+  width: 18px !important;
+  height: 18px !important;
+  color: currentColor !important;
+}
+
+.home-stage-one .home-tree-collapsed-link .home-tree-reference-icon svg,
+.home-stage-one .home-tree-collapsed-link .home-workshop-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+@media (max-width: 1180px) {
+  .home-stage-one .home-layout {
+    grid-template-columns: 252px minmax(0, 1fr) 292px;
+  }
+
+  .home-stage-one .home-layout.home-layout-tree-collapsed {
+    grid-template-columns: 54px minmax(0, 1fr) 292px;
+  }
+}
+
+@media (max-width: 960px) {
+  .home-stage-one .home-layout,
+  .home-stage-one .home-layout.home-layout-tree-collapsed {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* /FORRUM_HOME_REDESIGN_STAGE_C_V11 */

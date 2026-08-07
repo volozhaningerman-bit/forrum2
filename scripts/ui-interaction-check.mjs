@@ -50,8 +50,12 @@ for (const marker of [
 requireMarker(home, "'unanswered'", 'home feed');
 requireMarker(home, 'Без ответа', 'home feed');
 requireMarker(home, 'home-feed-toolbar', 'home feed');
-requireMarker(home, 'Все категории', 'home tree');
-requireMarker(home, 'home-tree-all-link', 'home tree');
+// FORRUM_HOME_REDESIGN_STAGE_C_V11_INTERACTION_CONTRACT
+forbidMarker(home, 'Все категории', 'home tree');
+forbidMarker(home, 'home-tree-all-link', 'home tree');
+requireMarker(home, 'home-tree-panel-toggle', 'home tree');
+requireMarker(home, 'home-tree-collapsed-list', 'home tree');
+requireMarker(home, 'home-tree-icon-link', 'home tree');
 
 requireMarker(
   ranking,
