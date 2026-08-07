@@ -9519,3 +9519,224 @@ body:has(.home-stage-one) {
 
 /* Stage A deliberately leaves the global header and navigation untouched. */
 /* /FORRUM_HOME_REDESIGN_STAGE_A_V11 */
+
+/* FORRUM_HOME_REDESIGN_STAGE_B_V11
+   Stage B: homepage-only header visual language and approved home navigation.
+   No content-column, tree, feed, news-rail or footer restructuring in this stage.
+*/
+
+body:has(.home-stage-one) .header {
+  border-bottom: 1px solid #26363a;
+  background: #0b1417;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+body:has(.home-stage-one) .header .nav {
+  min-height: 58px;
+  gap: 16px;
+}
+
+body:has(.home-stage-one) .header .brand {
+  gap: 8px;
+  color: #f1f5f4;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -.035em;
+}
+
+body:has(.home-stage-one) .header .brand:hover,
+body:has(.home-stage-one) .header .brand:focus-visible {
+  color: #f1f5f4;
+}
+
+body:has(.home-stage-one) .header .brand-mark {
+  width: 27px;
+  height: 30px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #19d39a;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+body:has(.home-stage-one) .header .main-links {
+  height: 58px;
+  gap: 2px;
+}
+
+body:has(.home-stage-one) .header .main-links a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 58px;
+  padding: 0 12px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: #c7d0ce;
+  font-size: 13px;
+  font-weight: 620;
+}
+
+body:has(.home-stage-one) .header .main-links a:hover,
+body:has(.home-stage-one) .header .main-links a:focus-visible {
+  border-bottom-color: transparent;
+  background: transparent;
+  color: #f1f5f4;
+}
+
+body:has(.home-stage-one) .header .main-links a.active {
+  border-bottom-color: #19d39a;
+  background: transparent;
+  color: #19d39a;
+}
+
+body:has(.home-stage-one) .header .main-links a::after,
+body:has(.home-stage-one) .header .main-links a:hover::after,
+body:has(.home-stage-one) .header .main-links a.active::after {
+  display: none;
+  content: none;
+}
+
+body:has(.home-stage-one) .header .main-nav-unread {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 50%;
+  background: #19d39a;
+  box-shadow: none;
+}
+
+body:has(.home-stage-one) .header .header-search {
+  width: min(360px, 29vw);
+  min-height: 36px;
+  border: 1px solid #2b3c40;
+  border-radius: 5px;
+  background: #0f191c;
+  box-shadow: none;
+}
+
+body:has(.home-stage-one) .header .header-search:focus-within {
+  border-color: #3c5d58;
+}
+
+body:has(.home-stage-one) .header .header-search input {
+  min-height: 34px;
+  border: 0;
+  background: transparent;
+  color: #f1f5f4;
+  caret-color: #19d39a;
+}
+
+body:has(.home-stage-one) .header .header-search input::placeholder {
+  color: #82908e;
+}
+
+body:has(.home-stage-one) .header .header-search input:focus {
+  outline: 0;
+}
+
+body:has(.home-stage-one) .header .header-search button {
+  min-height: 34px;
+  border: 0;
+  border-left: 1px solid #26363a;
+  border-radius: 0;
+  background: transparent;
+  color: #b6c1bf;
+}
+
+body:has(.home-stage-one) .header .header-search button:hover,
+body:has(.home-stage-one) .header .header-search button:focus-visible {
+  background: #121e21;
+  color: #f1f5f4;
+}
+
+body:has(.home-stage-one) .header .icon-links {
+  gap: 2px;
+}
+
+body:has(.home-stage-one) .header .icon-links a {
+  width: 34px;
+  height: 34px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: #d6dddb;
+}
+
+body:has(.home-stage-one) .header .icon-links a:hover,
+body:has(.home-stage-one) .header .icon-links a:focus-visible {
+  border-color: #2b3c40;
+  background: #121e21;
+  color: #f1f5f4;
+}
+
+body:has(.home-stage-one) .header .nav-badge {
+  border-color: #0b1417;
+  background: #19d39a;
+  color: #07110e;
+  box-shadow: none;
+}
+
+body:has(.home-stage-one) .header .auth-actions {
+  gap: 9px;
+  color: #d6dddb;
+  font-size: 13px;
+}
+
+body:has(.home-stage-one) .header .auth-actions > a:not(.button):hover,
+body:has(.home-stage-one) .header .auth-actions > a:not(.button):focus-visible {
+  color: #f1f5f4;
+}
+
+body:has(.home-stage-one) .header .auth-actions .button {
+  min-height: 34px;
+  padding: 7px 12px;
+  border: 1px solid #35484c;
+  border-radius: 4px;
+  background: #182327;
+  color: #f1f5f4;
+  box-shadow: none;
+}
+
+body:has(.home-stage-one) .header .auth-actions .button:hover,
+body:has(.home-stage-one) .header .auth-actions .button:focus-visible {
+  border-color: #46605f;
+  background: #1b2a2e;
+  color: #fff;
+}
+
+body:has(.home-stage-one) .header .profile-trigger {
+  color: #eef3f1;
+}
+
+body:has(.home-stage-one) .header .profile-trigger:hover,
+body:has(.home-stage-one) .header .profile-trigger:focus-visible {
+  color: #fff;
+}
+
+body:has(.home-stage-one) .header .profile-trigger .avatar {
+  border-color: #3a4c50;
+}
+
+body:has(.home-stage-one) .header .text-button {
+  color: #9eaaa8;
+}
+
+body:has(.home-stage-one) .header .text-button:hover,
+body:has(.home-stage-one) .header .text-button:focus-visible {
+  color: #f1f5f4;
+}
+
+body:has(.home-stage-one) .header :is(a, button, input):focus-visible {
+  outline: 2px solid #19d39a;
+  outline-offset: 2px;
+}
+
+/* /FORRUM_HOME_REDESIGN_STAGE_B_V11 */
