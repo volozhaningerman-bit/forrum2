@@ -24,9 +24,9 @@ forbidMarker(home, 'Создать тему', 'legacy create action on home cent
 forbidMarker(home, 'Фильтры', 'legacy filters on home center');
 
 requireMarker(page, '/feed?mode=popular', 'home initial discussed data');
-forbidMarker(page, '/feed?mode=new', 'legacy home initial feed');
+requireMarker(page, '/feed?mode=new', 'Stage E new topics data');
 
-requireMarker(feed, 'FORRUM_DISCUSSSED_TOPICS_24H_V11', '24h discussed semantics');
+requireMarker(feed, 'FORRUM_DISCUSSED_TOPICS_24H_V11', '24h discussed semantics');
 requireMarker(feed, "format: 'TOPIC'", 'popular topics-only filter');
 requireMarker(feed, 'recentCommentSince', '24h activity window');
 requireMarker(feed, 'publication.comments.length', '24h ranking count');

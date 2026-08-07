@@ -120,7 +120,7 @@ export class FeedService {
       communityId: hiddenCommunityIds.size && !['subscriptions', 'saved'].includes(mode) ? { notIn: [...hiddenCommunityIds] } : undefined,
     };
     let where: Prisma.PublicationWhereInput = { status: 'PUBLISHED', ...exclusions };
-    // FORRUM_DISCUSSSED_TOPICS_24H_V11
+    // FORRUM_DISCUSSED_TOPICS_24H_V11
     if (mode === 'popular') {
       where = {
         ...where,

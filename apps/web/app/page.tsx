@@ -43,6 +43,7 @@ export default async function Home() {
     announcements,
     workshop,
     feed,
+    newFeed,
   ] = await Promise.all([
     publicApi<HomeInitialData['communities']>(
       '/communities',
@@ -60,6 +61,9 @@ export default async function Home() {
     publicApi<HomeInitialData['feed']>(
       '/feed?mode=popular',
     ),
+    publicApi<HomeInitialData['newFeed']>(
+      '/feed?mode=new',
+    ),
   ]);
 
   return (
@@ -71,6 +75,7 @@ export default async function Home() {
         announcements,
         workshop,
         feed,
+        newFeed,
       }}
     />
   );

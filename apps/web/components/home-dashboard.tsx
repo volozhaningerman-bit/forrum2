@@ -67,6 +67,7 @@ export type HomeInitialData = {
   announcements?: PublicationCardData[];
   workshop?: WorkshopItem[];
   feed?: PublicationCardData[];
+  newFeed?: PublicationCardData[];
 };
 
 const feedTabs: Array<{ key: FeedMode; label: string }> = [
@@ -363,6 +364,9 @@ export function HomeDashboard({
   const [feed, setFeed] = useState<PublicationCardData[]>(
     initialData.feed ?? [],
   );
+  const [newFeed, setNewFeed] = useState<PublicationCardData[]>(
+    initialData.newFeed ?? [],
+  );
   const [mode] = useState<FeedMode>('popular');
   const [expanded, setExpanded] = useState<Set<string>>(
     () => new Set(['internet-projects']),
@@ -370,8 +374,12 @@ export function HomeDashboard({
   const [workshopOpen, setWorkshopOpen] = useState(true);
   const [treeCollapsed, setTreeCollapsed] = useState(false);
   const [feedRequestVersion, setFeedRequestVersion] = useState(0);
+  const [newFeedRequestVersion, setNewFeedRequestVersion] = useState(0);
   const [feedLoading, setFeedLoading] = useState(
     initialData.feed === undefined,
+  );
+  const [newFeedLoading, setNewFeedLoading] = useState(
+    initialData.newFeed === undefined,
   );
   const [pageLoading, setPageLoading] = useState(
     [
@@ -383,6 +391,7 @@ export function HomeDashboard({
     ].some((value) => value === undefined),
   );
   const [feedError, setFeedError] = useState('');
+  const [newFeedError, setNewFeedError] = useState('');
   const [pageError, setPageError] = useState('');
 
   const pageSeeded = [
@@ -393,6 +402,7 @@ export function HomeDashboard({
     initialData.workshop,
   ].every((value) => value !== undefined);
   const feedSeeded = initialData.feed !== undefined;
+  const newFeedSeeded = initialData.newFeed !== undefined;
 
   useEffect(() => {
     if (pageSeeded) return;
@@ -475,6 +485,39 @@ export function HomeDashboard({
       cancelled = true;
     };
   }, [feedRequestVersion, feedSeeded, mode]);
+
+  useEffect(() => {
+    if (newFeedSeeded && newFeedRequestVersion === 0) {
+      setNewFeedLoading(false);
+      return;
+    }
+    let cancelled = false;
+
+    async function loadNewFeed() {
+      setNewFeedLoading(true);
+      setNewFeedError('');
+      try {
+        const items = await api<PublicationCardData[]>('/feed?mode=new');
+        if (cancelled) return;
+        setNewFeed(items);
+      } catch (cause) {
+        if (cancelled) return;
+        setNewFeed([]);
+        setNewFeedError(
+          cause instanceof Error
+            ? cause.message
+            : 'Не удалось загрузить новые темы',
+        );
+      } finally {
+        if (!cancelled) setNewFeedLoading(false);
+      }
+    }
+
+    void loadNewFeed();
+    return () => {
+      cancelled = true;
+    };
+  }, [newFeedRequestVersion, newFeedSeeded]);
 
   const childrenByParent = useMemo(() => {
     const map = new Map<string, Community[]>();
@@ -788,7 +831,7 @@ export function HomeDashboard({
           )}
         </aside>
 
-        <main className="home-discussion-panel home-discussed-stage-d">
+        <main className="home-discussion-panel home-discussed-stage-d home-new-topics-stage-e">
           <section className="home-topic-table-block home-discussed-table" aria-labelledby="home-discussed-heading">
             <div className="home-reference-table-head">
               <span id="home-discussed-heading">Обсуждаемые темы</span>
@@ -891,6 +934,103 @@ export function HomeDashboard({
             <Link className="home-reference-show-more" href="/search">
               Показать больше тем <span aria-hidden="true">→</span>
             </Link>
+          </section>
+
+          <section className="home-topic-table-block home-new-topics-table" aria-labelledby="home-new-topics-heading">
+            <div className="home-reference-table-head">
+              <span id="home-new-topics-heading">Новые темы</span>
+              <span>Автор</span>
+              <span>Ответы</span>
+              <span>Просмотры</span>
+            </div>
+
+            <div className="home-reference-topic-list">
+              {newFeedLoading ? (
+                Array.from({ length: 5 }).map((_, index) => (
+                  <div className="home-reference-topic-skeleton" aria-hidden="true" key={index}>
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                ))
+              ) : newFeedError ? (
+                <div className="home-reference-topic-error">
+                  <strong>Не удалось загрузить новые темы</strong>
+                  <span>{newFeedError}</span>
+                  <button
+                    type="button"
+                    className="button ghost small"
+                    onClick={() => setNewFeedRequestVersion((current) => current + 1)}
+                  >
+                    Повторить
+                  </button>
+                </div>
+              ) : newFeed.length ? (
+                newFeed.slice(0, 5).map((item) => (
+                  <article className="home-reference-topic-row" key={item.id}>
+                    <div className="home-reference-topic-main">
+                      <Link
+                        className="home-reference-topic-visual"
+                        href={`/p/${item.slug}`}
+                        aria-label={`Открыть «${item.title || item.excerpt}»`}
+                      >
+                        <img src={topicVisual(item.community.slug)} alt="" aria-hidden="true" />
+                      </Link>
+                      <div className="home-reference-topic-copy">
+                        <div className="home-reference-topic-title-line">
+                          <Link className="home-reference-topic-title" href={`/p/${item.slug}`}>
+                            {item.title || item.excerpt.slice(0, 100)}
+                          </Link>
+                        </div>
+                        <div className="home-reference-topic-meta">
+                          <Link href={`/communities/${item.community.slug}`}>
+                            {item.community.name}
+                          </Link>
+                          {item.tags[0] && (
+                            <>
+                              <span className="home-reference-topic-meta-separator" aria-hidden="true">›</span>
+                              <Link href={`/tags/${item.tags[0].slug}`}>{item.tags[0].label}</Link>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="home-reference-topic-author">
+                      <Avatar
+                        name={item.author.displayName}
+                        size={30}
+                        url={item.author.avatarUrl}
+                      />
+                      <Link
+                        data-username={item.author.username}
+                        data-user-tone={nameTone(item.author.username)}
+                        href={`/u/${item.author.username}`}
+                      >
+                        {item.author.displayName}
+                      </Link>
+                    </div>
+                    <strong className="home-reference-topic-count" title="Ответы">
+                      {formatNumber(item.commentCount)}
+                    </strong>
+                    <strong className="home-reference-topic-count" title="Просмотры">
+                      {formatNumber(item.viewCount ?? 0)}
+                    </strong>
+                  </article>
+                ))
+              ) : (
+                <div className="home-reference-topic-empty">
+                  <strong>Новых тем пока нет</strong>
+                  <span>Новые публикации появятся здесь сразу после создания.</span>
+                </div>
+              )}
+            </div>
+            {newFeed.length > 0 && (
+              <Link className="home-reference-show-more" href="/search">
+                Показать больше тем <span aria-hidden="true">→</span>
+              </Link>
+            )}
           </section>
         </main>
         <aside className="home-current-panel">

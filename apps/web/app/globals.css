@@ -10287,3 +10287,20 @@ body:has(.home-stage-one) .header :is(a, button, input):focus-visible {
 }
 
 /* /FORRUM_HOME_REDESIGN_STAGE_D_V11 */
+
+/* FORRUM_HOME_REDESIGN_STAGE_E_V11
+   Stage E: second approved center table — "Новые темы".
+   Reuses Stage D row language and only adds vertical rhythm for the second block.
+*/
+.home-stage-one .home-discussion-panel.home-new-topics-stage-e {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  overflow: visible;
+}
+
+.home-stage-one .home-new-topics-table {
+  align-self: start;
+}
+
+/* /FORRUM_HOME_REDESIGN_STAGE_E_V11 */
