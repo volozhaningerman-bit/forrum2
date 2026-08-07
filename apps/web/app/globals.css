@@ -10037,3 +10037,253 @@ body:has(.home-stage-one) .header :is(a, button, input):focus-visible {
 }
 
 /* /FORRUM_HOME_REDESIGN_STAGE_C_2_V11 */
+
+/* FORRUM_HOME_REDESIGN_STAGE_D_V11
+   Stage D: approved master-reference "Обсуждаемые темы" table.
+   Center contains only this block until Stage E adds "Новые темы".
+*/
+
+.home-stage-one .home-discussion-panel.home-discussed-stage-d {
+  overflow: hidden;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.home-stage-one .home-topic-table-block {
+  overflow: hidden;
+  border: 1px solid var(--forrum-home-line);
+  border-radius: var(--forrum-home-radius);
+  background: var(--forrum-home-surface);
+}
+
+.home-stage-one .home-reference-table-head,
+.home-stage-one .home-reference-topic-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px 70px 84px;
+  align-items: center;
+  column-gap: 14px;
+}
+
+.home-stage-one .home-reference-table-head {
+  min-height: 40px;
+  padding: 0 14px;
+  border-bottom: 1px solid rgba(25, 211, 154, .16);
+  background: rgba(25, 211, 154, .085);
+  color: var(--forrum-home-accent);
+  font-size: 11.5px;
+  font-weight: 650;
+}
+
+.home-stage-one .home-reference-table-head span:nth-child(n + 2) {
+  text-align: center;
+}
+
+.home-stage-one .home-reference-topic-row {
+  min-height: 68px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--forrum-home-line-soft);
+  background: transparent;
+  transition: background-color 100ms ease;
+}
+
+.home-stage-one .home-reference-topic-row:hover,
+.home-stage-one .home-reference-topic-row:focus-within {
+  background: rgba(25, 211, 154, .035);
+}
+
+.home-stage-one .home-reference-topic-main {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  gap: 11px;
+}
+
+.home-stage-one .home-reference-topic-visual {
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  display: block;
+  border: 1px solid var(--forrum-home-line-strong);
+  border-radius: 5px;
+  background: var(--forrum-home-surface-soft);
+}
+
+.home-stage-one .home-reference-topic-visual img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.home-stage-one .home-reference-topic-copy {
+  min-width: 0;
+}
+
+.home-stage-one .home-reference-topic-title-line {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.home-stage-one .home-reference-topic-title {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--forrum-home-text);
+  font-size: 14px;
+  line-height: 1.28;
+  font-weight: 620;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-stage-one .home-reference-topic-title:hover,
+.home-stage-one .home-reference-topic-title:focus-visible {
+  color: var(--forrum-home-accent-hover);
+  outline: none;
+}
+
+.home-stage-one .home-reference-active-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--forrum-home-accent);
+  opacity: .9;
+}
+
+.home-stage-one .home-reference-topic-meta {
+  min-width: 0;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  color: var(--forrum-home-muted);
+  font-size: 10.5px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.home-stage-one .home-reference-topic-meta a {
+  overflow: hidden;
+  color: var(--forrum-home-muted);
+  text-overflow: ellipsis;
+}
+
+.home-stage-one .home-reference-topic-meta a:hover,
+.home-stage-one .home-reference-topic-meta a:focus-visible {
+  color: var(--forrum-home-muted-strong);
+  outline: none;
+}
+
+.home-stage-one .home-reference-topic-meta-separator {
+  color: rgba(141, 154, 152, .55);
+}
+
+.home-stage-one .home-reference-topic-author {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.home-stage-one .home-reference-topic-author .avatar {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.home-stage-one .home-reference-topic-author a {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--forrum-home-text-soft);
+  font-size: 11.5px;
+  font-weight: 560;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-stage-one .home-reference-topic-author a:hover,
+.home-stage-one .home-reference-topic-author a:focus-visible {
+  color: var(--forrum-home-accent-hover);
+  outline: none;
+}
+
+.home-stage-one .home-reference-topic-count {
+  color: var(--forrum-home-text-soft);
+  font-size: 11.5px;
+  font-weight: 560;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.home-stage-one .home-reference-topic-empty,
+.home-stage-one .home-reference-topic-error {
+  min-height: 96px;
+  padding: 20px 18px;
+  display: grid;
+  place-items: center;
+  gap: 7px;
+  color: var(--forrum-home-muted);
+  text-align: center;
+  font-size: 12px;
+}
+
+.home-stage-one .home-reference-topic-error strong,
+.home-stage-one .home-reference-topic-empty strong {
+  color: var(--forrum-home-text-soft);
+}
+
+.home-stage-one .home-reference-topic-skeleton {
+  min-height: 68px;
+  padding: 8px 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 190px 70px 84px;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid var(--forrum-home-line-soft);
+  opacity: .55;
+}
+
+.home-stage-one .home-reference-topic-skeleton span {
+  height: 8px;
+  border-radius: 2px;
+  background: var(--forrum-home-line-strong);
+}
+
+.home-stage-one .home-reference-show-more {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--forrum-home-accent);
+  font-size: 11.5px;
+  font-weight: 560;
+  transition: color 100ms ease, background-color 100ms ease;
+}
+
+.home-stage-one .home-reference-show-more:hover,
+.home-stage-one .home-reference-show-more:focus-visible {
+  background: rgba(25, 211, 154, .03);
+  color: var(--forrum-home-accent-hover);
+  outline: none;
+}
+
+.home-stage-one .home-reference-show-more span {
+  font-size: 15px;
+  line-height: 1;
+}
+
+@media (max-width: 1080px) {
+  .home-stage-one .home-reference-table-head,
+  .home-stage-one .home-reference-topic-row,
+  .home-stage-one .home-reference-topic-skeleton {
+    grid-template-columns: minmax(0, 1fr) 160px 62px 72px;
+    column-gap: 10px;
+  }
+}
+
+/* /FORRUM_HOME_REDESIGN_STAGE_D_V11 */

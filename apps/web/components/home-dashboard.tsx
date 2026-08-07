@@ -363,7 +363,7 @@ export function HomeDashboard({
   const [feed, setFeed] = useState<PublicationCardData[]>(
     initialData.feed ?? [],
   );
-  const [mode, setMode] = useState<FeedMode>('new');
+  const [mode] = useState<FeedMode>('popular');
   const [expanded, setExpanded] = useState<Set<string>>(
     () => new Set(['internet-projects']),
   );
@@ -437,7 +437,7 @@ export function HomeDashboard({
   }, [pageSeeded]);
 
   useEffect(() => {
-    if (mode === 'new' && feedSeeded && feedRequestVersion === 0) {
+    if (mode === 'popular' && feedSeeded && feedRequestVersion === 0) {
       setFeedLoading(false);
       return;
     }
@@ -788,203 +788,111 @@ export function HomeDashboard({
           )}
         </aside>
 
-        <main className="home-discussion-panel">
-          <header className="home-feed-toolbar">
-            <div className="home-feed-title">
-              <h2>Лента обсуждений</h2>
-              {!feedLoading && mode === 'new' && feed.length > 0 && (
-                <span className="home-new-feed-count">
-                  {feed.length > 99 ? '99+' : feed.length} новых
-                </span>
-              )}
-            </div>
-            <div className="home-feed-actions">
-              <Link className="home-filter-button" href="/search" aria-label="Открыть фильтры обсуждений">
-                <span aria-hidden="true">≡</span>
-                Фильтры
-              </Link>
-              <Link className="button home-create-topic" href="/create">
-                <span aria-hidden="true">＋</span>
-                <span className="home-create-topic-label">Создать тему</span>
-              </Link>
-            </div>
-          </header>
-
-          <div className="home-feed-tabs" role="tablist" aria-label="Режим ленты">
-            {feedTabs.map((tab) => (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={mode === tab.key}
-                className={mode === tab.key ? 'active' : ''}
-                key={tab.key}
-                onClick={() => setMode(tab.key)}
-              >
-                {tab.label}
-                {tab.key === 'new' && mode === 'new' && !feedLoading && feed.length > 0 && (
-                  <span className="home-tab-count" aria-label={`${feed.length} новых тем`}>
-                    {feed.length > 99 ? '99+' : feed.length}
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-
-          <div className="home-feed-table">
-            <div className="home-feed-head" aria-hidden="true">
-              <span>Тема</span>
+        <main className="home-discussion-panel home-discussed-stage-d">
+          <section className="home-topic-table-block home-discussed-table" aria-labelledby="home-discussed-heading">
+            <div className="home-reference-table-head">
+              <span id="home-discussed-heading">Обсуждаемые темы</span>
               <span>Автор</span>
               <span>Ответы</span>
               <span>Просмотры</span>
-              <span />
             </div>
-            {feedLoading ? (
-              Array.from({ length: 8 }).map((_, index) => (
-                <TopicSkeleton key={index} />
-              ))
-            ) : feedError ? (
-              <div className="home-feed-status error">
-                <strong>Не удалось загрузить ленту</strong>
-                <span>{feedError}</span>
-                <button
-                  type="button"
-                  className="button ghost small"
-                  onClick={() => setFeedRequestVersion((current) => current + 1)}
-                >
-                  Повторить
-                </button>
-              </div>
-            ) : feed.length ? (
-              feed.slice(0, 12).map((item, index) => {
-                const pinned = Boolean(
-                  item.pinnedUntil &&
-                    new Date(item.pinnedUntil).getTime() > Date.now(),
-                );
-                const unread = (item.recentCommentCount ?? 0) > 0;
-                const hot = (item.recentCommentCount ?? 0) >= 3 || item.commentCount >= 25;
-                const answered = item.type === 'QUESTION' && item.commentCount > 0;
-                const showCover =
-                  item.type === 'NEWS' ||
-                  item.type === 'GUIDE' ||
-                  item.type === 'PROJECT' ||
-                  index < 2;
 
-                return (
-                  <article
-                    className={`home-topic-row ${
-                      item.format === 'TOPIC' ? 'home-topic-permanent' : ''
-                    } ${unread ? 'home-topic-unread' : ''}`}
-                    data-community={item.community.slug}
-                    key={item.id}
+            <div className="home-reference-topic-list">
+              {feedLoading ? (
+                Array.from({ length: 5 }).map((_, index) => (
+                  <div className="home-reference-topic-skeleton" aria-hidden="true" key={index}>
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                ))
+              ) : feedError ? (
+                <div className="home-reference-topic-error">
+                  <strong>Не удалось загрузить обсуждаемые темы</strong>
+                  <span>{feedError}</span>
+                  <button
+                    type="button"
+                    className="button ghost small"
+                    onClick={() => setFeedRequestVersion((current) => current + 1)}
                   >
-                    <Link
-                      className={`home-topic-visual ${showCover ? 'with-cover' : 'with-type-mark'}`}
-                      href={`/p/${item.slug}`}
-                      aria-label={`Открыть «${item.title || item.excerpt}»`}
-                    >
-                      {showCover ? (
+                    Повторить
+                  </button>
+                </div>
+              ) : feed.length ? (
+                feed.slice(0, 5).map((item) => (
+                  <article className="home-reference-topic-row" key={item.id}>
+                    <div className="home-reference-topic-main">
+                      <Link
+                        className="home-reference-topic-visual"
+                        href={`/p/${item.slug}`}
+                        aria-label={`Открыть «${item.title || item.excerpt}»`}
+                      >
                         <img src={topicVisual(item.community.slug)} alt="" aria-hidden="true" />
-                      ) : (
-                        <TopicTypeMark type={item.type} />
-                      )}
-                    </Link>
-
-                    <div className="home-topic-copy">
-                      <div className="home-topic-topline">
-                        <div className="home-topic-path">
-                          {unread && <span className="home-topic-unread-dot" title="Есть новые ответы" />}
+                      </Link>
+                      <div className="home-reference-topic-copy">
+                        <div className="home-reference-topic-title-line">
+                          <Link className="home-reference-topic-title" href={`/p/${item.slug}`}>
+                            {item.title || item.excerpt.slice(0, 100)}
+                          </Link>
+                          {(item.recentCommentCount ?? 0) > 0 && (
+                            <span
+                              className="home-reference-active-dot"
+                              title="Обсуждается за последние 24 часа"
+                              aria-label="Обсуждается за последние 24 часа"
+                            />
+                          )}
+                        </div>
+                        <div className="home-reference-topic-meta">
                           <Link href={`/communities/${item.community.slug}`}>
                             {item.community.name}
                           </Link>
+                          {item.tags[0] && (
+                            <>
+                              <span className="home-reference-topic-meta-separator" aria-hidden="true">›</span>
+                              <Link href={`/tags/${item.tags[0].slug}`}>{item.tags[0].label}</Link>
+                            </>
+                          )}
                         </div>
-                        <div className="home-topic-statuses" aria-label="Статусы темы">
-                          {pinned && <span className="home-topic-status pinned">Закреплено</span>}
-                          {hot && <span className="home-topic-status hot">Горячая</span>}
-                          {answered && <span className="home-topic-status answered">Есть ответ</span>}
-                        </div>
-                      </div>
-
-                      <Link className="home-topic-title" href={`/p/${item.slug}`}>
-                        {item.title || item.excerpt.slice(0, 100)}
-                      </Link>
-                      <p>{item.excerpt}</p>
-
-                      <div className="home-topic-hashtags">
-                        {item.tags.slice(0, 4).map((tag) => (
-                          <Link
-                            className="home-topic-hashtag"
-                            href={`/tags/${tag.slug}`}
-                            key={tag.id}
-                          >
-                            #{tag.label}
-                          </Link>
-                        ))}
                       </div>
                     </div>
 
-                    <div className="home-topic-author">
+                    <div className="home-reference-topic-author">
                       <Avatar
                         name={item.author.displayName}
-                        size={28}
+                        size={30}
                         url={item.author.avatarUrl}
                       />
-                      <span className="home-topic-author-copy">
-                        <Link
-                          className="home-topic-author-link"
-                          data-username={item.author.username}
-                          data-user-tone={nameTone(item.author.username)}
-                          data-role={item.author.username === 'owner' ? 'owner' : undefined}
-                          href={`/u/${item.author.username}`}
-                        >
-                          {item.author.displayName}
-                        </Link>
-                        <span>{relativeDate(item.lastActivityAt || item.createdAt)}</span>
-                      </span>
+                      <Link
+                        data-username={item.author.username}
+                        data-user-tone={nameTone(item.author.username)}
+                        href={`/u/${item.author.username}`}
+                      >
+                        {item.author.displayName}
+                      </Link>
                     </div>
 
-                    <strong className="home-topic-count" title="Ответы">
+                    <strong className="home-reference-topic-count" title="Ответы">
                       {formatNumber(item.commentCount)}
                     </strong>
-                    <strong className="home-topic-count" title="Просмотры">
+                    <strong className="home-reference-topic-count" title="Просмотры">
                       {formatNumber(item.viewCount ?? 0)}
                     </strong>
-
-                    <div className="home-topic-actions">
-                      {item.isBookmarked ? (
-                        <Link className="home-topic-action saved" href="/saved" title="Открыть сохранённое">
-                          <span aria-hidden="true">◆</span>
-                          <span className="visually-hidden">Сохранено</span>
-                        </Link>
-                      ) : (
-                        <Link className="home-topic-action" href={`/p/${item.slug}`} title="Сохранить на странице темы">
-                          <span aria-hidden="true">◇</span>
-                          <span className="visually-hidden">Сохранить тему</span>
-                        </Link>
-                      )}
-                      <details className="home-topic-more">
-                        <summary aria-label="Дополнительные действия">•••</summary>
-                        <div className="home-topic-more-menu">
-                          <Link href={`/p/${item.slug}`}>Открыть тему</Link>
-                          <Link href={`/communities/${item.community.slug}`}>Перейти в раздел</Link>
-                          <Link href={`/u/${item.author.username}`}>Профиль автора</Link>
-                        </div>
-                      </details>
-                    </div>
                   </article>
-                );
-              })
-            ) : (
-              <div className="home-feed-status">
-                <strong>В этой вкладке пока пусто</strong>
-                <span>Выберите другой режим или создайте первую тему.</span>
-              </div>
-            )}
-          </div>
-          <Link className="home-panel-footer" href="/search">
-            Перейти ко всем обсуждениям <span aria-hidden="true">→</span>
-          </Link>
-        </main>
+                ))
+              ) : (
+                <div className="home-reference-topic-empty">
+                  <strong>За последние 24 часа активных обсуждений пока нет</strong>
+                  <span>Здесь появятся темы, в которых начнут активно отвечать пользователи.</span>
+                </div>
+              )}
+            </div>
 
+            <Link className="home-reference-show-more" href="/search">
+              Показать больше тем <span aria-hidden="true">→</span>
+            </Link>
+          </section>
+        </main>
         <aside className="home-current-panel">
           <header className="home-panel-heading">
             <h2>Актуальное</h2>

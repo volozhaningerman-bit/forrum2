@@ -120,6 +120,19 @@ export class FeedService {
       communityId: hiddenCommunityIds.size && !['subscriptions', 'saved'].includes(mode) ? { notIn: [...hiddenCommunityIds] } : undefined,
     };
     let where: Prisma.PublicationWhereInput = { status: 'PUBLISHED', ...exclusions };
+    // FORRUM_DISCUSSSED_TOPICS_24H_V11
+    if (mode === 'popular') {
+      where = {
+        ...where,
+        format: 'TOPIC',
+        comments: {
+          some: {
+            hiddenAt: null,
+            createdAt: { gte: recentCommentSince },
+          },
+        },
+      };
+    }
     if (mode === 'subscriptions' && userId) {
       const sources: Prisma.PublicationWhereInput[] = [];
       if (communityIds.size) sources.push({ communityId: { in: [...communityIds] } });
@@ -169,7 +182,16 @@ export class FeedService {
         isPinned: Boolean(publication.pinnedUntil && publication.pinnedUntil.getTime() > now),
       });
       return { publication, ...ranking };
-    }).sort((a, b) => b.score - a.score);
+    }).sort((a, b) => {
+      if (mode === 'popular') {
+        return (
+          b.publication.comments.length - a.publication.comments.length ||
+          b.publication.lastActivityAt.getTime() - a.publication.lastActivityAt.getTime() ||
+          b.publication._count.comments - a.publication._count.comments
+        );
+      }
+      return b.score - a.score;
+    });
 
     const selected: typeof scored = [];
     const communityCount = new Map<string, number>();
@@ -179,7 +201,7 @@ export class FeedService {
       if (mode === 'for-you' && !includeInForYou({ authenticated: Boolean(userId), recommendationsEnabled, personallyRelevant: item.personallyRelevant, discussed: item.discussed })) continue;
       const c = communityCount.get(item.publication.communityId) ?? 0;
       const a = authorCount.get(item.publication.authorId) ?? 0;
-      if (!['subscriptions', 'saved', 'new'].includes(mode) && (c >= 4 || a >= 3)) continue;
+      if (!['subscriptions', 'saved', 'new', 'popular'].includes(mode) && (c >= 4 || a >= 3)) continue;
       selected.push(item);
       communityCount.set(item.publication.communityId, c + 1);
       authorCount.set(item.publication.authorId, a + 1);

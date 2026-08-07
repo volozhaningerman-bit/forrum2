@@ -46,10 +46,13 @@ for (const marker of [
   requireMarker(catalogue, marker, 'community catalogue tree');
 }
 
-// FORRUM_HOME_STAGE_1_V9_INTERACTION_CONTRACT
-requireMarker(home, "'unanswered'", 'home feed');
-requireMarker(home, 'Без ответа', 'home feed');
-requireMarker(home, 'home-feed-toolbar', 'home feed');
+// FORRUM_HOME_REDESIGN_STAGE_D_V11_INTERACTION_CONTRACT
+requireMarker(home, 'home-discussed-stage-d', 'home discussed topics');
+requireMarker(home, 'Обсуждаемые темы', 'home discussed topics');
+requireMarker(home, 'home-reference-topic-row', 'home discussed topics');
+requireMarker(home, 'Показать больше тем', 'home discussed topics');
+forbidMarker(home, 'home-feed-toolbar', 'legacy home feed');
+forbidMarker(home, 'home-feed-tabs', 'legacy home feed');
 // FORRUM_HOME_REDESIGN_STAGE_C_V11_INTERACTION_CONTRACT
 forbidMarker(home, 'Все категории', 'home tree');
 forbidMarker(home, 'home-tree-all-link', 'home tree');

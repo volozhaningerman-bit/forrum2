@@ -58,7 +58,7 @@ export default async function Home() {
       '/workshop',
     ),
     publicApi<HomeInitialData['feed']>(
-      '/feed?mode=new',
+      '/feed?mode=popular',
     ),
   ]);
 
