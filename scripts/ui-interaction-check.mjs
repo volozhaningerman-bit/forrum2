@@ -126,3 +126,19 @@ requireMarker(home, 'home-news-stage-f', 'home news rail');
 requireMarker(home, 'home-participation-stage-f', 'home participation rail');
 forbidMarker(home, 'Новое в Мастерской', 'legacy workshop rail');
 forbidMarker(home, 'Новые сообщества', 'legacy communities rail');
+
+// FORRUM_COMMUNITIES_REDESIGN_STAGE_F2_V12_INTERACTION_CONTRACT
+for (const marker of [
+  'communities-v12-row-expand-surface',
+  'communities-v12-catalogue-icon-link',
+  'communities-v12-catalogue-name',
+  'communities-v12-hierarchy-child-expand-surface',
+  'communities-v12-hierarchy-child-icon-link',
+  'communities-v12-hierarchy-child-name',
+]) {
+  requireMarker(
+    catalogue,
+    marker,
+    'community tree-parity interaction',
+  );
+}

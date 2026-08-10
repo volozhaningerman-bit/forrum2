@@ -12467,3 +12467,88 @@ body:has(.communities-v12-stage-a) .main {
 }
 
 /* /FORRUM_COMMUNITIES_REDESIGN_STAGE_F_V12 */
+
+/* FORRUM_COMMUNITIES_REDESIGN_STAGE_F2_V12
+   Interaction parity with the approved homepage category tree:
+   icon/name navigate; all remaining row/card space expands the hierarchy.
+*/
+.communities-v12-stage-a .communities-v12-catalogue-row,
+.communities-v12-stage-a .communities-v12-hierarchy-child {
+  position: relative;
+  isolation: isolate;
+}
+
+.communities-v12-stage-a .communities-v12-row-expand-surface,
+.communities-v12-stage-a .communities-v12-hierarchy-child-expand-surface {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.communities-v12-stage-a .communities-v12-row-expand-surface:hover,
+.communities-v12-stage-a .communities-v12-row-expand-surface:active,
+.communities-v12-stage-a .communities-v12-hierarchy-child-expand-surface:hover,
+.communities-v12-stage-a .communities-v12-hierarchy-child-expand-surface:active {
+  background: transparent;
+}
+
+.communities-v12-stage-a .communities-v12-row-expand-surface:focus-visible,
+.communities-v12-stage-a .communities-v12-hierarchy-child-expand-surface:focus-visible {
+  outline: 1px solid var(--forrum-home-accent);
+  outline-offset: -2px;
+}
+
+.communities-v12-stage-a
+  .communities-v12-catalogue-row
+  > :not(.communities-v12-row-expand-surface),
+.communities-v12-stage-a
+  .communities-v12-hierarchy-child
+  > :not(.communities-v12-hierarchy-child-expand-surface) {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-icon-link,
+.communities-v12-stage-a .communities-v12-catalogue-name,
+.communities-v12-stage-a .communities-v12-subscribe,
+.communities-v12-stage-a .communities-v12-hierarchy-child-icon-link,
+.communities-v12-stage-a .communities-v12-hierarchy-child-name {
+  pointer-events: auto;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-child-icon-link {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 7px;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-child-icon-link:focus-visible,
+.communities-v12-stage-a .communities-v12-hierarchy-child-name:focus-visible {
+  outline: 1px solid var(--forrum-home-accent);
+  outline-offset: 2px;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-child-name:hover,
+.communities-v12-stage-a .communities-v12-hierarchy-child-name:focus-visible {
+  color: var(--forrum-home-accent);
+  text-decoration: none;
+}
+
+.communities-v12-stage-a .communities-v12-open-hierarchy,
+.communities-v12-stage-a .communities-v12-hierarchy-child-arrow {
+  pointer-events: none;
+  user-select: none;
+}
+/* /FORRUM_COMMUNITIES_REDESIGN_STAGE_F2_V12 */

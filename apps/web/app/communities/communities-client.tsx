@@ -395,6 +395,13 @@ export function CommunitiesClient({
         }`}
         key={item.id}
       >
+        <button
+          type="button"
+          className="communities-v12-row-expand-surface"
+          aria-label={`Показать подразделы ${item.name}`}
+          aria-pressed={selected}
+          onClick={() => setSelectedSlug(item.slug)}
+        />
         <div className="communities-v12-catalogue-community">
           <Link
             className="communities-v12-catalogue-icon-link"
@@ -466,16 +473,12 @@ export function CommunitiesClient({
               ? '✓  Вы подписаны'
               : 'Подписаться'}
         </button>
-
-        <button
-          type="button"
+        <span
           className="communities-v12-open-hierarchy"
-          aria-label={`Показать подразделы ${item.name}`}
-          aria-pressed={selected}
-          onClick={() => setSelectedSlug(item.slug)}
+          aria-hidden="true"
         >
-          <span aria-hidden="true">›</span>
-        </button>
+          ›
+        </span>
       </article>
     );
   }
@@ -749,16 +752,35 @@ export function CommunitiesClient({
                         className="communities-v12-hierarchy-child"
                         key={child.id}
                       >
-                        <Link
-                          className="communities-v12-hierarchy-child-main"
-                          href={communityHref(child.slug)}
-                        >
-                          <CommunityGlyph
-                            slug={child.slug}
-                            compact
-                          />
+                        <button
+                          type="button"
+                          className="communities-v12-hierarchy-child-expand-surface"
+                          aria-label={`Показать подразделы ${child.name}`}
+                          aria-pressed={selectedSlug === child.slug}
+                          onClick={() =>
+                            setSelectedSlug(child.slug)
+                          }
+                        />
+                        <div className="communities-v12-hierarchy-child-main">
+                          <Link
+                            className="communities-v12-hierarchy-child-icon-link"
+                            href={communityHref(child.slug)}
+                            aria-label={`Открыть ${child.name}`}
+                          >
+                            <CommunityGlyph
+                              slug={child.slug}
+                              compact
+                            />
+                          </Link>
                           <div>
-                            <strong>{child.name}</strong>
+                            <strong>
+                              <Link
+                                className="communities-v12-hierarchy-child-name"
+                                href={communityHref(child.slug)}
+                              >
+                                {child.name}
+                              </Link>
+                            </strong>
                             <p>
                               {child.shortDescription ||
                                 child.description}
@@ -779,18 +801,13 @@ export function CommunitiesClient({
                               )}
                             </span>
                           </div>
-                        </Link>
-
-                        <button
-                          type="button"
+                        </div>
+                        <span
                           className="communities-v12-hierarchy-child-arrow"
-                          aria-label={`Показать подразделы ${child.name}`}
-                          onClick={() =>
-                            setSelectedSlug(child.slug)
-                          }
+                          aria-hidden="true"
                         >
                           ›
-                        </button>
+                        </span>
                       </article>
                     ))}
                   </div>
