@@ -476,21 +476,39 @@ export function CommunitiesClient({
   }
   return (
     <div className="community-browser-page communities-v12-stage-a">
-      <header className="compact-page-heading">
-        <div>
-          <h1>Сообщества</h1>
-          <p>
-            Направления, подразделы и активность
-            FORRUM.
-          </p>
+            <header className="communities-v12-hero" aria-labelledby="communities-title">
+        <div className="communities-v12-hero-main">
+          <span className="communities-v12-hero-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32" focusable="false">
+              <circle cx="16" cy="11" r="4" />
+              <circle cx="7.5" cy="13" r="3" />
+              <circle cx="24.5" cy="13" r="3" />
+              <path d="M9.5 25v-2.2c0-4 2.9-7.1 6.5-7.1s6.5 3.1 6.5 7.1V25" />
+              <path d="M2.8 24.2v-1.7c0-3.1 2-5.5 4.7-5.5 1 0 1.9.3 2.6.8" />
+              <path d="M29.2 24.2v-1.7c0-3.1-2-5.5-4.7-5.5-1 0-1.9.3-2.6.8" />
+            </svg>
+          </span>
+
+          <div className="communities-v12-hero-copy">
+            <h1 id="communities-title">Сообщества</h1>
+            <p>
+              Сообщества — основные направления FORRUM. Подписывайтесь,
+              участвуйте в обсуждениях и помогайте им развиваться.
+              За порядком и развитием следят кураторы, выбранные участниками.
+            </p>
+          </div>
         </div>
 
-        <Link
-          className="button"
-          href="/communities/proposals"
-        >
-          Предложить сообщество
-        </Link>
+        <div className="communities-v12-hero-actions" aria-label="Действия сообщества">
+          <Link className="communities-v12-hero-primary" href="/communities/proposals">
+            Предложить сообщество
+            <span aria-hidden="true">＋</span>
+          </Link>
+          <Link className="communities-v12-hero-secondary" href="/#become-curator">
+            Стать куратором
+            <span aria-hidden="true">→</span>
+          </Link>
+        </div>
       </header>
 
       <section
