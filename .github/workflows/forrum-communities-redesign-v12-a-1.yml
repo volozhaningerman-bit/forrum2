@@ -1,0 +1,188 @@
+name: FORRUM Communities Redesign V12.A.1
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-communities-redesign-v12-a-1
+  cancel-in-progress: false
+
+env:
+  NODE_ENV: test
+  DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/forrum?schema=public
+  JWT_SECRET: forrum-github-actions-secret
+  WEB_URL: http://127.0.0.1:3000
+  API_INTERNAL_URL: http://127.0.0.1:4000/v1
+  PUBLIC_API_URL: http://127.0.0.1:4000
+  API_PORT: '4000'
+  PORT: '3000'
+
+jobs:
+  communities-stage-a-1:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: forrum
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d forrum"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    steps:
+      - name: Check out canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify approved baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f apps/web/app/communities/page.tsx
+          test -f apps/web/app/communities/communities-client.tsx
+          test -f apps/web/components/main-nav.tsx
+          test -f apps/web/components/site-header.tsx
+          test -f apps/web/components/site-footer.tsx
+          test -f apps/web/app/globals.css
+          test -f apps/api/src/communities/communities.controller.ts
+          test -f apps/api/src/communities/communities.service.ts
+          grep -q "CommunitiesClient" apps/web/app/communities/page.tsx
+          grep -q "api<Community\[]>('/communities')" apps/web/app/communities/communities-client.tsx
+          grep -q "FORRUM_HOME_REDESIGN_STAGE_B_V11" apps/web/app/globals.css
+          grep -q "FORRUM_HOME_REDESIGN_STAGE_H2_V11" apps/web/app/globals.css
+          grep -q "home-curator-requirements-stage-h" apps/web/components/home-dashboard.tsx
+          test -z "$(git status --porcelain)"
+
+      - name: Apply Communities Stage A
+        shell: bash
+        env:
+          STAGE_A_PATCH_B64: ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCgpjbGllbnRfcGF0aCA9IFBhdGgoJ2FwcHMvd2ViL2FwcC9jb21tdW5pdGllcy9jb21tdW5pdGllcy1jbGllbnQudHN4JykKbmF2X3BhdGggPSBQYXRoKCdhcHBzL3dlYi9jb21wb25lbnRzL21haW4tbmF2LnRzeCcpCmZvb3Rlcl9wYXRoID0gUGF0aCgnYXBwcy93ZWIvY29tcG9uZW50cy9zaXRlLWZvb3Rlci50c3gnKQpjc3NfcGF0aCA9IFBhdGgoJ2FwcHMvd2ViL2FwcC9nbG9iYWxzLmNzcycpCmNoZWNrX3BhdGggPSBQYXRoKCdzY3JpcHRzL2NvbW11bml0aWVzLXJlZGVzaWduLXN0YWdlLWEtY2hlY2subWpzJykKZG9jX3BhdGggPSBQYXRoKCdkb2NzL0ZPUlJVTV9DT01NVU5JVElFU19SRURFU0lHTl9TVEFHRV9BX1YxMi5tZCcpCgpmb3IgcGF0aCBpbiBbY2xpZW50X3BhdGgsIG5hdl9wYXRoLCBmb290ZXJfcGF0aCwgY3NzX3BhdGhdOgogICAgaWYgbm90IHBhdGguaXNfZmlsZSgpOgogICAgICAgIHJhaXNlIFJ1bnRpbWVFcnJvcihmJ01pc3NpbmcgcmVxdWlyZWQgYmFzZWxpbmUgZmlsZToge3BhdGh9JykKCmNsaWVudCA9IGNsaWVudF9wYXRoLnJlYWRfdGV4dChlbmNvZGluZz0ndXRmLTgnKQpuYXYgPSBuYXZfcGF0aC5yZWFkX3RleHQoZW5jb2Rpbmc9J3V0Zi04JykKZm9vdGVyID0gZm9vdGVyX3BhdGgucmVhZF90ZXh0KGVuY29kaW5nPSd1dGYtOCcpCmNzcyA9IGNzc19wYXRoLnJlYWRfdGV4dChlbmNvZGluZz0ndXRmLTgnKQoKb2xkX3Jvb3QgPSAnPGRpdiBjbGFzc05hbWU9ImNvbW11bml0eS1icm93c2VyLXBhZ2UiPicKbmV3X3Jvb3QgPSAnPGRpdiBjbGFzc05hbWU9ImNvbW11bml0eS1icm93c2VyLXBhZ2UgY29tbXVuaXRpZXMtdjEyLXN0YWdlLWEiPicKaWYgb2xkX3Jvb3QgaW4gY2xpZW50OgogICAgY2xpZW50ID0gY2xpZW50LnJlcGxhY2Uob2xkX3Jvb3QsIG5ld19yb290LCAxKQplbGlmIG5ld19yb290IG5vdCBpbiBjbGllbnQ6CiAgICByYWlzZSBSdW50aW1lRXJyb3IoJ0NvbW11bml0aWVzIHBhZ2Ugcm9vdCBiYXNlbGluZSBjaGFuZ2VkIHVuZXhwZWN0ZWRseScpCgpvbGRfbmF2X21vZGUgPSAiICBjb25zdCBvbkhvbWUgPSBwYXRobmFtZSA9PT0gJy8nO1xuICBjb25zdCBsaW5rcyA9IG9uSG9tZSA/IGhvbWVMaW5rcyA6IGxlZ2FjeUxpbmtzOyIKbmV3X25hdl9tb2RlID0gIiAgY29uc3Qgb25Ib21lID0gcGF0aG5hbWUgPT09ICcvJztcbiAgY29uc3Qgb25Db21tdW5pdGllcyA9IHBhdGhuYW1lID09PSAnL2NvbW11bml0aWVzJztcbiAgY29uc3QgdXNlQXBwcm92ZWROYXYgPSBvbkhvbWUgfHwgb25Db21tdW5pdGllcztcbiAgY29uc3QgbGlua3MgPSB1c2VBcHByb3ZlZE5hdiA/IGhvbWVMaW5rcyA6IGxlZ2FjeUxpbmtzOyIKaWYgb2xkX25hdl9tb2RlIGluIG5hdjoKICAgIG5hdiA9IG5hdi5yZXBsYWNlKG9sZF9uYXZfbW9kZSwgbmV3X25hdl9tb2RlLCAxKQplbGlmIG5ld19uYXZfbW9kZSBub3QgaW4gbmF2OgogICAgcmFpc2UgUnVudGltZUVycm9yKCdNYWluTmF2IG1vZGUgYmFzZWxpbmUgY2hhbmdlZCB1bmV4cGVjdGVkbHknKQoKb2xkX2RvdCA9ICIgICAgICAgIGNvbnN0IHNob3dEb3QgPSBvbkhvbWVcbiAgICAgICAgICA/IGhyZWYgPT09ICcvbmV3cycgJiYgbmV3c1VucmVhZFxuICAgICAgICAgIDogaHJlZiA9PT0gJy9ldmVudHMnICYmIGV2ZW50c1VucmVhZDsiCm5ld19kb3QgPSAiICAgICAgICBjb25zdCBzaG93RG90ID0gdXNlQXBwcm92ZWROYXZcbiAgICAgICAgICA/IGhyZWYgPT09ICcvbmV3cycgJiYgbmV3c1VucmVhZFxuICAgICAgICAgIDogaHJlZiA9PT0gJy9ldmVudHMnICYmIGV2ZW50c1VucmVhZDsiCmlmIG9sZF9kb3QgaW4gbmF2OgogICAgbmF2ID0gbmF2LnJlcGxhY2Uob2xkX2RvdCwgbmV3X2RvdCwgMSkKZWxpZiBuZXdfZG90IG5vdCBpbiBuYXY6CiAgICByYWlzZSBSdW50aW1lRXJyb3IoJ01haW5OYXYgdW5yZWFkLWRvdCBiYXNlbGluZSBjaGFuZ2VkIHVuZXhwZWN0ZWRseScpCgpoaWRlX2Zvb3RlciA9ICIgIGNvbnN0IGhpZGVGb290ZXIgPSBwYXRobmFtZSA9PT0gJy9jb21tdW5pdGllcyc7XG4gIGlmIChoaWRlRm9vdGVyKSByZXR1cm4gbnVsbDtcblxuIgppZiBoaWRlX2Zvb3RlciBub3QgaW4gZm9vdGVyOgogICAgYW5jaG9yID0gIiAgY29uc3QgaXNIb21lID0gcGF0aG5hbWUgPT09ICcvJztcbiIKICAgIGlmIGFuY2hvciBub3QgaW4gZm9vdGVyOgogICAgICAgIHJhaXNlIFJ1bnRpbWVFcnJvcignU2l0ZUZvb3RlciBwYXRobmFtZSBiYXNlbGluZSBjaGFuZ2VkIHVuZXhwZWN0ZWRseScpCiAgICBmb290ZXIgPSBmb290ZXIucmVwbGFjZShhbmNob3IsIGFuY2hvciArIGhpZGVfZm9vdGVyLCAxKQoKaGVhZGVyX21hcmtlciA9ICcvKiBGT1JSVU1fQ09NTVVOSVRJRVNfUkVERVNJR05fU1RBR0VfQV9IRUFERVJfVjEyICovJwppZiBoZWFkZXJfbWFya2VyIG5vdCBpbiBjc3M6CiAgICBzdGFnZV9iX3N0YXJ0ID0gY3NzLmZpbmQoJy8qIEZPUlJVTV9IT01FX1JFREVTSUdOX1NUQUdFX0JfVjExJykKICAgIHN0YWdlX2JfZW5kX21hcmtlciA9ICcvKiAvRk9SUlVNX0hPTUVfUkVERVNJR05fU1RBR0VfQl9WMTEgKi8nCiAgICBzdGFnZV9iX2VuZCA9IGNzcy5maW5kKHN0YWdlX2JfZW5kX21hcmtlciwgc3RhZ2VfYl9zdGFydCkKICAgIGlmIHN0YWdlX2Jfc3RhcnQgPCAwIG9yIHN0YWdlX2JfZW5kIDwgMDoKICAgICAgICByYWlzZSBSdW50aW1lRXJyb3IoJ0FwcHJvdmVkIGhvbWVwYWdlIFN0YWdlIEIgaGVhZGVyIENTUyBpcyBtaXNzaW5nJykKICAgIHN0YWdlX2JfZW5kICs9IGxlbihzdGFnZV9iX2VuZF9tYXJrZXIpCiAgICBob21lX2hlYWRlcl9ibG9jayA9IGNzc1tzdGFnZV9iX3N0YXJ0OnN0YWdlX2JfZW5kXQogICAgY29tbXVuaXR5X2hlYWRlcl9ibG9jayA9IGhvbWVfaGVhZGVyX2Jsb2NrLnJlcGxhY2UoCiAgICAgICAgJ2JvZHk6aGFzKC5ob21lLXN0YWdlLW9uZSknLAogICAgICAgICdib2R5OmhhcyguY29tbXVuaXRpZXMtdjEyLXN0YWdlLWEpJywKICAgICkKICAgIGNvbW11bml0eV9oZWFkZXJfYmxvY2sgPSBjb21tdW5pdHlfaGVhZGVyX2Jsb2NrLnJlcGxhY2UoCiAgICAgICAgJy8qIEZPUlJVTV9IT01FX1JFREVTSUdOX1NUQUdFX0JfVjExJywKICAgICAgICAnLyogRk9SUlVNX0NPTU1VTklUSUVTX1JFREVTSUdOX1NUQUdFX0FfSEVBREVSX1YxMlxuJwogICAgICAgICcgICBTb3VyY2U6IGFwcHJvdmVkIGhvbWVwYWdlIFN0YWdlIEIgVjExIGhlYWRlciBydWxlcy4nLAogICAgICAgIDEsCiAgICApCiAgICBjb21tdW5pdHlfaGVhZGVyX2Jsb2NrID0gY29tbXVuaXR5X2hlYWRlcl9ibG9jay5yZXBsYWNlKAogICAgICAgIHN0YWdlX2JfZW5kX21hcmtlciwKICAgICAgICAnLyogL0ZPUlJVTV9DT01NVU5JVElFU19SRURFU0lHTl9TVEFHRV9BX0hFQURFUl9WMTIgKi8nLAogICAgICAgIDEsCiAgICApCiAgICBjc3MgPSBjc3MucnN0cmlwKCkgKyAnXG5cbicgKyBjb21tdW5pdHlfaGVhZGVyX2Jsb2NrICsgJ1xuJwoKYmFzZV9tYXJrZXIgPSAnLyogRk9SUlVNX0NPTU1VTklUSUVTX1JFREVTSUdOX1NUQUdFX0FfVjEyJwppZiBiYXNlX21hcmtlciBub3QgaW4gY3NzOgogICAgYmFzZV9jc3MgPSAnJycvKiBGT1JSVU1fQ09NTVVOSVRJRVNfUkVERVNJR05fU1RBR0VfQV9WMTIKICAgU3RhZ2UgQTogc2hhcmVkIGRhcmsgZm91bmRhdGlvbiArIGFwcHJvdmVkIGhlYWRlciBvbiAvY29tbXVuaXRpZXMgb25seS4KICAgUGFnZSBoZXJvLCBsb2NhbCBzZWFyY2gsIGNhdGFsb2d1ZSByb3dzIGFuZCBoaWVyYXJjaHkgcGFuZWwgYXJlIGxhdGVyIHN0YWdlcy4KKi8KYm9keTpoYXMoLmNvbW11bml0aWVzLXYxMi1zdGFnZS1hKSB7CiAgLS1mb3JydW0taG9tZS1iZzogIzA5MTIxNTsKICAtLWZvcnJ1bS1ob21lLXN1cmZhY2U6ICMwZjE5MWM7CiAgLS1mb3JydW0taG9tZS1zdXJmYWNlLXNvZnQ6ICMxMjFlMjE7CiAgLS1mb3JydW0taG9tZS1zdXJmYWNlLWhvdmVyOiAjMTYyNDI4OwogIC0tZm9ycnVtLWhvbWUtc3VyZmFjZS1zZWxlY3RlZDogIzEwMmEyNTsKICAtLWZvcnJ1bS1ob21lLXRleHQ6ICNmMWY1ZjQ7CiAgLS1mb3JydW0taG9tZS10ZXh0LXNvZnQ6ICNjN2QwY2U7CiAgLS1mb3JydW0taG9tZS1tdXRlZDogIzhkOWE5ODsKICAtLWZvcnJ1bS1ob21lLW11dGVkLXN0cm9uZzogI2E5YjRiMjsKICAtLWZvcnJ1bS1ob21lLWxpbmU6ICMyNjM2M2E7CiAgLS1mb3JydW0taG9tZS1saW5lLXNvZnQ6ICMxZDJiMmY7CiAgLS1mb3JydW0taG9tZS1saW5lLXN0cm9uZzogIzM0NDg0ZDsKICAtLWZvcnJ1bS1ob21lLWFjY2VudDogIzE5ZDM5YTsKICAtLWZvcnJ1bS1ob21lLWFjY2VudC1ob3ZlcjogIzI3ZTJhYTsKICAtLWZvcnJ1bS1ob21lLWFjY2VudC1zb2Z0OiByZ2JhKDI1LCAyMTEsIDE1NCwgLjEwKTsKICAtLWZvcnJ1bS1ob21lLWRhbmdlcjogI2VkNmI2YjsKICAtLWZvcnJ1bS1ob21lLXJhZGl1czogNnB4OwogIGJhY2tncm91bmQ6IHZhcigtLWZvcnJ1bS1ob21lLWJnKTsKfQoKYm9keTpoYXMoLmNvbW11bml0aWVzLXYxMi1zdGFnZS1hKSAubWFpbiB7CiAgcGFkZGluZy1ibG9jazogMTZweCAyOHB4Owp9CgouY29tbXVuaXRpZXMtdjEyLXN0YWdlLWEgewogIC0tYmc6IHZhcigtLWZvcnJ1bS1ob21lLWJnKTsKICAtLXN1cmZhY2U6IHZhcigtLWZvcnJ1bS1ob21lLXN1cmZhY2UpOwogIC0tc3VyZmFjZS1zb2Z0OiB2YXIoLS1mb3JydW0taG9tZS1zdXJmYWNlLXNvZnQpOwogIC0tc3VyZmFjZS1zdHJvbmc6IHZhcigtLWZvcnJ1bS1ob21lLXN1cmZhY2UtaG92ZXIpOwogIC0tdGV4dDogdmFyKC0tZm9ycnVtLWhvbWUtdGV4dCk7CiAgLS1tdXRlZDogdmFyKC0tZm9ycnVtLWhvbWUtbXV0ZWQpOwogIC0tbXV0ZWQtc3Ryb25nOiB2YXIoLS1mb3JydW0taG9tZS1tdXRlZC1zdHJvbmcpOwogIC0tbGluZTogdmFyKC0tZm9ycnVtLWhvbWUtbGluZSk7CiAgLS1saW5lLXN0cm9uZzogdmFyKC0tZm9ycnVtLWhvbWUtbGluZS1zdHJvbmcpOwogIC0tZm9jdXM6IHZhcigtLWZvcnJ1bS1ob21lLWFjY2VudCk7CiAgLS1kYW5nZXI6IHZhcigtLWZvcnJ1bS1ob21lLWRhbmdlcik7CiAgY29sb3I6IHZhcigtLWZvcnJ1bS1ob21lLXRleHQpOwp9CgouY29tbXVuaXRpZXMtdjEyLXN0YWdlLWEgLmNvbW11bml0eS1icm93c2VyLWluZGV4IHsKICBkaXNwbGF5OiBub25lICFpbXBvcnRhbnQ7Cn0KCi5jb21tdW5pdGllcy12MTItc3RhZ2UtYSAuY29tbXVuaXR5LWJyb3dzZXItbGF5b3V0IHsKICBncmlkLXRlbXBsYXRlLWNvbHVtbnM6IG1pbm1heCgwLCAxZnIpOwogIGdhcDogMDsKfQoKLmNvbW11bml0aWVzLXYxMi1zdGFnZS1hIDppcygKICAuY29tcGFjdC1wYWdlLWhlYWRpbmcsCiAgLmNvbXBhY3QtZmlsdGVyYmFyLAogIC5jb21tdW5pdHktYnJvd3Nlci1saXN0CikgewogIGJvcmRlci1jb2xvcjogdmFyKC0tZm9ycnVtLWhvbWUtbGluZSkgIWltcG9ydGFudDsKICBib3JkZXItcmFkaXVzOiB2YXIoLS1mb3JydW0taG9tZS1yYWRpdXMpICFpbXBvcnRhbnQ7CiAgYmFja2dyb3VuZDogdmFyKC0tZm9ycnVtLWhvbWUtc3VyZmFjZSkgIWltcG9ydGFudDsKICBib3gtc2hhZG93OiBub25lICFpbXBvcnRhbnQ7Cn0KCi5jb21tdW5pdGllcy12MTItc3RhZ2UtYSA6aXMoaDEsIGgyLCBoMykgewogIGNvbG9yOiB2YXIoLS1mb3JydW0taG9tZS10ZXh0KSAhaW1wb3J0YW50Owp9CgouY29tbXVuaXRpZXMtdjEyLXN0YWdlLWEgOmlzKAogIC5jb21wYWN0LXBhZ2UtaGVhZGluZyBwLAogIC5jb21tdW5pdHktYnJvd3Nlci1jb3B5ID4gcCwKICAuY29tbXVuaXR5LWJyb3dzZXItbWV0YQopIHsKICBjb2xvcjogdmFyKC0tZm9ycnVtLWhvbWUtbXV0ZWQpICFpbXBvcnRhbnQ7Cn0KCi5jb21tdW5pdGllcy12MTItc3RhZ2UtYSAuY29tbXVuaXR5LWJyb3dzZXItcm93IHsKICBib3JkZXItY29sb3I6IHZhcigtLWZvcnJ1bS1ob21lLWxpbmUtc29mdCkgIWltcG9ydGFudDsKICBiYWNrZ3JvdW5kOiB0cmFuc3BhcmVudCAhaW1wb3J0YW50Owp9CgouY29tbXVuaXRpZXMtdjEyLXN0YWdlLWEgLmNvbW11bml0eS1icm93c2VyLXJvdzpob3ZlciwKLmNvbW11bml0aWVzLXYxMi1zdGFnZS1hIC5jb21tdW5pdHktYnJvd3Nlci1yb3c6Zm9jdXMtd2l0aGluIHsKICBiYWNrZ3JvdW5kOiB2YXIoLS1mb3JydW0taG9tZS1zdXJmYWNlLWhvdmVyKSAhaW1wb3J0YW50Owp9CgouY29tbXVuaXRpZXMtdjEyLXN0YWdlLWEgLmNvbW11bml0eS1icm93c2VyLW1haW4tbGluaywKLmNvbW11bml0aWVzLXYxMi1zdGFnZS1hIC5jb21tdW5pdHktYnJvd3Nlci10aXRsZSBzdHJvbmcgewogIGNvbG9yOiB2YXIoLS1mb3JydW0taG9tZS10ZXh0KSAhaW1wb3J0YW50Owp9CgouY29tbXVuaXRpZXMtdjEyLXN0YWdlLWEgOmlzKGlucHV0LCBzZWxlY3QpIHsKICBib3JkZXItY29sb3I6IHZhcigtLWZvcnJ1bS1ob21lLWxpbmUtc3Ryb25nKSAhaW1wb3J0YW50OwogIGJhY2tncm91bmQ6IHZhcigtLWZvcnJ1bS1ob21lLXN1cmZhY2Utc29mdCkgIWltcG9ydGFudDsKICBjb2xvcjogdmFyKC0tZm9ycnVtLWhvbWUtdGV4dCkgIWltcG9ydGFudDsKICBib3gtc2hhZG93OiBub25lICFpbXBvcnRhbnQ7Cn0KCi5jb21tdW5pdGllcy12MTItc3RhZ2UtYSA6aXMoaW5wdXQsIHNlbGVjdCk6Zm9jdXMgewogIGJvcmRlci1jb2xvcjogdmFyKC0tZm9ycnVtLWhvbWUtYWNjZW50KSAhaW1wb3J0YW50OwogIG91dGxpbmUtY29sb3I6IHZhcigtLWZvcnJ1bS1ob21lLWFjY2VudCkgIWltcG9ydGFudDsKfQoKLmNvbW11bml0aWVzLXYxMi1zdGFnZS1hIDppcyhhLCBidXR0b24pOmZvY3VzLXZpc2libGUgewogIG91dGxpbmUtY29sb3I6IHZhcigtLWZvcnJ1bS1ob21lLWFjY2VudCkgIWltcG9ydGFudDsKfQoKLyogL0ZPUlJVTV9DT01NVU5JVElFU19SRURFU0lHTl9TVEFHRV9BX1YxMiAqLycnJwogICAgY3NzID0gY3NzLnJzdHJpcCgpICsgJ1xuXG4nICsgYmFzZV9jc3MgKyAnXG4nCgpjbGllbnQgPSAnXG4nLmpvaW4obGluZS5yc3RyaXAoKSBmb3IgbGluZSBpbiBjbGllbnQuc3BsaXRsaW5lcygpKSArICdcbicKbmF2ID0gJ1xuJy5qb2luKGxpbmUucnN0cmlwKCkgZm9yIGxpbmUgaW4gbmF2LnNwbGl0bGluZXMoKSkgKyAnXG4nCmZvb3RlciA9ICdcbicuam9pbihsaW5lLnJzdHJpcCgpIGZvciBsaW5lIGluIGZvb3Rlci5zcGxpdGxpbmVzKCkpICsgJ1xuJwpjc3MgPSAnXG4nLmpvaW4obGluZS5yc3RyaXAoKSBmb3IgbGluZSBpbiBjc3Muc3BsaXRsaW5lcygpKSArICdcbicKCmNsaWVudF9wYXRoLndyaXRlX3RleHQoY2xpZW50LCBlbmNvZGluZz0ndXRmLTgnKQpuYXZfcGF0aC53cml0ZV90ZXh0KG5hdiwgZW5jb2Rpbmc9J3V0Zi04JykKZm9vdGVyX3BhdGgud3JpdGVfdGV4dChmb290ZXIsIGVuY29kaW5nPSd1dGYtOCcpCmNzc19wYXRoLndyaXRlX3RleHQoY3NzLCBlbmNvZGluZz0ndXRmLTgnKQoKY2hlY2tfcGF0aC53cml0ZV90ZXh0KHInJydpbXBvcnQgZnMgZnJvbSAnbm9kZTpmcyc7Cgpjb25zdCBjbGllbnQgPSBmcy5yZWFkRmlsZVN5bmMoJ2FwcHMvd2ViL2FwcC9jb21tdW5pdGllcy9jb21tdW5pdGllcy1jbGllbnQudHN4JywgJ3V0ZjgnKTsKY29uc3QgbmF2ID0gZnMucmVhZEZpbGVTeW5jKCdhcHBzL3dlYi9jb21wb25lbnRzL21haW4tbmF2LnRzeCcsICd1dGY4Jyk7CmNvbnN0IGZvb3RlciA9IGZzLnJlYWRGaWxlU3luYygnYXBwcy93ZWIvY29tcG9uZW50cy9zaXRlLWZvb3Rlci50c3gnLCAndXRmOCcpOwpjb25zdCBjc3MgPSBmcy5yZWFkRmlsZVN5bmMoJ2FwcHMvd2ViL2FwcC9nbG9iYWxzLmNzcycsICd1dGY4Jyk7CmNvbnN0IGhvbWUgPSBmcy5yZWFkRmlsZVN5bmMoJ2FwcHMvd2ViL2NvbXBvbmVudHMvaG9tZS1kYXNoYm9hcmQudHN4JywgJ3V0ZjgnKTsKCmZ1bmN0aW9uIHJlcXVpcmVNYXJrZXIoc291cmNlLCBtYXJrZXIsIGxhYmVsKSB7CiAgaWYgKCFzb3VyY2UuaW5jbHVkZXMobWFya2VyKSkgdGhyb3cgbmV3IEVycm9yKGAke2xhYmVsfTogbWlzc2luZyAke21hcmtlcn1gKTsKfQpmdW5jdGlvbiBmb3JiaWRNYXJrZXIoc291cmNlLCBtYXJrZXIsIGxhYmVsKSB7CiAgaWYgKHNvdXJjZS5pbmNsdWRlcyhtYXJrZXIpKSB0aHJvdyBuZXcgRXJyb3IoYCR7bGFiZWx9OiBmb3JiaWRkZW4gJHttYXJrZXJ9YCk7Cn0KCnJlcXVpcmVNYXJrZXIoY2xpZW50LCAnY29tbXVuaXR5LWJyb3dzZXItcGFnZSBjb21tdW5pdGllcy12MTItc3RhZ2UtYScsICdjb21tdW5pdGllcyBTdGFnZSBBIHJvb3QnKTsKcmVxdWlyZU1hcmtlcihuYXYsICJjb25zdCBvbkNvbW11bml0aWVzID0gcGF0aG5hbWUgPT09ICcvY29tbXVuaXRpZXMnOyIsICdhcHByb3ZlZCBjb21tdW5pdGllcyBuYXYgbW9kZScpOwpyZXF1aXJlTWFya2VyKG5hdiwgJ2NvbnN0IHVzZUFwcHJvdmVkTmF2ID0gb25Ib21lIHx8IG9uQ29tbXVuaXRpZXM7JywgJ3NoYXJlZCBhcHByb3ZlZCBuYXYnKTsKcmVxdWlyZU1hcmtlcihuYXYsICJbJy9uZXdzJywgJ9Cd0L7QstC+0YHRgtC4J10iLCAnTmV3cyBuYXZpZ2F0aW9uJyk7CnJlcXVpcmVNYXJrZXIobmF2LCAiaHJlZiA9PT0gJy9uZXdzJyAmJiBuZXdzVW5yZWFkIiwgJ05ld3MgdW5yZWFkIGluZGljYXRvcicpOwoKcmVxdWlyZU1hcmtlcihmb290ZXIsICJjb25zdCBoaWRlRm9vdGVyID0gcGF0aG5hbWUgPT09ICcvY29tbXVuaXRpZXMnOyIsICdjb21tdW5pdGllcyBmb290ZXIgc3VwcHJlc3Npb24nKTsKcmVxdWlyZU1hcmtlcihmb290ZXIsICdpZiAoaGlkZUZvb3RlcikgcmV0dXJuIG51bGw7JywgJ2NvbW11bml0aWVzIG5vLWZvb3RlciBjb250cmFjdCcpOwoKcmVxdWlyZU1hcmtlcihjc3MsICdGT1JSVU1fQ09NTVVOSVRJRVNfUkVERVNJR05fU1RBR0VfQV9IRUFERVJfVjEyJywgJ3JldXNlZCBob21lcGFnZSBoZWFkZXIgQ1NTJyk7CnJlcXVpcmVNYXJrZXIoY3NzLCAnRk9SUlVNX0NPTU1VTklUSUVTX1JFREVTSUdOX1NUQUdFX0FfVjEyJywgJ2NvbW11bml0aWVzIGRhcmsgZm91bmRhdGlvbicpOwpyZXF1aXJlTWFya2VyKGNzcywgJ2JvZHk6aGFzKC5jb21tdW5pdGllcy12MTItc3RhZ2UtYSknLCAnY29tbXVuaXRpZXMgZGFyayBib2R5IHNjb3BlJyk7CnJlcXVpcmVNYXJrZXIoY3NzLCAnLmNvbW11bml0aWVzLXYxMi1zdGFnZS1hIC5jb21tdW5pdHktYnJvd3Nlci1pbmRleCcsICdvYnNvbGV0ZSBsZWZ0IGluZGV4IHJlbW92YWwnKTsKCmZvcmJpZE1hcmtlcihjbGllbnQsICdjb21tdW5pdGllcy12MTItc3RhZ2UtYicsICdmdXR1cmUgU3RhZ2UgQiBsZWFrZWQgaW50byBTdGFnZSBBJyk7CmZvcmJpZE1hcmtlcihjbGllbnQsICdjb21tdW5pdGllcy12MTItY2F0YWxvZ3VlJywgJ2Z1dHVyZSBjYXRhbG9ndWUgcmVkZXNpZ24gbGVha2VkIGludG8gU3RhZ2UgQScpOwpmb3JiaWRNYXJrZXIoY2xpZW50LCAnY29tbXVuaXRpZXMtdjEyLWhpZXJhcmNoeS1wYW5lbCcsICdmdXR1cmUgaGllcmFyY2h5IHBhbmVsIGxlYWtlZCBpbnRvIFN0YWdlIEEnKTsKCnJlcXVpcmVNYXJrZXIoaG9tZSwgJ2hvbWUtZGlzY3Vzc2VkLXN0YWdlLWQnLCAnYXBwcm92ZWQgaG9tZXBhZ2UgZGlzY3Vzc2VkIHRhYmxlJyk7CnJlcXVpcmVNYXJrZXIoaG9tZSwgJ2hvbWUtbmV3LXRvcGljcy1zdGFnZS1lJywgJ2FwcHJvdmVkIGhvbWVwYWdlIG5ldyB0YWJsZScpOwpyZXF1aXJlTWFya2VyKGhvbWUsICdob21lLXJpZ2h0LXN0YWdlLWYnLCAnYXBwcm92ZWQgaG9tZXBhZ2UgcmlnaHQgcmFpbCcpOwpyZXF1aXJlTWFya2VyKGhvbWUsICdob21lLWN1cmF0b3ItcmVxdWlyZW1lbnRzLXN0YWdlLWgnLCAnYXBwcm92ZWQgaG9tZXBhZ2UgY3VyYXRvciBmb3JtJyk7Cgpjb25zb2xlLmxvZygnRk9SUlVNIENvbW11bml0aWVzIFJlZGVzaWduIFN0YWdlIEEgY29udHJhY3QgcGFzc2VkLicpOwonJycsIGVuY29kaW5nPSd1dGYtOCcpCgpkb2NfcGF0aC5wYXJlbnQubWtkaXIocGFyZW50cz1UcnVlLCBleGlzdF9vaz1UcnVlKQpkb2NfcGF0aC53cml0ZV90ZXh0KCcnJyMgRk9SUlVNIENvbW11bml0aWVzIFJlZGVzaWduIOKAlCBTdGFnZSBBIC8gVjEyCgpGaXJzdCBpbXBsZW1lbnRhdGlvbiBzdGFnZSBmb3IgdGhlIGFwcHJvdmVkIENvbW11bml0aWVzIHJlZGVzaWduLgoKIyMgQXVkaXQKCi0gYC9jb21tdW5pdGllc2AgYWxyZWFkeSBsb2FkcyB0aGUgcmVhbCBhY3RpdmUgY2F0ZWdvcnkgdHJlZSBmcm9tIGBHRVQgL2NvbW11bml0aWVzYC4KLSBUaGUgcmVzcG9uc2UgYWxyZWFkeSBjb250YWlucyBoaWVyYXJjaHkgKGBwYXJlbnRgKSwgc3Vic2NyaXB0aW9uIGNvdW50cy9zdGF0ZSwgcHVibGljYXRpb24gY291bnRzIGFuZCB0aGUgY3VycmVudCBjdXJhdG9yLgotIEV4aXN0aW5nIHN1YnNjcmlwdGlvbiBlbmRwb2ludHMgYXJlIHJldXNlZCBsYXRlcjsgbm8gZHVwbGljYXRlIGRhdGEgbW9kZWwgaXMgaW50cm9kdWNlZC4KLSBFeGlzdGluZyBgL2NvbW11bml0aWVzL3Byb3Bvc2Fsc2AgaXMgdGhlIGN1cnJlbnQgcHJvcG9zYWwgc2NyZWVuLgotIEEgZGVkaWNhdGVkIGN1cmF0b3Igcm91dGUgZG9lcyBub3QgY3VycmVudGx5IGV4aXN0OyB0aGUgZXhpc3RpbmcgaG9tZXBhZ2UgcGFydGljaXBhdGlvbiBzY3JlZW4gcmVtYWlucyB0aGUga25vd24gY3VyYXRvciBhcHBsaWNhdGlvbiBVSSB1bnRpbCBhIHNlcGFyYXRlIHJvdXRlIGlzIGV4cGxpY2l0bHkgYXBwcm92ZWQuCgojIyBTdGFnZSBBCgotIEFkZHMgdGhlIENvbW11bml0aWVzIHJlZGVzaWduIHBhZ2UgbWFya2VyLgotIFVzZXMgdGhlIGFwcHJvdmVkIGhvbWVwYWdlIG5hdiBzZXQgb24gYC9jb21tdW5pdGllc2A6IE1haW4sIENvbW11bml0aWVzLCBOZXdzLCBNZWRpYSwgRXZlbnRzLgotIEtlZXBzIHRoZSBOZXdzIHVucmVhZCBpbmRpY2F0b3IuCi0gUmV1c2VzIHRoZSBleGFjdCBhcHByb3ZlZCBob21lcGFnZSBTdGFnZSBCIGhlYWRlciBDU1MsIHNjb3BlZCB0byBgL2NvbW11bml0aWVzYC4KLSBBcHBsaWVzIHRoZSBzYW1lIGdyYXBoaXRlL2dyZWVuIHRva2VucyBhcyB0aGUgYXBwcm92ZWQgaG9tZXBhZ2UuCi0gUmVtb3ZlcyB0aGUgb2Jzb2xldGUgc2Vjb25kIGxlZnQgYNCd0LDQv9GA0LDQstC70LXQvdC40Y9gIHNpZGViYXIuCi0gSGlkZXMgdGhlIGdsb2JhbCBmb290ZXIgb25seSBvbiB0aGUgYC9jb21tdW5pdGllc2AgY2F0YWxvZ3VlIHBhZ2UuCi0gRG9lcyBub3QgcmVkZXNpZ24gdGhlIHBhZ2UgaGVhZGluZywgbG9jYWwgc2VhcmNoLCBjYXRhbG9ndWUgcm93cyBvciBoaWVyYXJjaHkgcGFuZWwgeWV0LgotIERvZXMgbm90IGNoYW5nZSBBUEkvc2NoZW1hIG9yIHRoZSBhcHByb3ZlZCBob21lcGFnZSBjb21wb25lbnQuCicnJywgZW5jb2Rpbmc9J3V0Zi04JykKCnByaW50KCdGT1JSVU0gQ29tbXVuaXRpZXMgUmVkZXNpZ24gU3RhZ2UgQSBhcHBsaWVkLicpCg==
+        run: |
+          set -euo pipefail
+          printf '%s' "$STAGE_A_PATCH_B64" | base64 -d > /tmp/forrum-communities-stage-a.py
+          python3 /tmp/forrum-communities-stage-a.py
+
+      - name: Verify Communities Stage A scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/communities-redesign-stage-a-check.mjs
+          node scripts/home-redesign-stage-h2-check.mjs
+          node scripts/home-redesign-stage-h-check.mjs
+          node scripts/ui-interaction-check.mjs
+          git diff --check
+
+          allowed='^(apps/web/app/communities/communities-client\.tsx|apps/web/components/main-nav\.tsx|apps/web/components/site-footer\.tsx|apps/web/app/globals\.css|scripts/communities-redesign-stage-a-check\.mjs|docs/FORRUM_COMMUNITIES_REDESIGN_STAGE_A_V12\.md)$'
+          unexpected="$(git diff --name-only | grep -Ev "$allowed" || true)"
+          if [ -n "$unexpected" ]; then
+            echo "Unexpected files were changed:"
+            echo "$unexpected"
+            exit 1
+          fi
+
+          if git diff -- apps/web/components/home-dashboard.tsx apps/web/app/page.tsx apps/api/src apps/api/prisma/schema.prisma | grep -q .; then
+            echo 'Stage A changed approved homepage content, homepage loader, API source or schema.'
+            exit 1
+          fi
+
+      - name: Create isolated Communities Stage A.1 commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "FORRUM QA updater"
+          git config user.email "actions@users.noreply.github.com"
+
+          git add --             apps/web/app/communities/communities-client.tsx             apps/web/components/main-nav.tsx             apps/web/components/site-footer.tsx             apps/web/app/globals.css             scripts/communities-redesign-stage-a-check.mjs             docs/FORRUM_COMMUNITIES_REDESIGN_STAGE_A_V12.md
+
+          if git diff --cached --quiet; then
+            echo 'Communities Stage A is already present.'
+          else
+            git commit -m "Start FORRUM Communities dark redesign"
+          fi
+          test -z "$(git status --porcelain)"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies without creating a lock file
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --package-lock=false
+          test ! -f package-lock.json
+
+      - name: Generate validate sync and seed Prisma
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run db:generate
+          npm run db:validate
+          npm run db:push
+          npm run db:seed
+
+      - name: Static UX accessibility and Communities Stage A.1 checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          node scripts/communities-redesign-stage-a-check.mjs
+          node scripts/home-redesign-stage-h2-check.mjs
+          node scripts/home-redesign-stage-h-check.mjs
+          node scripts/ui-interaction-check.mjs
+
+      - name: Typecheck every workspace
+        run: npm run typecheck
+
+      - name: Run API tests
+        run: npm test
+
+      - name: Clean production build
+        run: npm run build
+
+      - name: Remove generated build noise
+        shell: bash
+        run: |
+          set -euo pipefail
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+      - name: Push verified Communities Stage A.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+
+      - name: Verify remote main
+        shell: bash
+        run: |
+          set -euo pipefail
+          local_sha="$(git rev-parse HEAD)"
+          git fetch origin main
+          remote_sha="$(git rev-parse origin/main)"
+          echo "local=$local_sha"
+          echo "remote=$remote_sha"
+          test "$local_sha" = "$remote_sha"
+
+          git show origin/main:apps/web/app/communities/communities-client.tsx | grep -q 'communities-v12-stage-a'
+          git show origin/main:apps/web/components/main-nav.tsx | grep -q "const onCommunities = pathname === '/communities';"
+          git show origin/main:apps/web/components/site-footer.tsx | grep -q "const hideFooter = pathname === '/communities';"
+          git show origin/main:apps/web/app/globals.css | grep -q 'FORRUM_COMMUNITIES_REDESIGN_STAGE_A_V12'
