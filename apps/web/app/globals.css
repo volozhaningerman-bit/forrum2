@@ -12234,3 +12234,236 @@ body:has(.communities-v12-stage-a) .main {
 }
 
 /* /FORRUM_COMMUNITIES_REDESIGN_STAGE_E_V12 */
+
+/* FORRUM_COMMUNITIES_REDESIGN_STAGE_F_V12
+   Final Communities visual polish against the approved master reference.
+   Structure and interactions remain unchanged.
+*/
+.communities-v12-stage-a .communities-v12-desktop-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(330px, 30.5%);
+  gap: 12px;
+}
+
+.communities-v12-stage-a .communities-v12-hero {
+  min-height: 128px;
+  padding: 20px 22px;
+}
+
+.communities-v12-stage-a .communities-v12-hero-main {
+  gap: 20px;
+}
+
+.communities-v12-stage-a .communities-v12-hero-icon {
+  width: 60px;
+  height: 60px;
+  flex-basis: 60px;
+  border-color: rgba(25, 211, 154, .15);
+  background: rgba(25, 211, 154, .075);
+}
+
+.communities-v12-stage-a .communities-v12-hero-copy h1 {
+  margin-bottom: 8px;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.communities-v12-stage-a .communities-v12-hero-copy p {
+  max-width: 650px;
+  font-size: 11.7px;
+  line-height: 1.58;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-row {
+  min-height: 92px;
+  padding: 12px 14px;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-community {
+  gap: 13px;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-copy p {
+  margin-top: 7px;
+  line-height: 1.5;
+}
+
+.communities-v12-stage-a .communities-v12-glyph {
+  border-color: rgba(112, 137, 139, .27);
+  background: rgba(43, 64, 68, .38);
+}
+
+.communities-v12-stage-a .communities-v12-glyph svg {
+  stroke-width: 1.55;
+}
+
+.communities-v12-stage-a .communities-v12-glyph[data-tone="workshop"] {
+  border-color: rgba(154, 103, 255, .30);
+  background: rgba(118, 72, 205, .12);
+  color: #b99bff;
+}
+
+.communities-v12-stage-a .communities-v12-glyph[data-tone="internet"] {
+  border-color: rgba(25, 211, 154, .30);
+  background: rgba(25, 211, 154, .075);
+  color: #2ae0aa;
+}
+
+.communities-v12-stage-a .communities-v12-glyph[data-tone="promotion"] {
+  border-color: rgba(46, 153, 225, .29);
+  background: rgba(46, 153, 225, .075);
+  color: #58b8f0;
+}
+
+.communities-v12-stage-a .communities-v12-glyph[data-tone="forrum"] {
+  border-color: rgba(226, 190, 45, .28);
+  background: rgba(226, 190, 45, .07);
+  color: #e9c94d;
+}
+
+.communities-v12-stage-a .communities-v12-glyph[data-tone="gta"] {
+  border-color: rgba(177, 188, 191, .22);
+  background: rgba(177, 188, 191, .055);
+  color: #d5dddc;
+}
+
+.communities-v12-stage-a .communities-v12-glyph[data-tone="telegram"] {
+  border-color: rgba(51, 171, 231, .29);
+  background: rgba(51, 171, 231, .075);
+  color: #58c1f3;
+}
+
+.communities-v12-stage-a .communities-v12-subscribe {
+  min-width: 112px;
+  min-height: 32px;
+  padding-inline: 10px;
+  border-color: rgba(25, 211, 154, .32);
+  background: rgba(25, 211, 154, .012);
+  font-weight: 560;
+}
+
+.communities-v12-stage-a .communities-v12-subscribe:hover,
+.communities-v12-stage-a .communities-v12-subscribe:focus-visible {
+  border-color: rgba(25, 211, 154, .65);
+  background: rgba(25, 211, 154, .045);
+}
+
+.communities-v12-stage-a .communities-v12-subscribe.subscribed {
+  background: rgba(25, 211, 154, .03);
+}
+
+.communities-v12-stage-a .communities-v12-open-hierarchy {
+  color: #7f8d8b;
+  font-size: 23px;
+  font-weight: 300;
+}
+
+.communities-v12-stage-a .communities-v12-open-hierarchy:hover,
+.communities-v12-stage-a .communities-v12-open-hierarchy:focus-visible,
+.communities-v12-stage-a .communities-v12-open-hierarchy[aria-pressed="true"] {
+  color: var(--forrum-home-accent);
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-panel {
+  min-height: 620px;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-identity {
+  padding: 22px 20px 21px;
+  gap: 17px;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-title {
+  font-size: 21px;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-identity p {
+  margin: 10px 0 15px;
+  font-size: 11.7px;
+  line-height: 1.58;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-section {
+  padding: 17px 11px 13px;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-section h2 {
+  margin: 0 9px 11px;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-child {
+  min-height: 112px;
+  grid-template-columns: minmax(0, 1fr) 26px;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-child-main {
+  padding: 14px 7px 14px 13px;
+  gap: 13px;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-child-main p {
+  margin: 6px 0 9px;
+  font-size: 10.7px;
+  line-height: 1.52;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-child-arrow {
+  width: 26px;
+  color: #81908d;
+  font-size: 23px;
+  font-weight: 300;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-child-arrow:hover,
+.communities-v12-stage-a .communities-v12-hierarchy-child-arrow:focus-visible {
+  color: var(--forrum-home-accent);
+}
+
+@media (max-width: 1180px) {
+  .communities-v12-stage-a .communities-v12-desktop-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 31%);
+    gap: 10px;
+  }
+
+  .communities-v12-stage-a .communities-v12-catalogue-row {
+    min-height: 90px;
+  }
+}
+
+@media (max-width: 980px) {
+  .communities-v12-stage-a .communities-v12-desktop-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .communities-v12-stage-a .communities-v12-hierarchy-panel {
+    position: static;
+    min-height: 0;
+    max-height: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .communities-v12-stage-a .communities-v12-hero {
+    min-height: 0;
+    padding: 17px 16px;
+  }
+
+  .communities-v12-stage-a .communities-v12-hero-copy h1 {
+    font-size: 23px;
+  }
+
+  .communities-v12-stage-a .communities-v12-catalogue-row {
+    min-height: 80px;
+    padding: 10px 11px;
+  }
+
+  .communities-v12-stage-a .communities-v12-subscribe {
+    min-width: 104px;
+    min-height: 30px;
+  }
+
+  .communities-v12-stage-a .communities-v12-hierarchy-child {
+    min-height: 104px;
+  }
+}
+
+/* /FORRUM_COMMUNITIES_REDESIGN_STAGE_F_V12 */
