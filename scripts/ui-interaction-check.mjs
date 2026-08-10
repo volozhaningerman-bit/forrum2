@@ -142,3 +142,19 @@ for (const marker of [
     'community tree-parity interaction',
   );
 }
+
+// FORRUM_COMMUNITIES_REDESIGN_STAGE_F3_V12_INTERACTION_CONTRACT
+for (const marker of [
+  'FORRUM_COMMUNITIES_REDESIGN_STAGE_F3_V12_INTERACTION',
+  "target.closest(",
+  "'a, button, input, select, textarea'",
+  'communities-v12-curator-profile-link',
+  'communities-v12-hierarchy-curator-link',
+  'href={`/u/${encodeURIComponent(item.curator.username)}`}',
+]) {
+  requireMarker(
+    catalogue,
+    marker,
+    'community reliable row interaction and curator profile',
+  );
+}

@@ -384,6 +384,7 @@ export function CommunitiesClient({
     return source.trim().slice(0, 1).toUpperCase();
   }
 
+  // FORRUM_COMMUNITIES_REDESIGN_STAGE_F3_V12_INTERACTION
   function renderCatalogueRow(item: Community) {
     const selected = selectedRootSlug === item.slug;
 
@@ -394,6 +395,18 @@ export function CommunitiesClient({
           selected ? 'selected' : ''
         }`}
         key={item.id}
+
+        onClick={(event) => {
+          const target = event.target as HTMLElement;
+          if (
+            target.closest(
+              'a, button, input, select, textarea',
+            )
+          ) {
+            return;
+          }
+          setSelectedSlug(item.slug);
+        }}
       >
         <button
           type="button"
@@ -442,9 +455,12 @@ export function CommunitiesClient({
                   curatorInitial(item)
                 )}
               </span>
-              <span className="communities-v12-curator-name">
+              <Link
+                className="communities-v12-curator-name communities-v12-curator-profile-link"
+                href={`/u/${encodeURIComponent(item.curator.username)}`}
+              >
                 @{item.curator.username}
-              </span>
+              </Link>
             </>
           ) : (
             <span className="communities-v12-curator-empty">
@@ -722,9 +738,14 @@ export function CommunitiesClient({
                     {selectedItem.curator ? (
                       <span>
                         Куратор:{' '}
-                        <strong>
+                        <Link
+                          className="communities-v12-hierarchy-curator-link"
+                          href={`/u/${encodeURIComponent(
+                            selectedItem.curator.username,
+                          )}`}
+                        >
                           @{selectedItem.curator.username}
-                        </strong>
+                        </Link>
                       </span>
                     ) : (
                       <span>Куратор не назначен</span>
@@ -751,6 +772,19 @@ export function CommunitiesClient({
                       <article
                         className="communities-v12-hierarchy-child"
                         key={child.id}
+
+                        onClick={(event) => {
+                          const target =
+                            event.target as HTMLElement;
+                          if (
+                            target.closest(
+                              'a, button, input, select, textarea',
+                            )
+                          ) {
+                            return;
+                          }
+                          setSelectedSlug(child.slug);
+                        }}
                       >
                         <button
                           type="button"

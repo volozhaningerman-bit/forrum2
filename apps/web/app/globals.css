@@ -12552,3 +12552,112 @@ body:has(.communities-v12-stage-a) .main {
   user-select: none;
 }
 /* /FORRUM_COMMUNITIES_REDESIGN_STAGE_F2_V12 */
+
+/* FORRUM_COMMUNITIES_REDESIGN_STAGE_F3_V12
+   Reliable row click delegation + curator profile links + modest catalogue scale-up.
+*/
+.communities-v12-stage-a .communities-v12-catalogue-row,
+.communities-v12-stage-a .communities-v12-hierarchy-child {
+  cursor: pointer;
+}
+
+.communities-v12-stage-a .communities-v12-curator-profile-link,
+.communities-v12-stage-a .communities-v12-hierarchy-curator-link {
+  position: relative;
+  z-index: 3;
+  pointer-events: auto;
+  color: var(--forrum-home-accent);
+  text-decoration: none;
+}
+
+.communities-v12-stage-a .communities-v12-curator-profile-link:hover,
+.communities-v12-stage-a .communities-v12-curator-profile-link:focus-visible,
+.communities-v12-stage-a .communities-v12-hierarchy-curator-link:hover,
+.communities-v12-stage-a .communities-v12-hierarchy-curator-link:focus-visible {
+  color: #46e9b6;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-row {
+  min-height: 98px;
+  padding-block: 13px;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-community {
+  gap: 14px;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-icon-link,
+.communities-v12-stage-a .communities-v12-glyph {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 56px;
+}
+
+.communities-v12-stage-a .communities-v12-glyph svg {
+  width: 30px;
+  height: 30px;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-name {
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 680;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-copy p {
+  margin-top: 7px;
+  font-size: 11.2px;
+  line-height: 1.5;
+}
+
+.communities-v12-stage-a .communities-v12-curator-name {
+  font-size: 11.5px;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-subscribers {
+  font-size: 13.5px;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-child {
+  min-height: 120px;
+}
+
+.communities-v12-stage-a .communities-v12-glyph.compact {
+  width: 54px;
+  height: 54px;
+  flex-basis: 54px;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-child-name {
+  font-size: 14px;
+  line-height: 1.3;
+  font-weight: 680;
+}
+
+.communities-v12-stage-a .communities-v12-hierarchy-child-main p {
+  font-size: 11.2px;
+  line-height: 1.55;
+}
+
+@media (max-width: 760px) {
+  .communities-v12-stage-a .communities-v12-catalogue-row {
+    min-height: 86px;
+    padding-block: 10px;
+  }
+
+  .communities-v12-stage-a .communities-v12-catalogue-icon-link,
+  .communities-v12-stage-a .communities-v12-glyph {
+    width: 50px;
+    height: 50px;
+    flex-basis: 50px;
+  }
+
+  .communities-v12-stage-a .communities-v12-glyph.compact {
+    width: 48px;
+    height: 48px;
+    flex-basis: 48px;
+  }
+}
+/* /FORRUM_COMMUNITIES_REDESIGN_STAGE_F3_V12 */
