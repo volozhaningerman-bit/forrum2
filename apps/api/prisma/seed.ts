@@ -303,6 +303,16 @@ async function main() {
   }
 
   const communities = [
+    // FORRUM_COMMUNITIES_STAGE_E_WORKSHOP_ROOT
+    {
+      slug: 'workshop',
+      name: 'Мастерская',
+      shortDescription: 'Наши решения, инструменты и разработки для сообщества.',
+      description: 'Мастерская FORRUM: проекты и заказы, готовые решения, команды и специалисты.',
+      avatarUrl: '/forrum-assets/icon-forrum-start.svg',
+      coverUrl: '/forrum-assets/cover-forrum-start.svg',
+      accentColor: '#8C5CF6',
+    },
     {
       slug: 'forrum-start',
       name: 'FORRUM Start',
@@ -454,6 +464,38 @@ async function main() {
     }
     return child;
   };
+
+  // FORRUM_COMMUNITIES_STAGE_E_WORKSHOP_CHILDREN
+  await upsertDemoChild({
+    slug: 'workshop-projects',
+    name: 'Проекты и заказы',
+    shortDescription: 'Запросы, проекты и практические задачи сообщества.',
+    description: 'Раздел Мастерской для проектов, заказов, задач и совместной работы.',
+    avatarUrl: '/forrum-assets/icon-internet-projects.svg',
+    coverUrl: '/forrum-assets/cover-internet-projects.svg',
+    accentColor: '#8C5CF6',
+    parentSlug: 'workshop',
+  });
+  await upsertDemoChild({
+    slug: 'workshop-solutions',
+    name: 'Готовые решения',
+    shortDescription: 'Готовые инструменты, наработки и полезные решения.',
+    description: 'Раздел Мастерской с готовыми решениями, инструментами и наработками участников.',
+    avatarUrl: '/forrum-assets/icon-forrum-start.svg',
+    coverUrl: '/forrum-assets/cover-forrum-start.svg',
+    accentColor: '#8C5CF6',
+    parentSlug: 'workshop',
+  });
+  await upsertDemoChild({
+    slug: 'workshop-teams',
+    name: 'Команды и специалисты',
+    shortDescription: 'Поиск команд, специалистов и людей для совместной работы.',
+    description: 'Раздел Мастерской для поиска команд, специалистов и совместной работы.',
+    avatarUrl: '/forrum-assets/icon-launches.svg',
+    coverUrl: '/forrum-assets/cover-internet-projects.svg',
+    accentColor: '#8C5CF6',
+    parentSlug: 'workshop',
+  });
 
   const feedbackChild = await upsertDemoChild({
     slug: 'forrum-feedback',

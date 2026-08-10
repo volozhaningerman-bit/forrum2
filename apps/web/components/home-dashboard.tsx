@@ -621,7 +621,7 @@ export function HomeDashboard({
   const rootCommunities = useMemo(
     () =>
       communities
-        .filter((community) => !community.parent)
+        .filter((community) => !community.parent && community.slug !== 'workshop')
         .sort((left, right) => left.name.localeCompare(right.name, 'ru')),
     [communities],
   );

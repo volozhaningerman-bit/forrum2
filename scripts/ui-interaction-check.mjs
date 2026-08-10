@@ -35,26 +35,33 @@ for (const marker of [
   requireMarker(home, marker, 'home tree');
 }
 
-// FORRUM_COMMUNITIES_REDESIGN_STAGE_D_V12_INTERACTION_CONTRACT
+// FORRUM_COMMUNITIES_REDESIGN_STAGE_E_V12_INTERACTION_CONTRACT
 for (const marker of [
   'communities-v12-catalogue-name',
+  'communities-v12-catalogue-icon-link',
   'communities-v12-subscribe',
   'communities-v12-open-hierarchy',
-  'roots.map((root) => renderCatalogueRow(root))',
+  'roots.map((root) =>',
+  'renderCatalogueRow(root)',
   'setSelectedSlug(item.slug)',
-  'navigationIcon(item.slug)',
+  'CommunityGlyph',
+  'communityHref(item.slug)',
+  'communities-v12-hierarchy-panel',
+  'communities-v12-hierarchy-child-arrow',
+  'hierarchyTrail(selectedItem)',
 ]) {
-  requireMarker(catalogue, marker, 'community catalogue');
+  requireMarker(catalogue, marker, 'community catalogue and hierarchy');
 }
 for (const marker of [
   'community-browser-main-link',
   'community-browser-hitarea',
   'community-browser-chevron',
   'renderBranch(',
+  'CommunityMark',
+  'navigationIcon(item.slug)',
 ]) {
   forbidMarker(catalogue, marker, 'retired community catalogue tree');
 }
-
 // FORRUM_HOME_REDESIGN_STAGE_D_V11_INTERACTION_CONTRACT
 requireMarker(home, 'home-discussed-stage-d', 'home discussed topics');
 requireMarker(home, 'Обсуждаемые темы', 'home discussed topics');

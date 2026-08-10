@@ -18,7 +18,16 @@ requireMarker(client, '<span>Сообщество</span>', 'community column');
 requireMarker(client, '<span>Куратор</span>', 'curator column');
 requireMarker(client, '<span>Подписчики</span>', 'subscriber column');
 requireMarker(client, 'renderCatalogueRow', 'root catalogue renderer');
-requireMarker(client, 'roots.map((root) => renderCatalogueRow(root))', 'root-only catalogue');
+requireMarker(
+  client,
+  'roots.map((root) =>',
+  'root-only catalogue map',
+);
+requireMarker(
+  client,
+  'renderCatalogueRow(root)',
+  'root-only catalogue renderer',
+);
 requireMarker(client, 'communities-v12-catalogue-name', 'separate title link');
 requireMarker(client, 'communities-v12-subscribe', 'separate subscription control');
 requireMarker(client, 'communities-v12-open-hierarchy', 'separate hierarchy arrow');
@@ -28,7 +37,6 @@ requireMarker(client, 'item.curator.avatarUrl', 'curator avatar render');
 
 forbidMarker(client, 'roots.map((root) => renderBranch(root))', 'legacy recursive catalogue render');
 forbidMarker(client, 'className="community-browser-index"', 'obsolete left index DOM');
-forbidMarker(client, 'communities-v12-hierarchy-panel', 'future hierarchy panel stage');
 
 requireMarker(css, 'FORRUM_COMMUNITIES_REDESIGN_STAGE_D_V12', 'Stage D CSS');
 requireMarker(css, '.communities-v12-stage-a .communities-v12-catalogue-row', 'Stage D row CSS');

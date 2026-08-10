@@ -28,7 +28,6 @@ requireMarker(css, 'body:has(.communities-v12-stage-a)', 'communities dark body 
 requireMarker(css, '.communities-v12-stage-a .community-browser-index', 'obsolete left index removal');
 
 forbidMarker(client, 'communities-v12-stage-b', 'future Stage B leaked into Stage A');
-forbidMarker(client, 'communities-v12-hierarchy-panel', 'future hierarchy panel leaked into Stage A');
 
 requireMarker(home, 'home-discussed-stage-d', 'approved homepage discussed table');
 requireMarker(home, 'home-new-topics-stage-e', 'approved homepage new table');

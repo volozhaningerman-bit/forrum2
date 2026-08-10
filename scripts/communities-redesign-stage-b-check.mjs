@@ -24,7 +24,6 @@ requireMarker(client, 'href="/#become-curator"', 'curator CTA');
 requireMarker(client, 'Стать куратором', 'curator CTA label');
 
 forbidMarker(client, '<header className="compact-page-heading">', 'legacy Communities heading');
-forbidMarker(client, 'communities-v12-hierarchy-panel', 'future hierarchy panel stage');
 
 requireMarker(css, 'FORRUM_COMMUNITIES_REDESIGN_STAGE_B_V12', 'Stage B CSS');
 requireMarker(css, '.communities-v12-stage-a .communities-v12-hero', 'Stage B hero selector');
