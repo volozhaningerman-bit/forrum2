@@ -10761,7 +10761,6 @@ body {
 }
 
 .app-page-frame > #main-content {
-  width: 100%;
   min-width: 0;
   flex: 1 0 auto;
 }
@@ -10780,7 +10779,7 @@ body {
 }
 
 .site-footer-inner {
-  width: min(1360px, calc(100% - 32px));
+  width: min(1180px, calc(100% - 32px));
   min-height: 42px;
   margin: 0 auto;
   padding: 7px 8px;
@@ -10981,3 +10980,9 @@ body {
 }
 
 /* /FORRUM_HOME_REDESIGN_STAGE_H_V11 */
+
+/* FORRUM_HOME_REDESIGN_STAGE_H2_V11
+   Restore the canonical shell width after the global footer integration.
+   Footer inner width follows the same 1180px shell as header/content.
+*/
+/* /FORRUM_HOME_REDESIGN_STAGE_H2_V11 */
