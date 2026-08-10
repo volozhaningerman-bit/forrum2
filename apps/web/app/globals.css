@@ -12702,3 +12702,48 @@ body:has(.communities-v12-stage-a) .main {
   cursor: default;
 }
 /* /FORRUM_COMMUNITIES_REDESIGN_STAGE_F4_V12 */
+
+/* FORRUM_COMMUNITIES_REDESIGN_STAGE_F5_V12
+   Approved interaction:
+   - first load has no selected community;
+   - empty row space opens hierarchy with a normal cursor;
+   - icon/name/curator/buttons/chevrons use pointer cursor;
+   - subscribe remains an independent clickable action.
+*/
+.communities-v12-stage-a
+  .communities-v12-catalogue-row
+  > .communities-v12-subscribe {
+  position: relative;
+  z-index: 5;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.communities-v12-stage-a
+  .communities-v12-catalogue-row
+  > .communities-v12-subscribe:disabled {
+  cursor: wait;
+}
+
+.communities-v12-stage-a
+  .communities-v12-catalogue-row
+  > .communities-v12-open-hierarchy,
+.communities-v12-stage-a
+  .communities-v12-hierarchy-child
+  > .communities-v12-hierarchy-child-arrow {
+  position: relative;
+  z-index: 4;
+  pointer-events: auto;
+  cursor: pointer;
+  user-select: none;
+}
+
+.communities-v12-stage-a
+  .communities-v12-catalogue-row
+  > .communities-v12-open-hierarchy:hover,
+.communities-v12-stage-a
+  .communities-v12-hierarchy-child
+  > .communities-v12-hierarchy-child-arrow:hover {
+  color: var(--forrum-home-accent);
+}
+/* /FORRUM_COMMUNITIES_REDESIGN_STAGE_F5_V12 */

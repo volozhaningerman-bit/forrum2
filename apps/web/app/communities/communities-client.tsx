@@ -166,7 +166,7 @@ export function CommunitiesClient({
   const [busy, setBusy] = useState('');
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<Sort>('default');
-  const [selectedSlug, setSelectedSlug] = useState<string | null>('internet-projects');
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);

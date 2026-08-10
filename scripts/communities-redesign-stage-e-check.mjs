@@ -41,6 +41,7 @@ function forbidMarker(source, marker, label) {
   }
 }
 
+// FORRUM_COMMUNITIES_REDESIGN_STAGE_F5_INITIAL_SELECTION_CONTRACT
 for (const marker of [
   'communities-v12-hero',
   'communities-v12-tools',
@@ -50,7 +51,7 @@ for (const marker of [
   'communities-v12-hierarchy-identity',
   'communities-v12-hierarchy-child',
   'communities-v12-hierarchy-child-arrow',
-  "useState<string | null>('internet-projects')",
+  'useState<string | null>(null)',
   'selectedRootSlug',
   'hierarchyTrail(item: Community)',
   'CommunityGlyph',
