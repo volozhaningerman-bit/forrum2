@@ -11530,3 +11530,238 @@ body:has(.communities-v12-stage-a) .main {
 }
 
 /* /FORRUM_COMMUNITIES_REDESIGN_STAGE_C_V12 */
+
+/* FORRUM_COMMUNITIES_REDESIGN_STAGE_D_V12
+   Approved root-community catalogue rows.
+*/
+.communities-v12-stage-a .community-browser-layout {
+  display: block;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue {
+  overflow: hidden;
+  border: 1px solid var(--forrum-home-line) !important;
+  border-radius: var(--forrum-home-radius) !important;
+  background: var(--forrum-home-surface) !important;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-head,
+.communities-v12-stage-a .communities-v12-catalogue-row {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 172px 92px 138px 28px;
+  align-items: center;
+  column-gap: 12px;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-head {
+  min-height: 37px;
+  padding: 0 14px;
+  border-bottom: 1px solid var(--forrum-home-line);
+  color: #8d9a98;
+  font-size: 9.5px;
+  line-height: 1;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-row {
+  position: relative;
+  min-height: 84px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--forrum-home-line-soft);
+  background: transparent;
+  transition: background-color .12s ease, border-color .12s ease;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-row:last-child {
+  border-bottom: 0;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-row:hover,
+.communities-v12-stage-a .communities-v12-catalogue-row:focus-within {
+  background: rgba(255, 255, 255, .018);
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-row.selected {
+  background: rgba(25, 211, 154, .045);
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-row.selected::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--forrum-home-accent);
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-community {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-mark-shell {
+  flex: 0 0 auto;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-mark {
+  border: 1px solid color-mix(in srgb, currentColor 52%, #233538) !important;
+  border-radius: 7px !important;
+  background: color-mix(in srgb, currentColor 22%, #0d171a) !important;
+  color: inherit !important;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-mark img {
+  padding: 9px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  opacity: .94;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-copy {
+  min-width: 0;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-name {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--forrum-home-text);
+  font-size: 14px;
+  line-height: 1.25;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-name:hover,
+.communities-v12-stage-a .communities-v12-catalogue-name:focus-visible {
+  color: var(--forrum-home-accent);
+  outline: none;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-copy p {
+  margin: 5px 0 0;
+  overflow: hidden;
+  color: #9ba7a5 !important;
+  font-size: 10.5px;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-curator {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.communities-v12-stage-a .communities-v12-curator-avatar {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgba(25, 211, 154, .22);
+  border-radius: 50%;
+  background: #152125;
+  color: #dbe5e3;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.communities-v12-stage-a .communities-v12-curator-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.communities-v12-stage-a .communities-v12-curator-name {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--forrum-home-accent);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.communities-v12-stage-a .communities-v12-curator-empty {
+  color: #687573;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-subscribers {
+  color: #edf3f1;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.communities-v12-stage-a .communities-v12-subscribe {
+  min-height: 34px;
+  padding: 0 11px;
+  border: 1px solid rgba(25, 211, 154, .48);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--forrum-home-accent);
+  cursor: pointer;
+  font-size: 10.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.communities-v12-stage-a .communities-v12-subscribe:hover,
+.communities-v12-stage-a .communities-v12-subscribe:focus-visible {
+  border-color: var(--forrum-home-accent);
+  background: rgba(25, 211, 154, .06);
+  outline: none;
+}
+
+.communities-v12-stage-a .communities-v12-subscribe.subscribed {
+  background: rgba(25, 211, 154, .045);
+}
+
+.communities-v12-stage-a .communities-v12-subscribe:disabled {
+  opacity: .55;
+  cursor: wait;
+}
+
+.communities-v12-stage-a .communities-v12-open-hierarchy {
+  width: 28px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #cad4d2;
+  cursor: pointer;
+  font-size: 25px;
+  line-height: 1;
+}
+
+.communities-v12-stage-a .communities-v12-open-hierarchy:hover,
+.communities-v12-stage-a .communities-v12-open-hierarchy:focus-visible,
+.communities-v12-stage-a .communities-v12-open-hierarchy[aria-pressed="true"] {
+  color: var(--forrum-home-accent);
+  outline: none;
+}
+
+.communities-v12-stage-a .community-browser-children,
+.communities-v12-stage-a .community-browser-hitarea,
+.communities-v12-stage-a .community-browser-chevron,
+.communities-v12-stage-a .community-browser-actions {
+  display: none !important;
+}
+
+@media (max-width: 980px) {
+  .communities-v12-stage-a .communities-v12-catalogue-head,
+  .communities-v12-stage-a .communities-v12-catalogue-row {
+    grid-template-columns: minmax(230px, 1fr) 142px 82px 126px 26px;
+    column-gap: 9px;
+  }
+}
+
+/* /FORRUM_COMMUNITIES_REDESIGN_STAGE_D_V12 */

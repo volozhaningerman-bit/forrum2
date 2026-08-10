@@ -29,7 +29,6 @@ forbidMarker(client, 'Показывать', 'removed scope UI');
 forbidMarker(client, 'Только мои подписки', 'removed subscribed-only UI');
 forbidMarker(client, 'По активности', 'removed activity sort');
 forbidMarker(client, 'className="compact-filterbar"', 'removed legacy filterbar');
-forbidMarker(client, 'communities-v12-catalogue', 'future catalogue stage');
 forbidMarker(client, 'communities-v12-hierarchy-panel', 'future hierarchy panel stage');
 
 requireMarker(css, 'FORRUM_COMMUNITIES_REDESIGN_STAGE_C_V12', 'Stage C CSS');

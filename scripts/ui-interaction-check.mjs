@@ -35,15 +35,24 @@ for (const marker of [
   requireMarker(home, marker, 'home tree');
 }
 
+// FORRUM_COMMUNITIES_REDESIGN_STAGE_D_V12_INTERACTION_CONTRACT
+for (const marker of [
+  'communities-v12-catalogue-name',
+  'communities-v12-subscribe',
+  'communities-v12-open-hierarchy',
+  'roots.map((root) => renderCatalogueRow(root))',
+  'setSelectedSlug(item.slug)',
+  'navigationIcon(item.slug)',
+]) {
+  requireMarker(catalogue, marker, 'community catalogue');
+}
 for (const marker of [
   'community-browser-main-link',
   'community-browser-hitarea',
   'community-browser-chevron',
-  "event.key === 'ArrowRight'",
-  "event.key === 'ArrowLeft'",
-  'navigationIcon(item.slug)',
+  'renderBranch(',
 ]) {
-  requireMarker(catalogue, marker, 'community catalogue tree');
+  forbidMarker(catalogue, marker, 'retired community catalogue tree');
 }
 
 // FORRUM_HOME_REDESIGN_STAGE_D_V11_INTERACTION_CONTRACT

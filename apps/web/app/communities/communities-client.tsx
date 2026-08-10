@@ -3,12 +3,7 @@
 import Link from 'next/link';
 import { CommunityMark } from '@/components/community-mark';
 // FORRUM_TREE_INTERACTION_V8
-import type {
-  CSSProperties,
-  KeyboardEvent,
-  MouseEvent,
-  ReactNode,
-} from 'react';
+import type { MouseEvent } from 'react';
 import {
   useEffect,
   useMemo,
@@ -35,6 +30,7 @@ export type Community = {
   curator: {
     username: string;
     displayName: string;
+    avatarUrl?: string | null;
   } | null;
   parent: {
     slug: string;
@@ -80,9 +76,7 @@ export function CommunitiesClient({
   const [busy, setBusy] = useState('');
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<Sort>('default');
-  const [expanded, setExpanded] = useState<
-    Set<string>
-  >(() => new Set());
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
@@ -224,49 +218,6 @@ export function CommunitiesClient({
     ],
   );
 
-  function toggleOpen(slug: string) {
-    setExpanded((current) => {
-      const next = new Set(current);
-
-      if (next.has(slug)) next.delete(slug);
-      else next.add(slug);
-
-      return next;
-    });
-  }
-
-  function stop(event: MouseEvent<HTMLElement>) {
-    event.stopPropagation();
-  }
-
-  function keyboard(
-    event: KeyboardEvent<HTMLElement>,
-    open: boolean,
-    expandable: boolean,
-    toggleCurrent: () => void,
-  ) {
-    if (!expandable) return;
-
-    if (
-      event.key === 'Enter' ||
-      event.key === ' '
-    ) {
-      event.preventDefault();
-      toggleCurrent();
-      return;
-    }
-
-    if (event.key === 'ArrowRight' && !open) {
-      event.preventDefault();
-      toggleCurrent();
-      return;
-    }
-
-    if (event.key === 'ArrowLeft' && open) {
-      event.preventDefault();
-      toggleCurrent();
-    }
-  }
   async function changeSubscription(
     item: Community,
     event: MouseEvent<HTMLButtonElement>,
@@ -291,180 +242,115 @@ export function CommunitiesClient({
     }
   }
 
-  function renderBranch(
-    item: Community,
-    depth = 0,
-  ): ReactNode {
-    const children = sorted(
-      (
-        childrenByParent.get(item.slug) ?? []
-      ).filter(branchMatches),
-    );
+  function curatorInitial(item: Community) {
+    const source =
+      item.curator?.displayName ||
+      item.curator?.username ||
+      'F';
 
-    const expandable = children.length > 0;
-    const open =
-      Boolean(normalized) || expanded.has(item.slug);
-    const toggleCurrent = () => toggleOpen(item.slug);
+    return source.trim().slice(0, 1).toUpperCase();
+  }
+
+  function renderCatalogueRow(item: Community) {
+    const selected = selectedSlug === item.slug;
 
     return (
-      <section
-        className="community-browser-node"
+      <article
+        id={`community-${item.slug}`}
+        className={`communities-v12-catalogue-row ${
+          selected ? 'selected' : ''
+        }`}
         key={item.id}
       >
-        <article
-          id={`community-${item.slug}`}
-          className={`community-browser-row ${
-            expandable ? 'expandable' : ''
-          } ${open ? 'opened' : 'closed'}`}
-          style={
-            {
-              '--tree-depth': Math.min(depth, 4),
-            } as CSSProperties
-          }
-        >
-          <Link
-            className="community-browser-main-link"
-            href={`/communities/${item.slug}`}
+        <div className="communities-v12-catalogue-community">
+          <span
+            className="communities-v12-catalogue-mark-shell"
+            style={{ color: item.accentColor }}
           >
             <CommunityMark
               name={item.name}
-              url={navigationIcon(item.slug)}
-              size={34}
+              url={item.avatarUrl || navigationIcon(item.slug)}
+              size={48}
+              className="communities-v12-catalogue-mark"
             />
-            <div className="community-browser-copy">
-              <div className="community-browser-title">
-                <strong>{item.name}</strong>
-                {item.isSubscribed && (
-                  <span className="community-followed">
-                    Вы подписаны
-                  </span>
-                )}
-              </div>
+          </span>
 
-              <p>
-                {item.shortDescription ||
-                  item.description}
-              </p>
-
-              <div className="community-browser-meta">
-                <span>
-                  {formatNumber(item.subscriberCount)}{' '}
-                  подписчиков
-                </span>
-                <span>
-                  {formatNumber(item.publicationCount)}{' '}
-                  публикаций
-                </span>
-                {item.lastActivityAt && (
-                  <span>
-                    Активность{' '}
-                    {formatRelativeTime(
-                      item.lastActivityAt,
-                    )}
-                  </span>
-                )}
-                {item.curator && (
-                  <span>
-                    Куратор: {item.curator.displayName}
-                  </span>
-                )}
-              </div>
-            </div>
-          </Link>
-
-          {expandable ? (
-            <>
-              <button
-                type="button"
-                className="community-browser-hitarea"
-                aria-label={
-                  open
-                    ? `Свернуть подразделы ${item.name}`
-                    : `Показать подразделы ${item.name}`
-                }
-                aria-expanded={open}
-                onClick={toggleCurrent}
-                onKeyDown={(event) =>
-                  keyboard(
-                    event,
-                    open,
-                    expandable,
-                    toggleCurrent,
-                  )
-                }
-              >
-                <span className="visually-hidden">
-                  {open ? 'Свернуть' : 'Развернуть'}
-                </span>
-              </button>
-
-              <button
-                type="button"
-                className="community-browser-chevron"
-                aria-label={
-                  open
-                    ? `Свернуть подразделы ${item.name}`
-                    : `Показать подразделы ${item.name}`
-                }
-                aria-expanded={open}
-                onClick={toggleCurrent}
-                onKeyDown={(event) =>
-                  keyboard(
-                    event,
-                    open,
-                    expandable,
-                    toggleCurrent,
-                  )
-                }
-              >
-                <span aria-hidden="true">
-                  {open ? '−' : '+'}
-                </span>
-              </button>
-            </>
-          ) : (
-            <span
-              className="community-browser-spacer"
-              aria-hidden="true"
-            />
-          )}
-
-          <div className="community-browser-actions">
+          <div className="communities-v12-catalogue-copy">
             <Link
-              className="button ghost small"
+              className="communities-v12-catalogue-name"
               href={`/communities/${item.slug}`}
             >
-              Открыть
+              {item.name}
             </Link>
-            <button
-              type="button"
-              className={`button small ${
-                item.isSubscribed ? 'secondary' : ''
-              }`}
-              disabled={busy === item.slug}
-              onClick={(event) =>
-                void changeSubscription(item, event)
-              }
-            >
-              {busy === item.slug
-                ? 'Сохраняем…'
-                : item.isSubscribed
-                  ? 'Отписаться'
-                  : 'Подписаться'}
-            </button>
+            <p>
+              {item.shortDescription || item.description}
+            </p>
           </div>
-        </article>
+        </div>
 
-        {expandable && open && (
-          <div className="community-browser-children">
-            {children.map((child) =>
-              renderBranch(child, depth + 1),
-            )}
-          </div>
-        )}
-      </section>
+        <div className="communities-v12-catalogue-curator">
+          {item.curator ? (
+            <>
+              <span
+                className="communities-v12-curator-avatar"
+                aria-hidden="true"
+              >
+                {item.curator.avatarUrl ? (
+                  <img
+                    src={item.curator.avatarUrl}
+                    alt=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  curatorInitial(item)
+                )}
+              </span>
+              <span className="communities-v12-curator-name">
+                @{item.curator.username}
+              </span>
+            </>
+          ) : (
+            <span className="communities-v12-curator-empty">
+              —
+            </span>
+          )}
+        </div>
+
+        <div className="communities-v12-catalogue-subscribers">
+          {formatNumber(item.subscriberCount)}
+        </div>
+
+        <button
+          type="button"
+          className={`communities-v12-subscribe ${
+            item.isSubscribed ? 'subscribed' : ''
+          }`}
+          disabled={busy === item.slug}
+          onClick={(event) =>
+            void changeSubscription(item, event)
+          }
+        >
+          {busy === item.slug
+            ? 'Сохраняем…'
+            : item.isSubscribed
+              ? '✓  Вы подписаны'
+              : 'Подписаться'}
+        </button>
+
+        <button
+          type="button"
+          className="communities-v12-open-hierarchy"
+          aria-label={`Открыть структуру ${item.name}`}
+          aria-pressed={selected}
+          onClick={() => setSelectedSlug(item.slug)}
+        >
+          <span aria-hidden="true">›</span>
+        </button>
+      </article>
     );
   }
+
   return (
     <div className="community-browser-page communities-v12-stage-a">
             <header className="communities-v12-hero" aria-labelledby="communities-title">
@@ -566,42 +452,18 @@ export function CommunitiesClient({
       )}
 
       <div className="community-browser-layout">
-        <aside className="community-browser-index">
-          <strong>Направления</strong>
 
-          <nav>
-            {roots.map((root) => (
-              <a
-                key={root.id}
-                href={`#community-${root.slug}`}
-                onClick={() =>
-                  setExpanded((current) => {
-                    const next = new Set(current);
-                    next.add(root.slug);
-                    return next;
-                  })
-                }
-              >
-                <span>{root.name}</span>
-                <small>
-                  {formatNumber(
-                    root.subscriberCount,
-                  )}
-                </small>
-              </a>
-            ))}
-          </nav>
-
-          <Link
-            className="home-panel-footer"
-            href="/communities/proposals"
+        <main className="community-browser-list communities-v12-catalogue">
+          <div
+            className="communities-v12-catalogue-head"
+            aria-hidden="true"
           >
-            Предложения
-            <span aria-hidden="true">→</span>
-          </Link>
-        </aside>
-
-        <main className="community-browser-list">
+            <span>Сообщество</span>
+            <span>Куратор</span>
+            <span>Подписчики</span>
+            <span />
+            <span />
+          </div>
           {loading ? (
             <div
               className="compact-row-skeletons"
@@ -614,7 +476,7 @@ export function CommunitiesClient({
               )}
             </div>
           ) : roots.length ? (
-            roots.map((root) => renderBranch(root))
+            roots.map((root) => renderCatalogueRow(root))
           ) : (
             <div className="compact-empty-state">
               <strong>Ничего не найдено</strong>
