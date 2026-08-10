@@ -1,0 +1,302 @@
+name: FORRUM Communities Redesign V12.E.3
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: forrum-communities-redesign-v12-e-3
+  cancel-in-progress: false
+
+env:
+  NODE_ENV: test
+  DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/forrum?schema=public
+  JWT_SECRET: forrum-github-actions-secret
+  WEB_URL: http://127.0.0.1:3000
+  API_INTERNAL_URL: http://127.0.0.1:4000/v1
+  PUBLIC_API_URL: http://127.0.0.1:4000
+  API_PORT: '4000'
+  PORT: '3000'
+
+jobs:
+  communities-stage-e-3:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: forrum
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d forrum"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    steps:
+      - name: Check out canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify applied Communities Stage E baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          require_file_marker() {
+            local path="$1"
+            local marker="$2"
+            local label="$3"
+
+            if [[ ! -f "$path" ]]; then
+              echo "Missing file: $path"
+              exit 1
+            fi
+
+            local content
+            content="$(cat "$path")"
+
+            if [[ "$content" != *"$marker"* ]]; then
+              echo "Stage E baseline verification failed: $label"
+              echo "Missing marker: $marker"
+              exit 1
+            fi
+          }
+
+          forbid_file_marker() {
+            local path="$1"
+            local marker="$2"
+            local label="$3"
+
+            local content
+            content="$(cat "$path")"
+
+            if [[ "$content" == *"$marker"* ]]; then
+              echo "Stage E baseline verification failed: $label"
+              echo "Forbidden marker remains: $marker"
+              exit 1
+            fi
+          }
+
+          require_file_marker \
+            "apps/web/app/communities/communities-client.tsx" \
+            "communities-v12-desktop-grid" \
+            "approved two-column Communities layout"
+
+          require_file_marker \
+            "apps/web/app/communities/communities-client.tsx" \
+            "communities-v12-hierarchy-panel" \
+            "persistent hierarchy panel"
+
+          require_file_marker \
+            "apps/web/app/communities/communities-client.tsx" \
+            "CommunityGlyph" \
+            "system community glyphs"
+
+          require_file_marker \
+            "apps/web/app/communities/communities-client.tsx" \
+            "workshop: '/workshop'" \
+            "Workshop route"
+
+          require_file_marker \
+            "apps/web/app/globals.css" \
+            "FORRUM_COMMUNITIES_REDESIGN_STAGE_E_V12" \
+            "Stage E visual contract"
+
+          require_file_marker \
+            "apps/api/prisma/seed.ts" \
+            "FORRUM_COMMUNITIES_STAGE_E_WORKSHOP_ROOT" \
+            "Workshop taxonomy root"
+
+          require_file_marker \
+            "apps/api/prisma/seed.ts" \
+            "FORRUM_COMMUNITIES_STAGE_E_WORKSHOP_CHILDREN" \
+            "Workshop taxonomy children"
+
+          require_file_marker \
+            "apps/web/components/home-dashboard.tsx" \
+            "community.slug !== 'workshop'" \
+            "homepage Workshop duplicate protection"
+
+          require_file_marker \
+            "scripts/ui-interaction-check.mjs" \
+            "FORRUM_COMMUNITIES_REDESIGN_STAGE_E_V12_INTERACTION_CONTRACT" \
+            "Stage E interaction contract"
+
+          require_file_marker \
+            "scripts/communities-redesign-stage-d-check.mjs" \
+            "'roots.map((root) =>'" \
+            "evolved Stage D root catalogue contract"
+
+          require_file_marker \
+            "scripts/communities-redesign-stage-d-check.mjs" \
+            "'renderCatalogueRow(root)'" \
+            "evolved Stage D renderer contract"
+
+          forbid_file_marker \
+            "apps/web/app/communities/communities-client.tsx" \
+            "CommunityMark" \
+            "retired image-backed community mark"
+
+          forbid_file_marker \
+            "apps/web/app/communities/communities-client.tsx" \
+            "renderBranch(" \
+            "retired inline recursive catalogue"
+
+          test -z "$(git status --porcelain)"
+
+      - name: Run source contracts before dependency install
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/communities-redesign-stage-a-check.mjs
+          node scripts/communities-redesign-stage-b-check.mjs
+          node scripts/communities-redesign-stage-c-check.mjs
+          node scripts/communities-redesign-stage-d-check.mjs
+          node scripts/communities-redesign-stage-e-check.mjs
+          node scripts/home-redesign-stage-h2-check.mjs
+          node scripts/home-redesign-stage-h-check.mjs
+          node scripts/ui-interaction-check.mjs
+          git diff --check
+          test -z "$(git status --porcelain)"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies without creating a lock file
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --package-lock=false
+          test ! -f package-lock.json
+
+      - name: Generate validate sync and seed Prisma
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run db:generate
+          npm run db:validate
+          npm run db:push
+          npm run db:seed
+
+      - name: Static UX accessibility and final Communities checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          node scripts/communities-redesign-stage-a-check.mjs
+          node scripts/communities-redesign-stage-b-check.mjs
+          node scripts/communities-redesign-stage-c-check.mjs
+          node scripts/communities-redesign-stage-d-check.mjs
+          node scripts/communities-redesign-stage-e-check.mjs
+          node scripts/home-redesign-stage-h2-check.mjs
+          node scripts/home-redesign-stage-h-check.mjs
+          node scripts/ui-interaction-check.mjs
+
+      - name: Typecheck every workspace
+        run: npm run typecheck
+
+      - name: Run API tests
+        run: npm test
+
+      - name: Clean production build
+        run: npm run build
+
+      - name: Remove generated build noise
+        shell: bash
+        run: |
+          set -euo pipefail
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+      - name: Verify canonical main remotely
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+
+          local_sha="$(git rev-parse HEAD)"
+          remote_sha="$(git rev-parse origin/main)"
+
+          if [[ "$local_sha" != "$remote_sha" ]]; then
+            echo "Remote main changed during verification."
+            echo "Local:  $local_sha"
+            echo "Remote: $remote_sha"
+            exit 1
+          fi
+
+          verify_remote_marker() {
+            local path="$1"
+            local marker="$2"
+            local label="$3"
+
+            local content
+            content="$(git show "origin/main:$path")"
+
+            if [[ "$content" != *"$marker"* ]]; then
+              echo "Remote verification failed: $label"
+              echo "Missing marker: $marker"
+              exit 1
+            fi
+          }
+
+          verify_remote_marker \
+            "apps/web/app/communities/communities-client.tsx" \
+            "communities-v12-desktop-grid" \
+            "Communities desktop grid"
+
+          verify_remote_marker \
+            "apps/web/app/communities/communities-client.tsx" \
+            "communities-v12-hierarchy-panel" \
+            "Communities hierarchy panel"
+
+          verify_remote_marker \
+            "apps/web/app/communities/communities-client.tsx" \
+            "CommunityGlyph" \
+            "Communities system glyphs"
+
+          verify_remote_marker \
+            "apps/web/app/globals.css" \
+            "FORRUM_COMMUNITIES_REDESIGN_STAGE_E_V12" \
+            "Communities Stage E CSS"
+
+          verify_remote_marker \
+            "apps/api/prisma/seed.ts" \
+            "FORRUM_COMMUNITIES_STAGE_E_WORKSHOP_ROOT" \
+            "Workshop taxonomy root"
+
+          verify_remote_marker \
+            "apps/web/components/home-dashboard.tsx" \
+            "community.slug !== 'workshop'" \
+            "Homepage Workshop duplicate protection"
+
+          verify_remote_marker \
+            "scripts/ui-interaction-check.mjs" \
+            "FORRUM_COMMUNITIES_REDESIGN_STAGE_E_V12_INTERACTION_CONTRACT" \
+            "Communities Stage E interaction contract"
+
+          verify_remote_marker \
+            "scripts/communities-redesign-stage-d-check.mjs" \
+            "'roots.map((root) =>'" \
+            "Evolved Stage D root catalogue map"
+
+          verify_remote_marker \
+            "scripts/communities-redesign-stage-d-check.mjs" \
+            "'renderCatalogueRow(root)'" \
+            "Evolved Stage D renderer contract"
+
+          echo "FORRUM Communities V12.E.3 verification passed."
