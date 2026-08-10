@@ -1,0 +1,178 @@
+name: FORRUM Home Redesign V11.H.2
+on:
+  workflow_dispatch: {}
+permissions:
+  contents: write
+concurrency:
+  group: forrum-home-redesign-v11-h-2
+  cancel-in-progress: false
+env:
+  NODE_ENV: test
+  DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/forrum?schema=public
+  JWT_SECRET: forrum-github-actions-secret
+  WEB_URL: http://127.0.0.1:3000
+  API_INTERNAL_URL: http://127.0.0.1:4000/v1
+  PUBLIC_API_URL: http://127.0.0.1:4000
+  API_PORT: '4000'
+  PORT: '3000'
+jobs:
+  stage-h-2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: forrum
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d forrum"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - name: Check out canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify approved Stage H baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f apps/web/components/home-dashboard.tsx
+          test -f apps/web/app/globals.css
+          test -f apps/web/app/layout.tsx
+          test -f apps/web/components/site-footer.tsx
+          test -f apps/web/app/rules/page.tsx
+          test -f apps/web/app/support/page.tsx
+          grep -q 'FORRUM_HOME_REDESIGN_STAGE_H_V11' apps/web/app/globals.css
+          grep -q 'home-curator-requirements-stage-h' apps/web/components/home-dashboard.tsx
+          grep -q 'home-right-stage-f' apps/web/components/home-dashboard.tsx
+          grep -q '<SiteFooter/>' apps/web/app/layout.tsx
+          test -z "$(git status --porcelain)"
+
+      - name: Restore canonical content and footer width Stage H.2
+        shell: bash
+        env:
+          STAGE_H2_PATCH_B64: ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCgpjc3NfcGF0aCA9IFBhdGgoJ2FwcHMvd2ViL2FwcC9nbG9iYWxzLmNzcycpCmNoZWNrX3BhdGggPSBQYXRoKCdzY3JpcHRzL2hvbWUtcmVkZXNpZ24tc3RhZ2UtaDItY2hlY2subWpzJykKZG9jX3BhdGggPSBQYXRoKCdkb2NzL0ZPUlJVTV9IT01FX1JFREVTSUdOX1NUQUdFX0gyX1YxMS5tZCcpCgpjc3MgPSBjc3NfcGF0aC5yZWFkX3RleHQoZW5jb2Rpbmc9J3V0Zi04JykKCmlmICdGT1JSVU1fSE9NRV9SRURFU0lHTl9TVEFHRV9IX1YxMScgbm90IGluIGNzczoKICAgIHJhaXNlIFJ1bnRpbWVFcnJvcignU3RhZ2UgSCBDU1MgYmFzZWxpbmUgaXMgbWlzc2luZycpCgpvbGRfbWFpbiA9ICIuYXBwLXBhZ2UtZnJhbWUgPiAjbWFpbi1jb250ZW50IHtcbiAgd2lkdGg6IDEwMCU7XG4gIG1pbi13aWR0aDogMDtcbiAgZmxleDogMSAwIGF1dG87XG59IgpuZXdfbWFpbiA9ICIuYXBwLXBhZ2UtZnJhbWUgPiAjbWFpbi1jb250ZW50IHtcbiAgbWluLXdpZHRoOiAwO1xuICBmbGV4OiAxIDAgYXV0bztcbn0iCgppZiBvbGRfbWFpbiBpbiBjc3M6CiAgICBjc3MgPSBjc3MucmVwbGFjZShvbGRfbWFpbiwgbmV3X21haW4sIDEpCmVsaWYgbmV3X21haW4gbm90IGluIGNzczoKICAgIHJhaXNlIFJ1bnRpbWVFcnJvcignU3RhZ2UgSCBtYWluLWNvbnRlbnQgZnJhbWUgYmFzZWxpbmUgY2hhbmdlZCB1bmV4cGVjdGVkbHknKQoKb2xkX2Zvb3Rlcl93aWR0aCA9ICcgIHdpZHRoOiBtaW4oMTM2MHB4LCBjYWxjKDEwMCUgLSAzMnB4KSk7JwpuZXdfZm9vdGVyX3dpZHRoID0gJyAgd2lkdGg6IG1pbigxMTgwcHgsIGNhbGMoMTAwJSAtIDMycHgpKTsnCmlmIG9sZF9mb290ZXJfd2lkdGggaW4gY3NzOgogICAgY3NzID0gY3NzLnJlcGxhY2Uob2xkX2Zvb3Rlcl93aWR0aCwgbmV3X2Zvb3Rlcl93aWR0aCwgMSkKZWxpZiBuZXdfZm9vdGVyX3dpZHRoIG5vdCBpbiBjc3M6CiAgICByYWlzZSBSdW50aW1lRXJyb3IoJ1N0YWdlIEggZm9vdGVyIGlubmVyIHdpZHRoIGJhc2VsaW5lIGNoYW5nZWQgdW5leHBlY3RlZGx5JykKCm1hcmtlciA9ICgKICAgICcvKiBGT1JSVU1fSE9NRV9SRURFU0lHTl9TVEFHRV9IMl9WMTFcbicKICAgICcgICBSZXN0b3JlIHRoZSBjYW5vbmljYWwgc2hlbGwgd2lkdGggYWZ0ZXIgdGhlIGdsb2JhbCBmb290ZXIgaW50ZWdyYXRpb24uXG4nCiAgICAnICAgRm9vdGVyIGlubmVyIHdpZHRoIGZvbGxvd3MgdGhlIHNhbWUgMTE4MHB4IHNoZWxsIGFzIGhlYWRlci9jb250ZW50LlxuJwogICAgJyovXG4nCiAgICAnLyogL0ZPUlJVTV9IT01FX1JFREVTSUdOX1NUQUdFX0gyX1YxMSAqLycKKQoKaWYgJ0ZPUlJVTV9IT01FX1JFREVTSUdOX1NUQUdFX0gyX1YxMScgbm90IGluIGNzczoKICAgIGNzcyA9IGNzcy5yc3RyaXAoKSArICdcblxuJyArIG1hcmtlciArICdcbicKCmNzcyA9ICdcbicuam9pbihsaW5lLnJzdHJpcCgpIGZvciBsaW5lIGluIGNzcy5zcGxpdGxpbmVzKCkpICsgJ1xuJwpjc3NfcGF0aC53cml0ZV90ZXh0KGNzcywgZW5jb2Rpbmc9J3V0Zi04JykKCmNoZWNrX3BhdGgud3JpdGVfdGV4dCgKICAgICJpbXBvcnQgZnMgZnJvbSAnbm9kZTpmcyc7XG5cbiIKICAgICJjb25zdCBjc3MgPSBmcy5yZWFkRmlsZVN5bmMoJ2FwcHMvd2ViL2FwcC9nbG9iYWxzLmNzcycsICd1dGY4Jyk7XG4iCiAgICAiY29uc3QgbGF5b3V0ID0gZnMucmVhZEZpbGVTeW5jKCdhcHBzL3dlYi9hcHAvbGF5b3V0LnRzeCcsICd1dGY4Jyk7XG4iCiAgICAiY29uc3QgZm9vdGVyID0gZnMucmVhZEZpbGVTeW5jKCdhcHBzL3dlYi9jb21wb25lbnRzL3NpdGUtZm9vdGVyLnRzeCcsICd1dGY4Jyk7XG4iCiAgICAiY29uc3QgaG9tZSA9IGZzLnJlYWRGaWxlU3luYygnYXBwcy93ZWIvY29tcG9uZW50cy9ob21lLWRhc2hib2FyZC50c3gnLCAndXRmOCcpO1xuXG4iCiAgICAiZnVuY3Rpb24gcmVxdWlyZU1hcmtlcihzb3VyY2UsIG1hcmtlciwgbGFiZWwpIHtcbiIKICAgICIgIGlmICghc291cmNlLmluY2x1ZGVzKG1hcmtlcikpIHRocm93IG5ldyBFcnJvcihgJHtsYWJlbH06IG1pc3NpbmcgJHttYXJrZXJ9YCk7XG4iCiAgICAifVxuIgogICAgImZ1bmN0aW9uIGZvcmJpZE1hcmtlcihzb3VyY2UsIG1hcmtlciwgbGFiZWwpIHtcbiIKICAgICIgIGlmIChzb3VyY2UuaW5jbHVkZXMobWFya2VyKSkgdGhyb3cgbmV3IEVycm9yKGAke2xhYmVsfTogZm9yYmlkZGVuICR7bWFya2VyfWApO1xuIgogICAgIn1cblxuIgogICAgInJlcXVpcmVNYXJrZXIoY3NzLCAnRk9SUlVNX0hPTUVfUkVERVNJR05fU1RBR0VfSDJfVjExJywgJ1N0YWdlIEguMiBDU1MnKTtcbiIKICAgICJyZXF1aXJlTWFya2VyKGNzcywgJy5zaGVsbCB7IHdpZHRoOiBtaW4oMTE4MHB4LCBjYWxjKDEwMCUgLSAzMnB4KSk7JywgJ2Nhbm9uaWNhbCBzaGVsbCcpO1xuIgogICAgInJlcXVpcmVNYXJrZXIoY3NzLCAnLmFwcC1wYWdlLWZyYW1lID4gI21haW4tY29udGVudCB7JywgJ3BhZ2UgZnJhbWUgbWFpbicpO1xuIgogICAgInJlcXVpcmVNYXJrZXIoY3NzLCAnd2lkdGg6IG1pbigxMTgwcHgsIGNhbGMoMTAwJSAtIDMycHgpKTsnLCAnZm9vdGVyIHNoZWxsIHdpZHRoJyk7XG4iCiAgICAiZm9yYmlkTWFya2VyKGNzcywgJy5hcHAtcGFnZS1mcmFtZSA+ICNtYWluLWNvbnRlbnQge1xcbiAgd2lkdGg6IDEwMCU7JywgJ2Z1bGwtd2lkdGggbWFpbiByZWdyZXNzaW9uJyk7XG4iCiAgICAicmVxdWlyZU1hcmtlcihsYXlvdXQsICc8U2l0ZUZvb3Rlci8+JywgJ2dsb2JhbCBmb290ZXInKTtcbiIKICAgICJyZXF1aXJlTWFya2VyKGZvb3RlciwgJ3NpdGUtZm9vdGVyLWlubmVyJywgJ2dsb2JhbCBmb290ZXIgY29tcG9uZW50Jyk7XG4iCiAgICAicmVxdWlyZU1hcmtlcihob21lLCAnaG9tZS1yaWdodC1zdGFnZS1mJywgJ2FwcHJvdmVkIHJpZ2h0IHJhaWwnKTtcbiIKICAgICJyZXF1aXJlTWFya2VyKGhvbWUsICdob21lLWN1cmF0b3ItcmVxdWlyZW1lbnRzLXN0YWdlLWgnLCAnYXBwcm92ZWQgbGlnaHQgY3VyYXRvciBmb3JtJyk7XG4iCiAgICAicmVxdWlyZU1hcmtlcihob21lLCAnaG9tZS1uZXctdG9waWNzLXN0YWdlLWUnLCAnYXBwcm92ZWQgbmV3IHRvcGljcyB0YWJsZScpO1xuXG4iCiAgICAiY29uc29sZS5sb2coJ0ZPUlJVTSBIb21lIFJlZGVzaWduIFN0YWdlIEguMiBjb250cmFjdCBwYXNzZWQuJyk7XG4iLAogICAgZW5jb2Rpbmc9J3V0Zi04JwopCgpkb2NfcGF0aC5wYXJlbnQubWtkaXIocGFyZW50cz1UcnVlLCBleGlzdF9vaz1UcnVlKQpkb2NfcGF0aC53cml0ZV90ZXh0KAogICAgIiMgRk9SUlVNIEhvbWUgUmVkZXNpZ24g4oCUIFN0YWdlIEguMlxuXG4iCiAgICAiVGFyZ2V0ZWQgdmlzdWFsIHJlZ3Jlc3Npb24gZml4IGFmdGVyIFN0YWdlIEguXG5cbiIKICAgICItIFJlbW92ZXMgdGhlIGFjY2lkZW50YWwgYHdpZHRoOiAxMDAlYCBvdmVycmlkZSBmcm9tIHRoZSByb290IGAjbWFpbi1jb250ZW50YCwgYWxsb3dpbmcgdGhlIGV4aXN0aW5nIGAuc2hlbGxgIHdpZHRoIGFuZCBjZW50ZXJpbmcgdG8gd29yayBhZ2Fpbi5cbiIKICAgICItIEFsaWducyB0aGUgZ2xvYmFsIGZvb3RlciBpbm5lciBjb250ZW50IHRvIHRoZSBzYW1lIDExODBweCBzaGVsbCB1c2VkIGJ5IHRoZSBhcHBsaWNhdGlvbi5cbiIKICAgICItIERvZXMgbm90IHJlZGVzaWduIHRoZSBoZWFkZXIsIGNhdGVnb3J5IHRyZWUsIGNlbnRyYWwgdGFibGVzLCBuZXdzIHJhaWwsIHBhcnRpY2lwYXRpb24gZm9ybSwgUnVsZXMgb3IgU3VwcG9ydC5cbiIsCiAgICBlbmNvZGluZz0ndXRmLTgnCikKCnByaW50KCdGT1JSVU0gSG9tZSBSZWRlc2lnbiBTdGFnZSBILjIgYXBwbGllZC4nKQo=
+        run: |
+          set -euo pipefail
+          printf '%s' "$STAGE_H2_PATCH_B64" | base64 -d > /tmp/forrum-stage-h2-patch.py
+          python3 /tmp/forrum-stage-h2-patch.py
+
+      - name: Verify Stage H.2 scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/home-redesign-stage-h2-check.mjs
+          node scripts/home-redesign-stage-h-check.mjs
+          node scripts/home-redesign-stage-g-check.mjs
+          node scripts/home-redesign-stage-d-check.mjs
+          node scripts/home-redesign-stage-e-check.mjs
+          node scripts/home-redesign-stage-f-check.mjs
+          node scripts/ui-interaction-check.mjs
+          git diff --check
+
+          allowed='^(apps/web/app/globals\.css|scripts/home-redesign-stage-h2-check\.mjs|docs/FORRUM_HOME_REDESIGN_STAGE_H2_V11\.md)$'
+          unexpected="$(git diff --name-only | grep -Ev "$allowed" || true)"
+          if [ -n "$unexpected" ]; then
+            echo "Unexpected files were changed:"
+            echo "$unexpected"
+            exit 1
+          fi
+
+      - name: Create isolated Stage H.2 commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "FORRUM QA updater"
+          git config user.email "actions@users.noreply.github.com"
+          git add --             apps/web/app/globals.css             scripts/home-redesign-stage-h2-check.mjs             docs/FORRUM_HOME_REDESIGN_STAGE_H2_V11.md
+
+          if git diff --cached --quiet; then
+            echo 'Stage H.2 is already present.'
+          else
+            git commit -m "Restore FORRUM shell width after footer integration"
+          fi
+          test -z "$(git status --porcelain)"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: npm install --include=dev --no-audit --no-fund --package-lock=false
+
+      - name: Generate validate sync and seed Prisma
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run db:generate
+          npm run db:validate
+          npm run db:push
+          npm run db:seed
+
+      - name: Static UX accessibility and Stage H.2 checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          node scripts/home-redesign-stage-h2-check.mjs
+          node scripts/home-redesign-stage-h-check.mjs
+          node scripts/home-redesign-stage-g-check.mjs
+          node scripts/home-redesign-stage-d-check.mjs
+          node scripts/home-redesign-stage-e-check.mjs
+          node scripts/home-redesign-stage-f-check.mjs
+          node scripts/ui-interaction-check.mjs
+
+      - name: Typecheck every workspace
+        run: npm run typecheck
+
+      - name: Run API tests
+        run: npm run test -w @forrum/api
+
+      - name: Clean production build
+        shell: bash
+        env:
+          NODE_ENV: production
+        run: |
+          set -euo pipefail
+          rm -rf apps/web/.next apps/api/dist packages/contracts/dist
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/api
+          npm run build -w @forrum/web
+
+      - name: Remove generated build noise
+        shell: bash
+        run: |
+          set -euo pipefail
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+      - name: Push verified Stage H.2
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+
+      - name: Verify remote main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          LOCAL_SHA="$(git rev-parse HEAD)"
+          REMOTE_SHA="$(git rev-parse origin/main)"
+          echo "Local:  $LOCAL_SHA"
+          echo "Remote: $REMOTE_SHA"
+          test "$LOCAL_SHA" = "$REMOTE_SHA"
