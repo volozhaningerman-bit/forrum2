@@ -42,8 +42,7 @@ export type Community = {
   } | null;
 };
 
-type Scope = 'all' | 'subscribed';
-type Sort = 'active' | 'subscribers' | 'name';
+type Sort = 'default' | 'subscribers' | 'name';
 
 const formatNumber = (value: number) =>
   new Intl.NumberFormat('ru-RU').format(value);
@@ -80,8 +79,7 @@ export function CommunitiesClient({
   const [error, setError] = useState('');
   const [busy, setBusy] = useState('');
   const [query, setQuery] = useState('');
-  const [scope, setScope] = useState<Scope>('all');
-  const [sort, setSort] = useState<Sort>('active');
+  const [sort, setSort] = useState<Sort>('default');
   const [expanded, setExpanded] = useState<
     Set<string>
   >(() => new Set());
@@ -149,17 +147,6 @@ export function CommunitiesClient({
     return result;
   }
 
-  function containsSubscription(
-    item: Community,
-  ): boolean {
-    return (
-      item.isSubscribed ||
-      collectDescendants(item.slug).some(
-        (child) => child.isSubscribed,
-      )
-    );
-  }
-
   function branchMatches(item: Community): boolean {
     const ownMatch =
       !normalized ||
@@ -168,32 +155,21 @@ export function CommunitiesClient({
       }`
         .toLowerCase()
         .includes(normalized);
-
     const children =
       childrenByParent.get(item.slug) ?? [];
 
-    const queryMatch =
-      ownMatch || children.some(branchMatches);
-
-    const scopeMatch =
-      scope === 'all' || containsSubscription(item);
-
-    return queryMatch && scopeMatch;
+    return ownMatch || children.some(branchMatches);
   }
 
-  function activity(item: Community): number {
-    const own = item.lastActivityAt
-      ? new Date(item.lastActivityAt).getTime()
-      : 0;
 
-    return Math.max(
-      own,
-      ...(childrenByParent.get(item.slug) ?? []).map(
-        activity,
-      ),
-      0,
-    );
-  }
+  const canonicalRootOrder = [
+    'workshop',
+    'internet-projects',
+    'promotion',
+    'forrum-start',
+    'gta-rp',
+    'telegram',
+  ];
 
   function sorted(list: Community[]) {
     return [...list].sort((left, right) => {
@@ -211,7 +187,23 @@ export function CommunitiesClient({
         );
       }
 
-      return activity(right) - activity(left);
+      if (!left.parent && !right.parent) {
+        const leftIndex =
+          canonicalRootOrder.indexOf(left.slug);
+        const rightIndex =
+          canonicalRootOrder.indexOf(right.slug);
+
+        if (leftIndex !== rightIndex) {
+          if (leftIndex < 0) return 1;
+          if (rightIndex < 0) return -1;
+          return leftIndex - rightIndex;
+        }
+      }
+
+      return left.name.localeCompare(
+        right.name,
+        'ru',
+      );
     });
   }
 
@@ -228,7 +220,6 @@ export function CommunitiesClient({
       items,
       childrenByParent,
       normalized,
-      scope,
       sort,
     ],
   );
@@ -512,49 +503,44 @@ export function CommunitiesClient({
       </header>
 
       <section
-        className="compact-filterbar"
-        aria-label="Настройка каталога"
+        className="communities-v12-tools"
+        aria-label="Поиск и сортировка сообществ"
       >
-        <label className="compact-search-field">
+        <label className="communities-v12-search">
           <span className="visually-hidden">
-            Поиск
+            Найти сообщество или раздел
+          </span>
+          <span
+            className="communities-v12-search-icon"
+            aria-hidden="true"
+          >
+            <svg viewBox="0 0 24 24" focusable="false">
+              <circle cx="11" cy="11" r="6.5" />
+              <path d="m16 16 4 4" />
+            </svg>
           </span>
           <input
             value={query}
             onChange={(event) =>
               setQuery(event.target.value)
             }
-            placeholder="Название или тема сообщества"
+            placeholder="Найти сообщество или раздел..."
+            autoComplete="off"
           />
         </label>
 
-        <label>
-          <span>Показывать</span>
-          <select
-            value={scope}
-            onChange={(event) =>
-              setScope(event.target.value as Scope)
-            }
-          >
-            <option value="all">
-              Все сообщества
-            </option>
-            <option value="subscribed">
-              Только мои подписки
-            </option>
-          </select>
-        </label>
-
-        <label>
-          <span>Порядок</span>
+        <label className="communities-v12-sort">
+          <span className="visually-hidden">
+            Сортировка сообществ
+          </span>
           <select
             value={sort}
             onChange={(event) =>
               setSort(event.target.value as Sort)
             }
           >
-            <option value="active">
-              По активности
+            <option value="default">
+              По умолчанию
             </option>
             <option value="subscribers">
               По подписчикам
@@ -631,25 +617,19 @@ export function CommunitiesClient({
             roots.map((root) => renderBranch(root))
           ) : (
             <div className="compact-empty-state">
-              <strong>
-                {scope === 'subscribed'
-                  ? 'Подписок пока нет'
-                  : 'Ничего не найдено'}
-              </strong>
+              <strong>Ничего не найдено</strong>
               <span>
-                {scope === 'subscribed'
-                  ? 'Подпишитесь на сообщества, чтобы собрать собственную структуру.'
-                  : 'Сократите запрос или сбросьте фильтры.'}
+                Измените запрос или очистите поиск.
               </span>
               <button
                 type="button"
                 className="button ghost small"
                 onClick={() => {
                   setQuery('');
-                  setScope('all');
+                  setSort('default');
                 }}
               >
-                Сбросить фильтры
+                Очистить поиск
               </button>
             </div>
           )}

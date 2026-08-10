@@ -11450,3 +11450,83 @@ body:has(.communities-v12-stage-a) .main {
 }
 
 /* /FORRUM_COMMUNITIES_REDESIGN_STAGE_B_V12 */
+
+/* FORRUM_COMMUNITIES_REDESIGN_STAGE_C_V12
+   Approved local structure search + compact sorting.
+*/
+.communities-v12-stage-a .communities-v12-tools {
+  margin: 0 0 8px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 168px;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+}
+
+.communities-v12-stage-a .communities-v12-search,
+.communities-v12-stage-a .communities-v12-sort {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+
+.communities-v12-stage-a .communities-v12-search input,
+.communities-v12-stage-a .communities-v12-sort select {
+  min-height: 42px;
+  border: 1px solid var(--forrum-home-line);
+  border-radius: 5px !important;
+  background: var(--forrum-home-surface) !important;
+  color: var(--forrum-home-text) !important;
+  box-shadow: none !important;
+  font-size: 11px;
+}
+
+.communities-v12-stage-a .communities-v12-search input {
+  padding: 0 14px 0 42px;
+}
+
+.communities-v12-stage-a .communities-v12-search input::placeholder {
+  color: #7f8d8b;
+  opacity: 1;
+}
+
+.communities-v12-stage-a .communities-v12-sort select {
+  padding: 0 34px 0 12px;
+  cursor: pointer;
+}
+
+.communities-v12-stage-a .communities-v12-search-icon {
+  position: absolute;
+  z-index: 1;
+  left: 13px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  color: #9ca8a6;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.communities-v12-stage-a .communities-v12-search-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.communities-v12-stage-a .communities-v12-search input:hover,
+.communities-v12-stage-a .communities-v12-sort select:hover {
+  border-color: var(--forrum-home-line-strong) !important;
+}
+
+.communities-v12-stage-a .communities-v12-search input:focus,
+.communities-v12-stage-a .communities-v12-sort select:focus {
+  border-color: rgba(25, 211, 154, .62) !important;
+  outline: 1px solid rgba(25, 211, 154, .18) !important;
+}
+
+/* /FORRUM_COMMUNITIES_REDESIGN_STAGE_C_V12 */
