@@ -12661,3 +12661,44 @@ body:has(.communities-v12-stage-a) .main {
   }
 }
 /* /FORRUM_COMMUNITIES_REDESIGN_STAGE_F3_V12 */
+
+/* FORRUM_COMMUNITIES_REDESIGN_STAGE_F4_V12
+   Empty catalogue space stays clickable without pretending to be a link.
+   Actual navigation and action targets keep the pointer cursor.
+   Curator name regains a real mouse hit area above the full-row surface.
+*/
+.communities-v12-stage-a .communities-v12-catalogue-row,
+.communities-v12-stage-a .communities-v12-hierarchy-child,
+.communities-v12-stage-a .communities-v12-row-expand-surface,
+.communities-v12-stage-a .communities-v12-hierarchy-child-expand-surface {
+  cursor: default;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-curator {
+  pointer-events: auto;
+}
+
+.communities-v12-stage-a .communities-v12-curator-profile-link,
+.communities-v12-stage-a .communities-v12-hierarchy-curator-link {
+  position: relative;
+  z-index: 4;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-icon-link,
+.communities-v12-stage-a .communities-v12-catalogue-name,
+.communities-v12-stage-a .communities-v12-hierarchy-title,
+.communities-v12-stage-a .communities-v12-hierarchy-child-icon-link,
+.communities-v12-stage-a .communities-v12-hierarchy-child-name,
+.communities-v12-stage-a .communities-v12-subscribe,
+.communities-v12-stage-a .communities-v12-hero-primary,
+.communities-v12-stage-a .communities-v12-hero-secondary {
+  cursor: pointer;
+}
+
+.communities-v12-stage-a .communities-v12-catalogue-curator
+  > .communities-v12-curator-avatar {
+  cursor: default;
+}
+/* /FORRUM_COMMUNITIES_REDESIGN_STAGE_F4_V12 */
