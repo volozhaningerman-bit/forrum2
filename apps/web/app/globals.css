@@ -10570,3 +10570,169 @@ body:has(.home-stage-one) .header :is(a, button, input):focus-visible {
 }
 
 /* /FORRUM_HOME_REDESIGN_STAGE_F_V11 */
+
+/* FORRUM_HOME_REDESIGN_STAGE_G_V11
+   Stage G: dark viewport completion, compact footer, Rules and Support.
+*/
+.home-stage-one {
+  min-height: calc(100dvh - 52px);
+  display: flex;
+  flex-direction: column;
+}
+
+.home-stage-one .home-layout {
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.home-stage-one .home-reference-footer {
+  width: min(100%, 1360px);
+  margin: auto auto 0;
+  min-height: 64px;
+  padding: 18px 8px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 1px solid var(--forrum-home-line);
+  color: var(--forrum-home-muted);
+  font-size: 11px;
+}
+
+.home-stage-one .home-reference-footer nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.home-stage-one .home-reference-footer :is(a, button) {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--forrum-home-muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.home-stage-one .home-reference-footer :is(a, button):hover,
+.home-stage-one .home-reference-footer :is(a, button):focus-visible {
+  color: var(--forrum-home-accent);
+  outline: none;
+}
+
+.forrum-info-page {
+  min-height: calc(100dvh - 54px);
+  padding: 34px 20px 64px;
+}
+
+.forrum-info-document {
+  width: min(100%, 900px);
+  margin: 0 auto;
+  border: 1px solid #d9dddf;
+  border-radius: 5px;
+  background: #fff;
+}
+
+.forrum-info-document > header,
+.forrum-info-document > section,
+.forrum-info-document > footer {
+  padding: 22px 26px;
+}
+
+.forrum-info-document > header,
+.forrum-info-document > section {
+  border-bottom: 1px solid #e4e7e8;
+}
+
+.forrum-info-kicker {
+  color: #168760;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+
+.forrum-info-document h1 {
+  margin: 6px 0 8px;
+  font-size: 28px;
+  line-height: 1.15;
+}
+
+.forrum-info-document h2 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  line-height: 1.25;
+}
+
+.forrum-info-document p {
+  margin: 0;
+  color: #555d61;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.forrum-info-actions {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.forrum-info-actions a {
+  min-height: 34px;
+  padding: 0 11px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #cfd5d7;
+  border-radius: 4px;
+  color: #242a2d;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.forrum-info-actions a:hover,
+.forrum-info-actions a:focus-visible {
+  border-color: #168760;
+  color: #168760;
+  outline: none;
+}
+
+.forrum-info-document > footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.forrum-info-document > footer a {
+  color: #168760;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+@media (max-width: 760px) {
+  .home-stage-one .home-reference-footer {
+    padding-inline: 14px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .home-stage-one .home-reference-footer nav {
+    justify-content: flex-start;
+    gap: 14px 18px;
+  }
+
+  .forrum-info-page {
+    padding: 16px 12px 40px;
+  }
+
+  .forrum-info-document > header,
+  .forrum-info-document > section,
+  .forrum-info-document > footer {
+    padding: 18px;
+  }
+}
+
+/* /FORRUM_HOME_REDESIGN_STAGE_G_V11 */

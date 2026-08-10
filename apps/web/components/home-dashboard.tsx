@@ -1206,7 +1206,7 @@ export function HomeDashboard({
             </div>
           </section>
 
-          <section className="home-participation-stage-f" aria-labelledby="home-participation-heading">
+          <section id="home-participation" className="home-participation-stage-f" aria-labelledby="home-participation-heading">
             <header className="home-reference-rail-head compact">
               <h2 id="home-participation-heading">Участвовать в развитии</h2>
             </header>
@@ -1315,6 +1315,42 @@ export function HomeDashboard({
           </section>
         </aside>
       </div>
+
+      <footer className="home-reference-footer home-reference-footer-stage-g">
+        <span>© FORRUM, {new Date().getFullYear()}</span>
+        <nav aria-label="Ссылки в подвале главной">
+          <Link href="/rules">Правила</Link>
+          <button
+            type="button"
+            onClick={() => {
+              setParticipationMode('section');
+              setParticipationMessage('');
+              requestAnimationFrame(() => {
+                document
+                  .getElementById('home-participation')
+                  ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              });
+            }}
+          >
+            Предложить раздел
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setParticipationMode('curator');
+              setParticipationMessage('');
+              requestAnimationFrame(() => {
+                document
+                  .getElementById('home-participation')
+                  ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              });
+            }}
+          >
+            Стать куратором
+          </button>
+          <Link href="/support">Поддержка</Link>
+        </nav>
+      </footer>
     </div>
   );
 }
