@@ -475,7 +475,7 @@ export function CommunitiesClient({
     );
   }
   return (
-    <div className="community-browser-page">
+    <div className="community-browser-page communities-v12-stage-a">
       <header className="compact-page-heading">
         <div>
           <h1>Сообщества</h1>

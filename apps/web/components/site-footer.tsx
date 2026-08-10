@@ -6,6 +6,9 @@ import { usePathname } from 'next/navigation';
 export function SiteFooter() {
   const pathname = usePathname();
   const isHome = pathname === '/';
+  const hideFooter = pathname === '/communities';
+  if (hideFooter) return null;
+
 
   return (
     <footer className={`site-footer ${isHome ? 'site-footer-home' : ''}`}>

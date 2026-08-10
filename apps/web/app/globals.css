@@ -10986,3 +10986,334 @@ body {
    Footer inner width follows the same 1180px shell as header/content.
 */
 /* /FORRUM_HOME_REDESIGN_STAGE_H2_V11 */
+
+/* FORRUM_COMMUNITIES_REDESIGN_STAGE_A_HEADER_V12
+   Source: approved homepage Stage B V11 header rules.
+   Stage B: homepage-only header visual language and approved home navigation.
+   No content-column, tree, feed, news-rail or footer restructuring in this stage.
+*/
+
+body:has(.communities-v12-stage-a) .header {
+  border-bottom: 1px solid #26363a;
+  background: #0b1417;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+body:has(.communities-v12-stage-a) .header .nav {
+  min-height: 58px;
+  gap: 16px;
+}
+
+body:has(.communities-v12-stage-a) .header .brand {
+  gap: 8px;
+  color: #f1f5f4;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -.035em;
+}
+
+body:has(.communities-v12-stage-a) .header .brand:hover,
+body:has(.communities-v12-stage-a) .header .brand:focus-visible {
+  color: #f1f5f4;
+}
+
+body:has(.communities-v12-stage-a) .header .brand-mark {
+  width: 27px;
+  height: 30px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #19d39a;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+body:has(.communities-v12-stage-a) .header .main-links {
+  height: 58px;
+  gap: 2px;
+}
+
+body:has(.communities-v12-stage-a) .header .main-links a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 58px;
+  padding: 0 12px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  background: transparent;
+  color: #c7d0ce;
+  font-size: 13px;
+  font-weight: 620;
+}
+
+body:has(.communities-v12-stage-a) .header .main-links a:hover,
+body:has(.communities-v12-stage-a) .header .main-links a:focus-visible {
+  border-bottom-color: transparent;
+  background: transparent;
+  color: #f1f5f4;
+}
+
+body:has(.communities-v12-stage-a) .header .main-links a.active {
+  border-bottom-color: #19d39a;
+  background: transparent;
+  color: #19d39a;
+}
+
+body:has(.communities-v12-stage-a) .header .main-links a::after,
+body:has(.communities-v12-stage-a) .header .main-links a:hover::after,
+body:has(.communities-v12-stage-a) .header .main-links a.active::after {
+  display: none;
+  content: none;
+}
+
+body:has(.communities-v12-stage-a) .header .main-nav-unread {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: 50%;
+  background: #19d39a;
+  box-shadow: none;
+}
+
+body:has(.communities-v12-stage-a) .header .header-search {
+  width: min(360px, 29vw);
+  min-height: 36px;
+  border: 1px solid #2b3c40;
+  border-radius: 5px;
+  background: #0f191c;
+  box-shadow: none;
+}
+
+body:has(.communities-v12-stage-a) .header .header-search:focus-within {
+  border-color: #3c5d58;
+}
+
+body:has(.communities-v12-stage-a) .header .header-search input {
+  min-height: 34px;
+  border: 0;
+  background: transparent;
+  color: #f1f5f4;
+  caret-color: #19d39a;
+}
+
+body:has(.communities-v12-stage-a) .header .header-search input::placeholder {
+  color: #82908e;
+}
+
+body:has(.communities-v12-stage-a) .header .header-search input:focus {
+  outline: 0;
+}
+
+body:has(.communities-v12-stage-a) .header .header-search button {
+  min-height: 34px;
+  border: 0;
+  border-left: 1px solid #26363a;
+  border-radius: 0;
+  background: transparent;
+  color: #b6c1bf;
+}
+
+body:has(.communities-v12-stage-a) .header .header-search button:hover,
+body:has(.communities-v12-stage-a) .header .header-search button:focus-visible {
+  background: #121e21;
+  color: #f1f5f4;
+}
+
+body:has(.communities-v12-stage-a) .header .icon-links {
+  gap: 2px;
+}
+
+body:has(.communities-v12-stage-a) .header .icon-links a {
+  width: 34px;
+  height: 34px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: #d6dddb;
+}
+
+body:has(.communities-v12-stage-a) .header .icon-links a:hover,
+body:has(.communities-v12-stage-a) .header .icon-links a:focus-visible {
+  border-color: #2b3c40;
+  background: #121e21;
+  color: #f1f5f4;
+}
+
+body:has(.communities-v12-stage-a) .header .nav-badge {
+  border-color: #0b1417;
+  background: #19d39a;
+  color: #07110e;
+  box-shadow: none;
+}
+
+body:has(.communities-v12-stage-a) .header .auth-actions {
+  gap: 9px;
+  color: #d6dddb;
+  font-size: 13px;
+}
+
+body:has(.communities-v12-stage-a) .header .auth-actions > a:not(.button):hover,
+body:has(.communities-v12-stage-a) .header .auth-actions > a:not(.button):focus-visible {
+  color: #f1f5f4;
+}
+
+body:has(.communities-v12-stage-a) .header .auth-actions .button {
+  min-height: 34px;
+  padding: 7px 12px;
+  border: 1px solid #35484c;
+  border-radius: 4px;
+  background: #182327;
+  color: #f1f5f4;
+  box-shadow: none;
+}
+
+body:has(.communities-v12-stage-a) .header .auth-actions .button:hover,
+body:has(.communities-v12-stage-a) .header .auth-actions .button:focus-visible {
+  border-color: #46605f;
+  background: #1b2a2e;
+  color: #fff;
+}
+
+body:has(.communities-v12-stage-a) .header .profile-trigger {
+  color: #eef3f1;
+}
+
+body:has(.communities-v12-stage-a) .header .profile-trigger:hover,
+body:has(.communities-v12-stage-a) .header .profile-trigger:focus-visible {
+  color: #fff;
+}
+
+body:has(.communities-v12-stage-a) .header .profile-trigger .avatar {
+  border-color: #3a4c50;
+}
+
+body:has(.communities-v12-stage-a) .header .text-button {
+  color: #9eaaa8;
+}
+
+body:has(.communities-v12-stage-a) .header .text-button:hover,
+body:has(.communities-v12-stage-a) .header .text-button:focus-visible {
+  color: #f1f5f4;
+}
+
+body:has(.communities-v12-stage-a) .header :is(a, button, input):focus-visible {
+  outline: 2px solid #19d39a;
+  outline-offset: 2px;
+}
+
+/* /FORRUM_COMMUNITIES_REDESIGN_STAGE_A_HEADER_V12 */
+
+/* FORRUM_COMMUNITIES_REDESIGN_STAGE_A_V12
+   Stage A: shared dark foundation + approved header on /communities only.
+   Page hero, local search, catalogue rows and hierarchy panel are later stages.
+*/
+body:has(.communities-v12-stage-a) {
+  --forrum-home-bg: #091215;
+  --forrum-home-surface: #0f191c;
+  --forrum-home-surface-soft: #121e21;
+  --forrum-home-surface-hover: #162428;
+  --forrum-home-surface-selected: #102a25;
+  --forrum-home-text: #f1f5f4;
+  --forrum-home-text-soft: #c7d0ce;
+  --forrum-home-muted: #8d9a98;
+  --forrum-home-muted-strong: #a9b4b2;
+  --forrum-home-line: #26363a;
+  --forrum-home-line-soft: #1d2b2f;
+  --forrum-home-line-strong: #34484d;
+  --forrum-home-accent: #19d39a;
+  --forrum-home-accent-hover: #27e2aa;
+  --forrum-home-accent-soft: rgba(25, 211, 154, .10);
+  --forrum-home-danger: #ed6b6b;
+  --forrum-home-radius: 6px;
+  background: var(--forrum-home-bg);
+}
+
+body:has(.communities-v12-stage-a) .main {
+  padding-block: 16px 28px;
+}
+
+.communities-v12-stage-a {
+  --bg: var(--forrum-home-bg);
+  --surface: var(--forrum-home-surface);
+  --surface-soft: var(--forrum-home-surface-soft);
+  --surface-strong: var(--forrum-home-surface-hover);
+  --text: var(--forrum-home-text);
+  --muted: var(--forrum-home-muted);
+  --muted-strong: var(--forrum-home-muted-strong);
+  --line: var(--forrum-home-line);
+  --line-strong: var(--forrum-home-line-strong);
+  --focus: var(--forrum-home-accent);
+  --danger: var(--forrum-home-danger);
+  color: var(--forrum-home-text);
+}
+
+.communities-v12-stage-a .community-browser-index {
+  display: none !important;
+}
+
+.communities-v12-stage-a .community-browser-layout {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.communities-v12-stage-a :is(
+  .compact-page-heading,
+  .compact-filterbar,
+  .community-browser-list
+) {
+  border-color: var(--forrum-home-line) !important;
+  border-radius: var(--forrum-home-radius) !important;
+  background: var(--forrum-home-surface) !important;
+  box-shadow: none !important;
+}
+
+.communities-v12-stage-a :is(h1, h2, h3) {
+  color: var(--forrum-home-text) !important;
+}
+
+.communities-v12-stage-a :is(
+  .compact-page-heading p,
+  .community-browser-copy > p,
+  .community-browser-meta
+) {
+  color: var(--forrum-home-muted) !important;
+}
+
+.communities-v12-stage-a .community-browser-row {
+  border-color: var(--forrum-home-line-soft) !important;
+  background: transparent !important;
+}
+
+.communities-v12-stage-a .community-browser-row:hover,
+.communities-v12-stage-a .community-browser-row:focus-within {
+  background: var(--forrum-home-surface-hover) !important;
+}
+
+.communities-v12-stage-a .community-browser-main-link,
+.communities-v12-stage-a .community-browser-title strong {
+  color: var(--forrum-home-text) !important;
+}
+
+.communities-v12-stage-a :is(input, select) {
+  border-color: var(--forrum-home-line-strong) !important;
+  background: var(--forrum-home-surface-soft) !important;
+  color: var(--forrum-home-text) !important;
+  box-shadow: none !important;
+}
+
+.communities-v12-stage-a :is(input, select):focus {
+  border-color: var(--forrum-home-accent) !important;
+  outline-color: var(--forrum-home-accent) !important;
+}
+
+.communities-v12-stage-a :is(a, button):focus-visible {
+  outline-color: var(--forrum-home-accent) !important;
+}
+
+/* /FORRUM_COMMUNITIES_REDESIGN_STAGE_A_V12 */

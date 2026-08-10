@@ -110,7 +110,9 @@ export function MainNav() {
   }, [pathname]);
 
   const onHome = pathname === '/';
-  const links = onHome ? homeLinks : legacyLinks;
+  const onCommunities = pathname === '/communities';
+  const useApprovedNav = onHome || onCommunities;
+  const links = useApprovedNav ? homeLinks : legacyLinks;
 
   return (
     <nav className="main-links" aria-label="Основная навигация">
@@ -118,7 +120,7 @@ export function MainNav() {
         const active = href === '/'
           ? pathname === '/'
           : pathname.startsWith(href);
-        const showDot = onHome
+        const showDot = useApprovedNav
           ? href === '/news' && newsUnread
           : href === '/events' && eventsUnread;
 
