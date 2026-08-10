@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type {
   CSSProperties,
+  FormEvent,
   KeyboardEvent,
   ReactNode,
 } from 'react';
@@ -68,6 +69,7 @@ export type HomeInitialData = {
   workshop?: WorkshopItem[];
   feed?: PublicationCardData[];
   newFeed?: PublicationCardData[];
+  news?: PublicationCardData[];
 };
 
 const feedTabs: Array<{ key: FeedMode; label: string }> = [
@@ -112,6 +114,20 @@ function shortDate(value: string) {
     hour: '2-digit',
     minute: '2-digit',
   });
+}
+
+function homeNewsLabel(type: string) {
+  const labels: Record<string, string> = {
+    NEWS: 'Новость',
+    ANNOUNCEMENT: 'Важно',
+    GUIDE: 'Материал',
+    PROJECT: 'Сообщество',
+    DISCUSSION: 'Обсуждение',
+    QUESTION: 'Вопрос',
+    SERVICE: 'Сервис',
+    CASE: 'Разбор',
+  };
+  return labels[type] ?? 'Материал';
 }
 
 function typeLabel(type: string) {
@@ -367,6 +383,9 @@ export function HomeDashboard({
   const [newFeed, setNewFeed] = useState<PublicationCardData[]>(
     initialData.newFeed ?? [],
   );
+  const [news, setNews] = useState<PublicationCardData[]>(
+    initialData.news ?? [],
+  );
   const [mode] = useState<FeedMode>('popular');
   const [expanded, setExpanded] = useState<Set<string>>(
     () => new Set(['internet-projects']),
@@ -381,6 +400,9 @@ export function HomeDashboard({
   const [newFeedLoading, setNewFeedLoading] = useState(
     initialData.newFeed === undefined,
   );
+  const [newsLoading, setNewsLoading] = useState(
+    initialData.news === undefined,
+  );
   const [pageLoading, setPageLoading] = useState(
     [
       initialData.communities,
@@ -392,7 +414,19 @@ export function HomeDashboard({
   );
   const [feedError, setFeedError] = useState('');
   const [newFeedError, setNewFeedError] = useState('');
+  const [newsError, setNewsError] = useState('');
   const [pageError, setPageError] = useState('');
+  const [participationMode, setParticipationMode] = useState<'curator' | 'section'>('curator');
+  const [participationBusy, setParticipationBusy] = useState(false);
+  const [participationMessage, setParticipationMessage] = useState('');
+  const [curatorCommunity, setCuratorCommunity] = useState('');
+  const [curatorWhy, setCuratorWhy] = useState('');
+  const [curatorPlan, setCuratorPlan] = useState('');
+  const [proposalName, setProposalName] = useState('');
+  const [proposalParent, setProposalParent] = useState('');
+  const [proposalDescription, setProposalDescription] = useState('');
+  const [proposalTopics, setProposalTopics] = useState('');
+  const [proposalCuratorInterest, setProposalCuratorInterest] = useState('MAYBE');
 
   const pageSeeded = [
     initialData.communities,
@@ -403,6 +437,7 @@ export function HomeDashboard({
   ].every((value) => value !== undefined);
   const feedSeeded = initialData.feed !== undefined;
   const newFeedSeeded = initialData.newFeed !== undefined;
+  const newsSeeded = initialData.news !== undefined;
 
   useEffect(() => {
     if (pageSeeded) return;
@@ -519,6 +554,38 @@ export function HomeDashboard({
     };
   }, [newFeedRequestVersion, newFeedSeeded]);
 
+  useEffect(() => {
+    if (newsSeeded) {
+      setNewsLoading(false);
+      return;
+    }
+    let cancelled = false;
+
+    async function loadNews() {
+      setNewsLoading(true);
+      setNewsError('');
+      try {
+        const items = await api<PublicationCardData[]>('/news');
+        if (!cancelled) setNews(items);
+      } catch (cause) {
+        if (cancelled) return;
+        setNews([]);
+        setNewsError(
+          cause instanceof Error
+            ? cause.message
+            : 'Не удалось загрузить новости',
+        );
+      } finally {
+        if (!cancelled) setNewsLoading(false);
+      }
+    }
+
+    void loadNews();
+    return () => {
+      cancelled = true;
+    };
+  }, [newsSeeded]);
+
   const childrenByParent = useMemo(() => {
     const map = new Map<string, Community[]>();
     for (const community of communities) {
@@ -603,6 +670,71 @@ export function HomeDashboard({
     }));
     return [...upcoming, ...openPolls, ...latestAnnouncements].slice(0, 5);
   }, [announcements, events, polls]);
+
+  async function submitCuratorApplication(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setParticipationMessage('');
+    if (!curatorCommunity || curatorWhy.trim().length < 20 || curatorPlan.trim().length < 20) {
+      setParticipationMessage('Заполните категорию и два коротких ответа.');
+      return;
+    }
+    setParticipationBusy(true);
+    try {
+      await api('/governance/curator-applications', {
+        method: 'POST',
+        body: JSON.stringify({
+          communitySlug: curatorCommunity,
+          motivation: curatorWhy.trim(),
+          plan: curatorPlan.trim(),
+        }),
+      });
+      setParticipationMessage('Заявка отправлена администрации.');
+      setCuratorWhy('');
+      setCuratorPlan('');
+    } catch (cause) {
+      setParticipationMessage(
+        cause instanceof Error ? cause.message : 'Не удалось отправить заявку.',
+      );
+    } finally {
+      setParticipationBusy(false);
+    }
+  }
+
+  async function submitSectionProposal(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setParticipationMessage('');
+    if (
+      proposalName.trim().length < 2 ||
+      proposalDescription.trim().length < 30 ||
+      proposalTopics.trim().length < 10
+    ) {
+      setParticipationMessage('Заполните название, описание и примеры будущих тем.');
+      return;
+    }
+    setParticipationBusy(true);
+    try {
+      await api('/governance/proposals', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: proposalName.trim(),
+          description: proposalDescription.trim(),
+          initialTopics: proposalTopics.trim(),
+          parentSlug: proposalParent || undefined,
+          curatorInterest: proposalCuratorInterest,
+        }),
+      });
+      setParticipationMessage('Предложение отправлено.');
+      setProposalName('');
+      setProposalDescription('');
+      setProposalTopics('');
+    } catch (cause) {
+      setParticipationMessage(
+        cause instanceof Error ? cause.message : 'Не удалось отправить предложение.',
+      );
+    } finally {
+      setParticipationBusy(false);
+    }
+  }
 
   function toggle(slug: string) {
     setExpanded((current) => {
@@ -1033,96 +1165,153 @@ export function HomeDashboard({
             )}
           </section>
         </main>
-        <aside className="home-current-panel">
-          <header className="home-panel-heading">
-            <h2>Актуальное</h2>
-          </header>
-          <div className="home-current-list">
-            {pageLoading
-              ? Array.from({ length: 4 }).map((_, index) => (
-                  <div className="home-current-skeleton" key={index}>
+        <aside className="home-current-panel home-right-stage-f">
+          <section className="home-news-stage-f" aria-labelledby="home-news-heading">
+            <header className="home-reference-rail-head">
+              <h2 id="home-news-heading">Новости</h2>
+              <Link href="/news">Все новости <span aria-hidden="true">→</span></Link>
+            </header>
+
+            <div className="home-news-stage-f-list">
+              {newsLoading ? (
+                Array.from({ length: 4 }).map((_, index) => (
+                  <div className="home-news-stage-f-skeleton" aria-hidden="true" key={index}>
                     <span />
-                    <div><i /><i /><i /></div>
+                    <span />
+                    <span />
                   </div>
                 ))
-              : currentItems.map((item) => (
-                  <Link
-                    href={item.href}
-                    className={`home-current-item is-${item.kindKey}`}
-                    key={item.id}
-                  >
-                    <span className="home-current-icon">
-                      <CurrentTypeIcon kind={item.kindKey} />
+              ) : newsError ? (
+                <div className="home-news-stage-f-empty">
+                  <strong>Новости временно недоступны</strong>
+                  <span>{newsError}</span>
+                </div>
+              ) : news.length ? (
+                news.slice(0, 5).map((item) => (
+                  <Link className="home-news-stage-f-item" href={`/p/${item.slug}`} key={item.id}>
+                    <span className="home-news-stage-f-copy">
+                      <small>{homeNewsLabel(item.type)}</small>
+                      <strong>{item.title || item.excerpt.slice(0, 90)}</strong>
+                      <em>{item.community.name} · {relativeDate(item.createdAt)}</em>
                     </span>
-                    <span className="home-current-copy">
-                      <span className="home-current-kicker">
-                        <small>{item.kind}</small>
-                        {item.state && <b>{item.state}</b>}
-                      </span>
-                      <strong>{item.title}</strong>
-                      <em>{item.meta}</em>
-                    </span>
+                    <span className="home-news-stage-f-arrow" aria-hidden="true">›</span>
                   </Link>
-                ))}
-            {!pageLoading && !currentItems.length && (
-              <div className="home-current-empty">
-                Новых событий и объявлений пока нет.
-              </div>
-            )}
-          </div>
-          <Link className="home-panel-footer" href="/events">
-            Всё актуальное <span aria-hidden="true">→</span>
-          </Link>
-
-          <section className="home-rail-panel">
-            <header className="home-panel-heading compact">
-              <h2>Новое в Мастерской</h2>
-              <Link href="/workshop">Открыть</Link>
-            </header>
-            <div className="home-simple-list home-rail-list">
-              {workshopItems.map((item) => (
-                <Link href="/workshop" key={item.id}>
-                  <span className="home-list-icon" aria-hidden="true">
-                    {workshopTypeSymbols[item.type] ?? 'W'}
-                  </span>
-                  <span className="home-list-copy">
-                    <small>{typeLabel(item.type)}</small>
-                    <strong>{item.title}</strong>
-                    <em>@{item.author.username} · {relativeDate(item.createdAt)}</em>
-                  </span>
-                </Link>
-              ))}
-              {!pageLoading && !workshopItems.length && (
-                <div className="home-list-empty">Новых опубликованных работ пока нет.</div>
+                ))
+              ) : (
+                <div className="home-news-stage-f-empty">
+                  <strong>Новостей пока нет</strong>
+                  <span>Здесь появятся новые материалы раздела «Новости».</span>
+                </div>
               )}
             </div>
           </section>
 
-          <section className="home-rail-panel">
-            <header className="home-panel-heading compact">
-              <h2>Новые сообщества</h2>
-              <Link href="/communities">Открыть</Link>
+          <section className="home-participation-stage-f" aria-labelledby="home-participation-heading">
+            <header className="home-reference-rail-head compact">
+              <h2 id="home-participation-heading">Участвовать в развитии</h2>
             </header>
-            <div className="home-simple-list home-community-short-list home-rail-list">
-              {newCommunities.map((community) => (
-                <Link href={`/communities/${community.slug}`} key={community.id}>
-                  <span className="home-list-icon" aria-hidden="true">
-                    {community.name.charAt(0).toUpperCase()}
-                  </span>
-                  <span className="home-list-copy">
-                    <strong>{community.name}</strong>
-                    <small>{community.shortDescription || community.description}</small>
-                    <em>
-                      <i className="home-activity-dot" aria-hidden="true" />
-                      {formatNumber(community.subscriberCount)} подписчиков
-                    </em>
-                  </span>
-                </Link>
-              ))}
-              {!pageLoading && !newCommunities.length && (
-                <div className="home-list-empty">Новых сообществ пока нет.</div>
-              )}
+
+            <div className="home-participation-tabs" role="tablist" aria-label="Вариант участия">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={participationMode === 'curator'}
+                className={participationMode === 'curator' ? 'active' : ''}
+                onClick={() => {
+                  setParticipationMode('curator');
+                  setParticipationMessage('');
+                }}
+              >
+                Стать куратором
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={participationMode === 'section'}
+                className={participationMode === 'section' ? 'active' : ''}
+                onClick={() => {
+                  setParticipationMode('section');
+                  setParticipationMessage('');
+                }}
+              >
+                Предложить раздел
+              </button>
             </div>
+
+            {participationMode === 'curator' ? (
+              <form className="home-participation-form" onSubmit={submitCuratorApplication}>
+                <p>
+                  Куратор помогает развивать раздел и поддерживать порядок. При рассмотрении
+                  учитываются не новый аккаунт, подтверждённая почта, регулярная активность,
+                  полезный вклад в выбранную тематику и отсутствие действующих ограничений.
+                </p>
+                <label>
+                  <span>Категория</span>
+                  <select value={curatorCommunity} onChange={(event) => setCuratorCommunity(event.target.value)} required>
+                    <option value="">Выберите категорию</option>
+                    {rootCommunities.map((community) => (
+                      <option value={community.slug} key={community.id}>{community.name}</option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  <span>Почему именно вы?</span>
+                  <textarea rows={2} maxLength={2000} value={curatorWhy} onChange={(event) => setCuratorWhy(event.target.value)} placeholder="Опыт, участие в теме, чем можете быть полезны" required />
+                </label>
+                <label>
+                  <span>Что хотите развивать?</span>
+                  <textarea rows={2} maxLength={2000} value={curatorPlan} onChange={(event) => setCuratorPlan(event.target.value)} placeholder="Первые изменения или идеи для раздела" required />
+                </label>
+                <button type="submit" disabled={participationBusy}>
+                  {participationBusy ? 'Отправляем…' : 'Отправить заявку'}
+                </button>
+              </form>
+            ) : (
+              <form className="home-participation-form" onSubmit={submitSectionProposal}>
+                <p>
+                  Предложите новый раздел, если существующая структура не подходит для
+                  устойчивой отдельной тематики.
+                </p>
+                <label>
+                  <span>Название раздела</span>
+                  <input type="text" maxLength={80} value={proposalName} onChange={(event) => setProposalName(event.target.value)} placeholder="Например: Домашние серверы" required />
+                </label>
+                <label>
+                  <span>Где разместить?</span>
+                  <select value={proposalParent} onChange={(event) => setProposalParent(event.target.value)}>
+                    <option value="">Не знаю / верхний уровень</option>
+                    {rootCommunities.map((community) => (
+                      <option value={community.slug} key={community.id}>{community.name}</option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  <span>О чём будет раздел?</span>
+                  <textarea rows={2} maxLength={3000} value={proposalDescription} onChange={(event) => setProposalDescription(event.target.value)} placeholder="Тематика и зачем нужен отдельный раздел" required />
+                </label>
+                <label>
+                  <span>Какие темы появятся первыми?</span>
+                  <textarea rows={2} maxLength={2000} value={proposalTopics} onChange={(event) => setProposalTopics(event.target.value)} placeholder="2–3 примера обсуждений" required />
+                </label>
+                <label>
+                  <span>Хотели бы стать куратором?</span>
+                  <select value={proposalCuratorInterest} onChange={(event) => setProposalCuratorInterest(event.target.value)}>
+                    <option value="YES">Да</option>
+                    <option value="MAYBE">Возможно</option>
+                    <option value="NO">Нет</option>
+                  </select>
+                </label>
+                <button type="submit" disabled={participationBusy}>
+                  {participationBusy ? 'Отправляем…' : 'Предложить раздел'}
+                </button>
+              </form>
+            )}
+
+            {participationMessage && (
+              <div className="home-participation-message" role="status">
+                {participationMessage}
+              </div>
+            )}
           </section>
         </aside>
       </div>

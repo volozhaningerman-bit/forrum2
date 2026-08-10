@@ -103,3 +103,10 @@ for (const path of obsoleteWorkflows) {
 console.log(
   'V8 interaction contract passed: independent links, toggle zones, keyboard control and popular ranking.',
 );
+
+// FORRUM_HOME_REDESIGN_STAGE_F_V11_INTERACTION_CONTRACT
+requireMarker(home, 'home-right-stage-f', 'home right rail');
+requireMarker(home, 'home-news-stage-f', 'home news rail');
+requireMarker(home, 'home-participation-stage-f', 'home participation rail');
+forbidMarker(home, 'Новое в Мастерской', 'legacy workshop rail');
+forbidMarker(home, 'Новые сообщества', 'legacy communities rail');

@@ -10304,3 +10304,269 @@ body:has(.home-stage-one) .header :is(a, button, input):focus-visible {
 }
 
 /* /FORRUM_HOME_REDESIGN_STAGE_E_V11 */
+
+/* FORRUM_HOME_REDESIGN_STAGE_F_V11
+   Stage F: approved right rail — News + participation.
+*/
+.home-stage-one .home-current-panel.home-right-stage-f {
+  align-self: start;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  overflow: visible;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.home-stage-one .home-news-stage-f,
+.home-stage-one .home-participation-stage-f {
+  overflow: hidden;
+  border: 1px solid var(--forrum-home-line);
+  border-radius: var(--forrum-home-radius);
+  background: var(--forrum-home-surface);
+}
+
+.home-stage-one .home-reference-rail-head {
+  min-height: 40px;
+  padding: 0 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid rgba(25, 211, 154, .16);
+  background: rgba(25, 211, 154, .085);
+}
+
+.home-stage-one .home-reference-rail-head.compact { min-height: 38px; }
+
+.home-stage-one .home-reference-rail-head h2 {
+  margin: 0;
+  color: var(--forrum-home-accent) !important;
+  font-size: 13px;
+  line-height: 1.2;
+  font-weight: 650;
+}
+
+.home-stage-one .home-reference-rail-head > a {
+  color: var(--forrum-home-accent);
+  font-size: 10.5px;
+  font-weight: 550;
+}
+
+.home-stage-one .home-reference-rail-head > a:hover,
+.home-stage-one .home-reference-rail-head > a:focus-visible {
+  color: var(--forrum-home-accent-hover);
+  outline: none;
+}
+
+.home-stage-one .home-news-stage-f-list { display: grid; }
+
+.home-stage-one .home-news-stage-f-item {
+  min-height: 88px;
+  padding: 11px 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 7px;
+  border-bottom: 1px solid var(--forrum-home-line-soft);
+  background: transparent;
+}
+
+.home-stage-one .home-news-stage-f-item:last-child { border-bottom: 0; }
+
+.home-stage-one .home-news-stage-f-item:hover,
+.home-stage-one .home-news-stage-f-item:focus-visible {
+  background: rgba(25, 211, 154, .035);
+  outline: none;
+}
+
+.home-stage-one .home-news-stage-f-copy {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+
+.home-stage-one .home-news-stage-f-copy small {
+  width: max-content;
+  max-width: 100%;
+  color: var(--forrum-home-accent);
+  font-size: 9.5px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+}
+
+.home-stage-one .home-news-stage-f-copy strong {
+  overflow: hidden;
+  color: var(--forrum-home-text) !important;
+  font-size: 12.5px;
+  line-height: 1.32;
+  font-weight: 610;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.home-stage-one .home-news-stage-f-copy em {
+  overflow: hidden;
+  color: var(--forrum-home-muted) !important;
+  font-size: 10px;
+  font-style: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-stage-one .home-news-stage-f-arrow {
+  color: var(--forrum-home-accent);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.home-stage-one .home-news-stage-f-empty {
+  min-height: 100px;
+  padding: 18px 14px;
+  display: grid;
+  place-items: center;
+  gap: 5px;
+  color: var(--forrum-home-muted);
+  font-size: 11px;
+  text-align: center;
+}
+
+.home-stage-one .home-news-stage-f-empty strong { color: var(--forrum-home-text-soft); }
+
+.home-stage-one .home-news-stage-f-skeleton {
+  min-height: 80px;
+  padding: 12px;
+  display: grid;
+  align-content: center;
+  gap: 7px;
+  border-bottom: 1px solid var(--forrum-home-line-soft);
+  opacity: .6;
+}
+
+.home-stage-one .home-news-stage-f-skeleton span {
+  height: 7px;
+  border-radius: 2px;
+  background: var(--forrum-home-line-strong);
+}
+
+.home-stage-one .home-news-stage-f-skeleton span:nth-child(1) { width: 28%; }
+.home-stage-one .home-news-stage-f-skeleton span:nth-child(2) { width: 88%; }
+.home-stage-one .home-news-stage-f-skeleton span:nth-child(3) { width: 58%; }
+
+.home-stage-one .home-participation-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--forrum-home-line-soft);
+}
+
+.home-stage-one .home-participation-tabs button {
+  min-height: 38px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--forrum-home-line-soft);
+  border-radius: 0;
+  background: transparent;
+  color: var(--forrum-home-muted);
+  font-size: 10.5px;
+  font-weight: 570;
+}
+
+.home-stage-one .home-participation-tabs button:last-child { border-right: 0; }
+
+.home-stage-one .home-participation-tabs button:hover,
+.home-stage-one .home-participation-tabs button:focus-visible {
+  background: rgba(25, 211, 154, .025);
+  color: var(--forrum-home-text-soft);
+  outline: none;
+}
+
+.home-stage-one .home-participation-tabs button.active {
+  box-shadow: inset 0 -2px 0 var(--forrum-home-accent);
+  background: rgba(25, 211, 154, .04);
+  color: var(--forrum-home-accent);
+}
+
+.home-stage-one .home-participation-form {
+  padding: 12px;
+  display: grid;
+  gap: 9px;
+}
+
+.home-stage-one .home-participation-form > p {
+  margin: 0 0 2px;
+  color: var(--forrum-home-muted);
+  font-size: 10.5px;
+  line-height: 1.48;
+}
+
+.home-stage-one .home-participation-form label { display: grid; gap: 5px; }
+
+.home-stage-one .home-participation-form label > span {
+  color: var(--forrum-home-text-soft);
+  font-size: 10px;
+  font-weight: 570;
+}
+
+.home-stage-one .home-participation-form :is(input, select, textarea) {
+  width: 100%;
+  min-height: 32px;
+  padding: 7px 8px;
+  border: 1px solid var(--forrum-home-line-strong);
+  border-radius: 4px;
+  background: var(--forrum-home-surface-soft);
+  color: var(--forrum-home-text);
+  font: inherit;
+  font-size: 10.5px;
+  box-shadow: none;
+}
+
+.home-stage-one .home-participation-form textarea {
+  min-height: 54px;
+  line-height: 1.35;
+  resize: vertical;
+}
+
+.home-stage-one .home-participation-form :is(input, select, textarea):focus {
+  outline: 1px solid var(--forrum-home-accent);
+  border-color: var(--forrum-home-accent);
+}
+
+.home-stage-one .home-participation-form input::placeholder,
+.home-stage-one .home-participation-form textarea::placeholder { color: #71807e; }
+
+.home-stage-one .home-participation-form > button {
+  min-height: 34px;
+  padding: 0 11px;
+  border: 1px solid rgba(25, 211, 154, .42);
+  border-radius: 4px;
+  background: rgba(25, 211, 154, .08);
+  color: var(--forrum-home-accent);
+  font-size: 10.5px;
+  font-weight: 620;
+}
+
+.home-stage-one .home-participation-form > button:hover,
+.home-stage-one .home-participation-form > button:focus-visible {
+  background: rgba(25, 211, 154, .14);
+  border-color: var(--forrum-home-accent);
+  color: var(--forrum-home-accent-hover);
+  outline: none;
+}
+
+.home-stage-one .home-participation-form > button:disabled {
+  cursor: wait;
+  opacity: .55;
+}
+
+.home-stage-one .home-participation-message {
+  margin: 0 12px 12px;
+  padding-top: 9px;
+  border-top: 1px solid var(--forrum-home-line-soft);
+  color: var(--forrum-home-muted-strong);
+  font-size: 10.5px;
+  line-height: 1.4;
+}
+
+/* /FORRUM_HOME_REDESIGN_STAGE_F_V11 */

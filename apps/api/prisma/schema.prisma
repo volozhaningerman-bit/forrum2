@@ -138,6 +138,13 @@ enum ProposalStatus {
   WITHDRAWN
 }
 
+enum CuratorApplicationStatus {
+  REVIEW
+  APPROVED
+  REJECTED
+  WITHDRAWN
+}
+
 enum PollStatus {
   OPEN
   CLOSED
@@ -359,6 +366,7 @@ model User {
   moderationAppeals  ModerationAppeal[] @relation("AppealAuthor")
   moderationAppealsResolved ModerationAppeal[] @relation("AppealResolver")
   communityProposals CommunityProposal[]
+  curatorApplications CuratorApplication[]
   proposalSupports   ProposalSupport[]
   pollsCreated       CommunityPoll[] @relation("PollCreator")
   pollVotes          PollVote[]
@@ -493,6 +501,7 @@ model Community {
   publications     Publication[]
   promotions       PromotionOrder[]
   proposals        CommunityProposal[]
+  curatorApplications CuratorApplication[]
   polls            CommunityPoll[]
   achievements     UserAchievement[]
   interactions     ConfirmedInteraction[]
@@ -958,6 +967,7 @@ model CommunityProposal {
   name                String
   description         String
   initialTopics       String
+  curatorInterest     String         @default("MAYBE")
   status              ProposalStatus @default(OPEN)
   resolutionNote      String?
   createdAt           DateTime       @default(now())
@@ -978,6 +988,24 @@ model ProposalSupport {
 
   @@id([proposalId, userId])
   @@index([userId])
+}
+
+model CuratorApplication {
+  id               String                   @id @default(uuid()) @db.Uuid
+  userId           String                   @db.Uuid
+  communityId      String                   @db.Uuid
+  motivation       String
+  plan             String
+  activitySnapshot Json?
+  status           CuratorApplicationStatus @default(REVIEW)
+  resolutionNote   String?
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+  user             User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  community        Community                @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status, createdAt(sort: Desc)])
+  @@index([communityId, status, createdAt(sort: Desc)])
 }
 
 model CommunityPoll {

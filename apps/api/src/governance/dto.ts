@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsDateString, IsEnum, IsInt, IsOptional, IsString, Length, Max, Min } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsDateString, IsEnum, IsIn, IsInt, IsOptional, IsString, Length, Max, Min } from 'class-validator';
 import { PollKind, ProposalStatus } from '../generated/prisma/client.js';
 
 export class CreateProposalDto {
@@ -7,6 +7,7 @@ export class CreateProposalDto {
   @ApiProperty() @IsString() @Length(30, 3000) description!: string;
   @ApiProperty() @IsString() @Length(10, 2000) initialTopics!: string;
   @ApiPropertyOptional() @IsOptional() @IsString() @Length(1, 100) parentSlug?: string;
+  @ApiPropertyOptional({ enum: ['YES', 'MAYBE', 'NO'] }) @IsOptional() @IsIn(['YES', 'MAYBE', 'NO']) curatorInterest?: string;
 }
 
 export class ResolveProposalDto {
@@ -32,4 +33,9 @@ export class ClosePollDto {
 
 export class CastVoteDto {
   @ApiProperty() @IsString() optionId!: string;
+}
+export class CreateCuratorApplicationDto {
+  @ApiProperty() @IsString() @Length(1, 100) communitySlug!: string;
+  @ApiProperty() @IsString() @Length(20, 2000) motivation!: string;
+  @ApiProperty() @IsString() @Length(20, 2000) plan!: string;
 }

@@ -6,7 +6,7 @@ import { CurrentUser } from '../auth/current-user.js';
 import { OptionalSessionGuard } from '../auth/optional-session.guard.js';
 import { SessionGuard } from '../auth/session.guard.js';
 import { VerifiedGuard } from '../auth/verified.guard.js';
-import { CastVoteDto, ClosePollDto, CreatePollDto, CreateProposalDto, ResolveProposalDto } from './dto.js';
+import { CastVoteDto, ClosePollDto, CreateCuratorApplicationDto, CreatePollDto, CreateProposalDto, ResolveProposalDto } from './dto.js';
 import { GovernanceService } from './governance.service.js';
 
 @ApiTags('governance')
@@ -15,6 +15,7 @@ export class GovernanceController {
   constructor(private readonly service: GovernanceService) {}
   @Get('proposals') @UseGuards(OptionalSessionGuard) proposals(@CurrentUser() user?: User) { return this.service.proposals(user?.id); }
   @Post('proposals') @UseGuards(SessionGuard, VerifiedGuard) createProposal(@CurrentUser() user: User, @Body() dto: CreateProposalDto) { return this.service.createProposal(user.id, dto); }
+  @Post('curator-applications') @UseGuards(SessionGuard, VerifiedGuard) createCuratorApplication(@CurrentUser() user: User, @Body() dto: CreateCuratorApplicationDto) { return this.service.createCuratorApplication(user.id, dto); }
   @Post('proposals/:id/support') @UseGuards(SessionGuard, VerifiedGuard) support(@CurrentUser() user: User, @Param('id') id: string) { return this.service.toggleSupport(user.id, id); }
   @Get('polls') @UseGuards(OptionalSessionGuard) polls(@CurrentUser() user?: User) { return this.service.polls(user?.id); }
   @Post('communities/:slug/polls') @UseGuards(SessionGuard, VerifiedGuard) createPoll(@CurrentUser() user: User, @Param('slug') slug: string, @Body() dto: CreatePollDto) { return this.service.createPoll(slug, user, dto); }

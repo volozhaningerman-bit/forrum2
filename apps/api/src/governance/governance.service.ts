@@ -2,7 +2,7 @@ import { BadRequestException, ForbiddenException, Injectable, NotFoundException 
 import { CommunityRoleType, GlobalRole, PollKind, PollStatus, ProposalStatus, VoteClass, type User } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CommunitiesService } from '../communities/communities.service.js';
-import type { CreatePollDto, CreateProposalDto } from './dto.js';
+import type { CreateCuratorApplicationDto, CreatePollDto, CreateProposalDto } from './dto.js';
 import { determineVoteClass } from './rules.js';
 import { NotificationsService } from '../notifications/notifications.service.js';
 
@@ -27,9 +27,52 @@ export class GovernanceService {
     const parent = dto.parentSlug ? await this.prisma.community.findUnique({ where: { slug: dto.parentSlug } }) : null;
     if (dto.parentSlug && !parent) throw new NotFoundException('Родительское сообщество не найдено');
     return this.prisma.communityProposal.create({ data: {
-      authorId: userId, suggestedParentId: parent?.id, name: dto.name.trim(), description: dto.description.trim(), initialTopics: dto.initialTopics.trim(),
+      authorId: userId, suggestedParentId: parent?.id, name: dto.name.trim(), description: dto.description.trim(), initialTopics: dto.initialTopics.trim(), curatorInterest: dto.curatorInterest ?? 'MAYBE',
       supports: { create: { userId } },
     } });
+  }
+
+  async createCuratorApplication(userId: string, dto: CreateCuratorApplicationDto) {
+    const community = await this.prisma.community.findUnique({
+      where: { slug: dto.communitySlug },
+    });
+    if (!community || community.status !== 'ACTIVE') {
+      throw new NotFoundException('Категория не найдена');
+    }
+
+    const existing = await this.prisma.curatorApplication.findFirst({
+      where: { userId, communityId: community.id, status: 'REVIEW' },
+    });
+    if (existing) {
+      throw new BadRequestException('Заявка в эту категорию уже рассматривается');
+    }
+
+    const [user, publicationCount, commentCount] = await Promise.all([
+      this.prisma.user.findUnique({ where: { id: userId }, select: { createdAt: true } }),
+      this.prisma.publication.count({ where: { authorId: userId, status: 'PUBLISHED' } }),
+      this.prisma.comment.count({ where: { authorId: userId, hiddenAt: null } }),
+    ]);
+    if (!user) throw new NotFoundException('Пользователь не найден');
+
+    return this.prisma.curatorApplication.create({
+      data: {
+        userId,
+        communityId: community.id,
+        motivation: dto.motivation.trim(),
+        plan: dto.plan.trim(),
+        activitySnapshot: {
+          accountCreatedAt: user.createdAt.toISOString(),
+          publicationCount,
+          commentCount,
+        },
+      },
+      select: {
+        id: true,
+        status: true,
+        createdAt: true,
+        community: { select: { slug: true, name: true } },
+      },
+    });
   }
 
   async toggleSupport(userId: string, proposalId: string) {
