@@ -10736,3 +10736,248 @@ body:has(.home-stage-one) .header :is(a, button, input):focus-visible {
 }
 
 /* /FORRUM_HOME_REDESIGN_STAGE_G_V11 */
+
+/* FORRUM_HOME_REDESIGN_STAGE_H_V11
+   Final homepage polish + universal compact footer.
+*/
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+}
+
+.app-page-frame {
+  min-width: 0;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-page-frame > #main-content {
+  width: 100%;
+  min-width: 0;
+  flex: 1 0 auto;
+}
+
+.home-stage-one {
+  min-height: auto !important;
+}
+
+.site-footer {
+  width: 100%;
+  flex: 0 0 auto;
+  margin-top: auto;
+  border-top: 1px solid #d9dddf;
+  background: #ffffff;
+  color: #697276;
+}
+
+.site-footer-inner {
+  width: min(1360px, calc(100% - 32px));
+  min-height: 42px;
+  margin: 0 auto;
+  padding: 7px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  box-sizing: border-box;
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.site-footer-copy {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.site-footer-nav {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+}
+
+.site-footer a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.site-footer a:hover,
+.site-footer a:focus-visible {
+  color: #168760;
+  outline: none;
+}
+
+.site-footer-home {
+  border-top-color: rgba(76, 109, 104, .38);
+  background: #081215;
+  color: #82918f;
+}
+
+.site-footer-home a:hover,
+.site-footer-home a:focus-visible {
+  color: var(--forrum-home-accent);
+}
+
+.home-stage-one .home-reference-footer-stage-g {
+  display: none !important;
+}
+
+.home-stage-one .home-participation-stage-f {
+  border-color: rgba(69, 103, 98, .42);
+}
+
+.home-stage-one .home-participation-form {
+  padding: 11px 12px 12px;
+  gap: 7px;
+}
+
+.home-stage-one .home-participation-intro-stage-h {
+  margin: 0 0 1px;
+  color: #9aa8a6;
+  font-size: 10.5px;
+  line-height: 1.42;
+}
+
+.home-stage-one .home-curator-requirements-stage-h {
+  margin: 0 0 3px;
+  padding: 0 0 8px;
+  border-bottom: 1px solid rgba(75, 105, 101, .28);
+  color: #82918f;
+  font-size: 9.8px;
+  line-height: 1.4;
+}
+
+.home-stage-one .home-curator-requirements-stage-h summary {
+  width: max-content;
+  max-width: 100%;
+  cursor: pointer;
+  color: var(--forrum-home-accent);
+  font-weight: 580;
+}
+
+.home-stage-one .home-curator-requirements-stage-h ul {
+  margin: 7px 0 0;
+  padding-left: 16px;
+  display: grid;
+  gap: 3px;
+}
+
+.home-stage-one .home-participation-form label {
+  gap: 4px;
+}
+
+.home-stage-one .home-participation-form label > span {
+  color: #a8b4b2;
+  font-size: 9.6px;
+  font-weight: 570;
+}
+
+.home-stage-one .home-participation-form :is(input, select, textarea) {
+  min-height: 30px;
+  padding: 6px 8px;
+  border-color: rgba(76, 109, 104, .48);
+  background: #0a1518;
+  font-size: 10px;
+}
+
+.home-stage-one .home-participation-form textarea {
+  min-height: 46px;
+  resize: vertical;
+}
+
+.home-stage-one .home-participation-form :is(input, select, textarea):hover {
+  border-color: rgba(25, 211, 154, .35);
+}
+
+.home-stage-one .home-participation-form > button {
+  min-height: 31px;
+  margin-top: 1px;
+  border-color: rgba(25, 211, 154, .34);
+  background: transparent;
+}
+
+.home-stage-one .home-participation-form > button:hover,
+.home-stage-one .home-participation-form > button:focus-visible {
+  background: rgba(25, 211, 154, .07);
+}
+
+.home-stage-one .home-reference-topic-row {
+  position: relative;
+}
+
+.home-stage-one .home-reference-topic-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 1px;
+  background: rgba(25, 211, 154, .16);
+  opacity: .55;
+}
+
+.home-stage-one .home-reference-topic-row:hover::before,
+.home-stage-one .home-reference-topic-row:focus-within::before {
+  background: var(--forrum-home-accent);
+  opacity: .9;
+}
+
+.home-stage-one .home-reference-topic-visual {
+  border-color: rgba(25, 211, 154, .22);
+}
+
+.home-stage-one .home-reference-topic-meta::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: rgba(25, 211, 154, .72);
+}
+
+.home-stage-one .home-reference-topic-meta-separator {
+  color: rgba(25, 211, 154, .52);
+}
+
+.home-stage-one .home-reference-topic-author .avatar {
+  outline: 1px solid rgba(25, 211, 154, .18);
+  outline-offset: 1px;
+}
+
+.home-stage-one .home-reference-topic-count {
+  color: #d6e3e0;
+}
+
+.home-stage-one .home-reference-topic-row:hover .home-reference-topic-count,
+.home-stage-one .home-reference-topic-row:focus-within .home-reference-topic-count {
+  color: var(--forrum-home-accent);
+}
+
+@media (max-width: 760px) {
+  .site-footer-inner {
+    width: min(100%, calc(100% - 20px));
+    min-height: 54px;
+    padding: 9px 2px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .site-footer-nav {
+    justify-content: flex-start;
+    gap: 7px 16px;
+  }
+}
+
+/* /FORRUM_HOME_REDESIGN_STAGE_H_V11 */

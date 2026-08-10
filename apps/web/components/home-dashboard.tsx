@@ -586,6 +586,26 @@ export function HomeDashboard({
     };
   }, [newsSeeded]);
 
+  // FORRUM_HOME_STAGE_H_PARTICIPATION_HASH
+  useEffect(() => {
+    function syncParticipationHash() {
+      const hash = window.location.hash;
+      if (hash !== '#propose-section' && hash !== '#become-curator') return;
+
+      setParticipationMode(hash === '#propose-section' ? 'section' : 'curator');
+      setParticipationMessage('');
+      window.requestAnimationFrame(() => {
+        document
+          .getElementById('home-participation')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+
+    syncParticipationHash();
+    window.addEventListener('hashchange', syncParticipationHash);
+    return () => window.removeEventListener('hashchange', syncParticipationHash);
+  }, []);
+
   const childrenByParent = useMemo(() => {
     const map = new Map<string, Community[]>();
     for (const community of communities) {
@@ -1240,11 +1260,18 @@ export function HomeDashboard({
 
             {participationMode === 'curator' ? (
               <form className="home-participation-form" onSubmit={submitCuratorApplication}>
-                <p>
-                  Куратор помогает развивать раздел и поддерживать порядок. При рассмотрении
-                  учитываются не новый аккаунт, подтверждённая почта, регулярная активность,
-                  полезный вклад в выбранную тематику и отсутствие действующих ограничений.
+                <p className="home-participation-intro-stage-h">
+                  Куратор помогает развивать раздел, поддерживать порядок и быть связью
+                  между участниками и администрацией.
                 </p>
+                <details className="home-curator-requirements-stage-h">
+                  <summary>Что учитывается при рассмотрении</summary>
+                  <ul>
+                    <li>аккаунт не новый и почта подтверждена;</li>
+                    <li>есть регулярная активность и полезный вклад в тематику;</li>
+                    <li>нет действующих ограничений.</li>
+                  </ul>
+                </details>
                 <label>
                   <span>Категория</span>
                   <select value={curatorCommunity} onChange={(event) => setCuratorCommunity(event.target.value)} required>
@@ -1316,41 +1343,7 @@ export function HomeDashboard({
         </aside>
       </div>
 
-      <footer className="home-reference-footer home-reference-footer-stage-g">
-        <span>© FORRUM, {new Date().getFullYear()}</span>
-        <nav aria-label="Ссылки в подвале главной">
-          <Link href="/rules">Правила</Link>
-          <button
-            type="button"
-            onClick={() => {
-              setParticipationMode('section');
-              setParticipationMessage('');
-              requestAnimationFrame(() => {
-                document
-                  .getElementById('home-participation')
-                  ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              });
-            }}
-          >
-            Предложить раздел
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setParticipationMode('curator');
-              setParticipationMessage('');
-              requestAnimationFrame(() => {
-                document
-                  .getElementById('home-participation')
-                  ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              });
-            }}
-          >
-            Стать куратором
-          </button>
-          <Link href="/support">Поддержка</Link>
-        </nav>
-      </footer>
+
     </div>
   );
 }

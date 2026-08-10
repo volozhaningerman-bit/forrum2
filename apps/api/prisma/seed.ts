@@ -620,6 +620,34 @@ async function main() {
       authorId: owner.id, communityId: telegram.id },
   });
 
+  // FORRUM_HOME_STAGE_H_NEWS_SEED
+  await prisma.publication.upsert({
+    where: { slug: 'forrum-home-dark-redesign' },
+    update: {},
+    create: {
+      slug: 'forrum-home-dark-redesign',
+      format: PublicationFormat.TOPIC,
+      type: PublicationType.NEWS,
+      title: 'Главная FORRUM получила новый тёмный интерфейс',
+      body: 'Главная страница переводится на новый визуальный язык: графитовые поверхности, зелёно-бирюзовые системные акценты, компактное дерево категорий и две плотные ленты тем.',
+      authorId: owner.id,
+      communityId: start.id,
+    },
+  });
+  await prisma.publication.upsert({
+    where: { slug: 'forrum-curator-applications-open' },
+    update: {},
+    create: {
+      slug: 'forrum-curator-applications-open',
+      format: PublicationFormat.TOPIC,
+      type: PublicationType.NEWS,
+      title: 'Открыты заявки на кураторов и предложения новых разделов',
+      body: 'На главной FORRUM появился компактный блок участия в развитии платформы. Можно подать заявку на кураторство существующей категории или предложить новый раздел.',
+      authorId: owner.id,
+      communityId: start.id,
+    },
+  });
+
   const forrumTag = await prisma.tag.findUniqueOrThrow({ where: { slug: 'forrum' } });
   const projectsTag = await prisma.tag.findUniqueOrThrow({ where: { slug: 'proekty' } });
   await prisma.publicationTag.upsert({ where: { publicationId_tagId: { publicationId: welcome.id, tagId: forrumTag.id } }, update: {}, create: { publicationId: welcome.id, tagId: forrumTag.id } });

@@ -4,6 +4,8 @@ const home = fs.readFileSync('apps/web/components/home-dashboard.tsx', 'utf8');
 const css = fs.readFileSync('apps/web/app/globals.css', 'utf8');
 const rules = fs.readFileSync('apps/web/app/rules/page.tsx', 'utf8');
 const support = fs.readFileSync('apps/web/app/support/page.tsx', 'utf8');
+const layout = fs.readFileSync('apps/web/app/layout.tsx', 'utf8');
+const siteFooter = fs.readFileSync('apps/web/components/site-footer.tsx', 'utf8');
 
 function requireMarker(source, marker, label) {
   if (!source.includes(marker)) throw new Error(`${label}: missing ${marker}`);
@@ -12,11 +14,12 @@ function forbidMarker(source, marker, label) {
   if (source.includes(marker)) throw new Error(`${label}: forbidden ${marker}`);
 }
 
-requireMarker(home, 'home-reference-footer-stage-g', 'Stage G homepage footer');
-requireMarker(home, 'href="/rules"', 'Rules footer link');
-requireMarker(home, 'href="/support"', 'Support footer link');
-requireMarker(home, "setParticipationMode('section')", 'Section proposal footer action');
-requireMarker(home, "setParticipationMode('curator')", 'Curator footer action');
+requireMarker(layout, '<SiteFooter/>', 'global footer placement');
+requireMarker(siteFooter, 'site-footer', 'global footer component');
+requireMarker(siteFooter, 'href="/rules"', 'Rules footer link');
+requireMarker(siteFooter, 'href="/support"', 'Support footer link');
+requireMarker(siteFooter, 'href="/#propose-section"', 'Section proposal footer action');
+requireMarker(siteFooter, 'href="/#become-curator"', 'Curator footer action');
 requireMarker(home, 'id="home-participation"', 'Participation scroll target');
 
 requireMarker(css, 'FORRUM_HOME_REDESIGN_STAGE_G_V11', 'Stage G CSS');
