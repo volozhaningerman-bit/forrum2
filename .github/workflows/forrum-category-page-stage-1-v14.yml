@@ -1,0 +1,198 @@
+name: FORRUM Category Page Stage 1 V14
+run-name: FORRUM Category Page Stage 1 V14
+
+"on":
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-category-page-stage-1-v14
+  cancel-in-progress: false
+
+env:
+  NODE_ENV: test
+  DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/forrum?schema=public
+  JWT_SECRET: forrum-github-actions-secret
+  WEB_URL: http://127.0.0.1:3000
+  API_INTERNAL_URL: http://127.0.0.1:4000/v1
+  PUBLIC_API_URL: http://127.0.0.1:4000
+  API_PORT: '4000'
+  PORT: '3000'
+
+jobs:
+  category-page-stage-1-v14:
+    name: Category Page Stage 1 V14
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: forrum
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d forrum"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    steps:
+      - name: Check out canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify approved baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -f "apps/web/app/communities/[slug]/page.tsx"
+          test -f "apps/web/app/communities/[slug]/community-client.tsx"
+
+          grep -Fq "export default async function CommunityPage"             "apps/web/app/communities/[slug]/page.tsx"
+          grep -Fq "export function CommunityClient"             "apps/web/app/communities/[slug]/community-client.tsx"
+          grep -Fq "FORRUM_GLOBAL_HEADER_V13_4"             apps/web/components/main-nav.tsx
+
+          test -z "$(git status --porcelain)"
+
+      - name: Apply universal CategoryPage Stage 1
+        shell: bash
+        env:
+          PATCH_B64: ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCgpyb3V0ZV9wYXRoID0gUGF0aCgiYXBwcy93ZWIvYXBwL2NvbW11bml0aWVzL1tzbHVnXS9wYWdlLnRzeCIpCm9sZF9jbGllbnQgPSBQYXRoKCJhcHBzL3dlYi9hcHAvY29tbXVuaXRpZXMvW3NsdWddL2NvbW11bml0eS1jbGllbnQudHN4IikKbmV3X2NsaWVudCA9IFBhdGgoImFwcHMvd2ViL2FwcC9jb21tdW5pdGllcy9bc2x1Z10vY2F0ZWdvcnktcGFnZS50c3giKQpjaGVja19wYXRoID0gUGF0aCgic2NyaXB0cy9jYXRlZ29yeS1wYWdlLXN0YWdlLTEtdjE0LWNoZWNrLm1qcyIpCmRvY19wYXRoID0gUGF0aCgiZG9jcy9GT1JSVU1fQ0FURUdPUllfUEFHRV9TVEFHRV8xX1YxNC5tZCIpCgpmb3IgcGF0aCBpbiAocm91dGVfcGF0aCwgb2xkX2NsaWVudCk6CiAgICBpZiBub3QgcGF0aC5pc19maWxlKCk6CiAgICAgICAgcmFpc2UgUnVudGltZUVycm9yKGYiTWlzc2luZyBTdGFnZSAxIGJhc2VsaW5lIGZpbGU6IHtwYXRofSIpCgpyb3V0ZSA9IHJvdXRlX3BhdGgucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpCmNsaWVudCA9IG9sZF9jbGllbnQucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpCgpmb3IgbWFya2VyIGluIFsKICAgICJleHBvcnQgZGVmYXVsdCBhc3luYyBmdW5jdGlvbiBDb21tdW5pdHlQYWdlIiwKICAgICJwYXJhbXM6IFByb21pc2U8eyBzbHVnOiBzdHJpbmcgfT4iLAogICAgImAvY29tbXVuaXRpZXMvJHtlbmNvZGVVUklDb21wb25lbnQoc2x1Zyl9YCIsCiAgICAiPENvbW11bml0eUNsaWVudCIsCl06CiAgICBpZiBtYXJrZXIgbm90IGluIHJvdXRlOgogICAgICAgIHJhaXNlIFJ1bnRpbWVFcnJvcigKICAgICAgICAgICAgZiJDYXRlZ29yeSByb3V0ZSBiYXNlbGluZSBjaGFuZ2VkOiBtaXNzaW5nIHttYXJrZXJ9IgogICAgICAgICkKCmZvciBtYXJrZXIgaW4gWwogICAgImV4cG9ydCB0eXBlIENvbW11bml0eSA9IHsiLAogICAgImV4cG9ydCBmdW5jdGlvbiBDb21tdW5pdHlDbGllbnQiLAogICAgImFwaTxDb21tdW5pdHk+KGAvY29tbXVuaXRpZXMvJHtzbHVnfWApIiwKICAgICJgL2NvbW11bml0aWVzLyR7c2x1Z30vc3Vic2NyaWJlYCIsCiAgICAiYC9jcmVhdGU/Y29tbXVuaXR5PSR7ZW5jb2RlVVJJQ29tcG9uZW50KGRhdGEuc2x1Zyl9JmZvcm1hdD1UT1BJQ2AiLApdOgogICAgaWYgbWFya2VyIG5vdCBpbiBjbGllbnQ6CiAgICAgICAgcmFpc2UgUnVudGltZUVycm9yKAogICAgICAgICAgICBmIkNhdGVnb3J5IGNsaWVudCBiYXNlbGluZSBjaGFuZ2VkOiBtaXNzaW5nIHttYXJrZXJ9IgogICAgICAgICkKCmNsaWVudCA9IGNsaWVudC5yZXBsYWNlKAogICAgImV4cG9ydCBmdW5jdGlvbiBDb21tdW5pdHlDbGllbnQiLAogICAgIi8vIEZPUlJVTV9DQVRFR09SWV9QQUdFX1NUQUdFXzFfVjE0XG5leHBvcnQgZnVuY3Rpb24gQ2F0ZWdvcnlQYWdlIiwKICAgIDEsCikKY2xpZW50ID0gY2xpZW50LnJlcGxhY2UoCiAgICAiaW1wb3J0IHsgdXNlUGFyYW1zIH0gZnJvbSAnbmV4dC9uYXZpZ2F0aW9uJztcbiIsCiAgICAiIiwKICAgIDEsCikKCnJvdXRlID0gcm91dGUucmVwbGFjZSgKICAgICIgIENvbW11bml0eUNsaWVudCxcbiIsCiAgICAiICBDYXRlZ29yeVBhZ2UsXG4iLAogICAgMSwKKQpyb3V0ZSA9IHJvdXRlLnJlcGxhY2UoCiAgICAifSBmcm9tICcuL2NvbW11bml0eS1jbGllbnQnOyIsCiAgICAifSBmcm9tICcuL2NhdGVnb3J5LXBhZ2UnOyIsCiAgICAxLAopCnJvdXRlID0gcm91dGUucmVwbGFjZSgKICAgICJleHBvcnQgZGVmYXVsdCBhc3luYyBmdW5jdGlvbiBDb21tdW5pdHlQYWdlIiwKICAgICIvLyBGT1JSVU1fQ0FURUdPUllfUk9VVEVfU1RBR0VfMV9WMTRcbmV4cG9ydCBkZWZhdWx0IGFzeW5jIGZ1bmN0aW9uIENhdGVnb3J5Um91dGUiLAogICAgMSwKKQpyb3V0ZSA9IHJvdXRlLnJlcGxhY2UoCiAgICAiPENvbW11bml0eUNsaWVudCIsCiAgICAiPENhdGVnb3J5UGFnZSIsCiAgICAxLAopCgpuZXdfY2xpZW50LndyaXRlX3RleHQoY2xpZW50LCBlbmNvZGluZz0idXRmLTgiKQpyb3V0ZV9wYXRoLndyaXRlX3RleHQocm91dGUsIGVuY29kaW5nPSJ1dGYtOCIpCm9sZF9jbGllbnQudW5saW5rKCkKCmNoZWNrX3BhdGgud3JpdGVfdGV4dCgnaW1wb3J0IGZzIGZyb20gXCdub2RlOmZzXCc7XG5cbmNvbnN0IHJvdXRlID0gZnMucmVhZEZpbGVTeW5jKFxuICBcJ2FwcHMvd2ViL2FwcC9jb21tdW5pdGllcy9bc2x1Z10vcGFnZS50c3hcJyxcbiAgXCd1dGY4XCcsXG4pO1xuY29uc3QgcGFnZSA9IGZzLnJlYWRGaWxlU3luYyhcbiAgXCdhcHBzL3dlYi9hcHAvY29tbXVuaXRpZXMvW3NsdWddL2NhdGVnb3J5LXBhZ2UudHN4XCcsXG4gIFwndXRmOFwnLFxuKTtcblxuZnVuY3Rpb24gcmVxdWlyZU1hcmtlcihzb3VyY2UsIG1hcmtlciwgbGFiZWwpIHtcbiAgaWYgKCFzb3VyY2UuaW5jbHVkZXMobWFya2VyKSkge1xuICAgIHRocm93IG5ldyBFcnJvcihgJHtsYWJlbH06IG1pc3NpbmcgJHttYXJrZXJ9YCk7XG4gIH1cbn1cbmZ1bmN0aW9uIGZvcmJpZE1hcmtlcihzb3VyY2UsIG1hcmtlciwgbGFiZWwpIHtcbiAgaWYgKHNvdXJjZS5pbmNsdWRlcyhtYXJrZXIpKSB7XG4gICAgdGhyb3cgbmV3IEVycm9yKGAke2xhYmVsfTogZm9yYmlkZGVuICR7bWFya2VyfWApO1xuICB9XG59XG5cbnJlcXVpcmVNYXJrZXIoXG4gIHJvdXRlLFxuICBcJ0ZPUlJVTV9DQVRFR09SWV9ST1VURV9TVEFHRV8xX1YxNFwnLFxuICBcJ3VuaXZlcnNhbCBjYXRlZ29yeSByb3V0ZVwnLFxuKTtcbnJlcXVpcmVNYXJrZXIoXG4gIHJvdXRlLFxuICBcJ2V4cG9ydCBkZWZhdWx0IGFzeW5jIGZ1bmN0aW9uIENhdGVnb3J5Um91dGVcJyxcbiAgXCd1bml2ZXJzYWwgY2F0ZWdvcnkgcm91dGVcJyxcbik7XG5yZXF1aXJlTWFya2VyKFxuICByb3V0ZSxcbiAgInBhcmFtczogUHJvbWlzZTx7IHNsdWc6IHN0cmluZyB9PiIsXG4gIFwncmVjdXJzaXZlIHNsdWcgcm91dGVcJyxcbik7XG5yZXF1aXJlTWFya2VyKFxuICByb3V0ZSxcbiAgXCdgL2NvbW11bml0aWVzLyR7ZW5jb2RlVVJJQ29tcG9uZW50KHNsdWcpfWBcJyxcbiAgXCdleGlzdGluZyBjYXRlZ29yeSBBUEkgcmV1c2VcJyxcbik7XG5yZXF1aXJlTWFya2VyKFxuICByb3V0ZSxcbiAgImZyb20gXCcuL2NhdGVnb3J5LXBhZ2VcJzsiLFxuICBcJ0NhdGVnb3J5UGFnZSBpbXBvcnRcJyxcbik7XG5yZXF1aXJlTWFya2VyKHJvdXRlLCBcJzxDYXRlZ29yeVBhZ2VcJywgXCdDYXRlZ29yeVBhZ2UgcmVuZGVyXCcpO1xuXG5yZXF1aXJlTWFya2VyKFxuICBwYWdlLFxuICBcJ0ZPUlJVTV9DQVRFR09SWV9QQUdFX1NUQUdFXzFfVjE0XCcsXG4gIFwnQ2F0ZWdvcnlQYWdlXCcsXG4pO1xucmVxdWlyZU1hcmtlcihcbiAgcGFnZSxcbiAgXCdleHBvcnQgZnVuY3Rpb24gQ2F0ZWdvcnlQYWdlXCcsXG4gIFwnQ2F0ZWdvcnlQYWdlXCcsXG4pO1xucmVxdWlyZU1hcmtlcihcbiAgcGFnZSxcbiAgXCdleHBvcnQgdHlwZSBDb21tdW5pdHkgPSB7XCcsXG4gIFwnZXhpc3Rpbmcgbm9kZSBjb250cmFjdFwnLFxuKTtcbnJlcXVpcmVNYXJrZXIoXG4gIHBhZ2UsXG4gIFwnYXBpPENvbW11bml0eT4oYC9jb21tdW5pdGllcy8ke3NsdWd9YClcJyxcbiAgXCdleGlzdGluZyBjYXRlZ29yeSBsb2FkaW5nXCcsXG4pO1xucmVxdWlyZU1hcmtlcihcbiAgcGFnZSxcbiAgXCdgL2NvbW11bml0aWVzLyR7c2x1Z30vc3Vic2NyaWJlYFwnLFxuICBcJ2V4aXN0aW5nIHN1YnNjcmlwdGlvblwnLFxuKTtcbnJlcXVpcmVNYXJrZXIoXG4gIHBhZ2UsXG4gIFwnYC9jcmVhdGU/Y29tbXVuaXR5PSR7ZW5jb2RlVVJJQ29tcG9uZW50KGRhdGEuc2x1Zyl9JmZvcm1hdD1UT1BJQ2BcJyxcbiAgXCdleGlzdGluZyB0b3BpYyBjcmVhdGlvblwnLFxuKTtcblxuZm9yYmlkTWFya2VyKFxuICByb3V0ZSxcbiAgImZyb20gXCcuL2NvbW11bml0eS1jbGllbnRcJzsiLFxuICBcJ3JldGlyZWQgY2F0ZWdvcnkgY2xpZW50IGltcG9ydFwnLFxuKTtcbmZvcmJpZE1hcmtlcihcbiAgcm91dGUsXG4gIFwnPENvbW11bml0eUNsaWVudFwnLFxuICBcJ3JldGlyZWQgY2F0ZWdvcnkgY2xpZW50IHJlbmRlclwnLFxuKTtcbmZvcmJpZE1hcmtlcihcbiAgcGFnZSxcbiAgXCdleHBvcnQgZnVuY3Rpb24gQ29tbXVuaXR5Q2xpZW50XCcsXG4gIFwncmV0aXJlZCBjYXRlZ29yeSBjb21wb25lbnQgbmFtZVwnLFxuKTtcblxuaWYgKGZzLmV4aXN0c1N5bmMoXG4gIFwnYXBwcy93ZWIvYXBwL2NvbW11bml0aWVzL1tzbHVnXS9jb21tdW5pdHktY2xpZW50LnRzeFwnLFxuKSkge1xuICB0aHJvdyBuZXcgRXJyb3IoXG4gICAgXCdyZXRpcmVkIGNvbW11bml0eS1jbGllbnQudHN4IHN0aWxsIGV4aXN0cyBhZnRlciBTdGFnZSAxXCcsXG4gICk7XG59XG5cbmNvbnNvbGUubG9nKFxuICBcJ0ZPUlJVTSBDYXRlZ29yeSBQYWdlIFN0YWdlIDEgVjE0IHBhc3NlZDogb25lIHVuaXZlcnNhbCBbc2x1Z10gQ2F0ZWdvcnlQYWdlIHJvdXRlLlwnLFxuKTtcbicsIGVuY29kaW5nPSJ1dGYtOCIpCmRvY19wYXRoLndyaXRlX3RleHQoJyMgRk9SUlVNIENhdGVnb3J5IFBhZ2Ug4oCUIFN0YWdlIDEgVjE0XG5cblN0YWdlIDEgZXN0YWJsaXNoZXMgdGhlIGFwcHJvdmVkIHVuaXZlcnNhbCBjYXRlZ29yeSByb3V0ZS9jb21wb25lbnQgYm91bmRhcnkuXG5cbi0gUmV1c2VzIGAvY29tbXVuaXRpZXMvW3NsdWddYC5cbi0gUmVuYW1lcyB0aGUgZGV0YWlsIGNsaWVudCBib3VuZGFyeSB0byBgQ2F0ZWdvcnlQYWdlYC5cbi0gUHJlc2VydmVzIGV4aXN0aW5nIGxvYWRpbmcsIHN1YnNjcmlwdGlvbiBhbmQgdG9waWMtY3JlYXRpb24gYmVoYXZpb3VyLlxuLSBEb2VzIG5vdCBjcmVhdGUgc2VwYXJhdGUgcGFnZXMgZm9yIGluZGl2aWR1YWwgY2F0ZWdvcmllcy5cbi0gRG9lcyBub3QgY2hhbmdlIEFQSSwgUHJpc21hIHNjaGVtYSwgc2hhcmVkIGhlYWRlciwgaG9tZXBhZ2UsIENvbW11bml0aWVzIGNhdGFsb2d1ZSBvciB2aXN1YWwgc3R5bGluZy5cbi0gVmlzdWFsIHJlZGVzaWduIGJlZ2lucyBpbiBTdGFnZSAyLlxuXG5UaGUgZXhpc3RpbmcgYENvbW11bml0eWAgUHJpc21hIG1vZGVsIGFscmVhZHkgc3VwcG9ydHMgcmVjdXJzaXZlIHBhcmVudC9jaGlsZHJlbiByZWxhdGlvbnNoaXBzLlxuJywgZW5jb2Rpbmc9InV0Zi04IikKCnByaW50KCJGT1JSVU0gQ2F0ZWdvcnkgUGFnZSBTdGFnZSAxIFYxNCBhcHBsaWVkLiIpCg==
+        run: |
+          set -euo pipefail
+          printf '%s' "$PATCH_B64" | base64 -d             > /tmp/forrum-category-page-stage-1-v14.py
+          python3 /tmp/forrum-category-page-stage-1-v14.py
+
+      - name: Verify Stage 1 source and regression contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/category-page-stage-1-v14-check.mjs
+          node scripts/global-header-v13-4-check.mjs
+          node scripts/communities-redesign-stage-a-check.mjs
+          node scripts/communities-redesign-stage-b-check.mjs
+          node scripts/communities-redesign-stage-c-check.mjs
+          node scripts/communities-redesign-stage-d-check.mjs
+          node scripts/communities-redesign-stage-e-check.mjs
+          node scripts/communities-redesign-stage-f-check.mjs
+          node scripts/communities-redesign-stage-f2-check.mjs
+          node scripts/communities-redesign-stage-f3-check.mjs
+          node scripts/communities-redesign-stage-f4-check.mjs
+          node scripts/communities-redesign-stage-f5-check.mjs
+          node scripts/home-redesign-stage-h2-check.mjs
+          node scripts/home-redesign-stage-h-check.mjs
+          node scripts/ui-interaction-check.mjs
+
+          git diff --check
+
+          allowed='^(apps/web/app/communities/\[slug\]/page\.tsx|apps/web/app/communities/\[slug\]/category-page\.tsx|apps/web/app/communities/\[slug\]/community-client\.tsx|scripts/category-page-stage-1-v14-check\.mjs|docs/FORRUM_CATEGORY_PAGE_STAGE_1_V14\.md)$'
+          unexpected="$(git diff --name-only | grep -Ev "$allowed" || true)"
+          if [ -n "$unexpected" ]; then
+            echo "Unexpected files changed:"
+            echo "$unexpected"
+            exit 1
+          fi
+
+          if git diff --             apps/web/components/main-nav.tsx             apps/web/components/site-header.tsx             apps/web/components/site-footer.tsx             apps/web/components/home-dashboard.tsx             apps/web/app/communities/communities-client.tsx             apps/web/app/page.tsx             apps/api/src             apps/api/prisma | grep -q .; then
+            echo "Stage 1 changed approved shared/UI/backend scope."
+            exit 1
+          fi
+
+      - name: Create isolated Stage 1 commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "FORRUM QA updater"
+          git config user.email "actions@users.noreply.github.com"
+
+          git add -A --             "apps/web/app/communities/[slug]"             scripts/category-page-stage-1-v14-check.mjs             docs/FORRUM_CATEGORY_PAGE_STAGE_1_V14.md
+
+          git commit -m "Establish universal CategoryPage route"
+          test -z "$(git status --porcelain)"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies without lock file
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --package-lock=false
+          test ! -f package-lock.json
+
+      - name: Generate validate sync and seed Prisma
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run db:generate
+          npm run db:validate
+          npm run db:push
+          npm run db:seed
+
+      - name: Existing static UX and accessibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          node scripts/category-page-stage-1-v14-check.mjs
+          node scripts/global-header-v13-4-check.mjs
+          node scripts/ui-interaction-check.mjs
+
+      - name: Typecheck every workspace
+        run: npm run typecheck
+
+      - name: Run API tests
+        run: npm test
+
+      - name: Clean production build
+        run: npm run build
+
+      - name: Remove generated build noise
+        shell: bash
+        run: |
+          set -euo pipefail
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+      - name: Push verified Category Page Stage 1
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
+
+      - name: Verify remote main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+
+          git show "origin/main:apps/web/app/communities/[slug]/page.tsx"             | grep -Fq "FORRUM_CATEGORY_ROUTE_STAGE_1_V14"
+          git show "origin/main:apps/web/app/communities/[slug]/category-page.tsx"             | grep -Fq "FORRUM_CATEGORY_PAGE_STAGE_1_V14"
+
+          if git cat-file -e             "origin/main:apps/web/app/communities/[slug]/community-client.tsx"             2>/dev/null; then
+            echo "Retired community-client.tsx still exists."
+            exit 1
+          fi
+
+          git show origin/main:apps/web/components/main-nav.tsx             | grep -Fq "FORRUM_GLOBAL_HEADER_V13_4"
+
+          node scripts/category-page-stage-1-v14-check.mjs
+          echo "FORRUM Category Page Stage 1 V14 remote verification passed."
