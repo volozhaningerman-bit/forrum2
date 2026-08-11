@@ -9,6 +9,7 @@ import { Avatar } from '@/components/avatar';
 import { TagList } from '@/components/tag-list';
 import { BbcodeContent } from '@/components/bbcode-content';
 import { BbcodeEditor } from '@/components/bbcode-editor';
+import { TopicCategoryTree } from '@/components/topic-category-tree';
 import { TelegramShareButton } from '@/components/telegram-share-button';
 import {
   BookmarkIcon,
@@ -107,6 +108,7 @@ function dateLabel(value: string) {
   }).format(new Date(value));
 }
 
+// FORRUM_TOPIC_PAGE_FRAME_V15_4
 export function PublicationClient({
   slug,
   initialData,
@@ -130,11 +132,41 @@ export function PublicationClient({
   const [reportReason, setReportReason] = useState('');
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [commentOrder, setCommentOrder] = useState<'oldest' | 'newest'>('oldest');
+  const [topicCommunityAncestors, setTopicCommunityAncestors] =
+    useState<Array<{ slug: string; name: string }>>([]);
+
   const replyEditorRef = useRef<HTMLTextAreaElement>(null);
   const trackedSlugRef = useRef<string | null>(null);
 
   const load = (trackView = false) => api<Publication>(`/publications/${slug}?trackView=${trackView ? '1' : '0'}`).then(setItem).catch((e) => setError(e.message));
   useEffect(() => { if (trackedSlugRef.current === slug) return; trackedSlugRef.current = slug; void load(true); }, [slug]);
+  useEffect(() => {
+    if (!item || item.format !== 'TOPIC') {
+      setTopicCommunityAncestors([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    api<{ ancestors?: Array<{ slug: string; name: string }> }>(
+      `/communities/${encodeURIComponent(item.community.slug)}`,
+    )
+      .then((community) => {
+        if (!cancelled) {
+          setTopicCommunityAncestors(community.ancestors ?? []);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setTopicCommunityAncestors([]);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [item?.community.slug, item?.format]);
+
 
   const comments = useMemo<CommentNode[]>(() => {
     if (!item) return [];
@@ -287,14 +319,105 @@ export function PublicationClient({
   const updated = new Date(item.updatedAt).getTime() - new Date(item.createdAt).getTime() > 60_000;
 
   return (
-    <div className="publication-layout">
+    <div
+      className={
+        isTopic
+          ? 'topic-page-frame-v15-4 section-page-v14-4'
+          : 'publication-layout'
+      }
+      data-section-polish={isTopic ? 'v14-8' : undefined}
+      data-topic-frame={isTopic ? 'v15-4' : undefined}
+    >
+      {isTopic && (
+        <TopicCategoryTree activeSlug={item.community.slug} />
+      )}
       <main className="publication-column">
-        <div className="publication-breadcrumbs">
-          <Link href="/">Главная</Link><span>›</span>
-          <Link href={`/communities/${item.community.slug}`}>{item.community.name}</Link><span>›</span>
-          <span>{typeNames[item.type] ?? item.type}</span>
-        </div>
+        <nav
+          className="publication-breadcrumbs topic-frame-breadcrumbs"
+          aria-label="Хлебные крошки"
+        >
+          <Link href="/">Главная</Link>
+          <span aria-hidden="true">›</span>
 
+          {isTopic ? (
+            <>
+              <Link href="/communities">Сообщества</Link>
+
+              {topicCommunityAncestors.map((ancestor) => (
+                <span
+                  className="topic-frame-breadcrumb-segment"
+                  key={ancestor.slug}
+                >
+                  <span aria-hidden="true">›</span>
+                  <Link href={`/communities/${ancestor.slug}`}>
+                    {ancestor.name}
+                  </Link>
+                </span>
+              ))}
+
+              <span aria-hidden="true">›</span>
+              <Link href={`/communities/${item.community.slug}`}>
+                {item.community.name}
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href={`/communities/${item.community.slug}`}>
+                {item.community.name}
+              </Link>
+              <span aria-hidden="true">›</span>
+              <span>{typeNames[item.type] ?? item.type}</span>
+            </>
+          )}
+        </nav>
+
+        {isTopic && (
+          <section
+            className="topic-frame-header"
+            aria-labelledby="topic-frame-title"
+          >
+            <div className="topic-frame-header-copy">
+              <h1 id="topic-frame-title">
+                {item.title || 'Тема без заголовка'}
+              </h1>
+
+              <div className="topic-frame-header-meta">
+                <Link href={`/u/${item.author.username}`}>
+                  @{item.author.username}
+                </Link>
+                <span aria-hidden="true">·</span>
+                <time dateTime={item.createdAt}>
+                  {dateLabel(item.createdAt)}
+                </time>
+                <span aria-hidden="true">·</span>
+                <span>{item.viewCount} просмотров</span>
+              </div>
+            </div>
+
+            <div className="topic-frame-header-actions">
+              <button
+                type="button"
+                className="topic-frame-action"
+                disabled
+                aria-disabled="true"
+                title="Подписка на отдельную тему будет подключена отдельным этапом"
+              >
+                Подписаться
+              </button>
+
+              <button
+                type="button"
+                className={`topic-frame-action ${
+                  item.isBookmarked ? 'active' : ''
+                }`}
+                aria-pressed={item.isBookmarked}
+                onClick={bookmark}
+              >
+                {item.isBookmarked ? 'Сохранено' : 'Сохранить'}
+              </button>
+            </div>
+          </section>
+        )}
         <article
           className={`publication-detail ${isTopic ? 'publication-detail-topic' : 'publication-detail-post'}`}
           data-community={item.community.slug}
