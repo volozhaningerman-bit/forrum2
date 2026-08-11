@@ -70,6 +70,8 @@ const topicTabs: Array<{ key: TopicTab; label: string }> = [
   { key: 'unanswered', label: 'Без ответа' },
 ];
 
+const TOPICS_PER_PAGE = 20;
+
 const workshopNavigation = [
   { label: 'Проекты и заказы', href: '/workshop?section=projects' },
   { label: 'Готовые решения', href: '/workshop?section=solutions' },
@@ -99,6 +101,77 @@ const topicVisuals: Record<string, string> = {
 
 function formatNumber(value: number) {
   return new Intl.NumberFormat('ru-RU').format(value);
+}
+
+function formatTopicCreatedAt(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '—';
+
+  const now = new Date();
+  const startToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+  );
+  const startDate = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  );
+  const dayDiff = Math.floor(
+    (startToday.getTime() - startDate.getTime()) / 86_400_000,
+  );
+
+  const base = date
+    .toLocaleDateString('ru-RU', {
+      day: 'numeric',
+      month: 'short',
+      ...(date.getFullYear() === now.getFullYear()
+        ? {}
+        : { year: 'numeric' as const }),
+    })
+    .replace('.', '');
+
+  if (dayDiff >= 0 && dayDiff <= 2) {
+    const time = date.toLocaleTimeString('ru-RU', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    return `${base}, ${time}`;
+  }
+
+  return base;
+}
+
+function buildTopicPagination(
+  current: number,
+  total: number,
+): Array<number | 'gap'> {
+  if (total <= 7) {
+    return Array.from(
+      { length: total },
+      (_, index) => index + 1,
+    );
+  }
+
+  const result: Array<number | 'gap'> = [1];
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 1);
+
+  if (start > 2) result.push('gap');
+
+  for (
+    let pageNumber = start;
+    pageNumber <= end;
+    pageNumber += 1
+  ) {
+    result.push(pageNumber);
+  }
+
+  if (end < total - 1) result.push('gap');
+  result.push(total);
+
+  return result;
 }
 
 function topicVisual(slug: string) {
@@ -213,6 +286,7 @@ function sortRootCommunities(left: TreeCommunity, right: TreeCommunity) {
 // FORRUM_CATEGORY_PAGE_STAGE_1_V14
 // FORRUM_SECTION_PAGE_LAYOUT_V14_7
 // FORRUM_SECTION_PAGE_POLISH_V14_8
+// FORRUM_SECTION_PAGE_NAVIGATION_V14_10
 export function CategoryPage({
   slug,
   initialData,
@@ -235,6 +309,7 @@ export function CategoryPage({
   const [workshopOpen, setWorkshopOpen] = useState(true);
   const [topicTab, setTopicTab] = useState<TopicTab>('all');
   const [topicSort, setTopicSort] = useState<TopicSort>('activity');
+  const [topicPage, setTopicPage] = useState(1);
 
   const load = () =>
     api<Community>(`/communities/${slug}`)
@@ -259,6 +334,7 @@ export function CategoryPage({
         initialData.slug,
       ]),
     );
+    setTopicPage(1);
   }, [initialData]);
 
   useEffect(() => {
@@ -418,6 +494,40 @@ export function CategoryPage({
       );
     });
   }, [data, topicSort, topicTab]);
+
+  const topicPageCount = Math.max(
+    1,
+    Math.ceil(visibleTopics.length / TOPICS_PER_PAGE),
+  );
+  const safeTopicPage = Math.min(topicPage, topicPageCount);
+  const topicPageStart =
+    (safeTopicPage - 1) * TOPICS_PER_PAGE;
+  const paginatedTopics = visibleTopics.slice(
+    topicPageStart,
+    topicPageStart + TOPICS_PER_PAGE,
+  );
+  const topicPagination = buildTopicPagination(
+    safeTopicPage,
+    topicPageCount,
+  );
+
+  function goToTopicPage(nextPage: number) {
+    setTopicPage(
+      Math.min(
+        Math.max(nextPage, 1),
+        topicPageCount,
+      ),
+    );
+
+    window.requestAnimationFrame(() => {
+      document
+        .getElementById('section-topic-heading')
+        ?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+    });
+  }
 
   function toggleTree(slugToToggle: string) {
     setExpanded((current) => {
@@ -757,7 +867,10 @@ export function CategoryPage({
                       className={
                         topicTab === tab.key ? 'active' : ''
                       }
-                      onClick={() => setTopicTab(tab.key)}
+                      onClick={() => {
+                        setTopicTab(tab.key);
+                        setTopicPage(1);
+                      }}
                       key={tab.key}
                     >
                       {tab.label}
@@ -770,11 +883,12 @@ export function CategoryPage({
                 <span>Сортировка:</span>
                 <select
                   value={topicSort}
-                  onChange={(event) =>
+                  onChange={(event) => {
                     setTopicSort(
                       event.target.value as TopicSort,
-                    )
-                  }
+                    );
+                    setTopicPage(1);
+                  }}
                 >
                   <option value="activity">
                     Последняя активность
@@ -793,13 +907,14 @@ export function CategoryPage({
             >
               <span>Тема</span>
               <span>Автор</span>
+              <span>Дата</span>
               <span>Ответы</span>
               <span>Просмотры</span>
             </div>
 
             <div className="section-topic-list">
               {visibleTopics.length > 0 ? (
-                visibleTopics.map((item) => {
+                paginatedTopics.map((item) => {
                   const pinned =
                     Boolean(item.pinnedUntil) &&
                     new Date(
@@ -897,6 +1012,16 @@ export function CategoryPage({
                         </Link>
                       </div>
 
+                      <time
+                        className="section-topic-date"
+                        dateTime={item.createdAt}
+                        title={new Date(
+                          item.createdAt,
+                        ).toLocaleString('ru-RU')}
+                      >
+                        {formatTopicCreatedAt(item.createdAt)}
+                      </time>
+
                       <span className="section-topic-count">
                         {formatNumber(item.commentCount)}
                       </span>
@@ -922,6 +1047,78 @@ export function CategoryPage({
                 </div>
               )}
             </div>
+
+            {topicPageCount > 1 && (
+              <nav
+                className="section-topic-pagination"
+                aria-label="Страницы тем"
+              >
+                <span className="section-topic-pagination-summary">
+                  {topicPageStart + 1}–
+                  {Math.min(
+                    topicPageStart + TOPICS_PER_PAGE,
+                    visibleTopics.length,
+                  )}{' '}
+                  из {formatNumber(visibleTopics.length)}
+                </span>
+
+                <div className="section-topic-pagination-controls">
+                  <button
+                    type="button"
+                    disabled={safeTopicPage === 1}
+                    onClick={() =>
+                      goToTopicPage(safeTopicPage - 1)
+                    }
+                  >
+                    ← Назад
+                  </button>
+
+                  {topicPagination.map((pageItem, index) =>
+                    pageItem === 'gap' ? (
+                      <span
+                        className="section-topic-pagination-gap"
+                        aria-hidden="true"
+                        key={`gap-${index}`}
+                      >
+                        …
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        className={
+                          pageItem === safeTopicPage
+                            ? 'active'
+                            : ''
+                        }
+                        aria-current={
+                          pageItem === safeTopicPage
+                            ? 'page'
+                            : undefined
+                        }
+                        onClick={() =>
+                          goToTopicPage(pageItem)
+                        }
+                        key={pageItem}
+                      >
+                        {pageItem}
+                      </button>
+                    ),
+                  )}
+
+                  <button
+                    type="button"
+                    disabled={
+                      safeTopicPage === topicPageCount
+                    }
+                    onClick={() =>
+                      goToTopicPage(safeTopicPage + 1)
+                    }
+                  >
+                    Вперёд →
+                  </button>
+                </div>
+              </nav>
+            )}
           </section>
         </div>
       </div>
