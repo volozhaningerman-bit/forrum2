@@ -1,13 +1,14 @@
 import { notFound } from 'next/navigation';
 import {
-  CommunityClient,
+  CategoryPage,
   type Community,
-} from './community-client';
+} from './category-page';
 import { serverApi } from '@/lib/server-api';
 
 export const dynamic = 'force-dynamic';
 
-export default async function CommunityPage({
+// FORRUM_CATEGORY_ROUTE_STAGE_1_V14
+export default async function CategoryRoute({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -20,7 +21,7 @@ export default async function CommunityPage({
   if (!data) notFound();
 
   return (
-    <CommunityClient
+    <CategoryPage
       slug={slug}
       initialData={data}
     />

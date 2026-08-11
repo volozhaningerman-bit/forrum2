@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '@/lib/api';
 import type { PublicationCardData, Tag } from '@/lib/types';
@@ -40,7 +39,8 @@ const sections: Array<[Section, string]> = [['all', 'Все'], ['posts', 'Пос
 function formatNumber(value: number) { return new Intl.NumberFormat('ru-RU').format(value); }
 function formatDeadline(value: string) { return new Date(value).toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }); }
 
-export function CommunityClient({
+// FORRUM_CATEGORY_PAGE_STAGE_1_V14
+export function CategoryPage({
   slug,
   initialData,
 }: {
