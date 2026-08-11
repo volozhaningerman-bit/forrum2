@@ -287,6 +287,8 @@ function sortRootCommunities(left: TreeCommunity, right: TreeCommunity) {
 // FORRUM_SECTION_PAGE_LAYOUT_V14_7
 // FORRUM_SECTION_PAGE_POLISH_V14_8
 // FORRUM_SECTION_PAGE_NAVIGATION_V14_10
+// FORRUM_SECTION_TREE_HIT_AREA_V14_11
+// FORRUM_SECTION_TREE_HIT_AREA_V14_12
 export function CategoryPage({
   slug,
   initialData,
