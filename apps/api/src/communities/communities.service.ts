@@ -67,8 +67,19 @@ export class CommunitiesService {
     });
     if (!community) throw new NotFoundException('Сообщество не найдено');
 
-    const nodes = await this.prisma.community.findMany({ where: { status: 'ACTIVE' }, select: { id: true, parentId: true } });
+    const nodes = await this.prisma.community.findMany({ where: { status: 'ACTIVE' }, select: { id: true, parentId: true, slug: true, name: true } });
     const scopeIds = [...expandCommunityIds(nodes, [community.id])];
+    const nodeById = new Map(nodes.map((node) => [node.id, node]));
+    const ancestors: Array<{ slug: string; name: string }> = [];
+    let breadcrumbParentId = community.parentId;
+    let breadcrumbGuard = 0;
+    while (breadcrumbParentId && breadcrumbGuard < 20) {
+      const ancestor = nodeById.get(breadcrumbParentId);
+      if (!ancestor) break;
+      ancestors.unshift({ slug: ancestor.slug, name: ancestor.name });
+      breadcrumbParentId = ancestor.parentId;
+      breadcrumbGuard += 1;
+    }
     const [publications, tagCounts, activePoll] = await Promise.all([
       this.prisma.publication.findMany({
         where: { status: 'PUBLISHED', communityId: { in: scopeIds } },
@@ -121,6 +132,7 @@ export class CommunitiesService {
       avatarUrl: community.avatarUrl,
       coverUrl: community.coverUrl,
       accentColor: community.accentColor,
+      ancestors,
       parent: community.parent ? { slug: community.parent.slug, name: community.parent.name } : null,
       subscriberCount: community._count.subscriptions,
       ownPublicationCount: community._count.publications,

@@ -7,7 +7,6 @@ import type { PublicationCardData, Tag } from '@/lib/types';
 import { PublicationCard } from '@/components/publication-card';
 import { Avatar } from '@/components/avatar';
 import { CommunityMark } from '@/components/community-mark';
-import { UsersIcon } from '@/components/icons';
 
 export type Community = {
   id: string;
@@ -23,6 +22,7 @@ export type Community = {
   isSubscribed: boolean;
   canManage: boolean;
   notifyLevel: 'NONE' | 'IMPORTANT' | 'ALL' | null;
+  ancestors: Array<{ slug: string; name: string }>;
   parent: { slug: string; name: string } | null;
   children: Array<{ slug: string; name: string; shortDescription?: string | null; avatarUrl?: string | null; coverUrl?: string | null; subscriberCount: number }>;
   team: Array<{ role: string; user: { username: string; displayName: string; avatarUrl?: string | null } }>;
@@ -65,11 +65,6 @@ export function CategoryPage({
     catch (cause) { setError(cause instanceof Error ? cause.message : 'Не удалось изменить подписку'); }
   }
 
-  async function setNotifyLevel(notifyLevel: 'NONE' | 'IMPORTANT' | 'ALL') {
-    try { await api(`/communities/${slug}/subscription`, { method: 'PATCH', body: JSON.stringify({ notifyLevel }) }); await load(); }
-    catch (cause) { setError(cause instanceof Error ? cause.message : 'Не удалось изменить уведомления'); }
-  }
-
   const filtered = useMemo(() => {
     if (!data) return [];
     const items = data.publications.filter((item) => {
@@ -93,26 +88,77 @@ export function CategoryPage({
   const curator = data.team.find((item) => item.role === 'CURATOR') ?? data.team[0];
 
   return <>
-    <section className="community-profile" style={{ '--community-accent': data.accentColor } as React.CSSProperties}>
-      <div className="community-cover">
-        {data.coverUrl && <img className="community-cover-image" src={data.coverUrl} alt="" />}
-        <CommunityMark name={data.name} url={data.avatarUrl} size={104} />
+        {/* FORRUM_SECTION_PAGE_HEADER_V14_3 */}
+    <nav className="section-breadcrumbs" aria-label="Хлебные крошки">
+      <Link href="/">Главная</Link>
+      <span className="section-breadcrumbs-separator" aria-hidden="true">›</span>
+      <Link href="/communities">Сообщества</Link>
+      {data.ancestors.map((ancestor) => (
+        <span key={ancestor.slug} className="section-breadcrumbs-segment">
+          <span className="section-breadcrumbs-separator" aria-hidden="true">›</span>
+          <Link href={`/communities/${ancestor.slug}`}>{ancestor.name}</Link>
+        </span>
+      ))}
+      <span className="section-breadcrumbs-separator" aria-hidden="true">›</span>
+      <span className="section-breadcrumbs-current" aria-current="page">
+        {data.name}
+      </span>
+    </nav>
+
+    <section
+      className="section-identity"
+      style={{ '--community-accent': data.accentColor } as React.CSSProperties}
+    >
+      <div className="section-identity-mark" aria-hidden="true">
+        <CommunityMark name={data.name} url={data.avatarUrl} size={52} />
       </div>
-      <div className="community-profile-main">
-        <div className="community-title-row">
-          <div><h1>{data.name}</h1><p>{data.shortDescription || data.description}</p></div>
-          <div className="community-subscription-controls">
-            <button type="button" className={`button ${data.isSubscribed ? 'secondary' : ''}`} onClick={toggle}>{data.isSubscribed ? 'Вы подписаны' : 'Подписаться'}</button>
-            {data.isSubscribed && <label><span>Уведомления</span><select value={data.notifyLevel ?? 'IMPORTANT'} onChange={(event) => setNotifyLevel(event.target.value as 'NONE' | 'IMPORTANT' | 'ALL')}><option value="NONE">Без уведомлений</option><option value="IMPORTANT">Только важное</option><option value="ALL">Все новости</option></select></label>}
-          </div>
+
+      <div className="section-identity-copy">
+        <h1>{data.name}</h1>
+        <p>{data.shortDescription || data.description}</p>
+
+        <div className="section-identity-meta">
+          {curator ? (
+            <span className="section-identity-curator">
+              <Avatar
+                name={curator.user.displayName}
+                size={24}
+                url={curator.user.avatarUrl}
+              />
+              <span>
+                Куратор:{' '}
+                <Link href={`/u/${curator.user.username}`}>
+                  @{curator.user.username}
+                </Link>
+              </span>
+            </span>
+          ) : (
+            <span>Куратор не назначен</span>
+          )}
+          <span className="section-identity-dot" aria-hidden="true">·</span>
+          <span>{formatNumber(data.subscriberCount)} подписчиков</span>
         </div>
-        <div className="community-numbers"><span><UsersIcon/><strong>{formatNumber(data.subscriberCount)}</strong> подписчиков</span><span>·</span><span><strong>{formatNumber(data.publicationCount)}</strong> публикаций в общей ленте</span></div>
-        <div className="community-utility-links"><a href="#team">Команда</a>{data.activePoll && <Link href="/events">Открытое голосование</Link>}{data.canManage && <Link href={`/communities/${data.slug}/manage`}>Кабинет команды</Link>}</div>
       </div>
-      <div className="curator-panel">{curator ? <>
-        <div className="curator-person"><Avatar name={curator.user.displayName} size={52} url={curator.user.avatarUrl}/><div><span>{roleNames[curator.role] ?? 'Команда'}: <Link href={`/u/${curator.user.username}`}>@{curator.user.username}</Link></span><p>Отвечает за порядок и развитие сообщества.</p></div></div>
-        <div className="curator-actions"><Link className="button" href={`/messages?to=${curator.user.username}`}>Написать</Link><a className="button ghost" href="#team">Вся команда</a></div>
-      </> : <div className="sidebar-empty"><strong>Куратор ещё не назначен</strong><p>Сообщество пока управляется администрацией FORRUM.</p></div>}</div>
+
+      <div className="section-identity-actions">
+        <button
+          type="button"
+          className="section-subscribe"
+          onClick={toggle}
+          aria-pressed={data.isSubscribed}
+        >
+          <span aria-hidden="true">{data.isSubscribed ? '✓' : '＋'}</span>
+          {data.isSubscribed ? 'Вы подписаны' : 'Подписаться'}
+        </button>
+
+        <Link
+          className="section-create-topic"
+          href={`/create?community=${encodeURIComponent(data.slug)}&format=TOPIC`}
+        >
+          <span aria-hidden="true">＋</span>
+          Создать тему
+        </Link>
+      </div>
     </section>
 
     {data.children.length > 0 && <section className="child-community-strip"><div><strong>Подразделы {data.name}</strong><span>Материалы из них автоматически появляются и в этой общей ленте.</span></div><nav>{data.children.map((child) => <Link key={child.slug} href={`/communities/${child.slug}`}><CommunityMark name={child.name} url={child.avatarUrl} size={32}/><span>{child.name}</span><small>{formatNumber(child.subscriberCount)} подписчиков</small></Link>)}</nav></section>}
