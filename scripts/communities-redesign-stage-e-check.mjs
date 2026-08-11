@@ -190,8 +190,8 @@ forbidMarker(
 
 requireMarker(
   nav,
-  "const onCommunities = pathname === '/communities';",
-  'approved existing Communities header mode',
+  'FORRUM_GLOBAL_HEADER_V13_4',
+  'approved global header mode',
 );
 requireMarker(
   footer,

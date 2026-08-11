@@ -14,8 +14,8 @@ function forbidMarker(source, marker, label) {
 }
 
 requireMarker(client, 'community-browser-page communities-v12-stage-a', 'communities Stage A root');
-requireMarker(nav, "const onCommunities = pathname === '/communities';", 'approved communities nav mode');
-requireMarker(nav, 'const useApprovedNav = onHome || onCommunities;', 'shared approved nav');
+requireMarker(nav, 'FORRUM_GLOBAL_HEADER_V13_4', 'approved global header mode');
+requireMarker(nav, "['/services', 'Услуги']", 'global Services navigation');
 requireMarker(nav, "['/news', 'Новости']", 'News navigation');
 requireMarker(nav, "href === '/news' && newsUnread", 'News unread indicator');
 

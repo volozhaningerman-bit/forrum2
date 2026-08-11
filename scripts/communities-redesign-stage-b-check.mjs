@@ -29,7 +29,7 @@ requireMarker(css, 'FORRUM_COMMUNITIES_REDESIGN_STAGE_B_V12', 'Stage B CSS');
 requireMarker(css, '.communities-v12-stage-a .communities-v12-hero', 'Stage B hero selector');
 forbidMarker(css, '.communities-v12-stage-a .communities-v12-hero {\\n  min-height: 300px', 'oversized hero');
 
-requireMarker(nav, "const onCommunities = pathname === '/communities';", 'approved Communities header');
+requireMarker(nav, 'FORRUM_GLOBAL_HEADER_V13_4', 'approved global header');
 requireMarker(footer, "const hideFooter = pathname === '/communities';", 'no Communities footer');
 
 requireMarker(home, 'home-discussed-stage-d', 'approved homepage discussed table');
