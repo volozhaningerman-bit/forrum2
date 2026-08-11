@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { api } from '@/lib/api';
 import type { PublicationCardData, Tag } from '@/lib/types';
 import { Avatar } from '@/components/avatar';
-import { CommunityMark } from '@/components/community-mark';
 
 export type Community = {
   id: string;
@@ -106,6 +105,99 @@ function topicVisual(slug: string) {
   return topicVisuals[slug] ?? '/forrum-assets/topic-default.svg';
 }
 
+function SectionGlyph({ slug }: { slug: string }) {
+  const normalized = slug.toLowerCase();
+
+  if (normalized === 'promotion') {
+    return (
+      <span className="section-symbol" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M4 11v2l10 4V7L4 11Z" />
+          <path d="M14 9.5c2 .8 3 1.6 4.5 3.5" />
+          <path d="M14 14.5c2-.8 3-1.6 4.5-3.5" />
+          <path d="m7 14 1.6 5h3L10 15.2" />
+        </svg>
+      </span>
+    );
+  }
+
+  if (normalized === 'seo-and-traffic') {
+    return (
+      <span className="section-symbol" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <circle cx="10" cy="10" r="5" />
+          <path d="m14 14 5 5" />
+          <path d="M5 19h6" />
+          <path d="M5 16h3" />
+        </svg>
+      </span>
+    );
+  }
+
+  if (
+    normalized === 'internet-projects' ||
+    normalized === 'launches-and-teams'
+  ) {
+    return (
+      <span className="section-symbol" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="8" />
+          <path d="M4 12h16" />
+          <path d="M12 4c2.4 2.2 3.6 4.9 3.6 8S14.4 17.8 12 20" />
+          <path d="M12 4C9.6 6.2 8.4 8.9 8.4 12S9.6 17.8 12 20" />
+        </svg>
+      </span>
+    );
+  }
+
+  if (
+    normalized === 'forrum-start' ||
+    normalized === 'forrum-feedback'
+  ) {
+    return (
+      <span className="section-symbol" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M14.5 4.5c2.5.2 4.8 2.4 5 5-2.4 5-6.2 8.7-11.3 11l-4.7-4.7c2.4-5.1 6.1-8.9 11-11.3Z" />
+          <path d="M8 16 4 20" />
+          <circle cx="14.5" cy="9.5" r="1.8" />
+        </svg>
+      </span>
+    );
+  }
+
+  if (normalized === 'gta-rp' || normalized === 'majestic-rp') {
+    return (
+      <span className="section-symbol" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M7.5 8h9c2 0 3.2 1.1 3.7 3.4l.7 3.3c.4 2-.3 3.3-1.7 3.3-1 0-1.8-.6-2.8-2H7.6c-1 1.4-1.8 2-2.8 2-1.4 0-2.1-1.3-1.7-3.3l.7-3.3C4.3 9.1 5.5 8 7.5 8Z" />
+          <path d="M7 11v4M5 13h4" />
+          <circle cx="16.5" cy="12" r=".7" />
+          <circle cx="18.5" cy="14" r=".7" />
+        </svg>
+      </span>
+    );
+  }
+
+  if (normalized === 'telegram' || normalized === 'telegram-bots') {
+    return (
+      <span className="section-symbol" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="m3.5 11 16-6-4.2 15-5.1-5-3.2 2.5.5-4.5 8-5.4" />
+        </svg>
+      </span>
+    );
+  }
+
+  return (
+    <span className="section-symbol" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <rect x="5" y="5" width="14" height="14" rx="3" />
+        <path d="M9 9h6M9 12h6M9 15h4" />
+      </svg>
+    </span>
+  );
+}
+
 function rootRank(slug: string) {
   const rank = preferredRootOrder.indexOf(slug);
   return rank === -1 ? preferredRootOrder.length + 1 : rank;
@@ -120,6 +212,7 @@ function sortRootCommunities(left: TreeCommunity, right: TreeCommunity) {
 
 // FORRUM_CATEGORY_PAGE_STAGE_1_V14
 // FORRUM_SECTION_PAGE_LAYOUT_V14_7
+// FORRUM_SECTION_PAGE_POLISH_V14_8
 export function CategoryPage({
   slug,
   initialData,
@@ -368,11 +461,7 @@ export function CategoryPage({
             aria-current={active ? 'page' : undefined}
           >
             <span className="section-tree-icon">
-              <CommunityMark
-                name={community.name}
-                url={community.avatarUrl}
-                size={22}
-              />
+              <SectionGlyph slug={community.slug} />
             </span>
           </Link>
 
@@ -432,7 +521,7 @@ export function CategoryPage({
     data.team[0];
 
   return (
-    <div className="section-page-v14-4">
+    <div className="section-page-v14-4" data-section-polish="v14-8">
       <div className="section-page-layout">
         <aside
           className="section-category-tree"
@@ -585,11 +674,7 @@ export function CategoryPage({
               className="section-identity-mark"
               aria-hidden="true"
             >
-              <CommunityMark
-                name={data.name}
-                url={data.avatarUrl}
-                size={52}
-              />
+              <SectionGlyph slug={data.slug} />
             </div>
 
             <div className="section-identity-copy">

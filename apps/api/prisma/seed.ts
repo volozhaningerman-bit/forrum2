@@ -634,6 +634,161 @@ async function main() {
     },
   });
 
+
+  // FORRUM_SECTION_PAGE_POLISH_V14_8_DEMO_TOPICS
+  const promotionDemoTopics = [
+    {
+      slug: 'promotion-first-users-without-ads',
+      title: 'Как найти первых пользователей без рекламного бюджета?',
+      body: 'Собираем только практические способы получить первых живых пользователей: личный аутрич, тематические сообщества, партнёрства, каталоги и полезный контент. Интересуют конкретные цифры и что реально сработало.',
+      authorId: nora.id,
+      communityId: promotion.id,
+      type: PublicationType.QUESTION,
+      viewCount: 840,
+      ageDays: 4,
+      activityHours: 1,
+      pinned: true,
+    },
+    {
+      slug: 'promotion-channel-audit',
+      title: 'Разбор каналов привлечения: где проект теряет аудиторию',
+      body: 'Практический разбор цепочки от первого касания до регистрации. Смотрим источник трафика, посадочную страницу, первый экран, регистрацию и возврат пользователя.',
+      authorId: pixel.id,
+      communityId: promotion.id,
+      type: PublicationType.CASE,
+      viewCount: 521,
+      ageDays: 7,
+      activityHours: 4,
+      pinned: false,
+    },
+    {
+      slug: 'promotion-organic-growth-checklist',
+      title: 'Чек-лист органического продвижения нового проекта',
+      body: 'Короткий рабочий список перед запуском: поисковые страницы, сообщества, каталоги, партнёры, экспертные ответы, собственные публикации и аналитика источников.',
+      authorId: maxstream.id,
+      communityId: promotion.id,
+      type: PublicationType.GUIDE,
+      viewCount: 312,
+      ageDays: 1,
+      activityHours: 3,
+      pinned: false,
+    },
+    {
+      slug: 'promotion-retention-after-launch',
+      title: 'Как вернуть аудиторию после первого запуска',
+      body: 'Обсуждаем, что реально возвращает людей после первого визита: полезные уведомления, контентные циклы, ответы авторов, подписки на темы и персональные поводы вернуться.',
+      authorId: friend.id,
+      communityId: promotion.id,
+      type: PublicationType.DISCUSSION,
+      viewCount: 1128,
+      ageDays: 22,
+      activityHours: 30,
+      pinned: false,
+    },
+  ] as const;
+
+  const promotionDemoTopicIds = new Map<string, string>();
+
+  for (const topic of promotionDemoTopics) {
+    const createdAt = new Date(Date.now() - topic.ageDays * 86400000);
+    const lastActivityAt = new Date(
+      Date.now() - topic.activityHours * 3600000,
+    );
+    const pinnedUntil = topic.pinned
+      ? new Date(Date.now() + 30 * 86400000)
+      : null;
+
+    const publication = await prisma.publication.upsert({
+      where: { slug: topic.slug },
+      update: {
+        format: PublicationFormat.TOPIC,
+        type: topic.type,
+        title: topic.title,
+        body: topic.body,
+        authorId: topic.authorId,
+        communityId: topic.communityId,
+        viewCount: topic.viewCount,
+        createdAt,
+        lastActivityAt,
+        pinnedUntil,
+      },
+      create: {
+        slug: topic.slug,
+        format: PublicationFormat.TOPIC,
+        type: topic.type,
+        title: topic.title,
+        body: topic.body,
+        authorId: topic.authorId,
+        communityId: topic.communityId,
+        viewCount: topic.viewCount,
+        createdAt,
+        lastActivityAt,
+        pinnedUntil,
+      },
+    });
+
+    promotionDemoTopicIds.set(topic.slug, publication.id);
+  }
+
+  const promotionDemoComments = [
+    {
+      slug: 'promotion-first-users-without-ads',
+      authorId: friend.id,
+      body: 'Для первого десятка пользователей лучше всего сработали точечные личные приглашения с конкретной причиной, почему человеку будет полезен проект.',
+      hoursAgo: 1,
+    },
+    {
+      slug: 'promotion-first-users-without-ads',
+      authorId: maxstream.id,
+      body: 'У меня сильнее всего сработал полезный разбор в уже существующем сообществе без прямой продажи. Люди сами перешли посмотреть инструмент.',
+      hoursAgo: 2,
+    },
+    {
+      slug: 'promotion-channel-audit',
+      authorId: nora.id,
+      body: 'Я бы отдельно проверяла обещание в источнике трафика и первый экран. Часто аудитория приходит за одним, а на лендинге видит другое.',
+      hoursAgo: 4,
+    },
+    {
+      slug: 'promotion-channel-audit',
+      authorId: owner.id,
+      body: 'Добавим в разбор ещё скорость первого полезного действия: сколько времени проходит от входа до момента, когда человек понял ценность.',
+      hoursAgo: 5,
+    },
+    {
+      slug: 'promotion-retention-after-launch',
+      authorId: pixel.id,
+      body: 'Возвращает не частота уведомлений, а понятный незавершённый сценарий: ответ, продолжение темы, обновление проекта или реакция на вклад пользователя.',
+      hoursAgo: 30,
+    },
+  ] as const;
+
+  for (const comment of promotionDemoComments) {
+    const publicationId = promotionDemoTopicIds.get(comment.slug);
+    if (!publicationId) continue;
+
+    const existing = await prisma.comment.findFirst({
+      where: {
+        publicationId,
+        authorId: comment.authorId,
+        body: comment.body,
+      },
+    });
+
+    if (!existing) {
+      await prisma.comment.create({
+        data: {
+          publicationId,
+          authorId: comment.authorId,
+          body: comment.body,
+          createdAt: new Date(
+            Date.now() - comment.hoursAgo * 3600000,
+          ),
+        },
+      });
+    }
+  }
+
   const gta = await prisma.community.findUniqueOrThrow({ where: { slug: 'gta-rp' } });
   const telegram = await prisma.community.findUniqueOrThrow({ where: { slug: 'telegram' } });
   await prisma.publication.upsert({
