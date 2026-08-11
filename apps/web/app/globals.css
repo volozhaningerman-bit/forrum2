@@ -14546,3 +14546,405 @@ body:has(.section-page-v14-4) .site-footer a:hover {
     flex: 1 1 0;
   }
 }
+
+
+/* FORRUM_TOPIC_POST_SURFACE_V15_5
+   Topic content polish. Editor engine is intentionally not redesigned here. */
+
+.topic-page-frame-v15-4 .publication-detail-topic {
+  display: grid;
+  grid-template-columns: 154px minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  margin: 0 0 10px;
+  overflow: hidden;
+  border: 1px solid #25383d;
+  border-top: 1px solid #25383d;
+  border-radius: 4px;
+  background: #0d1a1e;
+  box-shadow: none;
+  color: #dce5e3;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  > .publication-detail-header {
+  display: none;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  > .publication-detail-author {
+  grid-column: 1;
+  grid-row: 1 / 4;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 7px;
+  padding: 14px 12px;
+  background: #0b171a;
+  border: 0;
+  border-right: 1px solid #203338;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  > .publication-detail-author
+  > .avatar {
+  width: 52px !important;
+  height: 52px !important;
+  flex: 0 0 52px;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  > .publication-detail-author
+  > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  > .publication-detail-author
+  strong {
+  color: var(--forrum-home-accent);
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  > .publication-detail-author
+  > div
+  > span {
+  color: #81918f;
+  font-size: 9.5px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  .verified-account {
+  margin: 3px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #6f8582;
+  font-size: 9px;
+  font-weight: 520;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  .verified-account
+  svg {
+  width: 12px;
+  height: 12px;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  > .publication-rich-body {
+  grid-column: 2;
+  grid-row: 1;
+  min-height: 145px;
+  padding: 17px 18px 12px;
+  background: #0d1a1e;
+  color: #d5dedd;
+  font-size: 12px;
+  line-height: 1.58;
+  white-space: pre-wrap;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  > .publication-rich-body
+  :is(p, li, blockquote, pre, code) {
+  color: inherit;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  > .publication-rich-body
+  a {
+  color: var(--forrum-home-accent);
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  > .tag-list {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+  padding: 0 18px 9px;
+  background: #0d1a1e;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  > .publication-detail-footer {
+  grid-column: 2;
+  grid-row: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding: 8px 10px;
+  border: 0;
+  border-top: 1px solid #203338;
+  background: #0b171a;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  .publication-reactions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  .reaction-button {
+  min-height: 26px;
+  padding: 4px 7px;
+  border: 1px solid #2a4146;
+  border-radius: 4px;
+  background: transparent;
+  color: #9fb0ad;
+  font-size: 9.5px;
+  box-shadow: none;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  .reaction-button:hover,
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  .reaction-button.active {
+  border-color: rgba(25, 211, 154, .5);
+  color: var(--forrum-home-accent);
+  background: rgba(25, 211, 154, .06);
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  .publication-action-row {
+  justify-content: flex-end;
+  gap: 9px;
+  margin-left: auto;
+  color: #8fa19e;
+  font-size: 9.5px;
+}
+
+.topic-page-frame-v15-4
+  .publication-detail-topic
+  .publication-action-row
+  :is(button, a) {
+  font-size: inherit;
+}
+
+.topic-page-frame-v15-4 .discussion-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.topic-page-frame-v15-4 .discussion-heading {
+  order: 1;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 2px 0 0;
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+}
+
+.topic-page-frame-v15-4 .discussion-heading .eyebrow {
+  display: none;
+}
+
+.topic-page-frame-v15-4 .discussion-heading h2 {
+  margin: 0;
+  color: #dce5e3;
+  font-size: 12px;
+  font-weight: 660;
+}
+
+.topic-page-frame-v15-4 .discussion-tools {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #81918f;
+  font-size: 9.5px;
+}
+
+.topic-page-frame-v15-4 .discussion-tools label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.topic-page-frame-v15-4 .discussion-tools select {
+  min-height: 28px;
+  padding: 4px 24px 4px 8px;
+  border: 1px solid #2a4146;
+  border-radius: 4px;
+  background: #0d1a1e;
+  color: #c7d1cf;
+  font-size: 9.5px;
+}
+
+.topic-page-frame-v15-4 .discussion-count {
+  min-width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #2a4146;
+  border-radius: 4px;
+  background: #0d1a1e;
+  color: #d8e1df;
+}
+
+.topic-page-frame-v15-4 .threaded-comments {
+  order: 2;
+  display: grid;
+  gap: 8px;
+}
+
+.topic-page-frame-v15-4 .reply-composer {
+  order: 3;
+  margin-top: 2px;
+}
+
+.topic-page-frame-v15-4 .discussion-comment {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  align-items: start;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid #25383d;
+  border-radius: 4px;
+  background: #0d1a1e;
+  box-shadow: none;
+  color: #d4dedd;
+}
+
+.topic-page-frame-v15-4
+  .discussion-comment
+  > .avatar {
+  width: 42px !important;
+  height: 42px !important;
+}
+
+.topic-page-frame-v15-4 .discussion-comment-body {
+  min-width: 0;
+}
+
+.topic-page-frame-v15-4 .discussion-comment-body header {
+  margin: 0 0 8px;
+  padding: 0 0 7px;
+  border-bottom: 1px solid #203338;
+  color: #81918f;
+  font-size: 9.5px;
+}
+
+.topic-page-frame-v15-4
+  .discussion-comment-body
+  header
+  strong {
+  color: var(--forrum-home-accent);
+  font-size: 10.5px;
+}
+
+.topic-page-frame-v15-4
+  .discussion-comment-body
+  header
+  time {
+  margin-left: auto;
+  color: #71827f;
+}
+
+.topic-page-frame-v15-4 .discussion-comment-body > p {
+  color: #cbd5d3;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.topic-page-frame-v15-4 .discussion-comment-body footer {
+  gap: 9px;
+  margin-top: 9px;
+  color: #879895;
+  font-size: 9.5px;
+}
+
+.topic-page-frame-v15-4 .comment-replies {
+  gap: 7px;
+  margin-left: 34px;
+  padding-left: 8px;
+  border-left: 1px solid #244139;
+}
+
+.topic-page-frame-v15-4 .threaded-comments .empty-state {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  border: 1px dashed #2a4146;
+  border-radius: 4px;
+  background: #0b171a;
+  color: #758784;
+  font-size: 10px;
+}
+
+@media (max-width: 760px) {
+  .topic-page-frame-v15-4 .publication-detail-topic {
+    grid-template-columns: 1fr;
+  }
+
+  .topic-page-frame-v15-4
+    .publication-detail-topic
+    > .publication-detail-author {
+    grid-column: 1;
+    grid-row: auto;
+    flex-direction: row;
+    align-items: center;
+    border-right: 0;
+    border-bottom: 1px solid #203338;
+  }
+
+  .topic-page-frame-v15-4
+    .publication-detail-topic
+    > :is(.publication-rich-body, .tag-list, .publication-detail-footer) {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .topic-page-frame-v15-4
+    .publication-detail-topic
+    > .publication-detail-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .topic-page-frame-v15-4
+    .publication-detail-topic
+    .publication-action-row {
+    margin-left: 0;
+  }
+}
