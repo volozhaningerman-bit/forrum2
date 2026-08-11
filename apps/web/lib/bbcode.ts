@@ -1,11 +1,28 @@
 export type BbTextNode = { type: 'text'; value: string };
-export type BbTagNode = { type: 'tag'; name: string; param?: string; children: BbNode[] };
+export type BbTagNode = {
+  type: 'tag';
+  name: string;
+  param?: string;
+  children: BbNode[];
+};
 export type BbNode = BbTextNode | BbTagNode;
 
-const supported = new Set(['b', 'i', 'u', 's', 'quote', 'code', 'url', 'spoiler', 'list', 'h2', 'h3', 'color', 'size', 'img', '*']);
-const tokenPattern = /\[(\/)?(b|i|u|s|quote|code|url|spoiler|list|h2|h3|color|size|img|\*)(?:=([^\]]+))?\]/gi;
-const allowedColors = new Set(['gray', 'blue', 'cyan', 'green', 'yellow', 'orange', 'red', 'pink', 'purple']);
-const allowedSizes = new Set(['small', 'normal', 'large', 'xlarge']);
+const supported = new Set([
+  'b', 'i', 'u', 's', 'quote', 'code', 'url', 'spoiler',
+  'list', 'h2', 'h3', 'color', 'size', 'img', '*',
+]);
+
+const tokenPattern =
+  /\[(\/)?(b|i|u|s|quote|code|url|spoiler|list|h2|h3|color|size|img|\*)(?:=([^\]]+))?\]/gi;
+
+const allowedColors = new Set([
+  'gray', 'blue', 'cyan', 'green', 'yellow',
+  'orange', 'red', 'pink', 'purple',
+]);
+
+const allowedSizes = new Set([
+  'small', 'normal', 'large', 'xlarge',
+]);
 
 function appendText(target: BbNode[], value: string) {
   if (!value) return;
@@ -19,12 +36,21 @@ export function parseBbcode(source: string): BbNode[] {
   const stack: BbTagNode[] = [root];
   let cursor = 0;
   tokenPattern.lastIndex = 0;
-  for (let match = tokenPattern.exec(source); match; match = tokenPattern.exec(source)) {
-    appendText(stack[stack.length - 1].children, source.slice(cursor, match.index));
+
+  for (
+    let match = tokenPattern.exec(source);
+    match;
+    match = tokenPattern.exec(source)
+  ) {
+    appendText(
+      stack[stack.length - 1].children,
+      source.slice(cursor, match.index),
+    );
     cursor = tokenPattern.lastIndex;
     const closing = Boolean(match[1]);
     const name = match[2].toLowerCase();
     const param = match[3]?.trim();
+
     if (!supported.has(name)) {
       appendText(stack[stack.length - 1].children, match[0]);
       continue;
@@ -32,69 +58,150 @@ export function parseBbcode(source: string): BbNode[] {
 
     if (name === '*' && !closing) {
       if (stack[stack.length - 1].name === '*') stack.pop();
-      const listIndex = [...stack].reverse().findIndex((node) => node.name === 'list');
+
+      const listIndex = [...stack]
+        .reverse()
+        .findIndex((node) => node.name === 'list');
+
       if (listIndex < 0) {
         appendText(stack[stack.length - 1].children, match[0]);
         continue;
       }
-      const node: BbTagNode = { type: 'tag', name: '*', children: [] };
+
+      const node: BbTagNode = {
+        type: 'tag',
+        name: '*',
+        children: [],
+      };
+
       stack[stack.length - 1].children.push(node);
       stack.push(node);
       continue;
     }
 
     if (!closing) {
-      const node: BbTagNode = { type: 'tag', name, param, children: [] };
+      const node: BbTagNode = {
+        type: 'tag',
+        name,
+        param,
+        children: [],
+      };
       stack[stack.length - 1].children.push(node);
       stack.push(node);
       continue;
     }
 
-    if (name === 'list' && stack[stack.length - 1].name === '*') stack.pop();
-    let matchingIndex = -1;
-    for (let index = stack.length - 1; index > 0; index -= 1) {
-      if (stack[index].name === name) { matchingIndex = index; break; }
+    if (
+      name === 'list' &&
+      stack[stack.length - 1].name === '*'
+    ) {
+      stack.pop();
     }
-    if (matchingIndex === -1) appendText(stack[stack.length - 1].children, match[0]);
-    else stack.splice(matchingIndex);
+
+    let matchingIndex = -1;
+
+    for (
+      let index = stack.length - 1;
+      index > 0;
+      index -= 1
+    ) {
+      if (stack[index].name === name) {
+        matchingIndex = index;
+        break;
+      }
+    }
+
+    if (matchingIndex === -1) {
+      appendText(stack[stack.length - 1].children, match[0]);
+    } else {
+      stack.splice(matchingIndex);
+    }
   }
-  appendText(stack[stack.length - 1].children, source.slice(cursor));
+
+  appendText(
+    stack[stack.length - 1].children,
+    source.slice(cursor),
+  );
+
   return root.children;
 }
 
 export function bbcodePlainText(nodes: BbNode[]): string {
-  return nodes.map((node) => {
-    if (node.type === 'text') return node.value;
-    if (node.name === 'img') return node.param ? `[Изображение: ${node.param}]` : '[Изображение]';
-    return bbcodePlainText(node.children);
-  }).join('');
+  return nodes
+    .map((node) => {
+      if (node.type === 'text') return node.value;
+      if (node.name === 'img') {
+        return node.param
+          ? `[Изображение: ${node.param}]`
+          : '[Изображение]';
+      }
+      return bbcodePlainText(node.children);
+    })
+    .join('');
 }
 
-export function safeBbcodeUrl(value: string | undefined): string | null {
+export function safeBbcodeUrl(
+  value: string | undefined,
+): string | null {
   if (!value) return null;
+
   try {
     const url = new URL(value, 'https://forrum.local');
     if (!['http:', 'https:'].includes(url.protocol)) return null;
     return value;
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
-export function safeBbcodeImageUrl(value: string | undefined): string | null {
+export function safeBbcodeImageUrl(
+  value: string | undefined,
+): string | null {
   const safe = safeBbcodeUrl(value);
   if (!safe) return null;
+
   try {
     const url = new URL(safe, 'https://forrum.local');
-    if (!url.pathname.match(/^\/v1\/media\/[0-9a-f-]+\/content$/i)) return null;
+    if (
+      !url.pathname.match(
+        /^\/v1\/media\/[0-9a-f-]+\/content$/i,
+      )
+    ) {
+      return null;
+    }
     return safe;
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
-export function safeBbcodeColor(value: string | undefined): string | null {
+// FORRUM_BBCODE_FREE_FORMATTING_V15_6
+export function safeBbcodeColor(
+  value: string | undefined,
+): string | null {
   const normalized = value?.trim().toLowerCase();
-  return normalized && allowedColors.has(normalized) ? normalized : null;
+  if (!normalized) return null;
+
+  if (allowedColors.has(normalized)) return normalized;
+  if (/^#[0-9a-f]{6}$/i.test(normalized)) return normalized;
+
+  return null;
 }
 
-export function safeBbcodeSize(value: string | undefined): string | null {
+export function safeBbcodeSize(
+  value: string | undefined,
+): string | null {
   const normalized = value?.trim().toLowerCase();
-  return normalized && allowedSizes.has(normalized) ? normalized : null;
+  if (!normalized) return null;
+
+  if (allowedSizes.has(normalized)) return normalized;
+
+  const pixelMatch = normalized.match(/^(\d{1,2})px$/);
+  if (!pixelMatch) return null;
+
+  const pixels = Number(pixelMatch[1]);
+  if (!Number.isInteger(pixels)) return null;
+  if (pixels < 10 || pixels > 48) return null;
+
+  return `${pixels}px`;
 }

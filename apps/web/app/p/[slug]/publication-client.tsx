@@ -109,6 +109,7 @@ function dateLabel(value: string) {
 }
 
 // FORRUM_TOPIC_PAGE_FRAME_V15_4
+// FORRUM_TOPIC_REPLY_EDITOR_V15_6
 export function PublicationClient({
   slug,
   initialData,
@@ -489,14 +490,30 @@ export function PublicationClient({
             <div className="discussion-tools"><label>Порядок<select value={commentOrder} onChange={(event) => setCommentOrder(event.target.value as 'oldest' | 'newest')}><option value="oldest">Сначала ранние</option><option value="newest">Сначала новые</option></select></label><span className="discussion-count">{item.comments.length}</span></div>
           </div>
 
-          <form className="reply-composer" onSubmit={sendComment}>
+          <form
+            className="reply-composer topic-reply-composer-v15-6"
+            onSubmit={sendComment}
+          >
+            <div className="reply-composer-title">
+              <strong>Ответить в теме</strong>
+              <span>Форматирование сохраняется в FORRUM</span>
+            </div>
             {replyTo && (
               <div className="replying-to">
                 Ответ для <strong>{replyTo.author.displayName}</strong>
                 <button type="button" onClick={() => setReplyTo(null)}>Отменить</button>
               </div>
             )}
-            <BbcodeEditor value={replyText} onChange={setReplyText} minLength={2} maxLength={8000} compact textareaRef={replyEditorRef} placeholder="Напишите содержательный ответ"/>
+            <BbcodeEditor
+              value={replyText}
+              onChange={setReplyText}
+              minLength={2}
+              maxLength={8000}
+              compact
+              textareaRef={replyEditorRef}
+              placeholder="Напишите содержательный ответ"
+              mode="topic-reply"
+            />
             <div className="composer-footer">
               <span>{replyText.length}/8000</span>
               <button className="button" disabled={replyText.trim().length < 2}>Отправить ответ</button>
