@@ -23,7 +23,7 @@ const css = fs.readFileSync(
 
 function requireMarker(source, marker, label) {
   if (!source.includes(marker)) {
-    throw new Error(label + ': missing ' + marker);
+    throw new Error(`${label}: missing ${marker}`);
   }
 }
 
@@ -31,8 +31,7 @@ function requireCount(source, marker, expected, label) {
   const count = source.split(marker).length - 1;
   if (count !== expected) {
     throw new Error(
-      label + ': expected ' + expected + ' occurrence(s) of ' +
-        marker + ', found ' + count,
+      `${label}: expected ${expected} occurrence(s) of ${marker}, found ${count}`,
     );
   }
 }
@@ -58,18 +57,19 @@ for (const marker of [
   'writeStoredDraft(draft)',
   'deleteStoredDraft();',
   'DRAFT_KEY',
-  '/communities/' + '$' + '{community}/publications',
-  'router.push(\`/p/' + '$' + '{result.slug}\`)',
+  '/communities/${community}/publications',
+  'router.push(`/p/${result.slug}`)',
 ]) {
-  requireMarker(create, marker, 'Create Topic V15.7.3');
+  requireMarker(create, marker, 'Create Topic V15.7.4');
 }
 
 for (const marker of [
   'FORRUM_EDITOR_ENGINE_V15_6',
   "mode?: 'default' | 'topic-reply' | 'topic-create';",
   'onPaste={handlePaste}',
-  '\`[size=' + '$' + '{normalized}px]\`',
-  '\`[color=' + '$' + '{customColor.toLowerCase()}]\`',
+  'className={`bb-preview-toggle ${',
+  '`[size=${normalized}px]`',
+  '`[color=${customColor.toLowerCase()}]`',
 ]) {
   requireMarker(editor, marker, 'Editor V15.6 baseline');
 }
@@ -91,32 +91,31 @@ for (const marker of [
 }
 
 for (const marker of [
-  'FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_2_START',
-  'FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_2_END',
   'FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_3_START',
   'FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_3_END',
-  'body:has(.topic-create-v15-7)',
-  'grid-template-columns: 220px minmax(0, 1fr);',
-  'grid-row: 1 / span 2;',
-  '.topic-create-v15-7 > .topic-create-telegram {',
-  'position: static;',
-  'min-height: 258px;',
-  'max-height: 540px;',
-  '.topic-create-telegram-content {',
-  'grid-template-columns: minmax(210px, .8fr) minmax(0, 1.2fr);',
-  '@media (max-width: 900px)',
-  '@media (prefers-reduced-motion: reduce)',
+  'FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_4_START',
+  'FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_4_END',
+  '.bb-preview-toggle {',
+  'display: none !important;',
+  'min-height: 232px;',
+  '.topic-create-submit-actions .button.ghost {',
+  '.topic-create-forrum-preview .bb-quote {',
+  '.topic-create-forrum-preview .bb-code {',
+  '.topic-create-forrum-preview .bb-spoiler {',
+  '.topic-create-forrum-preview .bb-list {',
+  '.topic-create-forrum-preview .bb-image {',
+  '@media (max-width: 720px)',
 ]) {
-  requireMarker(css, marker, 'Create Topic CSS V15.7.3');
+  requireMarker(css, marker, 'Create Topic CSS V15.7.4');
 }
 
 for (const marker of [
-  '/* FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_3_START */',
-  '/* FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_3_END */',
+  '/* FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_4_START */',
+  '/* FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_4_END */',
 ]) {
-  requireCount(css, marker, 1, 'Create Topic CSS V15.7.3');
+  requireCount(css, marker, 1, 'Create Topic CSS V15.7.4');
 }
 
 console.log(
-  'FORRUM Create Topic Workspace V15.7.3 passed: route-scoped Topic Page palette, integrated Telegram panel, compact editor, responsive layout; API and protected V15.6 scope preserved.',
+  'FORRUM Create Topic Workspace V15.7.4 passed: one FORRUM preview action, dark BBCode preview surfaces, stronger hierarchy and actions; API and protected V15.6 scope preserved.',
 );

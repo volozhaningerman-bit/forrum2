@@ -1,34 +1,33 @@
-# FORRUM Create Topic Workspace V15.7.3
+# FORRUM Create Topic Workspace V15.7.4
 
 ## Goal
 
-Synchronize the live **/create** route with the approved Topic Page V15.6 visual language without changing publishing behavior, APIs, Prisma, or shared editor logic.
+Complete the live **/create** visual polish after reviewing the V15.7.3 desktop screenshots.
 
-## Visual result
+## Changes
 
-- route-scoped graphite shell and header matching the Topic Page palette;
-- readable title, breadcrumbs, labels, counters, and autosave states;
-- approved category tree restyled inside the same dark workspace;
-- two-column desktop layout: category tree plus the full-width authoring workspace;
-- Telegram compatibility panel integrated below the authoring form and still collapsed by default;
-- editor reduced from 380px to 258px minimum height so primary actions remain visible on common desktop screens;
-- expanded Telegram content becomes a compact horizontal compatibility summary;
-- responsive one-column layout below 900px and mobile toolbar/action treatment;
-- reduced-motion accommodation.
+- hides the editor's duplicate generic `Предпросмотр` control in `topic-create` mode;
+- keeps `Предпросмотр FORRUM` as the only preview entry point;
+- restyles quote, code, list, spoiler, links, images, and invalid media inside the FORRUM preview for the dark route;
+- removes the white quote and spoiler surfaces inherited from the global light component rules;
+- increases contrast and size for the page title, section line, labels, inputs, counters, toolbar, autosave, and Telegram state;
+- reduces the editor minimum height from 258px to 232px on desktop and 210px on mobile;
+- changes the FORRUM preview button from white to graphite;
+- strengthens the publish action while retaining a clear disabled state;
+- keeps the expanded preview dense and readable for long BBCode documents.
 
 ## Preserved behavior
 
-- separate section selector;
-- topic title and up to five normalized hashtags;
-- shared V15.6 BBCode editor with 10–48px sizes, HEX colors, Ctrl+V/paperclip inline images;
-- FORRUM preview, local draft recovery, POST creation path, and current publication API;
-- collapsed-by-default Telegram preview and compatibility checks.
+- the shared V15.6 editor and its generic preview remain unchanged on other routes;
+- separate section selector, title, five normalized hashtags, arbitrary text size and HEX color;
+- Ctrl+V/paperclip cursor-position image insertion;
+- local draft recovery, Telegram compatibility panel, POST creation path, and publication API.
 
 ## Migration safety
 
-- requires installed and valid V15.7.2 markers;
-- appends one bounded V15.7.3 CSS layer and preserves the existing globals.css byte-for-byte;
-- rejects partial marker states;
+- requires installed and valid V15.7.3 markers;
+- appends one bounded V15.7.4 CSS layer without replacing existing CSS;
+- rejects partial CSS/check/document marker states;
 - validated repeat runs are successful no-ops;
 - only globals.css, the V15.7 checker, and this document may change;
-- Topic Page V15.6, Category Page, TopicCategoryTree, shared editor/parser, global component source, API, and Prisma stay protected.
+- Topic Page V15.6, Category Page, TopicCategoryTree, shared editor/parser, global component source, API, and Prisma remain protected.

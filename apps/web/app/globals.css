@@ -17594,3 +17594,389 @@ body:has(.topic-create-v15-7) .footer {
 }
 
 /* FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_3_END */
+
+/* FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_4_START */
+
+/* One preview entry point: the full FORRUM preview owns preview mode. */
+.topic-create-v15-7
+  .bb-editor-topic-create
+  .bb-preview-toggle {
+  display: none !important;
+}
+
+.topic-create-v15-7
+  .bb-editor-topic-create
+  .bb-toolbar-tools {
+  width: 100%;
+}
+
+/* Readability and hierarchy polish after live V15.7.3 review. */
+.topic-create-breadcrumbs {
+  min-height: 26px;
+  color: #879895;
+  font-size: 9.5px;
+}
+
+.topic-create-breadcrumbs a {
+  color: #94a5a2;
+}
+
+.topic-create-heading {
+  min-height: 54px;
+  padding: 2px 0 9px;
+}
+
+.topic-create-heading h1 {
+  color: #f4f8f7;
+  font-size: 22px;
+  font-weight: 740;
+  letter-spacing: -.018em;
+}
+
+.topic-create-section-line {
+  color: #9aa9a6;
+  font-size: 10px;
+}
+
+.topic-create-change-section {
+  color: #8fa19e;
+  font-size: 9px;
+}
+
+.topic-create-save-state {
+  color: #849693;
+  font-size: 9px;
+}
+
+.topic-create-community-picker label {
+  color: #a5b3b0;
+  font-size: 9.5px;
+}
+
+.topic-create-community-picker select {
+  min-height: 34px;
+  color: #e7eeec;
+  font-size: 10.5px;
+}
+
+.topic-create-field label {
+  color: #a0afac;
+  font-size: 9.5px;
+  font-weight: 620;
+}
+
+.topic-create-input-wrap > input {
+  min-height: 38px;
+  color: #edf3f1;
+  font-size: 11.5px;
+}
+
+.topic-create-input-wrap > span,
+.topic-create-tag-preview span,
+.topic-create-preview-tags span {
+  color: #829b94;
+  font-size: 8.5px;
+}
+
+.topic-create-v15-7
+  .bb-editor-topic-create
+  .bb-toolbar {
+  min-height: 42px;
+}
+
+.topic-create-v15-7
+  .bb-editor-topic-create
+  .bb-toolbar button {
+  color: #d0dbd8;
+  font-size: 10.5px;
+}
+
+.topic-create-v15-7
+  .bb-editor-topic-create
+  .bb-tool-caption {
+  color: #9aaba8;
+  font-size: 9px;
+}
+
+.topic-create-v15-7
+  .bb-editor-topic-create textarea,
+.topic-create-v15-7
+  .bb-editor-topic-create
+  .bb-inline-preview {
+  min-height: 232px;
+  max-height: 500px;
+}
+
+.topic-create-v15-7
+  .bb-editor-topic-create textarea {
+  color: #e3ebe9 !important;
+  scrollbar-color: #566966 #0d1a1e;
+  scrollbar-width: thin;
+}
+
+.topic-create-v15-7
+  .bb-editor-topic-create textarea::placeholder {
+  color: #71827f;
+}
+
+.topic-create-v15-7
+  .bb-editor-topic-create
+  .bb-editor-hint,
+.topic-create-editor-status,
+.topic-create-autosave {
+  color: #81928f;
+  font-size: 8.7px;
+}
+
+.topic-create-editor-status span:nth-child(2) {
+  color: #9aaba8;
+}
+
+/* The sole preview control follows the dark FORRUM action language. */
+.topic-create-submit-actions .button.ghost {
+  border-color: #365057;
+  background: #102126;
+  color: #dce7e4;
+}
+
+.topic-create-submit-actions
+  .button.ghost:hover:not(:disabled),
+.topic-create-submit-actions
+  .button.ghost:focus-visible {
+  border-color: #4b6d66;
+  background: #142a2f;
+  color: #f4faf8;
+}
+
+.topic-create-submit-actions .button:not(.ghost) {
+  min-width: 104px;
+  border-color: #2f9b78;
+  background: #126148;
+  color: #f0fff9;
+  font-weight: 700;
+}
+
+.topic-create-submit-actions
+  .button:not(.ghost):hover:not(:disabled),
+.topic-create-submit-actions
+  .button:not(.ghost):focus-visible {
+  border-color: var(--create-accent);
+  background: #177357;
+  color: #fff;
+}
+
+.topic-create-submit-actions
+  .button:not(.ghost):disabled {
+  border-color: #29453f;
+  background: #153129;
+  color: #6f8982;
+  opacity: 1;
+}
+
+/* Full FORRUM preview: dark BBCode surfaces instead of light global cards. */
+.topic-create-forrum-preview {
+  background: #091619;
+}
+
+.topic-create-preview-heading {
+  min-height: 36px;
+  background: #0a1518;
+}
+
+.topic-create-preview-heading strong {
+  color: #edf4f2;
+  font-size: 10px;
+}
+
+.topic-create-preview-heading button {
+  color: #9aaba8;
+  font-size: 9px;
+}
+
+.topic-create-preview-heading button:hover,
+.topic-create-preview-heading button:focus-visible {
+  color: var(--create-accent);
+}
+
+.topic-create-forrum-preview article {
+  min-height: 112px;
+  padding: 14px 15px 17px;
+  color: #dce5e3;
+}
+
+.topic-create-forrum-preview article > small {
+  color: #8bd9bf;
+  font-size: 9px;
+}
+
+.topic-create-forrum-preview h2 {
+  color: #f0f5f4;
+  font-size: 17px;
+}
+
+.topic-create-forrum-preview .bbcode-content {
+  color: #dce5e3;
+  font-size: 12.5px;
+  line-height: 1.62;
+  overflow-wrap: anywhere;
+}
+
+.topic-create-forrum-preview .bbcode-content a {
+  color: #59d9b3;
+  text-decoration-color: rgba(89, 217, 179, .45);
+  text-underline-offset: 2px;
+}
+
+.topic-create-forrum-preview .bb-quote {
+  margin: 14px 0;
+  padding: 12px 14px;
+  border: 1px solid #294047;
+  border-left: 3px solid #4c8f7d;
+  border-radius: 3px;
+  background: #102328;
+  color: #cdd8d5;
+}
+
+.topic-create-forrum-preview .bb-quote cite {
+  display: block;
+  margin-bottom: 6px;
+  color: #8bd9bf;
+  font-size: 9.5px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.topic-create-forrum-preview .bb-code {
+  margin: 14px 0;
+  padding: 12px 14px;
+  overflow: auto;
+  border: 1px solid #263a40;
+  border-radius: 3px;
+  background: #081216;
+  color: #c9d6d3;
+  box-shadow: none;
+  font-size: 11.5px;
+  line-height: 1.55;
+  scrollbar-color: #4a5d59 #081216;
+  scrollbar-width: thin;
+}
+
+.topic-create-forrum-preview .bb-list {
+  margin: 12px 0;
+  padding-left: 22px;
+  color: #dce5e3;
+}
+
+.topic-create-forrum-preview .bb-list li + li {
+  margin-top: 4px;
+}
+
+.topic-create-forrum-preview .bb-spoiler {
+  margin: 14px 0;
+  overflow: hidden;
+  border: 1px solid #294047;
+  border-radius: 3px;
+  background: #0d1a1e;
+  color: #d8e2df;
+}
+
+.topic-create-forrum-preview .bb-spoiler summary {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  border: 0;
+  background: #102328;
+  color: #cbd7d4;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 680;
+  list-style: none;
+}
+
+.topic-create-forrum-preview
+  .bb-spoiler summary::-webkit-details-marker {
+  display: none;
+}
+
+.topic-create-forrum-preview .bb-spoiler summary::before {
+  content: "›";
+  color: var(--create-accent);
+  transform: rotate(0deg);
+  transition: transform .14s ease;
+}
+
+.topic-create-forrum-preview
+  .bb-spoiler[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.topic-create-forrum-preview .bb-spoiler > div {
+  padding: 11px 12px 13px;
+  border-top: 1px solid #294047;
+  background: #0b171a;
+  color: #cdd8d5;
+}
+
+.topic-create-forrum-preview .bb-image-wrap {
+  margin: 14px 0;
+}
+
+.topic-create-forrum-preview .bb-image {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #294047;
+  border-radius: 3px;
+}
+
+.topic-create-forrum-preview .bb-image-wrap figcaption,
+.topic-create-forrum-preview .bb-invalid {
+  color: #82938f;
+  font-size: 9px;
+}
+
+.topic-create-preview-tags {
+  padding-top: 2px;
+  border-top: 1px solid #1c2e33;
+}
+
+.topic-create-actions {
+  min-height: 50px;
+  border-top: 1px solid #203338;
+}
+
+.topic-create-telegram-heading strong,
+.topic-create-telegram-state strong {
+  color: #e0e8e6;
+}
+
+.topic-create-telegram-heading-state,
+.topic-create-telegram-state span,
+.topic-create-telegram-rules dt,
+.topic-create-telegram-note {
+  color: #82938f;
+}
+
+@media (max-width: 720px) {
+  .topic-create-v15-7
+    .bb-editor-topic-create textarea,
+  .topic-create-v15-7
+    .bb-editor-topic-create
+    .bb-inline-preview {
+    min-height: 210px;
+  }
+
+  .topic-create-submit-actions .button:not(.ghost) {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topic-create-forrum-preview
+    .bb-spoiler summary::before {
+    transition: none;
+  }
+}
+
+/* FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_4_END */
