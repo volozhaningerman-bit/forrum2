@@ -18315,3 +18315,293 @@ body:has(.topic-create-v15-7) footer:not(.topic-create-actions) a {
 }
 
 /* FORRUM_CREATE_TOPIC_EDITOR_V15_8_END */
+
+/* FORRUM_VISUAL_BBCODE_EDITOR_V15_9_START */
+
+/* Telegram compatibility is handled during export, not in the authoring UI. */
+.topic-create-v15-7 {
+  grid-template-columns: 220px minmax(0, 1fr) !important;
+}
+
+.topic-create-main {
+  grid-column: 2 !important;
+}
+
+.topic-create-draft-restore,
+.draft-restore-banner,
+.topic-create-telegram {
+  display: none !important;
+}
+
+/* The topic editor is visual while its controlled value remains BBCode. */
+.bb-editor-visual .bb-visual-input {
+  min-height: 258px;
+  max-height: 620px;
+  overflow: auto;
+  padding: 17px;
+  border: 0;
+  outline: 0;
+  background: #0d1a1e;
+  color: #e5ecea;
+  caret-color: #6ce2bc;
+  font: 13px/1.65 Inter, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.bb-editor-visual .bb-visual-input:focus {
+  background: #0e1c20;
+  box-shadow: inset 2px 0 0 #19d39a;
+}
+
+.bb-editor-visual .bb-visual-input:empty::before {
+  content: attr(data-placeholder);
+  color: #71827f;
+  pointer-events: none;
+}
+
+.bb-editor-visual .bb-visual-input blockquote {
+  margin: 12px 0;
+  padding: 10px 13px;
+  border-left: 3px solid #4c876d;
+  background: #102328;
+  color: #d2ddda;
+}
+
+.bb-editor-visual .bb-visual-input pre {
+  margin: 12px 0;
+  padding: 11px 13px;
+  overflow: auto;
+  border: 1px solid #263f43;
+  border-radius: 3px;
+  background: #081216;
+  color: #cbd8d5;
+  font: 12px/1.55 ui-monospace, SFMono-Regular, Consolas, monospace;
+  white-space: pre-wrap;
+}
+
+.bb-editor-visual .bb-visual-input ul,
+.bb-editor-visual .bb-visual-input ol {
+  margin: 11px 0;
+  padding-left: 24px;
+}
+
+.bb-editor-visual .bb-visual-input details {
+  margin: 12px 0;
+  border: 1px solid #294047;
+  border-radius: 3px;
+  background: #0d1a1e;
+}
+
+.bb-editor-visual .bb-visual-input summary {
+  padding: 9px 12px;
+  background: #102328;
+  color: #cddbd7;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.bb-editor-visual .bb-visual-input details > div {
+  padding: 10px 12px;
+  border-top: 1px solid #294047;
+}
+
+.bb-editor-visual .bb-visual-input figure {
+  margin: 13px 0;
+}
+
+.bb-editor-visual .bb-visual-input img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #294047;
+  border-radius: 3px;
+}
+
+.bb-editor-visual .bb-visual-input a {
+  color: #59d9b3;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Clear icon + label pairs instead of ambiguous standalone glyphs. */
+.bb-editor-topic-create .bb-tool-group-secondary button,
+.bb-editor-topic-reply .bb-tool-group-secondary button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 7px 9px;
+  color: #e1ebe8;
+  font-size: 11px;
+}
+
+.bb-tool-symbol {
+  min-width: 14px;
+  color: #66d8b4;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+}
+
+/* Custom dark size picker: presets plus instant 10–48 px slider. */
+.bb-tool-size,
+.bb-tool-color {
+  position: relative;
+}
+
+.bb-editor-topic-create .bb-size-trigger,
+.bb-editor-topic-reply .bb-size-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 105px;
+  border-color: #31504b;
+  background: #0b191c;
+  color: #dce7e4;
+  font-size: 11px;
+}
+
+.bb-size-popover {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 272px;
+  padding: 12px;
+  border: 1px solid #31514c;
+  border-radius: 6px;
+  background: #0b181b;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, .48);
+}
+
+.bb-size-presets {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.bb-editor-topic-create .bb-size-presets button,
+.bb-editor-topic-reply .bb-size-presets button {
+  min-width: 0;
+  min-height: 32px;
+  padding: 6px 4px;
+  border: 1px solid #294640;
+  background: #0f2222;
+  color: #b9c9c5;
+  font-size: 10.5px;
+}
+
+.bb-editor-topic-create .bb-size-presets button:hover,
+.bb-editor-topic-create .bb-size-presets button.active,
+.bb-editor-topic-reply .bb-size-presets button:hover,
+.bb-editor-topic-reply .bb-size-presets button.active {
+  border-color: #3a9b7c;
+  background: #12362d;
+  color: #effaf6;
+}
+
+.bb-size-range {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 45px;
+  align-items: center;
+  gap: 9px;
+  margin-top: 11px;
+  color: #91a49f;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.bb-size-range input {
+  width: 100%;
+  accent-color: #19d39a;
+  cursor: ew-resize;
+}
+
+.bb-size-range output {
+  color: #e4eeeb;
+  font-size: 10.5px;
+  text-align: right;
+}
+
+/* Expanded 30-colour project palette plus live arbitrary HEX. */
+.bb-editor-topic-create .bb-color-trigger,
+.bb-editor-topic-reply .bb-color-trigger {
+  min-width: 122px;
+}
+
+.bb-color-popover {
+  width: 286px;
+  padding: 13px;
+}
+
+.bb-color-palette {
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.bb-editor-topic-create .bb-color-palette button,
+.bb-editor-topic-reply .bb-color-palette button {
+  width: 34px;
+  min-width: 34px;
+  height: 30px;
+  min-height: 30px;
+  border-radius: 4px;
+}
+
+.bb-editor-topic-create .bb-color-palette button:hover,
+.bb-editor-topic-reply .bb-color-palette button:hover {
+  transform: translateY(-1px);
+  border-color: #fff;
+}
+
+.bb-color-hex input {
+  min-height: 36px;
+  font-size: 12px;
+}
+
+@media (max-width: 820px) {
+  .topic-create-v15-7 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .topic-create-main {
+    grid-column: 1 !important;
+  }
+
+  .bb-size-popover,
+  .bb-color-popover {
+    right: 0;
+    left: auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .bb-size-popover,
+  .bb-color-popover {
+    position: fixed;
+    right: 10px;
+    left: 10px;
+    width: auto;
+  }
+
+  .bb-color-palette {
+    grid-template-columns: repeat(6, 1fr);
+  }
+
+  .bb-editor-topic-create .bb-color-palette button,
+  .bb-editor-topic-reply .bb-color-palette button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bb-editor-topic-create .bb-color-palette button,
+  .bb-editor-topic-reply .bb-color-palette button {
+    transform: none !important;
+  }
+}
+
+/* FORRUM_VISUAL_BBCODE_EDITOR_V15_9_END */

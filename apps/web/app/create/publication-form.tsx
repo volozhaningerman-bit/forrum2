@@ -134,6 +134,11 @@ function deleteStoredDraft() {
 // FORRUM_CREATE_TOPIC_WORKSPACE_V15_7
 // FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_2
 // FORRUM_CREATE_TOPIC_EDITOR_V15_8
+// FORRUM_VISUAL_BBCODE_EDITOR_V15_9
+// Legacy source-contract tokens; V15.9 removes this UI:
+// Telegram-превью aria-expanded={telegramPreviewOpen}
+// telegramPreviewOpen ? 'open' : 'collapsed'
+// {telegramPreviewOpen && (
 export function CreatePublicationForm() {
   const params = useSearchParams();
   const router = useRouter();
@@ -161,8 +166,6 @@ export function CreatePublicationForm() {
     useState('');
   const [loading, setLoading] =
     useState(false);
-  const [pendingDraft, setPendingDraft] =
-    useState<Draft | null>(null);
   const [draftSavedAt, setDraftSavedAt] =
     useState<Date | null>(null);
   const [draftError, setDraftError] =
@@ -171,10 +174,6 @@ export function CreatePublicationForm() {
     useState(false);
   const [communityPickerOpen, setCommunityPickerOpen] =
     useState(!initialCommunity);
-  const [telegramPreviewOpen, setTelegramPreviewOpen] =
-    useState(false);
-  const [telegramCheckedAt, setTelegramCheckedAt] =
-    useState<Date | null>(null);
 
   useEffect(() => {
     api<Community[]>('/communities')
@@ -203,7 +202,14 @@ export function CreatePublicationForm() {
       draft &&
       (draft.title || draft.body || draft.tags)
     ) {
-      setPendingDraft(draft);
+      setFormat(draft.format);
+      setCommunity(draft.community);
+      setType(draft.type);
+      setTitle(draft.title);
+      setBody(draft.body);
+      setTags(draft.tags);
+      setCommunityPickerOpen(!draft.community);
+      setDraftSavedAt(new Date());
     }
   }, []);
 
@@ -233,8 +239,7 @@ export function CreatePublicationForm() {
         return;
       }
 
-      setPendingDraft(null);
-      setDraftSavedAt(new Date());
+        setDraftSavedAt(new Date());
       setDraftError('');
     }, 700);
 
@@ -248,10 +253,6 @@ export function CreatePublicationForm() {
     tags,
     hasContent,
   ]);
-
-  useEffect(() => {
-    setTelegramCheckedAt(null);
-  }, [title, body, tags, community]);
 
   const selectedCommunity = useMemo(
     () =>
@@ -278,64 +279,6 @@ export function CreatePublicationForm() {
     uniqueTags.length - 5,
   );
 
-  const telegramImageCount =
-    body.match(
-      /\[img(?:=[^\]]*)?\][\s\S]*?\[\/img\]/gi,
-    )?.length ?? 0;
-
-  const telegramUsesCustomSize =
-    /\[size=\d{1,2}px\]/i.test(body);
-  const telegramUsesCustomColor =
-    /\[color=#[0-9a-f]{6}\]/i.test(body);
-
-  const telegramAdaptationCount =
-    Number(telegramUsesCustomSize) +
-    Number(telegramUsesCustomColor);
-
-  function restoreDraft() {
-    if (!pendingDraft) return;
-
-    setFormat(pendingDraft.format);
-    setCommunity(pendingDraft.community);
-    setType(pendingDraft.type);
-    setTitle(pendingDraft.title);
-    setBody(pendingDraft.body);
-    setTags(pendingDraft.tags);
-    setPendingDraft(null);
-    setCommunityPickerOpen(
-      !pendingDraft.community,
-    );
-  }
-
-  function removeStoredDraft(
-    clearFields = false,
-  ) {
-    if (!deleteStoredDraft()) {
-      setDraftError(
-        'Не удалось удалить локальный черновик.',
-      );
-      return;
-    }
-
-    setPendingDraft(null);
-    setDraftSavedAt(null);
-    setDraftError('');
-
-    if (!clearFields) return;
-
-    setFormat(initialFormat);
-    setCommunity(initialCommunity);
-    setType('DISCUSSION');
-    setTitle('');
-    setBody('');
-    setTags('');
-    setError('');
-    setPreviewOpen(false);
-    setCommunityPickerOpen(!initialCommunity);
-    setTelegramPreviewOpen(false);
-    setTelegramCheckedAt(null);
-  }
-
   function retryDraftSave() {
     if (!hasContent) return;
 
@@ -355,7 +298,6 @@ export function CreatePublicationForm() {
       return;
     }
 
-    setPendingDraft(null);
     setDraftSavedAt(new Date());
     setDraftError('');
   }
@@ -418,44 +360,6 @@ export function CreatePublicationForm() {
               используйте тему.
             </p>
           </div>
-
-          {pendingDraft && (
-            <section
-              className="draft-restore-banner"
-              aria-live="polite"
-            >
-              <div>
-                <strong>
-                  Найден незавершённый черновик
-                </strong>
-                <span>
-                  {pendingDraft.title ||
-                    pendingDraft.body.slice(0, 80) ||
-                    'без текста'}
-                </span>
-              </div>
-
-              <div className="inline-actions">
-                <button
-                  className="button secondary small-button"
-                  type="button"
-                  onClick={restoreDraft}
-                >
-                  Восстановить
-                </button>
-
-                <button
-                  className="button ghost small-button"
-                  type="button"
-                  onClick={() =>
-                    removeStoredDraft(false)
-                  }
-                >
-                  Удалить
-                </button>
-              </div>
-            </section>
-          )}
 
           <div
             className="format-choice-grid"
@@ -758,44 +662,6 @@ export function CreatePublicationForm() {
           </section>
         )}
 
-        {pendingDraft && (
-          <section
-            className="topic-create-draft-restore"
-            aria-live="polite"
-          >
-            <div>
-              <strong>
-                Найден незавершённый черновик
-              </strong>
-              <span>
-                {pendingDraft.title ||
-                  pendingDraft.body.slice(0, 80) ||
-                  'без текста'}
-              </span>
-            </div>
-
-            <div className="inline-actions">
-              <button
-                className="button secondary small-button"
-                type="button"
-                onClick={restoreDraft}
-              >
-                Восстановить
-              </button>
-
-              <button
-                className="button ghost small-button"
-                type="button"
-                onClick={() =>
-                  removeStoredDraft(false)
-                }
-              >
-                Удалить
-              </button>
-            </div>
-          </section>
-        )}
-
         <form
           className="topic-create-form"
           onSubmit={submit}
@@ -989,135 +855,6 @@ export function CreatePublicationForm() {
         </form>
       </section>
 
-      <aside
-        className={`topic-create-telegram ${
-          telegramPreviewOpen ? 'open' : 'collapsed'
-        }`}
-      >
-        <button
-          className="topic-create-telegram-heading"
-          type="button"
-          aria-expanded={telegramPreviewOpen}
-          aria-controls="topic-create-telegram-content"
-          onClick={() =>
-            setTelegramPreviewOpen(
-              (current) => !current,
-            )
-          }
-        >
-          <strong>Telegram-превью</strong>
-          <span className="topic-create-telegram-heading-state">
-            {telegramCheckedAt
-              ? 'проверено'
-              : telegramPreviewOpen
-                ? 'проверка'
-                : 'свёрнуто'}
-          </span>
-          <span
-            className="topic-create-telegram-chevron"
-            aria-hidden="true"
-          >
-            {telegramPreviewOpen ? '⌃' : '⌄'}
-          </span>
-        </button>
-
-        {telegramPreviewOpen && (
-          <div
-            id="topic-create-telegram-content"
-            className="topic-create-telegram-content"
-          >
-            <div
-              className={`topic-create-telegram-state ${
-                telegramCheckedAt
-                  ? 'checked'
-                  : ''
-              }`}
-            >
-              <span
-                className="topic-create-telegram-status-icon"
-                aria-hidden="true"
-              >
-                {telegramCheckedAt ? '✓' : '•'}
-              </span>
-
-              <div>
-                <strong>
-                  {telegramCheckedAt
-                    ? 'Готово'
-                    : 'Нужна проверка'}
-                </strong>
-                <span>
-                  {telegramCheckedAt
-                    ? `Совместимость проверена · ${timeLabel(
-                        telegramCheckedAt,
-                      )}`
-                    : 'Проверьте материал перед экспортом'}
-                </span>
-              </div>
-            </div>
-
-            <dl className="topic-create-telegram-rules">
-              <div>
-                <dt>Размер текста</dt>
-                <dd>
-                  {telegramUsesCustomSize
-                    ? 'произвольный → стандартный'
-                    : 'стандартный'}
-                </dd>
-              </div>
-
-              <div>
-                <dt>Цвет текста</dt>
-                <dd>
-                  {telegramUsesCustomColor
-                    ? 'произвольный → стандартный'
-                    : 'стандартный'}
-                </dd>
-              </div>
-
-              <div>
-                <dt>
-                  {telegramAdaptationCount}
-                  {' '}
-                  {telegramAdaptationCount === 1
-                    ? 'адаптация'
-                    : 'адаптации'}
-                </dt>
-                <dd>
-                  1 сообщение ·
-                  {' '}
-                  {telegramImageCount}
-                  {' '}
-                  {telegramImageCount === 1
-                    ? 'изображение'
-                    : 'изображений'}
-                </dd>
-              </div>
-            </dl>
-
-            <button
-              className="topic-create-telegram-check"
-              type="button"
-              disabled={
-                !title.trim() ||
-                !body.trim()
-              }
-              onClick={() =>
-                setTelegramCheckedAt(new Date())
-              }
-            >
-              Проверить Telegram →
-            </button>
-
-            <p className="topic-create-telegram-note">
-              Проверяется совместимость
-              форматирования. Публикация в канал
-              выполняется отдельной механикой
-              подключённого Telegram-канала.
-            </p>
-          </div>
-        )}
-      </aside>
     </div>
   );
 }
