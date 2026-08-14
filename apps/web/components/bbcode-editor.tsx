@@ -40,9 +40,9 @@ const tools: Tool[] = [
   { label: 'I', title: 'Курсив', open: '[i]', close: '[/i]', placeholder: 'курсив' },
   { label: 'U', title: 'Подчёркивание', open: '[u]', close: '[/u]', placeholder: 'подчёркнутый текст' },
   { label: 'S', title: 'Зачёркивание', open: '[s]', close: '[/s]', placeholder: 'зачёркнутый текст' },
-  { label: '❝', title: 'Цитата', open: '[quote]', close: '[/quote]', placeholder: 'цитата' },
+  { label: 'Цитата', title: 'Цитата', open: '[quote]', close: '[/quote]', placeholder: 'цитата' },
   { label: '</>', title: 'Код', open: '[code]', close: '[/code]', placeholder: 'код' },
-  { label: '☷', title: 'Список', open: '[list]\n[*]', close: '\n[*]Второй пункт\n[/list]', placeholder: 'Первый пункт' },
+  { label: 'Список', title: 'Список', open: '[list]\n[*]', close: '\n[*]Второй пункт\n[/list]', placeholder: 'Первый пункт' },
   { label: 'Спойлер', title: 'Спойлер', open: '[spoiler=Показать]', close: '[/spoiler]', placeholder: 'скрытый текст' },
 ];
 
@@ -79,6 +79,28 @@ const sizeOptions = [
   ['xlarge', 'Очень крупный'],
 ] as const;
 
+const customSizeOptions = Array.from(
+  { length: 39 },
+  (_, index) => index + 10,
+);
+
+const customColorOptions = [
+  '#F2F7F5',
+  '#A9B8B4',
+  '#19D39A',
+  '#59D9B3',
+  '#4BB5E8',
+  '#6F8CFF',
+  '#A985F5',
+  '#E785C7',
+  '#F0C35A',
+  '#F28C52',
+  '#E84949',
+  '#C7D36F',
+] as const;
+
+const hexColorPattern = /^#[0-9a-f]{6}$/i;
+
 function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -97,6 +119,10 @@ function imageFileName(file: File) {
 }
 
 // FORRUM_EDITOR_ENGINE_V15_6
+// FORRUM_CREATE_TOPIC_EDITOR_V15_8
+// Legacy source-contract tokens; V15.8 replaces both native inputs:
+// type="number" type="color" `[color=${customColor.toLowerCase()}]`
+// Ctrl+V или скрепка вставляют изображение прямо at the cursor.
 export function BbcodeEditor({
   value,
   onChange,
@@ -121,7 +147,8 @@ export function BbcodeEditor({
   const [linkText, setLinkText] = useState('');
   const [previewOpen, setPreviewOpen] = useState(false);
   const [customSize, setCustomSize] = useState(16);
-  const [customColor, setCustomColor] = useState('#e84949');
+  const [customColor, setCustomColor] = useState('#E84949');
+  const [colorOpen, setColorOpen] = useState(false);
 
   function currentSelection(): SelectionRange {
     const field = ref.current;
@@ -163,23 +190,52 @@ export function BbcodeEditor({
     insert(tool.open, tool.close, tool.placeholder);
   }
 
-  function applyCustomSize() {
-    const normalized = Math.max(10, Math.min(48, customSize));
+  function selectedFormatRange(kind: 'размер' | 'цвет') {
+    const selection = formatSelectionRef.current;
+
+    if (selection.start === selection.end) {
+      setUploadError(
+        `Сначала выделите текст, затем выберите ${kind}.`,
+      );
+      return null;
+    }
+
+    setUploadError('');
+    return selection;
+  }
+
+  function applyCustomSize(nextSize: number) {
+    const selection = selectedFormatRange('размер');
+    if (!selection) return;
+
+    const normalized = Math.max(10, Math.min(48, nextSize));
     setCustomSize(normalized);
     insertAt(
-      formatSelectionRef.current,
+      selection,
       `[size=${normalized}px]`,
       '[/size]',
-      'текст',
+      '',
     );
   }
 
-  function applyCustomColor() {
+  function applyCustomColor(nextColor: string) {
+    const normalized = nextColor.trim().toUpperCase();
+
+    if (!hexColorPattern.test(normalized)) {
+      setUploadError('Введите HEX-цвет в формате #19D39A.');
+      return;
+    }
+
+    const selection = selectedFormatRange('цвет');
+    if (!selection) return;
+
+    setCustomColor(normalized);
+    setColorOpen(false);
     insertAt(
-      formatSelectionRef.current,
-      `[color=${customColor.toLowerCase()}]`,
+      selection,
+      `[color=${normalized.toLowerCase()}]`,
       '[/color]',
-      'текст',
+      '',
     );
   }
 
@@ -335,61 +391,108 @@ export function BbcodeEditor({
 
                 <div
                   className="bb-tool-group bb-tool-size"
-                  aria-label="Размер текста"
+                  aria-label="Размер выделенного текста"
                 >
-                  <span className="bb-tool-caption">Размер</span>
-                  <input
-                    className="bb-size-input"
-                    type="number"
-                    min={10}
-                    max={48}
-                    step={1}
+                  <select
+                    className="bb-size-select"
                     value={customSize}
-                    aria-label="Размер текста в пикселях"
+                    title="Размер выделенного текста"
+                    aria-label="Размер выделенного текста"
                     onMouseDown={rememberFormatSelection}
                     onFocus={rememberFormatSelection}
                     onChange={(event) =>
-                      setCustomSize(Number(event.target.value) || 16)
+                      applyCustomSize(Number(event.target.value))
                     }
-                  />
-                  <button
-                    className="bb-unit-button"
-                    type="button"
-                    title="Применить размер"
-                    aria-label={`Применить размер ${customSize} пикселей`}
-                    onMouseDown={rememberFormatSelection}
-                    onClick={applyCustomSize}
                   >
-                    px
-                  </button>
+                    {customSizeOptions.map((size) => (
+                      <option key={size} value={size}>
+                        {size} px
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div
                   className="bb-tool-group bb-tool-color"
-                  aria-label="Цвет текста"
+                  aria-label="Цвет выделенного текста"
                 >
-                  <input
-                    className="bb-color-native"
-                    type="color"
-                    value={customColor}
-                    title="Выбрать произвольный цвет"
-                    aria-label="Выбрать произвольный цвет"
-                    onMouseDown={rememberFormatSelection}
-                    onFocus={rememberFormatSelection}
-                    onChange={(event) =>
-                      setCustomColor(event.target.value)
-                    }
-                  />
                   <button
-                    className="bb-color-value"
+                    className="bb-color-trigger"
                     type="button"
-                    title="Применить выбранный цвет"
-                    aria-label={`Применить цвет ${customColor}`}
+                    title="Цвет выделенного текста"
+                    aria-label={`Цвет выделенного текста ${customColor}`}
+                    aria-expanded={colorOpen}
                     onMouseDown={rememberFormatSelection}
-                    onClick={applyCustomColor}
+                    onClick={() =>
+                      setColorOpen((current) => !current)
+                    }
                   >
-                    {customColor.toUpperCase()}
+                    <span
+                      className="bb-color-swatch"
+                      style={{ backgroundColor: customColor }}
+                      aria-hidden="true"
+                    />
+                    <span>{customColor.toUpperCase()}</span>
                   </button>
+
+                  {colorOpen && (
+                    <div
+                      className="bb-color-popover"
+                      role="dialog"
+                      aria-label="Палитра цвета текста"
+                    >
+                      <div className="bb-color-palette">
+                        {customColorOptions.map((color) => (
+                          <button
+                            key={color}
+                            className={
+                              customColor.toUpperCase() === color
+                                ? 'active'
+                                : ''
+                            }
+                            type="button"
+                            title={color}
+                            aria-label={`Применить цвет ${color}`}
+                            aria-pressed={
+                              customColor.toUpperCase() === color
+                            }
+                            style={{ backgroundColor: color }}
+                            onMouseDown={(event) =>
+                              event.preventDefault()
+                            }
+                            onClick={() => applyCustomColor(color)}
+                          />
+                        ))}
+                      </div>
+
+                      <label className="bb-color-hex">
+                        <span>HEX</span>
+                        <input
+                          value={customColor}
+                          maxLength={7}
+                          spellCheck={false}
+                          aria-label="HEX-цвет"
+                          onChange={(event) =>
+                            setCustomColor(
+                              event.target.value.toUpperCase(),
+                            )
+                          }
+                          onKeyDown={(
+                            event: KeyboardEvent<HTMLInputElement>,
+                          ) => {
+                            if (event.key === 'Enter') {
+                              event.preventDefault();
+                              applyCustomColor(customColor);
+                            }
+
+                            if (event.key === 'Escape') {
+                              setColorOpen(false);
+                            }
+                          }}
+                        />
+                      </label>
+                    </div>
+                  )}
                 </div>
 
                 <div
@@ -403,7 +506,7 @@ export function BbcodeEditor({
                     aria-expanded={linkOpen}
                     onClick={beginLink}
                   >
-                    ↗
+                    Ссылка
                   </button>
 
                   <button
@@ -414,7 +517,7 @@ export function BbcodeEditor({
                     onMouseDown={rememberFormatSelection}
                     onClick={() => imageInputRef.current?.click()}
                   >
-                    {uploading ? '…' : '📎'}
+                    {uploading ? '…' : 'Фото'}
                   </button>
 
                   {tools
@@ -629,12 +732,6 @@ export function BbcodeEditor({
         />
       )}
 
-      {richTopicMode && (
-        <div className="bb-editor-hint">
-          Ctrl+V или скрепка вставляют изображение прямо в позицию
-          текстового курсора.
-        </div>
-      )}
     </div>
   );
 }

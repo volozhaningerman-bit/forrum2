@@ -133,6 +133,7 @@ function deleteStoredDraft() {
 
 // FORRUM_CREATE_TOPIC_WORKSPACE_V15_7
 // FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_2
+// FORRUM_CREATE_TOPIC_EDITOR_V15_8
 export function CreatePublicationForm() {
   const params = useSearchParams();
   const router = useRouter();
@@ -871,20 +872,15 @@ export function CreatePublicationForm() {
               onChange={setBody}
               minLength={2}
               maxLength={30000}
-              placeholder="Расскажите о теме подробно. Используйте абзацы, цитаты, код, ссылки и изображения."
+              placeholder="Напишите текст темы…"
               mode="topic-create"
             />
 
-            <div className="topic-create-editor-status">
-              <span>
-                Стандарт: 16 px · автоцвет
-              </span>
-              <span>
-                {body.length}/30000
-              </span>
-              <span>
-                Произвольный размер и цвет
-              </span>
+            <div
+              className="topic-create-editor-status"
+              aria-live="polite"
+            >
+              <span>{body.length}/30000</span>
             </div>
           </div>
 
@@ -961,27 +957,6 @@ export function CreatePublicationForm() {
           )}
 
           <footer className="topic-create-actions">
-            <div className="topic-create-autosave">
-              <span>
-                {draftSavedAt
-                  ? `Автосохранение · ${timeLabel(
-                      draftSavedAt,
-                    )}`
-                  : 'Автосохранение включено'}
-              </span>
-
-              {hasContent && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    removeStoredDraft(true)
-                  }
-                >
-                  Очистить
-                </button>
-              )}
-            </div>
-
             <div className="topic-create-submit-actions">
               <button
                 className="button ghost"
