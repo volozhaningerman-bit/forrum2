@@ -29,6 +29,7 @@ function requireMarker(source, marker, label) {
 
 for (const marker of [
   'FORRUM_CREATE_TOPIC_WORKSPACE_V15_7',
+  'FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_2',
   '<TopicCategoryTree',
   'activeSlug={community || null}',
   '<h1>Создать тему</h1>',
@@ -48,12 +49,23 @@ for (const marker of [
   'telegramImageCount',
   'setTelegramCheckedAt(new Date())',
   'window.localStorage.setItem(',
+  'readStoredDraft()',
+  'writeStoredDraft(draft)',
+  'deleteStoredDraft();',
+  'retryDraftSave',
+  'draft-save-error',
+  'topic-create-draft-error',
+  'uniqueTags.slice(0, 5)',
+  'extraTagCount',
+  'minLength={3}',
+  'maxLength={160}',
+  'maxLength={30000}',
   'DRAFT_KEY',
   'api<{ slug: string }>(',
   '`/communities/${community}/publications`',
   'router.push(`/p/${result.slug}`)',
 ]) {
-  requireMarker(create, marker, 'Create Topic V15.7');
+  requireMarker(create, marker, 'Create Topic V15.7.2');
 }
 
 for (const marker of [
@@ -84,6 +96,8 @@ for (const marker of [
 
 for (const marker of [
   'FORRUM_CREATE_TOPIC_WORKSPACE_V15_7',
+  'FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_2_START',
+  'FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_2_END',
   '.topic-create-v15-7 {',
   'grid-template-columns: 220px minmax(0, 1fr) 224px;',
   '.topic-create-main {',
@@ -94,12 +108,14 @@ for (const marker of [
   '.topic-create-telegram-content {',
   '.topic-create-forrum-preview {',
   '.topic-create-actions {',
+  '.draft-save-error,',
+  '.topic-create-draft-error {',
 ]) {
-  requireMarker(css, marker, 'Create Topic CSS V15.7');
+  requireMarker(css, marker, 'Create Topic CSS V15.7.2');
 }
 
 console.log(
-  'FORRUM Create Topic Workspace V15.7 passed: ' +
+  'FORRUM Create Topic Workspace V15.7.2 passed: ' +
     'approved tree + V15.6 editor + draft + FORRUM preview + ' +
     'collapsed-by-default Telegram preview; API contract preserved.',
 );

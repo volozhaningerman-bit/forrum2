@@ -94,7 +94,45 @@ function timeLabel(date: Date | null) {
   }).format(date);
 }
 
+function readStoredDraft() {
+  try {
+    return {
+      draft: parseDraft(
+        window.localStorage.getItem(DRAFT_KEY),
+      ),
+      failed: false,
+    };
+  } catch {
+    return {
+      draft: null,
+      failed: true,
+    };
+  }
+}
+
+function writeStoredDraft(draft: Draft) {
+  try {
+    window.localStorage.setItem(
+      DRAFT_KEY,
+      JSON.stringify(draft),
+    );
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function deleteStoredDraft() {
+  try {
+    window.localStorage.removeItem(DRAFT_KEY);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 // FORRUM_CREATE_TOPIC_WORKSPACE_V15_7
+// FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_2
 export function CreatePublicationForm() {
   const params = useSearchParams();
   const router = useRouter();
@@ -126,6 +164,8 @@ export function CreatePublicationForm() {
     useState<Draft | null>(null);
   const [draftSavedAt, setDraftSavedAt] =
     useState<Date | null>(null);
+  const [draftError, setDraftError] =
+    useState('');
   const [previewOpen, setPreviewOpen] =
     useState(false);
   const [communityPickerOpen, setCommunityPickerOpen] =
@@ -149,9 +189,14 @@ export function CreatePublicationForm() {
         ),
       );
 
-    const draft = parseDraft(
-      window.localStorage.getItem(DRAFT_KEY),
-    );
+    const storedDraft = readStoredDraft();
+    const draft = storedDraft.draft;
+
+    if (storedDraft.failed) {
+      setDraftError(
+        'Не удалось прочитать локальный черновик.',
+      );
+    }
 
     if (
       draft &&
@@ -180,13 +225,16 @@ export function CreatePublicationForm() {
         tags,
       };
 
-      window.localStorage.setItem(
-        DRAFT_KEY,
-        JSON.stringify(draft),
-      );
+      if (!writeStoredDraft(draft)) {
+        setDraftError(
+          'Не удалось сохранить локальный черновик.',
+        );
+        return;
+      }
 
       setPendingDraft(null);
       setDraftSavedAt(new Date());
+      setDraftError('');
     }, 700);
 
     return () => window.clearTimeout(timer);
@@ -261,9 +309,16 @@ export function CreatePublicationForm() {
   function removeStoredDraft(
     clearFields = false,
   ) {
-    window.localStorage.removeItem(DRAFT_KEY);
+    if (!deleteStoredDraft()) {
+      setDraftError(
+        'Не удалось удалить локальный черновик.',
+      );
+      return;
+    }
+
     setPendingDraft(null);
     setDraftSavedAt(null);
+    setDraftError('');
 
     if (!clearFields) return;
 
@@ -278,6 +333,30 @@ export function CreatePublicationForm() {
     setCommunityPickerOpen(!initialCommunity);
     setTelegramPreviewOpen(false);
     setTelegramCheckedAt(null);
+  }
+
+  function retryDraftSave() {
+    if (!hasContent) return;
+
+    const saved = writeStoredDraft({
+      format,
+      community,
+      type,
+      title,
+      body,
+      tags,
+    });
+
+    if (!saved) {
+      setDraftError(
+        'Не удалось сохранить локальный черновик.',
+      );
+      return;
+    }
+
+    setPendingDraft(null);
+    setDraftSavedAt(new Date());
+    setDraftError('');
   }
 
   async function submit(
@@ -305,7 +384,7 @@ export function CreatePublicationForm() {
         },
       );
 
-      window.localStorage.removeItem(DRAFT_KEY);
+      deleteStoredDraft();
       router.push(`/p/${result.slug}`);
     } catch (cause) {
       setError(
@@ -338,6 +417,44 @@ export function CreatePublicationForm() {
               используйте тему.
             </p>
           </div>
+
+          {pendingDraft && (
+            <section
+              className="draft-restore-banner"
+              aria-live="polite"
+            >
+              <div>
+                <strong>
+                  Найден незавершённый черновик
+                </strong>
+                <span>
+                  {pendingDraft.title ||
+                    pendingDraft.body.slice(0, 80) ||
+                    'без текста'}
+                </span>
+              </div>
+
+              <div className="inline-actions">
+                <button
+                  className="button secondary small-button"
+                  type="button"
+                  onClick={restoreDraft}
+                >
+                  Восстановить
+                </button>
+
+                <button
+                  className="button ghost small-button"
+                  type="button"
+                  onClick={() =>
+                    removeStoredDraft(false)
+                  }
+                >
+                  Удалить
+                </button>
+              </div>
+            </section>
+          )}
 
           <div
             className="format-choice-grid"
@@ -477,6 +594,21 @@ export function CreatePublicationForm() {
                 role="alert"
               >
                 {error}
+              </div>
+            )}
+
+            {draftError && (
+              <div
+                className="draft-save-error"
+                role="alert"
+              >
+                <span>{draftError}</span>
+                <button
+                  type="button"
+                  onClick={retryDraftSave}
+                >
+                  Повторить
+                </button>
               </div>
             )}
 
@@ -810,6 +942,21 @@ export function CreatePublicationForm() {
               role="alert"
             >
               {error}
+            </div>
+          )}
+
+          {draftError && (
+            <div
+              className="topic-create-draft-error"
+              role="alert"
+            >
+              <span>{draftError}</span>
+              <button
+                type="button"
+                onClick={retryDraftSave}
+              >
+                Повторить
+              </button>
             </div>
           )}
 
