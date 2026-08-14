@@ -1,8 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import type { ChangeEvent, FormEvent } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import type {
+  ChangeEvent,
+  CSSProperties,
+  FormEvent,
+} from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import { BbcodeContent } from '@/components/bbcode-content';
@@ -22,6 +26,22 @@ type Community = {
 
 type Format = 'POST' | 'TOPIC';
 
+type TagStyleId =
+  | 'emerald'
+  | 'sky'
+  | 'violet'
+  | 'amber'
+  | 'rose'
+  | 'slate';
+
+type TagStylePreset = {
+  id: TagStyleId;
+  label: string;
+  text: string;
+  background: string;
+  border: string;
+};
+
 type Draft = {
   format: Format;
   community: string;
@@ -29,9 +49,71 @@ type Draft = {
   title: string;
   body: string;
   tags: string;
+  tagStyles: Record<string, TagStyleId>;
 };
 
 const DRAFT_KEY = 'forrum-publication-draft';
+
+const defaultTagStyle: TagStyleId = 'emerald';
+
+const tagStylePresets: TagStylePreset[] = [
+  {
+    id: 'emerald',
+    label: 'Изумрудный',
+    text: '#79E6C4',
+    background: '#0C2B24',
+    border: '#286956',
+  },
+  {
+    id: 'sky',
+    label: 'Голубой',
+    text: '#8DDCFF',
+    background: '#102A38',
+    border: '#2B657D',
+  },
+  {
+    id: 'violet',
+    label: 'Фиолетовый',
+    text: '#D1B4FF',
+    background: '#271D3A',
+    border: '#654A8E',
+  },
+  {
+    id: 'amber',
+    label: 'Янтарный',
+    text: '#FFD87A',
+    background: '#33270D',
+    border: '#7A6124',
+  },
+  {
+    id: 'rose',
+    label: 'Красный',
+    text: '#FFAAA8',
+    background: '#35191B',
+    border: '#844145',
+  },
+  {
+    id: 'slate',
+    label: 'Нейтральный',
+    text: '#D2DDDA',
+    background: '#1C2927',
+    border: '#4B615D',
+  },
+];
+
+const tagStyleIds = new Set<TagStyleId>(
+  tagStylePresets.map((preset) => preset.id),
+);
+
+function tagStyleVariables(
+  preset: TagStylePreset,
+): CSSProperties {
+  return {
+    '--tag-text': preset.text,
+    '--tag-background': preset.background,
+    '--tag-border': preset.border,
+  } as CSSProperties;
+}
 
 const types = [
   ['DISCUSSION', 'Обсуждение'],
@@ -79,6 +161,19 @@ function parseDraft(raw: string | null): Draft | null {
         typeof value.tags === 'string'
           ? value.tags
           : '',
+      tagStyles:
+        value.tagStyles &&
+        typeof value.tagStyles === 'object'
+          ? Object.fromEntries(
+              Object.entries(value.tagStyles).filter(
+                (
+                  entry,
+                ): entry is [string, TagStyleId] =>
+                  typeof entry[0] === 'string' &&
+                  tagStyleIds.has(entry[1] as TagStyleId),
+              ),
+            )
+          : {},
     };
   } catch {
     return null;
@@ -135,6 +230,7 @@ function deleteStoredDraft() {
 // FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_2
 // FORRUM_CREATE_TOPIC_EDITOR_V15_8
 // FORRUM_VISUAL_BBCODE_EDITOR_V15_9
+// FORRUM_EDITOR_CONTROLS_V15_10
 // Legacy source-contract tokens; V15.9 removes this UI:
 // Telegram-превью aria-expanded={telegramPreviewOpen}
 // telegramPreviewOpen ? 'open' : 'collapsed'
@@ -142,6 +238,7 @@ function deleteStoredDraft() {
 export function CreatePublicationForm() {
   const params = useSearchParams();
   const router = useRouter();
+  const tagStylePickerRef = useRef<HTMLDivElement>(null);
 
   const initialFormat: Format =
     params.get('format') === 'POST' ? 'POST' : 'TOPIC';
@@ -162,6 +259,11 @@ export function CreatePublicationForm() {
     useState('');
   const [tags, setTags] =
     useState('');
+  const [tagStyles, setTagStyles] = useState<
+    Record<string, TagStyleId>
+  >({});
+  const [tagStylePicker, setTagStylePicker] =
+    useState<string | null>(null);
   const [error, setError] =
     useState('');
   const [loading, setLoading] =
@@ -208,6 +310,7 @@ export function CreatePublicationForm() {
       setTitle(draft.title);
       setBody(draft.body);
       setTags(draft.tags);
+      setTagStyles(draft.tagStyles);
       setCommunityPickerOpen(!draft.community);
       setDraftSavedAt(new Date());
     }
@@ -230,6 +333,7 @@ export function CreatePublicationForm() {
         title,
         body,
         tags,
+        tagStyles,
       };
 
       if (!writeStoredDraft(draft)) {
@@ -251,8 +355,50 @@ export function CreatePublicationForm() {
     title,
     body,
     tags,
+    tagStyles,
     hasContent,
   ]);
+
+  useEffect(() => {
+    if (!tagStylePicker) return;
+
+    function closeTagStylePicker(event: PointerEvent) {
+      const target = event.target;
+      if (
+        target instanceof Node &&
+        !tagStylePickerRef.current?.contains(target)
+      ) {
+        setTagStylePicker(null);
+      }
+    }
+
+    function closeTagStylePickerOnEscape(
+      event: globalThis.KeyboardEvent,
+    ) {
+      if (event.key === 'Escape') {
+        setTagStylePicker(null);
+      }
+    }
+
+    document.addEventListener(
+      'pointerdown',
+      closeTagStylePicker,
+    );
+    document.addEventListener(
+      'keydown',
+      closeTagStylePickerOnEscape,
+    );
+    return () => {
+      document.removeEventListener(
+        'pointerdown',
+        closeTagStylePicker,
+      );
+      document.removeEventListener(
+        'keydown',
+        closeTagStylePickerOnEscape,
+      );
+    };
+  }, [tagStylePicker]);
 
   const selectedCommunity = useMemo(
     () =>
@@ -279,6 +425,22 @@ export function CreatePublicationForm() {
     uniqueTags.length - 5,
   );
 
+  function tagPreset(tag: string) {
+    const id = tagStyles[tag] ?? defaultTagStyle;
+    return (
+      tagStylePresets.find((preset) => preset.id === id) ??
+      tagStylePresets[0]
+    );
+  }
+
+  function chooseTagStyle(tag: string, style: TagStyleId) {
+    setTagStyles((current) => ({
+      ...current,
+      [tag]: style,
+    }));
+    setTagStylePicker(null);
+  }
+
   function retryDraftSave() {
     if (!hasContent) return;
 
@@ -289,6 +451,7 @@ export function CreatePublicationForm() {
       title,
       body,
       tags,
+      tagStyles,
     });
 
     if (!saved) {
@@ -326,6 +489,31 @@ export function CreatePublicationForm() {
           }),
         },
       );
+
+      if (tagList.length) {
+        try {
+          await api(
+            `/communities/${encodeURIComponent(
+              community,
+            )}/publications/${encodeURIComponent(
+              result.slug,
+            )}/tag-styles`,
+            {
+              method: 'PATCH',
+              body: JSON.stringify({
+                styles: Object.fromEntries(
+                  tagList.map((tag) => [
+                    tag,
+                    tagStyles[tag] ?? defaultTagStyle,
+                  ]),
+                ),
+              }),
+            },
+          );
+        } catch {
+          // Publication succeeded; default tag colours remain safe.
+        }
+      }
 
       deleteStoredDraft();
       router.push(`/p/${result.slug}`);
@@ -714,12 +902,73 @@ export function CreatePublicationForm() {
             </div>
 
             {tagList.length > 0 && (
-              <div className="topic-create-tag-preview">
-                {tagList.map((tag) => (
-                  <span key={tag}>
-                    #{tag}
-                  </span>
-                ))}
+              <div
+                ref={tagStylePickerRef}
+                className="topic-create-tag-customizer"
+              >
+                <div className="topic-create-tag-preview">
+                  {tagList.map((tag) => {
+                    const preset = tagPreset(tag);
+                    return (
+                      <button
+                        key={tag}
+                        type="button"
+                        className={
+                          tagStylePicker === tag
+                            ? 'active'
+                            : ''
+                        }
+                        style={tagStyleVariables(preset)}
+                        aria-expanded={tagStylePicker === tag}
+                        aria-label={`Настроить цвет хэштега ${tag}`}
+                        onClick={() =>
+                          setTagStylePicker((current) =>
+                            current === tag ? null : tag,
+                          )
+                        }
+                      >
+                        #{tag}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {tagStylePicker && (
+                  <div
+                    className="topic-create-tag-style-picker"
+                    role="dialog"
+                    aria-label={`Цвет хэштега ${tagStylePicker}`}
+                  >
+                    <strong>Цвет хэштега</strong>
+                    <div className="topic-create-tag-style-options">
+                      {tagStylePresets.map((preset) => (
+                        <button
+                          key={preset.id}
+                          type="button"
+                          className={
+                            tagPreset(tagStylePicker).id === preset.id
+                              ? 'active'
+                              : ''
+                          }
+                          style={tagStyleVariables(preset)}
+                          aria-label={preset.label}
+                          aria-pressed={
+                            tagPreset(tagStylePicker).id === preset.id
+                          }
+                          onClick={() =>
+                            chooseTagStyle(
+                              tagStylePicker,
+                              preset.id,
+                            )
+                          }
+                        >
+                          <span>#{tagStylePicker}</span>
+                          <small>{preset.label}</small>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -770,28 +1019,41 @@ export function CreatePublicationForm() {
               </div>
 
               <article>
-                <small>
-                  {selectedCommunity?.name ??
-                    'Раздел не выбран'}
-                </small>
-                <h2>
-                  {title ||
-                    'Заголовок будущей темы'}
-                </h2>
-                <BbcodeContent
-                  source={
-                    body ||
-                    'Здесь появится содержимое темы.'
-                  }
-                />
+                <header className="topic-create-preview-title">
+                  <small>
+                    {selectedCommunity?.name ??
+                      'Раздел не выбран'}
+                  </small>
+                  <span>Название темы</span>
+                  <h2>
+                    {title ||
+                      'Заголовок будущей темы'}
+                  </h2>
+                </header>
+
+                <section className="topic-create-preview-description">
+                  <span>Описание темы</span>
+                  <BbcodeContent
+                    source={
+                      body ||
+                      'Здесь появится содержимое темы.'
+                    }
+                  />
+                </section>
 
                 {tagList.length > 0 && (
                   <div className="topic-create-preview-tags">
-                    {tagList.map((tag) => (
-                      <span key={tag}>
-                        #{tag}
-                      </span>
-                    ))}
+                    {tagList.map((tag) => {
+                      const preset = tagPreset(tag);
+                      return (
+                        <span
+                          key={tag}
+                          style={tagStyleVariables(preset)}
+                        >
+                          #{tag}
+                        </span>
+                      );
+                    })}
                   </div>
                 )}
               </article>

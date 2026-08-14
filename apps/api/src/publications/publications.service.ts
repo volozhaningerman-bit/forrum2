@@ -1,3 +1,4 @@
+import { NotFoundException as TagStyleNotFoundException } from '@nestjs/common';
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { GlobalRole, NotificationType, PublicationFormat, PublicationStatus, PublicationType, type Prisma, type ReactionType, type User } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -341,4 +342,91 @@ export class PublicationsService {
     });
     return { id: report.id };
   }
+
+  // FORRUM_TAG_STYLE_PRESETS_V15_10
+  async styleTags(
+    authorId: string,
+    communitySlug: string,
+    publicationSlug: string,
+    rawStyles: Record<string, string> | undefined,
+  ) {
+    const presets = {
+      emerald: {
+        textColor: '#79E6C4',
+        backgroundColor: '#0C2B24',
+        borderColor: '#286956',
+      },
+      sky: {
+        textColor: '#8DDCFF',
+        backgroundColor: '#102A38',
+        borderColor: '#2B657D',
+      },
+      violet: {
+        textColor: '#D1B4FF',
+        backgroundColor: '#271D3A',
+        borderColor: '#654A8E',
+      },
+      amber: {
+        textColor: '#FFD87A',
+        backgroundColor: '#33270D',
+        borderColor: '#7A6124',
+      },
+      rose: {
+        textColor: '#FFAAA8',
+        backgroundColor: '#35191B',
+        borderColor: '#844145',
+      },
+      slate: {
+        textColor: '#D2DDDA',
+        backgroundColor: '#1C2927',
+        borderColor: '#4B615D',
+      },
+    } as const;
+
+    const publication = await this.prisma.publication.findFirst({
+      where: {
+        slug: publicationSlug,
+        authorId,
+        community: { slug: communitySlug },
+      },
+      select: { id: true },
+    });
+
+    if (!publication) {
+      throw new TagStyleNotFoundException('Публикация не найдена');
+    }
+
+    const entries = Object.entries(rawStyles ?? {})
+      .filter(
+        (entry): entry is [string, keyof typeof presets] =>
+          Boolean(entry[0].trim()) && entry[1] in presets,
+      )
+      .slice(0, 5);
+
+    const results = await this.prisma.$transaction(
+      entries.map(([rawTag, presetId]) => {
+        const tag = rawTag.replace(/^#/, '').trim().toLowerCase();
+        return this.prisma.tag.updateMany({
+          where: {
+            publications: {
+              some: { publicationId: publication.id },
+            },
+            OR: [{ slug: tag }, { label: tag }],
+          },
+          data: {
+            ...presets[presetId],
+            styleEnabled: true,
+          },
+        });
+      }),
+    );
+
+    return {
+      updated: results.reduce(
+        (total, result) => total + result.count,
+        0,
+      ),
+    };
+  }
+
 }

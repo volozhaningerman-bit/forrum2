@@ -18605,3 +18605,239 @@ body:has(.topic-create-v15-7) footer:not(.topic-create-actions) a {
 }
 
 /* FORRUM_VISUAL_BBCODE_EDITOR_V15_9_END */
+
+/* FORRUM_EDITOR_CONTROLS_V15_10_START */
+
+/* Clear 18 px line icons keep labels readable at a glance. */
+.bb-editor-topic-create .bb-tool-group-secondary button,
+.bb-editor-topic-reply .bb-tool-group-secondary button {
+  gap: 7px;
+  min-height: 40px;
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+.bb-tool-icon {
+  display: block;
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  color: #79e6c4;
+}
+
+/* 10–72 px picker with a thumb that remains draggable. */
+.bb-size-popover {
+  width: 304px;
+  padding: 14px;
+}
+
+.bb-size-presets {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.bb-editor-topic-create .bb-size-presets button,
+.bb-editor-topic-reply .bb-size-presets button {
+  min-height: 35px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.bb-size-range {
+  grid-template-columns: auto minmax(0, 1fr) 48px;
+  gap: 11px;
+  margin-top: 14px;
+  font-size: 11px;
+}
+
+.bb-size-range input[type="range"] {
+  height: 24px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  touch-action: none;
+  cursor: ew-resize;
+}
+
+.bb-size-range input[type="range"]::-webkit-slider-runnable-track {
+  height: 5px;
+  border-radius: 999px;
+  background: #28443f;
+}
+
+.bb-size-range input[type="range"]::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  margin-top: -6.5px;
+  appearance: none;
+  border: 2px solid #e8f4f0;
+  border-radius: 50%;
+  background: #19d39a;
+  box-shadow: 0 0 0 3px rgba(25, 211, 154, .18);
+}
+
+.bb-size-range input[type="range"]::-moz-range-track {
+  height: 5px;
+  border-radius: 999px;
+  background: #28443f;
+}
+
+.bb-size-range input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e8f4f0;
+  border-radius: 50%;
+  background: #19d39a;
+  box-shadow: 0 0 0 3px rgba(25, 211, 154, .18);
+}
+
+.bb-size-range output {
+  font-size: 12px;
+}
+
+/* Hashtag presets always pair legible text, background and border. */
+.topic-create-tag-customizer {
+  position: relative;
+}
+
+.topic-create-tag-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topic-create-tag-preview button,
+.topic-create-preview-tags span {
+  border: 1px solid var(--tag-border) !important;
+  border-radius: 999px;
+  background: var(--tag-background) !important;
+  color: var(--tag-text) !important;
+  font-weight: 750;
+  line-height: 1;
+}
+
+.topic-create-tag-preview button {
+  min-height: 30px;
+  padding: 6px 11px;
+  cursor: pointer;
+}
+
+.topic-create-tag-preview button:hover,
+.topic-create-tag-preview button.active {
+  box-shadow: 0 0 0 2px rgba(121, 230, 196, .24);
+  filter: brightness(1.08);
+}
+
+.topic-create-tag-style-picker {
+  position: absolute;
+  z-index: 45;
+  top: calc(100% + 9px);
+  left: 0;
+  width: min(460px, 100%);
+  padding: 13px;
+  border: 1px solid #31514c;
+  border-radius: 6px;
+  background: #0b181b;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, .48);
+}
+
+.topic-create-tag-style-picker > strong {
+  display: block;
+  margin-bottom: 10px;
+  color: #e7efed;
+  font-size: 12px;
+}
+
+.topic-create-tag-style-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.topic-create-tag-style-options button {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--tag-border);
+  border-radius: 5px;
+  background: var(--tag-background);
+  color: var(--tag-text);
+  text-align: left;
+}
+
+.topic-create-tag-style-options button:hover,
+.topic-create-tag-style-options button.active {
+  outline: 2px solid #79e6c4;
+  outline-offset: 1px;
+}
+
+.topic-create-tag-style-options span {
+  overflow: hidden;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topic-create-tag-style-options small {
+  color: inherit;
+  opacity: .76;
+}
+
+/* Preview title and description are separate editorial regions. */
+.topic-create-forrum-preview article {
+  padding: 0 !important;
+}
+
+.topic-create-preview-title,
+.topic-create-preview-description {
+  padding: 16px 18px;
+}
+
+.topic-create-preview-title {
+  display: grid;
+  gap: 5px;
+}
+
+.topic-create-preview-title > span,
+.topic-create-preview-description > span {
+  color: #7f9791;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.topic-create-preview-title h2 {
+  margin: 0;
+}
+
+.topic-create-preview-description {
+  min-height: 110px;
+  border-top: 1px solid #294047;
+  border-bottom: 1px solid #294047;
+  background: #0c191d;
+}
+
+.topic-create-preview-description > span {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.topic-create-preview-tags {
+  margin: 0 !important;
+  padding: 14px 18px 16px;
+}
+
+.topic-create-preview-tags span {
+  display: inline-flex;
+  padding: 6px 10px;
+}
+
+@media (max-width: 620px) {
+  .topic-create-tag-style-options {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* FORRUM_EDITOR_CONTROLS_V15_10_END */

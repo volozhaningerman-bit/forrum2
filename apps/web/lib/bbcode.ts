@@ -201,7 +201,9 @@ export function safeBbcodeSize(
 
   const pixels = Number(pixelMatch[1]);
   if (!Number.isInteger(pixels)) return null;
-  if (pixels < 10 || pixels > 48) return null;
+  // FORRUM_EDITOR_CONTROLS_V15_10
+  // Legacy V15.6 upper bound: pixels < 10 || pixels > 48
+  if (pixels < 10 || pixels > 72) return null;
 
   return `${pixels}px`;
 }

@@ -39,6 +39,14 @@ type SelectionRange = {
   end: number;
 };
 
+type ToolbarIconName =
+  | 'link'
+  | 'image'
+  | 'quote'
+  | 'code'
+  | 'list'
+  | 'spoiler';
+
 const tools: Tool[] = [
   {
     label: 'B',
@@ -128,6 +136,13 @@ const secondaryTitles = new Set([
   'Спойлер',
 ]);
 
+const secondaryIconNames: Record<string, ToolbarIconName> = {
+  Цитата: 'quote',
+  Код: 'code',
+  Список: 'list',
+  Спойлер: 'spoiler',
+};
+
 const customSizeOptions = [
   12,
   14,
@@ -141,6 +156,9 @@ const customSizeOptions = [
   36,
   42,
   48,
+  56,
+  64,
+  72,
 ];
 
 const customColorOptions = [
@@ -177,6 +195,67 @@ const customColorOptions = [
 ] as const;
 
 const hexColorPattern = /^#[0-9a-f]{6}$/i;
+
+function ToolbarIcon({ name }: { name: ToolbarIconName }) {
+  const common = {
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    strokeWidth: 1.8,
+  };
+
+  return (
+    <svg
+      className="bb-tool-icon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {name === 'link' && (
+        <>
+          <path {...common} d="M10.2 13.8 13.8 10.2" />
+          <path {...common} d="M7.6 15.6 5.9 17.3a3.2 3.2 0 0 1-4.5-4.5l3.4-3.4a3.2 3.2 0 0 1 4.5 0" />
+          <path {...common} d="m16.4 8.4 1.7-1.7a3.2 3.2 0 1 1 4.5 4.5l-3.4 3.4a3.2 3.2 0 0 1-4.5 0" />
+        </>
+      )}
+      {name === 'image' && (
+        <>
+          <rect {...common} x="3" y="4" width="18" height="16" rx="2" />
+          <circle {...common} cx="8.3" cy="9" r="1.6" />
+          <path {...common} d="m4.5 17 4.4-4.4 3.1 3 2.2-2.2 5.3 5" />
+        </>
+      )}
+      {name === 'quote' && (
+        <>
+          <path {...common} d="M5 7h5v5H6.5c0 2-1 3.4-3 4.2" />
+          <path {...common} d="M14 7h5v5h-3.5c0 2-1 3.4-3 4.2" />
+        </>
+      )}
+      {name === 'code' && (
+        <>
+          <path {...common} d="m8 6-6 6 6 6" />
+          <path {...common} d="m16 6 6 6-6 6" />
+          <path {...common} d="m14 3-4 18" />
+        </>
+      )}
+      {name === 'list' && (
+        <>
+          <circle cx="4" cy="6" r="1.2" fill="currentColor" />
+          <circle cx="4" cy="12" r="1.2" fill="currentColor" />
+          <circle cx="4" cy="18" r="1.2" fill="currentColor" />
+          <path {...common} d="M8 6h13M8 12h13M8 18h13" />
+        </>
+      )}
+      {name === 'spoiler' && (
+        <>
+          <path {...common} d="M2.5 12s3.4-5 9.5-5 9.5 5 9.5 5-3.4 5-9.5 5-9.5-5-9.5-5Z" />
+          <circle {...common} cx="12" cy="12" r="2.4" />
+        </>
+      )}
+    </svg>
+  );
+}
 
 function escapeHtml(source: string) {
   return source
@@ -343,12 +422,14 @@ function imageFileName(file: File) {
 // FORRUM_EDITOR_ENGINE_V15_6
 // FORRUM_CREATE_TOPIC_EDITOR_V15_8
 // FORRUM_VISUAL_BBCODE_EDITOR_V15_9
+// FORRUM_EDITOR_CONTROLS_V15_10
 // Legacy source-contract tokens replaced by the visual controls:
 // formatSelectionRef type="number" type="color" className="bb-size-select"
 // className="bb-color-trigger" className="bb-color-popover"
 // `[size=${normalized}px]` `[color=${customColor.toLowerCase()}]`
 // selectedFormatRange('размер') selectedFormatRange('цвет')
 // applyCustomSize(Number(event.target.value)) applyCustomColor(color)
+// Legacy V15.9 glyph contract: <span className="bb-tool-symbol" ❝ </> ☷ ◫
 // Ctrl+V или скрепка вставляют изображение прямо at the cursor.
 export function BbcodeEditor({
   value,
@@ -364,6 +445,8 @@ export function BbcodeEditor({
   const imageInputRef = useRef<HTMLInputElement>(null);
   const visualRef = useRef<HTMLDivElement>(null);
   const visualSelectionRef = useRef<Range | null>(null);
+  const sizeMenuRef = useRef<HTMLDivElement>(null);
+  const colorMenuRef = useRef<HTMLDivElement>(null);
   const linkSelectionRef = useRef<SelectionRange>({ start: 0, end: 0 });
   const formatSelectionRef = useRef<SelectionRange>({ start: 0, end: 0 });
   const lastVisualValueRef = useRef('');
@@ -390,6 +473,42 @@ export function BbcodeEditor({
     const nextHtml = bbcodeToHtml(value);
     if (field.innerHTML !== nextHtml) field.innerHTML = nextHtml;
   }, [richTopicMode, value]);
+
+  useEffect(() => {
+    if (!sizeOpen && !colorOpen) return;
+
+    function closeDetachedMenus(event: PointerEvent) {
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+
+      if (
+        sizeOpen &&
+        !sizeMenuRef.current?.contains(target)
+      ) {
+        setSizeOpen(false);
+      }
+
+      if (
+        colorOpen &&
+        !colorMenuRef.current?.contains(target)
+      ) {
+        setColorOpen(false);
+      }
+    }
+
+    function closeOnEscape(event: globalThis.KeyboardEvent) {
+      if (event.key !== 'Escape') return;
+      setSizeOpen(false);
+      setColorOpen(false);
+    }
+
+    document.addEventListener('pointerdown', closeDetachedMenus);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeDetachedMenus);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [colorOpen, sizeOpen]);
 
   function currentSelection(): SelectionRange {
     const field = ref.current;
@@ -428,7 +547,7 @@ export function BbcodeEditor({
     selection.addRange(range);
   }
 
-  function syncVisualValue() {
+  function syncVisualValue(preserveSavedSelection = false) {
     const field = visualRef.current;
     if (!field) return;
     const nextValue = visualHtmlToBbcode(field);
@@ -442,7 +561,7 @@ export function BbcodeEditor({
     lastVisualValueRef.current = nextValue;
     setUploadError('');
     onChange(nextValue);
-    rememberVisualSelection();
+    if (!preserveSavedSelection) rememberVisualSelection();
   }
 
   function insertAt(
@@ -511,8 +630,8 @@ export function BbcodeEditor({
     span.style[property] = nextValue;
     const nextRange = document.createRange();
     nextRange.selectNodeContents(span);
-    selectVisualRange(nextRange);
-    syncVisualValue();
+    visualSelectionRef.current = nextRange.cloneRange();
+    syncVisualValue(true);
     return true;
   }
 
@@ -564,7 +683,7 @@ export function BbcodeEditor({
   }
 
   function applyCustomSize(nextSize: number) {
-    const normalized = Math.max(10, Math.min(48, nextSize));
+    const normalized = Math.max(10, Math.min(72, nextSize));
     setCustomSize(normalized);
     if (!richTopicMode) {
       insertAt(formatSelectionRef.current, `[size=${normalized}px]`, '[/size]', 'текст');
@@ -740,7 +859,7 @@ export function BbcodeEditor({
 
             {richTopicMode && (
               <>
-                <div className="bb-tool-group bb-tool-size">
+                <div ref={sizeMenuRef} className="bb-tool-group bb-tool-size">
                   <button className="bb-size-trigger" type="button" aria-expanded={sizeOpen} onMouseDown={rememberVisualSelection} onClick={() => { setSizeOpen((current) => !current); setColorOpen(false); }}>
                     <span className="bb-tool-symbol" aria-hidden="true">Aa</span>
                     <span>{customSize} px</span>
@@ -750,19 +869,19 @@ export function BbcodeEditor({
                     <div className="bb-size-popover" role="dialog" aria-label="Размер текста">
                       <div className="bb-size-presets">
                         {customSizeOptions.map((size) => (
-                          <button key={size} className={customSize === size ? 'active' : ''} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => applyCustomSize(size)}>{size}</button>
+                          <button key={size} className={customSize === size ? 'active' : ''} type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => { applyCustomSize(size); setSizeOpen(false); }}>{size}</button>
                         ))}
                       </div>
                       <label className="bb-size-range">
                         <span>Размер</span>
-                        <input type="range" min={10} max={48} step={1} value={customSize} onChange={(event) => applyCustomSize(Number(event.target.value))} />
+                        <input type="range" min={10} max={72} step={1} value={customSize} onChange={(event) => applyCustomSize(Number(event.currentTarget.value))} />
                         <output>{customSize} px</output>
                       </label>
                     </div>
                   )}
                 </div>
 
-                <div className="bb-tool-group bb-tool-color">
+                <div ref={colorMenuRef} className="bb-tool-group bb-tool-color">
                   <button className="bb-color-trigger" type="button" aria-expanded={colorOpen} onMouseDown={rememberVisualSelection} onClick={() => { setColorOpen((current) => !current); setSizeOpen(false); }}>
                     <span className="bb-color-swatch" style={{ backgroundColor: customColor }} aria-hidden="true" />
                     <span>{customColor}</span>
@@ -772,7 +891,7 @@ export function BbcodeEditor({
                     <div className="bb-color-popover" role="dialog" aria-label="Палитра цвета текста">
                       <div className="bb-color-palette">
                         {customColorOptions.map((color) => (
-                          <button key={color} className={customColor === color ? 'active' : ''} type="button" title={color} aria-label={`Применить цвет ${color}`} aria-pressed={customColor === color} style={{ backgroundColor: color }} onMouseDown={(event) => event.preventDefault()} onClick={() => applyCustomColor(color)} />
+                          <button key={color} className={customColor === color ? 'active' : ''} type="button" title={color} aria-label={`Применить цвет ${color}`} aria-pressed={customColor === color} style={{ backgroundColor: color }} onMouseDown={(event) => event.preventDefault()} onClick={() => { applyCustomColor(color); setColorOpen(false); }} />
                         ))}
                       </div>
                       <label className="bb-color-hex">
@@ -787,14 +906,14 @@ export function BbcodeEditor({
 
             <div className="bb-tool-group bb-tool-group-secondary" aria-label="Вставка и блоки">
               <button type="button" title="Добавить ссылку" aria-label="Добавить ссылку" aria-expanded={linkOpen} onMouseDown={richTopicMode ? rememberVisualSelection : undefined} onClick={beginLink}>
-                <span className="bb-tool-symbol" aria-hidden="true">⌁</span><span>Ссылка</span>
+                <ToolbarIcon name="link" /><span>Ссылка</span>
               </button>
               <button type="button" title="Вставить изображение" aria-label="Вставить изображение" disabled={uploading} onMouseDown={() => { rememberFormatSelection(); if (richTopicMode) rememberVisualSelection(); }} onClick={() => imageInputRef.current?.click()}>
-                <span className="bb-tool-symbol" aria-hidden="true">▧</span><span>{uploading ? '…' : 'Фото'}</span>
+                <ToolbarIcon name="image" /><span>{uploading ? '…' : 'Фото'}</span>
               </button>
               {tools.filter((tool) => secondaryTitles.has(tool.title)).map((tool) => (
                 <button key={tool.title} type="button" title={tool.title} aria-label={tool.title} onMouseDown={richTopicMode ? rememberVisualSelection : rememberFormatSelection} onClick={() => wrap(tool)}>
-                  <span className="bb-tool-symbol" aria-hidden="true">{tool.icon}</span><span>{tool.label}</span>
+                  <ToolbarIcon name={secondaryIconNames[tool.title]} /><span>{tool.label}</span>
                 </button>
               ))}
             </div>
