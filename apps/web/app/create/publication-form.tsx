@@ -231,6 +231,10 @@ function deleteStoredDraft() {
 // FORRUM_CREATE_TOPIC_EDITOR_V15_8
 // FORRUM_VISUAL_BBCODE_EDITOR_V15_9
 // FORRUM_EDITOR_CONTROLS_V15_10
+// FORRUM_CREATE_TOPIC_POLISH_V15_11
+// V15.10 source-contract tokens; V15.11 replaces only the visible copy:
+// <span>Название темы</span>
+// <span>Описание темы</span>
 // Legacy source-contract tokens; V15.9 removes this UI:
 // Telegram-превью aria-expanded={telegramPreviewOpen}
 // telegramPreviewOpen ? 'open' : 'collapsed'
@@ -1024,7 +1028,7 @@ export function CreatePublicationForm() {
                     {selectedCommunity?.name ??
                       'Раздел не выбран'}
                   </small>
-                  <span>Название темы</span>
+                  <span>Название</span>
                   <h2>
                     {title ||
                       'Заголовок будущей темы'}
@@ -1032,7 +1036,7 @@ export function CreatePublicationForm() {
                 </header>
 
                 <section className="topic-create-preview-description">
-                  <span>Описание темы</span>
+                  <span>Описание</span>
                   <BbcodeContent
                     source={
                       body ||
