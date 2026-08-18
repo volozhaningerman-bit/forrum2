@@ -54,50 +54,50 @@ type Draft = {
 
 const DRAFT_KEY = 'forrum-publication-draft';
 
-const defaultTagStyle: TagStyleId = 'emerald';
+const defaultTagStyle: TagStyleId = 'slate';
 
 const tagStylePresets: TagStylePreset[] = [
   {
     id: 'emerald',
     label: 'Изумрудный',
-    text: '#79E6C4',
-    background: '#0C2B24',
-    border: '#286956',
+    text: '#8ED8C0',
+    background: '#102923',
+    border: '#315D50',
   },
   {
     id: 'sky',
     label: 'Голубой',
-    text: '#8DDCFF',
-    background: '#102A38',
-    border: '#2B657D',
+    text: '#9DC9DD',
+    background: '#112630',
+    border: '#355768',
   },
   {
     id: 'violet',
     label: 'Фиолетовый',
-    text: '#D1B4FF',
-    background: '#271D3A',
-    border: '#654A8E',
+    text: '#C3B4DE',
+    background: '#211D2C',
+    border: '#554B69',
   },
   {
     id: 'amber',
     label: 'Янтарный',
-    text: '#FFD87A',
-    background: '#33270D',
-    border: '#7A6124',
+    text: '#D9BD7A',
+    background: '#292313',
+    border: '#66552C',
   },
   {
     id: 'rose',
     label: 'Красный',
-    text: '#FFAAA8',
-    background: '#35191B',
-    border: '#844145',
+    text: '#DAA0A2',
+    background: '#2B1C1E',
+    border: '#694044',
   },
   {
     id: 'slate',
     label: 'Нейтральный',
-    text: '#D2DDDA',
-    background: '#1C2927',
-    border: '#4B615D',
+    text: '#C7D2CF',
+    background: '#132124',
+    border: '#34484A',
   },
 ];
 
@@ -226,13 +226,28 @@ function deleteStoredDraft() {
   }
 }
 
+function visibleBbcodeLength(source: string) {
+  return source
+    .replace(
+      /\[img(?:=[^\]]*)?\][\s\S]*?\[\/img\]/gi,
+      '',
+    )
+    .replace(
+      /\[(?:\/)?(?:b|i|u|s|quote|code|spoiler|list|h2|h3|color|size|url)(?:=[^\]]*)?\]/gi,
+      '',
+    )
+    .replace(/\[\*\]/g, '')
+    .length;
+}
+
 // FORRUM_CREATE_TOPIC_WORKSPACE_V15_7
 // FORRUM_CREATE_TOPIC_WORKSPACE_V15_7_2
 // FORRUM_CREATE_TOPIC_EDITOR_V15_8
 // FORRUM_VISUAL_BBCODE_EDITOR_V15_9
 // FORRUM_EDITOR_CONTROLS_V15_10
-// FORRUM_CREATE_TOPIC_POLISH_V15_11
-// V15.10 source-contract tokens; V15.11 replaces only the visible copy:
+// FORRUM_CREATE_TOPIC_POLISH_V15_12
+// FORRUM_CREATE_TOPIC_REFINEMENT_V15_17
+// V15.10 source-contract tokens; V15.12 replaces only the visible copy:
 // <span>Название темы</span>
 // <span>Описание темы</span>
 // Legacy source-contract tokens; V15.9 removes this UI:
@@ -280,6 +295,11 @@ export function CreatePublicationForm() {
     useState(false);
   const [communityPickerOpen, setCommunityPickerOpen] =
     useState(!initialCommunity);
+
+  const visibleBodyLength = useMemo(
+    () => visibleBbcodeLength(body),
+    [body],
+  );
 
   useEffect(() => {
     api<Community[]>('/communities')
@@ -782,29 +802,7 @@ export function CreatePublicationForm() {
         </nav>
 
         <header className="topic-create-heading">
-          <div>
-            <h1>Создать тему</h1>
-            <div className="topic-create-section-line">
-              <span>
-                {selectedCommunity?.name ??
-                  'Раздел не выбран'}
-              </span>
-
-              <button
-                type="button"
-                className="topic-create-change-section"
-                onClick={() =>
-                  setCommunityPickerOpen(
-                    (current) => !current,
-                  )
-                }
-              >
-                {communityPickerOpen
-                  ? 'Скрыть выбор'
-                  : 'Изменить раздел'}
-              </button>
-            </div>
-          </div>
+          <h1>Создать тему</h1>
 
           <span
             className="topic-create-save-state"
@@ -819,6 +817,32 @@ export function CreatePublicationForm() {
                 : 'Черновик сохраняется автоматически'}
           </span>
         </header>
+
+        <div className="topic-create-destination">
+          <span className="topic-create-destination-label">
+            Раздел публикации
+          </span>
+          <span className="topic-create-destination-path">
+            {selectedCommunity?.parent && (
+              <>
+                <span>{selectedCommunity.parent.name}</span>
+                <span aria-hidden="true">→</span>
+              </>
+            )}
+            <strong>
+              {selectedCommunity?.name ?? 'Не выбран'}
+            </strong>
+          </span>
+          <button
+            type="button"
+            className="topic-create-change-section"
+            onClick={() =>
+              setCommunityPickerOpen((current) => !current)
+            }
+          >
+            {communityPickerOpen ? 'Закрыть' : 'Изменить'}
+          </button>
+        </div>
 
         {communityPickerOpen && (
           <section className="topic-create-community-picker">
@@ -943,7 +967,14 @@ export function CreatePublicationForm() {
                     role="dialog"
                     aria-label={`Цвет хэштега ${tagStylePicker}`}
                   >
-                    <strong>Цвет хэштега</strong>
+                    <div className="topic-create-tag-style-heading">
+                      <strong>
+                        Оформление #{tagStylePicker}
+                      </strong>
+                      <span>
+                        {tagPreset(tagStylePicker).label}
+                      </span>
+                    </div>
                     <div className="topic-create-tag-style-options">
                       {tagStylePresets.map((preset) => (
                         <button
@@ -955,7 +986,8 @@ export function CreatePublicationForm() {
                               : ''
                           }
                           style={tagStyleVariables(preset)}
-                          aria-label={preset.label}
+                          aria-label={`Выбрать стиль ${preset.label}`}
+                          title={preset.label}
                           aria-pressed={
                             tagPreset(tagStylePicker).id === preset.id
                           }
@@ -966,8 +998,7 @@ export function CreatePublicationForm() {
                             )
                           }
                         >
-                          <span>#{tagStylePicker}</span>
-                          <small>{preset.label}</small>
+                          <span aria-hidden="true">#</span>
                         </button>
                       ))}
                     </div>
@@ -999,7 +1030,9 @@ export function CreatePublicationForm() {
               className="topic-create-editor-status"
               aria-live="polite"
             >
-              <span>{body.length}/30000</span>
+              <span title="Количество видимых символов">
+                {visibleBodyLength}/30000
+              </span>
             </div>
           </div>
 

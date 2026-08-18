@@ -39,6 +39,8 @@ type SelectionRange = {
   end: number;
 };
 
+type VisualSelectionBookmark = SelectionRange;
+
 type ToolbarIconName =
   | 'link'
   | 'image'
@@ -423,6 +425,7 @@ function imageFileName(file: File) {
 // FORRUM_CREATE_TOPIC_EDITOR_V15_8
 // FORRUM_VISUAL_BBCODE_EDITOR_V15_9
 // FORRUM_EDITOR_CONTROLS_V15_10
+// FORRUM_STABLE_VISUAL_SELECTION_V15_17
 // Legacy source-contract tokens replaced by the visual controls:
 // formatSelectionRef type="number" type="color" className="bb-size-select"
 // className="bb-color-trigger" className="bb-color-popover"
@@ -445,6 +448,8 @@ export function BbcodeEditor({
   const imageInputRef = useRef<HTMLInputElement>(null);
   const visualRef = useRef<HTMLDivElement>(null);
   const visualSelectionRef = useRef<Range | null>(null);
+  const visualSelectionBookmarkRef =
+    useRef<VisualSelectionBookmark | null>(null);
   const sizeMenuRef = useRef<HTMLDivElement>(null);
   const colorMenuRef = useRef<HTMLDivElement>(null);
   const linkSelectionRef = useRef<SelectionRange>({ start: 0, end: 0 });
@@ -521,6 +526,90 @@ export function BbcodeEditor({
     formatSelectionRef.current = currentSelection();
   }
 
+  function textOffsetWithin(
+    field: HTMLElement,
+    container: Node,
+    offset: number,
+  ) {
+    try {
+      const range = document.createRange();
+      range.selectNodeContents(field);
+      range.setEnd(container, offset);
+      return range.toString().length;
+    } catch {
+      return null;
+    }
+  }
+
+  function pointAtTextOffset(
+    field: HTMLElement,
+    targetOffset: number,
+  ) {
+    const walker = document.createTreeWalker(
+      field,
+      NodeFilter.SHOW_TEXT,
+    );
+    let remaining = Math.max(0, targetOffset);
+    let lastText: Text | null = null;
+    let node = walker.nextNode();
+
+    while (node) {
+      const text = node as Text;
+      lastText = text;
+      if (remaining <= text.data.length) {
+        return { node: text as Node, offset: remaining };
+      }
+      remaining -= text.data.length;
+      node = walker.nextNode();
+    }
+
+    if (lastText) {
+      return {
+        node: lastText as Node,
+        offset: lastText.data.length,
+      };
+    }
+
+    return {
+      node: field as Node,
+      offset: field.childNodes.length,
+    };
+  }
+
+  function bookmarkVisualRange(range: Range) {
+    const field = visualRef.current;
+    if (!field || !field.contains(range.commonAncestorContainer)) {
+      return;
+    }
+
+    const start = textOffsetWithin(
+      field,
+      range.startContainer,
+      range.startOffset,
+    );
+    const end = textOffsetWithin(
+      field,
+      range.endContainer,
+      range.endOffset,
+    );
+    if (start === null || end === null) return;
+
+    visualSelectionBookmarkRef.current = { start, end };
+  }
+
+  function rangeFromVisualBookmark() {
+    const field = visualRef.current;
+    const bookmark = visualSelectionBookmarkRef.current;
+    if (!field || !bookmark) return null;
+
+    const start = pointAtTextOffset(field, bookmark.start);
+    const end = pointAtTextOffset(field, bookmark.end);
+    const range = document.createRange();
+    range.setStart(start.node, start.offset);
+    range.setEnd(end.node, end.offset);
+    return range;
+  }
+
   function rememberVisualSelection() {
     const field = visualRef.current;
     const selection = window.getSelection();
@@ -528,12 +617,17 @@ export function BbcodeEditor({
     const range = selection.getRangeAt(0);
     if (!field.contains(range.commonAncestorContainer)) return;
     visualSelectionRef.current = range.cloneRange();
+    bookmarkVisualRange(range);
   }
 
   function restoreVisualSelection() {
-    const range = visualSelectionRef.current;
+    const field = visualRef.current;
     const selection = window.getSelection();
-    if (!range || !selection) return false;
+    if (!field || !selection) return false;
+
+    const range = rangeFromVisualBookmark();
+    if (!range) return false;
+    visualSelectionRef.current = range.cloneRange();
     selection.removeAllRanges();
     selection.addRange(range);
     return true;
@@ -542,6 +636,7 @@ export function BbcodeEditor({
   function selectVisualRange(range: Range) {
     const selection = window.getSelection();
     visualSelectionRef.current = range.cloneRange();
+    bookmarkVisualRange(range);
     if (!selection) return;
     selection.removeAllRanges();
     selection.addRange(range);
@@ -606,20 +701,39 @@ export function BbcodeEditor({
     property: 'color' | 'fontSize',
     nextValue: string,
   ) {
-    const range = visualSelectionRef.current;
-    if (!range || range.collapsed) {
+    const field = visualRef.current;
+    const selection = window.getSelection();
+    if (!field || !selection || !restoreVisualSelection()) {
+      setUploadError('Сначала выделите текст.');
+      return false;
+    }
+
+    const range = selection.rangeCount
+      ? selection.getRangeAt(0).cloneRange()
+      : null;
+    if (
+      !range ||
+      range.collapsed ||
+      !field.contains(range.commonAncestorContainer)
+    ) {
       setUploadError('Сначала выделите текст.');
       return false;
     }
 
     let span: HTMLSpanElement;
     const container = range.commonAncestorContainer;
+    const containerElement =
+      container instanceof HTMLElement
+        ? container
+        : container.parentElement;
+    const closestSpan = containerElement?.closest('span');
 
     if (
-      container instanceof HTMLSpanElement &&
-      range.toString() === container.textContent
+      closestSpan instanceof HTMLSpanElement &&
+      field.contains(closestSpan) &&
+      range.toString() === closestSpan.textContent
     ) {
-      span = container;
+      span = closestSpan;
     } else {
       span = document.createElement('span');
       const fragment = range.extractContents();
@@ -630,7 +744,7 @@ export function BbcodeEditor({
     span.style[property] = nextValue;
     const nextRange = document.createRange();
     nextRange.selectNodeContents(span);
-    visualSelectionRef.current = nextRange.cloneRange();
+    selectVisualRange(nextRange);
     syncVisualValue(true);
     return true;
   }
@@ -860,7 +974,7 @@ export function BbcodeEditor({
             {richTopicMode && (
               <>
                 <div ref={sizeMenuRef} className="bb-tool-group bb-tool-size">
-                  <button className="bb-size-trigger" type="button" aria-expanded={sizeOpen} onMouseDown={rememberVisualSelection} onClick={() => { setSizeOpen((current) => !current); setColorOpen(false); }}>
+                  <button className="bb-size-trigger" type="button" aria-expanded={sizeOpen} onMouseDown={(event) => { event.preventDefault(); rememberVisualSelection(); }} onClick={() => { setSizeOpen((current) => !current); setColorOpen(false); }}>
                     <span className="bb-tool-symbol" aria-hidden="true">Aa</span>
                     <span>{customSize} px</span>
                     <span aria-hidden="true">⌄</span>
@@ -882,7 +996,7 @@ export function BbcodeEditor({
                 </div>
 
                 <div ref={colorMenuRef} className="bb-tool-group bb-tool-color">
-                  <button className="bb-color-trigger" type="button" aria-expanded={colorOpen} onMouseDown={rememberVisualSelection} onClick={() => { setColorOpen((current) => !current); setSizeOpen(false); }}>
+                  <button className="bb-color-trigger" type="button" aria-expanded={colorOpen} onMouseDown={(event) => { event.preventDefault(); rememberVisualSelection(); }} onClick={() => { setColorOpen((current) => !current); setSizeOpen(false); }}>
                     <span className="bb-color-swatch" style={{ backgroundColor: customColor }} aria-hidden="true" />
                     <span>{customColor}</span>
                     <span aria-hidden="true">⌄</span>

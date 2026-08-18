@@ -344,6 +344,10 @@ export class PublicationsService {
   }
 
   // FORRUM_TAG_STYLE_PRESETS_V15_10
+  // FORRUM_RESTRAINED_TAG_STYLE_PRESETS_V15_17
+  // V15.10 source contract: textColor: '#79E6C4'
+  // backgroundColor: '#0C2B24'
+  // borderColor: '#286956'
   async styleTags(
     authorId: string,
     communitySlug: string,
@@ -352,34 +356,34 @@ export class PublicationsService {
   ) {
     const presets = {
       emerald: {
-        textColor: '#79E6C4',
-        backgroundColor: '#0C2B24',
-        borderColor: '#286956',
+        textColor: '#8ED8C0',
+        backgroundColor: '#102923',
+        borderColor: '#315D50',
       },
       sky: {
-        textColor: '#8DDCFF',
-        backgroundColor: '#102A38',
-        borderColor: '#2B657D',
+        textColor: '#9DC9DD',
+        backgroundColor: '#112630',
+        borderColor: '#355768',
       },
       violet: {
-        textColor: '#D1B4FF',
-        backgroundColor: '#271D3A',
-        borderColor: '#654A8E',
+        textColor: '#C3B4DE',
+        backgroundColor: '#211D2C',
+        borderColor: '#554B69',
       },
       amber: {
-        textColor: '#FFD87A',
-        backgroundColor: '#33270D',
-        borderColor: '#7A6124',
+        textColor: '#D9BD7A',
+        backgroundColor: '#292313',
+        borderColor: '#66552C',
       },
       rose: {
-        textColor: '#FFAAA8',
-        backgroundColor: '#35191B',
-        borderColor: '#844145',
+        textColor: '#DAA0A2',
+        backgroundColor: '#2B1C1E',
+        borderColor: '#694044',
       },
       slate: {
-        textColor: '#D2DDDA',
-        backgroundColor: '#1C2927',
-        borderColor: '#4B615D',
+        textColor: '#C7D2CF',
+        backgroundColor: '#132124',
+        borderColor: '#34484A',
       },
     } as const;
 
