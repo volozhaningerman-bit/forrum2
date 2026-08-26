@@ -1,16 +1,17 @@
-name: Deploy FORRUM Web
+name: Deploy FORRUM API
 
 on:
   push:
     branches:
       - main
     paths:
-      - "apps/web/**"
+      - "apps/api/**"
       - "packages/contracts/**"
-      - "Dockerfile.web"
+      - "Dockerfile.api"
       - "package.json"
       - "package-lock.json"
-      - ".github/workflows/deploy-forrum-web.yml"
+      - "docker-compose.yml"
+      - ".github/workflows/deploy-forrum-api.yml"
 
   workflow_dispatch:
 
@@ -20,15 +21,15 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy to FirstVDS
+    name: Deploy API to FirstVDS
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Prepare SSH
         shell: bash
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.FORRUM_SSH_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.FORRUM_API_SSH_KEY }}
           SSH_HOST: ${{ secrets.FORRUM_HOST }}
         run: |
           set -euo pipefail
@@ -36,13 +37,13 @@ jobs:
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/forrum_actions
-          chmod 600 ~/.ssh/forrum_actions
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/forrum_api_actions
+          chmod 600 ~/.ssh/forrum_api_actions
 
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Deploy FORRUM
+      - name: Deploy FORRUM API
         shell: bash
         env:
           SSH_HOST: ${{ secrets.FORRUM_HOST }}
@@ -51,20 +52,15 @@ jobs:
           set -euo pipefail
 
           ssh \
-            -i ~/.ssh/forrum_actions \
+            -i ~/.ssh/forrum_api_actions \
             -o BatchMode=yes \
             -o StrictHostKeyChecking=yes \
             "$SSH_USER@$SSH_HOST" deploy
 
-      - name: Verify production
+      - name: Verify production API
         shell: bash
         run: |
           set -euo pipefail
-
-          curl --fail --silent --show-error \
-            --retry 5 \
-            --retry-delay 3 \
-            https://4rrum.ru/ > /dev/null
 
           curl --fail --silent --show-error \
             --retry 5 \
