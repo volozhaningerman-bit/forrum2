@@ -29,7 +29,7 @@ jobs:
       - name: Prepare SSH
         shell: bash
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.FORRUM_API_SSH_KEY }}
+          SSH_PRIVATE_KEY_B64: ${{ secrets.FORRUM_API_SSH_KEY_B64 }}
           SSH_HOST: ${{ secrets.FORRUM_HOST }}
         run: |
           set -euo pipefail
@@ -37,8 +37,9 @@ jobs:
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
 
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/forrum_api_actions
+          printf '%s' "$SSH_PRIVATE_KEY_B64" | base64 -d > ~/.ssh/forrum_api_actions
           chmod 600 ~/.ssh/forrum_api_actions
+          ssh-keygen -y -f ~/.ssh/forrum_api_actions > /dev/null
 
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
