@@ -1,0 +1,72 @@
+name: Deploy FORRUM Web
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/web/**"
+      - "packages/contracts/**"
+      - "Dockerfile.web"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy-forrum-web.yml"
+
+  workflow_dispatch:
+
+concurrency:
+  group: forrum-production-web
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to FirstVDS
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Prepare SSH
+        shell: bash
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.FORRUM_SSH_KEY }}
+          SSH_HOST: ${{ secrets.FORRUM_HOST }}
+        run: |
+          set -euo pipefail
+
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/forrum_actions
+          chmod 600 ~/.ssh/forrum_actions
+
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy FORRUM
+        shell: bash
+        env:
+          SSH_HOST: ${{ secrets.FORRUM_HOST }}
+          SSH_USER: ${{ secrets.FORRUM_USER }}
+        run: |
+          set -euo pipefail
+
+          ssh \
+            -i ~/.ssh/forrum_actions \
+            -o BatchMode=yes \
+            -o StrictHostKeyChecking=yes \
+            "$SSH_USER@$SSH_HOST" deploy
+
+      - name: Verify production
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          curl --fail --silent --show-error \
+            --retry 5 \
+            --retry-delay 3 \
+            https://4rrum.ru/ > /dev/null
+
+          curl --fail --silent --show-error \
+            --retry 5 \
+            --retry-delay 3 \
+            https://api.4rrum.ru/v1/health
