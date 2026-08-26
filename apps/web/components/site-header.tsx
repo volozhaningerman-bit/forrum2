@@ -13,7 +13,7 @@ import { MainNav } from './main-nav';
 export function SiteHeader() {
   return (
     <>
-      <header className="header">
+      <header data-forrum-shell="header" className="header">
         <div className="shell nav">
           <Link
             className="brand"

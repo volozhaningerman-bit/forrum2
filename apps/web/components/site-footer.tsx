@@ -11,7 +11,7 @@ export function SiteFooter() {
 
 
   return (
-    <footer className={`site-footer ${isHome ? 'site-footer-home' : ''}`}>
+    <footer data-forrum-shell="footer" className={`site-footer ${isHome ? 'site-footer-home' : ''}`}>
       <div className="site-footer-inner">
         <span className="site-footer-copy">
           © FORRUM, {new Date().getFullYear()}
