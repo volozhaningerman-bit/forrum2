@@ -1,5 +1,5 @@
 const DEFAULT_PUBLIC_API =
-  'https://api-production-37ce.up.railway.app';
+  'https://api.4rrum.ru';
 
 function addProtocol(value: string) {
   if (/^https?:\/\//i.test(value)) return value;
