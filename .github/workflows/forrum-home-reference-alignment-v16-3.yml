@@ -1,0 +1,209 @@
+name: FORRUM Home Reference Alignment V16.3
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-home-reference-alignment-v16-3
+  cancel-in-progress: false
+
+env:
+  NODE_ENV: test
+
+jobs:
+  home-reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify clean baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          test -f apps/web/components/site-header.tsx
+          test -f apps/web/components/home-dashboard.tsx
+          test -f apps/web/app/globals.css
+          test -f scripts/home-paper-graphite-v16-check.mjs
+          test -f scripts/global-shell-v16-1-check.mjs
+
+      - name: Apply reference alignment
+        shell: bash
+        env:
+          PATCH_B64: ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCmltcG9ydCByZQoKSEVBREVSID0gUGF0aCgiYXBwcy93ZWIvY29tcG9uZW50cy9zaXRlLWhlYWRlci50c3giKQpIT01FID0gUGF0aCgiYXBwcy93ZWIvY29tcG9uZW50cy9ob21lLWRhc2hib2FyZC50c3giKQpDU1MgPSBQYXRoKCJhcHBzL3dlYi9hcHAvZ2xvYmFscy5jc3MiKQoKZm9yIHBhdGggaW4gKEhFQURFUiwgSE9NRSwgQ1NTKToKICAgIGlmIG5vdCBwYXRoLmV4aXN0cygpOgogICAgICAgIHJhaXNlIFN5c3RlbUV4aXQoZiJSZXF1aXJlZCBzb3VyY2UgZmlsZSBpcyBtaXNzaW5nOiB7cGF0aH0iKQoKaGVhZGVyID0gSEVBREVSLnJlYWRfdGV4dChlbmNvZGluZz0idXRmLTgiKQpob21lID0gSE9NRS5yZWFkX3RleHQoZW5jb2Rpbmc9InV0Zi04IikKY3NzID0gQ1NTLnJlYWRfdGV4dChlbmNvZGluZz0idXRmLTgiKQoKZGVmIHJlcGxhY2VfaHJlZihzb3VyY2U6IHN0ciwgb2xkOiBzdHIsIG5ldzogc3RyKToKICAgIHZhcmlhbnRzID0gWwogICAgICAgIChmJ2hyZWY9IntvbGR9IicsIGYnaHJlZj0ie25ld30iJyksCiAgICAgICAgKGYiaHJlZj0ne29sZH0nIiwgZiJocmVmPSd7bmV3fSciKSwKICAgICAgICAoZidocmVmOiAie29sZH0iJywgZidocmVmOiAie25ld30iJyksCiAgICAgICAgKGYiaHJlZjogJ3tvbGR9JyIsIGYiaHJlZjogJ3tuZXd9JyIpLAogICAgXQogICAgY2hhbmdlZCA9IEZhbHNlCiAgICBmb3IgYmVmb3JlLCBhZnRlciBpbiB2YXJpYW50czoKICAgICAgICBpZiBiZWZvcmUgaW4gc291cmNlOgogICAgICAgICAgICBzb3VyY2UgPSBzb3VyY2UucmVwbGFjZShiZWZvcmUsIGFmdGVyKQogICAgICAgICAgICBjaGFuZ2VkID0gVHJ1ZQogICAgcmV0dXJuIHNvdXJjZSwgY2hhbmdlZAoKcm91dGVfY2hhbmdlcyA9IFsKICAgICgiL3NlcnZpY2VzIiwgIi9mZWVkIiwgItCj0YHQu9GD0LPQuCIsICLQotC10LzRiyIpLAogICAgKCIvbWVkaWEiLCAiL3VzZXJzIiwgItCc0LXQtNC40LAiLCAi0J/QvtC70YzQt9C+0LLQsNGC0LXQu9C4IiksCiAgICAoIi9uZXdzIiwgIi9hcmNoaXZlIiwgItCd0L7QstC+0YHRgtC4IiwgItCQ0YDRhdC40LIiKSwKXQoKZm9yIG9sZF9ocmVmLCBuZXdfaHJlZiwgb2xkX2xhYmVsLCBuZXdfbGFiZWwgaW4gcm91dGVfY2hhbmdlczoKICAgIGhlYWRlciwgY2hhbmdlZCA9IHJlcGxhY2VfaHJlZihoZWFkZXIsIG9sZF9ocmVmLCBuZXdfaHJlZikKICAgIGlmIG5vdCBjaGFuZ2VkIGFuZCBuZXdfaHJlZiBub3QgaW4gaGVhZGVyOgogICAgICAgIHJhaXNlIFN5c3RlbUV4aXQoCiAgICAgICAgICAgIGYiQ291bGQgbm90IGZpbmQgaGVhZGVyIHJvdXRlIHtvbGRfaHJlZiFyfTsgc291cmNlIHNoYXBlIGNoYW5nZWQuIgogICAgICAgICkKICAgIGhlYWRlciA9IGhlYWRlci5yZXBsYWNlKG9sZF9sYWJlbCwgbmV3X2xhYmVsKQoKZm9yIHJlamVjdGVkIGluIFsiL3NlcnZpY2VzIiwgIi9tZWRpYSIsICIvbmV3cyIsICLQo9GB0LvRg9Cz0LgiLCAi0JzQtdC00LjQsCIsICLQndC+0LLQvtGB0YLQuCJdOgogICAgaWYgcmVqZWN0ZWQgaW4gaGVhZGVyOgogICAgICAgIHJhaXNlIFN5c3RlbUV4aXQoZiJMZWdhY3kgaGVhZGVyIG5hdmlnYXRpb24gcmVtYWluczoge3JlamVjdGVkfSIpCgpmb3IgcmVxdWlyZWQgaW4gWyIvZmVlZCIsICIvdXNlcnMiLCAiL2FyY2hpdmUiLCAi0KLQtdC80YsiLCAi0J/QvtC70YzQt9C+0LLQsNGC0LXQu9C4IiwgItCQ0YDRhdC40LIiXToKICAgIGlmIHJlcXVpcmVkIG5vdCBpbiBoZWFkZXI6CiAgICAgICAgcmFpc2UgU3lzdGVtRXhpdChmIkFwcHJvdmVkIGhlYWRlciBuYXZpZ2F0aW9uIG1pc3Npbmc6IHtyZXF1aXJlZH0iKQoKSEVBREVSLndyaXRlX3RleHQoaGVhZGVyLCBlbmNvZGluZz0idXRmLTgiKQoKdG9waWNfc3RhcnQgPSBob21lLmZpbmQoImZ1bmN0aW9uIFRvcGljUm93KHsiKQp0b3BpY19lbmQgPSBob21lLmZpbmQoIlxuZnVuY3Rpb24gVHJlZUJyYW5jaCh7IikKCmlmIHRvcGljX3N0YXJ0IDwgMCBvciB0b3BpY19lbmQgPCAwIG9yIHRvcGljX2VuZCA8PSB0b3BpY19zdGFydDoKICAgIHJhaXNlIFN5c3RlbUV4aXQoIkNvdWxkIG5vdCBpc29sYXRlIFRvcGljUm93IGluIGhvbWUtZGFzaGJvYXJkLnRzeCIpCgpuZXdfdG9waWNfZnVuY3Rpb24gPSAnZnVuY3Rpb24gVG9waWNSb3coe1xuICBpdGVtLFxuICBjb21wYWN0ID0gZmFsc2UsXG59OiB7XG4gIGl0ZW06IFB1YmxpY2F0aW9uQ2FyZERhdGE7XG4gIGNvbXBhY3Q/OiBib29sZWFuO1xufSkge1xuICBjb25zdCB0aXRsZSA9IGl0ZW0udGl0bGU/LnRyaW0oKSB8fCBcJ9Ci0LXQvNCwINCx0LXQtyDQt9Cw0LPQvtC70L7QstC60LBcJztcbiAgY29uc3QgZGF0ZSA9IGl0ZW0ubGFzdEFjdGl2aXR5QXQgfHwgaXRlbS5jcmVhdGVkQXQ7XG5cbiAgaWYgKGNvbXBhY3QpIHtcbiAgICByZXR1cm4gKFxuICAgICAgPExpbmtcbiAgICAgICAgY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX25ldy10b3BpYyJcbiAgICAgICAgaHJlZj17YC9wLyR7aXRlbS5zbHVnfWB9XG4gICAgICA+XG4gICAgICAgIDxzdHJvbmcgY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX25ldy10b3BpYy10aXRsZSI+XG4gICAgICAgICAge3RpdGxlfVxuICAgICAgICA8L3N0cm9uZz5cbiAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX25ldy10b3BpYy1zZWN0aW9uIj5cbiAgICAgICAgICB7aXRlbS5jb21tdW5pdHkubmFtZX1cbiAgICAgICAgPC9zcGFuPlxuICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLWF1dGhvciI+XG4gICAgICAgICAgQHtpdGVtLmF1dGhvci51c2VybmFtZX1cbiAgICAgICAgPC9zcGFuPlxuICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLW51bWJlciI+XG4gICAgICAgICAge2Zvcm1hdENvdW50KGl0ZW0uY29tbWVudENvdW50KX1cbiAgICAgICAgPC9zcGFuPlxuICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLW51bWJlciI+XG4gICAgICAgICAge2Zvcm1hdENvdW50KGl0ZW0udmlld0NvdW50KX1cbiAgICAgICAgPC9zcGFuPlxuICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLWxhc3QiPlxuICAgICAgICAgIHtyZWxhdGl2ZVRpbWUoZGF0ZSl9XG4gICAgICAgIDwvc3Bhbj5cbiAgICAgIDwvTGluaz5cbiAgICApO1xuICB9XG5cbiAgcmV0dXJuIChcbiAgICA8TGlua1xuICAgICAgY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX3RvcGljIlxuICAgICAgaHJlZj17YC9wLyR7aXRlbS5zbHVnfWB9XG4gICAgPlxuICAgICAgPENvbW11bml0eU1hcmtcbiAgICAgICAgY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX3RvcGljLW1hcmsiXG4gICAgICAgIG5hbWU9e2l0ZW0uY29tbXVuaXR5Lm5hbWV9XG4gICAgICAgIHVybD17aXRlbS5jb21tdW5pdHkuYXZhdGFyVXJsfVxuICAgICAgICBzaXplPXszOH1cbiAgICAgIC8+XG5cbiAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X190b3BpYy1jb3B5Ij5cbiAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX3RvcGljLXRpdGxlIj5cbiAgICAgICAgICA8c3BhblxuICAgICAgICAgICAgY2xhc3NOYW1lPXtgZm9ycnVtLWhvbWUtdjE2X190eXBlIHR5cGUtJHtpdGVtLnR5cGUudG9Mb3dlckNhc2UoKX1gfVxuICAgICAgICAgID5cbiAgICAgICAgICAgIHtwdWJsaWNhdGlvblR5cGVOYW1lW2l0ZW0udHlwZV0gPz8gXCfQotC10LzQsFwnfVxuICAgICAgICAgIDwvc3Bhbj5cbiAgICAgICAgICA8c3Ryb25nPnt0aXRsZX08L3N0cm9uZz5cbiAgICAgICAgPC9zcGFuPlxuXG4gICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X190b3BpYy1leGNlcnB0Ij5cbiAgICAgICAgICB7aXRlbS5leGNlcnB0fVxuICAgICAgICA8L3NwYW4+XG5cbiAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX3RvcGljLW1ldGEiPlxuICAgICAgICAgIDxzcGFuPkB7aXRlbS5hdXRob3IudXNlcm5hbWV9PC9zcGFuPlxuICAgICAgICAgIDxzcGFuIGFyaWEtaGlkZGVuPSJ0cnVlIj7igLo8L3NwYW4+XG4gICAgICAgICAgPHNwYW4+e2l0ZW0uY29tbXVuaXR5Lm5hbWV9PC9zcGFuPlxuICAgICAgICA8L3NwYW4+XG4gICAgICA8L3NwYW4+XG5cbiAgICAgIDxzcGFuXG4gICAgICAgIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X190b3BpYy1zdGF0cyJcbiAgICAgICAgYXJpYS1sYWJlbD0i0KHRgtCw0YLQuNGB0YLQuNC60LAg0YLQtdC80YsiXG4gICAgICA+XG4gICAgICAgIDxzcGFuIHRpdGxlPSLQntGC0LLQtdGC0YsiPlxuICAgICAgICAgIDxzcGFuIGFyaWEtaGlkZGVuPSJ0cnVlIj7il6s8L3NwYW4+XG4gICAgICAgICAge2Zvcm1hdENvdW50KGl0ZW0uY29tbWVudENvdW50KX1cbiAgICAgICAgPC9zcGFuPlxuICAgICAgICA8c3BhbiB0aXRsZT0i0J/RgNC+0YHQvNC+0YLRgNGLIj5cbiAgICAgICAgICA8c3BhbiBhcmlhLWhpZGRlbj0idHJ1ZSI+4peJPC9zcGFuPlxuICAgICAgICAgIHtmb3JtYXRDb3VudChpdGVtLnZpZXdDb3VudCl9XG4gICAgICAgIDwvc3Bhbj5cbiAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX3RvcGljLXRpbWUiPlxuICAgICAgICAgIHtyZWxhdGl2ZVRpbWUoZGF0ZSl9XG4gICAgICAgIDwvc3Bhbj5cbiAgICAgIDwvc3Bhbj5cbiAgICA8L0xpbms+XG4gICk7XG59XG4nCmhvbWUgPSBob21lWzp0b3BpY19zdGFydF0gKyBuZXdfdG9waWNfZnVuY3Rpb24gKyBob21lW3RvcGljX2VuZDpdCgpvbGRfbmV3X3RvcGljcyA9ICcgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fdG9waWMtbGlzdCBpcy1jb21wYWN0Ij5cbiAgICAgICAgICAgIHtuZXdlc3QubGVuZ3RoID8gKFxuICAgICAgICAgICAgICBuZXdlc3QubWFwKChpdGVtKSA9PiAoXG4gICAgICAgICAgICAgICAgPFRvcGljUm93XG4gICAgICAgICAgICAgICAgICBrZXk9e2l0ZW0uaWR9XG4gICAgICAgICAgICAgICAgICBpdGVtPXtpdGVtfVxuICAgICAgICAgICAgICAgICAgY29tcGFjdFxuICAgICAgICAgICAgICAgIC8+XG4gICAgICAgICAgICAgICkpXG4gICAgICAgICAgICApIDogKFxuICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fZW1wdHkiPlxuICAgICAgICAgICAgICAgINCd0L7QstGL0YUg0YLQtdC8INC/0L7QutCwINC90LXRgi5cbiAgICAgICAgICAgICAgPC9wPlxuICAgICAgICAgICAgKX1cbiAgICAgICAgICA8L2Rpdj4nCm5ld19uZXdfdG9waWNzID0gJyAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtdGFibGUiPlxuICAgICAgICAgICAgPGRpdlxuICAgICAgICAgICAgICBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLWhlYWQiXG4gICAgICAgICAgICAgIGFyaWEtaGlkZGVuPSJ0cnVlIlxuICAgICAgICAgICAgPlxuICAgICAgICAgICAgICA8c3Bhbj7QotC10LzQsDwvc3Bhbj5cbiAgICAgICAgICAgICAgPHNwYW4+0KDQsNC30LTQtdC7PC9zcGFuPlxuICAgICAgICAgICAgICA8c3Bhbj7QkNCy0YLQvtGAPC9zcGFuPlxuICAgICAgICAgICAgICA8c3Bhbj7QntGC0LLQtdGC0Ys8L3NwYW4+XG4gICAgICAgICAgICAgIDxzcGFuPtCf0YDQvtGB0LzQvtGC0YDRizwvc3Bhbj5cbiAgICAgICAgICAgICAgPHNwYW4+0J/QvtGB0LvQtdC00L3QtdC1INGB0L7QvtCx0YnQtdC90LjQtTwvc3Bhbj5cbiAgICAgICAgICAgIDwvZGl2PlxuXG4gICAgICAgICAgICB7bmV3ZXN0Lmxlbmd0aCA/IChcbiAgICAgICAgICAgICAgbmV3ZXN0Lm1hcCgoaXRlbSkgPT4gKFxuICAgICAgICAgICAgICAgIDxUb3BpY1Jvd1xuICAgICAgICAgICAgICAgICAga2V5PXtpdGVtLmlkfVxuICAgICAgICAgICAgICAgICAgaXRlbT17aXRlbX1cbiAgICAgICAgICAgICAgICAgIGNvbXBhY3RcbiAgICAgICAgICAgICAgICAvPlxuICAgICAgICAgICAgICApKVxuICAgICAgICAgICAgKSA6IChcbiAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX2VtcHR5Ij5cbiAgICAgICAgICAgICAgICDQndC+0LLRi9GFINGC0LXQvCDQv9C+0LrQsCDQvdC10YIuXG4gICAgICAgICAgICAgIDwvcD5cbiAgICAgICAgICAgICl9XG4gICAgICAgICAgPC9kaXY+JwoKaWYgb2xkX25ld190b3BpY3Mgbm90IGluIGhvbWU6CiAgICByYWlzZSBTeXN0ZW1FeGl0KAogICAgICAgICJDb3VsZCBub3QgZmluZCBjYW5vbmljYWwgVjE2IG5ldy10b3BpY3MgYmxvY2s7IHJlZnVzaW5nIHVuc2FmZSBwYXRjaC4iCiAgICApCgpob21lID0gaG9tZS5yZXBsYWNlKG9sZF9uZXdfdG9waWNzLCBuZXdfbmV3X3RvcGljcywgMSkKCmZvciByZXF1aXJlZCBpbiBbCiAgICAiZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtdGFibGUiLAogICAgImZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLWhlYWQiLAogICAgImZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljIiwKICAgICLQn9C+0YHQu9C10LTQvdC10LUg0YHQvtC+0LHRidC10L3QuNC1IiwKXToKICAgIGlmIHJlcXVpcmVkIG5vdCBpbiBob21lOgogICAgICAgIHJhaXNlIFN5c3RlbUV4aXQoZiJIb21lIHJlZmVyZW5jZSBhbGlnbm1lbnQgbWlzc2luZzoge3JlcXVpcmVkfSIpCgpIT01FLndyaXRlX3RleHQoaG9tZSwgZW5jb2Rpbmc9InV0Zi04IikKCmZyZXNoID0gUGF0aCgiL3RtcC9mb3JydW0taG9tZS1yZWZlcmVuY2UtdjE2LTMuY3NzIikucmVhZF90ZXh0KAogICAgZW5jb2Rpbmc9InV0Zi04IgopLnN0cmlwKCkKCnBhdHRlcm4gPSByZS5jb21waWxlKAogICAgciIvXCogRk9SUlVNX0hPTUVfUkVGRVJFTkNFX1YxNl8zX1NUQVJUIgogICAgciJbXHNcU10qPyIKICAgIHIiL1wqIEZPUlJVTV9IT01FX1JFRkVSRU5DRV9WMTZfM19FTkQgXCovXHMqIgopCgpjc3MgPSBwYXR0ZXJuLnN1YigiIiwgY3NzKS5yc3RyaXAoKQpDU1Mud3JpdGVfdGV4dChjc3MgKyAiXG5cbiIgKyBmcmVzaCArICJcbiIsIGVuY29kaW5nPSJ1dGYtOCIpCg==
+          CSS_B64: LyogRk9SUlVNX0hPTUVfUkVGRVJFTkNFX1YxNl8zX1NUQVJUCiAgIEFwcHJvdmVkIHJlZmVyZW5jZSBhbGlnbm1lbnQuCiAgIFBhcGVyIGFuZCBHcmFwaGl0ZSB1c2UgdGhlIGV4YWN0IHNhbWUgZ2VvbWV0cnkuCiAgIEdyYXBoaXRlIG92ZXJyaWRlcyBvbmx5IHZpc3VhbCB0b2tlbnMuCiovCjpyb290IHsKICAtLWZyMy1wYWdlOiAjZWNlYmU3OwogIC0tZnIzLXN1cmZhY2U6ICNmNWY0ZjA7CiAgLS1mcjMtcGFuZWw6ICNmYWY5ZjY7CiAgLS1mcjMtbGluZTogI2M5YzdjMTsKICAtLWZyMy1saW5lLXN0cm9uZzogIzk0OTI4YzsKICAtLWZyMy10ZXh0OiAjMjIyMjIyOwogIC0tZnIzLW11dGVkOiAjNmI2OTY0OwogIC0tZnIzLWZhaW50OiAjOGE4ODgyOwogIC0tZnIzLWFjY2VudDogIzE3NjlmZjsKICAtLWZyMy1hY2NlbnQtdGV4dDogI2ZmZmZmZjsKfQoKaHRtbC5kYXJrLApodG1sW2RhdGEtdGhlbWU9ImRhcmsiXSwKaHRtbFtkYXRhLXRoZW1lPSJncmFwaGl0ZSJdLApodG1sW2RhdGEtZm9ycnVtLXRoZW1lPSJncmFwaGl0ZSJdIHsKICAtLWZyMy1wYWdlOiAjMTIxNDE2OwogIC0tZnIzLXN1cmZhY2U6ICMxODFiMWY7CiAgLS1mcjMtcGFuZWw6ICMxNzFhMWQ7CiAgLS1mcjMtbGluZTogIzM0M2E0MDsKICAtLWZyMy1saW5lLXN0cm9uZzogIzU3NWU2NTsKICAtLWZyMy10ZXh0OiAjZWNlY2VjOwogIC0tZnIzLW11dGVkOiAjYTJhOGFlOwogIC0tZnIzLWZhaW50OiAjN2M4MzhhOwogIC0tZnIzLWFjY2VudDogIzJjNzBmZjsKICAtLWZyMy1hY2NlbnQtdGV4dDogI2ZmZmZmZjsKfQoKW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSB7CiAgYmFja2dyb3VuZDogdmFyKC0tZnIzLXN1cmZhY2UpICFpbXBvcnRhbnQ7CiAgYm9yZGVyLWJvdHRvbS1jb2xvcjogdmFyKC0tZnIzLWxpbmUpICFpbXBvcnRhbnQ7CiAgY29sb3I6IHZhcigtLWZyMy10ZXh0KSAhaW1wb3J0YW50Owp9CgpbZGF0YS1mb3JydW0tc2hlbGw9ImhlYWRlciJdID4gKiB7CiAgd2lkdGg6IG1pbihjYWxjKDEwMCUgLSAyNHB4KSwgMTY4MHB4KSAhaW1wb3J0YW50OwogIG1heC13aWR0aDogMTY4MHB4ICFpbXBvcnRhbnQ7Cn0KCltkYXRhLWZvcnJ1bS1zaGVsbD0iaGVhZGVyIl0gYSB7CiAgY29sb3I6IHZhcigtLWZyMy10ZXh0KTsKfQoKW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSBhW2FyaWEtY3VycmVudD0icGFnZSJdLApbZGF0YS1mb3JydW0tc2hlbGw9ImhlYWRlciJdIFtkYXRhLWFjdGl2ZT0idHJ1ZSJdIHsKICBjb2xvcjogdmFyKC0tZnIzLWFjY2VudCkgIWltcG9ydGFudDsKfQoKW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSBhW2FyaWEtY3VycmVudD0icGFnZSJdOjphZnRlciwKW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSBbZGF0YS1hY3RpdmU9InRydWUiXTo6YWZ0ZXIgewogIGJhY2tncm91bmQ6IHZhcigtLWZyMy1hY2NlbnQpICFpbXBvcnRhbnQ7Cn0KCltkYXRhLWZvcnJ1bS1zaGVsbD0iaGVhZGVyIl0gaW5wdXQgewogIGJhY2tncm91bmQ6IHZhcigtLWZyMy1wYW5lbCkgIWltcG9ydGFudDsKICBib3JkZXItY29sb3I6IHZhcigtLWZyMy1saW5lKSAhaW1wb3J0YW50OwogIGNvbG9yOiB2YXIoLS1mcjMtdGV4dCkgIWltcG9ydGFudDsKfQoKW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSBhW2hyZWYqPSJyZWdpc3RlciJdIHsKICBib3JkZXItY29sb3I6IHZhcigtLWZyMy1hY2NlbnQpICFpbXBvcnRhbnQ7CiAgYmFja2dyb3VuZDogdmFyKC0tZnIzLWFjY2VudCkgIWltcG9ydGFudDsKICBjb2xvcjogdmFyKC0tZnIzLWFjY2VudC10ZXh0KSAhaW1wb3J0YW50Owp9CgouZm9ycnVtLWhvbWUtdjE2IHsKICBncmlkLXRlbXBsYXRlLWNvbHVtbnM6IDI5MnB4IG1pbm1heCgwLCAxZnIpIDMwNnB4OwogIGdhcDogMTJweDsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1yb290ID4KLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1ub2RlID4KLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1yb3cKLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1uYW1lIHsKICBmb250LXdlaWdodDogNzAwOwp9CgouZm9ycnVtLWhvbWUtdjE2X190cmVlLWNoaWxkcmVuIHsKICBtYXJnaW4tbGVmdDogOXB4OwogIHBhZGRpbmctbGVmdDogMTNweDsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1jaGlsZHJlbjo6YmVmb3JlIHsKICBsZWZ0OiAycHg7CiAgYm9yZGVyLWxlZnQ6IDFweCBkb3R0ZWQgdmFyKC0tZnIzLWxpbmUtc3Ryb25nKTsKICBvcGFjaXR5OiAxOwp9CgouZm9ycnVtLWhvbWUtdjE2X190cmVlLWNoaWxkcmVuID4KLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1ub2RlOjpiZWZvcmUgewogIGxlZnQ6IC0xMXB4OwogIHdpZHRoOiAxMnB4OwogIGJvcmRlci10b3A6IDFweCBkb3R0ZWQgdmFyKC0tZnIzLWxpbmUtc3Ryb25nKTsKICBvcGFjaXR5OiAxOwp9CgouZm9ycnVtLWhvbWUtdjE2X190cmVlLXJvdyB7CiAgbWluLWhlaWdodDogMjlweDsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1saW5rIHsKICBtaW4taGVpZ2h0OiAyOHB4OwogIGdhcDogNXB4OwogIHBhZGRpbmctYmxvY2s6IDFweDsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1mb2xkZXIgewogIGNvbG9yOiB2YXIoLS1mcjMtbXV0ZWQpOwp9CgouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtdGFibGUgewogIHBhZGRpbmc6IDAgMTJweCA1cHg7CiAgbWluLXdpZHRoOiAwOwp9CgouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtaGVhZCwKLmZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljIHsKICBkaXNwbGF5OiBncmlkOwogIGdyaWQtdGVtcGxhdGUtY29sdW1uczoKICAgIG1pbm1heCgyMjBweCwgMS43NWZyKQogICAgbWlubWF4KDEyMHB4LCAxZnIpCiAgICBtaW5tYXgoMTA1cHgsIDAuODZmcikKICAgIDU4cHgKICAgIDcycHgKICAgIG1pbm1heCgxMDRweCwgMC44ZnIpOwogIGNvbHVtbi1nYXA6IDEwcHg7CiAgYWxpZ24taXRlbXM6IGNlbnRlcjsKICBtaW4td2lkdGg6IDA7Cn0KCi5mb3JydW0taG9tZS12MTZfX25ldy10b3BpYy1oZWFkIHsKICBtaW4taGVpZ2h0OiAzMHB4OwogIGJvcmRlci1ib3R0b206IDFweCBzb2xpZCB2YXIoLS1mcjMtbGluZSk7CiAgY29sb3I6IHZhcigtLWZyMy1tdXRlZCk7CiAgZm9udC1zaXplOiAxMHB4OwogIGZvbnQtd2VpZ2h0OiA2NTA7Cn0KCi5mb3JydW0taG9tZS12MTZfX25ldy10b3BpYyB7CiAgbWluLWhlaWdodDogMzRweDsKICBib3JkZXItYm90dG9tOiAxcHggc29saWQgdmFyKC0tZnIzLWxpbmUpOwogIGNvbG9yOiB2YXIoLS1mcjMtbXV0ZWQpOwogIGZvbnQtc2l6ZTogMTFweDsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljOmxhc3QtY2hpbGQgewogIGJvcmRlci1ib3R0b206IDA7Cn0KCi5mb3JydW0taG9tZS12MTZfX25ldy10b3BpYzpob3ZlcgouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtdGl0bGUsCi5mb3JydW0taG9tZS12MTZfX25ldy10b3BpYzpmb2N1cy12aXNpYmxlCi5mb3JydW0taG9tZS12MTZfX25ldy10b3BpYy10aXRsZSB7CiAgY29sb3I6IHZhcigtLWZyMy1hY2NlbnQpOwp9CgouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtdGl0bGUsCi5mb3JydW0taG9tZS12MTZfX25ldy10b3BpYy1zZWN0aW9uLAouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtYXV0aG9yLAouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtbGFzdCB7CiAgbWluLXdpZHRoOiAwOwogIG92ZXJmbG93OiBoaWRkZW47CiAgdGV4dC1vdmVyZmxvdzogZWxsaXBzaXM7CiAgd2hpdGUtc3BhY2U6IG5vd3JhcDsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLXRpdGxlIHsKICBjb2xvcjogdmFyKC0tZnIzLXRleHQpOwogIGZvbnQtc2l6ZTogMTFweDsKICBmb250LXdlaWdodDogNjIwOwp9CgouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtbnVtYmVyIHsKICB0ZXh0LWFsaWduOiBjZW50ZXI7CiAgY29sb3I6IHZhcigtLWZyMy10ZXh0KTsKICBmb250LXZhcmlhbnQtbnVtZXJpYzogdGFidWxhci1udW1zOwp9CgouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtbGFzdCB7CiAgdGV4dC1hbGlnbjogcmlnaHQ7CiAgY29sb3I6IHZhcigtLWZyMy1mYWludCk7Cn0KCi5mb3JydW0taG9tZS12MTZfX3BhbmVsLAouZm9ycnVtLWhvbWUtdjE2X190cmVlIHsKICBib3JkZXItcmFkaXVzOiAycHg7Cn0KCi5mb3JydW0taG9tZS12MTZfX3BhbmVsLWhlYWQgewogIG1pbi1oZWlnaHQ6IDQwcHg7Cn0KCi5mb3JydW0taG9tZS12MTZfX3BhbmVsLWhlYWQgaDIsCi5mb3JydW0taG9tZS12MTZfX3NpZGUtaGVhZCBoMiB7CiAgZm9udC1zaXplOiAxMnB4OwogIGxldHRlci1zcGFjaW5nOiAwLjAyNWVtOwp9CgpAbWVkaWEgKG1heC13aWR0aDogMTI0MHB4KSB7CiAgLmZvcnJ1bS1ob21lLXYxNiB7CiAgICBncmlkLXRlbXBsYXRlLWNvbHVtbnM6IDI2MHB4IG1pbm1heCgwLCAxZnIpOwogIH0KfQoKQG1lZGlhIChtYXgtd2lkdGg6IDk2MHB4KSB7CiAgLmZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLWhlYWQgewogICAgZGlzcGxheTogbm9uZTsKICB9CgogIC5mb3JydW0taG9tZS12MTZfX25ldy10b3BpYyB7CiAgICBncmlkLXRlbXBsYXRlLWNvbHVtbnM6IG1pbm1heCgwLCAxZnIpIGF1dG8gYXV0bzsKICAgIGdhcDogOHB4OwogICAgbWluLWhlaWdodDogNDRweDsKICB9CgogIC5mb3JydW0taG9tZS12MTZfX25ldy10b3BpYy1zZWN0aW9uLAogIC5mb3JydW0taG9tZS12MTZfX25ldy10b3BpYy1hdXRob3IsCiAgLmZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLWxhc3QgewogICAgZGlzcGxheTogbm9uZTsKICB9Cn0KCkBtZWRpYSAobWF4LXdpZHRoOiA4NjBweCkgewogIC5mb3JydW0taG9tZS12MTYgewogICAgZ3JpZC10ZW1wbGF0ZS1jb2x1bW5zOiAxZnI7CiAgfQp9Ci8qIEZPUlJVTV9IT01FX1JFRkVSRU5DRV9WMTZfM19FTkQgKi8=
+          CHECK_B64: aW1wb3J0IGZzIGZyb20gJ25vZGU6ZnMnOwoKY29uc3QgaGVhZGVyUGF0aCA9ICdhcHBzL3dlYi9jb21wb25lbnRzL3NpdGUtaGVhZGVyLnRzeCc7CmNvbnN0IGhvbWVQYXRoID0gJ2FwcHMvd2ViL2NvbXBvbmVudHMvaG9tZS1kYXNoYm9hcmQudHN4JzsKY29uc3QgY3NzUGF0aCA9ICdhcHBzL3dlYi9hcHAvZ2xvYmFscy5jc3MnOwoKZm9yIChjb25zdCBwYXRoIG9mIFtoZWFkZXJQYXRoLCBob21lUGF0aCwgY3NzUGF0aF0pIHsKICBpZiAoIWZzLmV4aXN0c1N5bmMocGF0aCkpIHsKICAgIHRocm93IG5ldyBFcnJvcihgUmVxdWlyZWQgZmlsZSBpcyBtaXNzaW5nOiAke3BhdGh9YCk7CiAgfQp9Cgpjb25zdCBoZWFkZXIgPSBmcy5yZWFkRmlsZVN5bmMoaGVhZGVyUGF0aCwgJ3V0ZjgnKTsKY29uc3QgaG9tZSA9IGZzLnJlYWRGaWxlU3luYyhob21lUGF0aCwgJ3V0ZjgnKTsKY29uc3QgY3NzID0gZnMucmVhZEZpbGVTeW5jKGNzc1BhdGgsICd1dGY4Jyk7Cgpmb3IgKGNvbnN0IHJlamVjdGVkIG9mIFsKICAn0KPRgdC70YPQs9C4JywgJ9Cc0LXQtNC40LAnLCAn0J3QvtCy0L7RgdGC0LgnLAogICcvc2VydmljZXMnLCAnL21lZGlhJywgJy9uZXdzJywKXSkgewogIGlmIChoZWFkZXIuaW5jbHVkZXMocmVqZWN0ZWQpKSB7CiAgICB0aHJvdyBuZXcgRXJyb3IoYExlZ2FjeSBoZWFkZXIgaXRlbSByZW1haW5zOiAke3JlamVjdGVkfWApOwogIH0KfQoKZm9yIChjb25zdCByZXF1aXJlZCBvZiBbCiAgJ9CT0LvQsNCy0L3QsNGPJywgJ9Ch0L7QvtCx0YnQtdGB0YLQstCwJywgJ9Ci0LXQvNGLJywKICAn0J/QvtC70YzQt9C+0LLQsNGC0LXQu9C4JywgJ9CQ0YDRhdC40LInLAogICcvZmVlZCcsICcvdXNlcnMnLCAnL2FyY2hpdmUnLApdKSB7CiAgaWYgKCFoZWFkZXIuaW5jbHVkZXMocmVxdWlyZWQpKSB7CiAgICB0aHJvdyBuZXcgRXJyb3IoYEFwcHJvdmVkIGhlYWRlciBpdGVtIG1pc3Npbmc6ICR7cmVxdWlyZWR9YCk7CiAgfQp9Cgpmb3IgKGNvbnN0IHJlcXVpcmVkIG9mIFsKICAnZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtdGFibGUnLAogICdmb3JydW0taG9tZS12MTZfX25ldy10b3BpYy1oZWFkJywKICAnZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMnLAogICfQn9C+0YHQu9C10LTQvdC10LUg0YHQvtC+0LHRidC10L3QuNC1JywKICAnZm9ycnVtLWhvbWUtdjE2X190cmVlLWNoaWxkcmVuJywKICAn0KPRh9Cw0YHRgtC90LjQutC4INC90LXQtNC10LvQuCcsCiAgJ9CQ0LrRgtC40LLQvdGL0LUg0LPQvtC70L7RgdC+0LLQsNC90LjRjycsCiAgJ0ZPUlJVTSDRgdC10LPQvtC00L3RjycsCl0pIHsKICBpZiAoIWhvbWUuaW5jbHVkZXMocmVxdWlyZWQpKSB7CiAgICB0aHJvdyBuZXcgRXJyb3IoYEhvbWVwYWdlIHJlZmVyZW5jZSBtYXJrZXIgbWlzc2luZzogJHtyZXF1aXJlZH1gKTsKICB9Cn0KCmZvciAoY29uc3QgcmVqZWN0ZWQgb2YgWwogICfQmtGD0YDQsNGC0L7RgNGLINC90LXQtNC10LvQuCcsCiAgJ9Cg0LDQt9Cy0LjRgtC40LUgRk9SUlVNJywKICAn0J/QvtC00LTQtdGA0LbQsNGC0Ywg0L/RgNC+0LXQutGCJywKICAn0JHQu9C40LbQsNC50YjQuNC1INGB0L7QsdGL0YLQuNGPJywKXSkgewogIGlmIChob21lLmluY2x1ZGVzKHJlamVjdGVkKSkgewogICAgdGhyb3cgbmV3IEVycm9yKGBSZWplY3RlZCBob21lcGFnZSBibG9jayByZXR1cm5lZDogJHtyZWplY3RlZH1gKTsKICB9Cn0KCmNvbnN0IHN0YXJ0ID0gJy8qIEZPUlJVTV9IT01FX1JFRkVSRU5DRV9WMTZfM19TVEFSVCc7CmNvbnN0IGVuZCA9ICcvKiBGT1JSVU1fSE9NRV9SRUZFUkVOQ0VfVjE2XzNfRU5EICovJzsKCmlmICgoY3NzLm1hdGNoKC9GT1JSVU1fSE9NRV9SRUZFUkVOQ0VfVjE2XzNfU1RBUlQvZykgPz8gW10pLmxlbmd0aCAhPT0gMSkgewogIHRocm93IG5ldyBFcnJvcignRXhwZWN0ZWQgZXhhY3RseSBvbmUgVjE2LjMgQ1NTIHN0YXJ0IG1hcmtlci4nKTsKfQoKaWYgKChjc3MubWF0Y2goL0ZPUlJVTV9IT01FX1JFRkVSRU5DRV9WMTZfM19FTkQvZykgPz8gW10pLmxlbmd0aCAhPT0gMSkgewogIHRocm93IG5ldyBFcnJvcignRXhwZWN0ZWQgZXhhY3RseSBvbmUgVjE2LjMgQ1NTIGVuZCBtYXJrZXIuJyk7Cn0KCmNvbnN0IGJsb2NrID0gY3NzLnNsaWNlKAogIGNzcy5pbmRleE9mKHN0YXJ0KSwKICBjc3MuaW5kZXhPZihlbmQpICsgZW5kLmxlbmd0aCwKKTsKCmZvciAoY29uc3QgcmVxdWlyZWQgb2YgWwogICdncmlkLXRlbXBsYXRlLWNvbHVtbnM6IDI5MnB4IG1pbm1heCgwLCAxZnIpIDMwNnB4JywKICAnZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtaGVhZCcsCiAgJ2JvcmRlci1sZWZ0OiAxcHggZG90dGVkIHZhcigtLWZyMy1saW5lLXN0cm9uZyknLAogICctLWZyMy1wYWdlOiAjZWNlYmU3JywKICAnLS1mcjMtcGFnZTogIzEyMTQxNicsCiAgJy0tZnIzLWFjY2VudDogIzE3NjlmZicsCiAgJy0tZnIzLWFjY2VudDogIzJjNzBmZicsCl0pIHsKICBpZiAoIWJsb2NrLmluY2x1ZGVzKHJlcXVpcmVkKSkgewogICAgdGhyb3cgbmV3IEVycm9yKGBWMTYuMyB2aXN1YWwgY29udHJhY3QgbWlzc2luZzogJHtyZXF1aXJlZH1gKTsKICB9Cn0KCmZvciAoY29uc3QgZm9yYmlkZGVuIG9mIFsKICAnbGluZWFyLWdyYWRpZW50JywKICAncmFkaWFsLWdyYWRpZW50JywKICAnYmFja2Ryb3AtZmlsdGVyJywKICAnZmlsdGVyOiBibHVyJywKICAnYm94LXNoYWRvdzonLApdKSB7CiAgaWYgKGJsb2NrLmluY2x1ZGVzKGZvcmJpZGRlbikpIHsKICAgIHRocm93IG5ldyBFcnJvcihgRm9yYmlkZGVuIHN0eWxpbmcgZm91bmQ6ICR7Zm9yYmlkZGVufWApOwogIH0KfQoKY29uc3QgZGFya1N0YXJ0ID0gYmxvY2suaW5kZXhPZignaHRtbC5kYXJrLCcpOwpjb25zdCBsYXlvdXRTdGFydCA9IGJsb2NrLmluZGV4T2YoJ1tkYXRhLWZvcnJ1bS1zaGVsbD0iaGVhZGVyIl0nKTsKCmlmIChkYXJrU3RhcnQgPCAwIHx8IGxheW91dFN0YXJ0IDwgMCB8fCBsYXlvdXRTdGFydCA8PSBkYXJrU3RhcnQpIHsKICB0aHJvdyBuZXcgRXJyb3IoJ0NvdWxkIG5vdCBpc29sYXRlIEdyYXBoaXRlIHRva2VuIG92ZXJyaWRlLicpOwp9Cgpjb25zdCB0b2tlbkFyZWEgPSBibG9jay5zbGljZShkYXJrU3RhcnQsIGxheW91dFN0YXJ0KTsKCmZvciAoY29uc3Qgc3RydWN0dXJhbCBvZiBbCiAgJ2Rpc3BsYXk6JywgJ3Bvc2l0aW9uOicsICdncmlkLXRlbXBsYXRlJywKICAnd2lkdGg6JywgJ2hlaWdodDonLCAnbWFyZ2luOicsICdwYWRkaW5nOicsCiAgJ2dhcDonLCAnZmxleC1kaXJlY3Rpb246JywKXSkgewogIGlmICh0b2tlbkFyZWEuaW5jbHVkZXMoc3RydWN0dXJhbCkpIHsKICAgIHRocm93IG5ldyBFcnJvcigKICAgICAgYEdyYXBoaXRlIGNoYW5nZXMgbGF5b3V0IGluc3RlYWQgb2YgdG9rZW5zOiAke3N0cnVjdHVyYWx9YCwKICAgICk7CiAgfQp9Cgpjb25zb2xlLmxvZygKICAnRk9SUlVNIEhvbWUgUmVmZXJlbmNlIEFsaWdubWVudCBWMTYuMyBwYXNzZWQuJywKKTsK
+        run: |
+          set -euo pipefail
+
+          printf '%s' "$PATCH_B64" | base64 -d             > /tmp/forrum-home-reference-v16-3.py
+          printf '%s' "$CSS_B64" | base64 -d             > /tmp/forrum-home-reference-v16-3.css
+          printf '%s' "$CHECK_B64" | base64 -d             > scripts/home-reference-v16-3-check.mjs
+
+          python3 /tmp/forrum-home-reference-v16-3.py
+
+          git diff --check
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/global-shell-v16-1-check.mjs
+          node scripts/home-reference-v16-3-check.mjs
+
+      - name: Verify isolated source scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          allowed='^(apps/web/app/globals\.css|apps/web/components/site-header\.tsx|apps/web/components/home-dashboard\.tsx|scripts/home-reference-v16-3-check\.mjs)$'
+          bad="$(
+            git status --porcelain=v1 --untracked-files=all               | sed 's/^...//'               | grep -Ev "$allowed" || true
+          )"
+          if [ -n "$bad" ]; then
+            echo "::error::Unexpected source changes before build:"
+            printf '%s\n' "$bad"
+            exit 1
+          fi
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Install build dependencies
+        run: >
+          npm install --include=dev
+          --no-audit --no-fund
+          --package-lock=false
+
+      - name: Run static UX accessibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/global-shell-v16-1-check.mjs
+          node scripts/home-reference-v16-3-check.mjs
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          git diff --check
+
+      - name: Run available tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/web --if-present
+
+      - name: Typecheck
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run typecheck -w @forrum/contracts
+          npm run typecheck -w @forrum/web
+
+      - name: Production build
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf apps/web/.next
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/web
+
+      - name: Restore tracked build side effects
+        shell: bash
+        run: |
+          set -euo pipefail
+          allowed='^(apps/web/app/globals\.css|apps/web/components/site-header\.tsx|apps/web/components/home-dashboard\.tsx|scripts/home-reference-v16-3-check\.mjs)$'
+          mapfile -t tracked_dirty < <(
+            git status --porcelain=v1 --untracked-files=no               | sed 's/^...//'               | grep -Ev "$allowed" || true
+          )
+          for path in "${tracked_dirty[@]}"; do
+            [ -n "$path" ] || continue
+            git restore --staged --worktree -- "$path"
+          done
+
+      - name: Remove generated build artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clean -ffdx             -e scripts/home-reference-v16-3-check.mjs
+          test -f scripts/home-reference-v16-3-check.mjs
+
+      - name: Final production audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/global-shell-v16-1-check.mjs
+          node scripts/home-reference-v16-3-check.mjs
+          git diff --check
+
+          allowed='^(apps/web/app/globals\.css|apps/web/components/site-header\.tsx|apps/web/components/home-dashboard\.tsx|scripts/home-reference-v16-3-check\.mjs)$'
+          actual="$(
+            git status --porcelain=v1 --untracked-files=all               | sed 's/^...//'
+          )"
+          bad="$(
+            printf '%s\n' "$actual"               | grep -Ev "$allowed" || true
+          )"
+          if [ -n "$bad" ]; then
+            echo "::error::Unexpected files remain after build cleanup:"
+            printf '%s\n' "$bad"
+            git status --short
+            exit 1
+          fi
+
+          echo "Final V16.3 production audit passed."
+
+      - name: Commit verified reference alignment
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet             && [ -z "$(git ls-files --others --exclude-standard scripts/home-reference-v16-3-check.mjs)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Home Reference Alignment V16.3 is already applied."
+            exit 0
+          fi
+
+          git config user.name "forrum-actions"
+          git config user.email "actions@forrum.local"
+
+          git add             apps/web/app/globals.css             apps/web/components/site-header.tsx             apps/web/components/home-dashboard.tsx             scripts/home-reference-v16-3-check.mjs
+
+          git diff --cached --check
+          git commit -m "Align FORRUM home with approved Paper Graphite references"
+          test -z "$(git status --porcelain --untracked-files=no)"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Rebase on latest main
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git rebase origin/main
+
+      - name: Push verified reference alignment
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git push origin HEAD:main
+
+      - name: Verify remote commit
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+          echo "Published verified Home Reference Alignment V16.3: $(git rev-parse HEAD)"
