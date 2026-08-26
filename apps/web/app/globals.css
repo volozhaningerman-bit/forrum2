@@ -19261,3 +19261,691 @@ body:has(.topic-create-v15-7) footer:not(.topic-create-actions) a {
 }
 
 /* FORRUM_CREATE_TOPIC_REFINEMENT_V15_17_END */
+
+/* FORRUM_HOME_PAPER_GRAPHITE_V16_START
+   Canonical homepage. Paper and Graphite share exactly the same DOM/layout.
+   Theme differences are token-only.
+*/
+.forrum-home-v16 {
+  --fh-bg: #ecebe7;
+  --fh-surface: #f5f4f0;
+  --fh-panel: #faf9f6;
+  --fh-panel-muted: #f0efeb;
+  --fh-line: #c8c7c2;
+  --fh-line-strong: #9d9b95;
+  --fh-text: #222222;
+  --fh-muted: #686762;
+  --fh-faint: #8c8a84;
+  --fh-accent: #1769ff;
+  --fh-accent-soft: #e6edff;
+  --fh-success: #178a49;
+  --fh-warning: #b86812;
+  --fh-danger: #bd3b35;
+
+  width: min(100%, 1680px);
+  margin: 0 auto;
+  padding: 14px 16px 22px;
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr) 292px;
+  gap: 12px;
+  align-items: start;
+  color: var(--fh-text);
+  background: var(--fh-bg);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+html.dark .forrum-home-v16,
+html[data-theme="dark"] .forrum-home-v16,
+html[data-theme="graphite"] .forrum-home-v16,
+html[data-forrum-theme="graphite"] .forrum-home-v16 {
+  --fh-bg: #121416;
+  --fh-surface: #181b1f;
+  --fh-panel: #171a1d;
+  --fh-panel-muted: #1e2226;
+  --fh-line: #343a40;
+  --fh-line-strong: #555b62;
+  --fh-text: #ececec;
+  --fh-muted: #9ca3aa;
+  --fh-faint: #737b83;
+  --fh-accent: #2c70ff;
+  --fh-accent-soft: #18294d;
+  --fh-success: #45b96d;
+  --fh-warning: #db9141;
+  --fh-danger: #df6b67;
+}
+
+body:has(.forrum-home-v16) {
+  background: #ecebe7;
+}
+
+html.dark body:has(.forrum-home-v16),
+html[data-theme="dark"] body:has(.forrum-home-v16),
+html[data-theme="graphite"] body:has(.forrum-home-v16),
+html[data-forrum-theme="graphite"] body:has(.forrum-home-v16) {
+  background: #121416;
+}
+
+.forrum-home-v16 *,
+.forrum-home-v16 *::before,
+.forrum-home-v16 *::after {
+  box-sizing: border-box;
+}
+
+.forrum-home-v16 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.forrum-home-v16 button,
+.forrum-home-v16 a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.forrum-home-v16__tree,
+.forrum-home-v16__panel {
+  min-width: 0;
+  border: 1px solid var(--fh-line);
+  border-radius: 3px;
+  background: var(--fh-panel);
+}
+
+.forrum-home-v16__tree {
+  position: sticky;
+  top: 72px;
+  padding: 0 12px 12px;
+  max-height: calc(100vh - 90px);
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color:
+    var(--fh-line-strong)
+    transparent;
+}
+
+.forrum-home-v16__side-head,
+.forrum-home-v16__panel-head {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--fh-line);
+}
+
+.forrum-home-v16__side-head h2,
+.forrum-home-v16__panel-head h2 {
+  margin: 0;
+  color: var(--fh-text);
+  font-size: 13px;
+  line-height: 1;
+  font-weight: 760;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
+.forrum-home-v16__panel-head {
+  padding: 0 12px;
+}
+
+.forrum-home-v16__panel-head > a {
+  flex: 0 0 auto;
+  color: var(--fh-accent);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.forrum-home-v16__tree-root,
+.forrum-home-v16__tree-children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.forrum-home-v16__tree-root {
+  padding: 6px 0 8px;
+}
+
+.forrum-home-v16__tree-node {
+  position: relative;
+  min-width: 0;
+}
+
+.forrum-home-v16__tree-children {
+  position: relative;
+  margin-left: 12px;
+  padding-left: 11px;
+}
+
+.forrum-home-v16__tree-children::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 11px;
+  left: 2px;
+  border-left: 1px dotted
+    var(--fh-line-strong);
+  opacity: 0.82;
+}
+
+.forrum-home-v16__tree-children >
+.forrum-home-v16__tree-node::before {
+  content: "";
+  position: absolute;
+  top: 15px;
+  left: -9px;
+  width: 10px;
+  border-top: 1px dotted
+    var(--fh-line-strong);
+  opacity: 0.82;
+}
+
+.forrum-home-v16__tree-row {
+  min-height: 31px;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.forrum-home-v16__tree-toggle,
+.forrum-home-v16__tree-spacer {
+  width: 20px;
+  height: 30px;
+  flex: 0 0 20px;
+}
+
+.forrum-home-v16__tree-toggle {
+  display: grid;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--fh-muted);
+  cursor: pointer;
+  font: inherit;
+}
+
+.forrum-home-v16__tree-toggle:hover,
+.forrum-home-v16__tree-toggle:focus-visible {
+  color: var(--fh-accent);
+}
+
+.forrum-home-v16__tree-toggle:focus-visible,
+.forrum-home-v16__tree-link:focus-visible,
+.forrum-home-v16__proposal:focus-visible,
+.forrum-home-v16__topic:focus-visible,
+.forrum-home-v16__poll:focus-visible,
+.forrum-home-v16__actual:focus-visible,
+.forrum-home-v16__tabs button:focus-visible {
+  outline: 2px solid var(--fh-accent);
+  outline-offset: 1px;
+}
+
+.forrum-home-v16__tree-link {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns:
+    17px minmax(0, 1fr) auto;
+  gap: 6px;
+  align-items: center;
+  min-height: 29px;
+  padding: 2px 4px;
+  border-radius: 2px;
+  color: var(--fh-text);
+  font-size: 12px;
+}
+
+.forrum-home-v16__tree-link:hover {
+  background: var(--fh-panel-muted);
+}
+
+.forrum-home-v16__tree-folder {
+  color: var(--fh-muted);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.forrum-home-v16__tree-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 570;
+}
+
+.forrum-home-v16__tree-count {
+  color: var(--fh-faint);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.forrum-home-v16__proposal {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 7px;
+  border: 1px dashed var(--fh-line-strong);
+  border-radius: 2px;
+  color: var(--fh-text);
+  font-size: 12px;
+  font-weight: 620;
+}
+
+.forrum-home-v16__proposal:hover {
+  border-color: var(--fh-accent);
+  color: var(--fh-accent);
+}
+
+.forrum-home-v16__center,
+.forrum-home-v16__rail {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.forrum-home-v16__topic-list {
+  padding: 0 12px;
+}
+
+.forrum-home-v16__topic {
+  min-width: 0;
+  display: grid;
+  grid-template-columns:
+    38px minmax(0, 1fr) 210px;
+  gap: 10px;
+  align-items: center;
+  min-height: 69px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--fh-line);
+}
+
+.forrum-home-v16__topic:last-child {
+  border-bottom: 0;
+}
+
+.forrum-home-v16__topic.is-compact {
+  grid-template-columns:
+    28px minmax(0, 1fr) 210px;
+  min-height: 44px;
+  padding: 5px 0;
+}
+
+.forrum-home-v16__topic:hover
+.forrum-home-v16__topic-title strong,
+.forrum-home-v16__topic:focus-visible
+.forrum-home-v16__topic-title strong {
+  color: var(--fh-accent);
+}
+
+.forrum-home-v16__topic-mark,
+.forrum-home-v16__actual .community-mark {
+  image-rendering: pixelated;
+  border-radius: 2px !important;
+}
+
+.forrum-home-v16__topic-copy {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.forrum-home-v16__topic-title {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.forrum-home-v16__topic-title strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--fh-text);
+  font-size: 13px;
+  font-weight: 690;
+}
+
+.forrum-home-v16__type {
+  flex: 0 0 auto;
+  padding: 2px 5px;
+  border: 1px solid var(--fh-line-strong);
+  border-radius: 2px;
+  color: var(--fh-muted);
+  font-size: 10px;
+  line-height: 1.15;
+  font-weight: 650;
+}
+
+.forrum-home-v16__type.type-guide {
+  border-color: color-mix(
+    in srgb,
+    var(--fh-success) 60%,
+    var(--fh-line)
+  );
+  color: var(--fh-success);
+}
+
+.forrum-home-v16__type.type-question {
+  border-color: color-mix(
+    in srgb,
+    var(--fh-danger) 58%,
+    var(--fh-line)
+  );
+  color: var(--fh-danger);
+}
+
+.forrum-home-v16__type.type-news {
+  border-color: color-mix(
+    in srgb,
+    var(--fh-accent) 58%,
+    var(--fh-line)
+  );
+  color: var(--fh-accent);
+}
+
+.forrum-home-v16__type.type-case,
+.forrum-home-v16__type.type-project {
+  border-color: color-mix(
+    in srgb,
+    var(--fh-warning) 58%,
+    var(--fh-line)
+  );
+  color: var(--fh-warning);
+}
+
+.forrum-home-v16__topic-excerpt {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--fh-muted);
+  font-size: 11px;
+}
+
+.forrum-home-v16__topic-meta {
+  display: flex;
+  gap: 5px;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--fh-faint);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.forrum-home-v16__topic-meta span:first-child {
+  color: var(--fh-accent);
+}
+
+.forrum-home-v16__topic-stats {
+  display: grid;
+  grid-template-columns:
+    48px 55px minmax(76px, 1fr);
+  gap: 8px;
+  align-items: center;
+  justify-items: end;
+  color: var(--fh-muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.forrum-home-v16__topic-stats > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+.forrum-home-v16__topic-time {
+  color: var(--fh-faint);
+}
+
+.forrum-home-v16__poll-list,
+.forrum-home-v16__actual-list {
+  padding: 0 12px;
+}
+
+.forrum-home-v16__poll {
+  min-height: 58px;
+  display: grid;
+  grid-template-columns:
+    30px minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: center;
+  border-bottom: 1px solid var(--fh-line);
+}
+
+.forrum-home-v16__poll:last-child,
+.forrum-home-v16__actual:last-child {
+  border-bottom: 0;
+}
+
+.forrum-home-v16__poll:hover strong,
+.forrum-home-v16__actual:hover strong {
+  color: var(--fh-accent);
+}
+
+.forrum-home-v16__poll-icon,
+.forrum-home-v16__actual-symbol {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--fh-line);
+  border-radius: 2px;
+  background: var(--fh-panel-muted);
+  color: var(--fh-accent);
+  font-size: 14px;
+}
+
+.forrum-home-v16__poll > span:nth-child(2),
+.forrum-home-v16__actual > span:last-child {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.forrum-home-v16__poll strong,
+.forrum-home-v16__actual strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--fh-text);
+  font-size: 12px;
+  font-weight: 660;
+}
+
+.forrum-home-v16__poll small,
+.forrum-home-v16__actual small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--fh-muted);
+  font-size: 10px;
+}
+
+.forrum-home-v16__actual {
+  min-height: 56px;
+  display: grid;
+  grid-template-columns:
+    30px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  border-bottom: 1px solid var(--fh-line);
+}
+
+.forrum-home-v16__tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--fh-line);
+}
+
+.forrum-home-v16__tabs button {
+  min-height: 38px;
+  padding: 0 6px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--fh-muted);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.forrum-home-v16__tabs button.is-active {
+  border-bottom-color: var(--fh-accent);
+  color: var(--fh-accent);
+  font-weight: 670;
+}
+
+.forrum-home-v16__weekly-empty {
+  min-height: 130px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 5px;
+  padding: 18px;
+  text-align: center;
+  color: var(--fh-muted);
+}
+
+.forrum-home-v16__weekly-empty > span {
+  color: var(--fh-accent);
+  font-size: 20px;
+}
+
+.forrum-home-v16__weekly-empty strong {
+  color: var(--fh-text);
+  font-size: 12px;
+}
+
+.forrum-home-v16__weekly-empty p {
+  max-width: 220px;
+  margin: 0;
+  color: var(--fh-faint);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.forrum-home-v16__stats {
+  margin: 0;
+  padding: 4px 12px 10px;
+}
+
+.forrum-home-v16__stats > div {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--fh-line);
+}
+
+.forrum-home-v16__stats > div:last-child {
+  border-bottom: 0;
+}
+
+.forrum-home-v16__stats dt {
+  color: var(--fh-muted);
+  font-size: 11px;
+}
+
+.forrum-home-v16__stats dd {
+  margin: 0;
+  color: var(--fh-text);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.forrum-home-v16__empty {
+  margin: 0;
+  padding: 18px 12px;
+  color: var(--fh-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+@media (max-width: 1240px) {
+  .forrum-home-v16 {
+    grid-template-columns:
+      245px minmax(0, 1fr);
+  }
+
+  .forrum-home-v16__rail {
+    grid-column: 1 / -1;
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+  .forrum-home-v16__rail
+  .forrum-home-v16__panel {
+    align-self: stretch;
+  }
+}
+
+@media (max-width: 860px) {
+  .forrum-home-v16 {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+
+  .forrum-home-v16__tree {
+    position: static;
+    max-height: 320px;
+  }
+
+  .forrum-home-v16__rail {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .forrum-home-v16__topic,
+  .forrum-home-v16__topic.is-compact {
+    grid-template-columns:
+      32px minmax(0, 1fr);
+  }
+
+  .forrum-home-v16__topic-stats {
+    grid-column: 2;
+    grid-template-columns:
+      auto auto auto;
+    justify-content: start;
+    justify-items: start;
+  }
+}
+
+@media (max-width: 520px) {
+  .forrum-home-v16 {
+    padding: 8px 6px;
+    gap: 8px;
+  }
+
+  .forrum-home-v16__center,
+  .forrum-home-v16__rail {
+    gap: 8px;
+  }
+
+  .forrum-home-v16__topic-title {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .forrum-home-v16__topic-title strong,
+  .forrum-home-v16__topic-excerpt {
+    white-space: normal;
+  }
+
+  .forrum-home-v16__topic-stats {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+/* FORRUM_HOME_PAPER_GRAPHITE_V16_END */

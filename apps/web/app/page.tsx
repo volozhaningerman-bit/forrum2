@@ -2,9 +2,37 @@ import {
   HomeDashboard,
   type HomeInitialData,
 } from '@/components/home-dashboard';
-import { resolveApiBase } from '@/lib/api-base';
 
 export const dynamic = 'force-dynamic';
+
+function normalizeApiBase(value: string) {
+  const trimmed = value.trim().replace(/\/+$/, '');
+  const withProtocol = /^https?:\/\//i.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`;
+
+  return withProtocol.endsWith('/v1')
+    ? withProtocol
+    : `${withProtocol}/v1`;
+}
+
+function resolveApiBase() {
+  const internal = process.env.API_INTERNAL_URL?.trim();
+
+  if (internal) {
+    return normalizeApiBase(internal);
+  }
+
+  const publicApi =
+    process.env.PUBLIC_API_URL?.trim() ||
+    process.env.NEXT_PUBLIC_API_URL?.trim();
+
+  if (publicApi) {
+    return normalizeApiBase(publicApi);
+  }
+
+  return 'http://127.0.0.1:4000/v1';
+}
 
 async function publicApi<T>(path: string) {
   const controller = new AbortController();
@@ -38,26 +66,19 @@ async function publicApi<T>(path: string) {
 export default async function Home() {
   const [
     communities,
-    events,
     polls,
     announcements,
-    workshop,
     feed,
     newFeed,
-    news,
   ] = await Promise.all([
     publicApi<HomeInitialData['communities']>(
       '/communities',
     ),
-    publicApi<HomeInitialData['events']>('/events'),
     publicApi<HomeInitialData['polls']>(
       '/governance/polls',
     ),
     publicApi<HomeInitialData['announcements']>(
       '/announcements',
-    ),
-    publicApi<HomeInitialData['workshop']>(
-      '/workshop',
     ),
     publicApi<HomeInitialData['feed']>(
       '/feed?mode=popular',
@@ -65,20 +86,16 @@ export default async function Home() {
     publicApi<HomeInitialData['newFeed']>(
       '/feed?mode=new',
     ),
-    publicApi<HomeInitialData['news']>('/news'),
   ]);
 
   return (
     <HomeDashboard
       initialData={{
         communities,
-        events,
         polls,
         announcements,
-        workshop,
         feed,
         newFeed,
-        news,
       }}
     />
   );
