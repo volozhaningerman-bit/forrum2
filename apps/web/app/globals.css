@@ -21013,3 +21013,172 @@ body {
   }
 }
 /* FORRUM_VISUAL_THEME_END */
+
+/* FORRUM_VISUAL_POLISH_V23_START
+   Final polish layer.
+   No API/data/product changes.
+   No Paper/Graphite geometry divergence.
+*/
+
+/* Header / brand */
+[data-forrum-shell="header"] > * > a[href="/"]:first-child {
+  font-size: 24px !important;
+  line-height: 1;
+  letter-spacing: 0.022em;
+  white-space: nowrap;
+}
+
+[data-forrum-shell="header"] nav {
+  min-width: 0;
+}
+
+[data-forrum-shell="header"] nav > a {
+  font-size: 13px !important;
+  font-weight: 640;
+}
+
+/* Theme switch: icon only, never a visible text label. */
+.forrum-theme-toggle {
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  margin-left: 4px;
+  padding: 0;
+  overflow: hidden;
+  font-size: 0;
+  line-height: 0;
+  vertical-align: middle;
+}
+
+.forrum-theme-toggle__icon {
+  width: 14px;
+  height: 14px;
+}
+
+.forrum-theme-toggle__icon::before {
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: 4px;
+}
+
+.forrum-theme-toggle__icon::after {
+  top: 5px;
+  right: 2px;
+  width: 2px;
+  height: 2px;
+}
+
+/* Section headings: less "terminal", still strict and compact. */
+.forrum-home-v16__panel-head h2,
+.forrum-home-v16__side-head h2 {
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 740;
+  letter-spacing: 0.012em;
+  line-height: 1.15;
+}
+
+.forrum-home-v16__panel-head > a,
+.forrum-home-v16__side-head > a {
+  font-weight: 620;
+}
+
+/* Category tree: hierarchy must read immediately. */
+.forrum-home-v16__tree-root >
+.forrum-home-v16__tree-node >
+.forrum-home-v16__tree-row
+.forrum-home-v16__tree-name {
+  font-weight: 740;
+}
+
+.forrum-home-v16__tree-children::before {
+  border-left-style: dotted !important;
+  border-left-width: 1px !important;
+  opacity: 0.92;
+}
+
+.forrum-home-v16__tree-children >
+.forrum-home-v16__tree-node::before {
+  border-top-style: dotted !important;
+  border-top-width: 1px !important;
+  opacity: 0.92;
+}
+
+.forrum-home-v16__tree-link {
+  border-radius: 0;
+}
+
+.forrum-home-v16__tree-row:hover
+.forrum-home-v16__tree-name {
+  color: var(--fvt-accent);
+}
+
+/* Topic table: restore a small pixel identity without card noise. */
+.forrum-home-v16__new-topic-title {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 7px;
+  font-weight: 660;
+}
+
+.forrum-home-v16__new-topic-title::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border: 1px solid var(--fvt-line-strong);
+  background: var(--fvt-panel-soft);
+  image-rendering: pixelated;
+}
+
+.forrum-home-v16__new-topic:hover
+.forrum-home-v16__new-topic-title {
+  color: var(--fvt-accent);
+}
+
+.forrum-home-v16__new-topic-head {
+  font-family: inherit;
+  font-weight: 620;
+  letter-spacing: 0;
+}
+
+.forrum-home-v16__new-topic-section,
+.forrum-home-v16__new-topic-author,
+.forrum-home-v16__new-topic-last {
+  line-height: 1.25;
+}
+
+/* Right rail: small readability cleanup only. */
+.forrum-home-v16__actual strong,
+.forrum-home-v16__weekly-empty strong {
+  line-height: 1.25;
+}
+
+.forrum-home-v16__stats > div:last-child {
+  border-bottom: 0 !important;
+}
+
+/* Keep the compact retro-internet feel. */
+.forrum-home-v16__panel,
+.forrum-home-v16__tree,
+.forrum-home-v16__proposal,
+.forrum-theme-toggle {
+  border-radius: 2px;
+}
+
+@media (max-width: 860px) {
+  .forrum-theme-toggle {
+    width: 27px;
+    height: 27px;
+    flex-basis: 27px;
+    margin-left: 2px;
+  }
+
+  [data-forrum-shell="header"] > * > a[href="/"]:first-child {
+    font-size: 21px !important;
+  }
+}
+/* FORRUM_VISUAL_POLISH_V23_END */

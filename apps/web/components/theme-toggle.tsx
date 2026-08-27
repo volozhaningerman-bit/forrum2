@@ -1,6 +1,7 @@
 "use client";
 
 // FORRUM_THEME_TOGGLE_V1
+// FORRUM_THEME_TOGGLE_V23
 import { useEffect, useState } from "react";
 
 type ForumTheme = "paper" | "graphite";
@@ -27,7 +28,8 @@ function readInitialTheme(): ForumTheme {
     return current;
   }
 
-  const stored = window.localStorage.getItem(STORAGE_KEY);
+  const stored =
+    window.localStorage.getItem(STORAGE_KEY);
 
   if (stored === "paper" || stored === "graphite") {
     return stored;
@@ -64,7 +66,10 @@ export function ThemeToggle() {
       setTheme(event.newValue);
     };
 
-    window.addEventListener("storage", handleStorage);
+    window.addEventListener(
+      "storage",
+      handleStorage,
+    );
 
     return () => {
       window.removeEventListener(
@@ -80,10 +85,12 @@ export function ThemeToggle() {
 
   const toggleTheme = () => {
     applyTheme(targetTheme);
+
     window.localStorage.setItem(
       STORAGE_KEY,
       targetTheme,
     );
+
     setTheme(targetTheme);
   };
 
@@ -109,9 +116,6 @@ export function ThemeToggle() {
         className="forrum-theme-toggle__icon"
         aria-hidden="true"
       />
-      <span className="sr-only">
-        {isGraphite ? "Paper" : "Graphite"}
-      </span>
     </button>
   );
 }
