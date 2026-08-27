@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 
+import { ThemeToggle } from "./theme-toggle";
 type ActivityItem = { id: string; createdAt: string };
 
 // FORRUM_GLOBAL_HEADER_V13_4
@@ -90,6 +91,7 @@ export function MainNav() {
           </Link>
         );
       })}
+      <ThemeToggle />
     </nav>
   );
 }
