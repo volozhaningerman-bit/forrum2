@@ -1,0 +1,385 @@
+name: FORRUM Navigation Architecture V27
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-navigation-architecture-v27
+  cancel-in-progress: false
+
+env:
+  NODE_ENV: test
+
+jobs:
+  navigation-architecture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Inventory product before change
+        shell: bash
+        run: |
+          set -euo pipefail
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          test -f apps/web/components/main-nav.tsx
+          test -f scripts/home-reference-check.mjs
+          test -f apps/web/app/services/page.tsx
+          test -f apps/web/app/media/page.tsx
+          test -f apps/web/app/news/page.tsx
+
+          {
+            echo "## FORRUM V27 — product mapping before code"
+            echo
+            echo "| Элемент | Существующая реализация | V27 |"
+            echo "|---|---|---|"
+            echo "| Главная | \`/\` | сохранить |"
+            echo "| Сообщества | \`/communities\` | сохранить |"
+            echo "| Услуги | \`/services\` page существует | вернуть в header |"
+            echo "| Медиа | \`/media\` page существует | вернуть в header |"
+            echo "| Новости | \`/news\` page + существующий API polling | вернуть в header, оживить unread |"
+            echo "| Темы / Пользователи / Архив | предыдущая подмена header | убрать только из header |"
+            if grep -q "redirect('/media')" apps/web/app/news/page.tsx; then
+              echo
+              echo "> /news сейчас перенаправляет в /media. V27 сохраняет это существующее поведение; отдельная News page — отдельное продуктовое решение."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Decode V27 product patch
+        shell: bash
+        env:
+          PATCH_B64: ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCmltcG9ydCByZQoKTkFWID0gUGF0aCgiYXBwcy93ZWIvY29tcG9uZW50cy9tYWluLW5hdi50c3giKQpSRUZFUkVOQ0UgPSBQYXRoKCJzY3JpcHRzL2hvbWUtcmVmZXJlbmNlLWNoZWNrLm1qcyIpCgpmb3IgcGF0aCBpbiAoTkFWLCBSRUZFUkVOQ0UpOgogICAgaWYgbm90IHBhdGguZXhpc3RzKCk6CiAgICAgICAgcmFpc2UgU3lzdGVtRXhpdChmIlJlcXVpcmVkIFYyNyBzb3VyY2UgaXMgbWlzc2luZzoge3BhdGh9IikKCmZvciByb3V0ZV9wYWdlIGluICgKICAgIFBhdGgoImFwcHMvd2ViL2FwcC9zZXJ2aWNlcy9wYWdlLnRzeCIpLAogICAgUGF0aCgiYXBwcy93ZWIvYXBwL21lZGlhL3BhZ2UudHN4IiksCiAgICBQYXRoKCJhcHBzL3dlYi9hcHAvbmV3cy9wYWdlLnRzeCIpLAopOgogICAgaWYgbm90IHJvdXRlX3BhZ2UuZXhpc3RzKCk6CiAgICAgICAgcmFpc2UgU3lzdGVtRXhpdChmIkFwcHJvdmVkIG5hdmlnYXRpb24gcm91dGUgaGFzIG5vIHJlYWwgcGFnZToge3JvdXRlX3BhZ2V9IikKCm5hdiA9IE5BVi5yZWFkX3RleHQoZW5jb2Rpbmc9InV0Zi04IikKCmxpbmtzX3BhdHRlcm4gPSByZS5jb21waWxlKAogICAgciJjb25zdFxzK2xpbmtzXHMqPVxzKlxbW1xzXFNdKj9cXVxzKmFzXHMrY29uc3Rccyo7IgopCm1hdGNoZXMgPSBsaXN0KGxpbmtzX3BhdHRlcm4uZmluZGl0ZXIobmF2KSkKaWYgbGVuKG1hdGNoZXMpICE9IDE6CiAgICByYWlzZSBTeXN0ZW1FeGl0KAogICAgICAgICJWMjcgZXhwZWN0cyBleGFjdGx5IG9uZSBjdXJyZW50IE1haW5OYXYgbGlua3MgYXJyYXk7ICIKICAgICAgICBmImZvdW5kIHtsZW4obWF0Y2hlcyl9LiBSZWZ1c2luZyB0byBndWVzcy4iCiAgICApCgphcHByb3ZlZF9saW5rcyA9ICIiImNvbnN0IGxpbmtzID0gWwogIFsnLycsICfQk9C70LDQstC90LDRjyddLAogIFsnL2NvbW11bml0aWVzJywgJ9Ch0L7QvtCx0YnQtdGB0YLQstCwJ10sCiAgWycvc2VydmljZXMnLCAn0KPRgdC70YPQs9C4J10sCiAgWycvbWVkaWEnLCAn0JzQtdC00LjQsCddLAogIFsnL25ld3MnLCAn0J3QvtCy0L7RgdGC0LgnXSwKXSBhcyBjb25zdDsiIiIKCm5hdiA9IGxpbmtzX3BhdHRlcm4uc3ViKGFwcHJvdmVkX2xpbmtzLCBuYXYsIGNvdW50PTEpCgppZiAiY29uc3QgW25ld3NVbnJlYWQsIHNldE5ld3NVbnJlYWRdIiBub3QgaW4gbmF2OgogICAgcmFpc2UgU3lzdGVtRXhpdCgiRXhpc3RpbmcgbmV3c1VucmVhZCBzdGF0ZSBpcyBtaXNzaW5nLiIpCgppZiAiYXBpPEFjdGl2aXR5SXRlbVtdPignL25ld3MnKSIgbm90IGluIG5hdjoKICAgIHJhaXNlIFN5c3RlbUV4aXQoIkV4aXN0aW5nIC9uZXdzIHBvbGxpbmcgaXMgbWlzc2luZy4iKQoKaWYgImNvbnN0IFtuZXdzU2lnbmF0dXJlLCBzZXROZXdzU2lnbmF0dXJlXSIgbm90IGluIG5hdjoKICAgIG5hdiwgY291bnQgPSByZS5zdWJuKAogICAgICAgIHIiKD9QPGk+WyBcdF0qKWNvbnN0XHMrXFtuZXdzVW5yZWFkLFxzKnNldE5ld3NVbnJlYWRcXVxzKj1ccyp1c2VTdGF0ZVwoZmFsc2VcKTsiLAogICAgICAgIGxhbWJkYSBtOiAoCiAgICAgICAgICAgIG0uZ3JvdXAoMCkKICAgICAgICAgICAgKyAiXG4iCiAgICAgICAgICAgICsgbS5ncm91cCgiaSIpCiAgICAgICAgICAgICsgImNvbnN0IFtuZXdzU2lnbmF0dXJlLCBzZXROZXdzU2lnbmF0dXJlXSA9IHVzZVN0YXRlKCcnKTsiCiAgICAgICAgKSwKICAgICAgICBuYXYsCiAgICAgICAgY291bnQ9MSwKICAgICkKICAgIGlmIGNvdW50ICE9IDE6CiAgICAgICAgcmFpc2UgU3lzdGVtRXhpdCgiQ291bGQgbm90IGFkZCBuZXdzU2lnbmF0dXJlIHN0YXRlLiIpCgojIFdoaXRlc3BhY2UtaW5zZW5zaXRpdmU7IHVwZGF0ZSBzdGF0ZSBvbmx5IGFmdGVyIGNhbmNlbGxhdGlvbiBndWFyZC4KaWYgInNldE5ld3NTaWduYXR1cmUobmV4dFNpZ25hdHVyZSk7IiBub3QgaW4gbmF2OgogICAgbmF2LCBjb3VudCA9IHJlLnN1Ym4oCiAgICAgICAgciIoY29uc3RccytuZXh0U2lnbmF0dXJlXHMqPVxzKnNpZ25hdHVyZVwoaXRlbXNcKTspIgogICAgICAgIHIiKD9QPHdzPlxzKikiCiAgICAgICAgciIoaWZccypcKFxzKmNhbmNlbGxlZFxzKlwpXHMqcmV0dXJuOykiLAogICAgICAgIGxhbWJkYSBtOiAoCiAgICAgICAgICAgIG0uZ3JvdXAoMSkKICAgICAgICAgICAgKyBtLmdyb3VwKCJ3cyIpCiAgICAgICAgICAgICsgbS5ncm91cCgzKQogICAgICAgICAgICArICJcbiAgICAgICAgc2V0TmV3c1NpZ25hdHVyZShuZXh0U2lnbmF0dXJlKTsiCiAgICAgICAgKSwKICAgICAgICBuYXYsCiAgICAgICAgY291bnQ9MSwKICAgICkKICAgIGlmIGNvdW50ICE9IDE6CiAgICAgICAgcmFpc2UgU3lzdGVtRXhpdCgKICAgICAgICAgICAgIkNvdWxkIG5vdCBsb2NhdGUgTmV3cyBzaWduYXR1cmUgKyBjYW5jZWxsYXRpb24gZ3VhcmQuIgogICAgICAgICkKCm5hdiwgZW1wdHlfY291bnQgPSByZS5zdWJuKAogICAgciJpZlxzKlwoXHMqIW5leHRTaWduYXR1cmVccypcKVxzKlx7XHMqIgogICAgciIoPzpzZXROZXdzU2lnbmF0dXJlXCgnJ1wpO1xzKik/IgogICAgciJzZXROZXdzVW5yZWFkXChmYWxzZVwpO1xzKnJldHVybjtccypcfSIsCiAgICAiIiJpZiAoIW5leHRTaWduYXR1cmUpIHsKICAgICAgICAgIHNldE5ld3NTaWduYXR1cmUoJycpOwogICAgICAgICAgc2V0TmV3c1VucmVhZChmYWxzZSk7CiAgICAgICAgICByZXR1cm47CiAgICAgICAgfSIiIiwKICAgIG5hdiwKICAgIGNvdW50PTEsCikKaWYgZW1wdHlfY291bnQgIT0gMToKICAgIHJhaXNlIFN5c3RlbUV4aXQoIkNvdWxkIG5vdCBub3JtYWxpemUgZW1wdHkgTmV3cyByZXNwb25zZS4iKQoKIyBJTVBPUlRBTlQ6IFYyNyBkZWxpYmVyYXRlbHkgZG9lcyBOT1QgcmV3cml0ZSBjYXRjaC4KIyBWMjYncyBicm9hZCBjYXRjaCByZWdleCBjb25zdW1lZCB0aGUgY2xvc2luZyBicmFjZSBvZiBjaGVja05ld3MoKS4KCm5hdiwgc2hvd19jb3VudCA9IHJlLnN1Ym4oCiAgICByImNvbnN0XHMrc2hvd0RvdFxzKj1ccyoiCiAgICByIig/OlN0cmluZ1woXHMqaHJlZlxzKlwpfGhyZWYpXHMqIgogICAgciI9PT1ccypbJ1wiXS9uZXdzWydcIl1ccyomJlxzKm5ld3NVbnJlYWRccyo7IiwKICAgICJjb25zdCBzaG93RG90ID0gaHJlZiA9PT0gJy9uZXdzJyAmJiBuZXdzVW5yZWFkOyIsCiAgICBuYXYsCiAgICBjb3VudD0xLAopCmlmIHNob3dfY291bnQgIT0gMToKICAgIHJhaXNlIFN5c3RlbUV4aXQoIkNvdWxkIG5vdCBlc3RhYmxpc2ggZGlyZWN0IC9uZXdzIHVucmVhZCBjb21wYXJpc29uLiIpCgppZiAiY29uc3QgbWFya05ld3NTZWVuID0gKCkgPT4geyIgbm90IGluIG5hdjoKICAgIHJlbmRlciA9IHJlLnNlYXJjaCgKICAgICAgICByIlxuKD9QPGk+WyBcdF0qKXJldHVyblxzKlwoXHMqXG4iCiAgICAgICAgciJbIFx0XSo8bmF2XHMrY2xhc3NOYW1lPVwibWFpbi1saW5rc1wiIiwKICAgICAgICBuYXYsCiAgICApCiAgICBpZiBub3QgcmVuZGVyOgogICAgICAgIHJhaXNlIFN5c3RlbUV4aXQoIkNvdWxkIG5vdCBmaW5kIE1haW5OYXYgdG9wLWxldmVsIHJlbmRlciBib3VuZGFyeS4iKQoKICAgIGkgPSByZW5kZXIuZ3JvdXAoImkiKQogICAgYmxvY2sgPSAoCiAgICAgICAgIlxuIiArIGkgKyAiY29uc3QgbWFya05ld3NTZWVuID0gKCkgPT4ge1xuIgogICAgICAgICsgaSArICIgIGlmICghbmV3c1NpZ25hdHVyZSkgcmV0dXJuO1xuXG4iCiAgICAgICAgKyBpICsgIiAgbG9jYWxTdG9yYWdlLnNldEl0ZW0obmV3c1NlZW5LZXksIG5ld3NTaWduYXR1cmUpO1xuIgogICAgICAgICsgaSArICIgIHNldE5ld3NVbnJlYWQoZmFsc2UpO1xuIgogICAgICAgICsgaSArICJ9O1xuIgogICAgKQogICAgbmF2ID0gbmF2WzpyZW5kZXIuc3RhcnQoKV0gKyBibG9jayArIG5hdltyZW5kZXIuc3RhcnQoKTpdCgppZiAib25DbGljaz17aHJlZiA9PT0gJy9uZXdzJyA/IG1hcmtOZXdzU2VlbiA6IHVuZGVmaW5lZH0iIG5vdCBpbiBuYXY6CiAgICBuYXYsIGNvdW50ID0gcmUuc3VibigKICAgICAgICByIihhcmlhLWN1cnJlbnQ9XHthY3RpdmVccypcP1xzKlsnXCJdcGFnZVsnXCJdXHMqOlxzKnVuZGVmaW5lZFx9KSIsCiAgICAgICAgciJcMVxuICAgICAgICAgICAgb25DbGljaz17aHJlZiA9PT0gJy9uZXdzJyA/IG1hcmtOZXdzU2VlbiA6IHVuZGVmaW5lZH0iLAogICAgICAgIG5hdiwKICAgICAgICBjb3VudD0xLAogICAgKQogICAgaWYgY291bnQgIT0gMToKICAgICAgICByYWlzZSBTeXN0ZW1FeGl0KCJDb3VsZCBub3QgYXR0YWNoIE5ld3Mgc2VlbiBoYW5kbGVyLiIpCgpsaW5rc19tYXRjaCA9IHJlLnNlYXJjaCgKICAgIHIiY29uc3RccytsaW5rc1xzKj1ccypcWyhbXHNcU10qPylcXVxzKmFzXHMrY29uc3Rccyo7IiwKICAgIG5hdiwKKQppZiBub3QgbGlua3NfbWF0Y2g6CiAgICByYWlzZSBTeXN0ZW1FeGl0KCJDb3VsZCBub3QgcmUtcmVhZCBNYWluTmF2IGxpbmtzIGFmdGVyIFYyNy4iKQoKbGlua3MgPSBsaW5rc19tYXRjaC5ncm91cCgxKQoKZm9yIHJlcXVpcmVkIGluICgKICAgICJbJy8nLCAn0JPQu9Cw0LLQvdCw0Y8nXSIsCiAgICAiWycvY29tbXVuaXRpZXMnLCAn0KHQvtC+0LHRidC10YHRgtCy0LAnXSIsCiAgICAiWycvc2VydmljZXMnLCAn0KPRgdC70YPQs9C4J10iLAogICAgIlsnL21lZGlhJywgJ9Cc0LXQtNC40LAnXSIsCiAgICAiWycvbmV3cycsICfQndC+0LLQvtGB0YLQuCddIiwKKToKICAgIGlmIHJlcXVpcmVkIG5vdCBpbiBsaW5rczoKICAgICAgICByYWlzZSBTeXN0ZW1FeGl0KGYiQXBwcm92ZWQgaGVhZGVyIGl0ZW0gbWlzc2luZzoge3JlcXVpcmVkfSIpCgpmb3IgcmVqZWN0ZWQgaW4gKAogICAgIlsnL2ZlZWQnLCAn0KLQtdC80YsnXSIsCiAgICAiWycvdXNlcnMnLCAn0J/QvtC70YzQt9C+0LLQsNGC0LXQu9C4J10iLAogICAgIlsnL2FyY2hpdmUnLCAn0JDRgNGF0LjQsiddIiwKKToKICAgIGlmIHJlamVjdGVkIGluIGxpbmtzOgogICAgICAgIHJhaXNlIFN5c3RlbUV4aXQoZiJVbmFwcHJvdmVkIGhlYWRlciBzdWJzdGl0dXRpb24gcmVtYWluczoge3JlamVjdGVkfSIpCgppZiAiU3RyaW5nKGhyZWYpIiBpbiBuYXY6CiAgICByYWlzZSBTeXN0ZW1FeGl0KCJTdHJpbmcoaHJlZikgd29ya2Fyb3VuZCByZW1haW5zLiIpCgpOQVYud3JpdGVfdGV4dChuYXYsIGVuY29kaW5nPSJ1dGYtOCIpCgojIFJlcGFpciBvbmx5IHRoZSBuYXZpZ2F0aW9uIHNlY3Rpb24gb2YgdGhlIGV4aXN0aW5nIHJlZmVyZW5jZSB2YWxpZGF0b3IuCmNoZWNrZXIgPSBSRUZFUkVOQ0UucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpCnN0YXJ0X3Rva2VuID0gImNvbnN0IG5hdiA9IGZzLnJlYWRGaWxlU3luYyhuYXZQYXRoLCAndXRmOCcpOyIKZW5kX3Rva2VuID0gImNvbnN0IGhvbWUgPSBmcy5yZWFkRmlsZVN5bmMoaG9tZVBhdGgsICd1dGY4Jyk7IgpzdGFydCA9IGNoZWNrZXIuZmluZChzdGFydF90b2tlbikKZW5kID0gY2hlY2tlci5maW5kKGVuZF90b2tlbikKCmlmIHN0YXJ0IDwgMCBvciBlbmQgPCAwIG9yIGVuZCA8PSBzdGFydDoKICAgIHJhaXNlIFN5c3RlbUV4aXQoCiAgICAgICAgIkNvdWxkIG5vdCBpc29sYXRlIG5hdmlnYXRpb24gc2VjdGlvbiBvZiBob21lLXJlZmVyZW5jZS1jaGVjay5tanMuIgogICAgKQoKbmV3X25hdl92YWxpZGF0aW9uID0gciIiImNvbnN0IG5hdiA9IGZzLnJlYWRGaWxlU3luYyhuYXZQYXRoLCAndXRmOCcpOwpjb25zdCBsaW5rc01hdGNoID0gbmF2Lm1hdGNoKAogIC9jb25zdFxzK2xpbmtzXHMqPVxzKlxbKFtcc1xTXSo/KVxdXHMqYXNccytjb25zdFxzKjsvLAopOwoKaWYgKCFsaW5rc01hdGNoKSB7CiAgdGhyb3cgbmV3IEVycm9yKCdDb3VsZCBub3QgaXNvbGF0ZSBNYWluTmF2IHByb2R1Y3QgbGlua3MgYXJyYXkuJyk7Cn0KCmNvbnN0IGxpbmtzID0gbGlua3NNYXRjaFsxXTsKCmNvbnN0IGV4cGVjdGVkTmF2aWdhdGlvbiA9IFsKICBbJy8nLCAn0JPQu9Cw0LLQvdCw0Y8nXSwKICBbJy9jb21tdW5pdGllcycsICfQodC+0L7QsdGJ0LXRgdGC0LLQsCddLAogIFsnL3NlcnZpY2VzJywgJ9Cj0YHQu9GD0LPQuCddLAogIFsnL21lZGlhJywgJ9Cc0LXQtNC40LAnXSwKICBbJy9uZXdzJywgJ9Cd0L7QstC+0YHRgtC4J10sCl07Cgpjb25zdCB0dXBsZXMgPSBbCiAgLi4ubGlua3MubWF0Y2hBbGwoCiAgICAvXFtccypbJyJdKFteJyJdKylbJyJdXHMqLFxzKlsnIl0oW14nIl0rKVsnIl1ccypcXS9nLAogICksCl0ubWFwKChtYXRjaCkgPT4gW21hdGNoWzFdLCBtYXRjaFsyXV0pOwoKaWYgKEpTT04uc3RyaW5naWZ5KHR1cGxlcykgIT09IEpTT04uc3RyaW5naWZ5KGV4cGVjdGVkTmF2aWdhdGlvbikpIHsKICB0aHJvdyBuZXcgRXJyb3IoCiAgICBgTWFpbk5hdiBwcm9kdWN0IGNvbnRyYWN0IG1pc21hdGNoOiAke0pTT04uc3RyaW5naWZ5KHR1cGxlcyl9YCwKICApOwp9Cgpmb3IgKGNvbnN0IHJvdXRlUGFnZSBvZiBbCiAgJ2FwcHMvd2ViL2FwcC9zZXJ2aWNlcy9wYWdlLnRzeCcsCiAgJ2FwcHMvd2ViL2FwcC9tZWRpYS9wYWdlLnRzeCcsCiAgJ2FwcHMvd2ViL2FwcC9uZXdzL3BhZ2UudHN4JywKXSkgewogIGlmICghZnMuZXhpc3RzU3luYyhyb3V0ZVBhZ2UpKSB7CiAgICB0aHJvdyBuZXcgRXJyb3IoCiAgICAgIGBBcHByb3ZlZCBNYWluTmF2IHJvdXRlIGhhcyBubyByZWFsIHBhZ2U6ICR7cm91dGVQYWdlfWAsCiAgICApOwogIH0KfQoKZm9yIChjb25zdCByZXF1aXJlZCBvZiBbCiAgImFwaTxBY3Rpdml0eUl0ZW1bXT4oJy9uZXdzJykiLAogICJocmVmID09PSAnL25ld3MnICYmIG5ld3NVbnJlYWQiLAogICJvbkNsaWNrPXtocmVmID09PSAnL25ld3MnID8gbWFya05ld3NTZWVuIDogdW5kZWZpbmVkfSIsCl0pIHsKICBpZiAoIW5hdi5pbmNsdWRlcyhyZXF1aXJlZCkpIHsKICAgIHRocm93IG5ldyBFcnJvcigKICAgICAgYE5ld3MgbmF2aWdhdGlvbiBiZWhhdmlvciBpcyBtaXNzaW5nOiAke3JlcXVpcmVkfWAsCiAgICApOwogIH0KfQoKaWYgKG5hdi5pbmNsdWRlcygiU3RyaW5nKGhyZWYpIikpIHsKICB0aHJvdyBuZXcgRXJyb3IoCiAgICAnU3RyaW5nKGhyZWYpIHdvcmthcm91bmQgcmV0dXJuZWQ7IGZpeCB0aGUgcm91dGUgdW5pb24gaW5zdGVhZC4nLAogICk7Cn0KCiIiIgoKY2hlY2tlciA9IGNoZWNrZXJbOnN0YXJ0XSArIG5ld19uYXZfdmFsaWRhdGlvbiArIGNoZWNrZXJbZW5kOl0KY2hlY2tlciA9IGNoZWNrZXIucmVwbGFjZSgKICAgICJGT1JSVU0gSG9tZSBSZWZlcmVuY2UgRklOQUwgcGFzc2VkOiB0dXBsZSBuYXYsIHJlZmVyZW5jZSB0YWJsZS90cmVlLCBvbmUgUGFwZXIvR3JhcGhpdGUgZ2VvbWV0cnkuIiwKICAgICJGT1JSVU0gSG9tZSBSZWZlcmVuY2UgRklOQUwgcGFzc2VkOiBwcm9kdWN0IG5hdiwgcmVmZXJlbmNlIHRhYmxlL3RyZWUsIG9uZSBQYXBlci9HcmFwaGl0ZSBnZW9tZXRyeS4iLAopClJFRkVSRU5DRS53cml0ZV90ZXh0KGNoZWNrZXIsIGVuY29kaW5nPSJ1dGYtOCIpCg==
+          CHECK_B64: aW1wb3J0IGZzIGZyb20gIm5vZGU6ZnMiOwpjb25zdCBuYXZQYXRoID0gImFwcHMvd2ViL2NvbXBvbmVudHMvbWFpbi1uYXYudHN4IjsKY29uc3QgcmVmUGF0aCA9ICJzY3JpcHRzL2hvbWUtcmVmZXJlbmNlLWNoZWNrLm1qcyI7CmZvciAoY29uc3QgcGF0aCBvZiBbCiAgbmF2UGF0aCwKICByZWZQYXRoLAogICJhcHBzL3dlYi9hcHAvc2VydmljZXMvcGFnZS50c3giLAogICJhcHBzL3dlYi9hcHAvbWVkaWEvcGFnZS50c3giLAogICJhcHBzL3dlYi9hcHAvbmV3cy9wYWdlLnRzeCIsCl0pIHsKICBpZiAoIWZzLmV4aXN0c1N5bmMocGF0aCkpIHRocm93IG5ldyBFcnJvcihgVjI3IG1pc3Npbmc6ICR7cGF0aH1gKTsKfQpjb25zdCBuYXYgPSBmcy5yZWFkRmlsZVN5bmMobmF2UGF0aCwgInV0ZjgiKTsKY29uc3QgbSA9IG5hdi5tYXRjaCgvY29uc3RccytsaW5rc1xzKj1ccypcWyhbXHNcU10qPylcXVxzKmFzXHMrY29uc3Rccyo7Lyk7CmlmICghbSkgdGhyb3cgbmV3IEVycm9yKCJWMjcgZ2xvYmFsIGxpbmtzIGFycmF5IG1pc3NpbmcuIik7CmNvbnN0IHR1cGxlcyA9IFsuLi5tWzFdLm1hdGNoQWxsKC9cW1xzKlsnXCJdKFteJ1wiXSspWydcIl1ccyosXHMqWydcIl0oW14nXCJdKylbJ1wiXVxzKlxdL2cpXS5tYXAoeCA9PiBbeFsxXSwgeFsyXV0pOwpjb25zdCBleHBlY3RlZCA9IFsKICBbIi8iLCAi0JPQu9Cw0LLQvdCw0Y8iXSwKICBbIi9jb21tdW5pdGllcyIsICLQodC+0L7QsdGJ0LXRgdGC0LLQsCJdLAogIFsiL3NlcnZpY2VzIiwgItCj0YHQu9GD0LPQuCJdLAogIFsiL21lZGlhIiwgItCc0LXQtNC40LAiXSwKICBbIi9uZXdzIiwgItCd0L7QstC+0YHRgtC4Il0sCl07CmlmIChKU09OLnN0cmluZ2lmeSh0dXBsZXMpICE9PSBKU09OLnN0cmluZ2lmeShleHBlY3RlZCkpIHsKICB0aHJvdyBuZXcgRXJyb3IoYFYyNyBoZWFkZXIgbWlzbWF0Y2g6ICR7SlNPTi5zdHJpbmdpZnkodHVwbGVzKX1gKTsKfQpmb3IgKGNvbnN0IHJlcXVpcmVkIG9mIFsKICAiYXBpPEFjdGl2aXR5SXRlbVtdPignL25ld3MnKSIsCiAgImNvbnN0IFtuZXdzU2lnbmF0dXJlLCBzZXROZXdzU2lnbmF0dXJlXSIsCiAgInNldE5ld3NTaWduYXR1cmUobmV4dFNpZ25hdHVyZSk7IiwKICAiaHJlZiA9PT0gJy9uZXdzJyAmJiBuZXdzVW5yZWFkIiwKICAibG9jYWxTdG9yYWdlLnNldEl0ZW0obmV3c1NlZW5LZXksIG5ld3NTaWduYXR1cmUpIiwKICAib25DbGljaz17aHJlZiA9PT0gJy9uZXdzJyA/IG1hcmtOZXdzU2VlbiA6IHVuZGVmaW5lZH0iLApdKSB7CiAgaWYgKCFuYXYuaW5jbHVkZXMocmVxdWlyZWQpKSB0aHJvdyBuZXcgRXJyb3IoYFYyNyBOZXdzIG1pc3Npbmc6ICR7cmVxdWlyZWR9YCk7Cn0KZm9yIChjb25zdCBmb3JiaWRkZW4gb2YgWwogICJTdHJpbmcoaHJlZikgPT09ICcvbmV3cyciLAogICJbJy9mZWVkJywgJ9Ci0LXQvNGLJ10iLAogICJbJy91c2VycycsICfQn9C+0LvRjNC30L7QstCw0YLQtdC70LgnXSIsCiAgIlsnL2FyY2hpdmUnLCAn0JDRgNGF0LjQsiddIiwKXSkgewogIGlmIChuYXYuaW5jbHVkZXMoZm9yYmlkZGVuKSkgdGhyb3cgbmV3IEVycm9yKGBWMjcgcmVqZWN0ZWQgaGVhZGVyIGJlaGF2aW9yOiAke2ZvcmJpZGRlbn1gKTsKfQpjb25zdCByZWYgPSBmcy5yZWFkRmlsZVN5bmMocmVmUGF0aCwgInV0ZjgiKTsKZm9yIChjb25zdCByZXF1aXJlZCBvZiBbCiAgIlsnL3NlcnZpY2VzJywgJ9Cj0YHQu9GD0LPQuCddIiwKICAiWycvbWVkaWEnLCAn0JzQtdC00LjQsCddIiwKICAiWycvbmV3cycsICfQndC+0LLQvtGB0YLQuCddIiwKICAiTWFpbk5hdiBwcm9kdWN0IGNvbnRyYWN0IG1pc21hdGNoIiwKICAiZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtdGFibGUiLAogICLQo9GH0LDRgdGC0L3QuNC60Lgg0L3QtdC00LXQu9C4IiwKICAi0JDQutGC0LjQstC90YvQtSDQs9C+0LvQvtGB0L7QstCw0L3QuNGPIiwKICAiRk9SUlVNINGB0LXQs9C+0LTQvdGPIiwKXSkgewogIGlmICghcmVmLmluY2x1ZGVzKHJlcXVpcmVkKSkgdGhyb3cgbmV3IEVycm9yKGBWMjcgcmVwYWlyZWQgdmFsaWRhdG9yIG1pc3Npbmc6ICR7cmVxdWlyZWR9YCk7Cn0KY29uc29sZS5sb2coIkZPUlJVTSBOYXZpZ2F0aW9uIEFyY2hpdGVjdHVyZSBWMjcgcGFzc2VkLiIpOwo=
+        run: |
+          set -euo pipefail
+          printf '%s' "$PATCH_B64" | base64 -d > /tmp/forrum-navigation-v27.py
+          printf '%s' "$CHECK_B64" | base64 -d > /tmp/forrum-navigation-v27-check.mjs
+          python3 -m py_compile /tmp/forrum-navigation-v27.py
+          node --check /tmp/forrum-navigation-v27-check.mjs
+
+      - name: Apply V27 navigation architecture
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 /tmp/forrum-navigation-v27.py
+          git diff --check
+          node scripts/static-check.mjs
+          node /tmp/forrum-navigation-v27-check.mjs
+          node scripts/home-reference-check.mjs
+
+      - name: Audit V27 git diff and scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== V27 DIFF ==="
+          git diff -- apps/web/components/main-nav.tsx scripts/home-reference-check.mjs || true
+
+          allowed='^(apps/web/components/main-nav\.tsx|scripts/home-reference-check\.mjs|scripts/navigation-product-contract-v27-check\.mjs)$'
+          bad="$(
+            git status --porcelain=v1 --untracked-files=all |
+            sed 's/^...//' |
+            grep -Ev "$allowed" || true
+          )"
+          if [ -n "$bad" ]; then
+            echo "::error::V27 changed files outside routing task:"
+            printf '%s\n' "$bad"
+            exit 1
+          fi
+
+          test -z "$(
+            git diff --name-only |
+            grep -E 'globals\.css|home-dashboard\.tsx|apps/api|packages/contracts' || true
+          )"
+
+      - name: Run existing FORRUM design contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          for checker in             scripts/home-paper-graphite-v16-check.mjs             scripts/global-shell-v16-1-check.mjs             scripts/home-reference-check.mjs             scripts/home-scale-polish-check.mjs             scripts/home-visual-theme-check.mjs
+          do
+            if [ -f "$checker" ]; then
+              node "$checker"
+            fi
+          done
+          node /tmp/forrum-navigation-v27-check.mjs
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Install build dependencies
+        run: >
+          npm install --include=dev
+          --no-audit --no-fund
+          --package-lock=false
+
+      - name: Run static UX accessibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const fs = require("fs");
+          const ts = require("typescript");
+          const path = "apps/web/components/main-nav.tsx";
+          const source = fs.readFileSync(path, "utf8");
+          const file = ts.createSourceFile(
+            path,
+            source,
+            ts.ScriptTarget.Latest,
+            true,
+            ts.ScriptKind.TSX,
+          );
+          const diagnostics = file.parseDiagnostics ?? [];
+          if (diagnostics.length) {
+            for (const d of diagnostics) {
+              const pos = file.getLineAndCharacterOfPosition(d.start ?? 0);
+              console.error(
+                `${path}:${pos.line + 1}:${pos.character + 1} ` +
+                ts.flattenDiagnosticMessageText(d.messageText, "\n"),
+              );
+            }
+            process.exit(1);
+          }
+          console.log("MainNav V27 TSX parser: PASS");
+          NODE
+          node /tmp/forrum-navigation-v27-check.mjs
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          git diff --check
+
+      - name: Run relevant tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/web --if-present
+
+      - name: Typecheck
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run typecheck -w @forrum/contracts
+          npm run typecheck -w @forrum/web
+
+      - name: Production build
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf apps/web/.next
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/web
+
+      - name: Find and fix one weakness
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq "onClick={href === '/news' ? markNewsSeen : undefined}" apps/web/components/main-nav.tsx
+          grep -Fq "localStorage.setItem(newsSeenKey, newsSignature)" apps/web/components/main-nav.tsx
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          source = Path(
+              "apps/web/components/main-nav.tsx"
+          ).read_text(encoding="utf-8")
+
+          pattern = (
+              r"async\s+function\s+checkNews\(\)[\s\S]*?"
+              r"\n\s*\}\s*\n\s*\n?\s*void\s+checkNews\(\);"
+          )
+
+          if not re.search(pattern, source):
+              raise SystemExit(
+                  "V26 regression: checkNews is not closed before void checkNews()."
+              )
+
+          print("V26 missing-brace regression guard: PASS")
+          PY
+
+          node /tmp/forrum-navigation-v27-check.mjs
+          npm run typecheck -w @forrum/web
+          git diff --check
+          echo "Weakness fixed: News unread clears before the current /news redirect."
+
+      - name: Restore tracked build side effects
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -t tracked_dirty < <(
+            git status --porcelain=v1 --untracked-files=no |
+            sed 's/^...//'
+          )
+          for path in "${tracked_dirty[@]}"; do
+            [ -n "$path" ] || continue
+            case "$path" in
+              apps/web/components/main-nav.tsx|scripts/home-reference-check.mjs)
+                continue
+                ;;
+            esac
+            git restore --staged --worktree -- "$path"
+          done
+
+      - name: Remove generated build artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clean -ffdx -e /tmp/forrum-navigation-v27-check.mjs
+          test -f /tmp/forrum-navigation-v27-check.mjs
+
+      - name: Final V27 production audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          node /tmp/forrum-navigation-v27-check.mjs
+          node scripts/home-reference-check.mjs
+          git diff --check
+
+          allowed='^(apps/web/components/main-nav\.tsx|scripts/home-reference-check\.mjs|scripts/navigation-product-contract-v27-check\.mjs)$'
+          bad="$(
+            git status --porcelain=v1 --untracked-files=all |
+            sed 's/^...//' |
+            grep -Ev "$allowed" || true
+          )"
+          if [ -n "$bad" ]; then
+            echo "::error::Unexpected final V27 changes:"
+            printf '%s\n' "$bad"
+            exit 1
+          fi
+
+          test -f apps/web/app/services/page.tsx
+          test -f apps/web/app/media/page.tsx
+          test -f apps/web/app/news/page.tsx
+
+          test -z "$(
+            git diff --name-only |
+            grep -E 'globals\.css|theme-toggle\.tsx' || true
+          )"
+
+      - name: Commit verified V27
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet             && [ -z "$(git ls-files --others --exclude-standard /tmp/forrum-navigation-v27-check.mjs)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "FORRUM Navigation Architecture V27 already applied."
+            exit 0
+          fi
+
+          git config user.name "forrum-actions"
+          git config user.email "actions@forrum.local"
+          git add             apps/web/components/main-nav.tsx             scripts/home-reference-check.mjs           git diff --cached --check
+          git commit -m "Restore FORRUM product navigation V27"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Rebase on latest main
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git rebase origin/main
+
+      - name: Re-run full V27 audit after rebase
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          node /tmp/forrum-navigation-v27-check.mjs
+          node scripts/home-reference-check.mjs
+          git diff --check
+
+          npm install --include=dev --no-audit --no-fund --package-lock=false
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/web --if-present
+          npm run typecheck -w @forrum/contracts
+          npm run typecheck -w @forrum/web
+
+          rm -rf apps/web/.next
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/web
+          git diff --check
+
+          git restore --source=HEAD --staged --worktree -- .
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          node /tmp/forrum-navigation-v27-check.mjs
+          node scripts/home-reference-check.mjs
+          echo "Post-rebase V27 production audit passed."
+
+      - name: Publish V27 safely
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          max_attempts=3
+
+          for attempt in $(seq 1 "$max_attempts"); do
+            git fetch origin main
+            local_head="$(git rev-parse HEAD)"
+            remote_head="$(git rev-parse origin/main)"
+
+            if ! git merge-base --is-ancestor "$remote_head" "$local_head"; then
+              git rebase origin/main
+              node /tmp/forrum-navigation-v27-check.mjs
+              node scripts/home-reference-check.mjs
+              git diff --check
+
+              if [ ! -d node_modules ]; then
+                npm install --include=dev --no-audit --no-fund --package-lock=false
+              fi
+
+              npm run validate:static
+              npm run validate:ux
+              npm run validate:a11y
+              npm test -w @forrum/contracts --if-present
+              npm test -w @forrum/web --if-present
+              npm run typecheck -w @forrum/contracts
+              npm run typecheck -w @forrum/web
+              rm -rf apps/web/.next
+              npm run build -w @forrum/contracts
+              npm run build -w @forrum/web
+              git diff --check
+              git restore --source=HEAD --staged --worktree -- .
+              test -z "$(git status --porcelain --untracked-files=no)"
+            fi
+
+            git fetch origin main
+            latest_remote="$(git rev-parse origin/main)"
+            merge_base="$(git merge-base HEAD origin/main)"
+            if [ "$latest_remote" != "$merge_base" ]; then
+              continue
+            fi
+
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+          done
+
+          echo "::error::Could not publish V27 after $max_attempts safe attempts."
+          exit 1
+
+      - name: Verify remote V27 commit
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+          echo "Published FORRUM Navigation Architecture V27: $(git rev-parse HEAD)"
