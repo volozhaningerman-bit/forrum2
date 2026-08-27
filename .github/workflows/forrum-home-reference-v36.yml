@@ -1,0 +1,1116 @@
+name: FORRUM Home Reference V36
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-home-reference-v36
+  cancel-in-progress: false
+
+jobs:
+  homepage-v36:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Inventory product before V36
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          for path in \
+            apps/web/components/home-dashboard.tsx \
+            apps/web/components/main-nav.tsx \
+            apps/web/app/page.tsx \
+            apps/web/app/globals.css \
+            apps/web/lib/types.ts \
+            apps/api/src/home/home.service.ts \
+            apps/api/src/feed/feed.service.ts \
+            apps/api/src/governance/governance.service.ts \
+            apps/api/prisma/schema.prisma
+          do
+            test -f "$path"
+          done
+
+          grep -Fq "['/services', 'Услуги']" apps/web/components/main-nav.tsx
+          grep -Fq "['/media', 'Медиа']" apps/web/components/main-nav.tsx
+          grep -Fq "['/news', 'Новости']" apps/web/components/main-nav.tsx
+          grep -Fq "api<ActivityItem[]>('/news')" apps/web/components/main-nav.tsx
+
+          grep -Fq "async polls(userId?: string)" apps/api/src/governance/governance.service.ts
+          grep -Fq "bindingVotes:" apps/api/src/governance/governance.service.ts
+          grep -Fq "advisoryVotes:" apps/api/src/governance/governance.service.ts
+          grep -Fq "model Session" apps/api/prisma/schema.prisma
+          grep -Fq "model PlatformSetting" apps/api/prisma/schema.prisma
+          grep -Fq -- "--fvt-panel:" apps/web/app/globals.css
+          grep -Fq ".forrum-theme-toggle" apps/web/app/globals.css
+
+          {
+            echo "## FORRUM Home Reference V36"
+            echo
+            echo "V36 changes presentation plus only the backend data required by the approved homepage."
+            echo
+            echo "| Reference | Existing product source | V36 |"
+            echo "|---|---|---|"
+            echo "| Community tree | /communities hierarchy | preserve real hierarchy; dense reference tree |"
+            echo "| Discussed topics | /feed?mode=popular | real 24h discussed topics + latest reply author |"
+            echo "| New topics | /feed?mode=new | dense table + latest reply author |"
+            echo "| Active polls | /governance/polls | title, all options, counts/percent, remaining time; click opens polls |"
+            echo "| Weekly users | existing users/topics/comments/reactions | real 7-day ranking from backend |"
+            echo "| FORRUM today | existing DB entities/sessions | communities/topics/messages/online + persisted online record |"
+            echo "| Themes | existing Paper/Graphite tokens | one identical geometry, token-only colors |"
+            echo
+            echo "Navigation, services/media/news routes and voting mechanics are not redesigned."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Write V36 product patch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > /tmp/forrum-home-reference-v36.py <<'PY'
+          from pathlib import Path
+          import re
+
+          HOME = Path('apps/web/components/home-dashboard.tsx')
+          PAGE = Path('apps/web/app/page.tsx')
+          CSS = Path('apps/web/app/globals.css')
+          TYPES = Path('apps/web/lib/types.ts')
+          HOME_SERVICE = Path('apps/api/src/home/home.service.ts')
+          FEED_SERVICE = Path('apps/api/src/feed/feed.service.ts')
+
+          for path in (HOME, PAGE, CSS, TYPES, HOME_SERVICE, FEED_SERVICE):
+              if not path.exists():
+                  raise SystemExit(f'V36 required source missing: {path}')
+
+          HOME_SOURCE = '\'use client\';\n\nimport Link from \'next/link\';\nimport type { CSSProperties, ReactNode } from \'react\';\nimport { useMemo, useState } from \'react\';\nimport { Avatar } from \'@/components/avatar\';\nimport { CommunityMark } from \'@/components/community-mark\';\nimport type { PublicationCardData } from \'@/lib/types\';\n\ntype Community = {\n  id: string;\n  slug: string;\n  name: string;\n  description: string;\n  shortDescription?: string | null;\n  avatarUrl?: string | null;\n  subscriberCount: number;\n  publicationCount: number;\n  recentPublicationCount?: number;\n  lastActivityAt?: string | null;\n  isSubscribed?: boolean;\n  parent: { slug: string; name: string } | null;\n};\n\ntype PollOption = {\n  id: string;\n  label: string;\n  position?: number;\n  bindingVotes: number;\n  advisoryVotes: number;\n};\n\ntype PollItem = {\n  id: string;\n  title: string;\n  closesAt: string;\n  status: string;\n  createdAt?: string;\n  options?: PollOption[];\n  community: { slug: string; name: string; accentColor?: string };\n};\n\ntype WeeklyUser = {\n  username: string;\n  displayName: string;\n  avatarUrl?: string | null;\n  score: number;\n  reactionCount: number;\n  topicCount: number;\n  commentCount: number;\n};\n\ntype HomeOverview = {\n  stats: {\n    communities: number;\n    topics: number;\n    messages: number;\n    usersOnline: number;\n    recordOnline: number;\n    recordOnlineAt?: string | null;\n  };\n  weekly: {\n    likes: WeeklyUser[];\n    activity: WeeklyUser[];\n  };\n};\n\nexport type HomeInitialData = {\n  communities?: Community[];\n  polls?: PollItem[];\n  announcements?: PublicationCardData[];\n  feed?: PublicationCardData[];\n  newFeed?: PublicationCardData[];\n  overview?: HomeOverview;\n};\n\ntype TreeNode = Community & { children: TreeNode[] };\n\nconst topicVisuals: Record<string, string> = {\n  \'forrum-start\': \'/forrum-assets/topic-forrum.svg\',\n  \'forrum-feedback\': \'/forrum-assets/topic-forrum.svg\',\n  \'internet-projects\': \'/forrum-assets/topic-projects.svg\',\n  \'launches-and-teams\': \'/forrum-assets/topic-projects.svg\',\n  promotion: \'/forrum-assets/topic-promotion.svg\',\n  \'seo-and-traffic\': \'/forrum-assets/topic-seo.svg\',\n  \'gta-rp\': \'/forrum-assets/topic-gta.svg\',\n  \'majestic-rp\': \'/forrum-assets/topic-gta.svg\',\n  telegram: \'/forrum-assets/topic-telegram.svg\',\n  \'telegram-bots\': \'/forrum-assets/topic-telegram.svg\',\n};\n\nfunction topicVisual(slug: string) {\n  return topicVisuals[slug] ?? \'/forrum-assets/topic-default.svg\';\n}\n\nconst publicationTypeName: Record<string, string> = {\n  DISCUSSION: \'Обсуждение\',\n  QUESTION: \'Вопрос\',\n  NEWS: \'Новости\',\n  GUIDE: \'Гайд\',\n  PROJECT: \'Проект\',\n  SERVICE: \'Услуга\',\n  CASE: \'Кейс\',\n  ANNOUNCEMENT: \'Объявление\',\n};\n\nfunction formatCount(value: number | undefined) {\n  const safe = Number.isFinite(value) ? Number(value) : 0;\n  return new Intl.NumberFormat(\'ru-RU\', {\n    notation: safe >= 10_000 ? \'compact\' : \'standard\',\n    maximumFractionDigits: 1,\n  }).format(safe);\n}\n\nfunction formatMetric(value: number | undefined) {\n  return Number.isFinite(value) ? formatCount(value) : \'—\';\n}\n\nfunction relativeTime(value?: string | null) {\n  if (!value) return \'\';\n  const time = new Date(value).getTime();\n  if (!Number.isFinite(time)) return \'\';\n  const diff = Math.max(0, Date.now() - time);\n  if (diff < 60_000) return \'только что\';\n  const minutes = Math.floor(diff / 60_000);\n  if (minutes < 60) return `${minutes} мин. назад`;\n  const hours = Math.floor(diff / 3_600_000);\n  if (hours < 24) return `${hours} ч. назад`;\n  const days = Math.floor(diff / 86_400_000);\n  if (days < 14) return `${days} дн. назад`;\n  return new Date(value).toLocaleDateString(\'ru-RU\', { day: \'numeric\', month: \'short\' });\n}\n\nfunction pollTimeLeft(value: string) {\n  const time = new Date(value).getTime();\n  if (!Number.isFinite(time)) return \'\';\n  const diff = time - Date.now();\n  if (diff <= 0) return \'завершено\';\n  const hours = Math.ceil(diff / 3_600_000);\n  if (hours < 24) return `${hours} ч.`;\n  return `${Math.ceil(diff / 86_400_000)} дн.`;\n}\n\nfunction formatRecordDate(value?: string | null) {\n  if (!value) return \'\';\n  const date = new Date(value);\n  if (Number.isNaN(date.getTime())) return \'\';\n  return date.toLocaleString(\'ru-RU\', {\n    day: \'numeric\',\n    month: \'short\',\n    hour: \'2-digit\',\n    minute: \'2-digit\',\n  });\n}\n\nfunction buildTree(items: Community[]): TreeNode[] {\n  const nodes = new Map<string, TreeNode>();\n  items.forEach((item) => nodes.set(item.slug, { ...item, children: [] }));\n  const roots: TreeNode[] = [];\n  nodes.forEach((node) => {\n    const parent = node.parent?.slug ? nodes.get(node.parent.slug) : undefined;\n    if (parent && parent.slug !== node.slug) parent.children.push(node);\n    else roots.push(node);\n  });\n  const sortNodes = (rows: TreeNode[]) => {\n    rows.sort((a, b) =>\n      (b.subscriberCount ?? 0) - (a.subscriberCount ?? 0) ||\n      a.name.localeCompare(b.name, \'ru\'),\n    );\n    rows.forEach((row) => sortNodes(row.children));\n  };\n  sortNodes(roots);\n  return roots;\n}\n\nfunction topicRows(items: PublicationCardData[] | undefined) {\n  return (items ?? []).filter((item) => item.format === \'TOPIC\').slice(0, 5);\n}\n\nfunction lastReply(item: PublicationCardData) {\n  return {\n    username: item.lastComment?.author.username ?? item.author.username,\n    createdAt: item.lastComment?.createdAt ?? item.lastActivityAt ?? item.createdAt,\n  };\n}\n\nfunction TreeBranch({\n  node,\n  depth,\n  expanded,\n  onToggle,\n}: {\n  node: TreeNode;\n  depth: number;\n  expanded: Set<string>;\n  onToggle: (slug: string) => void;\n}) {\n  const hasChildren = node.children.length > 0;\n  const isOpen = expanded.has(node.slug);\n  return (\n    <li className="forrum-home-v16__tree-node" style={{ \'--tree-depth\': depth } as CSSProperties}>\n      <div className="forrum-home-v16__tree-row">\n        {hasChildren ? (\n          <button\n            className="forrum-home-v16__tree-toggle"\n            type="button"\n            aria-expanded={isOpen}\n            aria-label={isOpen ? `Свернуть ${node.name}` : `Развернуть ${node.name}`}\n            onClick={() => onToggle(node.slug)}\n          >\n            <span aria-hidden="true">{isOpen ? \'⌄\' : \'›\'}</span>\n          </button>\n        ) : (\n          <span className="forrum-home-v16__tree-spacer" aria-hidden="true" />\n        )}\n        <Link className="forrum-home-v16__tree-link" href={`/communities/${node.slug}`}>\n          <span className="forrum-home-v16__tree-folder" aria-hidden="true" />\n          <span className="forrum-home-v16__tree-name">{node.name}</span>\n          <span className="forrum-home-v16__tree-count">{formatCount(node.subscriberCount)}</span>\n        </Link>\n      </div>\n      {hasChildren && isOpen && (\n        <ul className="forrum-home-v16__tree-children">\n          {node.children.map((child) => (\n            <TreeBranch\n              key={child.id}\n              node={child}\n              depth={depth + 1}\n              expanded={expanded}\n              onToggle={onToggle}\n            />\n          ))}\n        </ul>\n      )}\n    </li>\n  );\n}\n\nfunction HomePanel({ title, href, children }: { title: string; href?: string; children: ReactNode }) {\n  return (\n    <section className="forrum-home-v16__panel">\n      <header className="forrum-home-v16__panel-head">\n        <h2>{title}</h2>\n        {href && <Link href={href}>Смотреть все <span aria-hidden="true">→</span></Link>}\n      </header>\n      {children}\n    </section>\n  );\n}\n\nfunction DiscussedTopic({ item }: { item: PublicationCardData }) {\n  const reply = lastReply(item);\n  return (\n    <Link className="forrum-home-v16__discussed" href={`/p/${item.slug}`}>\n      <CommunityMark\n        className="forrum-home-v16__topic-mark"\n        name={item.community.name}\n        url={item.community.avatarUrl ?? topicVisual(item.community.slug)}\n        size={42}\n      />\n      <span className="forrum-home-v16__discussed-copy">\n        <span className="forrum-home-v16__topic-title">\n          <span className={`forrum-home-v16__type type-${item.type.toLowerCase()}`}>\n            {publicationTypeName[item.type] ?? \'Тема\'}\n          </span>\n          <strong>{item.title?.trim() || \'Тема без заголовка\'}</strong>\n        </span>\n        <span className="forrum-home-v16__topic-excerpt">{item.excerpt}</span>\n        <span className="forrum-home-v16__topic-meta">\n          <span>@{item.author.username}</span>\n          <span aria-hidden="true">→</span>\n          <span>{relativeTime(item.createdAt)}</span>\n        </span>\n      </span>\n      <span className="forrum-home-v16__discussion-stat" title="Ответы">▣ {formatCount(item.commentCount)}</span>\n      <span className="forrum-home-v16__discussion-stat" title="Просмотры">◉ {formatCount(item.viewCount)}</span>\n      <span className="forrum-home-v16__last-message">\n        <strong>{relativeTime(reply.createdAt)}</strong>\n        <small>@{reply.username}</small>\n      </span>\n    </Link>\n  );\n}\n\nfunction NewTopic({ item }: { item: PublicationCardData }) {\n  const reply = lastReply(item);\n  return (\n    <Link className="forrum-home-v16__new-topic" href={`/p/${item.slug}`}>\n      <span className="forrum-home-v16__new-topic-title">{item.title?.trim() || \'Тема без заголовка\'}</span>\n      <span className="forrum-home-v16__new-topic-section">{item.community.name}</span>\n      <span className="forrum-home-v16__new-topic-author">@{item.author.username}</span>\n      <span className="forrum-home-v16__new-topic-number">{formatCount(item.commentCount)}</span>\n      <span className="forrum-home-v16__new-topic-number">{formatCount(item.viewCount)}</span>\n      <span className="forrum-home-v16__new-topic-last">\n        {relativeTime(reply.createdAt)} <b>@{reply.username}</b>\n      </span>\n    </Link>\n  );\n}\n\nfunction PollRow({ poll }: { poll: PollItem }) {\n  const options = poll.options ?? [];\n  const total = options.reduce((sum, option) => sum + Math.max(0, option.bindingVotes), 0);\n  return (\n    <Link className="forrum-home-v16__poll" href="/events?tab=polls">\n      <CommunityMark\n        className="forrum-home-v16__poll-mark"\n        name={poll.community.name}\n        url={topicVisual(poll.community.slug)}\n        size={38}\n      />\n      <span className="forrum-home-v16__poll-copy">\n        <strong>{poll.title}</strong>\n        <small>Голосов: {formatCount(total)}</small>\n      </span>\n      <span className="forrum-home-v16__poll-options">\n        {options.map((option) => {\n          const percent = total > 0 ? Math.round((option.bindingVotes / total) * 100) : 0;\n          return (\n            <span className="forrum-home-v16__poll-option" key={option.id}>\n              <span>{option.label}</span>\n              <i aria-hidden="true"><b style={{ width: `${percent}%` }} /></i>\n              <em>{formatCount(option.bindingVotes)}</em>\n              <strong>{percent}%</strong>\n            </span>\n          );\n        })}\n      </span>\n      <span className="forrum-home-v16__poll-time">Осталось: {pollTimeLeft(poll.closesAt)}</span>\n    </Link>\n  );\n}\n\nexport function HomeDashboard({ initialData }: { initialData: HomeInitialData }) {\n  const communities = initialData.communities ?? [];\n  const tree = useMemo(() => buildTree(communities), [communities]);\n  const parentSlugs = useMemo(\n    () => communities.filter((item) => communities.some((candidate) => candidate.parent?.slug === item.slug)).map((item) => item.slug),\n    [communities],\n  );\n  const [expanded, setExpanded] = useState<Set<string>>(() => new Set(parentSlugs));\n  const [weeklyMode, setWeeklyMode] = useState<\'likes\' | \'activity\'>(\'likes\');\n  const discussed = topicRows(initialData.feed);\n  const newest = topicRows(initialData.newFeed);\n  const activePolls = useMemo(\n    () => (initialData.polls ?? [])\n      .filter((poll) => poll.status.toUpperCase() === \'OPEN\' && new Date(poll.closesAt).getTime() > Date.now())\n      .sort((a, b) => new Date(a.closesAt).getTime() - new Date(b.closesAt).getTime())\n      .slice(0, 3),\n    [initialData.polls],\n  );\n  const announcements = (initialData.announcements ?? []).slice(0, 2);\n  const weekly = initialData.overview?.weekly[weeklyMode] ?? [];\n  const stats = initialData.overview?.stats;\n\n  const toggleTree = (slug: string) => {\n    setExpanded((current) => {\n      const next = new Set(current);\n      if (next.has(slug)) next.delete(slug);\n      else next.add(slug);\n      return next;\n    });\n  };\n\n  return (\n    <div className="forrum-home-v16" data-home-reference="v36">\n      <aside className="forrum-home-v16__tree">\n        <div className="forrum-home-v16__side-head"><h2>Сообщества</h2></div>\n        {tree.length ? (\n          <ul className="forrum-home-v16__tree-root">\n            {tree.map((node) => (\n              <TreeBranch key={node.id} node={node} depth={0} expanded={expanded} onToggle={toggleTree} />\n            ))}\n          </ul>\n        ) : (\n          <p className="forrum-home-v16__empty">Сообщества появятся после загрузки данных.</p>\n        )}\n        <Link className="forrum-home-v16__proposal" href="/communities/proposals">\n          <span aria-hidden="true">⊞</span> Предложить сообщество\n        </Link>\n      </aside>\n\n      <main className="forrum-home-v16__center">\n        <HomePanel title="Обсуждаемые темы" href="/feed?mode=popular">\n          <div className="forrum-home-v16__discussed-list">\n            {discussed.length ? discussed.map((item) => <DiscussedTopic key={item.id} item={item} />) : (\n              <p className="forrum-home-v16__empty">Обсуждаемых тем за последние 24 часа пока нет.</p>\n            )}\n          </div>\n        </HomePanel>\n\n        <HomePanel title="Новые темы" href="/feed?mode=new">\n          <div className="forrum-home-v16__new-topic-table">\n            <div className="forrum-home-v16__new-topic-head" aria-hidden="true">\n              <span>Тема</span><span>Раздел</span><span>Автор</span><span>Ответы</span><span>Просмотры</span><span>Последнее сообщение</span>\n            </div>\n            {newest.length ? newest.map((item) => <NewTopic key={item.id} item={item} />) : (\n              <p className="forrum-home-v16__empty">Новых тем пока нет.</p>\n            )}\n          </div>\n        </HomePanel>\n\n        <HomePanel title="Активные голосования" href="/events?tab=polls">\n          <div className="forrum-home-v16__poll-list">\n            {activePolls.length ? activePolls.map((poll) => <PollRow key={poll.id} poll={poll} />) : (\n              <p className="forrum-home-v16__empty">Активных голосований сейчас нет.</p>\n            )}\n          </div>\n        </HomePanel>\n      </main>\n\n      <aside className="forrum-home-v16__rail">\n        <HomePanel title="Актуальное" href="/news">\n          <div className="forrum-home-v16__actual-list">\n            {announcements.map((item) => (\n              <Link className="forrum-home-v16__actual" href={`/p/${item.slug}`} key={item.id}>\n                <CommunityMark name={item.community.name} url={item.community.avatarUrl ?? topicVisual(item.community.slug)} size={34} />\n                <span><strong>{item.title || \'Объявление\'}</strong><small>{relativeTime(item.createdAt)}</small></span>\n              </Link>\n            ))}\n            {activePolls[0] && (\n              <Link className="forrum-home-v16__actual" href="/events?tab=polls">\n                <CommunityMark name={activePolls[0].community.name} url={topicVisual(activePolls[0].community.slug)} size={34} />\n                <span><strong>Активное голосование</strong><small>{activePolls[0].title}</small></span>\n              </Link>\n            )}\n            {!announcements.length && !activePolls.length && (\n              <p className="forrum-home-v16__empty">Важных обновлений сейчас нет.</p>\n            )}\n          </div>\n        </HomePanel>\n\n        <section className="forrum-home-v16__panel">\n          <header className="forrum-home-v16__panel-head"><h2>Участники недели</h2></header>\n          <div className="forrum-home-v16__tabs" role="tablist" aria-label="Рейтинг недели">\n            <button type="button" role="tab" aria-selected={weeklyMode === \'likes\'} className={weeklyMode === \'likes\' ? \'is-active\' : \'\'} onClick={() => setWeeklyMode(\'likes\')}>По симпатиям</button>\n            <button type="button" role="tab" aria-selected={weeklyMode === \'activity\'} className={weeklyMode === \'activity\' ? \'is-active\' : \'\'} onClick={() => setWeeklyMode(\'activity\')}>По активности</button>\n          </div>\n          <ol className="forrum-home-v16__weekly">\n            {weekly.map((user, index) => (\n              <li key={user.username}>\n                <span className="forrum-home-v16__weekly-rank">{index + 1}</span>\n                <Avatar name={user.displayName} url={user.avatarUrl} size={30} />\n                <Link href={`/u/${user.username}`}>@{user.username}</Link>\n                <strong>{weeklyMode === \'likes\' ? \'♡\' : \'↻\'} {formatCount(user.score)}</strong>\n              </li>\n            ))}\n          </ol>\n          {!weekly.length && <p className="forrum-home-v16__weekly-empty">За эту неделю рейтинг ещё не сформировался.</p>}\n          <Link className="forrum-home-v16__rail-footer" href="/users">Смотреть рейтинг <span aria-hidden="true">→</span></Link>\n        </section>\n\n        <section className="forrum-home-v16__panel">\n          <header className="forrum-home-v16__panel-head"><h2>FORRUM сегодня</h2></header>\n          <dl className="forrum-home-v16__stats">\n            <div><dt>Сообщества</dt><dd>{formatMetric(stats?.communities)}</dd></div>\n            <div><dt>Тем создано</dt><dd>{formatMetric(stats?.topics)}</dd></div>\n            <div><dt>Сообщений</dt><dd>{formatMetric(stats?.messages)}</dd></div>\n            <div><dt>Пользователей онлайн</dt><dd>{formatMetric(stats?.usersOnline)}</dd></div>\n          </dl>\n          <div className="forrum-home-v16__record">\n            Рекорд онлайн: <strong>{formatMetric(stats?.recordOnline)}</strong>\n            {stats?.recordOnlineAt ? ` — ${formatRecordDate(stats.recordOnlineAt)}` : \'\'}\n          </div>\n        </section>\n      </aside>\n    </div>\n  );\n}\n'
+          PAGE_SOURCE = "import {\n  HomeDashboard,\n  type HomeInitialData,\n} from '@/components/home-dashboard';\nimport { resolveApiBase } from '@/lib/api-base';\n\nexport const dynamic = 'force-dynamic';\n\nasync function publicApi<T>(path: string) {\n  const controller = new AbortController();\n  const timeout = setTimeout(\n    () => controller.abort(),\n    12_000,\n  );\n\n  try {\n    const response = await fetch(\n      `${resolveApiBase()}${path}`,\n      {\n        cache: 'no-store',\n        headers: {\n          Accept: 'application/json',\n        },\n        signal: controller.signal,\n      },\n    );\n\n    if (!response.ok) return undefined;\n\n    return (await response.json()) as T;\n  } catch {\n    return undefined;\n  } finally {\n    clearTimeout(timeout);\n  }\n}\n\nexport default async function Home() {\n  const [\n    communities,\n    polls,\n    announcements,\n    feed,\n    newFeed,\n    overview,\n  ] = await Promise.all([\n    publicApi<HomeInitialData['communities']>(\n      '/communities',\n    ),\n    publicApi<HomeInitialData['polls']>(\n      '/governance/polls',\n    ),\n    publicApi<HomeInitialData['announcements']>(\n      '/announcements',\n    ),\n    publicApi<HomeInitialData['feed']>(\n      '/feed?mode=popular',\n    ),\n    publicApi<HomeInitialData['newFeed']>(\n      '/feed?mode=new',\n    ),\n    publicApi<HomeInitialData['overview']>(\n      '/home/overview',\n    ),\n  ]);\n\n  return (\n    <HomeDashboard\n      initialData={{\n        communities,\n        polls,\n        announcements,\n        feed,\n        newFeed,\n        overview,\n      }}\n    />\n  );\n}\n"
+          HOME_SERVICE_SOURCE = "import { Injectable } from '@nestjs/common';\nimport {\n  PollStatus,\n  PublicationFormat,\n  PublicationStatus,\n  ReactionType,\n} from '../generated/prisma/client.js';\nimport { PrismaService } from '../prisma/prisma.service.js';\n\ntype WeeklyUser = {\n  username: string;\n  displayName: string;\n  avatarUrl: string | null;\n  score: number;\n  reactionCount: number;\n  topicCount: number;\n  commentCount: number;\n};\n\ntype WeeklyAccumulator = WeeklyUser & {\n  id: string;\n};\n\ntype UserIdentity = {\n  id: string;\n  username: string;\n  displayName: string;\n  avatarUrl: string | null;\n};\n\nconst onlineRecordKey = 'home.recordOnline';\n\nfunction getWeeklyUser(\n  map: Map<string, WeeklyAccumulator>,\n  user: UserIdentity,\n) {\n  const existing = map.get(user.id);\n\n  if (existing) return existing;\n\n  const created: WeeklyAccumulator = {\n    id: user.id,\n    username: user.username,\n    displayName: user.displayName,\n    avatarUrl: user.avatarUrl,\n    score: 0,\n    reactionCount: 0,\n    topicCount: 0,\n    commentCount: 0,\n  };\n\n  map.set(user.id, created);\n  return created;\n}\n\nfunction topWeekly(\n  map: Map<string, WeeklyAccumulator>,\n  score: (item: WeeklyAccumulator) => number,\n) {\n  return [...map.values()]\n    .map((item) => ({\n      username: item.username,\n      displayName: item.displayName,\n      avatarUrl: item.avatarUrl,\n      score: score(item),\n      reactionCount: item.reactionCount,\n      topicCount: item.topicCount,\n      commentCount: item.commentCount,\n    }))\n    .filter((item) => item.score > 0)\n    .sort(\n      (left, right) =>\n        right.score - left.score ||\n        left.username.localeCompare(right.username),\n    )\n    .slice(0, 5);\n}\n\nfunction readOnlineRecord(value: unknown) {\n  if (\n    typeof value !== 'object' ||\n    value === null ||\n    Array.isArray(value)\n  ) {\n    return { count: 0, at: null as string | null };\n  }\n\n  const record = value as Record<string, unknown>;\n  const count =\n    typeof record.count === 'number' &&\n    Number.isFinite(record.count)\n      ? Math.max(0, Math.floor(record.count))\n      : 0;\n  const at =\n    typeof record.at === 'string'\n      ? record.at\n      : null;\n\n  return { count, at };\n}\n\n@Injectable()\nexport class HomeService {\n  constructor(private readonly prisma: PrismaService) {}\n\n  async overview(userId?: string) {\n    const now = new Date();\n    const dayAgo = new Date(\n      now.getTime() - 24 * 60 * 60 * 1000,\n    );\n    const weekAgo = new Date(\n      now.getTime() - 7 * 24 * 60 * 60 * 1000,\n    );\n    const onlineSince = new Date(\n      now.getTime() - 5 * 60 * 1000,\n    );\n\n    const [\n      verifiedUsers,\n      activeUsers24h,\n      publications,\n      comments24h,\n      communities,\n      topics,\n      messages,\n      onlineSessions,\n      recordSetting,\n      weeklyTopics,\n      weeklyComments,\n      publicationReactions,\n      commentReactions,\n      poll,\n      proposal,\n    ] = await Promise.all([\n      this.prisma.user.count({\n        where: { emailVerifiedAt: { not: null } },\n      }),\n      this.prisma.user.count({\n        where: { lastSeenAt: { gte: dayAgo } },\n      }),\n      this.prisma.publication.count({\n        where: { status: PublicationStatus.PUBLISHED },\n      }),\n      this.prisma.comment.count({\n        where: {\n          hiddenAt: null,\n          createdAt: { gte: dayAgo },\n        },\n      }),\n      this.prisma.community.count({\n        where: { status: 'ACTIVE' },\n      }),\n      this.prisma.publication.count({\n        where: {\n          status: PublicationStatus.PUBLISHED,\n          format: PublicationFormat.TOPIC,\n        },\n      }),\n      this.prisma.comment.count({\n        where: { hiddenAt: null },\n      }),\n      this.prisma.session.findMany({\n        where: {\n          revokedAt: null,\n          expiresAt: { gt: now },\n          lastSeenAt: { gte: onlineSince },\n        },\n        distinct: ['userId'],\n        select: { userId: true },\n      }),\n      this.prisma.platformSetting.findUnique({\n        where: { key: onlineRecordKey },\n      }),\n      this.prisma.publication.findMany({\n        where: {\n          status: PublicationStatus.PUBLISHED,\n          format: PublicationFormat.TOPIC,\n          createdAt: { gte: weekAgo },\n        },\n        select: {\n          author: {\n            select: {\n              id: true,\n              username: true,\n              displayName: true,\n              avatarUrl: true,\n            },\n          },\n        },\n      }),\n      this.prisma.comment.findMany({\n        where: {\n          hiddenAt: null,\n          createdAt: { gte: weekAgo },\n          publication: {\n            status: PublicationStatus.PUBLISHED,\n          },\n        },\n        select: {\n          author: {\n            select: {\n              id: true,\n              username: true,\n              displayName: true,\n              avatarUrl: true,\n            },\n          },\n        },\n      }),\n      this.prisma.publicationReaction.findMany({\n        where: {\n          createdAt: { gte: weekAgo },\n          type: ReactionType.LIKE,\n          publication: {\n            status: PublicationStatus.PUBLISHED,\n          },\n        },\n        select: {\n          userId: true,\n          publication: {\n            select: {\n              author: {\n                select: {\n                  id: true,\n                  username: true,\n                  displayName: true,\n                  avatarUrl: true,\n                },\n              },\n            },\n          },\n        },\n      }),\n      this.prisma.commentReaction.findMany({\n        where: {\n          createdAt: { gte: weekAgo },\n          type: ReactionType.LIKE,\n          comment: {\n            hiddenAt: null,\n            publication: {\n              status: PublicationStatus.PUBLISHED,\n            },\n          },\n        },\n        select: {\n          userId: true,\n          comment: {\n            select: {\n              author: {\n                select: {\n                  id: true,\n                  username: true,\n                  displayName: true,\n                  avatarUrl: true,\n                },\n              },\n            },\n          },\n        },\n      }),\n      this.prisma.communityPoll.findFirst({\n        where: {\n          status: PollStatus.OPEN,\n          closesAt: { gt: now },\n        },\n        orderBy: { createdAt: 'desc' },\n        include: {\n          community: {\n            select: {\n              slug: true,\n              name: true,\n              accentColor: true,\n            },\n          },\n          options: {\n            orderBy: { position: 'asc' },\n            include: {\n              _count: { select: { votes: true } },\n            },\n          },\n          votes: {\n            where: {\n              userId:\n                userId ??\n                '00000000-0000-0000-0000-000000000000',\n            },\n            take: 1,\n          },\n        },\n      }),\n      this.prisma.communityProposal.findFirst({\n        where: { status: 'OPEN' },\n        orderBy: { createdAt: 'desc' },\n        include: {\n          author: {\n            select: {\n              username: true,\n              displayName: true,\n            },\n          },\n          _count: { select: { supports: true } },\n        },\n      }),\n    ]);\n\n    const activity = new Map<string, WeeklyAccumulator>();\n    const likes = new Map<string, WeeklyAccumulator>();\n\n    for (const item of weeklyTopics) {\n      getWeeklyUser(activity, item.author).topicCount += 1;\n    }\n\n    for (const item of weeklyComments) {\n      getWeeklyUser(activity, item.author).commentCount += 1;\n    }\n\n    for (const item of publicationReactions) {\n      const author = item.publication.author;\n\n      if (item.userId === author.id) continue;\n\n      getWeeklyUser(likes, author).reactionCount += 1;\n    }\n\n    for (const item of commentReactions) {\n      const author = item.comment.author;\n\n      if (item.userId === author.id) continue;\n\n      getWeeklyUser(likes, author).reactionCount += 1;\n    }\n\n    const usersOnline = onlineSessions.length;\n    const savedRecord = readOnlineRecord(\n      recordSetting?.value,\n    );\n\n    let recordOnline = savedRecord.count;\n    let recordOnlineAt = savedRecord.at;\n\n    if (usersOnline > recordOnline) {\n      recordOnline = usersOnline;\n      recordOnlineAt = now.toISOString();\n\n      await this.prisma.platformSetting.upsert({\n        where: { key: onlineRecordKey },\n        create: {\n          key: onlineRecordKey,\n          value: {\n            count: recordOnline,\n            at: recordOnlineAt,\n          },\n        },\n        update: {\n          value: {\n            count: recordOnline,\n            at: recordOnlineAt,\n          },\n        },\n      });\n    }\n\n    return {\n      stats: {\n        // Existing fields stay for backward compatibility.\n        verifiedUsers,\n        activeUsers24h,\n        publications,\n        comments24h,\n        communities,\n        // Canonical FORRUM Today metrics.\n        topics,\n        messages,\n        usersOnline,\n        recordOnline,\n        recordOnlineAt,\n      },\n      weekly: {\n        likes: topWeekly(\n          likes,\n          (item) => item.reactionCount,\n        ),\n        activity: topWeekly(\n          activity,\n          (item) => item.topicCount + item.commentCount,\n        ),\n      },\n      poll: poll\n        ? {\n            id: poll.id,\n            title: poll.title,\n            closesAt: poll.closesAt,\n            community: poll.community,\n            totalVotes: poll.options.reduce(\n              (sum, option) =>\n                sum + option._count.votes,\n              0,\n            ),\n            viewerVoted: poll.votes.length > 0,\n          }\n        : null,\n      proposal: proposal\n        ? {\n            id: proposal.id,\n            name: proposal.name,\n            description: proposal.description,\n            supportCount: proposal._count.supports,\n            author: proposal.author,\n          }\n        : null,\n    };\n  }\n}\n"
+          CHECK_HOME_SOURCE = 'import fs from \'node:fs\';\n\nconst homePath = \'apps/web/components/home-dashboard.tsx\';\nconst cssPath = \'apps/web/app/globals.css\';\nconst pagePath = \'apps/web/app/page.tsx\';\n\nfor (const path of [homePath, cssPath, pagePath]) {\n  if (!fs.existsSync(path)) {\n    throw new Error(`Homepage V36 required file missing: ${path}`);\n  }\n}\n\nconst home = fs.readFileSync(homePath, \'utf8\');\nconst css = fs.readFileSync(cssPath, \'utf8\');\nconst page = fs.readFileSync(pagePath, \'utf8\');\n\nfor (const required of [\n  \'data-home-reference="v36"\',\n  \'Обсуждаемые темы\',\n  \'Новые темы\',\n  \'Активные голосования\',\n  \'Участники недели\',\n  \'FORRUM сегодня\',\n  \'Сообщества\',\n  \'Тем создано\',\n  \'Сообщений\',\n  \'Пользователей онлайн\',\n  \'Рекорд онлайн:\',\n  \'item.lastComment?.author.username\',\n  \'poll.options ?? []\',\n  \'option.bindingVotes\',\n  \'Осталось:\',\n]) {\n  if (!home.includes(required)) {\n    throw new Error(`Homepage V36 product element missing: ${required}`);\n  }\n}\n\nfor (const required of [\n  "\'/communities\'",\n  "\'/governance/polls\'",\n  "\'/announcements\'",\n  "\'/feed?mode=popular\'",\n  "\'/feed?mode=new\'",\n  "\'/home/overview\'",\n]) {\n  if (!page.includes(required)) {\n    throw new Error(`Homepage V36 server data source missing: ${required}`);\n  }\n}\n\nconst startMarker = \'/* FORRUM_HOME_REFERENCE_V36_START\';\nconst endMarker = \'/* FORRUM_HOME_REFERENCE_V36_END */\';\nconst starts = css.split(startMarker).length - 1;\nconst ends = css.split(endMarker).length - 1;\n\nif (starts !== 1 || ends !== 1) {\n  throw new Error(\n    `Homepage V36 must have exactly one canonical CSS block; got ${starts}/${ends}.`,\n  );\n}\n\nconst start = css.indexOf(startMarker);\nconst end = css.indexOf(endMarker, start);\nconst block = css.slice(start, end + endMarker.length);\nconst outside = css.slice(0, start) + css.slice(end + endMarker.length);\n\nfor (const required of [\n  \'grid-template-columns: 300px minmax(0, 1fr) 326px\',\n  \'max-width: 1680px\',\n  \'gap: 14px\',\n  \'min-height: 68px\',\n  \'min-height: 39px\',\n  \'min-height: 78px\',\n  \'.forrum-home-v16__tree-children::before\',\n  \'border-left: 1px dotted\',\n  \'.forrum-home-v16__new-topic-head\',\n  \'.forrum-home-v16__poll-option\',\n  \'.forrum-home-v16__weekly\',\n  \'.forrum-home-v16__record\',\n  \'@media (max-width: 860px)\',\n]) {\n  if (!block.includes(required)) {\n    throw new Error(`Homepage V36 reference geometry missing: ${required}`);\n  }\n}\n\nif (outside.includes(\'.forrum-home-v16\')) {\n  throw new Error(\n    \'Homepage styles are duplicated outside the single V36 canonical block.\',\n  );\n}\n\nfor (const forbidden of [\n  \'!important\',\n  \'linear-gradient\',\n  \'radial-gradient\',\n  \'box-shadow:\',\n  \'backdrop-filter:\',\n  \'border-radius: 12px\',\n  \'border-radius: 16px\',\n]) {\n  if (block.includes(forbidden)) {\n    throw new Error(`Homepage V36 forbidden visual pattern: ${forbidden}`);\n  }\n}\n\nfor (const forbiddenThemeGeometry of [\n  \'html.dark .forrum-home-v16\',\n  \'html[data-theme="dark"] .forrum-home-v16\',\n  \'html[data-theme="graphite"] .forrum-home-v16\',\n  \'html[data-forrum-theme="graphite"] .forrum-home-v16\',\n]) {\n  if (block.includes(forbiddenThemeGeometry)) {\n    throw new Error(\n      `Paper/Graphite geometry diverged in V36: ${forbiddenThemeGeometry}`,\n    );\n  }\n}\n\nconsole.log(\n  \'FORRUM Home V36 passed: reference geometry, dense tree/table/polls, one Paper/Graphite layout.\',\n);\n'
+          CHECK_REFERENCE_SOURCE = 'import fs from \'node:fs\';\n\nconst navPath = \'apps/web/components/main-nav.tsx\';\nconst homePath = \'apps/web/components/home-dashboard.tsx\';\nconst cssPath = \'apps/web/app/globals.css\';\n\nfor (const path of [navPath, homePath, cssPath]) {\n  if (!fs.existsSync(path)) {\n    throw new Error(`FORRUM reference file missing: ${path}`);\n  }\n}\n\nconst nav = fs.readFileSync(navPath, \'utf8\');\nconst linksMatch = nav.match(\n  /const\\s+links\\s*=\\s*\\[([\\s\\S]*?)\\]\\s*as\\s+const\\s*;/,\n);\n\nif (!linksMatch) {\n  throw new Error(\'Could not isolate MainNav product links array.\');\n}\n\nconst tuples = [\n  ...linksMatch[1].matchAll(\n    /\\[\\s*[\'"]([^\'"]+)[\'"]\\s*,\\s*[\'"]([^\'"]+)[\'"]\\s*\\]/g,\n  ),\n].map((match) => [match[1], match[2]]);\n\nconst expectedNavigation = [\n  [\'/\', \'Главная\'],\n  [\'/communities\', \'Сообщества\'],\n  [\'/services\', \'Услуги\'],\n  [\'/media\', \'Медиа\'],\n  [\'/news\', \'Новости\'],\n];\n\nif (JSON.stringify(tuples) !== JSON.stringify(expectedNavigation)) {\n  throw new Error(\n    `MainNav product contract mismatch: ${JSON.stringify(tuples)}`,\n  );\n}\n\nfor (const routePage of [\n  \'apps/web/app/services/page.tsx\',\n  \'apps/web/app/media/page.tsx\',\n  \'apps/web/app/news/page.tsx\',\n]) {\n  if (!fs.existsSync(routePage)) {\n    throw new Error(`Approved MainNav route has no real page: ${routePage}`);\n  }\n}\n\nif (!nav.includes("api<ActivityItem[]>(\'/news\')")) {\n  throw new Error(\'Existing News polling was removed.\');\n}\n\nif (nav.includes(\'String(href)\')) {\n  throw new Error(\'String(href) workaround returned to MainNav.\');\n}\n\nconst home = fs.readFileSync(homePath, \'utf8\');\nconst css = fs.readFileSync(cssPath, \'utf8\');\n\nconst requiredHome = [\n  \'data-home-reference="v36"\',\n  \'forrum-home-v16__tree\',\n  \'forrum-home-v16__discussed\',\n  \'forrum-home-v16__new-topic-table\',\n  \'forrum-home-v16__poll-list\',\n  \'forrum-home-v16__weekly\',\n  \'forrum-home-v16__stats\',\n];\n\nfor (const marker of requiredHome) {\n  if (!home.includes(marker)) {\n    throw new Error(`V36 reference screen structure missing: ${marker}`);\n  }\n}\n\nconst start = css.indexOf(\'/* FORRUM_HOME_REFERENCE_V36_START\');\nconst end = css.indexOf(\'/* FORRUM_HOME_REFERENCE_V36_END */\', start);\n\nif (start < 0 || end < 0) {\n  throw new Error(\'V36 reference CSS block is missing.\');\n}\n\nconst block = css.slice(start, end);\n\nif (!block.includes(\'grid-template-columns: 300px minmax(0, 1fr) 326px\')) {\n  throw new Error(\'V36 reference three-column geometry is missing.\');\n}\n\nif (!block.includes(\'border-left: 1px dotted\')) {\n  throw new Error(\'V36 visible community hierarchy is missing.\');\n}\n\nconsole.log(\n  \'FORRUM Home Reference V36 passed: approved navigation preserved and homepage aligned to reference.\',\n);\n'
+          CHECK_SCALE_SOURCE = "import fs from 'node:fs';\n\nconst css = fs.readFileSync('apps/web/app/globals.css', 'utf8');\nconst start = css.indexOf('/* FORRUM_HOME_REFERENCE_V36_START');\nconst end = css.indexOf('/* FORRUM_HOME_REFERENCE_V36_END */', start);\n\nif (start < 0 || end < 0) {\n  throw new Error('V36 canonical homepage block missing.');\n}\n\nconst block = css.slice(start, end);\n\nconst densityContract = [\n  'grid-template-columns: 300px minmax(0, 1fr) 326px',\n  'min-height: 44px',\n  'min-height: 68px',\n  'min-height: 39px',\n  'min-height: 78px',\n  'font-size: 12.5px',\n  '@media (max-width: 1480px)',\n  '@media (max-width: 1240px)',\n  '@media (max-width: 860px)',\n  '@media (max-width: 560px)',\n];\n\nfor (const marker of densityContract) {\n  if (!block.includes(marker)) {\n    throw new Error(`V36 density/scale contract missing: ${marker}`);\n  }\n}\n\nconsole.log(\n  'FORRUM Home Scale V36 passed: reference shell width, dense rows and responsive collapse.',\n);\n"
+          CHECK_THEME_SOURCE = 'import fs from \'node:fs\';\n\nconst css = fs.readFileSync(\'apps/web/app/globals.css\', \'utf8\');\n\nfor (const token of [\n  \'--fvt-page:\',\n  \'--fvt-panel:\',\n  \'--fvt-line:\',\n  \'--fvt-text:\',\n  \'--fvt-muted:\',\n  \'--fvt-accent:\',\n]) {\n  if (!css.includes(token)) {\n    throw new Error(`FORRUM visual token missing: ${token}`);\n  }\n}\n\nif (\n  !css.includes(\'html[data-theme="graphite"]\') &&\n  !css.includes(\'html[data-forrum-theme="graphite"]\') &&\n  !css.includes(\'html.dark\')\n) {\n  throw new Error(\'Graphite token theme selector is missing.\');\n}\n\nif (!css.includes(\'.forrum-theme-toggle\')) {\n  throw new Error(\'Theme toggle styling is missing.\');\n}\n\nconst start = css.indexOf(\'/* FORRUM_HOME_REFERENCE_V36_START\');\nconst end = css.indexOf(\'/* FORRUM_HOME_REFERENCE_V36_END */\', start);\nconst block = start >= 0 && end >= 0 ? css.slice(start, end) : \'\';\n\nif (!block) {\n  throw new Error(\'V36 canonical homepage style block missing.\');\n}\n\nfor (const selector of [\n  \'html.dark\',\n  \'html[data-theme=\',\n  \'html[data-forrum-theme=\',\n]) {\n  if (block.includes(selector)) {\n    throw new Error(\n      `Theme-specific homepage geometry is forbidden in V36: ${selector}`,\n    );\n  }\n}\n\nconsole.log(\n  \'FORRUM Visual Theme V36 passed: Paper/Graphite are token-only with one shared homepage geometry.\',\n);\n'
+          V36_CSS = '/* FORRUM_HOME_REFERENCE_V36_START\n   Canonical homepage reference geometry.\n   Paper and Graphite share one layout; theme differences come only from --fvt-* tokens.\n*/\n.forrum-home-v16 {\n  width: min(calc(100vw - 24px), 1680px);\n  max-width: 1680px;\n  margin: 0 auto;\n  padding: 14px 12px 26px;\n  display: grid;\n  grid-template-columns: 300px minmax(0, 1fr) 326px;\n  gap: 14px;\n  align-items: start;\n  color: var(--fvt-text);\n  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;\n  font-size: 12.5px;\n}\n\n.forrum-home-v16 *,\n.forrum-home-v16 *::before,\n.forrum-home-v16 *::after { box-sizing: border-box; }\n.forrum-home-v16 a { color: inherit; text-decoration: none; }\n.forrum-home-v16 a:focus-visible,\n.forrum-home-v16 button:focus-visible { outline: 1px dashed var(--fvt-focus); outline-offset: 2px; }\n\n.forrum-home-v16__tree,\n.forrum-home-v16__panel {\n  min-width: 0;\n  border: 1px solid var(--fvt-line);\n  border-radius: 2px;\n  background: var(--fvt-panel);\n}\n\n.forrum-home-v16__tree {\n  position: sticky;\n  top: 72px;\n  padding: 0 14px 14px;\n  max-height: calc(100vh - 88px);\n  overflow: auto;\n  scrollbar-width: thin;\n  scrollbar-color: var(--fvt-line-strong) transparent;\n}\n\n.forrum-home-v16__center,\n.forrum-home-v16__rail { min-width: 0; display: grid; gap: 14px; }\n\n.forrum-home-v16__side-head,\n.forrum-home-v16__panel-head {\n  min-height: 44px;\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 12px;\n  border-bottom: 1px solid var(--fvt-line);\n}\n.forrum-home-v16__panel-head { padding: 0 14px; }\n.forrum-home-v16__side-head h2,\n.forrum-home-v16__panel-head h2 {\n  margin: 0;\n  color: var(--fvt-text);\n  font-size: 13px;\n  line-height: 1.15;\n  font-weight: 760;\n  letter-spacing: 0.012em;\n  text-transform: uppercase;\n}\n.forrum-home-v16__panel-head > a {\n  color: var(--fvt-accent);\n  font-size: 12px;\n  font-weight: 650;\n  white-space: nowrap;\n}\n\n.forrum-home-v16__tree-root,\n.forrum-home-v16__tree-children { list-style: none; margin: 0; padding: 0; }\n.forrum-home-v16__tree-root { padding: 8px 0 10px; }\n.forrum-home-v16__tree-node { position: relative; min-width: 0; }\n.forrum-home-v16__tree-children { position: relative; margin-left: 11px; padding-left: 15px; }\n.forrum-home-v16__tree-children::before {\n  content: "";\n  position: absolute;\n  top: 0;\n  bottom: 12px;\n  left: 2px;\n  border-left: 1px dotted var(--fvt-line-strong);\n  border-left-color: var(--fh-line-strong);\n}\n.forrum-home-v16__tree-children > .forrum-home-v16__tree-node::before {\n  content: "";\n  position: absolute;\n  top: 16px;\n  left: -13px;\n  width: 14px;\n  border-top: 1px dotted var(--fvt-line-strong);\n  border-top-color: var(--fh-line-strong);\n}\n.forrum-home-v16__tree-row { min-height: 32px; display: flex; align-items: center; min-width: 0; }\n.forrum-home-v16__tree-toggle,\n.forrum-home-v16__tree-spacer { width: 21px; height: 31px; flex: 0 0 21px; }\n.forrum-home-v16__tree-toggle {\n  display: grid; place-items: center; margin: 0; padding: 0; border: 0; background: transparent;\n  color: var(--fvt-muted); cursor: pointer; font: inherit;\n}\n.forrum-home-v16__tree-toggle:hover { color: var(--fvt-accent); }\n.forrum-home-v16__tree-link {\n  min-width: 0; flex: 1 1 auto; display: grid;\n  grid-template-columns: 18px minmax(0, 1fr) auto;\n  gap: 7px; align-items: center; min-height: 31px; padding: 2px 4px; border-radius: 0; color: var(--fvt-text);\n}\n.forrum-home-v16__tree-row:hover .forrum-home-v16__tree-link { background: var(--fvt-hover); }\n.forrum-home-v16__tree-row:hover .forrum-home-v16__tree-name { color: var(--fvt-accent); }\n.forrum-home-v16__tree-folder {\n  position: relative;\n  width: 14px;\n  height: 10px;\n  display: block;\n  border: 1px solid var(--fvt-muted);\n  border-radius: 1px;\n}\n.forrum-home-v16__tree-folder::before {\n  content: "";\n  position: absolute;\n  top: -4px;\n  left: 1px;\n  width: 6px;\n  height: 3px;\n  border: 1px solid var(--fvt-muted);\n  border-bottom: 0;\n  background: var(--fvt-panel);\n}\n.forrum-home-v16__tree-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12.5px; font-weight: 610; }\n.forrum-home-v16__tree-root > .forrum-home-v16__tree-node > .forrum-home-v16__tree-row .forrum-home-v16__tree-name { font-size: 13px; font-weight: 740; }\n.forrum-home-v16__tree-count { color: var(--fvt-muted); font-size: 10.5px; font-variant-numeric: tabular-nums; }\n.forrum-home-v16__proposal {\n  min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 9px;\n  border: 1px dashed var(--fvt-line-strong); border-radius: 2px; background: var(--fvt-panel-soft); color: var(--fvt-text); font-size: 12.5px; font-weight: 650;\n}\n.forrum-home-v16__proposal:hover { border-color: var(--fvt-accent); color: var(--fvt-accent); }\n\n.forrum-home-v16__discussed-list,\n.forrum-home-v16__actual-list,\n.forrum-home-v16__poll-list { padding: 0 14px; }\n.forrum-home-v16__discussed {\n  min-width: 0; min-height: 68px; display: grid;\n  grid-template-columns: 44px minmax(0, 1fr) 58px 70px 120px;\n  gap: 10px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--fvt-line);\n}\n.forrum-home-v16__discussed:last-child { border-bottom: 0; }\n.forrum-home-v16__discussed:hover .forrum-home-v16__topic-title strong { color: var(--fvt-accent); }\n.forrum-home-v16 .forrum-home-v16__topic-mark { image-rendering: pixelated; border-radius: 2px; }\n.forrum-home-v16__discussed-copy { min-width: 0; display: grid; gap: 3px; }\n.forrum-home-v16__topic-title { min-width: 0; display: flex; align-items: center; gap: 7px; }\n.forrum-home-v16__topic-title strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fvt-text); font-size: 13px; font-weight: 700; }\n.forrum-home-v16__type { flex: 0 0 auto; padding: 2px 5px; border: 1px solid var(--fvt-line-strong); border-radius: 1px; color: var(--fvt-muted); font-size: 10px; line-height: 1.15; font-weight: 650; }\n.forrum-home-v16__type.type-guide { color: #25884b; border-color: #75aa88; }\n.forrum-home-v16__type.type-question { color: #bd3b35; border-color: #c98680; }\n.forrum-home-v16__type.type-news { color: var(--fvt-accent); border-color: var(--fvt-accent); }\n.forrum-home-v16__type.type-case,\n.forrum-home-v16__type.type-project { color: #b86812; border-color: #c69b6b; }\n.forrum-home-v16__topic-excerpt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fvt-muted); font-size: 11px; }\n.forrum-home-v16__topic-meta { display: flex; gap: 6px; min-width: 0; overflow: hidden; color: var(--fvt-faint); font-size: 10.5px; white-space: nowrap; }\n.forrum-home-v16__topic-meta span:first-child { color: var(--fvt-muted); }\n.forrum-home-v16__discussion-stat { justify-self: end; color: var(--fvt-muted); font-size: 11.5px; font-variant-numeric: tabular-nums; white-space: nowrap; }\n.forrum-home-v16__last-message { min-width: 0; display: grid; gap: 2px; justify-items: start; color: var(--fvt-faint); font-size: 10.5px; }\n.forrum-home-v16__last-message strong { color: var(--fvt-muted); font-size: 10.5px; font-weight: 550; }\n\n.forrum-home-v16__new-topic-table { padding: 0 14px 6px; min-width: 0; }\n.forrum-home-v16__new-topic-head,\n.forrum-home-v16__new-topic {\n  display: grid;\n  grid-template-columns: minmax(260px, 2fr) minmax(130px, 1fr) minmax(116px, .9fr) 62px 78px minmax(142px, 1fr);\n  column-gap: 12px; align-items: center; min-width: 0;\n}\n.forrum-home-v16__new-topic-head { min-height: 32px; border-bottom: 1px solid var(--fvt-line); color: var(--fvt-muted); font-size: 10.5px; font-weight: 620; }\n.forrum-home-v16__new-topic { min-height: 39px; border-bottom: 1px solid var(--fvt-line); color: var(--fvt-muted); font-size: 11.5px; }\n.forrum-home-v16__new-topic:last-child { border-bottom: 0; }\n.forrum-home-v16__new-topic:hover { background: var(--fvt-hover); }\n.forrum-home-v16__new-topic:hover .forrum-home-v16__new-topic-title { color: var(--fvt-accent); }\n.forrum-home-v16__new-topic-title,\n.forrum-home-v16__new-topic-section,\n.forrum-home-v16__new-topic-author,\n.forrum-home-v16__new-topic-last { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.forrum-home-v16__new-topic-title { display: flex; align-items: center; gap: 7px; color: var(--fvt-text); font-size: 12px; font-weight: 650; }\n.forrum-home-v16__new-topic-title::before { content: ""; width: 9px; height: 9px; flex: 0 0 9px; border: 1px solid var(--fvt-line-strong); background: var(--fvt-panel-soft); image-rendering: pixelated; }\n.forrum-home-v16__new-topic-number { text-align: center; color: var(--fvt-text); font-variant-numeric: tabular-nums; }\n.forrum-home-v16__new-topic-last { text-align: right; color: var(--fvt-faint); }\n.forrum-home-v16__new-topic-last b { color: var(--fvt-muted); font-weight: 550; }\n\n.forrum-home-v16__poll { min-width: 0; min-height: 78px; display: grid; grid-template-columns: 40px minmax(210px, .9fr) minmax(360px, 1.4fr) 105px; gap: 12px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--fvt-line); }\n.forrum-home-v16__poll:last-child { border-bottom: 0; }\n.forrum-home-v16__poll:hover { background: var(--fvt-hover); }\n.forrum-home-v16 .forrum-home-v16__poll-mark { image-rendering: pixelated; border-radius: 2px; }\n.forrum-home-v16__poll-copy { min-width: 0; display: grid; gap: 3px; }\n.forrum-home-v16__poll-copy strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fvt-text); font-size: 12.5px; font-weight: 680; }\n.forrum-home-v16__poll-copy small { color: var(--fvt-muted); font-size: 10.5px; }\n.forrum-home-v16__poll-options { min-width: 0; display: grid; gap: 4px; }\n.forrum-home-v16__poll-option { min-width: 0; display: grid; grid-template-columns: minmax(115px, .9fr) minmax(90px, 1.5fr) 36px 36px; gap: 8px; align-items: center; color: var(--fvt-muted); font-size: 10.5px; }\n.forrum-home-v16__poll-option > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }\n.forrum-home-v16__poll-option i { height: 5px; display: block; overflow: hidden; border: 1px solid var(--fvt-line); background: var(--fvt-panel-soft); }\n.forrum-home-v16__poll-option i b { display: block; height: 100%; background: var(--fvt-accent); }\n.forrum-home-v16__poll-option em { color: var(--fvt-faint); font-style: normal; text-align: right; font-variant-numeric: tabular-nums; }\n.forrum-home-v16__poll-option > strong { color: var(--fvt-text); text-align: right; font-size: 10.5px; font-variant-numeric: tabular-nums; }\n.forrum-home-v16__poll-time { justify-self: end; color: var(--fvt-muted); font-size: 10.5px; white-space: nowrap; }\n\n.forrum-home-v16__actual { min-height: 66px; display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 10px; align-items: center; border-bottom: 1px solid var(--fvt-line); }\n.forrum-home-v16__actual:last-child { border-bottom: 0; }\n.forrum-home-v16__actual:hover { background: var(--fvt-hover); }\n.forrum-home-v16 .forrum-home-v16__actual .community-mark { image-rendering: pixelated; border-radius: 2px; }\n.forrum-home-v16__actual > span:last-child { min-width: 0; display: grid; gap: 3px; }\n.forrum-home-v16__actual strong { overflow: hidden; text-overflow: ellipsis; color: var(--fvt-text); font-size: 12.5px; line-height: 1.25; }\n.forrum-home-v16__actual small { overflow: hidden; text-overflow: ellipsis; color: var(--fvt-muted); font-size: 10.5px; }\n\n.forrum-home-v16__tabs { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--fvt-line); }\n.forrum-home-v16__tabs button { min-height: 40px; padding: 0 6px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--fvt-muted); font: inherit; font-size: 11.5px; cursor: pointer; }\n.forrum-home-v16__tabs button.is-active { border-bottom-color: var(--fvt-accent); color: var(--fvt-accent); font-weight: 670; }\n.forrum-home-v16__weekly { list-style: none; margin: 0; padding: 6px 14px 2px; }\n.forrum-home-v16__weekly li { min-height: 41px; display: grid; grid-template-columns: 18px 32px minmax(0,1fr) auto; gap: 8px; align-items: center; border-bottom: 1px solid var(--fvt-line); }\n.forrum-home-v16__weekly li:last-child { border-bottom: 0; }\n.forrum-home-v16__weekly-rank { color: var(--fvt-text); font-size: 11px; text-align: center; }\n.forrum-home-v16 .forrum-home-v16__weekly .avatar { image-rendering: pixelated; border-radius: 2px; }\n.forrum-home-v16__weekly a { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fvt-accent); font-size: 11.5px; font-weight: 620; }\n.forrum-home-v16__weekly strong { color: var(--fvt-text); font-size: 11px; font-weight: 600; font-variant-numeric: tabular-nums; }\n.forrum-home-v16__weekly-empty { margin: 0; min-height: 92px; display: grid; place-items: center; padding: 16px; color: var(--fvt-muted); font-size: 11px; text-align: center; }\n.forrum-home-v16__rail-footer { min-height: 38px; display: flex; align-items: center; padding: 0 14px; border-top: 1px solid var(--fvt-line); color: var(--fvt-accent); font-size: 11.5px; font-weight: 620; }\n\n.forrum-home-v16__stats { margin: 0; padding: 5px 14px 8px; }\n.forrum-home-v16__stats > div { min-height: 41px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--fvt-line); }\n.forrum-home-v16__stats dt { color: var(--fvt-muted); font-size: 11.5px; }\n.forrum-home-v16__stats dd { margin: 0; color: var(--fvt-text); font-size: 13.5px; font-weight: 720; font-variant-numeric: tabular-nums; }\n.forrum-home-v16__record { margin: 0 14px 10px; padding-top: 9px; border-top: 1px solid var(--fvt-line); color: var(--fvt-muted); font-size: 10.5px; }\n.forrum-home-v16__record strong { color: var(--fvt-text); font-weight: 650; }\n.forrum-home-v16__empty { margin: 0; padding: 18px 14px; color: var(--fvt-muted); font-size: 11.5px; line-height: 1.45; }\n\n@media (max-width: 1480px) {\n  .forrum-home-v16 { grid-template-columns: 276px minmax(0, 1fr) 292px; gap: 12px; }\n  .forrum-home-v16__discussed { grid-template-columns: 42px minmax(0,1fr) 52px 64px 105px; gap: 8px; }\n  .forrum-home-v16__new-topic-head,\n  .forrum-home-v16__new-topic { grid-template-columns: minmax(220px, 1.8fr) minmax(110px,.9fr) minmax(100px,.8fr) 56px 70px minmax(120px,.9fr); column-gap: 9px; }\n  .forrum-home-v16__poll { grid-template-columns: 38px minmax(180px,.8fr) minmax(300px,1.3fr) 95px; gap: 9px; }\n}\n\n@media (max-width: 1240px) {\n  .forrum-home-v16 { width: calc(100vw - 20px); grid-template-columns: 260px minmax(0, 1fr); padding-inline: 8px; }\n  .forrum-home-v16__rail { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0,1fr)); }\n}\n\n@media (max-width: 960px) {\n  .forrum-home-v16__new-topic-head { display: none; }\n  .forrum-home-v16__new-topic { grid-template-columns: minmax(0,1fr) auto auto; gap: 8px; min-height: 44px; }\n  .forrum-home-v16__new-topic-section,\n  .forrum-home-v16__new-topic-author,\n  .forrum-home-v16__new-topic-last { display: none; }\n  .forrum-home-v16__discussed { grid-template-columns: 38px minmax(0,1fr) auto auto; }\n  .forrum-home-v16__last-message { display: none; }\n  .forrum-home-v16__poll { grid-template-columns: 38px minmax(0,1fr) 90px; }\n  .forrum-home-v16__poll-options { grid-column: 2 / -1; }\n}\n\n@media (max-width: 860px) {\n  .forrum-home-v16 { width: calc(100vw - 12px); grid-template-columns: 1fr; gap: 10px; padding: 10px 6px 18px; }\n  .forrum-home-v16__tree { position: static; max-height: 360px; }\n  .forrum-home-v16__rail { grid-column: auto; grid-template-columns: 1fr; }\n}\n\n@media (max-width: 560px) {\n  .forrum-home-v16__panel-head { padding-inline: 10px; }\n  .forrum-home-v16__discussed-list,\n  .forrum-home-v16__actual-list,\n  .forrum-home-v16__poll-list,\n  .forrum-home-v16__new-topic-table { padding-inline: 10px; }\n  .forrum-home-v16__discussed { grid-template-columns: 34px minmax(0,1fr) auto; }\n  .forrum-home-v16__discussion-stat:nth-of-type(2),\n  .forrum-home-v16__last-message { display: none; }\n  .forrum-home-v16__topic-excerpt { white-space: normal; max-height: 2.7em; overflow: hidden; }\n  .forrum-home-v16__poll { grid-template-columns: 34px minmax(0,1fr); }\n  .forrum-home-v16__poll-options,\n  .forrum-home-v16__poll-time { grid-column: 1 / -1; }\n  .forrum-home-v16__poll-time { justify-self: start; }\n  .forrum-home-v16__poll-option { grid-template-columns: minmax(90px,1fr) minmax(70px,1.2fr) 32px 34px; gap: 5px; }\n}\n/* FORRUM_HOME_REFERENCE_V36_END */\n'
+
+          HOME.write_text(HOME_SOURCE, encoding='utf-8')
+          PAGE.write_text(PAGE_SOURCE, encoding='utf-8')
+          HOME_SERVICE.write_text(HOME_SERVICE_SOURCE, encoding='utf-8')
+          Path('scripts/home-paper-graphite-v16-check.mjs').write_text(CHECK_HOME_SOURCE, encoding='utf-8')
+          Path('scripts/home-reference-check.mjs').write_text(CHECK_REFERENCE_SOURCE, encoding='utf-8')
+          Path('scripts/home-scale-polish-check.mjs').write_text(CHECK_SCALE_SOURCE, encoding='utf-8')
+          Path('scripts/home-visual-theme-check.mjs').write_text(CHECK_THEME_SOURCE, encoding='utf-8')
+
+
+          # PublicationCardData gains the last visible reply used by both tables.
+          types = TYPES.read_text(encoding='utf-8')
+          if 'lastComment?: {' not in types:
+              anchor = '  lastActivityAt?: string;\n'
+              if anchor not in types:
+                  raise SystemExit('V36 could not locate PublicationCardData.lastActivityAt.')
+              types = types.replace(
+                  anchor,
+                  anchor
+                  + '  lastComment?: {\n'
+                  + '    createdAt: string;\n'
+                  + '    author: {\n'
+                  + '      username: string;\n'
+                  + '      displayName: string;\n'
+                  + '      avatarUrl?: string | null;\n'
+                  + '    };\n'
+                  + '  } | null;\n',
+                  1,
+              )
+          TYPES.write_text(types, encoding='utf-8')
+
+          # Feed keeps its existing ranking contract and adds only the latest visible reply.
+          feed = FEED_SERVICE.read_text(encoding='utf-8')
+          if '// FORRUM_HOME_LAST_COMMENT_V36' not in feed:
+              return_anchor = '    return selected.map(({ publication, reason }) => ({\n'
+              if return_anchor not in feed:
+                  raise SystemExit('V36 could not locate FeedService selected map.')
+
+              latest_block = '''    // FORRUM_HOME_LAST_COMMENT_V36
+              const selectedPublicationIds = selected.map(
+                ({ publication }) => publication.id,
+              );
+              const latestComments = selectedPublicationIds.length
+                ? await this.prisma.comment.findMany({
+                    where: {
+                      publicationId: { in: selectedPublicationIds },
+                      hiddenAt: null,
+                    },
+                    orderBy: [
+                      { publicationId: 'asc' },
+                      { createdAt: 'desc' },
+                    ],
+                    distinct: ['publicationId'],
+                    select: {
+                      publicationId: true,
+                      createdAt: true,
+                      author: {
+                        select: {
+                          username: true,
+                          displayName: true,
+                          avatarUrl: true,
+                        },
+                      },
+                    },
+                  })
+                : [];
+              const latestCommentByPublication = new Map(
+                latestComments.map((comment) => [
+                  comment.publicationId,
+                  {
+                    createdAt: comment.createdAt,
+                    author: comment.author,
+                  },
+                ]),
+              );
+
+          '''
+              feed = feed.replace(return_anchor, latest_block + return_anchor, 1)
+
+              activity_anchor = '      lastActivityAt: publication.lastActivityAt,\n'
+              if activity_anchor not in feed:
+                  raise SystemExit('V36 could not locate FeedService lastActivityAt output.')
+
+              feed = feed.replace(
+                  activity_anchor,
+                  activity_anchor
+                  + '      lastComment: latestCommentByPublication.get(publication.id) ?? null,\n',
+                  1,
+              )
+
+          for required in (
+              '// FORRUM_HOME_LAST_COMMENT_V36',
+              "distinct: ['publicationId']",
+              'hiddenAt: null',
+              'lastComment: latestCommentByPublication.get(publication.id) ?? null',
+          ):
+              if required not in feed:
+                  raise SystemExit(f'V36 feed output incomplete: {required}')
+          FEED_SERVICE.write_text(feed, encoding='utf-8')
+
+          # Remove every active old homepage rule before adding the single canonical V36 block.
+          css = CSS.read_text(encoding='utf-8')
+          css = re.sub(
+              r'/\* FORRUM_HOME_REFERENCE_V36_START[\s\S]*?'
+              r'/\* FORRUM_HOME_REFERENCE_V36_END \*/\s*',
+              '',
+              css,
+          )
+
+          def find_delimiter(text: str, start: int):
+              quote = None
+              comment = False
+              paren = 0
+              bracket = 0
+              i = start
+              while i < len(text):
+                  if comment:
+                      if text.startswith('*/', i):
+                          comment = False
+                          i += 2
+                          continue
+                      i += 1
+                      continue
+                  if quote:
+                      if text[i] == '\\':
+                          i += 2
+                          continue
+                      if text[i] == quote:
+                          quote = None
+                      i += 1
+                      continue
+                  if text.startswith('/*', i):
+                      comment = True
+                      i += 2
+                      continue
+                  ch = text[i]
+                  if ch in ('"', "'"):
+                      quote = ch
+                  elif ch == '(':
+                      paren += 1
+                  elif ch == ')':
+                      paren = max(0, paren - 1)
+                  elif ch == '[':
+                      bracket += 1
+                  elif ch == ']':
+                      bracket = max(0, bracket - 1)
+                  elif paren == 0 and bracket == 0 and ch in ('{', ';'):
+                      return i, ch
+                  i += 1
+              return None, None
+
+
+          def matching_brace(text: str, open_at: int):
+              depth = 0
+              quote = None
+              comment = False
+              i = open_at
+              while i < len(text):
+                  if comment:
+                      if text.startswith('*/', i):
+                          comment = False
+                          i += 2
+                          continue
+                      i += 1
+                      continue
+                  if quote:
+                      if text[i] == '\\':
+                          i += 2
+                          continue
+                      if text[i] == quote:
+                          quote = None
+                      i += 1
+                      continue
+                  if text.startswith('/*', i):
+                      comment = True
+                      i += 2
+                      continue
+                  ch = text[i]
+                  if ch in ('"', "'"):
+                      quote = ch
+                  elif ch == '{':
+                      depth += 1
+                  elif ch == '}':
+                      depth -= 1
+                      if depth == 0:
+                          return i
+                  i += 1
+              raise SystemExit('V36 CSS parser found an unbalanced block.')
+
+
+          def strip_home_rules(text: str):
+              out = []
+              pos = 0
+              while pos < len(text):
+                  delimiter, kind = find_delimiter(text, pos)
+                  if delimiter is None:
+                      out.append(text[pos:])
+                      break
+                  if kind == ';':
+                      out.append(text[pos:delimiter + 1])
+                      pos = delimiter + 1
+                      continue
+
+                  close = matching_brace(text, delimiter)
+                  prelude = text[pos:delimiter]
+                  inner = text[delimiter + 1:close]
+                  normalized = re.sub(r'/\*[\s\S]*?\*/', ' ', prelude).strip()
+
+                  if normalized.startswith(('@media', '@supports', '@layer', '@container')):
+                      cleaned = strip_home_rules(inner)
+                      if cleaned.strip():
+                          out.append(prelude + '{' + cleaned + '}')
+                  elif '.forrum-home-v16' in normalized:
+                      prefix_match = re.match(r'((?:\s|/\*[\s\S]*?\*/)*)', prelude)
+                      prefix = prefix_match.group(1) if prefix_match else ''
+                      selector = prelude[len(prefix):]
+                      parts = [part for part in selector.split(',') if '.forrum-home-v16' not in part]
+                      if parts:
+                          out.append(prefix + ','.join(parts) + '{' + inner + '}')
+                      else:
+                          out.append(prefix)
+                  else:
+                      out.append(prelude + '{' + inner + '}')
+                  pos = close + 1
+              return ''.join(out)
+
+          css = strip_home_rules(css).rstrip()
+
+          global_shell_start_marker = '/* FORRUM_GLOBAL_SHELL_V16_1_START'
+          global_shell_end_marker = '/* FORRUM_GLOBAL_SHELL_V16_1_END */'
+
+          global_shell_start = css.find(global_shell_start_marker)
+          global_shell_end = css.find(
+              global_shell_end_marker,
+              global_shell_start,
+          )
+
+          if global_shell_start < 0 or global_shell_end < 0:
+              raise SystemExit(
+                  'V36 requires existing Global Shell V16.1; '
+                  'refusing to create a parallel shell.'
+              )
+
+          css = (
+              css[:global_shell_end].rstrip()
+              + '\n\n'
+              + V36_CSS.strip()
+              + '\n'
+              + css[global_shell_end:]
+          )
+
+          # Keep the V32 trailing-whitespace regression fixed.
+          css = '\n'.join(
+              line.rstrip(' \t')
+              for line in css.splitlines()
+          ) + '\n'
+
+          start = css.index('/* FORRUM_HOME_REFERENCE_V36_START')
+          end = css.index('/* FORRUM_HOME_REFERENCE_V36_END */', start)
+
+          global_shell_start = css.index(global_shell_start_marker)
+          global_shell_end = css.index(
+              global_shell_end_marker,
+              global_shell_start,
+          )
+
+          if not (
+              global_shell_start
+              < start
+              < end
+              < global_shell_end
+          ):
+              raise SystemExit(
+                  'V36 canonical homepage source must be inside Global Shell V16.1.'
+              )
+
+          outside = (
+              css[:start]
+              + css[
+                  end
+                  + len('/* FORRUM_HOME_REFERENCE_V36_END */'):
+              ]
+          )
+
+          if '.forrum-home-v16' in outside:
+              raise SystemExit(
+                  'V36 cleanup left competing homepage CSS outside canonical source.'
+              )
+
+          global_shell_block = css[
+              global_shell_start:
+              global_shell_end + len(global_shell_end_marker)
+          ]
+
+          for required_shell_rule in (
+              'width: min(calc(100vw - 24px), 1680px)',
+              'border-left-color: var(--fh-line-strong)',
+              'border-top-color: var(--fh-line-strong)',
+          ):
+              if required_shell_rule not in global_shell_block:
+                  raise SystemExit(
+                      'V36 broke Global Shell homepage contract: '
+                      + required_shell_rule
+                  )
+
+          if '!important' in V36_CSS:
+              raise SystemExit(
+                  'V36 canonical homepage CSS must not use !important.'
+              )
+
+          CSS.write_text(css, encoding='utf-8')
+          PY
+
+          PYTHONDONTWRITEBYTECODE=1 \
+            python3 -m py_compile \
+            /tmp/forrum-home-reference-v36.py
+
+      - name: Apply complete V36 homepage
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PYTHONDONTWRITEBYTECODE=1 \
+            python3 /tmp/forrum-home-reference-v36.py
+
+          git diff --check
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          css = Path(
+              'apps/web/app/globals.css'
+          ).read_text(encoding='utf-8')
+
+          bad_lines = [
+              number
+              for number, line in enumerate(
+                  css.splitlines(),
+                  start=1,
+              )
+              if line.endswith((' ', '\t'))
+          ]
+
+          if bad_lines:
+              raise SystemExit(
+                  'V36 CSS trailing whitespace remains on lines: '
+                  + ', '.join(map(str, bad_lines[:20]))
+              )
+
+          print(
+              'V36 CSS trailing-whitespace regression check: PASS'
+          )
+          PY
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          if [ -f scripts/global-shell-v16-1-check.mjs ]; then
+            node scripts/global-shell-v16-1-check.mjs
+          fi
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          css = Path(
+              'apps/web/app/globals.css'
+          ).read_text(encoding='utf-8')
+
+          global_start = css.index(
+              '/* FORRUM_GLOBAL_SHELL_V16_1_START'
+          )
+          global_end = css.index(
+              '/* FORRUM_GLOBAL_SHELL_V16_1_END */',
+              global_start,
+          )
+          home_start = css.index(
+              '/* FORRUM_HOME_REFERENCE_V36_START'
+          )
+          home_end = css.index(
+              '/* FORRUM_HOME_REFERENCE_V36_END */',
+              home_start,
+          )
+
+          if not (
+              global_start
+              < home_start
+              < home_end
+              < global_end
+          ):
+              raise SystemExit(
+                  'V36 homepage source is not nested in Global Shell V16.1.'
+              )
+
+          shell = css[global_start:global_end]
+
+          for marker in (
+              'width: min(calc(100vw - 24px), 1680px)',
+              'border-left-color: var(--fh-line-strong)',
+              'border-top-color: var(--fh-line-strong)',
+          ):
+              if marker not in shell:
+                  raise SystemExit(
+                      'V36 Global Shell compatibility missing: '
+                      + marker
+                  )
+
+          print('V36 Global Shell compatibility: PASS')
+          PY
+
+      - name: Audit V36 source scope before dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "=== V36 SOURCE DIFF ==="
+          git diff --stat
+          git diff --check
+
+          allowed='^(apps/web/components/home-dashboard\.tsx|apps/web/app/page\.tsx|apps/web/app/globals\.css|apps/web/lib/types\.ts|apps/api/src/home/home\.service\.ts|apps/api/src/feed/feed\.service\.ts|scripts/home-paper-graphite-v16-check\.mjs|scripts/home-reference-check\.mjs|scripts/home-scale-polish-check\.mjs|scripts/home-visual-theme-check\.mjs)$'
+
+          bad="$(
+            git status --porcelain=v1 --untracked-files=all |
+            sed 's/^...//' |
+            grep -Ev "$allowed" || true
+          )"
+
+          if [ -n "$bad" ]; then
+            echo "::error::V36 changed files outside the approved homepage task:"
+            printf '%s\n' "$bad"
+            exit 1
+          fi
+
+          test -z "$(git diff --name-only -- apps/web/components/main-nav.tsx apps/web/components/theme-toggle.tsx apps/api/prisma/schema.prisma)"
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm install \
+            --include=dev \
+            --no-audit \
+            --no-fund \
+            --package-lock=false
+
+          node -e "console.log('TypeScript:', require.resolve('typescript'))"
+
+      - name: Regenerate Prisma client from canonical schema
+        shell: bash
+        env:
+          DATABASE_URL: postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public
+        run: |
+          set -euo pipefail
+
+          # prisma.config.ts requires DATABASE_URL to load.
+          # validate/generate are schema-only and do not connect to this dummy DB.
+          npm run db:validate
+          npm run db:generate
+
+          test -d apps/api/src/generated/prisma
+
+          for marker in \
+            MediaPartnerStatus \
+            MediaPartnerType \
+            ReviewModerationStatus \
+            showFavorites \
+            curatorApplication \
+            mediaPartner \
+            userGift
+          do
+            if ! grep -R -Fq \
+              "$marker" \
+              apps/api/src/generated/prisma
+            then
+              echo "::error::Generated Prisma client is stale or incomplete: $marker"
+              exit 1
+            fi
+          done
+
+          echo "V36 Prisma client regeneration: PASS"
+
+      - name: Parse changed TypeScript sources
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node - <<'NODE'
+          const fs = require('fs');
+          const ts = require('typescript');
+
+          const files = [
+            ['apps/web/components/home-dashboard.tsx', ts.ScriptKind.TSX],
+            ['apps/web/app/page.tsx', ts.ScriptKind.TSX],
+            ['apps/web/lib/types.ts', ts.ScriptKind.TS],
+            ['apps/api/src/home/home.service.ts', ts.ScriptKind.TS],
+            ['apps/api/src/feed/feed.service.ts', ts.ScriptKind.TS],
+          ];
+
+          let failed = false;
+
+          for (const [path, kind] of files) {
+            const source = fs.readFileSync(path, 'utf8');
+            const file = ts.createSourceFile(
+              path,
+              source,
+              ts.ScriptTarget.Latest,
+              true,
+              kind,
+            );
+
+            for (const diagnostic of file.parseDiagnostics ?? []) {
+              failed = true;
+              const pos = file.getLineAndCharacterOfPosition(
+                diagnostic.start ?? 0,
+              );
+              console.error(
+                `${path}:${pos.line + 1}:${pos.character + 1} ` +
+                ts.flattenDiagnosticMessageText(
+                  diagnostic.messageText,
+                  '\n',
+                ),
+              );
+            }
+          }
+
+          if (failed) process.exit(1);
+          console.log('V36 changed TypeScript syntax: PASS');
+          NODE
+
+          node scripts/static-check.mjs
+
+      - name: Verify V36 product data contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          home=apps/web/components/home-dashboard.tsx
+          page=apps/web/app/page.tsx
+          feed=apps/api/src/feed/feed.service.ts
+          overview=apps/api/src/home/home.service.ts
+          types=apps/web/lib/types.ts
+
+          grep -Fq "'/feed?mode=popular'" "$page"
+          grep -Fq "'/feed?mode=new'" "$page"
+          grep -Fq "'/governance/polls'" "$page"
+          grep -Fq "'/home/overview'" "$page"
+
+          grep -Fq "lastComment?: {" "$types"
+          grep -Fq "FORRUM_HOME_LAST_COMMENT_V36" "$feed"
+          grep -Fq "distinct: ['publicationId']" "$feed"
+          grep -Fq "lastComment: latestCommentByPublication.get(publication.id) ?? null" "$feed"
+
+          grep -Fq "usersOnline" "$overview"
+          grep -Fq "recordOnline" "$overview"
+          grep -Fq "weekly:" "$overview"
+          grep -Fq "home.recordOnline" "$overview"
+          grep -Fq "PublicationFormat.TOPIC" "$overview"
+          grep -Fq "ReactionType.LIKE" "$overview"
+
+          grep -Fq "item.lastComment?.author.username" "$home"
+          grep -Fq "options.map((option)" "$home"
+          ! grep -Fq "options.slice(0, 3).map" "$home"
+          grep -Fq 'href="/events?tab=polls"' "$home"
+          ! grep -Fq "castVote" "$home"
+          ! grep -Fq "advisoryVotes" < <(sed -n '/function PollRow/,/^}$/p' "$home")
+
+          grep -Fq "Сообщества" "$home"
+          grep -Fq "Тем создано" "$home"
+          grep -Fq "Сообщений" "$home"
+          grep -Fq "Пользователей онлайн" "$home"
+          grep -Fq "Рекорд онлайн:" "$home"
+
+      - name: Compare whole homepage with approved reference contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          if [ -f scripts/global-shell-v16-1-check.mjs ]; then
+            node scripts/global-shell-v16-1-check.mjs
+          fi
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          css = Path('apps/web/app/globals.css').read_text(encoding='utf-8')
+          start = css.index('/* FORRUM_HOME_REFERENCE_V36_START')
+          end = css.index('/* FORRUM_HOME_REFERENCE_V36_END */', start)
+          block = css[start:end]
+          outside = css[:start] + css[end:]
+
+          required = [
+              'width: min(calc(100vw - 24px), 1680px)',
+              'max-width: 1680px',
+              'grid-template-columns: 300px minmax(0, 1fr) 326px',
+              'border-left-color: var(--fh-line-strong)',
+              'border-top-color: var(--fh-line-strong)',
+              'min-height: 68px',
+              'min-height: 39px',
+              'min-height: 78px',
+              'border-left: 1px dotted',
+              'border-top: 1px dotted',
+              'image-rendering: pixelated',
+          ]
+
+          for item in required:
+              if item not in block:
+                  raise SystemExit(f'Reference geometry missing: {item}')
+
+          global_start = css.index(
+              '/* FORRUM_GLOBAL_SHELL_V16_1_START'
+          )
+          global_end = css.index(
+              '/* FORRUM_GLOBAL_SHELL_V16_1_END */',
+              global_start,
+          )
+
+          if not (
+              global_start
+              < start
+              < end
+              < global_end
+          ):
+              raise SystemExit(
+                  'Homepage V36 canonical source must live inside Global Shell V16.1.'
+              )
+
+          if '.forrum-home-v16' in outside:
+              raise SystemExit('Homepage has competing CSS outside V36 canonical source.')
+
+          if '!important' in block:
+              raise SystemExit('V36 homepage CSS contains !important.')
+
+          print('Whole-screen V36 reference contract: PASS')
+          PY
+
+      - name: Run static UX accessibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+
+          # Prisma output is a generated build artifact. While it is present,
+          # whitespace checking is restricted to authored V36 source files.
+          git diff --check -- \
+            apps/web/components/home-dashboard.tsx             apps/web/app/page.tsx             apps/web/app/globals.css             apps/web/lib/types.ts             apps/api/src/home/home.service.ts             apps/api/src/feed/feed.service.ts             scripts/home-paper-graphite-v16-check.mjs             scripts/home-reference-check.mjs             scripts/home-scale-polish-check.mjs             scripts/home-visual-theme-check.mjs
+
+      - name: Run relevant tests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/api --if-present
+          npm test -w @forrum/web --if-present
+
+      - name: Typecheck entire product
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm run typecheck
+
+      - name: Production build entire product
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf apps/web/.next apps/api/dist packages/contracts/dist
+          npm run build
+
+      - name: Self-review fix weaknesses and second pass
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          before="$(git diff | sha256sum | cut -d' ' -f1)"
+
+          PYTHONDONTWRITEBYTECODE=1 \
+            python3 /tmp/forrum-home-reference-v36.py
+
+          after="$(git diff | sha256sum | cut -d' ' -f1)"
+          test "$before" = "$after"
+
+          # Weakness 1 found before delivery: first draft hid poll choices after three.
+          # Final V36 renders every real API option.
+          grep -Fq "options.map((option)" apps/web/components/home-dashboard.tsx
+          ! grep -Fq "options.slice(0, 3).map" apps/web/components/home-dashboard.tsx
+
+          # Weakness 2 found before delivery: first draft used !important to square pixel marks.
+          # Weakness discovered by the failed V35 production run:
+          # global git diff --check was executed while generated Prisma files
+          # were intentionally dirty. V36 scopes diff-check to authored source
+          # until generated artifacts are restored before final audit.
+          generated_dirty="$(
+            git status --porcelain=v1 --untracked-files=all |
+            sed 's/^...//' |
+            grep '^apps/api/src/generated/prisma/' || true
+          )"
+
+          if [ -z "$generated_dirty" ]; then
+            echo "::error::V36 expected regenerated Prisma artifacts during verification."
+            exit 1
+          fi
+
+          git diff --check --             apps/web/components/home-dashboard.tsx             apps/web/app/page.tsx             apps/web/app/globals.css             apps/web/lib/types.ts             apps/api/src/home/home.service.ts             apps/api/src/feed/feed.service.ts             scripts/home-paper-graphite-v16-check.mjs             scripts/home-reference-check.mjs             scripts/home-scale-polish-check.mjs             scripts/home-visual-theme-check.mjs
+
+          # Weakness discovered by the failed V34 production run:
+          # the checked-in generated Prisma client was older than schema.prisma.
+          # V36 regenerates it before every API test/typecheck/build phase.
+          for marker in \
+            MediaPartnerStatus \
+            MediaPartnerType \
+            ReviewModerationStatus \
+            showFavorites \
+            curatorApplication \
+            mediaPartner \
+            userGift
+          do
+            grep -R -Fq \
+              "$marker" \
+              apps/api/src/generated/prisma
+          done
+
+          # Do not hide the problem by skipping API typecheck.
+          npm run typecheck -w @forrum/api
+
+          # Weakness discovered by the failed V33 production run:
+          # V33 stripped homepage rules from the established Global Shell block
+          # and appended the canonical homepage source outside it.
+          if [ -f scripts/global-shell-v16-1-check.mjs ]; then
+            node scripts/global-shell-v16-1-check.mjs
+          fi
+
+          grep -Fq             'width: min(calc(100vw - 24px), 1680px)'             apps/web/app/globals.css
+
+          grep -Fq             'border-left-color: var(--fh-line-strong)'             apps/web/app/globals.css
+
+          grep -Fq             'border-top-color: var(--fh-line-strong)'             apps/web/app/globals.css
+
+          # Weakness discovered by the failed V32 production run:
+          # generated CSS contained trailing whitespace.
+          python3 - <<'PY'
+          from pathlib import Path
+
+          css = Path(
+              'apps/web/app/globals.css'
+          ).read_text(encoding='utf-8')
+
+          if any(
+              line.endswith((' ', '\t'))
+              for line in css.splitlines()
+          ):
+              raise SystemExit(
+                  'V36 self-review failed: CSS trailing whitespace returned.'
+              )
+
+          print(
+              'V36 self-review: CSS whitespace hygiene PASS'
+          )
+          PY
+
+          # Final V36 uses selector specificity instead.
+          python3 - <<'PY'
+          from pathlib import Path
+          css = Path('apps/web/app/globals.css').read_text(encoding='utf-8')
+          start = css.index('/* FORRUM_HOME_REFERENCE_V36_START')
+          end = css.index('/* FORRUM_HOME_REFERENCE_V36_END */', start)
+          block = css[start:end]
+          if '!important' in block:
+              raise SystemExit('V36 self-review failed: !important returned.')
+          PY
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          npm run validate:static
+          npm run typecheck
+
+          # Same rule during second pass: validate authored source while the
+          # regenerated Prisma client is intentionally dirty.
+          git diff --check -- \
+            apps/web/components/home-dashboard.tsx             apps/web/app/page.tsx             apps/web/app/globals.css             apps/web/lib/types.ts             apps/api/src/home/home.service.ts             apps/api/src/feed/feed.service.ts             scripts/home-paper-graphite-v16-check.mjs             scripts/home-reference-check.mjs             scripts/home-scale-polish-check.mjs             scripts/home-visual-theme-check.mjs
+
+          echo "V36 second-pass self-review: PASS"
+
+      - name: Restore build side effects and clean dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          allowed='^(apps/web/components/home-dashboard\.tsx|apps/web/app/page\.tsx|apps/web/app/globals\.css|apps/web/lib/types\.ts|apps/api/src/home/home\.service\.ts|apps/api/src/feed/feed\.service\.ts|scripts/home-paper-graphite-v16-check\.mjs|scripts/home-reference-check\.mjs|scripts/home-scale-polish-check\.mjs|scripts/home-visual-theme-check\.mjs)$'
+
+          mapfile -t tracked_dirty < <(
+            git status --porcelain=v1 --untracked-files=no |
+            sed 's/^...//'
+          )
+
+          for path in "${tracked_dirty[@]}"; do
+            [ -n "$path" ] || continue
+            if printf '%s\n' "$path" | grep -Eq "$allowed"; then
+              continue
+            fi
+            git restore --staged --worktree -- "$path"
+          done
+
+          git clean -ffdx
+
+          # Generated Prisma client is verified build output, not V36 source.
+          test -z "$(
+            git status --porcelain=v1 --untracked-files=all |
+            grep -F 'apps/api/src/generated/prisma/' || true
+          )"
+
+      - name: Final V36 pre-commit audit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          # Generated Prisma artifacts must be gone before the strict final audit.
+          test -z "$(
+            git status --porcelain=v1 --untracked-files=all |
+            sed 's/^...//' |
+            grep '^apps/api/src/generated/prisma/' || true
+          )"
+
+          git diff --check
+
+          allowed='^(apps/web/components/home-dashboard\.tsx|apps/web/app/page\.tsx|apps/web/app/globals\.css|apps/web/lib/types\.ts|apps/api/src/home/home\.service\.ts|apps/api/src/feed/feed\.service\.ts|scripts/home-paper-graphite-v16-check\.mjs|scripts/home-reference-check\.mjs|scripts/home-scale-polish-check\.mjs|scripts/home-visual-theme-check\.mjs)$'
+
+          bad="$(
+            git status --porcelain=v1 --untracked-files=all |
+            sed 's/^...//' |
+            grep -Ev "$allowed" || true
+          )"
+
+          if [ -n "$bad" ]; then
+            echo "::error::Unexpected final V36 files:"
+            printf '%s\n' "$bad"
+            exit 1
+          fi
+
+          test -z "$(git diff --name-only -- apps/web/components/main-nav.tsx apps/web/components/theme-toggle.tsx apps/api/prisma/schema.prisma)"
+
+      - name: Commit verified V36
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "FORRUM Home Reference V36 is already present."
+            exit 0
+          fi
+
+          git config user.name "forrum-actions"
+          git config user.email "actions@forrum.local"
+
+          git add \
+            apps/web/components/home-dashboard.tsx \
+            apps/web/app/page.tsx \
+            apps/web/app/globals.css \
+            apps/web/lib/types.ts \
+            apps/api/src/home/home.service.ts \
+            apps/api/src/feed/feed.service.ts \
+            scripts/home-paper-graphite-v16-check.mjs \
+            scripts/home-reference-check.mjs \
+            scripts/home-scale-polish-check.mjs \
+            scripts/home-visual-theme-check.mjs
+
+          git diff --cached --check
+          git commit -m "Align complete FORRUM homepage to reference V36"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Rebase and full V36 production audit
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          git rebase origin/main
+
+          npm install \
+            --include=dev \
+            --no-audit \
+            --no-fund \
+            --package-lock=false
+
+          DATABASE_URL='postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public' \
+            npm run db:validate
+
+          DATABASE_URL='postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public' \
+            npm run db:generate
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+          if [ -f scripts/global-shell-v16-1-check.mjs ]; then
+            node scripts/global-shell-v16-1-check.mjs
+          fi
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/api --if-present
+          npm test -w @forrum/web --if-present
+          npm run typecheck
+
+          rm -rf apps/web/.next apps/api/dist packages/contracts/dist
+          npm run build
+
+          git restore --source=HEAD --staged --worktree -- .
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          echo "Post-rebase V36 full product audit: PASS"
+
+      - name: Publish V36 safely
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+            remote="$(git rev-parse origin/main)"
+
+            if ! git merge-base --is-ancestor "$remote" HEAD; then
+              echo "origin/main advanced; rebase V36 and repeat production checks."
+              git rebase origin/main
+
+              npm install \
+                --include=dev \
+                --no-audit \
+                --no-fund \
+                --package-lock=false
+
+              DATABASE_URL='postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public' \
+                npm run db:validate
+
+              DATABASE_URL='postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public' \
+                npm run db:generate
+
+              node scripts/home-paper-graphite-v16-check.mjs
+              node scripts/home-reference-check.mjs
+              node scripts/home-scale-polish-check.mjs
+              node scripts/home-visual-theme-check.mjs
+              npm run validate:static
+              npm run validate:ux
+              npm run validate:a11y
+              npm test -w @forrum/api --if-present
+              npm run typecheck
+
+              rm -rf apps/web/.next apps/api/dist packages/contracts/dist
+              npm run build
+
+              git restore --source=HEAD --staged --worktree -- .
+              git clean -ffdx
+              test -z "$(git status --porcelain)"
+            fi
+
+            git fetch origin main
+
+            if [ "$(git rev-parse origin/main)" != "$(git merge-base HEAD origin/main)" ]; then
+              continue
+            fi
+
+            if git push origin HEAD:main; then
+              echo "V36 push succeeded on attempt $attempt."
+              exit 0
+            fi
+          done
+
+          echo "::error::V36 could not be published safely after three attempts."
+          exit 1
+
+      - name: Verify remote V36 commit
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+          echo "Published FORRUM Home Reference V36: $(git rev-parse HEAD)"
