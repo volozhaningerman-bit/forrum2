@@ -12,9 +12,9 @@ type ActivityItem = { id: string; createdAt: string };
 const links = [
   ['/', 'Главная'],
   ['/communities', 'Сообщества'],
-  ['/feed', 'Темы'],
-  ['/users', 'Пользователи'],
-  ['/archive', 'Архив'],
+  ['/services', 'Услуги'],
+  ['/media', 'Медиа'],
+  ['/news', 'Новости'],
 ] as const;
 
 const newsSeenKey = 'forrum.news.seen-signature';
@@ -72,7 +72,7 @@ export function MainNav() {
         const active = href === '/'
           ? pathname === '/'
           : pathname.startsWith(href);
-        const showDot = String(href) === '/news' && newsUnread;
+        const showDot = href === '/news' && newsUnread;
 
         return (
           <Link

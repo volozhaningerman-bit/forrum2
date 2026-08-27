@@ -11,61 +11,28 @@ for (const file of [navPath, homePath, cssPath]) {
 }
 
 const nav = fs.readFileSync(navPath, 'utf8');
-const linksMatch = nav.match(
-  /const\s+links\s*=\s*\[([\s\S]*?)\]\s*as\s+const\s*;/,
-);
-
-if (!linksMatch) {
-  throw new Error('Could not isolate MainNav links array.');
+const linksMatch = nav.match(/const\s+links\s*=\s*\[([\s\S]*?)\]\s*as\s+const\s*;/);
+if (!linksMatch) throw new Error('MainNav links array missing.');
+const tuples = [...linksMatch[1].matchAll(/\[\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]+)['"]\s*\]/g)].map((m) => [m[1], m[2]]);
+const expectedNavigation = [
+  ['/', 'Главная'],
+  ['/communities', 'Сообщества'],
+  ['/services', 'Услуги'],
+  ['/media', 'Медиа'],
+  ['/news', 'Новости'],
+];
+if (JSON.stringify(tuples) !== JSON.stringify(expectedNavigation)) {
+  throw new Error(`MainNav product contract mismatch: ${JSON.stringify(tuples)}`);
 }
-
-const links = linksMatch[1];
-
-for (const rejected of [
-  'Услуги',
-  'Медиа',
-  'Новости',
-  '/services',
-  '/media',
+for (const routePage of [
+  'apps/web/app/services/page.tsx',
+  'apps/web/app/media/page.tsx',
+  'apps/web/app/news/page.tsx',
 ]) {
-  if (links.includes(rejected)) {
-    throw new Error(`Legacy nav marker remains in links array: ${rejected}`);
-  }
+  if (!fs.existsSync(routePage)) throw new Error(`Approved route missing: ${routePage}`);
 }
-
-for (const required of [
-  'Главная',
-  'Сообщества',
-  'Темы',
-  'Пользователи',
-  'Архив',
-  '/feed',
-  '/users',
-  '/archive',
-]) {
-  if (!links.includes(required)) {
-    throw new Error(`Canonical nav marker missing: ${required}`);
-  }
-}
-
-// /news is allowed outside the links array because the current component
-// still uses it to calculate the existing unread-news state.
-if (!nav.includes("api<ActivityItem[]>('/news')")) {
-  console.log('Note: legacy unread-news polling is no longer present.');
-}
-
-
-// The current navigation tuple no longer includes /news.
-// A direct literal comparison such as `href === '/news'` is invalid under
-// the inferred route union and causes TS2367.
-const bareNewsCompare =
-  /\b(?:href|pathname)\s*(?:===|!==)\s*(['"])\/news\1/;
-
-if (bareNewsCompare.test(nav)) {
-  throw new Error(
-    'Bare typed-route comparison with /news remains in MainNav.',
-  );
-}
+if (!nav.includes("api<ActivityItem[]>('/news')")) throw new Error('News polling removed.');
+if (nav.includes('String(href)')) throw new Error('String(href) workaround returned.');
 
 const home = fs.readFileSync(homePath, 'utf8');
 
