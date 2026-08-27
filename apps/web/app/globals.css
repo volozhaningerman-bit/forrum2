@@ -20098,3 +20098,238 @@ html[data-forrum-theme="graphite"] {
   }
 }
 /* FORRUM_GLOBAL_SHELL_V16_1_END */
+
+/* FORRUM_HOME_REFERENCE_FINAL_START
+   Approved reference alignment.
+   Paper and Graphite use the exact same geometry.
+   Graphite overrides only visual tokens.
+*/
+:root {
+  --fhr-page: #ecebe7;
+  --fhr-surface: #f5f4f0;
+  --fhr-panel: #faf9f6;
+  --fhr-line: #c9c7c1;
+  --fhr-line-strong: #94928c;
+  --fhr-text: #222222;
+  --fhr-muted: #6b6964;
+  --fhr-faint: #8a8882;
+  --fhr-accent: #1769ff;
+  --fhr-accent-text: #ffffff;
+}
+
+html.dark,
+html[data-theme="dark"],
+html[data-theme="graphite"],
+html[data-forrum-theme="graphite"] {
+  --fhr-page: #121416;
+  --fhr-surface: #181b1f;
+  --fhr-panel: #171a1d;
+  --fhr-line: #343a40;
+  --fhr-line-strong: #575e65;
+  --fhr-text: #ececec;
+  --fhr-muted: #a2a8ae;
+  --fhr-faint: #7c838a;
+  --fhr-accent: #2c70ff;
+  --fhr-accent-text: #ffffff;
+}
+
+[data-forrum-shell="header"] {
+  background: var(--fhr-surface) !important;
+  border-bottom-color: var(--fhr-line) !important;
+  color: var(--fhr-text) !important;
+}
+
+[data-forrum-shell="header"] > * {
+  width: min(calc(100% - 24px), 1680px) !important;
+  max-width: 1680px !important;
+}
+
+[data-forrum-shell="header"] a {
+  color: var(--fhr-text);
+}
+
+[data-forrum-shell="header"] a[aria-current="page"],
+[data-forrum-shell="header"] [data-active="true"] {
+  color: var(--fhr-accent) !important;
+}
+
+[data-forrum-shell="header"] a[aria-current="page"]::after,
+[data-forrum-shell="header"] [data-active="true"]::after {
+  background: var(--fhr-accent) !important;
+}
+
+[data-forrum-shell="header"] input {
+  background: var(--fhr-panel) !important;
+  border-color: var(--fhr-line) !important;
+  color: var(--fhr-text) !important;
+}
+
+[data-forrum-shell="header"] a[href*="register"] {
+  border-color: var(--fhr-accent) !important;
+  background: var(--fhr-accent) !important;
+  color: var(--fhr-accent-text) !important;
+}
+
+.forrum-home-v16 {
+  grid-template-columns: 292px minmax(0, 1fr) 306px;
+  gap: 12px;
+}
+
+.forrum-home-v16__tree-root >
+.forrum-home-v16__tree-node >
+.forrum-home-v16__tree-row
+.forrum-home-v16__tree-name {
+  font-weight: 700;
+}
+
+.forrum-home-v16__tree-children {
+  margin-left: 9px;
+  padding-left: 13px;
+}
+
+.forrum-home-v16__tree-children::before {
+  left: 2px;
+  border-left: 1px dotted var(--fhr-line-strong);
+  opacity: 1;
+}
+
+.forrum-home-v16__tree-children >
+.forrum-home-v16__tree-node::before {
+  left: -11px;
+  width: 12px;
+  border-top: 1px dotted var(--fhr-line-strong);
+  opacity: 1;
+}
+
+.forrum-home-v16__tree-row {
+  min-height: 29px;
+}
+
+.forrum-home-v16__tree-link {
+  min-height: 28px;
+  gap: 5px;
+  padding-block: 1px;
+}
+
+.forrum-home-v16__tree-folder {
+  color: var(--fhr-muted);
+}
+
+.forrum-home-v16__new-topic-table {
+  padding: 0 12px 5px;
+  min-width: 0;
+}
+
+.forrum-home-v16__new-topic-head,
+.forrum-home-v16__new-topic {
+  display: grid;
+  grid-template-columns:
+    minmax(220px, 1.75fr)
+    minmax(120px, 1fr)
+    minmax(105px, 0.86fr)
+    58px
+    72px
+    minmax(104px, 0.8fr);
+  column-gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.forrum-home-v16__new-topic-head {
+  min-height: 30px;
+  border-bottom: 1px solid var(--fhr-line);
+  color: var(--fhr-muted);
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.forrum-home-v16__new-topic {
+  min-height: 34px;
+  border-bottom: 1px solid var(--fhr-line);
+  color: var(--fhr-muted);
+  font-size: 11px;
+}
+
+.forrum-home-v16__new-topic:last-child {
+  border-bottom: 0;
+}
+
+.forrum-home-v16__new-topic:hover
+.forrum-home-v16__new-topic-title,
+.forrum-home-v16__new-topic:focus-visible
+.forrum-home-v16__new-topic-title {
+  color: var(--fhr-accent);
+}
+
+.forrum-home-v16__new-topic-title,
+.forrum-home-v16__new-topic-section,
+.forrum-home-v16__new-topic-author,
+.forrum-home-v16__new-topic-last {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.forrum-home-v16__new-topic-title {
+  color: var(--fhr-text);
+  font-size: 11px;
+  font-weight: 620;
+}
+
+.forrum-home-v16__new-topic-number {
+  text-align: center;
+  color: var(--fhr-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.forrum-home-v16__new-topic-last {
+  text-align: right;
+  color: var(--fhr-faint);
+}
+
+.forrum-home-v16__panel,
+.forrum-home-v16__tree {
+  border-radius: 2px;
+}
+
+.forrum-home-v16__panel-head {
+  min-height: 40px;
+}
+
+.forrum-home-v16__panel-head h2,
+.forrum-home-v16__side-head h2 {
+  font-size: 12px;
+  letter-spacing: 0.025em;
+}
+
+@media (max-width: 1240px) {
+  .forrum-home-v16 {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 960px) {
+  .forrum-home-v16__new-topic-head {
+    display: none;
+  }
+
+  .forrum-home-v16__new-topic {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 8px;
+    min-height: 44px;
+  }
+
+  .forrum-home-v16__new-topic-section,
+  .forrum-home-v16__new-topic-author,
+  .forrum-home-v16__new-topic-last {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  .forrum-home-v16 {
+    grid-template-columns: 1fr;
+  }
+}
+/* FORRUM_HOME_REFERENCE_FINAL_END */

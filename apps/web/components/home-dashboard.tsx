@@ -162,16 +162,44 @@ function TopicRow({
   const title = item.title?.trim() || 'Тема без заголовка';
   const date = item.lastActivityAt || item.createdAt;
 
+  if (compact) {
+    return (
+      <Link
+        className="forrum-home-v16__new-topic"
+        href={`/p/${item.slug}`}
+      >
+        <strong className="forrum-home-v16__new-topic-title">
+          {title}
+        </strong>
+        <span className="forrum-home-v16__new-topic-section">
+          {item.community.name}
+        </span>
+        <span className="forrum-home-v16__new-topic-author">
+          @{item.author.username}
+        </span>
+        <span className="forrum-home-v16__new-topic-number">
+          {formatCount(item.commentCount)}
+        </span>
+        <span className="forrum-home-v16__new-topic-number">
+          {formatCount(item.viewCount)}
+        </span>
+        <span className="forrum-home-v16__new-topic-last">
+          {relativeTime(date)}
+        </span>
+      </Link>
+    );
+  }
+
   return (
     <Link
-      className={`forrum-home-v16__topic ${compact ? 'is-compact' : ''}`}
+      className="forrum-home-v16__topic"
       href={`/p/${item.slug}`}
     >
       <CommunityMark
         className="forrum-home-v16__topic-mark"
         name={item.community.name}
         url={item.community.avatarUrl}
-        size={compact ? 28 : 38}
+        size={38}
       />
 
       <span className="forrum-home-v16__topic-copy">
@@ -184,11 +212,9 @@ function TopicRow({
           <strong>{title}</strong>
         </span>
 
-        {!compact && (
-          <span className="forrum-home-v16__topic-excerpt">
-            {item.excerpt}
-          </span>
-        )}
+        <span className="forrum-home-v16__topic-excerpt">
+          {item.excerpt}
+        </span>
 
         <span className="forrum-home-v16__topic-meta">
           <span>@{item.author.username}</span>
@@ -480,7 +506,19 @@ export function HomeDashboard({
           title="Новые темы"
           href="/feed?mode=new"
         >
-          <div className="forrum-home-v16__topic-list is-compact">
+          <div className="forrum-home-v16__new-topic-table">
+            <div
+              className="forrum-home-v16__new-topic-head"
+              aria-hidden="true"
+            >
+              <span>Тема</span>
+              <span>Раздел</span>
+              <span>Автор</span>
+              <span>Ответы</span>
+              <span>Просмотры</span>
+              <span>Последнее сообщение</span>
+            </div>
+
             {newest.length ? (
               newest.map((item) => (
                 <TopicRow
