@@ -1,0 +1,369 @@
+name: FORRUM Visual Theme V20
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-visual-theme-v20
+  cancel-in-progress: false
+
+env:
+  NODE_ENV: test
+
+jobs:
+  visual-theme:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify clean baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git reset --hard HEAD
+          git clean -ffdx
+
+          test -z "$(git status --porcelain)"
+
+          test -f apps/web/components/main-nav.tsx
+          test -f apps/web/components/home-dashboard.tsx
+          test -f apps/web/app/globals.css
+          test -f scripts/home-paper-graphite-v16-check.mjs
+          test -f scripts/global-shell-v16-1-check.mjs
+          test -f scripts/home-reference-check.mjs
+          test -f scripts/home-scale-polish-check.mjs
+
+      - name: Decode and syntax-check patch
+        shell: bash
+        env:
+          PATCH_B64: ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCmltcG9ydCByZQoKTkFWID0gUGF0aCgiYXBwcy93ZWIvY29tcG9uZW50cy9tYWluLW5hdi50c3giKQpUSEVNRSA9IFBhdGgoImFwcHMvd2ViL2NvbXBvbmVudHMvdGhlbWUtdG9nZ2xlLnRzeCIpCkNTUyA9IFBhdGgoImFwcHMvd2ViL2FwcC9nbG9iYWxzLmNzcyIpCgpmb3IgcGF0aCBpbiAoTkFWLCBDU1MpOgogICAgaWYgbm90IHBhdGguZXhpc3RzKCk6CiAgICAgICAgcmFpc2UgU3lzdGVtRXhpdChmIlJlcXVpcmVkIHNvdXJjZSBmaWxlIGlzIG1pc3Npbmc6IHtwYXRofSIpCgpuYXYgPSBOQVYucmVhZF90ZXh0KGVuY29kaW5nPSJ1dGYtOCIpCmNzcyA9IENTUy5yZWFkX3RleHQoZW5jb2Rpbmc9InV0Zi04IikKCiMgLS0tLS0gVGhlbWUgY29tcG9uZW50IC0tLS0tCmZyZXNoX3RoZW1lID0gUGF0aCgiL3RtcC9mb3JydW0tdGhlbWUtdG9nZ2xlLnRzeCIpLnJlYWRfdGV4dCgKICAgIGVuY29kaW5nPSJ1dGYtOCIKKQoKaWYgVEhFTUUuZXhpc3RzKCk6CiAgICBleGlzdGluZyA9IFRIRU1FLnJlYWRfdGV4dChlbmNvZGluZz0idXRmLTgiKQoKICAgIGlmICJGT1JSVU1fVEhFTUVfVE9HR0xFX1YxIiBub3QgaW4gZXhpc3Rpbmc6CiAgICAgICAgcmFpc2UgU3lzdGVtRXhpdCgKICAgICAgICAgICAgInRoZW1lLXRvZ2dsZS50c3ggYWxyZWFkeSBleGlzdHMgYnV0IGlzIG5vdCB0aGUgRk9SUlVNLW93bmVkICIKICAgICAgICAgICAgImNvbXBvbmVudC4gUmVmdXNpbmcgdG8gb3ZlcndyaXRlIGl0LiIKICAgICAgICApCgpUSEVNRS53cml0ZV90ZXh0KAogICAgZnJlc2hfdGhlbWUsCiAgICBlbmNvZGluZz0idXRmLTgiLAopCgojIC0tLS0tIE1haW5OYXYgaW1wb3J0IC0tLS0tCnRoZW1lX2ltcG9ydCA9ICgKICAgICdpbXBvcnQgeyBUaGVtZVRvZ2dsZSB9IGZyb20gIi4vdGhlbWUtdG9nZ2xlIjsnCikKCmlmIHRoZW1lX2ltcG9ydCBub3QgaW4gbmF2OgogICAgaW1wb3J0X21hdGNoZXMgPSBsaXN0KAogICAgICAgIHJlLmZpbmRpdGVyKAogICAgICAgICAgICByIig/bSleaW1wb3J0XHMrW1xzXFNdKj87XHMqJCIsCiAgICAgICAgICAgIG5hdiwKICAgICAgICApCiAgICApCgogICAgaWYgbm90IGltcG9ydF9tYXRjaGVzOgogICAgICAgIHJhaXNlIFN5c3RlbUV4aXQoCiAgICAgICAgICAgICJDb3VsZCBub3QgZmluZCBpbXBvcnRzIGluIG1haW4tbmF2LnRzeC4iCiAgICAgICAgKQoKICAgIGluc2VydF9hdCA9IGltcG9ydF9tYXRjaGVzWy0xXS5lbmQoKQoKICAgIG5hdiA9ICgKICAgICAgICBuYXZbOmluc2VydF9hdF0KICAgICAgICArICJcbiIKICAgICAgICArIHRoZW1lX2ltcG9ydAogICAgICAgICsgbmF2W2luc2VydF9hdDpdCiAgICApCgojIC0tLS0tIE1haW5OYXYgY29tcG9uZW50IGluc2VydGlvbiAtLS0tLQppZiAiPFRoZW1lVG9nZ2xlIC8+IiBub3QgaW4gbmF2OgogICAgY2xvc2luZ19uYXZfbWF0Y2hlcyA9IGxpc3QoCiAgICAgICAgcmUuZmluZGl0ZXIoCiAgICAgICAgICAgIHIiKD9tKV4oWyBcdF0qKTwvbmF2PiIsCiAgICAgICAgICAgIG5hdiwKICAgICAgICApCiAgICApCgogICAgaWYgbGVuKGNsb3NpbmdfbmF2X21hdGNoZXMpICE9IDE6CiAgICAgICAgcmFpc2UgU3lzdGVtRXhpdCgKICAgICAgICAgICAgIkV4cGVjdGVkIGV4YWN0bHkgb25lIGNsb3NpbmcgPC9uYXY+IGluIG1haW4tbmF2LnRzeDsgIgogICAgICAgICAgICBmImZvdW5kIHtsZW4oY2xvc2luZ19uYXZfbWF0Y2hlcyl9LiIKICAgICAgICApCgogICAgbWF0Y2ggPSBjbG9zaW5nX25hdl9tYXRjaGVzWzBdCiAgICBpbmRlbnQgPSBtYXRjaC5ncm91cCgxKQoKICAgIHJlcGxhY2VtZW50ID0gKAogICAgICAgIGYie2luZGVudH0gIDxUaGVtZVRvZ2dsZSAvPlxuIgogICAgICAgIGYie2luZGVudH08L25hdj4iCiAgICApCgogICAgbmF2ID0gKAogICAgICAgIG5hdls6bWF0Y2guc3RhcnQoKV0KICAgICAgICArIHJlcGxhY2VtZW50CiAgICAgICAgKyBuYXZbbWF0Y2guZW5kKCk6XQogICAgKQoKaWYgbmF2LmNvdW50KHRoZW1lX2ltcG9ydCkgIT0gMToKICAgIHJhaXNlIFN5c3RlbUV4aXQoCiAgICAgICAgIlRoZW1lVG9nZ2xlIGltcG9ydCBtdXN0IG9jY3VyIGV4YWN0bHkgb25jZS4iCiAgICApCgppZiBuYXYuY291bnQoIjxUaGVtZVRvZ2dsZSAvPiIpICE9IDE6CiAgICByYWlzZSBTeXN0ZW1FeGl0KAogICAgICAgICJUaGVtZVRvZ2dsZSBjb21wb25lbnQgbXVzdCBvY2N1ciBleGFjdGx5IG9uY2UuIgogICAgKQoKTkFWLndyaXRlX3RleHQoCiAgICBuYXYsCiAgICBlbmNvZGluZz0idXRmLTgiLAopCgojIC0tLS0tIFZpc3VhbCBDU1MgLS0tLS0KZnJlc2hfY3NzID0gUGF0aCgiL3RtcC9mb3JydW0tdmlzdWFsLXRoZW1lLmNzcyIpLnJlYWRfdGV4dCgKICAgIGVuY29kaW5nPSJ1dGYtOCIKKS5zdHJpcCgpCgpwYXR0ZXJuID0gcmUuY29tcGlsZSgKICAgIHIiL1wqIEZPUlJVTV9WSVNVQUxfVEhFTUVfU1RBUlQiCiAgICByIltcc1xTXSo/IgogICAgciIvXCogRk9SUlVNX1ZJU1VBTF9USEVNRV9FTkQgXCovXHMqIgopCgpjc3MgPSBwYXR0ZXJuLnN1YigiIiwgY3NzKS5yc3RyaXAoKQoKQ1NTLndyaXRlX3RleHQoCiAgICBjc3MgKyAiXG5cbiIgKyBmcmVzaF9jc3MgKyAiXG4iLAogICAgZW5jb2Rpbmc9InV0Zi04IiwKKQo=
+          CSS_B64: LyogRk9SUlVNX1ZJU1VBTF9USEVNRV9TVEFSVAogICBGaW5hbCB2aXN1YWwgbGFuZ3VhZ2UgZm9yIHRoZSBjYW5vbmljYWwgRk9SUlVNIHNoZWxsL2hvbWUuCiAgIFBhcGVyIGFuZCBHcmFwaGl0ZSBzaGFyZSBPTkUgZ2VvbWV0cnkuIFRoZW1lIHNlbGVjdG9yIGNoYW5nZXMgVE9LRU5TIE9OTFkuCiovCjpyb290IHsKICBjb2xvci1zY2hlbWU6IGxpZ2h0OwoKICAtLWZ2dC1wYWdlOiAjZWJlOWU0OwogIC0tZnZ0LXN1cmZhY2U6ICNmM2YxZWM7CiAgLS1mdnQtcGFuZWw6ICNmOGY2ZjE7CiAgLS1mdnQtcGFuZWwtc29mdDogI2VmZWRlNzsKICAtLWZ2dC1saW5lOiAjYzRjMWI5OwogIC0tZnZ0LWxpbmUtc3Ryb25nOiAjOGY4YjgyOwogIC0tZnZ0LXRleHQ6ICMyMDIyMjQ7CiAgLS1mdnQtbXV0ZWQ6ICM2NjY3NjA7CiAgLS1mdnQtZmFpbnQ6ICM4Yjg5ODE7CiAgLS1mdnQtYWNjZW50OiAjMTc2OWZmOwogIC0tZnZ0LWFjY2VudC1zb2Z0OiAjZTdlZmZmOwogIC0tZnZ0LWhvdmVyOiAjZWVlY2U2OwogIC0tZnZ0LWZvY3VzOiAjMGQ1ZWU4OwogIC0tZnZ0LWljb24tYmc6ICNmNWYzZWU7CiAgLS1mdnQtdGV4dHVyZToKICAgIHVybCgiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMicgaGVpZ2h0PScxMicgdmlld0JveD0nMCAwIDEyIDEyJyUzRSUzQ3BhdGggZD0nTTAgMTEuNUgxMicgc3Ryb2tlPSclMjMyMDIyMjQnIHN0cm9rZS1vcGFjaXR5PScuMDIyJy8lM0UlM0NjaXJjbGUgY3g9JzInIGN5PSczJyByPScuNDUnIGZpbGw9JyUyMzIwMjIyNCcgZmlsbC1vcGFjaXR5PScuMDI4Jy8lM0UlM0NjaXJjbGUgY3g9JzknIGN5PSc3JyByPScuMzUnIGZpbGw9JyUyMzIwMjIyNCcgZmlsbC1vcGFjaXR5PScuMDIyJy8lM0UlM0Mvc3ZnJTNFIik7Cn0KCmh0bWwuZGFyaywKaHRtbFtkYXRhLXRoZW1lPSJkYXJrIl0sCmh0bWxbZGF0YS10aGVtZT0iZ3JhcGhpdGUiXSwKaHRtbFtkYXRhLWZvcnJ1bS10aGVtZT0iZ3JhcGhpdGUiXSB7CiAgY29sb3Itc2NoZW1lOiBkYXJrOwoKICAtLWZ2dC1wYWdlOiAjMTAxMzE2OwogIC0tZnZ0LXN1cmZhY2U6ICMxNTE5MWM7CiAgLS1mdnQtcGFuZWw6ICMxNzFiMWU7CiAgLS1mdnQtcGFuZWwtc29mdDogIzEyMTYxOTsKICAtLWZ2dC1saW5lOiAjMzQzYTNmOwogIC0tZnZ0LWxpbmUtc3Ryb25nOiAjNTk2MTY4OwogIC0tZnZ0LXRleHQ6ICNlNmU4ZTk7CiAgLS1mdnQtbXV0ZWQ6ICNhMWE3YWM7CiAgLS1mdnQtZmFpbnQ6ICM3ZTg1OGI7CiAgLS1mdnQtYWNjZW50OiAjMzk3Y2ZmOwogIC0tZnZ0LWFjY2VudC1zb2Z0OiAjMTcyNjQxOwogIC0tZnZ0LWhvdmVyOiAjMWIyMDI0OwogIC0tZnZ0LWZvY3VzOiAjNmQ5Y2ZmOwogIC0tZnZ0LWljb24tYmc6ICMxMjE2MTk7CiAgLS1mdnQtdGV4dHVyZToKICAgIHVybCgiZGF0YTppbWFnZS9zdmcreG1sLCUzQ3N2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMicgaGVpZ2h0PScxMicgdmlld0JveD0nMCAwIDEyIDEyJyUzRSUzQ3BhdGggZD0nTTAgMTEuNUgxMicgc3Ryb2tlPSclMjNmZmZmZmYnIHN0cm9rZS1vcGFjaXR5PScuMDE4Jy8lM0UlM0NjaXJjbGUgY3g9JzInIGN5PSczJyByPScuNDUnIGZpbGw9JyUyM2ZmZmZmZicgZmlsbC1vcGFjaXR5PScuMDIyJy8lM0UlM0NjaXJjbGUgY3g9JzknIGN5PSc3JyByPScuMzUnIGZpbGw9JyUyM2ZmZmZmZicgZmlsbC1vcGFjaXR5PScuMDE4Jy8lM0UlM0Mvc3ZnJTNFIik7Cn0KCmh0bWwsCmJvZHkgewogIGJhY2tncm91bmQtY29sb3I6IHZhcigtLWZ2dC1wYWdlKSAhaW1wb3J0YW50Owp9Cgpib2R5IHsKICBjb2xvcjogdmFyKC0tZnZ0LXRleHQpOwogIGJhY2tncm91bmQtaW1hZ2U6IHZhcigtLWZ2dC10ZXh0dXJlKTsKICBiYWNrZ3JvdW5kLXNpemU6IDEycHggMTJweDsKICBiYWNrZ3JvdW5kLWF0dGFjaG1lbnQ6IGZpeGVkOwp9CgovKiBHbG9iYWwgc2hlbGwgKi8KW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSwKW2RhdGEtZm9ycnVtLXNoZWxsPSJmb290ZXIiXSB7CiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tZnZ0LXN1cmZhY2UpICFpbXBvcnRhbnQ7CiAgY29sb3I6IHZhcigtLWZ2dC10ZXh0KSAhaW1wb3J0YW50OwogIGJvcmRlci1jb2xvcjogdmFyKC0tZnZ0LWxpbmUpICFpbXBvcnRhbnQ7Cn0KCltkYXRhLWZvcnJ1bS1zaGVsbD0iaGVhZGVyIl0gewogIGJvcmRlci1ib3R0b20td2lkdGg6IDFweCAhaW1wb3J0YW50Owp9CgpbZGF0YS1mb3JydW0tc2hlbGw9ImZvb3RlciJdIHsKICBib3JkZXItdG9wLXdpZHRoOiAxcHggIWltcG9ydGFudDsKfQoKW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSA+ICogPiBhW2hyZWY9Ii8iXTpmaXJzdC1jaGlsZCB7CiAgZm9udC1mYW1pbHk6CiAgICB1aS1tb25vc3BhY2UsCiAgICAiU0ZNb25vLVJlZ3VsYXIiLAogICAgQ29uc29sYXMsCiAgICAiTGliZXJhdGlvbiBNb25vIiwKICAgIG1vbm9zcGFjZTsKICBmb250LXNpemU6IDIycHggIWltcG9ydGFudDsKICBmb250LXdlaWdodDogODUwICFpbXBvcnRhbnQ7CiAgbGV0dGVyLXNwYWNpbmc6IDAuMDM1ZW07Cn0KCltkYXRhLWZvcnJ1bS1zaGVsbD0iaGVhZGVyIl0gbmF2IHsKICBhbGlnbi1pdGVtczogY2VudGVyOwp9CgpbZGF0YS1mb3JydW0tc2hlbGw9ImhlYWRlciJdIG5hdiA+IGEgewogIHBvc2l0aW9uOiByZWxhdGl2ZTsKICBtaW4taGVpZ2h0OiAzOXB4OwogIGRpc3BsYXk6IGlubGluZS1mbGV4OwogIGFsaWduLWl0ZW1zOiBjZW50ZXI7CiAgZm9udC1zaXplOiAxM3B4ICFpbXBvcnRhbnQ7CiAgZm9udC13ZWlnaHQ6IDYyMDsKICBsZXR0ZXItc3BhY2luZzogLTAuMDFlbTsKICBjb2xvcjogdmFyKC0tZnZ0LXRleHQpICFpbXBvcnRhbnQ7Cn0KCltkYXRhLWZvcnJ1bS1zaGVsbD0iaGVhZGVyIl0gbmF2ID4gYTpob3ZlciwKW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSBuYXYgPiBhOmZvY3VzLXZpc2libGUgewogIGNvbG9yOiB2YXIoLS1mdnQtYWNjZW50KSAhaW1wb3J0YW50Owp9CgpbZGF0YS1mb3JydW0tc2hlbGw9ImhlYWRlciJdIG5hdiA+IGFbYXJpYS1jdXJyZW50PSJwYWdlIl0gewogIGNvbG9yOiB2YXIoLS1mdnQtYWNjZW50KSAhaW1wb3J0YW50Owp9CgpbZGF0YS1mb3JydW0tc2hlbGw9ImhlYWRlciJdIG5hdiA+IGFbYXJpYS1jdXJyZW50PSJwYWdlIl06OmFmdGVyIHsKICBjb250ZW50OiAiIjsKICBwb3NpdGlvbjogYWJzb2x1dGU7CiAgcmlnaHQ6IDA7CiAgYm90dG9tOiAtMXB4OwogIGxlZnQ6IDA7CiAgaGVpZ2h0OiAycHg7CiAgYmFja2dyb3VuZDogdmFyKC0tZnZ0LWFjY2VudCk7Cn0KCltkYXRhLWZvcnJ1bS1zaGVsbD0iaGVhZGVyIl0gaW5wdXQgewogIGJvcmRlcjogMXB4IHNvbGlkIHZhcigtLWZ2dC1saW5lKSAhaW1wb3J0YW50OwogIGJhY2tncm91bmQ6IHZhcigtLWZ2dC1wYW5lbCkgIWltcG9ydGFudDsKICBjb2xvcjogdmFyKC0tZnZ0LXRleHQpICFpbXBvcnRhbnQ7Cn0KCltkYXRhLWZvcnJ1bS1zaGVsbD0iaGVhZGVyIl0gaW5wdXQ6OnBsYWNlaG9sZGVyIHsKICBjb2xvcjogdmFyKC0tZnZ0LWZhaW50KTsKfQoKW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSBidXR0b24sCltkYXRhLWZvcnJ1bS1zaGVsbD0iaGVhZGVyIl0gYSB7CiAgb3V0bGluZS1vZmZzZXQ6IDJweDsKfQoKW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSBidXR0b246Zm9jdXMtdmlzaWJsZSwKW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSBhOmZvY3VzLXZpc2libGUsCi5mb3JydW0taG9tZS12MTYgYTpmb2N1cy12aXNpYmxlLAouZm9ycnVtLWhvbWUtdjE2IGJ1dHRvbjpmb2N1cy12aXNpYmxlIHsKICBvdXRsaW5lOiAxcHggZGFzaGVkIHZhcigtLWZ2dC1mb2N1cykgIWltcG9ydGFudDsKfQoKW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSBhW2hyZWYqPSJyZWdpc3RlciJdIHsKICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1mdnQtYWNjZW50KSAhaW1wb3J0YW50OwogIGJhY2tncm91bmQ6IHZhcigtLWZ2dC1hY2NlbnQpICFpbXBvcnRhbnQ7CiAgY29sb3I6ICNmZmZmZmYgIWltcG9ydGFudDsKICBmb250LXdlaWdodDogNjgwOwp9CgovKiBDb21wYWN0IFBhcGVyIC8gR3JhcGhpdGUgc3dpdGNoLiAqLwouZm9ycnVtLXRoZW1lLXRvZ2dsZSB7CiAgcG9zaXRpb246IHJlbGF0aXZlOwogIHdpZHRoOiAyOXB4OwogIGhlaWdodDogMjlweDsKICBmbGV4OiAwIDAgMjlweDsKICBkaXNwbGF5OiBpbmxpbmUtZ3JpZDsKICBwbGFjZS1pdGVtczogY2VudGVyOwogIG1hcmdpbi1sZWZ0OiAycHg7CiAgcGFkZGluZzogMDsKICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1mdnQtbGluZS1zdHJvbmcpOwogIGJvcmRlci1yYWRpdXM6IDJweDsKICBiYWNrZ3JvdW5kOiB2YXIoLS1mdnQtaWNvbi1iZyk7CiAgY29sb3I6IHZhcigtLWZ2dC10ZXh0KTsKICBjdXJzb3I6IHBvaW50ZXI7Cn0KCi5mb3JydW0tdGhlbWUtdG9nZ2xlOmhvdmVyIHsKICBib3JkZXItY29sb3I6IHZhcigtLWZ2dC1hY2NlbnQpOwogIGNvbG9yOiB2YXIoLS1mdnQtYWNjZW50KTsKfQoKLmZvcnJ1bS10aGVtZS10b2dnbGVfX2ljb24gewogIHBvc2l0aW9uOiByZWxhdGl2ZTsKICB3aWR0aDogMTVweDsKICBoZWlnaHQ6IDE1cHg7CiAgZGlzcGxheTogYmxvY2s7CiAgYm9yZGVyOiAxcHggc29saWQgY3VycmVudENvbG9yOwogIGJhY2tncm91bmQ6IHRyYW5zcGFyZW50Owp9CgouZm9ycnVtLXRoZW1lLXRvZ2dsZV9faWNvbjo6YmVmb3JlIHsKICBjb250ZW50OiAiIjsKICBwb3NpdGlvbjogYWJzb2x1dGU7CiAgdG9wOiAycHg7CiAgYm90dG9tOiAycHg7CiAgbGVmdDogMnB4OwogIHdpZHRoOiA1cHg7CiAgYmFja2dyb3VuZDogY3VycmVudENvbG9yOwp9CgouZm9ycnVtLXRoZW1lLXRvZ2dsZV9faWNvbjo6YWZ0ZXIgewogIGNvbnRlbnQ6ICIiOwogIHBvc2l0aW9uOiBhYnNvbHV0ZTsKICB0b3A6IDVweDsKICByaWdodDogMnB4OwogIHdpZHRoOiAzcHg7CiAgaGVpZ2h0OiAzcHg7CiAgYm9yZGVyOiAxcHggc29saWQgY3VycmVudENvbG9yOwogIGJhY2tncm91bmQ6IHZhcigtLWZ2dC1pY29uLWJnKTsKfQoKLmZvcnJ1bS10aGVtZS10b2dnbGVbZGF0YS10aGVtZS1zdGF0ZT0iZ3JhcGhpdGUiXQouZm9ycnVtLXRoZW1lLXRvZ2dsZV9faWNvbjo6YmVmb3JlIHsKICBsZWZ0OiBhdXRvOwogIHJpZ2h0OiAycHg7Cn0KCi8qIEhvbWUgc3VyZmFjZXMgKi8KLmZvcnJ1bS1ob21lLXYxNiB7CiAgY29sb3I6IHZhcigtLWZ2dC10ZXh0KTsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fcGFuZWwsCi5mb3JydW0taG9tZS12MTZfX3RyZWUgewogIGJvcmRlci1jb2xvcjogdmFyKC0tZnZ0LWxpbmUpICFpbXBvcnRhbnQ7CiAgYmFja2dyb3VuZDogdmFyKC0tZnZ0LXBhbmVsKSAhaW1wb3J0YW50Owp9CgouZm9ycnVtLWhvbWUtdjE2X19wYW5lbC1oZWFkLAouZm9ycnVtLWhvbWUtdjE2X19zaWRlLWhlYWQgewogIGJvcmRlci1ib3R0b20tY29sb3I6IHZhcigtLWZ2dC1saW5lKSAhaW1wb3J0YW50OwogIGJhY2tncm91bmQ6IHRyYW5zcGFyZW50ICFpbXBvcnRhbnQ7Cn0KCi5mb3JydW0taG9tZS12MTZfX3BhbmVsLWhlYWQgaDIsCi5mb3JydW0taG9tZS12MTZfX3NpZGUtaGVhZCBoMiwKLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1uYW1lIHsKICBjb2xvcjogdmFyKC0tZnZ0LXRleHQpOwp9CgouZm9ycnVtLWhvbWUtdjE2X19wYW5lbC1oZWFkIGgyLAouZm9ycnVtLWhvbWUtdjE2X19zaWRlLWhlYWQgaDIgewogIGZvbnQtZmFtaWx5OgogICAgdWktbW9ub3NwYWNlLAogICAgIlNGTW9uby1SZWd1bGFyIiwKICAgIENvbnNvbGFzLAogICAgIkxpYmVyYXRpb24gTW9ubyIsCiAgICBtb25vc3BhY2U7CiAgZm9udC13ZWlnaHQ6IDc2MDsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fcGFuZWwtaGVhZCA+IGEsCi5mb3JydW0taG9tZS12MTZfX3NpZGUtaGVhZCA+IGEsCi5mb3JydW0taG9tZS12MTYgYSB7CiAgY29sb3I6IHZhcigtLWZ2dC1hY2NlbnQpOwp9CgouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtaGVhZCB7CiAgY29sb3I6IHZhcigtLWZ2dC1tdXRlZCk7CiAgYm9yZGVyLWJvdHRvbS1jb2xvcjogdmFyKC0tZnZ0LWxpbmUpICFpbXBvcnRhbnQ7CiAgZm9udC1mYW1pbHk6CiAgICB1aS1tb25vc3BhY2UsCiAgICAiU0ZNb25vLVJlZ3VsYXIiLAogICAgQ29uc29sYXMsCiAgICAiTGliZXJhdGlvbiBNb25vIiwKICAgIG1vbm9zcGFjZTsKICBmb250LXdlaWdodDogNjIwOwp9CgouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMgewogIGNvbG9yOiB2YXIoLS1mdnQtbXV0ZWQpOwogIGJvcmRlci1ib3R0b20tY29sb3I6IHZhcigtLWZ2dC1saW5lKSAhaW1wb3J0YW50Owp9CgouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWM6aG92ZXIgewogIGJhY2tncm91bmQ6IHZhcigtLWZ2dC1ob3Zlcik7Cn0KCi5mb3JydW0taG9tZS12MTZfX25ldy10b3BpYy10aXRsZSwKLmZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLW51bWJlciB7CiAgY29sb3I6IHZhcigtLWZ2dC10ZXh0KTsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLXRpdGxlIHsKICBsZXR0ZXItc3BhY2luZzogLTAuMDEyZW07Cn0KCi5mb3JydW0taG9tZS12MTZfX25ldy10b3BpYy1zZWN0aW9uLAouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtYXV0aG9yIHsKICBjb2xvcjogdmFyKC0tZnZ0LW11dGVkKTsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLWxhc3QgewogIGNvbG9yOiB2YXIoLS1mdnQtZmFpbnQpOwp9CgouZm9ycnVtLWhvbWUtdjE2X190cmVlLXJvdzpob3ZlcgouZm9ycnVtLWhvbWUtdjE2X190cmVlLWxpbmsgewogIGJhY2tncm91bmQ6IHZhcigtLWZ2dC1ob3Zlcik7Cn0KCi5mb3JydW0taG9tZS12MTZfX3RyZWUtZm9sZGVyLAouZm9ycnVtLWhvbWUtdjE2X190cmVlLWNvdW50IHsKICBjb2xvcjogdmFyKC0tZnZ0LW11dGVkKTsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1jaGlsZHJlbjo6YmVmb3JlIHsKICBib3JkZXItbGVmdC1jb2xvcjogdmFyKC0tZnZ0LWxpbmUtc3Ryb25nKSAhaW1wb3J0YW50Owp9CgouZm9ycnVtLWhvbWUtdjE2X190cmVlLWNoaWxkcmVuID4KLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1ub2RlOjpiZWZvcmUgewogIGJvcmRlci10b3AtY29sb3I6IHZhcigtLWZ2dC1saW5lLXN0cm9uZykgIWltcG9ydGFudDsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fcHJvcG9zYWwgewogIGJvcmRlci1jb2xvcjogdmFyKC0tZnZ0LWxpbmUtc3Ryb25nKSAhaW1wb3J0YW50OwogIGJhY2tncm91bmQ6IHZhcigtLWZ2dC1wYW5lbC1zb2Z0KSAhaW1wb3J0YW50OwogIGNvbG9yOiB2YXIoLS1mdnQtdGV4dCkgIWltcG9ydGFudDsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fcHJvcG9zYWw6aG92ZXIgewogIGJvcmRlci1jb2xvcjogdmFyKC0tZnZ0LWFjY2VudCkgIWltcG9ydGFudDsKICBjb2xvcjogdmFyKC0tZnZ0LWFjY2VudCkgIWltcG9ydGFudDsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fYWN0dWFsLAouZm9ycnVtLWhvbWUtdjE2X19wb2xsLAouZm9ycnVtLWhvbWUtdjE2X19zdGF0cyA+IGRpdiB7CiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1mdnQtbGluZSkgIWltcG9ydGFudDsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fYWN0dWFsOmhvdmVyLAouZm9ycnVtLWhvbWUtdjE2X19wb2xsOmhvdmVyIHsKICBiYWNrZ3JvdW5kOiB2YXIoLS1mdnQtaG92ZXIpOwp9CgouZm9ycnVtLWhvbWUtdjE2X19hY3R1YWwtc3ltYm9sLAouZm9ycnVtLWhvbWUtdjE2X19wb2xsLWljb24gewogIGJvcmRlci1jb2xvcjogdmFyKC0tZnZ0LWxpbmUtc3Ryb25nKSAhaW1wb3J0YW50OwogIGJhY2tncm91bmQ6IHZhcigtLWZ2dC1pY29uLWJnKSAhaW1wb3J0YW50OwogIGNvbG9yOiB2YXIoLS1mdnQtdGV4dCk7Cn0KCi5mb3JydW0taG9tZS12MTZfX3RhYnMgewogIGJvcmRlci1ib3R0b20tY29sb3I6IHZhcigtLWZ2dC1saW5lKSAhaW1wb3J0YW50Owp9CgouZm9ycnVtLWhvbWUtdjE2X190YWJzIGJ1dHRvbiB7CiAgY29sb3I6IHZhcigtLWZ2dC1tdXRlZCk7Cn0KCi5mb3JydW0taG9tZS12MTZfX3RhYnMgYnV0dG9uW2FyaWEtc2VsZWN0ZWQ9InRydWUiXSwKLmZvcnJ1bS1ob21lLXYxNl9fdGFicyBidXR0b24uaXMtYWN0aXZlIHsKICBjb2xvcjogdmFyKC0tZnZ0LWFjY2VudCk7CiAgYm9yZGVyLWJvdHRvbS1jb2xvcjogdmFyKC0tZnZ0LWFjY2VudCkgIWltcG9ydGFudDsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fd2Vla2x5LWVtcHR5LAouZm9ycnVtLWhvbWUtdjE2X19lbXB0eSB7CiAgY29sb3I6IHZhcigtLWZ2dC1tdXRlZCk7Cn0KCi5mb3JydW0taG9tZS12MTZfX3dlZWtseS1lbXB0eSBzdHJvbmcgewogIGNvbG9yOiB2YXIoLS1mdnQtdGV4dCk7Cn0KCi5mb3JydW0taG9tZS12MTZfX3N0YXRzIGR0IHsKICBjb2xvcjogdmFyKC0tZnZ0LW11dGVkKTsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fc3RhdHMgZGQgewogIGNvbG9yOiB2YXIoLS1mdnQtdGV4dCk7Cn0KCltkYXRhLWZvcnJ1bS1zaGVsbD0iZm9vdGVyIl0gYSB7CiAgY29sb3I6IHZhcigtLWZ2dC1tdXRlZCkgIWltcG9ydGFudDsKfQoKW2RhdGEtZm9ycnVtLXNoZWxsPSJmb290ZXIiXSBhOmhvdmVyLApbZGF0YS1mb3JydW0tc2hlbGw9ImZvb3RlciJdIGE6Zm9jdXMtdmlzaWJsZSB7CiAgY29sb3I6IHZhcigtLWZ2dC1hY2NlbnQpICFpbXBvcnRhbnQ7Cn0KCkBtZWRpYSAobWF4LXdpZHRoOiA4NjBweCkgewogIC5mb3JydW0tdGhlbWUtdG9nZ2xlIHsKICAgIHdpZHRoOiAyOHB4OwogICAgaGVpZ2h0OiAyOHB4OwogICAgZmxleC1iYXNpczogMjhweDsKICB9Cn0KLyogRk9SUlVNX1ZJU1VBTF9USEVNRV9FTkQgKi8=
+          THEME_B64: InVzZSBjbGllbnQiOwoKLy8gRk9SUlVNX1RIRU1FX1RPR0dMRV9WMQppbXBvcnQgeyB1c2VFZmZlY3QsIHVzZVN0YXRlIH0gZnJvbSAicmVhY3QiOwoKdHlwZSBGb3J1bVRoZW1lID0gInBhcGVyIiB8ICJncmFwaGl0ZSI7Cgpjb25zdCBTVE9SQUdFX0tFWSA9ICJmb3JydW0udGhlbWUiOwoKZnVuY3Rpb24gYXBwbHlUaGVtZSh0aGVtZTogRm9ydW1UaGVtZSkgewogIGNvbnN0IHJvb3QgPSBkb2N1bWVudC5kb2N1bWVudEVsZW1lbnQ7CiAgY29uc3QgaXNHcmFwaGl0ZSA9IHRoZW1lID09PSAiZ3JhcGhpdGUiOwoKICByb290LmRhdGFzZXQudGhlbWUgPSB0aGVtZTsKICByb290LmRhdGFzZXQuZm9ycnVtVGhlbWUgPSB0aGVtZTsKICByb290LmNsYXNzTGlzdC50b2dnbGUoImRhcmsiLCBpc0dyYXBoaXRlKTsKICByb290LnN0eWxlLmNvbG9yU2NoZW1lID0gaXNHcmFwaGl0ZSA/ICJkYXJrIiA6ICJsaWdodCI7Cn0KCmZ1bmN0aW9uIHJlYWRJbml0aWFsVGhlbWUoKTogRm9ydW1UaGVtZSB7CiAgY29uc3Qgcm9vdCA9IGRvY3VtZW50LmRvY3VtZW50RWxlbWVudDsKICBjb25zdCBjdXJyZW50ID0KICAgIHJvb3QuZGF0YXNldC5mb3JydW1UaGVtZSA/PwogICAgcm9vdC5kYXRhc2V0LnRoZW1lOwoKICBpZiAoY3VycmVudCA9PT0gInBhcGVyIiB8fCBjdXJyZW50ID09PSAiZ3JhcGhpdGUiKSB7CiAgICByZXR1cm4gY3VycmVudDsKICB9CgogIGNvbnN0IHN0b3JlZCA9IHdpbmRvdy5sb2NhbFN0b3JhZ2UuZ2V0SXRlbShTVE9SQUdFX0tFWSk7CgogIGlmIChzdG9yZWQgPT09ICJwYXBlciIgfHwgc3RvcmVkID09PSAiZ3JhcGhpdGUiKSB7CiAgICByZXR1cm4gc3RvcmVkOwogIH0KCiAgcmV0dXJuIHJvb3QuY2xhc3NMaXN0LmNvbnRhaW5zKCJkYXJrIikKICAgID8gImdyYXBoaXRlIgogICAgOiAicGFwZXIiOwp9CgpleHBvcnQgZnVuY3Rpb24gVGhlbWVUb2dnbGUoKSB7CiAgY29uc3QgW3RoZW1lLCBzZXRUaGVtZV0gPQogICAgdXNlU3RhdGU8Rm9ydW1UaGVtZT4oInBhcGVyIik7CgogIHVzZUVmZmVjdCgoKSA9PiB7CiAgICBjb25zdCBpbml0aWFsID0gcmVhZEluaXRpYWxUaGVtZSgpOwoKICAgIGFwcGx5VGhlbWUoaW5pdGlhbCk7CiAgICBzZXRUaGVtZShpbml0aWFsKTsKCiAgICBjb25zdCBoYW5kbGVTdG9yYWdlID0gKGV2ZW50OiBTdG9yYWdlRXZlbnQpID0+IHsKICAgICAgaWYgKGV2ZW50LmtleSAhPT0gU1RPUkFHRV9LRVkpIHsKICAgICAgICByZXR1cm47CiAgICAgIH0KCiAgICAgIGlmICgKICAgICAgICBldmVudC5uZXdWYWx1ZSAhPT0gInBhcGVyIiAmJgogICAgICAgIGV2ZW50Lm5ld1ZhbHVlICE9PSAiZ3JhcGhpdGUiCiAgICAgICkgewogICAgICAgIHJldHVybjsKICAgICAgfQoKICAgICAgYXBwbHlUaGVtZShldmVudC5uZXdWYWx1ZSk7CiAgICAgIHNldFRoZW1lKGV2ZW50Lm5ld1ZhbHVlKTsKICAgIH07CgogICAgd2luZG93LmFkZEV2ZW50TGlzdGVuZXIoInN0b3JhZ2UiLCBoYW5kbGVTdG9yYWdlKTsKCiAgICByZXR1cm4gKCkgPT4gewogICAgICB3aW5kb3cucmVtb3ZlRXZlbnRMaXN0ZW5lcigKICAgICAgICAic3RvcmFnZSIsCiAgICAgICAgaGFuZGxlU3RvcmFnZSwKICAgICAgKTsKICAgIH07CiAgfSwgW10pOwoKICBjb25zdCBpc0dyYXBoaXRlID0gdGhlbWUgPT09ICJncmFwaGl0ZSI7CiAgY29uc3QgdGFyZ2V0VGhlbWU6IEZvcnVtVGhlbWUgPQogICAgaXNHcmFwaGl0ZSA/ICJwYXBlciIgOiAiZ3JhcGhpdGUiOwoKICBjb25zdCB0b2dnbGVUaGVtZSA9ICgpID0+IHsKICAgIGFwcGx5VGhlbWUodGFyZ2V0VGhlbWUpOwogICAgd2luZG93LmxvY2FsU3RvcmFnZS5zZXRJdGVtKAogICAgICBTVE9SQUdFX0tFWSwKICAgICAgdGFyZ2V0VGhlbWUsCiAgICApOwogICAgc2V0VGhlbWUodGFyZ2V0VGhlbWUpOwogIH07CgogIHJldHVybiAoCiAgICA8YnV0dG9uCiAgICAgIHR5cGU9ImJ1dHRvbiIKICAgICAgY2xhc3NOYW1lPSJmb3JydW0tdGhlbWUtdG9nZ2xlIgogICAgICBkYXRhLXRoZW1lLXN0YXRlPXt0aGVtZX0KICAgICAgYXJpYS1sYWJlbD17CiAgICAgICAgaXNHcmFwaGl0ZQogICAgICAgICAgPyAi0JLQutC70Y7Rh9C40YLRjCDRgdCy0LXRgtC70YPRjiDRgtC10LzRgyBQYXBlciIKICAgICAgICAgIDogItCS0LrQu9GO0YfQuNGC0Ywg0YLRkdC80L3Rg9GOINGC0LXQvNGDIEdyYXBoaXRlIgogICAgICB9CiAgICAgIGFyaWEtcHJlc3NlZD17aXNHcmFwaGl0ZX0KICAgICAgdGl0bGU9ewogICAgICAgIGlzR3JhcGhpdGUKICAgICAgICAgID8gIlBhcGVyIgogICAgICAgICAgOiAiR3JhcGhpdGUiCiAgICAgIH0KICAgICAgb25DbGljaz17dG9nZ2xlVGhlbWV9CiAgICA+CiAgICAgIDxzcGFuCiAgICAgICAgY2xhc3NOYW1lPSJmb3JydW0tdGhlbWUtdG9nZ2xlX19pY29uIgogICAgICAgIGFyaWEtaGlkZGVuPSJ0cnVlIgogICAgICAvPgogICAgICA8c3BhbiBjbGFzc05hbWU9InNyLW9ubHkiPgogICAgICAgIHtpc0dyYXBoaXRlID8gIlBhcGVyIiA6ICJHcmFwaGl0ZSJ9CiAgICAgIDwvc3Bhbj4KICAgIDwvYnV0dG9uPgogICk7Cn0K
+          CHECK_B64: aW1wb3J0IGZzIGZyb20gIm5vZGU6ZnMiOwoKY29uc3QgbmF2UGF0aCA9CiAgImFwcHMvd2ViL2NvbXBvbmVudHMvbWFpbi1uYXYudHN4IjsKY29uc3QgdGhlbWVQYXRoID0KICAiYXBwcy93ZWIvY29tcG9uZW50cy90aGVtZS10b2dnbGUudHN4IjsKY29uc3QgY3NzUGF0aCA9CiAgImFwcHMvd2ViL2FwcC9nbG9iYWxzLmNzcyI7Cgpmb3IgKGNvbnN0IGZpbGUgb2YgWwogIG5hdlBhdGgsCiAgdGhlbWVQYXRoLAogIGNzc1BhdGgsCl0pIHsKICBpZiAoIWZzLmV4aXN0c1N5bmMoZmlsZSkpIHsKICAgIHRocm93IG5ldyBFcnJvcigKICAgICAgYFJlcXVpcmVkIHZpc3VhbC90aGVtZSBmaWxlIGlzIG1pc3Npbmc6ICR7ZmlsZX1gLAogICAgKTsKICB9Cn0KCmNvbnN0IG5hdiA9IGZzLnJlYWRGaWxlU3luYyhuYXZQYXRoLCAidXRmOCIpOwpjb25zdCB0aGVtZSA9IGZzLnJlYWRGaWxlU3luYyh0aGVtZVBhdGgsICJ1dGY4Iik7CmNvbnN0IGNzcyA9IGZzLnJlYWRGaWxlU3luYyhjc3NQYXRoLCAidXRmOCIpOwoKaWYgKAogICgKICAgIG5hdi5tYXRjaCgKICAgICAgL2ltcG9ydFxzK1x7XHMqVGhlbWVUb2dnbGVccypcfVxzK2Zyb21ccytbIiddXC5cL3RoZW1lLXRvZ2dsZVsiJ107L2csCiAgICApID8/IFtdCiAgKS5sZW5ndGggIT09IDEKKSB7CiAgdGhyb3cgbmV3IEVycm9yKAogICAgIkV4cGVjdGVkIGV4YWN0bHkgb25lIFRoZW1lVG9nZ2xlIGltcG9ydC4iLAogICk7Cn0KCmlmICgKICAoCiAgICBuYXYubWF0Y2goLzxUaGVtZVRvZ2dsZVxzKlwvPi9nKSA/PyBbXQogICkubGVuZ3RoICE9PSAxCikgewogIHRocm93IG5ldyBFcnJvcigKICAgICJFeHBlY3RlZCBleGFjdGx5IG9uZSBUaGVtZVRvZ2dsZSBpbiBNYWluTmF2LiIsCiAgKTsKfQoKZm9yIChjb25zdCByZXF1aXJlZCBvZiBbCiAgIkZPUlJVTV9USEVNRV9UT0dHTEVfVjEiLAogICcidXNlIGNsaWVudCInLAogICd0eXBlIEZvcnVtVGhlbWUgPSAicGFwZXIiIHwgImdyYXBoaXRlIicsCiAgJ2NvbnN0IFNUT1JBR0VfS0VZID0gImZvcnJ1bS50aGVtZSInLAogICJyb290LmRhdGFzZXQudGhlbWUgPSB0aGVtZSIsCiAgInJvb3QuZGF0YXNldC5mb3JydW1UaGVtZSA9IHRoZW1lIiwKICAncm9vdC5jbGFzc0xpc3QudG9nZ2xlKCJkYXJrIiwgaXNHcmFwaGl0ZSknLAogICJ3aW5kb3cubG9jYWxTdG9yYWdlLnNldEl0ZW0iLAogICdhcmlhLXByZXNzZWQ9e2lzR3JhcGhpdGV9JywKICAnY2xhc3NOYW1lPSJmb3JydW0tdGhlbWUtdG9nZ2xlIicsCl0pIHsKICBpZiAoIXRoZW1lLmluY2x1ZGVzKHJlcXVpcmVkKSkgewogICAgdGhyb3cgbmV3IEVycm9yKAogICAgICBgVGhlbWVUb2dnbGUgY29udHJhY3QgaXMgbWlzc2luZzogJHtyZXF1aXJlZH1gLAogICAgKTsKICB9Cn0KCmNvbnN0IHN0YXJ0ID0KICAiLyogRk9SUlVNX1ZJU1VBTF9USEVNRV9TVEFSVCI7CmNvbnN0IGVuZCA9CiAgIi8qIEZPUlJVTV9WSVNVQUxfVEhFTUVfRU5EICovIjsKCmlmICgKICAoCiAgICBjc3MubWF0Y2goCiAgICAgIC9GT1JSVU1fVklTVUFMX1RIRU1FX1NUQVJUL2csCiAgICApID8/IFtdCiAgKS5sZW5ndGggIT09IDEKKSB7CiAgdGhyb3cgbmV3IEVycm9yKAogICAgIkV4cGVjdGVkIG9uZSB2aXN1YWwtdGhlbWUgc3RhcnQgbWFya2VyLiIsCiAgKTsKfQoKaWYgKAogICgKICAgIGNzcy5tYXRjaCgKICAgICAgL0ZPUlJVTV9WSVNVQUxfVEhFTUVfRU5EL2csCiAgICApID8/IFtdCiAgKS5sZW5ndGggIT09IDEKKSB7CiAgdGhyb3cgbmV3IEVycm9yKAogICAgIkV4cGVjdGVkIG9uZSB2aXN1YWwtdGhlbWUgZW5kIG1hcmtlci4iLAogICk7Cn0KCmNvbnN0IGJsb2NrID0gY3NzLnNsaWNlKAogIGNzcy5pbmRleE9mKHN0YXJ0KSwKICBjc3MuaW5kZXhPZihlbmQpICsgZW5kLmxlbmd0aCwKKTsKCmZvciAoY29uc3QgcmVxdWlyZWQgb2YgWwogICItLWZ2dC1wYWdlOiAjZWJlOWU0IiwKICAiLS1mdnQtcGFnZTogIzEwMTMxNiIsCiAgIi0tZnZ0LWFjY2VudDogIzE3NjlmZiIsCiAgIi0tZnZ0LWFjY2VudDogIzM5N2NmZiIsCiAgIi0tZnZ0LXRleHR1cmU6IiwKICAiLmZvcnJ1bS10aGVtZS10b2dnbGUiLAogICIuZm9ycnVtLXRoZW1lLXRvZ2dsZV9faWNvbiIsCiAgImJhY2tncm91bmQtaW1hZ2U6IHZhcigtLWZ2dC10ZXh0dXJlKSIsCiAgIltkYXRhLWZvcnJ1bS1zaGVsbD1cImhlYWRlclwiXSBuYXYgPiBhIiwKICAiLmZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljOmhvdmVyIiwKXSkgewogIGlmICghYmxvY2suaW5jbHVkZXMocmVxdWlyZWQpKSB7CiAgICB0aHJvdyBuZXcgRXJyb3IoCiAgICAgIGBWaXN1YWwtdGhlbWUgY29udHJhY3QgaXMgbWlzc2luZzogJHtyZXF1aXJlZH1gLAogICAgKTsKICB9Cn0KCi8vIE1haW4tcGFnZSBnZW9tZXRyeSBiZWxvbmdzIHRvIHRoZSBhbHJlYWR5LXJlcXVpcmVkCi8vIGhvbWUtc2NhbGUtcG9saXNoLWNoZWNrLm1qcyBjb250cmFjdC4gVGhlIHZpc3VhbC10aGVtZSBibG9jawovLyBtdXN0IHZhbGlkYXRlIHZpc3VhbCB0b2tlbnMvc3RhdGVzLCBub3QgZHVwbGljYXRlIGdyaWQgZ2VvbWV0cnkuCmlmICghY3NzLmluY2x1ZGVzKCJGT1JSVU1fSE9NRV9TQ0FMRV9QT0xJU0hfU1RBUlQiKSkgewogIHRocm93IG5ldyBFcnJvcigKICAgICJIb21lIHNjYWxlLXBvbGlzaCBjb250cmFjdCBpcyBtaXNzaW5nIGJlZm9yZSB2aXN1YWwtdGhlbWUgdmFsaWRhdGlvbi4iLAogICk7Cn0KCmZvciAoY29uc3QgZm9yYmlkZGVuIG9mIFsKICAibGluZWFyLWdyYWRpZW50IiwKICAicmFkaWFsLWdyYWRpZW50IiwKICAiYmFja2Ryb3AtZmlsdGVyIiwKICAiZmlsdGVyOiBibHVyIiwKICAiYm94LXNoYWRvdzoiLAogICJib3JkZXItcmFkaXVzOiA4cHgiLAogICJib3JkZXItcmFkaXVzOiAxMnB4IiwKICAidHJhbnNpdGlvbjogYWxsIiwKXSkgewogIGlmIChibG9jay5pbmNsdWRlcyhmb3JiaWRkZW4pKSB7CiAgICB0aHJvdyBuZXcgRXJyb3IoCiAgICAgIGBSZWplY3RlZCB2aXN1YWwgc3R5bGluZyBmb3VuZDogJHtmb3JiaWRkZW59YCwKICAgICk7CiAgfQp9Cgpjb25zdCBkYXJrU3RhcnQgPQogIGJsb2NrLmluZGV4T2YoImh0bWwuZGFyaywiKTsKY29uc3Qgc2hlbGxTdGFydCA9CiAgYmxvY2suaW5kZXhPZigiaHRtbCxcbmJvZHkiKTsKCmlmICgKICBkYXJrU3RhcnQgPCAwIHx8CiAgc2hlbGxTdGFydCA8IDAgfHwKICBzaGVsbFN0YXJ0IDw9IGRhcmtTdGFydAopIHsKICB0aHJvdyBuZXcgRXJyb3IoCiAgICAiQ291bGQgbm90IGlzb2xhdGUgR3JhcGhpdGUgdG9rZW4gb3ZlcnJpZGUuIiwKICApOwp9Cgpjb25zdCBncmFwaGl0ZVRva2VucyA9CiAgYmxvY2suc2xpY2UoZGFya1N0YXJ0LCBzaGVsbFN0YXJ0KTsKCmZvciAoY29uc3Qgc3RydWN0dXJhbCBvZiBbCiAgImRpc3BsYXk6IiwKICAicG9zaXRpb246IiwKICAiZ3JpZC10ZW1wbGF0ZSIsCiAgImZsZXgtZGlyZWN0aW9uOiIsCiAgIndpZHRoOiIsCiAgImhlaWdodDoiLAogICJtYXJnaW46IiwKICAicGFkZGluZzoiLAogICJnYXA6IiwKICAiaW5zZXQ6IiwKICAidG9wOiIsCiAgInJpZ2h0OiIsCiAgImJvdHRvbToiLAogICJsZWZ0OiIsCl0pIHsKICBpZiAoZ3JhcGhpdGVUb2tlbnMuaW5jbHVkZXMoc3RydWN0dXJhbCkpIHsKICAgIHRocm93IG5ldyBFcnJvcigKICAgICAgYEdyYXBoaXRlIGNoYW5nZXMgZ2VvbWV0cnk6ICR7c3RydWN0dXJhbH1gLAogICAgKTsKICB9Cn0KCmNvbnNvbGUubG9nKAogICJGT1JSVU0gVmlzdWFsIFRoZW1lIHBhc3NlZDogUGFwZXIvR3JhcGhpdGUgdG9rZW5zLCBwZXJzaXN0ZW50IGFjY2Vzc2libGUgdG9nZ2xlLCByZXRyby1wYXBlciB2aXN1YWwgbGF5ZXIsIG9uZSBnZW9tZXRyeS4iLAopOwo=
+        run: |
+          set -euo pipefail
+
+          printf '%s' "$PATCH_B64" | base64 -d             > /tmp/forrum-visual-theme.py
+
+          printf '%s' "$CSS_B64" | base64 -d             > /tmp/forrum-visual-theme.css
+
+          printf '%s' "$THEME_B64" | base64 -d             > /tmp/forrum-theme-toggle.tsx
+
+          printf '%s' "$CHECK_B64" | base64 -d             > scripts/home-visual-theme-check.mjs
+
+          python3 -m py_compile             /tmp/forrum-visual-theme.py
+
+          node --check             scripts/home-visual-theme-check.mjs
+
+
+      - name: Apply visual theme
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 /tmp/forrum-visual-theme.py
+
+          git diff --check
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/global-shell-v16-1-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+      - name: Verify isolated source scope
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          is_allowed() {
+            case "$1" in
+              apps/web/app/globals.css|              apps/web/components/main-nav.tsx|              apps/web/components/theme-toggle.tsx|              scripts/home-visual-theme-check.mjs)
+                return 0
+                ;;
+              *)
+                return 1
+                ;;
+            esac
+          }
+
+          bad=0
+
+          while IFS= read -r line; do
+            [ -n "$line" ] || continue
+
+            path="${line:3}"
+
+            if ! is_allowed "$path"; then
+              echo "::error::Unexpected source file: $path"
+              bad=1
+            fi
+          done < <(
+            git status               --porcelain=v1               --untracked-files=all
+          )
+
+          exit "$bad"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Install build dependencies
+        run: >
+          npm install --include=dev
+          --no-audit --no-fund
+          --package-lock=false
+
+      - name: Validate ThemeToggle TypeScript
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node - <<'NODE'
+          const fs = require("fs");
+          const ts = require("typescript");
+
+          const source = fs.readFileSync(
+            "/tmp/forrum-theme-toggle.tsx",
+            "utf8",
+          );
+
+          const result = ts.transpileModule(
+            source,
+            {
+              compilerOptions: {
+                target: ts.ScriptTarget.ES2022,
+                module: ts.ModuleKind.ESNext,
+                jsx: ts.JsxEmit.ReactJSX,
+                strict: true,
+              },
+              reportDiagnostics: true,
+            },
+          );
+
+          const errors = (
+            result.diagnostics ?? []
+          ).filter(
+            (diagnostic) =>
+              diagnostic.category ===
+              ts.DiagnosticCategory.Error,
+          );
+
+          if (errors.length) {
+            for (const error of errors) {
+              console.error(
+                ts.flattenDiagnosticMessageText(
+                  error.messageText,
+                  "\n",
+                ),
+              );
+            }
+            process.exit(1);
+          }
+
+          console.log(
+            "ThemeToggle TypeScript validation: OK",
+          );
+          NODE
+
+      - name: Run static UX accessibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/global-shell-v16-1-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+
+          git diff --check
+
+      - name: Run available tests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/web --if-present
+
+      - name: Typecheck
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm run typecheck -w @forrum/contracts
+          npm run typecheck -w @forrum/web
+
+      - name: Production build
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf apps/web/.next
+
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/web
+
+      - name: Restore tracked build side effects
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mapfile -t tracked_dirty < <(
+            git status               --porcelain=v1               --untracked-files=no |
+            sed 's/^...//'
+          )
+
+          for path in "${tracked_dirty[@]}"; do
+            [ -n "$path" ] || continue
+
+            case "$path" in
+              apps/web/app/globals.css|              apps/web/components/main-nav.tsx)
+                continue
+                ;;
+            esac
+
+            echo               "Restoring build-only tracked change: $path"
+
+            git restore               --staged               --worktree               -- "$path"
+          done
+
+      - name: Remove generated build artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git clean -ffdx             -e apps/web/components/theme-toggle.tsx             -e scripts/home-visual-theme-check.mjs
+
+          test -f             apps/web/components/theme-toggle.tsx
+
+          test -f             scripts/home-visual-theme-check.mjs
+
+      - name: Final production audit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/global-shell-v16-1-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          git diff --check
+
+          is_allowed() {
+            case "$1" in
+              apps/web/app/globals.css|              apps/web/components/main-nav.tsx|              apps/web/components/theme-toggle.tsx|              scripts/home-visual-theme-check.mjs)
+                return 0
+                ;;
+              *)
+                return 1
+                ;;
+            esac
+          }
+
+          bad=0
+
+          while IFS= read -r line; do
+            [ -n "$line" ] || continue
+
+            path="${line:3}"
+
+            if ! is_allowed "$path"; then
+              echo                 "::error::Unexpected final file: $path"
+              bad=1
+            fi
+          done < <(
+            git status               --porcelain=v1               --untracked-files=all
+          )
+
+          exit "$bad"
+
+      - name: Commit verified visual theme
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet             && [ -z "$(git ls-files --others --exclude-standard apps/web/components/theme-toggle.tsx scripts/home-visual-theme-check.mjs)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo               "Visual Theme Toggle is already applied."
+            exit 0
+          fi
+
+          git config             user.name             "forrum-actions"
+
+          git config             user.email             "actions@forrum.local"
+
+          git add             apps/web/app/globals.css             apps/web/components/main-nav.tsx             apps/web/components/theme-toggle.tsx             scripts/home-visual-theme-check.mjs
+
+          git diff --cached --check
+
+          git commit -m             "Finalize FORRUM Paper Graphite visual theme V20"
+
+          test -z "$(
+            git status               --porcelain               --untracked-files=no
+          )"
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Rebase on latest main
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          git rebase origin/main
+
+      - name: Re-run audits after rebase
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/global-shell-v16-1-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          npm run typecheck -w @forrum/web
+
+          git diff --check
+
+      - name: Push verified visual theme
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git push origin HEAD:main
+
+      - name: Verify remote commit
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+
+          test "$(git rev-parse HEAD)" =             "$(git rev-parse origin/main)"
+
+          echo             "Published verified FORRUM Visual Theme V20: $(git rev-parse HEAD)"
