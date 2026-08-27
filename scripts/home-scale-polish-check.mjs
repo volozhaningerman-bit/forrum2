@@ -1,70 +1,34 @@
 import fs from 'node:fs';
 
-const cssPath = 'apps/web/app/globals.css';
+const css = fs.readFileSync('apps/web/app/globals.css', 'utf8');
+const start = css.indexOf('/* FORRUM_HOME_REFERENCE_V36_START');
+const end = css.indexOf('/* FORRUM_HOME_REFERENCE_V36_END */', start);
 
-if (!fs.existsSync(cssPath)) {
-  throw new Error(`Missing ${cssPath}`);
+if (start < 0 || end < 0) {
+  throw new Error('V36 canonical homepage block missing.');
 }
 
-const css = fs.readFileSync(cssPath, 'utf8');
+const block = css.slice(start, end);
 
-const start = '/* FORRUM_HOME_SCALE_POLISH_START';
-const end = '/* FORRUM_HOME_SCALE_POLISH_END */';
-
-if ((css.match(/FORRUM_HOME_SCALE_POLISH_START/g) ?? []).length !== 1) {
-  throw new Error('Expected exactly one scale-polish start marker.');
-}
-
-if ((css.match(/FORRUM_HOME_SCALE_POLISH_END/g) ?? []).length !== 1) {
-  throw new Error('Expected exactly one scale-polish end marker.');
-}
-
-const block = css.slice(
-  css.indexOf(start),
-  css.indexOf(end) + end.length,
-);
-
-for (const required of [
-  'max-width: 1920px',
-  'grid-template-columns: 320px minmax(0, 1fr) 326px',
-  'font-size: 12.5px',
+const densityContract = [
+  'grid-template-columns: 300px minmax(0, 1fr) 326px',
+  'min-height: 44px',
+  'min-height: 68px',
   'min-height: 39px',
-  'min-height: 148px',
-  'width: 14px',
-  'font-size: 13.5px',
-]) {
-  if (!block.includes(required)) {
-    throw new Error(`Scale-polish contract missing: ${required}`);
-  }
-}
+  'min-height: 78px',
+  'font-size: 12.5px',
+  '@media (max-width: 1480px)',
+  '@media (max-width: 1240px)',
+  '@media (max-width: 860px)',
+  '@media (max-width: 560px)',
+];
 
-for (const forbidden of [
-  'linear-gradient',
-  'radial-gradient',
-  'backdrop-filter',
-  'filter: blur',
-  'box-shadow:',
-]) {
-  if (block.includes(forbidden)) {
-    throw new Error(`Forbidden decorative effect found: ${forbidden}`);
-  }
-}
-
-// This pass must not add theme-specific geometry.
-// It deliberately contains no dark/graphite selector at all.
-for (const forbiddenThemeSelector of [
-  'html.dark',
-  'data-theme="dark"',
-  'data-theme="graphite"',
-  'data-forrum-theme="graphite"',
-]) {
-  if (block.includes(forbiddenThemeSelector)) {
-    throw new Error(
-      `Scale polish contains theme-specific layout: ${forbiddenThemeSelector}`,
-    );
+for (const marker of densityContract) {
+  if (!block.includes(marker)) {
+    throw new Error(`V36 density/scale contract missing: ${marker}`);
   }
 }
 
 console.log(
-  'FORRUM Home Scale Polish passed: wider shell, stronger type, denser tree/table, identical Paper/Graphite geometry.',
+  'FORRUM Home Scale V36 passed: reference shell width, dense rows and responsive collapse.',
 );

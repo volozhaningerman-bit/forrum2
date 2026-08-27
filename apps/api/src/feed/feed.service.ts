@@ -207,6 +207,44 @@ export class FeedService {
       authorCount.set(item.publication.authorId, a + 1);
     }
 
+    // FORRUM_HOME_LAST_COMMENT_V36
+    const selectedPublicationIds = selected.map(
+      ({ publication }) => publication.id,
+    );
+    const latestComments = selectedPublicationIds.length
+      ? await this.prisma.comment.findMany({
+          where: {
+            publicationId: { in: selectedPublicationIds },
+            hiddenAt: null,
+          },
+          orderBy: [
+            { publicationId: 'asc' },
+            { createdAt: 'desc' },
+          ],
+          distinct: ['publicationId'],
+          select: {
+            publicationId: true,
+            createdAt: true,
+            author: {
+              select: {
+                username: true,
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        })
+      : [];
+    const latestCommentByPublication = new Map(
+      latestComments.map((comment) => [
+        comment.publicationId,
+        {
+          createdAt: comment.createdAt,
+          author: comment.author,
+        },
+      ]),
+    );
+
     return selected.map(({ publication, reason }) => ({
       id: publication.id,
       slug: publication.slug,
@@ -217,6 +255,7 @@ export class FeedService {
       viewCount: publication.viewCount,
       createdAt: publication.createdAt,
       lastActivityAt: publication.lastActivityAt,
+      lastComment: latestCommentByPublication.get(publication.id) ?? null,
       pinnedUntil: publication.pinnedUntil,
       reason: showReasons ? reason : null,
       feedbackEnabled: Boolean(userId && ['for-you', 'all', 'popular', 'new'].includes(mode)),

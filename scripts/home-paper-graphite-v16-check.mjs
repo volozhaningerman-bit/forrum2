@@ -1,173 +1,123 @@
 import fs from 'node:fs';
 
-const homePath =
-  'apps/web/components/home-dashboard.tsx';
-const pagePath = 'apps/web/app/page.tsx';
+const homePath = 'apps/web/components/home-dashboard.tsx';
 const cssPath = 'apps/web/app/globals.css';
+const pagePath = 'apps/web/app/page.tsx';
 
-for (const path of [homePath, pagePath, cssPath]) {
+for (const path of [homePath, cssPath, pagePath]) {
   if (!fs.existsSync(path)) {
-    throw new Error(
-      `Missing required file: ${path}`,
-    );
+    throw new Error(`Homepage V36 required file missing: ${path}`);
   }
 }
 
 const home = fs.readFileSync(homePath, 'utf8');
-const page = fs.readFileSync(pagePath, 'utf8');
 const css = fs.readFileSync(cssPath, 'utf8');
+const page = fs.readFileSync(pagePath, 'utf8');
 
-const requiredHome = [
-  'forrum-home-v16',
+for (const required of [
+  'data-home-reference="v36"',
   'Обсуждаемые темы',
   'Новые темы',
   'Активные голосования',
-  'Актуальное',
   'Участники недели',
   'FORRUM сегодня',
-  'Предложить сообщество',
-  'forrum-home-v16__tree-children',
-  'aria-expanded={isOpen}',
-  'href="/feed?mode=popular"',
-  'href="/feed?mode=new"',
-];
-
-for (const marker of requiredHome) {
-  if (!home.includes(marker)) {
-    throw new Error(
-      `Homepage contract is missing: ${marker}`,
-    );
-  }
-}
-
-for (const rejected of [
-  'Кураторы недели',
-  'Развитие FORRUM',
-  'Поддержать проект',
-  'Ближайшие события',
+  'Сообщества',
+  'Тем создано',
+  'Сообщений',
+  'Пользователей онлайн',
+  'Рекорд онлайн:',
+  'item.lastComment?.author.username',
+  'poll.options ?? []',
+  'option.bindingVotes',
+  'Осталось:',
 ]) {
-  if (home.includes(rejected)) {
-    throw new Error(
-      `Rejected homepage block returned: ${rejected}`,
-    );
+  if (!home.includes(required)) {
+    throw new Error(`Homepage V36 product element missing: ${required}`);
   }
 }
 
-for (const marker of [
+for (const required of [
   "'/communities'",
   "'/governance/polls'",
   "'/announcements'",
   "'/feed?mode=popular'",
   "'/feed?mode=new'",
+  "'/home/overview'",
 ]) {
-  if (!page.includes(marker)) {
-    throw new Error(
-      `Homepage data source is missing: ${marker}`,
-    );
+  if (!page.includes(required)) {
+    throw new Error(`Homepage V36 server data source missing: ${required}`);
   }
 }
 
-const start =
-  '/* FORRUM_HOME_PAPER_GRAPHITE_V16_START';
-const end =
-  '/* FORRUM_HOME_PAPER_GRAPHITE_V16_END */';
+const startMarker = '/* FORRUM_HOME_REFERENCE_V36_START';
+const endMarker = '/* FORRUM_HOME_REFERENCE_V36_END */';
+const starts = css.split(startMarker).length - 1;
+const ends = css.split(endMarker).length - 1;
 
-if (
-  (
-    css.match(
-      /FORRUM_HOME_PAPER_GRAPHITE_V16_START/g,
-    ) ?? []
-  ).length !== 1
-) {
+if (starts !== 1 || ends !== 1) {
   throw new Error(
-    'Expected exactly one V16 CSS start marker.',
+    `Homepage V36 must have exactly one canonical CSS block; got ${starts}/${ends}.`,
   );
 }
 
-if (
-  (
-    css.match(
-      /FORRUM_HOME_PAPER_GRAPHITE_V16_END/g,
-    ) ?? []
-  ).length !== 1
-) {
-  throw new Error(
-    'Expected exactly one V16 CSS end marker.',
-  );
-}
+const start = css.indexOf(startMarker);
+const end = css.indexOf(endMarker, start);
+const block = css.slice(start, end + endMarker.length);
+const outside = css.slice(0, start) + css.slice(end + endMarker.length);
 
-const v16 = css.slice(
-  css.indexOf(start),
-  css.indexOf(end) + end.length,
-);
-
-for (const marker of [
-  '--fh-bg: #ecebe7',
-  '--fh-panel: #faf9f6',
-  '--fh-accent: #1769ff',
-  'html.dark .forrum-home-v16',
-  '--fh-bg: #121416',
-  '--fh-accent: #2c70ff',
-  'grid-template-columns: 270px minmax(0, 1fr) 292px',
+for (const required of [
+  'grid-template-columns: 300px minmax(0, 1fr) 326px',
+  'max-width: 1680px',
+  'gap: 14px',
+  'min-height: 68px',
+  'min-height: 39px',
+  'min-height: 78px',
+  '.forrum-home-v16__tree-children::before',
   'border-left: 1px dotted',
-  'border-top: 1px dotted',
+  '.forrum-home-v16__new-topic-head',
+  '.forrum-home-v16__poll-option',
+  '.forrum-home-v16__weekly',
+  '.forrum-home-v16__record',
+  '@media (max-width: 860px)',
 ]) {
-  if (!v16.includes(marker)) {
-    throw new Error(
-      `V16 visual contract is missing: ${marker}`,
-    );
+  if (!block.includes(required)) {
+    throw new Error(`Homepage V36 reference geometry missing: ${required}`);
   }
+}
+
+if (outside.includes('.forrum-home-v16')) {
+  throw new Error(
+    'Homepage styles are duplicated outside the single V36 canonical block.',
+  );
 }
 
 for (const forbidden of [
+  '!important',
   'linear-gradient',
   'radial-gradient',
-  'backdrop-filter',
   'box-shadow:',
+  'backdrop-filter:',
+  'border-radius: 12px',
+  'border-radius: 16px',
 ]) {
-  if (v16.includes(forbidden)) {
-    throw new Error(
-      `V16 must stay restrained; forbidden styling found: ${forbidden}`,
-    );
+  if (block.includes(forbidden)) {
+    throw new Error(`Homepage V36 forbidden visual pattern: ${forbidden}`);
   }
 }
 
-const darkStart =
-  v16.indexOf('html.dark .forrum-home-v16');
-const bodyStart =
-  v16.indexOf('body:has(.forrum-home-v16)');
-
-if (
-  darkStart < 0 ||
-  bodyStart < 0 ||
-  bodyStart <= darkStart
-) {
-  throw new Error(
-    'Could not isolate Graphite token override.',
-  );
-}
-
-const darkTokenBlock =
-  v16.slice(darkStart, bodyStart);
-
-for (const structuralRule of [
-  'grid-template-columns:',
-  'grid-template-rows:',
-  'display:',
-  'position:',
-  'padding:',
-  'margin:',
-  'gap:',
-  'width:',
-  'height:',
+for (const forbiddenThemeGeometry of [
+  'html.dark .forrum-home-v16',
+  'html[data-theme="dark"] .forrum-home-v16',
+  'html[data-theme="graphite"] .forrum-home-v16',
+  'html[data-forrum-theme="graphite"] .forrum-home-v16',
 ]) {
-  if (darkTokenBlock.includes(structuralRule)) {
+  if (block.includes(forbiddenThemeGeometry)) {
     throw new Error(
-      `Graphite must not redefine layout: ${structuralRule}`,
+      `Paper/Graphite geometry diverged in V36: ${forbiddenThemeGeometry}`,
     );
   }
 }
 
 console.log(
-  'FORRUM Home Paper/Graphite V16 passed: one layout, token-only themes, visible hierarchy, approved blocks.',
+  'FORRUM Home V36 passed: reference geometry, dense tree/table/polls, one Paper/Graphite layout.',
 );

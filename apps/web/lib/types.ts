@@ -19,6 +19,14 @@ export type PublicationCardData = {
   createdAt: string;
   savedAt?: string;
   lastActivityAt?: string;
+  lastComment?: {
+    createdAt: string;
+    author: {
+      username: string;
+      displayName: string;
+      avatarUrl?: string | null;
+    };
+  } | null;
   pinnedUntil?: string | null;
   reason?: string | null;
   feedbackEnabled?: boolean;
