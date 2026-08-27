@@ -1,0 +1,459 @@
+name: FORRUM Visual Polish V24
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-visual-polish-v24
+  cancel-in-progress: false
+
+env:
+  NODE_ENV: test
+
+jobs:
+  visual-polish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check out canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Verify V23 baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          test -f apps/web/app/globals.css
+          test -f apps/web/components/theme-toggle.tsx
+          test -f scripts/home-paper-graphite-v16-check.mjs
+          test -f scripts/global-shell-v16-1-check.mjs
+          test -f scripts/home-reference-check.mjs
+          test -f scripts/home-scale-polish-check.mjs
+          test -f scripts/home-visual-theme-check.mjs
+
+          grep -q             'FORRUM_THEME_TOGGLE_V1\|FORRUM_THEME_TOGGLE_V2'             apps/web/components/theme-toggle.tsx
+
+          grep -q             'FORRUM_VISUAL_THEME_START'             apps/web/app/globals.css
+
+      - name: Decode V24 patch
+        shell: bash
+        env:
+          PATCH_B64: ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCmltcG9ydCByZQoKVEhFTUUgPSBQYXRoKAogICAgImFwcHMvd2ViL2NvbXBvbmVudHMvdGhlbWUtdG9nZ2xlLnRzeCIKKQpDU1MgPSBQYXRoKAogICAgImFwcHMvd2ViL2FwcC9nbG9iYWxzLmNzcyIKKQoKZm9yIHBhdGggaW4gKFRIRU1FLCBDU1MpOgogICAgaWYgbm90IHBhdGguZXhpc3RzKCk6CiAgICAgICAgcmFpc2UgU3lzdGVtRXhpdCgKICAgICAgICAgICAgZiJSZXF1aXJlZCBWMjEgZmlsZSBpcyBtaXNzaW5nOiB7cGF0aH0iCiAgICAgICAgKQoKZXhpc3RpbmdfdGhlbWUgPSBUSEVNRS5yZWFkX3RleHQoCiAgICBlbmNvZGluZz0idXRmLTgiCikKCmlmICgKICAgICJGT1JSVU1fVEhFTUVfVE9HR0xFX1YxIiBub3QgaW4gZXhpc3RpbmdfdGhlbWUKICAgIGFuZAogICAgIkZPUlJVTV9USEVNRV9UT0dHTEVfVjIzIiBub3QgaW4gZXhpc3RpbmdfdGhlbWUKKToKICAgIHJhaXNlIFN5c3RlbUV4aXQoCiAgICAgICAgInRoZW1lLXRvZ2dsZS50c3ggaXMgbm90IHRoZSBGT1JSVU0tb3duZWQgIgogICAgICAgICJ0aGVtZSBjb21wb25lbnQuIFJlZnVzaW5nIG92ZXJ3cml0ZS4iCiAgICApCgpmcmVzaF90aGVtZSA9IFBhdGgoCiAgICAiL3RtcC9mb3JydW0tdGhlbWUtdG9nZ2xlLXYyMy50c3giCikucmVhZF90ZXh0KAogICAgZW5jb2Rpbmc9InV0Zi04IgopCgpUSEVNRS53cml0ZV90ZXh0KAogICAgZnJlc2hfdGhlbWUsCiAgICBlbmNvZGluZz0idXRmLTgiLAopCgpjc3MgPSBDU1MucmVhZF90ZXh0KAogICAgZW5jb2Rpbmc9InV0Zi04IgopCgppZiAiRk9SUlVNX1ZJU1VBTF9USEVNRV9TVEFSVCIgbm90IGluIGNzczoKICAgIHJhaXNlIFN5c3RlbUV4aXQoCiAgICAgICAgIlYyMSB2aXN1YWwtdGhlbWUgYmFzZSBjb250cmFjdCBpcyBtaXNzaW5nLiIKICAgICkKCmlmICJGT1JSVU1fSE9NRV9TQ0FMRV9QT0xJU0hfU1RBUlQiIG5vdCBpbiBjc3M6CiAgICByYWlzZSBTeXN0ZW1FeGl0KAogICAgICAgICJTY2FsZS1wb2xpc2ggZ2VvbWV0cnkgY29udHJhY3QgaXMgbWlzc2luZy4iCiAgICApCgpmcmVzaF9jc3MgPSBQYXRoKAogICAgIi90bXAvZm9ycnVtLXZpc3VhbC1wb2xpc2gtdjIzLmNzcyIKKS5yZWFkX3RleHQoCiAgICBlbmNvZGluZz0idXRmLTgiCikuc3RyaXAoKQoKcGF0dGVybiA9IHJlLmNvbXBpbGUoCiAgICByIi9cKiBGT1JSVU1fVklTVUFMX1BPTElTSF9WMjNfU1RBUlQiCiAgICByIltcc1xTXSo/IgogICAgciIvXCogRk9SUlVNX1ZJU1VBTF9QT0xJU0hfVjIzX0VORCBcKi9ccyoiCikKCmNzcyA9IHBhdHRlcm4uc3ViKAogICAgIiIsCiAgICBjc3MsCikucnN0cmlwKCkKCkNTUy53cml0ZV90ZXh0KAogICAgY3NzCiAgICArICJcblxuIgogICAgKyBmcmVzaF9jc3MKICAgICsgIlxuIiwKICAgIGVuY29kaW5nPSJ1dGYtOCIsCikK
+          CSS_B64: LyogRk9SUlVNX1ZJU1VBTF9QT0xJU0hfVjIzX1NUQVJUCiAgIEZpbmFsIHBvbGlzaCBsYXllci4KICAgTm8gQVBJL2RhdGEvcHJvZHVjdCBjaGFuZ2VzLgogICBObyBQYXBlci9HcmFwaGl0ZSBnZW9tZXRyeSBkaXZlcmdlbmNlLgoqLwoKLyogSGVhZGVyIC8gYnJhbmQgKi8KW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSA+ICogPiBhW2hyZWY9Ii8iXTpmaXJzdC1jaGlsZCB7CiAgZm9udC1zaXplOiAyNHB4ICFpbXBvcnRhbnQ7CiAgbGluZS1oZWlnaHQ6IDE7CiAgbGV0dGVyLXNwYWNpbmc6IDAuMDIyZW07CiAgd2hpdGUtc3BhY2U6IG5vd3JhcDsKfQoKW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSBuYXYgewogIG1pbi13aWR0aDogMDsKfQoKW2RhdGEtZm9ycnVtLXNoZWxsPSJoZWFkZXIiXSBuYXYgPiBhIHsKICBmb250LXNpemU6IDEzcHggIWltcG9ydGFudDsKICBmb250LXdlaWdodDogNjQwOwp9CgovKiBUaGVtZSBzd2l0Y2g6IGljb24gb25seSwgbmV2ZXIgYSB2aXNpYmxlIHRleHQgbGFiZWwuICovCi5mb3JydW0tdGhlbWUtdG9nZ2xlIHsKICBhcHBlYXJhbmNlOiBub25lOwogIHdpZHRoOiAyOHB4OwogIGhlaWdodDogMjhweDsKICBmbGV4OiAwIDAgMjhweDsKICBtYXJnaW4tbGVmdDogNHB4OwogIHBhZGRpbmc6IDA7CiAgb3ZlcmZsb3c6IGhpZGRlbjsKICBmb250LXNpemU6IDA7CiAgbGluZS1oZWlnaHQ6IDA7CiAgdmVydGljYWwtYWxpZ246IG1pZGRsZTsKfQoKLmZvcnJ1bS10aGVtZS10b2dnbGVfX2ljb24gewogIHdpZHRoOiAxNHB4OwogIGhlaWdodDogMTRweDsKfQoKLmZvcnJ1bS10aGVtZS10b2dnbGVfX2ljb246OmJlZm9yZSB7CiAgdG9wOiAycHg7CiAgYm90dG9tOiAycHg7CiAgbGVmdDogMnB4OwogIHdpZHRoOiA0cHg7Cn0KCi5mb3JydW0tdGhlbWUtdG9nZ2xlX19pY29uOjphZnRlciB7CiAgdG9wOiA1cHg7CiAgcmlnaHQ6IDJweDsKICB3aWR0aDogMnB4OwogIGhlaWdodDogMnB4Owp9CgovKiBTZWN0aW9uIGhlYWRpbmdzOiBsZXNzICJ0ZXJtaW5hbCIsIHN0aWxsIHN0cmljdCBhbmQgY29tcGFjdC4gKi8KLmZvcnJ1bS1ob21lLXYxNl9fcGFuZWwtaGVhZCBoMiwKLmZvcnJ1bS1ob21lLXYxNl9fc2lkZS1oZWFkIGgyIHsKICBmb250LWZhbWlseTogaW5oZXJpdDsKICBmb250LXNpemU6IDEyLjVweDsKICBmb250LXdlaWdodDogNzQwOwogIGxldHRlci1zcGFjaW5nOiAwLjAxMmVtOwogIGxpbmUtaGVpZ2h0OiAxLjE1Owp9CgouZm9ycnVtLWhvbWUtdjE2X19wYW5lbC1oZWFkID4gYSwKLmZvcnJ1bS1ob21lLXYxNl9fc2lkZS1oZWFkID4gYSB7CiAgZm9udC13ZWlnaHQ6IDYyMDsKfQoKLyogQ2F0ZWdvcnkgdHJlZTogaGllcmFyY2h5IG11c3QgcmVhZCBpbW1lZGlhdGVseS4gKi8KLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1yb290ID4KLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1ub2RlID4KLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1yb3cKLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1uYW1lIHsKICBmb250LXdlaWdodDogNzQwOwp9CgouZm9ycnVtLWhvbWUtdjE2X190cmVlLWNoaWxkcmVuOjpiZWZvcmUgewogIGJvcmRlci1sZWZ0LXN0eWxlOiBkb3R0ZWQgIWltcG9ydGFudDsKICBib3JkZXItbGVmdC13aWR0aDogMXB4ICFpbXBvcnRhbnQ7CiAgb3BhY2l0eTogMC45MjsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1jaGlsZHJlbiA+Ci5mb3JydW0taG9tZS12MTZfX3RyZWUtbm9kZTo6YmVmb3JlIHsKICBib3JkZXItdG9wLXN0eWxlOiBkb3R0ZWQgIWltcG9ydGFudDsKICBib3JkZXItdG9wLXdpZHRoOiAxcHggIWltcG9ydGFudDsKICBvcGFjaXR5OiAwLjkyOwp9CgouZm9ycnVtLWhvbWUtdjE2X190cmVlLWxpbmsgewogIGJvcmRlci1yYWRpdXM6IDA7Cn0KCi5mb3JydW0taG9tZS12MTZfX3RyZWUtcm93OmhvdmVyCi5mb3JydW0taG9tZS12MTZfX3RyZWUtbmFtZSB7CiAgY29sb3I6IHZhcigtLWZ2dC1hY2NlbnQpOwp9CgovKiBUb3BpYyB0YWJsZTogcmVzdG9yZSBhIHNtYWxsIHBpeGVsIGlkZW50aXR5IHdpdGhvdXQgY2FyZCBub2lzZS4gKi8KLmZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLXRpdGxlIHsKICBkaXNwbGF5OiBmbGV4OwogIGFsaWduLWl0ZW1zOiBjZW50ZXI7CiAgbWluLXdpZHRoOiAwOwogIGdhcDogN3B4OwogIGZvbnQtd2VpZ2h0OiA2NjA7Cn0KCi5mb3JydW0taG9tZS12MTZfX25ldy10b3BpYy10aXRsZTo6YmVmb3JlIHsKICBjb250ZW50OiAiIjsKICB3aWR0aDogOXB4OwogIGhlaWdodDogOXB4OwogIGZsZXg6IDAgMCA5cHg7CiAgYm9yZGVyOiAxcHggc29saWQgdmFyKC0tZnZ0LWxpbmUtc3Ryb25nKTsKICBiYWNrZ3JvdW5kOiB2YXIoLS1mdnQtcGFuZWwtc29mdCk7CiAgaW1hZ2UtcmVuZGVyaW5nOiBwaXhlbGF0ZWQ7Cn0KCi5mb3JydW0taG9tZS12MTZfX25ldy10b3BpYzpob3ZlcgouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtdGl0bGUgewogIGNvbG9yOiB2YXIoLS1mdnQtYWNjZW50KTsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLWhlYWQgewogIGZvbnQtZmFtaWx5OiBpbmhlcml0OwogIGZvbnQtd2VpZ2h0OiA2MjA7CiAgbGV0dGVyLXNwYWNpbmc6IDA7Cn0KCi5mb3JydW0taG9tZS12MTZfX25ldy10b3BpYy1zZWN0aW9uLAouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtYXV0aG9yLAouZm9ycnVtLWhvbWUtdjE2X19uZXctdG9waWMtbGFzdCB7CiAgbGluZS1oZWlnaHQ6IDEuMjU7Cn0KCi8qIFJpZ2h0IHJhaWw6IHNtYWxsIHJlYWRhYmlsaXR5IGNsZWFudXAgb25seS4gKi8KLmZvcnJ1bS1ob21lLXYxNl9fYWN0dWFsIHN0cm9uZywKLmZvcnJ1bS1ob21lLXYxNl9fd2Vla2x5LWVtcHR5IHN0cm9uZyB7CiAgbGluZS1oZWlnaHQ6IDEuMjU7Cn0KCi5mb3JydW0taG9tZS12MTZfX3N0YXRzID4gZGl2Omxhc3QtY2hpbGQgewogIGJvcmRlci1ib3R0b206IDAgIWltcG9ydGFudDsKfQoKLyogS2VlcCB0aGUgY29tcGFjdCByZXRyby1pbnRlcm5ldCBmZWVsLiAqLwouZm9ycnVtLWhvbWUtdjE2X19wYW5lbCwKLmZvcnJ1bS1ob21lLXYxNl9fdHJlZSwKLmZvcnJ1bS1ob21lLXYxNl9fcHJvcG9zYWwsCi5mb3JydW0tdGhlbWUtdG9nZ2xlIHsKICBib3JkZXItcmFkaXVzOiAycHg7Cn0KCkBtZWRpYSAobWF4LXdpZHRoOiA4NjBweCkgewogIC5mb3JydW0tdGhlbWUtdG9nZ2xlIHsKICAgIHdpZHRoOiAyN3B4OwogICAgaGVpZ2h0OiAyN3B4OwogICAgZmxleC1iYXNpczogMjdweDsKICAgIG1hcmdpbi1sZWZ0OiAycHg7CiAgfQoKICBbZGF0YS1mb3JydW0tc2hlbGw9ImhlYWRlciJdID4gKiA+IGFbaHJlZj0iLyJdOmZpcnN0LWNoaWxkIHsKICAgIGZvbnQtc2l6ZTogMjFweCAhaW1wb3J0YW50OwogIH0KfQovKiBGT1JSVU1fVklTVUFMX1BPTElTSF9WMjNfRU5EICov
+          THEME_B64: InVzZSBjbGllbnQiOwoKLy8gRk9SUlVNX1RIRU1FX1RPR0dMRV9WMQovLyBGT1JSVU1fVEhFTUVfVE9HR0xFX1YyMwppbXBvcnQgeyB1c2VFZmZlY3QsIHVzZVN0YXRlIH0gZnJvbSAicmVhY3QiOwoKdHlwZSBGb3J1bVRoZW1lID0gInBhcGVyIiB8ICJncmFwaGl0ZSI7Cgpjb25zdCBTVE9SQUdFX0tFWSA9ICJmb3JydW0udGhlbWUiOwoKZnVuY3Rpb24gYXBwbHlUaGVtZSh0aGVtZTogRm9ydW1UaGVtZSkgewogIGNvbnN0IHJvb3QgPSBkb2N1bWVudC5kb2N1bWVudEVsZW1lbnQ7CiAgY29uc3QgaXNHcmFwaGl0ZSA9IHRoZW1lID09PSAiZ3JhcGhpdGUiOwoKICByb290LmRhdGFzZXQudGhlbWUgPSB0aGVtZTsKICByb290LmRhdGFzZXQuZm9ycnVtVGhlbWUgPSB0aGVtZTsKICByb290LmNsYXNzTGlzdC50b2dnbGUoImRhcmsiLCBpc0dyYXBoaXRlKTsKICByb290LnN0eWxlLmNvbG9yU2NoZW1lID0gaXNHcmFwaGl0ZSA/ICJkYXJrIiA6ICJsaWdodCI7Cn0KCmZ1bmN0aW9uIHJlYWRJbml0aWFsVGhlbWUoKTogRm9ydW1UaGVtZSB7CiAgY29uc3Qgcm9vdCA9IGRvY3VtZW50LmRvY3VtZW50RWxlbWVudDsKICBjb25zdCBjdXJyZW50ID0KICAgIHJvb3QuZGF0YXNldC5mb3JydW1UaGVtZSA/PwogICAgcm9vdC5kYXRhc2V0LnRoZW1lOwoKICBpZiAoY3VycmVudCA9PT0gInBhcGVyIiB8fCBjdXJyZW50ID09PSAiZ3JhcGhpdGUiKSB7CiAgICByZXR1cm4gY3VycmVudDsKICB9CgogIGNvbnN0IHN0b3JlZCA9CiAgICB3aW5kb3cubG9jYWxTdG9yYWdlLmdldEl0ZW0oU1RPUkFHRV9LRVkpOwoKICBpZiAoc3RvcmVkID09PSAicGFwZXIiIHx8IHN0b3JlZCA9PT0gImdyYXBoaXRlIikgewogICAgcmV0dXJuIHN0b3JlZDsKICB9CgogIHJldHVybiByb290LmNsYXNzTGlzdC5jb250YWlucygiZGFyayIpCiAgICA/ICJncmFwaGl0ZSIKICAgIDogInBhcGVyIjsKfQoKZXhwb3J0IGZ1bmN0aW9uIFRoZW1lVG9nZ2xlKCkgewogIGNvbnN0IFt0aGVtZSwgc2V0VGhlbWVdID0KICAgIHVzZVN0YXRlPEZvcnVtVGhlbWU+KCJwYXBlciIpOwoKICB1c2VFZmZlY3QoKCkgPT4gewogICAgY29uc3QgaW5pdGlhbCA9IHJlYWRJbml0aWFsVGhlbWUoKTsKCiAgICBhcHBseVRoZW1lKGluaXRpYWwpOwogICAgc2V0VGhlbWUoaW5pdGlhbCk7CgogICAgY29uc3QgaGFuZGxlU3RvcmFnZSA9IChldmVudDogU3RvcmFnZUV2ZW50KSA9PiB7CiAgICAgIGlmIChldmVudC5rZXkgIT09IFNUT1JBR0VfS0VZKSB7CiAgICAgICAgcmV0dXJuOwogICAgICB9CgogICAgICBpZiAoCiAgICAgICAgZXZlbnQubmV3VmFsdWUgIT09ICJwYXBlciIgJiYKICAgICAgICBldmVudC5uZXdWYWx1ZSAhPT0gImdyYXBoaXRlIgogICAgICApIHsKICAgICAgICByZXR1cm47CiAgICAgIH0KCiAgICAgIGFwcGx5VGhlbWUoZXZlbnQubmV3VmFsdWUpOwogICAgICBzZXRUaGVtZShldmVudC5uZXdWYWx1ZSk7CiAgICB9OwoKICAgIHdpbmRvdy5hZGRFdmVudExpc3RlbmVyKAogICAgICAic3RvcmFnZSIsCiAgICAgIGhhbmRsZVN0b3JhZ2UsCiAgICApOwoKICAgIHJldHVybiAoKSA9PiB7CiAgICAgIHdpbmRvdy5yZW1vdmVFdmVudExpc3RlbmVyKAogICAgICAgICJzdG9yYWdlIiwKICAgICAgICBoYW5kbGVTdG9yYWdlLAogICAgICApOwogICAgfTsKICB9LCBbXSk7CgogIGNvbnN0IGlzR3JhcGhpdGUgPSB0aGVtZSA9PT0gImdyYXBoaXRlIjsKICBjb25zdCB0YXJnZXRUaGVtZTogRm9ydW1UaGVtZSA9CiAgICBpc0dyYXBoaXRlID8gInBhcGVyIiA6ICJncmFwaGl0ZSI7CgogIGNvbnN0IHRvZ2dsZVRoZW1lID0gKCkgPT4gewogICAgYXBwbHlUaGVtZSh0YXJnZXRUaGVtZSk7CgogICAgd2luZG93LmxvY2FsU3RvcmFnZS5zZXRJdGVtKAogICAgICBTVE9SQUdFX0tFWSwKICAgICAgdGFyZ2V0VGhlbWUsCiAgICApOwoKICAgIHNldFRoZW1lKHRhcmdldFRoZW1lKTsKICB9OwoKICByZXR1cm4gKAogICAgPGJ1dHRvbgogICAgICB0eXBlPSJidXR0b24iCiAgICAgIGNsYXNzTmFtZT0iZm9ycnVtLXRoZW1lLXRvZ2dsZSIKICAgICAgZGF0YS10aGVtZS1zdGF0ZT17dGhlbWV9CiAgICAgIGFyaWEtbGFiZWw9ewogICAgICAgIGlzR3JhcGhpdGUKICAgICAgICAgID8gItCS0LrQu9GO0YfQuNGC0Ywg0YHQstC10YLQu9GD0Y4g0YLQtdC80YMgUGFwZXIiCiAgICAgICAgICA6ICLQktC60LvRjtGH0LjRgtGMINGC0ZHQvNC90YPRjiDRgtC10LzRgyBHcmFwaGl0ZSIKICAgICAgfQogICAgICBhcmlhLXByZXNzZWQ9e2lzR3JhcGhpdGV9CiAgICAgIHRpdGxlPXsKICAgICAgICBpc0dyYXBoaXRlCiAgICAgICAgICA/ICJQYXBlciIKICAgICAgICAgIDogIkdyYXBoaXRlIgogICAgICB9CiAgICAgIG9uQ2xpY2s9e3RvZ2dsZVRoZW1lfQogICAgPgogICAgICA8c3BhbgogICAgICAgIGNsYXNzTmFtZT0iZm9ycnVtLXRoZW1lLXRvZ2dsZV9faWNvbiIKICAgICAgICBhcmlhLWhpZGRlbj0idHJ1ZSIKICAgICAgLz4KICAgIDwvYnV0dG9uPgogICk7Cn0K
+          CHECK_B64: aW1wb3J0IGZzIGZyb20gIm5vZGU6ZnMiOwoKY29uc3QgdGhlbWVQYXRoID0KICAiYXBwcy93ZWIvY29tcG9uZW50cy90aGVtZS10b2dnbGUudHN4IjsKY29uc3QgY3NzUGF0aCA9CiAgImFwcHMvd2ViL2FwcC9nbG9iYWxzLmNzcyI7Cgpmb3IgKGNvbnN0IHBhdGggb2YgWwogIHRoZW1lUGF0aCwKICBjc3NQYXRoLApdKSB7CiAgaWYgKCFmcy5leGlzdHNTeW5jKHBhdGgpKSB7CiAgICB0aHJvdyBuZXcgRXJyb3IoCiAgICAgIGBWMjMgcmVxdWlyZWQgZmlsZSBpcyBtaXNzaW5nOiAke3BhdGh9YCwKICAgICk7CiAgfQp9Cgpjb25zdCB0aGVtZSA9CiAgZnMucmVhZEZpbGVTeW5jKHRoZW1lUGF0aCwgInV0ZjgiKTsKY29uc3QgY3NzID0KICBmcy5yZWFkRmlsZVN5bmMoY3NzUGF0aCwgInV0ZjgiKTsKCmZvciAoY29uc3QgcmVxdWlyZWQgb2YgWwogICJGT1JSVU1fVEhFTUVfVE9HR0xFX1YxIiwKICAiRk9SUlVNX1RIRU1FX1RPR0dMRV9WMjMiLAogICcidXNlIGNsaWVudCInLAogICd0eXBlIEZvcnVtVGhlbWUgPSAicGFwZXIiIHwgImdyYXBoaXRlIicsCiAgJ2NvbnN0IFNUT1JBR0VfS0VZID0gImZvcnJ1bS50aGVtZSInLAogICJ3aW5kb3cubG9jYWxTdG9yYWdlLnNldEl0ZW0iLAogICdhcmlhLXByZXNzZWQ9e2lzR3JhcGhpdGV9JywKICAnY2xhc3NOYW1lPSJmb3JydW0tdGhlbWUtdG9nZ2xlIicsCiAgJ2NsYXNzTmFtZT0iZm9ycnVtLXRoZW1lLXRvZ2dsZV9faWNvbiInLApdKSB7CiAgaWYgKCF0aGVtZS5pbmNsdWRlcyhyZXF1aXJlZCkpIHsKICAgIHRocm93IG5ldyBFcnJvcigKICAgICAgYFYyMyBUaGVtZVRvZ2dsZSBjb250cmFjdCBtaXNzaW5nOiAke3JlcXVpcmVkfWAsCiAgICApOwogIH0KfQoKZm9yIChjb25zdCBmb3JiaWRkZW4gb2YgWwogICdjbGFzc05hbWU9InNyLW9ubHkiJywKXSkgewogIGlmICh0aGVtZS5pbmNsdWRlcyhmb3JiaWRkZW4pKSB7CiAgICB0aHJvdyBuZXcgRXJyb3IoCiAgICAgIGBWMjMgb2xkL3Zpc2libGUgbGFiZWwgY29udHJhY3QgcmVtYWluczogJHtmb3JiaWRkZW59YCwKICAgICk7CiAgfQp9Cgpjb25zdCBzdGFydCA9CiAgIi8qIEZPUlJVTV9WSVNVQUxfUE9MSVNIX1YyM19TVEFSVCI7CmNvbnN0IGVuZCA9CiAgIi8qIEZPUlJVTV9WSVNVQUxfUE9MSVNIX1YyM19FTkQgKi8iOwoKaWYgKAogICgKICAgIGNzcy5tYXRjaCgKICAgICAgL0ZPUlJVTV9WSVNVQUxfUE9MSVNIX1YyM19TVEFSVC9nLAogICAgKSA/PyBbXQogICkubGVuZ3RoICE9PSAxCikgewogIHRocm93IG5ldyBFcnJvcigKICAgICJFeHBlY3RlZCBleGFjdGx5IG9uZSBWMjMgcG9saXNoIHN0YXJ0IG1hcmtlci4iLAogICk7Cn0KCmlmICgKICAoCiAgICBjc3MubWF0Y2goCiAgICAgIC9GT1JSVU1fVklTVUFMX1BPTElTSF9WMjNfRU5EL2csCiAgICApID8/IFtdCiAgKS5sZW5ndGggIT09IDEKKSB7CiAgdGhyb3cgbmV3IEVycm9yKAogICAgIkV4cGVjdGVkIGV4YWN0bHkgb25lIFYyMyBwb2xpc2ggZW5kIG1hcmtlci4iLAogICk7Cn0KCmlmICghY3NzLmluY2x1ZGVzKCJGT1JSVU1fVklTVUFMX1RIRU1FX1NUQVJUIikpIHsKICB0aHJvdyBuZXcgRXJyb3IoCiAgICAiVjIxIHZpc3VhbC10aGVtZSBiYXNlIGNvbnRyYWN0IGlzIG1pc3NpbmcuIiwKICApOwp9CgppZiAoIWNzcy5pbmNsdWRlcygiRk9SUlVNX0hPTUVfU0NBTEVfUE9MSVNIX1NUQVJUIikpIHsKICB0aHJvdyBuZXcgRXJyb3IoCiAgICAiU2NhbGUtcG9saXNoIGdlb21ldHJ5IGNvbnRyYWN0IGlzIG1pc3NpbmcuIiwKICApOwp9Cgpjb25zdCBibG9jayA9IGNzcy5zbGljZSgKICBjc3MuaW5kZXhPZihzdGFydCksCiAgY3NzLmluZGV4T2YoZW5kKSArIGVuZC5sZW5ndGgsCik7Cgpmb3IgKGNvbnN0IHJlcXVpcmVkIG9mIFsKICAiZm9udC1zaXplOiAyNHB4ICFpbXBvcnRhbnQiLAogICIuZm9ycnVtLXRoZW1lLXRvZ2dsZSB7IiwKICAiZm9udC1zaXplOiAwIiwKICAib3ZlcmZsb3c6IGhpZGRlbiIsCiAgIndpZHRoOiAyOHB4IiwKICAiZm9udC1mYW1pbHk6IGluaGVyaXQiLAogICJib3JkZXItbGVmdC1zdHlsZTogZG90dGVkIiwKICAiYm9yZGVyLXRvcC1zdHlsZTogZG90dGVkIiwKICAiLmZvcnJ1bS1ob21lLXYxNl9fbmV3LXRvcGljLXRpdGxlOjpiZWZvcmUiLAogICJpbWFnZS1yZW5kZXJpbmc6IHBpeGVsYXRlZCIsCl0pIHsKICBpZiAoIWJsb2NrLmluY2x1ZGVzKHJlcXVpcmVkKSkgewogICAgdGhyb3cgbmV3IEVycm9yKAogICAgICBgVjIzIHZpc3VhbCBjb250cmFjdCBtaXNzaW5nOiAke3JlcXVpcmVkfWAsCiAgICApOwogIH0KfQoKZm9yIChjb25zdCBmb3JiaWRkZW5UaGVtZVNlbGVjdG9yIG9mIFsKICAiaHRtbC5kYXJrIiwKICAnZGF0YS10aGVtZT0iZGFyayInLAogICdkYXRhLXRoZW1lPSJncmFwaGl0ZSInLAogICdkYXRhLWZvcnJ1bS10aGVtZT0iZ3JhcGhpdGUiJywKXSkgewogIGlmIChibG9jay5pbmNsdWRlcyhmb3JiaWRkZW5UaGVtZVNlbGVjdG9yKSkgewogICAgdGhyb3cgbmV3IEVycm9yKAogICAgICBgVjIzIGNvbnRhaW5zIHRoZW1lLXNwZWNpZmljIGdlb21ldHJ5OiAke2ZvcmJpZGRlblRoZW1lU2VsZWN0b3J9YCwKICAgICk7CiAgfQp9Cgpmb3IgKGNvbnN0IGZvcmJpZGRlbiBvZiBbCiAgImxpbmVhci1ncmFkaWVudCIsCiAgInJhZGlhbC1ncmFkaWVudCIsCiAgImJhY2tkcm9wLWZpbHRlciIsCiAgImZpbHRlcjogYmx1ciIsCiAgImJveC1zaGFkb3c6IiwKICAidHJhbnNpdGlvbjogYWxsIiwKICAiYm9yZGVyLXJhZGl1czogOHB4IiwKICAiYm9yZGVyLXJhZGl1czogMTJweCIsCl0pIHsKICBpZiAoYmxvY2suaW5jbHVkZXMoZm9yYmlkZGVuKSkgewogICAgdGhyb3cgbmV3IEVycm9yKAogICAgICBgUmVqZWN0ZWQgVjIzIHZpc3VhbCBzdHlsaW5nOiAke2ZvcmJpZGRlbn1gLAogICAgKTsKICB9Cn0KCmNvbnNvbGUubG9nKAogICJGT1JSVU0gVmlzdWFsIFBvbGlzaCBWMjMgcGFzc2VkLiIsCik7Cg==
+        run: |
+          set -euo pipefail
+
+          printf '%s' "$PATCH_B64" | base64 -d             > /tmp/forrum-visual-polish-v23.py
+
+          printf '%s' "$CSS_B64" | base64 -d             > /tmp/forrum-visual-polish-v23.css
+
+          printf '%s' "$THEME_B64" | base64 -d             > /tmp/forrum-theme-toggle-v23.tsx
+
+          printf '%s' "$CHECK_B64" | base64 -d             > scripts/home-visual-polish-v23-check.mjs
+
+          python3 -m py_compile             /tmp/forrum-visual-polish-v23.py
+
+          node --check             scripts/home-visual-polish-v23-check.mjs
+
+      - name: Apply V24 visual polish
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 /tmp/forrum-visual-polish-v23.py
+
+          git diff --check
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/global-shell-v16-1-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+          node scripts/home-visual-polish-v23-check.mjs
+
+      - name: Verify isolated V24 scope
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          is_allowed() {
+            case "$1" in
+              apps/web/app/globals.css|              apps/web/components/theme-toggle.tsx|              scripts/home-visual-polish-v23-check.mjs)
+                return 0
+                ;;
+              *)
+                return 1
+                ;;
+            esac
+          }
+
+          bad=0
+
+          while IFS= read -r line; do
+            [ -n "$line" ] || continue
+            path="${line:3}"
+
+            if ! is_allowed "$path"; then
+              echo "::error::Unexpected V23 source file: $path"
+              bad=1
+            fi
+          done < <(
+            git status --porcelain=v1 --untracked-files=all
+          )
+
+          exit "$bad"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Install build dependencies
+        run: >
+          npm install --include=dev
+          --no-audit --no-fund
+          --package-lock=false
+
+      - name: Validate ThemeToggle V24 TypeScript
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node - <<'NODE'
+          const fs = require("fs");
+          const ts = require("typescript");
+
+          const source = fs.readFileSync(
+            "apps/web/components/theme-toggle.tsx",
+            "utf8",
+          );
+
+          const result = ts.transpileModule(
+            source,
+            {
+              compilerOptions: {
+                target: ts.ScriptTarget.ES2022,
+                module: ts.ModuleKind.ESNext,
+                jsx: ts.JsxEmit.ReactJSX,
+                strict: true,
+              },
+              reportDiagnostics: true,
+            },
+          );
+
+          const errors = (
+            result.diagnostics ?? []
+          ).filter(
+            (diagnostic) =>
+              diagnostic.category ===
+              ts.DiagnosticCategory.Error,
+          );
+
+          if (errors.length) {
+            for (const error of errors) {
+              console.error(
+                ts.flattenDiagnosticMessageText(
+                  error.messageText,
+                  "\n",
+                ),
+              );
+            }
+            process.exit(1);
+          }
+
+          console.log(
+            "ThemeToggle V23 TypeScript validation: OK",
+          );
+          NODE
+
+      - name: Run static UX accessibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/global-shell-v16-1-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+          node scripts/home-visual-polish-v23-check.mjs
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          git diff --check
+
+      - name: Run available tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/web --if-present
+
+      - name: Typecheck
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run typecheck -w @forrum/contracts
+          npm run typecheck -w @forrum/web
+
+      - name: Production build
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf apps/web/.next
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/web
+
+      - name: Restore tracked build side effects
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mapfile -t tracked_dirty < <(
+            git status --porcelain=v1 --untracked-files=no |
+            sed 's/^...//'
+          )
+
+          for path in "${tracked_dirty[@]}"; do
+            [ -n "$path" ] || continue
+
+            case "$path" in
+              apps/web/app/globals.css|              apps/web/components/theme-toggle.tsx)
+                continue
+                ;;
+            esac
+
+            git restore --staged --worktree -- "$path"
+          done
+
+      - name: Remove generated build artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git clean -ffdx             -e scripts/home-visual-polish-v23-check.mjs
+
+          test -f scripts/home-visual-polish-v23-check.mjs
+
+      - name: Final V24 production audit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/global-shell-v16-1-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+          node scripts/home-visual-polish-v23-check.mjs
+
+          git diff --check
+
+          is_allowed() {
+            case "$1" in
+              apps/web/app/globals.css|              apps/web/components/theme-toggle.tsx|              scripts/home-visual-polish-v23-check.mjs)
+                return 0
+                ;;
+              *)
+                return 1
+                ;;
+            esac
+          }
+
+          bad=0
+
+          while IFS= read -r line; do
+            [ -n "$line" ] || continue
+            path="${line:3}"
+
+            if ! is_allowed "$path"; then
+              echo "::error::Unexpected final V23 file: $path"
+              bad=1
+            fi
+          done < <(
+            git status --porcelain=v1 --untracked-files=all
+          )
+
+          exit "$bad"
+
+      - name: Commit verified V24
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet             && [ -z "$(
+              git ls-files                 --others                 --exclude-standard                 scripts/home-visual-polish-v23-check.mjs
+            )" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "FORRUM Visual Polish V24 already applied."
+            exit 0
+          fi
+
+          git config user.name "forrum-actions"
+          git config user.email "actions@forrum.local"
+
+          git add             apps/web/app/globals.css             apps/web/components/theme-toggle.tsx             scripts/home-visual-polish-v23-check.mjs
+
+          git diff --cached --check
+
+          git commit -m             "Polish FORRUM visual identity V24"
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Rebase on latest main
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          git rebase origin/main
+
+      - name: Re-run full V24 audit after rebase
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/global-shell-v16-1-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+          node scripts/home-visual-polish-v23-check.mjs
+          git diff --check
+
+          npm install --include=dev             --no-audit             --no-fund             --package-lock=false
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/web --if-present
+
+          npm run typecheck -w @forrum/contracts
+          npm run typecheck -w @forrum/web
+
+          rm -rf apps/web/.next
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/web
+
+          git diff --check
+
+          git restore             --source=HEAD             --staged             --worktree             -- .
+
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/global-shell-v16-1-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+          node scripts/home-visual-polish-v23-check.mjs
+
+          echo "Post-rebase V24 audit passed."
+
+      - name: Publish V24 safely
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          max_attempts=3
+
+          for attempt in $(seq 1 "$max_attempts"); do
+            echo "Publish attempt $attempt/$max_attempts"
+
+            # Check whether main advanced after the previous full audit.
+            git fetch origin main
+
+            local_head="$(git rev-parse HEAD)"
+            remote_head="$(git rev-parse origin/main)"
+
+            if ! git merge-base --is-ancestor "$remote_head" "$local_head"; then
+              echo "origin/main advanced; rebasing V24 onto the new main."
+              git rebase origin/main
+
+              # Any new rebase changes the source state, so audit it again.
+              node scripts/home-paper-graphite-v16-check.mjs
+              node scripts/global-shell-v16-1-check.mjs
+              node scripts/home-reference-check.mjs
+              node scripts/home-scale-polish-check.mjs
+              node scripts/home-visual-theme-check.mjs
+              node scripts/home-visual-polish-v23-check.mjs
+              git diff --check
+
+              # The prior cleanup may have removed node_modules.
+              if [ ! -d node_modules ]; then
+                npm install --include=dev                   --no-audit                   --no-fund                   --package-lock=false
+              fi
+
+              npm run validate:static
+              npm run validate:ux
+              npm run validate:a11y
+
+              npm test -w @forrum/contracts --if-present
+              npm test -w @forrum/web --if-present
+
+              npm run typecheck -w @forrum/contracts
+              npm run typecheck -w @forrum/web
+
+              rm -rf apps/web/.next
+              npm run build -w @forrum/contracts
+              npm run build -w @forrum/web
+
+              git diff --check
+
+              # Remove only tracked build side effects.
+              # Keep installed dependencies available in case another
+              # concurrent main update requires one more retry.
+              git restore                 --source=HEAD                 --staged                 --worktree                 -- .
+
+              test -z "$(git status --porcelain --untracked-files=no)"
+            fi
+
+            # Narrow the race window: refresh immediately before push.
+            git fetch origin main
+
+            latest_remote="$(git rev-parse origin/main)"
+            merge_base="$(git merge-base HEAD origin/main)"
+
+            if [ "$latest_remote" != "$merge_base" ]; then
+              echo "origin/main moved again before push; retrying."
+              continue
+            fi
+
+            if git push origin HEAD:main; then
+              echo "V24 push succeeded on attempt $attempt."
+              exit 0
+            fi
+
+            echo "Push raced with another update; retrying safely."
+          done
+
+          echo "::error::Could not publish V24 after $max_attempts safe attempts."
+          exit 1
+
+      - name: Verify remote V24 commit
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+          echo             "Published FORRUM Visual Polish V24: $(git rev-parse HEAD)"
