@@ -1,0 +1,483 @@
+name: FORRUM V45 — Right Rail News
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-v45-right-rail-news
+  cancel-in-progress: false
+
+jobs:
+  v45-right-rail-news:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Baseline
+        id: baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== RUNNING UNIQUE FORRUM V45 RIGHT RAIL NEWS ==="
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+          echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+          test -f apps/web/components/home-dashboard.tsx
+          test -f .github/workflows/forrum-v45-right-rail-news.yml
+
+          grep -Fq '// FORRUM_HOME_CONTENT_VISUALS_V43' apps/web/components/home-dashboard.tsx
+          grep -Fq 'function topicContentVisual(' apps/web/components/home-dashboard.tsx
+          grep -Fq 'title="Актуальное"' apps/web/components/home-dashboard.tsx
+          grep -Fq 'FORRUM сегодня' apps/web/components/home-dashboard.tsx
+          grep -Fq 'const announcements' apps/web/components/home-dashboard.tsx
+          grep -Fq 'const discussed' apps/web/components/home-dashboard.tsx
+          grep -Fq 'const activePolls' apps/web/components/home-dashboard.tsx
+          grep -Fq '1580px' apps/web/app/globals.css
+
+      - name: Write failing regression check
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > scripts/home-v45-right-rail-news-check.mjs <<'NODE'
+          import fs from 'node:fs';
+
+          const source = fs.readFileSync(
+            'apps/web/components/home-dashboard.tsx',
+            'utf8',
+          );
+
+          for (const marker of [
+            '// FORRUM_HOME_V45_RIGHT_RAIL_NEWS',
+            'title="Актуальное"',
+            'href="/feed?mode=popular"',
+            'discussed.slice(0, 3).map((item) => (',
+            'title="Новости FORRUM"',
+            'href="/news"',
+            'announcements.map((item) => (',
+            'Новости FORRUM пока не опубликованы.',
+          ]) {
+            if (!source.includes(marker)) {
+              throw new Error(`V45 marker missing: ${marker}`);
+            }
+          }
+
+          if (source.includes('FORRUM сегодня')) {
+            throw new Error('Legacy FORRUM today panel remains.');
+          }
+
+          if ((source.match(/title="Актуальное"/g) ?? []).length !== 1) {
+            throw new Error('Expected exactly one Actual panel.');
+          }
+
+          if ((source.match(/title="Новости FORRUM"/g) ?? []).length !== 1) {
+            throw new Error('Expected exactly one News panel.');
+          }
+
+          console.log('V45 regression contract: PASS');
+          NODE
+
+      - name: TDD RED
+        shell: bash
+        run: |
+          set -euo pipefail
+          if node scripts/home-v45-right-rail-news-check.mjs; then
+            echo "::error::V45 unexpectedly passed before implementation."
+            exit 1
+          fi
+          echo "TDD RED confirmed."
+
+      - name: Apply V45 production patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('apps/web/components/home-dashboard.tsx')
+          source = path.read_text(encoding='utf-8')
+          marker = '// FORRUM_HOME_V45_RIGHT_RAIL_NEWS'
+
+          if marker in source:
+              raise SystemExit('V45 is already applied.')
+
+          def replace_home_panel(text, title, replacement):
+              needle = f'title="{title}"'
+              pos = text.find(needle)
+              if pos < 0:
+                  raise SystemExit(f'Could not find HomePanel title: {title}')
+              start = text.rfind('<HomePanel', 0, pos)
+              end = text.find('</HomePanel>', pos)
+              if start < 0 or end < 0:
+                  raise SystemExit(f'Could not locate HomePanel bounds: {title}')
+              end += len('</HomePanel>')
+              return text[:start] + replacement + text[end:]
+
+          def replace_plain_panel(text, heading, replacement):
+              needle = f'<h2>{heading}</h2>'
+              pos = text.find(needle)
+              if pos < 0:
+                  raise SystemExit(f'Could not find panel heading: {heading}')
+              start = text.rfind(
+                  '<section className="forrum-home-v16__panel">',
+                  0,
+                  pos,
+              )
+              end = text.find('</section>', pos)
+              if start < 0 or end < 0:
+                  raise SystemExit(f'Could not locate section bounds: {heading}')
+              end += len('</section>')
+              return text[:start] + replacement + text[end:]
+
+          def remove_const(text, name):
+              match = re.search(rf'(?m)^  const {re.escape(name)}\b', text)
+              if not match:
+                  raise SystemExit(f'Could not locate legacy const: {name}')
+
+              start = match.start()
+              i = match.end()
+              paren = bracket = brace = 0
+              quote = None
+              escaped = False
+
+              while i < len(text):
+                  ch = text[i]
+
+                  if quote is not None:
+                      if escaped:
+                          escaped = False
+                      elif ch == '\\':
+                          escaped = True
+                      elif ch == quote:
+                          quote = None
+                      i += 1
+                      continue
+
+                  if ch in ("'", '"', '`'):
+                      quote = ch
+                  elif ch == '(':
+                      paren += 1
+                  elif ch == ')':
+                      paren -= 1
+                  elif ch == '[':
+                      bracket += 1
+                  elif ch == ']':
+                      bracket -= 1
+                  elif ch == '{':
+                      brace += 1
+                  elif ch == '}':
+                      brace -= 1
+                  elif ch == ';' and paren == 0 and bracket == 0 and brace == 0:
+                      end = i + 1
+                      while end < len(text) and text[end] == '\n':
+                          end += 1
+                      return text[:start] + text[end:]
+
+                  i += 1
+
+              raise SystemExit(f'Could not parse const end: {name}')
+
+          export_anchor = 'export function HomeDashboard({'
+          if source.count(export_anchor) != 1:
+              raise SystemExit('Unexpected HomeDashboard export count.')
+
+          source = source.replace(
+              export_anchor,
+              marker + '\n' + export_anchor,
+              1,
+          )
+
+          actual_lines = [
+              '<HomePanel',
+              '          title="Актуальное"',
+              '          href="/feed?mode=popular"',
+              '        >',
+              '          <div className="forrum-home-v16__actual-list">',
+              '            {discussed.length ? (',
+              '              discussed.slice(0, 3).map((item) => (',
+              '                <Link',
+              '                  className="forrum-home-v16__actual"',
+              '                  href={`/p/${item.slug}`}',
+              '                  key={item.id}',
+              '                >',
+              '                  <CommunityMark',
+              '                    name={item.community.name}',
+              '                    url={topicContentVisual(item)}',
+              '                    size={30}',
+              '                  />',
+              '                  <span>',
+              "                    <strong>{item.title || 'Актуальная тема'}</strong>",
+              '                    <small>{item.community.name}</small>',
+              '                  </span>',
+              '                </Link>',
+              '              ))',
+              '            ) : (',
+              '              <p className="forrum-home-v16__empty">',
+              '                Актуальных тем сейчас нет.',
+              '              </p>',
+              '            )}',
+              '            {activePolls[0] && (',
+              '              <Link className="forrum-home-v16__actual" href="/events">',
+              '                <span className="forrum-home-v16__actual-symbol" aria-hidden="true">',
+              '                  ▥',
+              '                </span>',
+              '                <span>',
+              '                  <strong>Активное голосование</strong>',
+              '                  <small>{activePolls[0].title}</small>',
+              '                </span>',
+              '              </Link>',
+              '            )}',
+              '          </div>',
+              '        </HomePanel>',
+          ]
+          actual_panel = '\n'.join(actual_lines)
+
+          news_lines = [
+              '<HomePanel',
+              '          title="Новости FORRUM"',
+              '          href="/news"',
+              '        >',
+              '          <div className="forrum-home-v16__actual-list">',
+              '            {announcements.length ? (',
+              '              announcements.map((item) => (',
+              '                <Link',
+              '                  className="forrum-home-v16__actual"',
+              '                  href={`/p/${item.slug}`}',
+              '                  key={item.id}',
+              '                >',
+              '                  <CommunityMark',
+              '                    name={item.community.name}',
+              '                    url={topicContentVisual(item)}',
+              '                    size={30}',
+              '                  />',
+              '                  <span>',
+              "                    <strong>{item.title || 'Новость FORRUM'}</strong>",
+              '                    <small>{relativeTime(item.createdAt)}</small>',
+              '                  </span>',
+              '                </Link>',
+              '              ))',
+              '            ) : (',
+              '              <p className="forrum-home-v16__empty">',
+              '                Новости FORRUM пока не опубликованы.',
+              '              </p>',
+              '            )}',
+              '          </div>',
+              '        </HomePanel>',
+          ]
+          news_panel = '\n'.join(news_lines)
+
+          source = replace_home_panel(source, 'Актуальное', actual_panel)
+          source = replace_plain_panel(source, 'FORRUM сегодня', news_panel)
+
+          for legacy in (
+              'totalPublications',
+              'recentPublications',
+              'totalSubscriptions',
+          ):
+              source = remove_const(source, legacy)
+
+          path.write_text(
+              '\n'.join(line.rstrip(' \t') for line in source.splitlines()) + '\n',
+              encoding='utf-8',
+          )
+
+          print('V45 whole-panel patch applied.')
+          PY
+
+          git diff --check
+
+      - name: TDD GREEN
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/home-v45-right-rail-news-check.mjs
+          echo "TDD GREEN confirmed."
+
+      - name: Scope audit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          changed="$(
+            {
+              git diff --name-only
+              git ls-files --others --exclude-standard
+            } | sort -u
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              apps/web/components/home-dashboard.tsx \
+              scripts/home-v45-right-rail-news-check.mjs |
+            sort
+          )"
+
+          printf 'V45 changed paths:\n%s\n' "$changed"
+          test "$changed" = "$expected"
+
+          test -z "$(
+            git diff --name-only -- \
+              apps/web/app/globals.css \
+              apps/web/components/main-nav.tsx \
+              apps/web/app/page.tsx \
+              apps/api \
+              packages/contracts
+          )"
+
+          grep -Fq '1580px' apps/web/app/globals.css
+
+      - name: Stage verified V45
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- \
+            apps/web/components/home-dashboard.tsx \
+            scripts/home-v45-right-rail-news-check.mjs
+          git diff --cached --check
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install \
+            --include=dev \
+            --no-audit \
+            --no-fund \
+            --package-lock=false
+
+      - name: Validate Prisma
+        shell: bash
+        env:
+          DATABASE_URL: postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public
+        run: |
+          set -euo pipefail
+          npm run db:validate
+          npm run db:generate
+
+      - name: Product checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/home-v45-right-rail-news-check.mjs
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/api --if-present
+          npm test -w @forrum/web --if-present
+          npm run typecheck
+          rm -rf apps/web/.next
+          npm run build
+
+      - name: Production self-review
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-v45-right-rail-news-check.mjs
+
+          grep -Fq '// FORRUM_HOME_CONTENT_VISUALS_V43' \
+            apps/web/components/home-dashboard.tsx
+          grep -Fq '1580px' apps/web/app/globals.css
+          grep -Fq "['/services', 'Услуги']" \
+            apps/web/components/main-nav.tsx
+          grep -Fq "['/media', 'Медиа']" \
+            apps/web/components/main-nav.tsx
+          grep -Fq "['/news', 'Новости']" \
+            apps/web/components/main-nav.tsx
+
+          ! grep -Fq 'FORRUM сегодня' \
+            apps/web/components/home-dashboard.tsx
+          ! grep -Fq 'const totalPublications' \
+            apps/web/components/home-dashboard.tsx
+          ! grep -Fq 'const recentPublications' \
+            apps/web/components/home-dashboard.tsx
+          ! grep -Fq 'const totalSubscriptions' \
+            apps/web/components/home-dashboard.tsx
+
+          test -z "$(
+            git diff --cached --name-only -- apps/web/app/globals.css
+          )"
+
+          npm run typecheck
+          npm run build
+
+          echo "V45 production self-review: PASS"
+
+      - name: Restore generated noise and self-delete
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git restore --worktree -- .
+          git clean -ffdx
+          git rm .github/workflows/forrum-v45-right-rail-news.yml
+          git diff --cached --check
+
+          staged="$(git diff --cached --name-only | sort)"
+          expected="$(
+            printf '%s\n' \
+              .github/workflows/forrum-v45-right-rail-news.yml \
+              apps/web/components/home-dashboard.tsx \
+              scripts/home-v45-right-rail-news-check.mjs |
+            sort
+          )"
+
+          printf 'V45 final staged paths:\n%s\n' "$staged"
+          test "$staged" = "$expected"
+
+      - name: Commit verified V45
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "FORRUM QA updater"
+          git config user.email "actions@users.noreply.github.com"
+          git commit -m "Replace home stats with FORRUM news V45"
+
+      - name: Publish only against unchanged main
+        shell: bash
+        env:
+          BASE_SHA: ${{ steps.baseline.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          if [ "$(git rev-parse origin/main)" != "$BASE_SHA" ]; then
+            echo "::error::main advanced during V45 verification. Rerun V45."
+            exit 1
+          fi
+          git push origin HEAD:main
+
+      - name: Verify remote
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+          git show origin/main:apps/web/components/home-dashboard.tsx \
+            | grep -Fq '// FORRUM_HOME_V45_RIGHT_RAIL_NEWS'
+
+          if git cat-file -e \
+            origin/main:.github/workflows/forrum-v45-right-rail-news.yml \
+            2>/dev/null
+          then
+            echo "::error::V45 workflow did not self-delete."
+            exit 1
+          fi
+
+          echo "V45 published and self-deleted."
