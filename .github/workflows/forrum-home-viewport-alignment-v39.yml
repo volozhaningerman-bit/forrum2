@@ -1,0 +1,766 @@
+name: FORRUM Home Viewport Alignment V39
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-home-viewport-alignment-v39
+  cancel-in-progress: false
+
+jobs:
+  homepage-v39:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Inventory deployed V38 baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          test -f apps/web/components/home-dashboard.tsx
+          test -f apps/web/app/globals.css
+          test -f apps/web/components/main-nav.tsx
+
+          grep -Fq \
+            'data-home-polish="v38"' \
+            apps/web/components/home-dashboard.tsx
+
+          grep -Fq \
+            'event.target !== event.currentTarget' \
+            apps/web/components/home-dashboard.tsx
+
+          grep -Fq \
+            'V38 final reference alignment:' \
+            apps/web/app/globals.css
+
+          grep -Fq \
+            "['/services', 'Услуги']" \
+            apps/web/components/main-nav.tsx
+
+          grep -Fq \
+            "['/media', 'Медиа']" \
+            apps/web/components/main-nav.tsx
+
+          grep -Fq \
+            "['/news', 'Новости']" \
+            apps/web/components/main-nav.tsx
+
+          {
+            echo "## FORRUM Home Viewport Alignment V39"
+            echo
+            echo "Approved light/dark references were compared against deployed V38."
+            echo
+            echo "| Area | V38 problem | V39 change |"
+            echo "|---|---|---|"
+            echo "| Whole page | homepage is centered inside a constrained parent and appears shifted right | restore viewport-centered Global Shell geometry |"
+            echo "| Top rhythm | first content row sits too low below header | remove redundant homepage top padding |"
+            echo "| Panel headers | slightly taller than approved reference | tighten 42px to 40px |"
+            echo "| New topics | title weight is heavier than reference | calmer 12px / 650 title hierarchy |"
+            echo "| Tree | interaction is approved | preserve mechanics exactly |"
+            echo "| Data | truthful empty states | keep truthful; no fake topics, polls or users |"
+            echo "| Paper/Graphite | same layout | same geometry retained |"
+            echo
+            echo "No backend, API, routes, navigation, tree mechanics or data contracts are changed."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Write V39 frontend patch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > /tmp/forrum-home-viewport-alignment-v39.py <<'PY'
+          from pathlib import Path
+
+          HOME = Path("apps/web/components/home-dashboard.tsx")
+          CSS = Path("apps/web/app/globals.css")
+
+          for path in (HOME, CSS):
+              if not path.exists():
+                  raise SystemExit(f"V39 required source missing: {path}")
+
+          home = HOME.read_text(encoding="utf-8")
+          css = CSS.read_text(encoding="utf-8")
+
+          OLD_MARKER = 'data-home-polish="v38"'
+          NEW_MARKER = 'data-home-polish="v39"'
+          CSS_START = "/* FORRUM_HOME_REFERENCE_V36_START"
+          CSS_END = "/* FORRUM_HOME_REFERENCE_V36_END */"
+
+          def replace_once(source: str, old: str, new: str, label: str) -> str:
+              count = source.count(old)
+              if count != 1:
+                  raise SystemExit(
+                      f"V39 expected one {label}; found {count}."
+                  )
+              return source.replace(old, new, 1)
+
+          def canonical_block(css_source: str) -> tuple[int, int, str]:
+              start = css_source.find(CSS_START)
+              end = css_source.find(CSS_END, start)
+
+              if start < 0 or end < 0:
+                  raise SystemExit("V39 canonical homepage CSS block missing.")
+
+              end += len(CSS_END)
+              return start, end, css_source[start:end]
+
+          def verify(home_source: str, css_source: str) -> None:
+              if NEW_MARKER not in home_source:
+                  raise SystemExit("V39 homepage polish marker missing.")
+
+              if OLD_MARKER in home_source:
+                  raise SystemExit("V39 old V38 polish marker remains.")
+
+              # Approved tree UX is frozen. Empty row space expands/collapses;
+              # only folder icon + community name navigate.
+              for marker in (
+                  "MouseEvent<HTMLDivElement>",
+                  "event.target !== event.currentTarget",
+                  "data-expandable={hasChildren ? 'true' : undefined}",
+                  'aria-label={`Открыть сообщество ${node.name}`}',
+              ):
+                  if marker not in home_source:
+                      raise SystemExit(f"V39 tree regression: {marker}")
+
+              if home_source.count(
+                  'href={`/communities/${node.slug}`}'
+              ) != 1:
+                  raise SystemExit(
+                      "V39 tree regression: navigation must remain only on icon + name."
+                  )
+
+              start, end, block = canonical_block(css_source)
+
+              required = (
+                  "V39 viewport alignment:",
+                  "position: relative;",
+                  "left: 50%;",
+                  "width: min(calc(100vw - 24px), 1680px);",
+                  "max-width: 1680px;",
+                  "margin-left: 0;",
+                  "margin-right: 0;",
+                  "transform: translateX(-50%);",
+                  "padding: 0 12px 26px;",
+                  "grid-template-columns: 300px minmax(0, 1fr) 326px;",
+                  "min-height: 40px;",
+                  "display: block; color: var(--fvt-text); font-size: 12px; font-weight: 650;",
+              )
+
+              for marker in required:
+                  if marker not in block:
+                      raise SystemExit(
+                          f"V39 viewport/reference contract missing: {marker}"
+                      )
+
+              # V39 must not invent a second home stylesheet.
+              outside = css_source[:start] + css_source[end:]
+              if ".forrum-home-v16" in outside:
+                  raise SystemExit(
+                      "V39 found competing homepage CSS outside canonical source."
+                  )
+
+              for forbidden in (
+                  "!important",
+                  "box-shadow:",
+                  "backdrop-filter:",
+                  "linear-gradient",
+                  "radial-gradient",
+              ):
+                  if forbidden in block:
+                      raise SystemExit(
+                          f"V39 canonical homepage uses forbidden style: {forbidden}"
+                      )
+
+              # Paper and Graphite are token-only theme variants.
+              for forbidden_theme_geometry in (
+                  "html.dark .forrum-home-v16",
+                  'html[data-theme="dark"] .forrum-home-v16',
+                  'html[data-theme="graphite"] .forrum-home-v16',
+                  'html[data-forrum-theme="graphite"] .forrum-home-v16',
+              ):
+                  if forbidden_theme_geometry in block:
+                      raise SystemExit(
+                          "V39 Paper/Graphite geometry diverged: "
+                          + forbidden_theme_geometry
+                      )
+
+          # Idempotent replay.
+          if NEW_MARKER in home:
+              verify(home, css)
+              print("FORRUM Home Viewport Alignment V39 already applied.")
+              raise SystemExit(0)
+
+          if OLD_MARKER not in home:
+              raise SystemExit(
+                  "V39 requires successfully deployed V38 homepage baseline."
+              )
+
+          home = replace_once(
+              home,
+              OLD_MARKER,
+              NEW_MARKER,
+              "homepage polish marker",
+          )
+
+          start, end, block = canonical_block(css)
+
+          block = replace_once(
+              block,
+              """   Canonical homepage reference geometry.
+             V38 final reference alignment: approved density, richer topic rows, plain dense New topics table.
+             Paper and Graphite share one layout; theme differences come only from --fvt-* tokens.""",
+              """   Canonical homepage reference geometry.
+             V39 viewport alignment: reference shell is centered against the viewport, not a constrained parent.
+             Paper and Graphite share one layout; theme differences come only from --fvt-* tokens.""",
+              "V39 canonical comment",
+          )
+
+          # Main weakness found during comparison with the reattached references:
+          # V38 used margin:auto inside a parent container. On the real page that parent
+          # is narrower/offset, so the entire three-column homepage appears shifted right.
+          # Restore the original Global Shell viewport-centering mechanism, but keep it
+          # inside the ONE canonical homepage source.
+          block = replace_once(
+              block,
+              """.forrum-home-v16 {
+            width: min(calc(100vw - 24px), 1680px);
+            max-width: 1680px;
+            margin: 0 auto;
+            padding: 10px 12px 26px;""",
+              """.forrum-home-v16 {
+            position: relative;
+            left: 50%;
+            width: min(calc(100vw - 24px), 1680px);
+            max-width: 1680px;
+            margin-left: 0;
+            margin-right: 0;
+            transform: translateX(-50%);
+            padding: 0 12px 26px;""",
+              "viewport-centered homepage root",
+          )
+
+          # Reference headers are slightly denser than deployed V38.
+          block = replace_once(
+              block,
+              """.forrum-home-v16__side-head,
+          .forrum-home-v16__panel-head {
+            min-height: 42px;""",
+              """.forrum-home-v16__side-head,
+          .forrum-home-v16__panel-head {
+            min-height: 40px;""",
+              "reference panel header height",
+          )
+
+          # New topics in the approved reference read as a dense forum table rather than
+          # a bold content feed. Calm only the title typography; data and row mechanics
+          # remain untouched.
+          block = replace_once(
+              block,
+              """.forrum-home-v16__new-topic-title { display: block; color: var(--fvt-text); font-size: 12.5px; font-weight: 700; letter-spacing: -0.008em; }""",
+              """.forrum-home-v16__new-topic-title { display: block; color: var(--fvt-text); font-size: 12px; font-weight: 650; letter-spacing: -0.004em; }""",
+              "New topics reference typography",
+          )
+
+          css = css[:start] + block + css[end:]
+
+          # Authored-source hygiene.
+          home = "\n".join(
+              line.rstrip(" \t") for line in home.splitlines()
+          ) + "\n"
+          css = "\n".join(
+              line.rstrip(" \t") for line in css.splitlines()
+          ) + "\n"
+
+          verify(home, css)
+
+          HOME.write_text(home, encoding="utf-8")
+          CSS.write_text(css, encoding="utf-8")
+
+          print(
+              "FORRUM Home Viewport Alignment V39 applied: "
+              "viewport-centered shell, tighter top rhythm and reference table hierarchy."
+          )
+          PY
+
+          python3 -S - <<'PY'
+          from pathlib import Path
+
+          path = Path('/tmp/forrum-home-viewport-alignment-v39.py')
+          compile(path.read_text(encoding='utf-8'), str(path), 'exec')
+          print('V39 embedded Python patch syntax: PASS')
+          PY
+
+      - name: Apply V39 visual alignment
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PYTHONDONTWRITEBYTECODE=1 \
+            python3 -S /tmp/forrum-home-viewport-alignment-v39.py
+
+          git diff --check
+
+          changed="$(
+            git diff --name-only | sort
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              apps/web/app/globals.css \
+              apps/web/components/home-dashboard.tsx |
+            sort
+          )"
+
+          if [ -n "$changed" ]; then
+            test "$changed" = "$expected"
+          fi
+
+      - name: Audit V39 product and UX contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git diff --check
+
+          changed="$(
+            git diff --name-only |
+            sort
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              apps/web/app/globals.css \
+              apps/web/components/home-dashboard.tsx |
+            sort
+          )"
+
+          if [ "$changed" != "$expected" ]; then
+            echo "::error::V39 changed files outside visual-home scope."
+            git diff --name-only
+            exit 1
+          fi
+
+          # Product navigation is frozen.
+          grep -Fq \
+            "['/services', 'Услуги']" \
+            apps/web/components/main-nav.tsx
+          grep -Fq \
+            "['/media', 'Медиа']" \
+            apps/web/components/main-nav.tsx
+          grep -Fq \
+            "['/news', 'Новости']" \
+            apps/web/components/main-nav.tsx
+
+          # Tree mechanics are frozen.
+          grep -Fq \
+            'event.target !== event.currentTarget' \
+            apps/web/components/home-dashboard.tsx
+          grep -Fq \
+            'data-expandable={hasChildren ? '"'"'true'"'"' : undefined}' \
+            apps/web/components/home-dashboard.tsx
+
+          count="$(
+            grep -F \
+              'href={`/communities/${node.slug}`}' \
+              apps/web/components/home-dashboard.tsx |
+            wc -l |
+            tr -d ' '
+          )"
+          test "$count" = "1"
+
+          # V39 exact visual requirements.
+          grep -Fq \
+            'data-home-polish="v39"' \
+            apps/web/components/home-dashboard.tsx
+          grep -Fq \
+            'V39 viewport alignment:' \
+            apps/web/app/globals.css
+          grep -Fq \
+            'left: 50%;' \
+            apps/web/app/globals.css
+          grep -Fq \
+            'transform: translateX(-50%);' \
+            apps/web/app/globals.css
+          grep -Fq \
+            'padding: 0 12px 26px;' \
+            apps/web/app/globals.css
+          grep -Fq \
+            'grid-template-columns: 300px minmax(0, 1fr) 326px;' \
+            apps/web/app/globals.css
+
+          # No new visual override layer and no CSS escalation.
+          test "$(
+            grep -F \
+              '/* FORRUM_HOME_REFERENCE_V36_START' \
+              apps/web/app/globals.css |
+            wc -l |
+            tr -d ' '
+          )" = "1"
+
+          ! grep -Fq \
+            'data-home-polish="v38"' \
+            apps/web/components/home-dashboard.tsx
+
+          # Backend/API/routes/theme switch remain outside V39.
+          test -z "$(
+            git diff --name-only -- \
+              apps/api \
+              apps/web/components/main-nav.tsx \
+              apps/web/components/theme-toggle.tsx \
+              apps/web/app/services \
+              apps/web/app/media \
+              apps/web/app/news
+          )"
+
+          echo "V39 product and UX contract: PASS"
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm install             --include=dev             --no-audit             --no-fund             --package-lock=false
+
+      - name: Parse changed TypeScript
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node - <<'NODE'
+          const fs = require("fs");
+          const ts = require("typescript");
+
+          const path =
+            "apps/web/components/home-dashboard.tsx";
+
+          const source =
+            fs.readFileSync(path, "utf8");
+
+          const file = ts.createSourceFile(
+            path,
+            source,
+            ts.ScriptTarget.Latest,
+            true,
+            ts.ScriptKind.TSX,
+          );
+
+          const diagnostics =
+            file.parseDiagnostics ?? [];
+
+          if (diagnostics.length) {
+            for (const diagnostic of diagnostics) {
+              const pos =
+                file.getLineAndCharacterOfPosition(
+                  diagnostic.start ?? 0,
+                );
+
+              console.error(
+                `${path}:${pos.line + 1}:${pos.character + 1} ` +
+                ts.flattenDiagnosticMessageText(
+                  diagnostic.messageText,
+                  "\n",
+                ),
+              );
+            }
+
+            process.exit(1);
+          }
+
+          console.log(
+            "V39 changed TSX parser: PASS",
+          );
+          NODE
+
+      - name: Run static UX accessibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          git diff --check
+
+      - name: Run relevant tests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/web --if-present
+
+      - name: Typecheck relevant workspaces
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm run typecheck -w @forrum/contracts
+          npm run typecheck -w @forrum/web
+
+      - name: Production build relevant workspaces
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf apps/web/.next
+
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/web
+
+      - name: Self-review and second pass
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # First-draft weakness found before delivery:
+          # margin:auto centered the homepage inside the app parent, not against
+          # the viewport. The approved Global Shell already used left:50% +
+          # translateX(-50%) to escape that parent constraint. V39 restores that
+          # geometry inside the single canonical homepage block.
+          grep -Fq \
+            'left: 50%;' \
+            apps/web/app/globals.css
+          grep -Fq \
+            'transform: translateX(-50%);' \
+            apps/web/app/globals.css
+          ! grep -Fq \
+            'margin: 0 auto;' \
+            apps/web/app/globals.css
+
+          # Second weakness: reducing top space must not change tree mechanics.
+          grep -Fq \
+            'event.target !== event.currentTarget' \
+            apps/web/components/home-dashboard.tsx
+
+          # Re-run source contracts after the correction.
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/web --if-present
+
+          npm run typecheck -w @forrum/contracts
+          npm run typecheck -w @forrum/web
+
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/web
+
+          git diff --check
+
+          echo "V39 second-pass production review: PASS"
+
+      - name: Restore build side effects and clean dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mapfile -t tracked_dirty < <(
+            git status               --porcelain=v1               --untracked-files=no |
+            sed 's/^...//'
+          )
+
+          for path in "${tracked_dirty[@]}"; do
+            [ -n "$path" ] || continue
+
+            case "$path" in
+              apps/web/components/home-dashboard.tsx|              apps/web/app/globals.css)
+                continue
+                ;;
+            esac
+
+            git restore               --staged               --worktree               -- "$path"
+          done
+
+          git clean -ffdx
+
+      - name: Final V39 pre-commit audit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          git diff --check
+
+          changed="$(
+            git diff --name-only | sort
+          )"
+
+          expected="$(
+            printf '%s\n'               apps/web/app/globals.css               apps/web/components/home-dashboard.tsx |
+            sort
+          )"
+
+          if [ -n "$changed" ]; then
+            test "$changed" = "$expected"
+          fi
+
+          test -z "$(
+            git status --porcelain=v1 --untracked-files=all |
+            grep -vE               '^( M|M |MM) (apps/web/app/globals\.css|apps/web/components/home-dashboard\.tsx)$'               || true
+          )"
+
+      - name: Commit verified V39
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "FORRUM Home Viewport Alignment V39 is already present."
+            exit 0
+          fi
+
+          git config user.name "forrum-actions"
+          git config user.email "actions@forrum.local"
+
+          git add             apps/web/components/home-dashboard.tsx             apps/web/app/globals.css
+
+          git diff --cached --check
+
+          git commit -m             "Polish FORRUM homepage reference V39"
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Rebase and full V39 production audit
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          git rebase origin/main
+
+          npm install             --include=dev             --no-audit             --no-fund             --package-lock=false
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/web --if-present
+          npm run typecheck -w @forrum/contracts
+          npm run typecheck -w @forrum/web
+
+          rm -rf apps/web/.next
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/web
+
+          git restore             --source=HEAD             --staged             --worktree             -- .
+
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          echo "Post-rebase V39 production audit: PASS"
+
+      - name: Publish V39 safely
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+
+            remote="$(
+              git rev-parse origin/main
+            )"
+
+            if ! git merge-base               --is-ancestor               "$remote"               HEAD
+            then
+              echo                 "origin/main advanced; rebasing and repeating V39 verification."
+
+              git rebase origin/main
+
+              npm install                 --include=dev                 --no-audit                 --no-fund                 --package-lock=false
+
+              node scripts/home-paper-graphite-v16-check.mjs
+              node scripts/home-reference-check.mjs
+              node scripts/home-scale-polish-check.mjs
+              node scripts/home-visual-theme-check.mjs
+
+              npm run validate:static
+              npm run validate:ux
+              npm run validate:a11y
+              npm test -w @forrum/contracts --if-present
+              npm test -w @forrum/web --if-present
+              npm run typecheck -w @forrum/contracts
+              npm run typecheck -w @forrum/web
+
+              rm -rf apps/web/.next
+              npm run build -w @forrum/contracts
+              npm run build -w @forrum/web
+
+              git restore                 --source=HEAD                 --staged                 --worktree                 -- .
+
+              git clean -ffdx
+              test -z "$(git status --porcelain)"
+            fi
+
+            git fetch origin main
+
+            if [ "$(
+              git rev-parse origin/main
+            )" != "$(
+              git merge-base HEAD origin/main
+            )" ]; then
+              continue
+            fi
+
+            if git push origin HEAD:main; then
+              echo "V39 push succeeded on attempt $attempt."
+              exit 0
+            fi
+          done
+
+          echo "::error::V39 could not be published safely."
+          exit 1
+
+      - name: Verify remote V39 commit
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+
+          test "$(
+            git rev-parse HEAD
+          )" = "$(
+            git rev-parse origin/main
+          )"
+
+          echo             "Published FORRUM Home Viewport Alignment V39."
