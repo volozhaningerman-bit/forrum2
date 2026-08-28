@@ -20484,3 +20484,13 @@ body {
   }
 }
 /* FORRUM_VISUAL_POLISH_V23_END */
+
+/* FORRUM_LOGO_DARK_HOVER_FIX */
+html.dark .brand:hover,
+html.dark .brand:focus-visible,
+.dark .brand:hover,
+.dark .brand:focus-visible,
+html[data-forrum-theme="graphite"] .brand:hover,
+html[data-forrum-theme="graphite"] .brand:focus-visible {
+  color: var(--fvt-text, var(--text));
+}

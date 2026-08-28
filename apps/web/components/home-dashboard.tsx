@@ -488,28 +488,6 @@ function PollRow({ poll }: { poll: PollItem }) {
 export function HomeDashboard({ initialData }: { initialData: HomeInitialData }) {
   const communities = initialData.communities ?? [];
 
-  // FORRUM_HOME_ACTUAL_ACTIVE_COMMUNITIES
-  const activeCommunities = useMemo(() => {
-    return [...communities]
-      .sort((a, b) => {
-        const recentDelta =
-          (b.recentPublicationCount ?? 0) -
-          (a.recentPublicationCount ?? 0);
-
-        if (recentDelta !== 0) return recentDelta;
-
-        const subscriberDelta =
-          (b.subscriberCount ?? 0) -
-          (a.subscriberCount ?? 0);
-
-        if (subscriberDelta !== 0) {
-          return subscriberDelta;
-        }
-
-        return a.name.localeCompare(b.name, 'ru');
-      })
-      .slice(0, 3);
-  }, [communities]);
   const tree = useMemo(() => buildTree(communities), [communities]);
   const parentSlugs = useMemo(
     () => communities.filter((item) => communities.some((candidate) => candidate.parent?.slug === item.slug)).map((item) => item.slug),
@@ -559,10 +537,20 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
   }, [initialData.overview?.activePolls, initialData.polls]);
 
   const announcements = initialData.announcements ?? [];
+
+  // FORRUM_HOME_CONTEXTUAL_ACTUAL
+  const actualAnnouncements = useMemo(() => {
+    const now = Date.now();
+    return announcements
+      .filter((item) => {
+        if (!item.pinnedUntil) return false;
+        return new Date(item.pinnedUntil).getTime() > now;
+      })
+      .slice(0, 2);
+  }, [announcements]);
   const actualPoll = activePolls[0];
   const actualProposal = initialData.overview?.proposal ?? null;
   const actualReserved = Number(Boolean(actualPoll)) + Number(Boolean(actualProposal));
-  const actualAnnouncements = announcements.slice(0, Math.max(0, 3 - actualReserved));
   const actualTopicSlots = Math.max(
     0,
     3 - actualReserved - actualAnnouncements.length,
@@ -624,25 +612,47 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
           </div>
         </HomePanel>
 
-        <HomePanel title="Активные голосования" href="/events?tab=polls">
+        {/* FORRUM_HOME_HIDE_EMPTY_POLLS */}
+        {activePolls.length > 0 && (
+<HomePanel title="Активные голосования" href="/events?tab=polls">
           <div className="forrum-home-v16__poll-list">
             {activePolls.length ? activePolls.map((poll) => <PollRow key={poll.id} poll={poll} />) : (
               <p className="forrum-home-v16__empty">Активных голосований сейчас нет.</p>
             )}
           </div>
         </HomePanel>
+        )}
       </main>
 
       <aside className="forrum-home-v16__rail">
+        {(activePolls.length > 0 || actualAnnouncements.length > 0) && (
         <HomePanel
           title="Актуальное"
-          href="/communities"
+          href="/events"
         >
           <div className="forrum-home-v16__actual-list">
-            {activePolls[0] && (
+            {actualAnnouncements.map((item) => (
+              <Link
+                className="forrum-home-v16__actual"
+                href={`/p/${item.slug}`}
+                key={`actual-${item.id}`}
+              >
+                <CommunityMark
+                  name={item.community.name}
+                  url={topicContentVisual(item)}
+                  size={30}
+                />
+                <span>
+                  <strong>{item.title || "Важное объявление"}</strong>
+                  <small>Важно сейчас</small>
+                </span>
+              </Link>
+            ))}
+            {activePolls.slice(0, 2).map((poll) => (
               <Link
                 className="forrum-home-v16__actual"
                 href="/events"
+                key={`actual-poll-${poll.id}`}
               >
                 <span
                   className="forrum-home-v16__actual-symbol"
@@ -651,44 +661,14 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
                   ▥
                 </span>
                 <span>
-                  <strong>Активное голосование</strong>
-                  <small>{activePolls[0].title}</small>
-                </span>
-              </Link>
-            )}
-            {activeCommunities.map((community) => (
-              <Link
-                className="forrum-home-v16__actual"
-                href={`/communities/${community.slug}`}
-                key={community.id}
-              >
-                <CommunityMark
-                  name={community.name}
-                  url={community.avatarUrl}
-                  size={30}
-                />
-                <span>
-                  <strong>{community.name}</strong>
-                  <small>
-                    {(community.recentPublicationCount ?? 0) > 0
-                      ? `${formatCount(
-                          community.recentPublicationCount,
-                        )} новых тем за 24 ч.`
-                      : `${formatCount(
-                          community.subscriberCount,
-                        )} подписчиков`}
-                  </small>
+                  <strong>{poll.title}</strong>
+                  <small>Идёт голосование</small>
                 </span>
               </Link>
             ))}
-            {!activeCommunities.length &&
-              !activePolls.length && (
-                <p className="forrum-home-v16__empty">
-                  Актуальных обновлений сейчас нет.
-                </p>
-              )}
           </div>
         </HomePanel>
+      )}
 
         <section className="forrum-home-v16__panel">
           <header className="forrum-home-v16__panel-head"><h2>Участники недели</h2></header>
