@@ -487,6 +487,29 @@ function PollRow({ poll }: { poll: PollItem }) {
 // FORRUM_HOME_V45_RIGHT_RAIL_NEWS
 export function HomeDashboard({ initialData }: { initialData: HomeInitialData }) {
   const communities = initialData.communities ?? [];
+
+  // FORRUM_HOME_ACTUAL_ACTIVE_COMMUNITIES
+  const activeCommunities = useMemo(() => {
+    return [...communities]
+      .sort((a, b) => {
+        const recentDelta =
+          (b.recentPublicationCount ?? 0) -
+          (a.recentPublicationCount ?? 0);
+
+        if (recentDelta !== 0) return recentDelta;
+
+        const subscriberDelta =
+          (b.subscriberCount ?? 0) -
+          (a.subscriberCount ?? 0);
+
+        if (subscriberDelta !== 0) {
+          return subscriberDelta;
+        }
+
+        return a.name.localeCompare(b.name, 'ru');
+      })
+      .slice(0, 3);
+  }, [communities]);
   const tree = useMemo(() => buildTree(communities), [communities]);
   const parentSlugs = useMemo(
     () => communities.filter((item) => communities.some((candidate) => candidate.parent?.slug === item.slug)).map((item) => item.slug),
@@ -613,35 +636,18 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
       <aside className="forrum-home-v16__rail">
         <HomePanel
           title="Актуальное"
-          href="/feed?mode=popular"
+          href="/communities"
         >
           <div className="forrum-home-v16__actual-list">
-            {discussed.length ? (
-              discussed.slice(0, 3).map((item) => (
-                <Link
-                  className="forrum-home-v16__actual"
-                  href={`/p/${item.slug}`}
-                  key={item.id}
-                >
-                  <CommunityMark
-                    name={item.community.name}
-                    url={topicContentVisual(item)}
-                    size={30}
-                  />
-                  <span>
-                    <strong>{item.title || 'Актуальная тема'}</strong>
-                    <small>{item.community.name}</small>
-                  </span>
-                </Link>
-              ))
-            ) : (
-              <p className="forrum-home-v16__empty">
-                Актуальных тем сейчас нет.
-              </p>
-            )}
             {activePolls[0] && (
-              <Link className="forrum-home-v16__actual" href="/events">
-                <span className="forrum-home-v16__actual-symbol" aria-hidden="true">
+              <Link
+                className="forrum-home-v16__actual"
+                href="/events"
+              >
+                <span
+                  className="forrum-home-v16__actual-symbol"
+                  aria-hidden="true"
+                >
                   ▥
                 </span>
                 <span>
@@ -650,6 +656,37 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
                 </span>
               </Link>
             )}
+            {activeCommunities.map((community) => (
+              <Link
+                className="forrum-home-v16__actual"
+                href={`/communities/${community.slug}`}
+                key={community.id}
+              >
+                <CommunityMark
+                  name={community.name}
+                  url={community.avatarUrl}
+                  size={30}
+                />
+                <span>
+                  <strong>{community.name}</strong>
+                  <small>
+                    {(community.recentPublicationCount ?? 0) > 0
+                      ? `${formatCount(
+                          community.recentPublicationCount,
+                        )} новых тем за 24 ч.`
+                      : `${formatCount(
+                          community.subscriberCount,
+                        )} подписчиков`}
+                  </small>
+                </span>
+              </Link>
+            ))}
+            {!activeCommunities.length &&
+              !activePolls.length && (
+                <p className="forrum-home-v16__empty">
+                  Актуальных обновлений сейчас нет.
+                </p>
+              )}
           </div>
         </HomePanel>
 
