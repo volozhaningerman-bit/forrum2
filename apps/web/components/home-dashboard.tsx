@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties, MouseEvent, ReactNode } from 'react';
 import { useMemo, useState } from 'react';
 import { Avatar } from '@/components/avatar';
 import { CommunityMark } from '@/components/community-mark';
@@ -197,28 +197,72 @@ function TreeBranch({
 }) {
   const hasChildren = node.children.length > 0;
   const isOpen = expanded.has(node.slug);
+
+  const onRowClick = (
+    event: MouseEvent<HTMLDivElement>,
+  ) => {
+    if (
+      !hasChildren ||
+      event.target !== event.currentTarget
+    ) {
+      return;
+    }
+
+    onToggle(node.slug);
+  };
+
   return (
-    <li className="forrum-home-v16__tree-node" style={{ '--tree-depth': depth } as CSSProperties}>
-      <div className="forrum-home-v16__tree-row">
+    <li
+      className="forrum-home-v16__tree-node"
+      style={{ '--tree-depth': depth } as CSSProperties}
+    >
+      <div
+        className="forrum-home-v16__tree-row"
+        data-expandable={hasChildren ? 'true' : undefined}
+        onClick={onRowClick}
+      >
         {hasChildren ? (
           <button
             className="forrum-home-v16__tree-toggle"
             type="button"
             aria-expanded={isOpen}
-            aria-label={isOpen ? `Свернуть ${node.name}` : `Развернуть ${node.name}`}
+            aria-label={
+              isOpen
+                ? `Свернуть ${node.name}`
+                : `Развернуть ${node.name}`
+            }
             onClick={() => onToggle(node.slug)}
           >
-            <span aria-hidden="true">{isOpen ? '⌄' : '›'}</span>
+            <span aria-hidden="true">
+              {isOpen ? '⌄' : '›'}
+            </span>
           </button>
         ) : (
-          <span className="forrum-home-v16__tree-spacer" aria-hidden="true" />
+          <span
+            className="forrum-home-v16__tree-spacer"
+            aria-hidden="true"
+          />
         )}
-        <Link className="forrum-home-v16__tree-link" href={`/communities/${node.slug}`}>
-          <span className="forrum-home-v16__tree-folder" aria-hidden="true" />
-          <span className="forrum-home-v16__tree-name">{node.name}</span>
-          <span className="forrum-home-v16__tree-count">{formatCount(node.subscriberCount)}</span>
+
+        <Link
+          className="forrum-home-v16__tree-link"
+          href={`/communities/${node.slug}`}
+          aria-label={`Открыть сообщество ${node.name}`}
+        >
+          <span
+            className="forrum-home-v16__tree-folder"
+            aria-hidden="true"
+          />
+          <span className="forrum-home-v16__tree-name">
+            {node.name}
+          </span>
         </Link>
+
+        <span className="forrum-home-v16__tree-count">
+          {formatCount(node.subscriberCount)}
+        </span>
       </div>
+
       {hasChildren && isOpen && (
         <ul className="forrum-home-v16__tree-children">
           {node.children.map((child) => (
@@ -363,7 +407,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
   };
 
   return (
-    <div className="forrum-home-v16" data-home-reference="v36">
+    <div className="forrum-home-v16" data-home-reference="v36" data-home-polish="v37">
       <aside className="forrum-home-v16__tree">
         <div className="forrum-home-v16__side-head"><h2>Сообщества</h2></div>
         {tree.length ? (
