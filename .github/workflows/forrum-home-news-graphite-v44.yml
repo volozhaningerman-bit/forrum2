@@ -1,0 +1,597 @@
+name: FORRUM Home News and Graphite V44
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-home-v44
+  cancel-in-progress: false
+
+jobs:
+  home-v44:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Baseline
+        id: baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+          echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+          grep -Fq 'FORRUM сегодня' apps/web/components/home-dashboard.tsx
+          grep -Fq '// FORRUM_HOME_CONTENT_VISUALS_V43' apps/web/components/home-dashboard.tsx
+          grep -Fq "['/services', 'Услуги']" apps/web/components/main-nav.tsx
+          grep -Fq "['/media', 'Медиа']" apps/web/components/main-nav.tsx
+          grep -Fq "['/news', 'Новости']" apps/web/components/main-nav.tsx
+          grep -Fq '1580px' apps/web/app/globals.css
+
+      - name: Write regression check first
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > scripts/home-news-v44-check.mjs <<'NODE'
+          import fs from 'node:fs';
+
+          const component = fs.readFileSync(
+            'apps/web/components/home-dashboard.tsx',
+            'utf8',
+          );
+          const css = fs.readFileSync(
+            'apps/web/app/globals.css',
+            'utf8',
+          );
+          const nav = fs.readFileSync(
+            'apps/web/components/main-nav.tsx',
+            'utf8',
+          );
+
+          const componentMarkers = [
+            '// FORRUM_HOME_NEWS_V44',
+            'const officialNews = useMemo(',
+            'const actualItems = useMemo(',
+            'title="Новости FORRUM"',
+            'href="/news"',
+            'className="forrum-home-v16__news-list"',
+            'className="forrum-home-v16__news-item"',
+            'Новости FORRUM пока не опубликованы.',
+          ];
+
+          for (const marker of componentMarkers) {
+            if (!component.includes(marker)) {
+              throw new Error(`Missing V44 component marker: ${marker}`);
+            }
+          }
+
+          if (component.includes('<h2>FORRUM сегодня</h2>')) {
+            throw new Error('Legacy FORRUM today panel is still present.');
+          }
+
+          for (const marker of [
+            'const totalPublications = communities.reduce(',
+            'const recentPublications = communities.reduce(',
+            'const totalSubscriptions = communities.reduce(',
+          ]) {
+            if (component.includes(marker)) {
+              throw new Error(`Dead stats code remains: ${marker}`);
+            }
+          }
+
+          for (const marker of [
+            '/* FORRUM_HOME_NEWS_V44 */',
+            '.forrum-home-v16__news-list {',
+            '.forrum-home-v16__news-item {',
+            '--fh-bg: #15181b;',
+            '--fh-surface: #1b1f22;',
+            '--fh-panel: #191d20;',
+            '--fh-text: #e4e7e9;',
+          ]) {
+            if (!css.includes(marker)) {
+              throw new Error(`Missing V44 CSS marker: ${marker}`);
+            }
+          }
+
+          for (const marker of [
+            "['/services', 'Услуги']",
+            "['/media', 'Медиа']",
+            "['/news', 'Новости']",
+          ]) {
+            if (!nav.includes(marker)) {
+              throw new Error(`Protected navigation changed: ${marker}`);
+            }
+          }
+
+          if (
+            !css.includes(
+              'font-family: "Courier New", ui-monospace, SFMono-Regular, monospace;',
+            )
+          ) {
+            throw new Error('Header wordmark polish is missing.');
+          }
+
+          console.log('V44 regression contract: PASS');
+          NODE
+
+      - name: TDD RED
+        shell: bash
+        run: |
+          set -euo pipefail
+          if node scripts/home-news-v44-check.mjs; then
+            echo "::error::V44 unexpectedly passed before implementation."
+            exit 1
+          fi
+          echo "TDD RED confirmed."
+
+      - name: Apply V44 component patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('apps/web/components/home-dashboard.tsx')
+          source = path.read_text(encoding='utf-8')
+
+          if '// FORRUM_HOME_NEWS_V44' in source:
+              raise SystemExit('V44 is already present; refusing a duplicate patch.')
+
+          announcements_re = re.compile(
+              r"  const announcements\s*=\s*\n"
+              r"    \(initialData\.announcements \?\? \[\]\)\.slice\(0, 3\);\n"
+          )
+          match = announcements_re.search(source)
+          if not match:
+              raise SystemExit('Could not locate announcements declaration.')
+
+          addition = (
+              match.group(0)
+              + "\n"
+              + "  // FORRUM_HOME_NEWS_V44\n"
+              + "  // Official news is separate from the mixed Actual panel.\n"
+              + "  const officialNews = useMemo(() => {\n"
+              + "    const rows = initialData.announcements ?? [];\n"
+              + "    const official = rows.filter((item) => {\n"
+              + "      const type = item.type.toUpperCase();\n"
+              + "      return type === 'NEWS' || type === 'ANNOUNCEMENT';\n"
+              + "    });\n"
+              + "    return (official.length ? official : rows).slice(0, 3);\n"
+              + "  }, [initialData.announcements]);\n\n"
+              + "  const actualItems = useMemo(() => {\n"
+              + "    const newsIds = new Set(officialNews.map((item) => item.id));\n"
+              + "    const seen = new Set<string>();\n"
+              + "    const rows: PublicationCardData[] = [];\n"
+              + "    for (const item of [\n"
+              + "      ...(initialData.announcements ?? []),\n"
+              + "      ...discussed,\n"
+              + "    ]) {\n"
+              + "      if (newsIds.has(item.id) || seen.has(item.id)) continue;\n"
+              + "      seen.add(item.id);\n"
+              + "      rows.push(item);\n"
+              + "      if (rows.length === 3) break;\n"
+              + "    }\n"
+              + "    return rows;\n"
+              + "  }, [initialData.announcements, officialNews, discussed]);\n"
+          )
+
+          source = source[:match.start()] + addition + source[match.end():]
+
+          for name in (
+              'totalPublications',
+              'recentPublications',
+              'totalSubscriptions',
+          ):
+              pattern = re.compile(
+                  rf"\n  const {name} = communities\.reduce\([\s\S]*?\n  \);\n"
+              )
+              source, count = pattern.subn('\n', source, count=1)
+              if count != 1:
+                  raise SystemExit(f'Could not remove legacy stat: {name}')
+
+          actual_start = source.find('title="Актуальное"')
+          weekly_start = source.find('<h2>Участники недели</h2>')
+          if actual_start < 0 or weekly_start < 0:
+              raise SystemExit('Could not locate Actual/Weekly boundaries.')
+
+          actual = source[actual_start:weekly_start]
+          if actual.count('announcements.map((item) => (') != 1:
+              raise SystemExit('Expected exactly one announcements map in Actual.')
+
+          actual = actual.replace(
+              'announcements.map((item) => (',
+              'actualItems.map((item) => (',
+              1,
+          )
+          actual = actual.replace(
+              '!announcements.length &&',
+              '!actualItems.length &&',
+              1,
+          )
+          source = source[:actual_start] + actual + source[weekly_start:]
+
+          stats_re = re.compile(
+              r'        <section className="forrum-home-v16__panel">\n'
+              r'          <header className="forrum-home-v16__panel-head">\n'
+              r'            <h2>FORRUM сегодня</h2>\n'
+              r'          </header>\n'
+              r'          <dl className="forrum-home-v16__stats">[\s\S]*?'
+              r'          </dl>\n'
+              r'        </section>'
+          )
+
+          news_panel = (
+              '        <HomePanel\n'
+              '          title="Новости FORRUM"\n'
+              '          href="/news"\n'
+              '        >\n'
+              '          <div className="forrum-home-v16__news-list">\n'
+              '            {officialNews.length ? (\n'
+              '              officialNews.map((item) => (\n'
+              '                <Link\n'
+              '                  className="forrum-home-v16__news-item"\n'
+              '                  href={`/p/${item.slug}`}\n'
+              '                  key={item.id}\n'
+              '                >\n'
+              '                  <CommunityMark\n'
+              '                    className="forrum-home-v16__news-mark"\n'
+              '                    name={item.community.name}\n'
+              '                    url={topicContentVisual(item)}\n'
+              '                    size={30}\n'
+              '                  />\n'
+              '                  <span className="forrum-home-v16__news-copy">\n'
+              "                    <strong>{item.title || 'Новость FORRUM'}</strong>\n"
+              '                    <small>{relativeTime(item.createdAt)}</small>\n'
+              '                  </span>\n'
+              '                </Link>\n'
+              '              ))\n'
+              '            ) : (\n'
+              '              <p className="forrum-home-v16__empty">\n'
+              '                Новости FORRUM пока не опубликованы.\n'
+              '              </p>\n'
+              '            )}\n'
+              '          </div>\n'
+              '        </HomePanel>'
+          )
+
+          source, count = stats_re.subn(news_panel, source, count=1)
+          if count != 1:
+              raise SystemExit('Could not replace FORRUM today panel.')
+
+          path.write_text(
+              '\n'.join(line.rstrip(' \t') for line in source.splitlines()) + '\n',
+              encoding='utf-8',
+          )
+          PY
+
+      - name: Apply V44 CSS patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('apps/web/app/globals.css')
+          css = path.read_text(encoding='utf-8')
+
+          dark_block_re = re.compile(
+              r'(html\.dark \.forrum-home-v16,[\s\S]*?'
+              r'html\[data-forrum-theme="graphite"\] \.forrum-home-v16 \{)'
+              r'([\s\S]*?)(\n\})'
+          )
+          match = dark_block_re.search(css)
+          if not match:
+              raise SystemExit('Could not locate Graphite variable block.')
+
+          block = match.group(2)
+          values = {
+              '--fh-bg': '#15181b',
+              '--fh-surface': '#1b1f22',
+              '--fh-panel': '#191d20',
+              '--fh-panel-muted': '#21262a',
+              '--fh-line': '#394047',
+              '--fh-line-strong': '#596168',
+              '--fh-text': '#e4e7e9',
+              '--fh-muted': '#a3abb1',
+              '--fh-faint': '#7d868d',
+          }
+
+          for token, value in values.items():
+              pattern = re.compile(rf'({re.escape(token)}:\s*)#[0-9a-fA-F]{{6}};')
+              block, count = pattern.subn(rf'\g<1>{value};', block, count=1)
+              if count != 1:
+                  raise SystemExit(f'Could not update Graphite token: {token}')
+
+          css = css[:match.start(2)] + block + css[match.end(2):]
+
+          body_dark_re = re.compile(
+              r'(html\.dark body:has\(\.forrum-home-v16\),[\s\S]*?'
+              r'html\[data-forrum-theme="graphite"\] body:has\(\.forrum-home-v16\) \{'
+              r'[\s\S]*?background:\s*)#[0-9a-fA-F]{6};'
+          )
+          css, count = body_dark_re.subn(
+              r'\g<1>#15181b;',
+              css,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit('Could not refine Graphite body background.')
+
+          if '/* FORRUM_HOME_NEWS_V44 */' in css:
+              raise SystemExit('V44 news CSS already exists.')
+
+          actual_start = css.find('.forrum-home-v16__actual {')
+          tabs_start = css.find('.forrum-home-v16__tabs {', actual_start)
+          if actual_start < 0 or tabs_start < 0:
+              raise SystemExit('Could not locate canonical Actual CSS.')
+
+          news_css = (
+              '/* FORRUM_HOME_NEWS_V44 */\n'
+              '.forrum-home-v16__news-list {\n'
+              '  padding: 0 12px;\n'
+              '}\n\n'
+              '.forrum-home-v16__news-item {\n'
+              '  min-height: 58px;\n'
+              '  display: grid;\n'
+              '  grid-template-columns: 30px minmax(0, 1fr);\n'
+              '  gap: 8px;\n'
+              '  align-items: center;\n'
+              '  border-bottom: 1px solid var(--fh-line);\n'
+              '}\n\n'
+              '.forrum-home-v16__news-item:last-child {\n'
+              '  border-bottom: 0;\n'
+              '}\n\n'
+              '.forrum-home-v16__news-item:hover strong {\n'
+              '  color: var(--fh-accent);\n'
+              '}\n\n'
+              '.forrum-home-v16__news-copy {\n'
+              '  min-width: 0;\n'
+              '  display: grid;\n'
+              '  gap: 2px;\n'
+              '}\n\n'
+              '.forrum-home-v16__news-copy strong {\n'
+              '  overflow: hidden;\n'
+              '  text-overflow: ellipsis;\n'
+              '  color: var(--fh-text);\n'
+              '  font-size: 12px;\n'
+              '  font-weight: 640;\n'
+              '  line-height: 1.25;\n'
+              '}\n\n'
+              '.forrum-home-v16__news-copy small {\n'
+              '  color: var(--fh-muted);\n'
+              '  font-size: 10px;\n'
+              '}\n\n'
+          )
+          css = css[:tabs_start] + news_css + css[tabs_start:]
+
+          brand_re = re.compile(r'\.brand\s*\{[\s\S]*?\}')
+          brand_match = brand_re.search(css)
+          if not brand_match:
+              raise SystemExit('Could not locate .brand CSS rule.')
+
+          brand = brand_match.group(0)
+          if '"Courier New"' not in brand:
+              brand = brand[:-1] + (
+                  '\n  font-family: "Courier New", ui-monospace, '
+                  'SFMono-Regular, monospace;\n'
+                  '  letter-spacing: .075em;\n'
+                  '  text-transform: uppercase;\n'
+                  '}'
+              )
+              css = css[:brand_match.start()] + brand + css[brand_match.end():]
+
+          path.write_text(
+              '\n'.join(line.rstrip(' \t') for line in css.splitlines()) + '\n',
+              encoding='utf-8',
+          )
+          PY
+
+          git diff --check
+
+      - name: TDD GREEN
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/home-news-v44-check.mjs
+          grep -Fq '// FORRUM_HOME_CONTENT_VISUALS_V43' apps/web/components/home-dashboard.tsx
+          grep -Fq '1580px' apps/web/app/globals.css
+          echo "TDD GREEN confirmed."
+
+      - name: Audit protected product scope
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          changed="$(
+            {
+              git diff --name-only
+              git ls-files --others --exclude-standard
+            } | sort -u
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              apps/web/app/globals.css \
+              apps/web/components/home-dashboard.tsx \
+              scripts/home-news-v44-check.mjs |
+            sort
+          )"
+
+          printf 'Detected V44 paths:\n%s\n' "$changed"
+          test "$changed" = "$expected"
+
+          test -z "$(
+            git diff --name-only -- \
+              apps/api \
+              packages/contracts \
+              apps/web/app/page.tsx \
+              apps/web/components/main-nav.tsx
+          )"
+
+          ! git diff | grep -Eq \
+            'fakePoll|fakeUser|mockPoll|mockUser|demoPoll|demoUser'
+          ! git diff | grep -Fq '!important'
+
+      - name: Stage verified V44 intent
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- \
+            apps/web/app/globals.css \
+            apps/web/components/home-dashboard.tsx \
+            scripts/home-news-v44-check.mjs
+          git diff --cached --check
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install \
+            --include=dev \
+            --no-audit \
+            --no-fund \
+            --package-lock=false
+
+      - name: Validate Prisma
+        shell: bash
+        env:
+          DATABASE_URL: postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public
+        run: |
+          set -euo pipefail
+          npm run db:validate
+          npm run db:generate
+
+      - name: Static UX and accessibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/home-news-v44-check.mjs
+          node scripts/home-content-visual-v43-check.mjs
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+
+      - name: Relevant tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/api --if-present
+          npm test -w @forrum/web --if-present
+
+      - name: Typecheck
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run typecheck
+
+      - name: Production build
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf apps/web/.next
+          npm run build
+
+      - name: Production self-review
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Review 1: no duplicated source arrays in the right rail.
+          grep -Fq 'const officialNews = useMemo(' apps/web/components/home-dashboard.tsx
+          grep -Fq 'const actualItems = useMemo(' apps/web/components/home-dashboard.tsx
+
+          # Review 2: obsolete stats are removed rather than hidden.
+          ! grep -Fq 'FORRUM сегодня' apps/web/components/home-dashboard.tsx
+          ! grep -Fq 'const totalPublications = communities.reduce(' apps/web/components/home-dashboard.tsx
+
+          # Review 3: approved geometry and product navigation remain intact.
+          grep -Fq '1580px' apps/web/app/globals.css
+          grep -Fq "['/services', 'Услуги']" apps/web/components/main-nav.tsx
+          grep -Fq "['/media', 'Медиа']" apps/web/components/main-nav.tsx
+          grep -Fq "['/news', 'Новости']" apps/web/components/main-nav.tsx
+
+          node scripts/home-news-v44-check.mjs
+          node scripts/home-content-visual-v43-check.mjs
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/api --if-present
+          npm test -w @forrum/web --if-present
+          npm run typecheck
+          npm run build
+
+      - name: Restore generated build noise
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git restore --worktree -- .
+          git clean -ffdx
+
+          git diff --cached --check
+
+          changed="$(git diff --cached --name-only | sort)"
+          expected="$(
+            printf '%s\n' \
+              apps/web/app/globals.css \
+              apps/web/components/home-dashboard.tsx \
+              scripts/home-news-v44-check.mjs |
+            sort
+          )"
+
+          printf 'Final staged V44 paths:\n%s\n' "$changed"
+          test "$changed" = "$expected"
+          test -z "$(git diff --name-only)"
+          test -z "$(git ls-files --others --exclude-standard)"
+
+      - name: Commit verified V44
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "FORRUM QA updater"
+          git config user.email "actions@users.noreply.github.com"
+          git commit -m "Replace home stats with FORRUM news V44"
+          test -z "$(git status --porcelain)"
+
+      - name: Publish only against unchanged main
+        shell: bash
+        env:
+          BASE_SHA: ${{ steps.baseline.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          if [ "$(git rev-parse origin/main)" != "$BASE_SHA" ]; then
+            echo "::error::main advanced during V44 verification. Rerun V44."
+            exit 1
+          fi
+          git push origin HEAD:main
+
+      - name: Verify remote V44
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+          git show origin/main:apps/web/components/home-dashboard.tsx \
+            | grep -Fq '// FORRUM_HOME_NEWS_V44'
+          echo "Published FORRUM Home News and Graphite V44."
