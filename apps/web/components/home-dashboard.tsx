@@ -407,7 +407,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
   };
 
   return (
-    <div className="forrum-home-v16" data-home-reference="v36" data-home-polish="v38">
+    <div className="forrum-home-v16" data-home-reference="v36" data-home-polish="v39">
       <aside className="forrum-home-v16__tree">
         <div className="forrum-home-v16__side-head"><h2>Сообщества</h2></div>
         {tree.length ? (

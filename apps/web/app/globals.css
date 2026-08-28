@@ -19538,14 +19538,18 @@ html[data-forrum-theme="graphite"] {
 
 /* FORRUM_HOME_REFERENCE_V36_START
    Canonical homepage reference geometry.
-   V38 final reference alignment: approved density, richer topic rows, plain dense New topics table.
+   V39 viewport alignment: reference shell is centered against the viewport, not a constrained parent.
    Paper and Graphite share one layout; theme differences come only from --fvt-* tokens.
 */
 .forrum-home-v16 {
+  position: relative;
+  left: 50%;
   width: min(calc(100vw - 24px), 1680px);
   max-width: 1680px;
-  margin: 0 auto;
-  padding: 10px 12px 26px;
+  margin-left: 0;
+  margin-right: 0;
+  transform: translateX(-50%);
+  padding: 0 12px 26px;
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr) 326px;
   gap: 14px;
@@ -19585,7 +19589,7 @@ html[data-forrum-theme="graphite"] {
 
 .forrum-home-v16__side-head,
 .forrum-home-v16__panel-head {
-  min-height: 42px;
+  min-height: 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -19741,7 +19745,7 @@ html[data-forrum-theme="graphite"] {
 .forrum-home-v16__new-topic-section,
 .forrum-home-v16__new-topic-author,
 .forrum-home-v16__new-topic-last { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.forrum-home-v16__new-topic-title { display: block; color: var(--fvt-text); font-size: 12.5px; font-weight: 700; letter-spacing: -0.008em; }
+.forrum-home-v16__new-topic-title { display: block; color: var(--fvt-text); font-size: 12px; font-weight: 650; letter-spacing: -0.004em; }
 .forrum-home-v16__new-topic-number { text-align: center; color: var(--fvt-text); font-variant-numeric: tabular-nums; }
 .forrum-home-v16__new-topic-last { text-align: right; color: var(--fvt-faint); }
 .forrum-home-v16__new-topic-last b { color: var(--fvt-muted); font-weight: 550; }
