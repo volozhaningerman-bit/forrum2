@@ -1,0 +1,1491 @@
+name: FORRUM Home Composition V40
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-home-composition-v40
+  cancel-in-progress: false
+
+jobs:
+  homepage-v40:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Inventory deployed V39 baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          for path in \
+            apps/web/components/home-dashboard.tsx \
+            apps/web/app/globals.css \
+            apps/web/components/main-nav.tsx \
+            apps/web/app/page.tsx \
+            apps/api/src/home/home.service.ts \
+            apps/api/prisma/schema.prisma \
+            scripts/home-paper-graphite-v16-check.mjs \
+            scripts/home-reference-check.mjs \
+            scripts/home-scale-polish-check.mjs
+          do
+            test -f "$path"
+          done
+
+          grep -Fq \
+            'data-home-polish="v39"' \
+            apps/web/components/home-dashboard.tsx
+
+          # Approved tree interaction is frozen.
+          grep -Fq \
+            'event.target !== event.currentTarget' \
+            apps/web/components/home-dashboard.tsx
+          grep -Fq \
+            'data-expandable={hasChildren ? '"'"'true'"'"' : undefined}' \
+            apps/web/components/home-dashboard.tsx
+
+          count="$(
+            grep -F \
+              'href={`/communities/${node.slug}`}' \
+              apps/web/components/home-dashboard.tsx |
+            wc -l |
+            tr -d ' '
+          )"
+          test "$count" = "1"
+
+          # Product navigation stays real FORRUM navigation.
+          grep -Fq "['/services', 'Услуги']" apps/web/components/main-nav.tsx
+          grep -Fq "['/media', 'Медиа']" apps/web/components/main-nav.tsx
+          grep -Fq "['/news', 'Новости']" apps/web/components/main-nav.tsx
+
+          # Confirm the current real schema already contains the entities V40 uses.
+          grep -Fq 'model Publication {' apps/api/prisma/schema.prisma
+          grep -Fq 'model CommunityPoll {' apps/api/prisma/schema.prisma
+          grep -Fq 'enum VoteClass {' apps/api/prisma/schema.prisma
+          grep -Fq 'model CommunityProposal {' apps/api/prisma/schema.prisma
+
+          {
+            echo "## FORRUM Home Composition V40"
+            echo
+            echo "Four-screen visual audit: deployed Paper/Graphite V39 vs approved Paper/Graphite references."
+            echo
+            echo "| Area | Visible V39 difference | V40 correction |"
+            echo "|---|---|---|"
+            echo "| Overall width | 1680px max makes the UI look like a miniature site inside a 1920px screen | near-full viewport shell, max 1920px, 10px outer target margin |"
+            echo "| Vertical density | Discussed is empty and Actual has one item, leaving a large empty lower half | real discussed ranking from existing publications + real Actual composition |"
+            echo "| Polls | frontend supports rich rows but home overview exposes only one summary without options | existing /home/overview now exposes up to 3 real open polls with option vote counts |"
+            echo "| Weekly members | UI/backend already exist; can be empty when no 7-day score exists | preserve honest empty state; no fake users |"
+            echo "| Typography | too much bold text | lower heading/topic/tree weights, denser New topics rows |"
+            echo "| Graphite | page is too black and text too white | lighter graphite page levels + softer text tokens |"
+            echo "| Paper | page is too gray/dark compared with reference | lighter warm-paper page/surface tokens |"
+            echo "| Header | 64px base rhythm is heavier than reference | edit original header/nav heights to 56px |"
+            echo "| Tree | interaction is approved | preserve interaction exactly; only typography/rhythm changes |"
+            echo
+            echo "Backend availability:"
+            echo "- Discussed topics: schema already has publications/comments/reactions; V40 uses those real records."
+            echo "- Active polls: schema already has CommunityPoll/PollOption/PollVote; V40 exposes existing real records."
+            echo "- Weekly rating: backend already calculates 7-day likes/activity; if it is empty, the runtime data is genuinely empty."
+            echo "- No new route, entity, schema field or fake record is introduced."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Write V40 composition patch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > /tmp/forrum-home-composition-v40.py <<'PY'
+          from pathlib import Path
+          import re
+
+          HOME = Path('apps/web/components/home-dashboard.tsx')
+          CSS = Path('apps/web/app/globals.css')
+          SERVICE = Path('apps/api/src/home/home.service.ts')
+          CHECK_HOME = Path('scripts/home-paper-graphite-v16-check.mjs')
+          CHECK_REFERENCE = Path('scripts/home-reference-check.mjs')
+          CHECK_SCALE = Path('scripts/home-scale-polish-check.mjs')
+
+          for path in (HOME, CSS, SERVICE, CHECK_HOME, CHECK_REFERENCE, CHECK_SCALE):
+              if not path.exists():
+                  raise SystemExit(f'V40 required source missing: {path}')
+
+          home = HOME.read_text(encoding='utf-8')
+          css = CSS.read_text(encoding='utf-8')
+          service = SERVICE.read_text(encoding='utf-8')
+          important_before = css.count('!important')
+
+          OLD_MARKER = 'data-home-polish="v39"'
+          NEW_MARKER = 'data-home-polish="v40"'
+          CSS_START = '/* FORRUM_HOME_REFERENCE_V36_START'
+          CSS_END = '/* FORRUM_HOME_REFERENCE_V36_END */'
+          THEME_START = '/* FORRUM_VISUAL_THEME_START'
+          THEME_END = '/* FORRUM_VISUAL_THEME_END */'
+          SHELL_START = '/* FORRUM_GLOBAL_SHELL_V16_1_START'
+          SHELL_END = '/* FORRUM_GLOBAL_SHELL_V16_1_END */'
+          DATA_MARKER = '// FORRUM_HOME_COMPOSITION_V40_DATA'
+
+
+          def replace_once(source: str, old: str, new: str, label: str) -> str:
+              count = source.count(old)
+              if count != 1:
+                  raise SystemExit(f'V40 expected one {label}; found {count}.')
+              return source.replace(old, new, 1)
+
+
+          def block_bounds(source: str, start_marker: str, end_marker: str):
+              start = source.find(start_marker)
+              end = source.find(end_marker, start)
+              if start < 0 or end < 0:
+                  raise SystemExit(f'V40 block missing: {start_marker}')
+              end += len(end_marker)
+              return start, end, source[start:end]
+
+
+          def replace_in_block(source: str, start_marker: str, end_marker: str, old: str, new: str, label: str):
+              start, end, block = block_bounds(source, start_marker, end_marker)
+              block = replace_once(block, old, new, label)
+              return source[:start] + block + source[end:]
+
+
+          def verify_tree(source: str):
+              for marker in (
+                  'MouseEvent<HTMLDivElement>',
+                  'event.target !== event.currentTarget',
+                  "data-expandable={hasChildren ? 'true' : undefined}",
+                  'aria-label={`Открыть сообщество ${node.name}`}',
+              ):
+                  if marker not in source:
+                      raise SystemExit(f'V40 tree regression: {marker}')
+              if source.count('href={`/communities/${node.slug}`}') != 1:
+                  raise SystemExit('V40 tree navigation must stay only on folder + name.')
+
+
+          # Idempotent verification path.
+          if NEW_MARKER in home and DATA_MARKER in service:
+              verify_tree(home)
+              print('FORRUM Home Composition V40 already applied.')
+              raise SystemExit(0)
+
+          if OLD_MARKER not in home:
+              raise SystemExit('V40 requires successfully deployed V39 homepage baseline.')
+
+          verify_tree(home)
+          home = replace_once(home, OLD_MARKER, NEW_MARKER, 'homepage polish marker')
+
+          # ------------------------------------------------------------------
+          # REAL HOME DATA: existing /home/overview is expanded, no new route/schema.
+          # ------------------------------------------------------------------
+          service = replace_once(
+              service,
+              '  ReactionType,\n} from \'../generated/prisma/client.js\';',
+              '  ReactionType,\n  VoteClass,\n} from \'../generated/prisma/client.js\';',
+              'VoteClass import',
+          )
+
+          service = replace_once(
+              service,
+              "const onlineRecordKey = 'home.recordOnline';\n",
+              """const onlineRecordKey = 'home.recordOnline';
+
+          function homeExcerpt(value: string) {
+            const normalized = value.replace(/\\s+/g, ' ').trim();
+            if (!normalized) return 'Без описания.';
+            return normalized.length > 180
+              ? `${normalized.slice(0, 177).trimEnd()}...`
+              : normalized;
+          }
+          """,
+              'home excerpt helper',
+          )
+
+          service = replace_once(
+              service,
+              '      poll,\n      proposal,',
+              '      polls,\n      proposal,',
+              'poll Promise result name',
+          )
+
+          old_poll_query = """this.prisma.communityPoll.findFirst({
+                  where: {
+                    status: PollStatus.OPEN,
+                    closesAt: { gt: now },
+                  },
+                  orderBy: { createdAt: 'desc' },
+                  include: {
+                    community: {
+                      select: {
+                        slug: true,
+                        name: true,
+                        accentColor: true,
+                      },
+                    },
+                    options: {
+                      orderBy: { position: 'asc' },
+                      include: {
+                        _count: { select: { votes: true } },
+                      },
+                    },
+                    votes: {
+                      where: {
+                        userId:
+                          userId ??
+                          '00000000-0000-0000-0000-000000000000',
+                      },
+                      take: 1,
+                    },
+                  },
+                }),"""
+
+          new_poll_query = """this.prisma.communityPoll.findMany({
+                  where: {
+                    status: PollStatus.OPEN,
+                    closesAt: { gt: now },
+                  },
+                  orderBy: { closesAt: 'asc' },
+                  take: 3,
+                  include: {
+                    community: {
+                      select: {
+                        slug: true,
+                        name: true,
+                        accentColor: true,
+                      },
+                    },
+                    options: {
+                      orderBy: { position: 'asc' },
+                      include: {
+                        votes: {
+                          select: { voteClass: true },
+                        },
+                      },
+                    },
+                    votes: {
+                      where: {
+                        userId:
+                          userId ??
+                          '00000000-0000-0000-0000-000000000000',
+                      },
+                      take: 1,
+                    },
+                  },
+                }),"""
+          service = replace_once(service, old_poll_query, new_poll_query, 'home active polls query')
+
+          # Existing schema already has topics/comments/reactions. Use them directly for
+          # a truthful discussed block instead of relying on an empty generic feed mode.
+          activity_anchor = '    const activity = new Map<string, WeeklyAccumulator>();\n'
+          discussed_query = """    // FORRUM_HOME_COMPOSITION_V40_DATA
+              const discussedSince = new Date(
+                now.getTime() - 30 * 24 * 60 * 60 * 1000,
+              );
+
+              const discussedCandidates = await this.prisma.publication.findMany({
+                where: {
+                  status: PublicationStatus.PUBLISHED,
+                  format: PublicationFormat.TOPIC,
+                  lastActivityAt: { gte: discussedSince },
+                },
+                orderBy: { lastActivityAt: 'desc' },
+                take: 30,
+                select: {
+                  id: true,
+                  slug: true,
+                  type: true,
+                  title: true,
+                  body: true,
+                  viewCount: true,
+                  createdAt: true,
+                  lastActivityAt: true,
+                  author: {
+                    select: {
+                      username: true,
+                      displayName: true,
+                      avatarUrl: true,
+                    },
+                  },
+                  community: {
+                    select: {
+                      slug: true,
+                      name: true,
+                      accentColor: true,
+                      avatarUrl: true,
+                    },
+                  },
+                  comments: {
+                    where: { hiddenAt: null },
+                    orderBy: { createdAt: 'desc' },
+                    take: 1,
+                    select: {
+                      createdAt: true,
+                      author: {
+                        select: {
+                          username: true,
+                          displayName: true,
+                        },
+                      },
+                    },
+                  },
+                  _count: {
+                    select: {
+                      comments: { where: { hiddenAt: null } },
+                      reactions: true,
+                    },
+                  },
+                },
+              });
+
+              const discussed = discussedCandidates
+                .map((item) => ({
+                  id: item.id,
+                  slug: item.slug,
+                  type: item.type,
+                  title: item.title,
+                  excerpt: homeExcerpt(item.body),
+                  viewCount: item.viewCount,
+                  createdAt: item.createdAt,
+                  lastActivityAt: item.lastActivityAt,
+                  commentCount: item._count.comments,
+                  reactionCount: item._count.reactions,
+                  author: item.author,
+                  community: item.community,
+                  lastComment: item.comments[0] ?? null,
+                  score:
+                    item._count.comments * 12 +
+                    item._count.reactions * 5 +
+                    Math.min(item.viewCount, 5000) / 50,
+                }))
+                .sort(
+                  (left, right) =>
+                    right.score - left.score ||
+                    right.lastActivityAt.getTime() - left.lastActivityAt.getTime(),
+                )
+                .slice(0, 5)
+                .map(({ score: _score, ...item }) => item);
+
+          """
+          service = replace_once(service, activity_anchor, discussed_query + activity_anchor, 'discussed data insertion')
+
+          old_return_poll = """      poll: poll
+                  ? {
+                      id: poll.id,
+                      title: poll.title,
+                      closesAt: poll.closesAt,
+                      community: poll.community,
+                      totalVotes: poll.options.reduce(
+                        (sum, option) =>
+                          sum + option._count.votes,
+                        0,
+                      ),
+                      viewerVoted: poll.votes.length > 0,
+                    }
+                  : null,"""
+          new_return_poll = """      discussed,
+                activePolls: polls.map((poll) => ({
+                  id: poll.id,
+                  title: poll.title,
+                  closesAt: poll.closesAt,
+                  status: poll.status,
+                  createdAt: poll.createdAt,
+                  community: poll.community,
+                  options: poll.options.map((option) => ({
+                    id: option.id,
+                    label: option.label,
+                    position: option.position,
+                    bindingVotes: option.votes.filter(
+                      (vote) => vote.voteClass === VoteClass.BINDING,
+                    ).length,
+                    advisoryVotes: option.votes.filter(
+                      (vote) => vote.voteClass === VoteClass.ADVISORY,
+                    ).length,
+                  })),
+                })),
+                // Backward-compatible single poll summary for existing consumers.
+                poll: polls[0]
+                  ? {
+                      id: polls[0].id,
+                      title: polls[0].title,
+                      closesAt: polls[0].closesAt,
+                      community: polls[0].community,
+                      totalVotes: polls[0].options.reduce(
+                        (sum, option) => sum + option.votes.length,
+                        0,
+                      ),
+                      viewerVoted: polls[0].votes.length > 0,
+                    }
+                  : null,"""
+          service = replace_once(service, old_return_poll, new_return_poll, 'overview poll return contract')
+
+          # ------------------------------------------------------------------
+          # FRONTEND DATA CONTRACT + real composition.
+          # ------------------------------------------------------------------
+          home_type_anchor = """type HomeOverview = {
+            stats: {"""
+          home_type_new = """type HomeDiscussedTopic = {
+            id: string;
+            slug: string;
+            type: string;
+            title: string | null;
+            excerpt: string;
+            viewCount: number;
+            createdAt: string;
+            lastActivityAt?: string;
+            commentCount: number;
+            reactionCount: number;
+            author: {
+              username: string;
+              displayName: string;
+              avatarUrl?: string | null;
+            };
+            community: {
+              slug: string;
+              name: string;
+              accentColor?: string;
+              avatarUrl?: string | null;
+            };
+            lastComment?: {
+              createdAt: string;
+              author: { username: string; displayName: string };
+            } | null;
+          };
+
+          type HomeProposal = {
+            id: string;
+            name: string;
+            description: string;
+            supportCount: number;
+            author: { username: string; displayName: string };
+          };
+
+          type HomeOverview = {
+            discussed?: HomeDiscussedTopic[];
+            activePolls?: PollItem[];
+            proposal?: HomeProposal | null;
+            stats: {"""
+          home = replace_once(home, home_type_anchor, home_type_new, 'HomeOverview composition types')
+
+          old_last_reply = 'function lastReply(item: PublicationCardData) {'
+          new_last_reply = """function lastReply(item: {
+            lastComment?: { createdAt: string; author: { username: string } } | null;
+            author: { username: string };
+            lastActivityAt?: string;
+            createdAt: string;
+          }) {"""
+          home = replace_once(home, old_last_reply, new_last_reply, 'generic lastReply contract')
+
+          home = replace_once(
+              home,
+              'function DiscussedTopic({ item }: { item: PublicationCardData }) {',
+              'function DiscussedTopic({ item }: { item: PublicationCardData | HomeDiscussedTopic }) {',
+              'DiscussedTopic real home data type',
+          )
+
+          old_data_state = """const discussed = topicRows(initialData.feed);
+            const newest = topicRows(initialData.newFeed);
+            const activePolls = useMemo(
+              () => (initialData.polls ?? [])
+                .filter((poll) => poll.status.toUpperCase() === 'OPEN' && new Date(poll.closesAt).getTime() > Date.now())
+                .sort((a, b) => new Date(a.closesAt).getTime() - new Date(b.closesAt).getTime())
+                .slice(0, 3),
+              [initialData.polls],
+            );
+            const announcements = (initialData.announcements ?? []).slice(0, 2);
+            const weekly = initialData.overview?.weekly[weeklyMode] ?? [];
+            const stats = initialData.overview?.stats;
+          """
+          new_data_state = """const discussed = initialData.overview?.discussed?.length
+              ? initialData.overview.discussed
+              : topicRows(initialData.feed);
+            const newest = topicRows(initialData.newFeed);
+            const activePolls = useMemo(() => {
+              const now = Date.now();
+              const merged = [
+                ...(initialData.overview?.activePolls ?? []),
+                ...(initialData.polls ?? []),
+              ];
+              const unique = new Map<string, PollItem>();
+
+              for (const poll of merged) {
+                if (
+                  poll.status.toUpperCase() !== 'OPEN' ||
+                  new Date(poll.closesAt).getTime() <= now
+                ) {
+                  continue;
+                }
+                if (!unique.has(poll.id)) unique.set(poll.id, poll);
+              }
+
+              return [...unique.values()]
+                .sort(
+                  (a, b) =>
+                    new Date(a.closesAt).getTime() -
+                    new Date(b.closesAt).getTime(),
+                )
+                .slice(0, 3);
+            }, [initialData.overview?.activePolls, initialData.polls]);
+
+            const announcements = initialData.announcements ?? [];
+            const actualPoll = activePolls[0];
+            const actualProposal = initialData.overview?.proposal ?? null;
+            const actualReserved = Number(Boolean(actualPoll)) + Number(Boolean(actualProposal));
+            const actualAnnouncements = announcements.slice(0, Math.max(0, 3 - actualReserved));
+            const actualTopicSlots = Math.max(
+              0,
+              3 - actualReserved - actualAnnouncements.length,
+            );
+            const actualTopics = newest.slice(0, actualTopicSlots);
+            const actualCount =
+              actualAnnouncements.length +
+              actualTopics.length +
+              Number(Boolean(actualPoll)) +
+              Number(Boolean(actualProposal));
+
+            const weekly = initialData.overview?.weekly[weeklyMode] ?? [];
+            const stats = initialData.overview?.stats;
+          """
+          home = replace_once(home, old_data_state, new_data_state, 'homepage real data composition')
+
+          home = replace_once(
+              home,
+              'Обсуждаемых тем за последние 24 часа пока нет.',
+              'Обсуждаемых тем пока нет.',
+              'truthful discussed empty state',
+          )
+
+          old_actual = """          <div className=\"forrum-home-v16__actual-list\">
+                      {announcements.map((item) => (
+                        <Link className=\"forrum-home-v16__actual\" href={`/p/${item.slug}`} key={item.id}>
+                          <CommunityMark name={item.community.name} url={item.community.avatarUrl ?? topicVisual(item.community.slug)} size={36} />
+                          <span><strong>{item.title || 'Объявление'}</strong><small>{relativeTime(item.createdAt)}</small></span>
+                        </Link>
+                      ))}
+                      {activePolls[0] && (
+                        <Link className=\"forrum-home-v16__actual\" href=\"/events?tab=polls\">
+                          <CommunityMark name={activePolls[0].community.name} url={topicVisual(activePolls[0].community.slug)} size={36} />
+                          <span><strong>Активное голосование</strong><small>{activePolls[0].title}</small></span>
+                        </Link>
+                      )}
+                      {!announcements.length && !activePolls.length && (
+                        <p className=\"forrum-home-v16__empty\">Важных обновлений сейчас нет.</p>
+                      )}
+                    </div>"""
+          new_actual = """          <div className=\"forrum-home-v16__actual-list\">
+                      {actualAnnouncements.map((item) => (
+                        <Link className=\"forrum-home-v16__actual\" href={`/p/${item.slug}`} key={`announcement-${item.id}`}>
+                          <CommunityMark name={item.community.name} url={item.community.avatarUrl ?? topicVisual(item.community.slug)} size={36} />
+                          <span><strong>{item.title || 'Объявление'}</strong><small>Новость · {relativeTime(item.createdAt)}</small></span>
+                        </Link>
+                      ))}
+                      {actualPoll && (
+                        <Link className=\"forrum-home-v16__actual\" href=\"/events?tab=polls\">
+                          <CommunityMark name={actualPoll.community.name} url={topicVisual(actualPoll.community.slug)} size={36} />
+                          <span><strong>Активное голосование</strong><small>{actualPoll.title}</small></span>
+                        </Link>
+                      )}
+                      {actualProposal && (
+                        <Link className=\"forrum-home-v16__actual\" href=\"/communities/proposals\">
+                          <CommunityMark name=\"Предложения\" url=\"/forrum-assets/topic-forrum.svg\" size={36} />
+                          <span><strong>Предложен раздел: {actualProposal.name}</strong><small>@{actualProposal.author.username} · {formatCount(actualProposal.supportCount)} поддержали</small></span>
+                        </Link>
+                      )}
+                      {actualTopics.map((item) => (
+                        <Link className=\"forrum-home-v16__actual\" href={`/p/${item.slug}`} key={`topic-${item.id}`}>
+                          <CommunityMark name={item.community.name} url={item.community.avatarUrl ?? topicVisual(item.community.slug)} size={36} />
+                          <span><strong>{item.title?.trim() || 'Новая тема'}</strong><small>Новая тема · {item.community.name}</small></span>
+                        </Link>
+                      ))}
+                      {!actualCount && (
+                        <p className=\"forrum-home-v16__empty\">Важных обновлений сейчас нет.</p>
+                      )}
+                    </div>"""
+          home = replace_once(home, old_actual, new_actual, 'rich Actual rail')
+
+          # Add small stat glyphs without adding a new CSS override layer.
+          home = replace_once(
+              home,
+              '<div><dt>Сообщества</dt><dd>{formatMetric(stats?.communities)}</dd></div>\n            <div><dt>Тем создано</dt><dd>{formatMetric(stats?.topics)}</dd></div>\n            <div><dt>Сообщений</dt><dd>{formatMetric(stats?.messages)}</dd></div>\n            <div><dt>Пользователей онлайн</dt><dd>{formatMetric(stats?.usersOnline)}</dd></div>',
+              '<div><dt><span aria-hidden="true">◇</span>Сообщества</dt><dd>{formatMetric(stats?.communities)}</dd></div>\n            <div><dt><span aria-hidden="true">▣</span>Тем создано</dt><dd>{formatMetric(stats?.topics)}</dd></div>\n            <div><dt><span aria-hidden="true">▤</span>Сообщений</dt><dd>{formatMetric(stats?.messages)}</dd></div>\n            <div><dt><span aria-hidden="true">♙</span>Пользователей онлайн</dt><dd>{formatMetric(stats?.usersOnline)}</dd></div>',
+              'FORRUM today iconography',
+          )
+
+          # ------------------------------------------------------------------
+          # GEOMETRY + DENSITY: edit canonical rules, no new V40 override block.
+          # ------------------------------------------------------------------
+          start, end, block = block_bounds(css, CSS_START, CSS_END)
+
+          block = replace_once(
+              block,
+              """   Canonical homepage reference geometry.
+             V39 viewport alignment: reference shell is centered against the viewport, not a constrained parent.
+             Paper and Graphite share one layout; theme differences come only from --fvt-* tokens.""",
+              """   Canonical homepage reference geometry.
+             V40 composition alignment: near-full viewport shell, real dense home data, calmer typography.
+             Paper and Graphite share one layout; theme differences come only from --fvt-* tokens.""",
+              'V40 canonical comment',
+          )
+          block = replace_once(
+              block,
+              """  width: min(calc(100vw - 24px), 1680px);
+            max-width: 1680px;""",
+              """  width: min(calc(100vw - 20px), 1920px);
+            max-width: 1920px;""",
+              'near-full viewport width',
+          )
+          block = replace_once(block, '  gap: 14px;\n  align-items: start;', '  gap: 12px;\n  align-items: start;', 'main grid gap')
+          block = replace_once(
+              block,
+              '.forrum-home-v16__center,\n.forrum-home-v16__rail { min-width: 0; display: grid; gap: 14px; }',
+              '.forrum-home-v16__center,\n.forrum-home-v16__rail { min-width: 0; display: grid; gap: 10px; }',
+              'vertical panel rhythm',
+          )
+          block = replace_once(
+              block,
+              '  font-weight: 750;\n  letter-spacing: 0.02em;',
+              '  font-weight: 690;\n  letter-spacing: 0.014em;',
+              'panel heading weight',
+          )
+          block = replace_once(
+              block,
+              '.forrum-home-v16__tree-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12.5px; font-weight: 610; }\n.forrum-home-v16__tree-root > .forrum-home-v16__tree-node > .forrum-home-v16__tree-row .forrum-home-v16__tree-name { font-size: 13px; font-weight: 740; }',
+              '.forrum-home-v16__tree-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 540; }\n.forrum-home-v16__tree-root > .forrum-home-v16__tree-node > .forrum-home-v16__tree-row .forrum-home-v16__tree-name { font-size: 12.5px; font-weight: 650; }',
+              'tree typography rhythm',
+          )
+          block = replace_once(
+              block,
+              '.forrum-home-v16__topic-title strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fvt-text); font-size: 14px; font-weight: 720; letter-spacing: -0.01em; }',
+              '.forrum-home-v16__topic-title strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fvt-text); font-size: 13.5px; font-weight: 650; letter-spacing: -0.006em; }',
+              'discussed title weight',
+          )
+          block = replace_once(
+              block,
+              '.forrum-home-v16__new-topic-head { min-height: 32px;',
+              '.forrum-home-v16__new-topic-head { min-height: 28px;',
+              'new topics head density',
+          )
+          block = replace_once(
+              block,
+              '.forrum-home-v16__new-topic { min-height: 39px;',
+              '.forrum-home-v16__new-topic { min-height: 32px;',
+              'new topics row density',
+          )
+          block = replace_once(
+              block,
+              '.forrum-home-v16__new-topic-title { display: block; color: var(--fvt-text); font-size: 12px; font-weight: 650; letter-spacing: -0.004em; }',
+              '.forrum-home-v16__new-topic-title { display: block; color: var(--fvt-text); font-size: 11.75px; font-weight: 580; letter-spacing: -0.002em; }',
+              'new topics calmer hierarchy',
+          )
+          block = replace_once(
+              block,
+              '.forrum-home-v16__actual strong { overflow: hidden; text-overflow: ellipsis; color: var(--fvt-text); font-size: 12.5px; line-height: 1.22; font-weight: 700; }',
+              '.forrum-home-v16__actual strong { overflow: hidden; text-overflow: ellipsis; color: var(--fvt-text); font-size: 12.25px; line-height: 1.22; font-weight: 620; }',
+              'Actual typography weight',
+          )
+          block = replace_once(
+              block,
+              '.forrum-home-v16__stats dt { color: var(--fvt-muted); font-size: 11.5px; }',
+              '.forrum-home-v16__stats dt { display: flex; align-items: center; gap: 8px; color: var(--fvt-muted); font-size: 11.5px; }\n.forrum-home-v16__stats dt > span { width: 13px; color: var(--fvt-text); text-align: center; font-size: 12px; }',
+              'stats icon rhythm',
+          )
+          # Keep desktop three-column geometry at 1480; only collapse when genuinely narrow.
+          block = replace_once(
+              block,
+              '@media (max-width: 1480px) {\n  .forrum-home-v16 { grid-template-columns: 276px minmax(0, 1fr) 292px; gap: 12px; }',
+              '@media (max-width: 1480px) {\n  .forrum-home-v16 { grid-template-columns: 276px minmax(0, 1fr) 292px; gap: 10px; }',
+              'narrow desktop gap',
+          )
+          css = css[:start] + block + css[end:]
+
+          # ------------------------------------------------------------------
+          # THEME: change token values in the existing token block only.
+          # ------------------------------------------------------------------
+          t0, t1, theme = block_bounds(css, THEME_START, THEME_END)
+          for old, new, label in (
+              ('--fvt-page: #ebe9e4;', '--fvt-page: #f7f5f1;', 'Paper page'),
+              ('--fvt-surface: #f3f1ec;', '--fvt-surface: #faf8f4;', 'Paper surface'),
+              ('--fvt-panel: #f8f6f1;', '--fvt-panel: #faf8f3;', 'Paper panel'),
+              ('--fvt-panel-soft: #efede7;', '--fvt-panel-soft: #f2efe9;', 'Paper panel soft'),
+              ('--fvt-line: #c4c1b9;', '--fvt-line: #d1cdc4;', 'Paper line'),
+              ('--fvt-line-strong: #8f8b82;', '--fvt-line-strong: #99958c;', 'Paper line strong'),
+              ('--fvt-text: #202224;', '--fvt-text: #292a29;', 'Paper text'),
+              ('--fvt-muted: #666760;', '--fvt-muted: #6b6963;', 'Paper muted'),
+              ('--fvt-faint: #8b8981;', '--fvt-faint: #908c84;', 'Paper faint'),
+              ('--fvt-hover: #eeece6;', '--fvt-hover: #f1eee8;', 'Paper hover'),
+              ('--fvt-icon-bg: #f5f3ee;', '--fvt-icon-bg: #f7f4ee;', 'Paper icon background'),
+              ('--fvt-page: #101316;', '--fvt-page: #151a1d;', 'Graphite page'),
+              ('--fvt-surface: #15191c;', '--fvt-surface: #181d20;', 'Graphite surface'),
+              ('--fvt-panel: #171b1e;', '--fvt-panel: #191e21;', 'Graphite panel'),
+              ('--fvt-panel-soft: #121619;', '--fvt-panel-soft: #161b1e;', 'Graphite panel soft'),
+              ('--fvt-line: #343a3f;', '--fvt-line: #363d42;', 'Graphite line'),
+              ('--fvt-line-strong: #596168;', '--fvt-line-strong: #596269;', 'Graphite line strong'),
+              ('--fvt-text: #e6e8e9;', '--fvt-text: #d7dbdd;', 'Graphite text'),
+              ('--fvt-muted: #a1a7ac;', '--fvt-muted: #9aa2a7;', 'Graphite muted'),
+              ('--fvt-faint: #7e858b;', '--fvt-faint: #767f85;', 'Graphite faint'),
+              ('--fvt-hover: #1b2024;', '--fvt-hover: #1e2428;', 'Graphite hover'),
+              ('--fvt-icon-bg: #121619;', '--fvt-icon-bg: #171c1f;', 'Graphite icon background'),
+          ):
+              theme = replace_once(theme, old, new, label)
+          css = css[:t0] + theme + css[t1:]
+
+          # ------------------------------------------------------------------
+          # GLOBAL SHELL: edit source selectors instead of overriding them.
+          # ------------------------------------------------------------------
+          if SHELL_START in css and SHELL_END in css:
+              s0, s1, shell = block_bounds(css, SHELL_START, SHELL_END)
+              shell = replace_once(shell, '  min-height: 58px;', '  min-height: 56px;', 'header shell height')
+              old_shell_width = """  width: min(calc(100% - 32px), 1680px) !important;
+            max-width: 1680px !important;"""
+              new_shell_width = """  width: min(calc(100% - 20px), 1920px) !important;
+            max-width: 1920px !important;"""
+              if shell.count(old_shell_width) != 2:
+                  raise SystemExit(f'V40 expected two shell width rules; found {shell.count(old_shell_width)}.')
+              shell = shell.replace(old_shell_width, new_shell_width)
+              css = css[:s0] + shell + css[s1:]
+
+          # Base header geometry exists outside the token/canonical blocks. Edit it.
+          css = replace_once(css, '.nav { min-height: 64px; display: flex; gap: 20px; align-items: center; }', '.nav { min-height: 56px; display: flex; gap: 20px; align-items: center; }', 'base nav height')
+          css = replace_once(css, '.main-links { gap:30px; height:64px; }', '.main-links { gap:28px; height:56px; }', 'main links height')
+          css = replace_once(css, '.main-links a { height:64px; display:flex; align-items:center; position:relative; font-size:15px; }', '.main-links a { height:56px; display:flex; align-items:center; position:relative; font-size:14px; }', 'main link height')
+
+          # ------------------------------------------------------------------
+          # Correct old validators: protect product/data/layout properties, not stale V36 pixels.
+          # ------------------------------------------------------------------
+          CHECK_HOME.write_text("""import fs from 'node:fs';
+
+          const paths = {
+            home: 'apps/web/components/home-dashboard.tsx',
+            css: 'apps/web/app/globals.css',
+            page: 'apps/web/app/page.tsx',
+            service: 'apps/api/src/home/home.service.ts',
+          };
+
+          for (const path of Object.values(paths)) {
+            if (!fs.existsSync(path)) throw new Error(`Homepage contract file missing: ${path}`);
+          }
+
+          const home = fs.readFileSync(paths.home, 'utf8');
+          const css = fs.readFileSync(paths.css, 'utf8');
+          const page = fs.readFileSync(paths.page, 'utf8');
+          const service = fs.readFileSync(paths.service, 'utf8');
+
+          for (const required of [
+            'Обсуждаемые темы', 'Новые темы', 'Активные голосования',
+            'Участники недели', 'FORRUM сегодня',
+            'event.target !== event.currentTarget',
+            'initialData.overview?.discussed',
+            'initialData.overview?.activePolls',
+          ]) {
+            if (!home.includes(required)) throw new Error(`Homepage product element missing: ${required}`);
+          }
+
+          for (const required of ["'/home/overview'", "'/feed?mode=new'", "'/announcements'"]) {
+            if (!page.includes(required)) throw new Error(`Homepage server source missing: ${required}`);
+          }
+
+          for (const required of ['discussedCandidates', 'activePolls: polls.map', 'VoteClass.BINDING']) {
+            if (!service.includes(required)) throw new Error(`Homepage real-data contract missing: ${required}`);
+          }
+
+          const startMarker = '/* FORRUM_HOME_REFERENCE_V36_START';
+          const endMarker = '/* FORRUM_HOME_REFERENCE_V36_END */';
+          const start = css.indexOf(startMarker);
+          const end = css.indexOf(endMarker, start);
+          if (start < 0 || end < 0) throw new Error('Canonical homepage CSS source missing.');
+          const block = css.slice(start, end);
+          const outside = css.slice(0, start) + css.slice(end + endMarker.length);
+
+          for (const required of [
+            'width: min(calc(100vw - 20px), 1920px)',
+            'grid-template-columns: 300px minmax(0, 1fr) 326px',
+            '.forrum-home-v16__tree-children::before',
+            '.forrum-home-v16__discussed',
+            '.forrum-home-v16__poll-option',
+            '@media (max-width: 860px)',
+          ]) {
+            if (!block.includes(required)) throw new Error(`Homepage layout contract missing: ${required}`);
+          }
+
+          if (outside.includes('.forrum-home-v16')) {
+            throw new Error('Competing homepage CSS exists outside canonical source.');
+          }
+
+          for (const forbidden of ['!important', 'box-shadow:', 'backdrop-filter:']) {
+            if (block.includes(forbidden)) throw new Error(`Homepage canonical CSS forbidden pattern: ${forbidden}`);
+          }
+
+          console.log('FORRUM Home product contract passed: real data, near-full shell, dense responsive composition.');
+          """, encoding='utf-8')
+
+          CHECK_REFERENCE.write_text("""import fs from 'node:fs';
+
+          const nav = fs.readFileSync('apps/web/components/main-nav.tsx', 'utf8');
+          const home = fs.readFileSync('apps/web/components/home-dashboard.tsx', 'utf8');
+          const css = fs.readFileSync('apps/web/app/globals.css', 'utf8');
+
+          const linksMatch = nav.match(/const\\s+links\\s*=\\s*\\[([\\s\\S]*?)\\]\\s*as\\s+const\\s*;/);
+          if (!linksMatch) throw new Error('Could not isolate MainNav product links.');
+          const tuples = [...linksMatch[1].matchAll(/\\[\\s*['\"]([^'\"]+)['\"]\\s*,\\s*['\"]([^'\"]+)['\"]\\s*\\]/g)].map((m) => [m[1], m[2]]);
+          const expected = [['/','Главная'],['/communities','Сообщества'],['/services','Услуги'],['/media','Медиа'],['/news','Новости']];
+          if (JSON.stringify(tuples) !== JSON.stringify(expected)) throw new Error(`MainNav product contract mismatch: ${JSON.stringify(tuples)}`);
+          if (!nav.includes("api<ActivityItem[]>('/news')")) throw new Error('Existing News polling was removed.');
+          if (nav.includes('String(href)')) throw new Error('String(href) workaround returned.');
+
+          for (const marker of [
+            'data-home-reference="v36"', 'data-home-polish="v40"',
+            'forrum-home-v16__tree', 'forrum-home-v16__discussed',
+            'forrum-home-v16__new-topic-table', 'forrum-home-v16__poll-list',
+            'forrum-home-v16__weekly', 'forrum-home-v16__stats',
+          ]) {
+            if (!home.includes(marker)) throw new Error(`Reference structure missing: ${marker}`);
+          }
+
+          const start = css.indexOf('/* FORRUM_HOME_REFERENCE_V36_START');
+          const end = css.indexOf('/* FORRUM_HOME_REFERENCE_V36_END */', start);
+          if (start < 0 || end < 0) throw new Error('Canonical homepage CSS missing.');
+          const block = css.slice(start, end);
+
+          if (!block.includes('width: min(calc(100vw - 20px), 1920px)')) throw new Error('Homepage does not use reference-scale viewport width.');
+          if (!block.includes('grid-template-columns: 300px minmax(0, 1fr) 326px')) throw new Error('Three-column reference geometry missing.');
+          if (!block.includes('border-left: 1px dotted')) throw new Error('Visible community hierarchy missing.');
+
+          console.log('FORRUM reference contract passed: product navigation preserved; composition follows approved home geometry.');
+          """, encoding='utf-8')
+
+          CHECK_SCALE.write_text("""import fs from 'node:fs';
+          const css = fs.readFileSync('apps/web/app/globals.css', 'utf8');
+          const start = css.indexOf('/* FORRUM_HOME_REFERENCE_V36_START');
+          const end = css.indexOf('/* FORRUM_HOME_REFERENCE_V36_END */', start);
+          if (start < 0 || end < 0) throw new Error('Canonical homepage CSS missing.');
+          const block = css.slice(start, end);
+
+          for (const marker of [
+            'width: min(calc(100vw - 20px), 1920px)',
+            'grid-template-columns: 300px minmax(0, 1fr) 326px',
+            '.forrum-home-v16__discussed',
+            '.forrum-home-v16__new-topic',
+            '.forrum-home-v16__poll',
+            '.forrum-home-v16__weekly',
+            '@media (max-width: 1480px)',
+            '@media (max-width: 1240px)',
+            '@media (max-width: 860px)',
+            '@media (max-width: 560px)',
+          ]) {
+            if (!block.includes(marker)) throw new Error(`Homepage density/scale contract missing: ${marker}`);
+          }
+
+          console.log('FORRUM Home scale contract passed: wide desktop shell, dense functional rows, responsive collapse.');
+          """, encoding='utf-8')
+
+          # Authored whitespace only.
+          for path, content in ((HOME, home), (CSS, css), (SERVICE, service)):
+              normalized = '\n'.join(line.rstrip(' \t') for line in content.splitlines()) + '\n'
+              path.write_text(normalized, encoding='utf-8')
+
+          # ------------------------------------------------------------------
+          # FINAL IN-PATCH CONTRACT.
+          # ------------------------------------------------------------------
+          home = HOME.read_text(encoding='utf-8')
+          css = CSS.read_text(encoding='utf-8')
+          service = SERVICE.read_text(encoding='utf-8')
+          verify_tree(home)
+
+          for marker in (
+              NEW_MARKER,
+              'initialData.overview?.discussed',
+              'initialData.overview?.activePolls',
+              'actualTopics',
+              'Предложен раздел:',
+          ):
+              if marker not in home:
+                  raise SystemExit(f'V40 frontend composition missing: {marker}')
+
+          for marker in (
+              DATA_MARKER,
+              'discussedCandidates',
+              'activePolls: polls.map',
+              'VoteClass.BINDING',
+              'VoteClass.ADVISORY',
+          ):
+              if marker not in service:
+                  raise SystemExit(f'V40 backend real-data contract missing: {marker}')
+
+          _, _, final_block = block_bounds(css, CSS_START, CSS_END)
+          for marker in (
+              'V40 composition alignment:',
+              'width: min(calc(100vw - 20px), 1920px);',
+              'max-width: 1920px;',
+              'grid-template-columns: 300px minmax(0, 1fr) 326px;',
+              'gap: 12px;',
+              'min-height: 32px;',
+          ):
+              if marker not in final_block:
+                  raise SystemExit(f'V40 visual composition missing: {marker}')
+
+          if css.count('!important') != important_before:
+              raise SystemExit('V40 must not add a new !important layer.')
+
+          for forbidden in (
+              'html.dark .forrum-home-v16',
+              'html[data-theme="dark"] .forrum-home-v16',
+              'html[data-theme="graphite"] .forrum-home-v16',
+          ):
+              if forbidden in final_block:
+                  raise SystemExit(f'V40 theme-specific geometry forbidden: {forbidden}')
+
+          print('FORRUM Home Composition V40 applied: wide dense shell + real discussed/polls/actual data + calibrated Paper/Graphite.')
+          PY
+
+          python3 -m py_compile /tmp/forrum-home-composition-v40.py
+
+      - name: Apply V40 composition
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PYTHONDONTWRITEBYTECODE=1 \
+            python3 -S /tmp/forrum-home-composition-v40.py
+
+          git diff --check
+
+          changed="$(
+            git diff --name-only |
+            sort
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              apps/api/src/home/home.service.ts \
+              apps/web/app/globals.css \
+              apps/web/components/home-dashboard.tsx \
+              scripts/home-paper-graphite-v16-check.mjs \
+              scripts/home-reference-check.mjs \
+              scripts/home-scale-polish-check.mjs |
+            sort
+          )"
+
+          test "$changed" = "$expected"
+
+      - name: Audit V40 product data and visual contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git diff --check
+
+          changed="$(
+            git diff --name-only |
+            sort
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              apps/api/src/home/home.service.ts \
+              apps/web/app/globals.css \
+              apps/web/components/home-dashboard.tsx \
+              scripts/home-paper-graphite-v16-check.mjs \
+              scripts/home-reference-check.mjs \
+              scripts/home-scale-polish-check.mjs |
+            sort
+          )"
+
+          if [ "$changed" != "$expected" ]; then
+            echo "::error::V40 changed files outside the approved scope."
+            git diff --name-only
+            exit 1
+          fi
+
+          # Existing product navigation/routes stay untouched.
+          grep -Fq "['/services', 'Услуги']" apps/web/components/main-nav.tsx
+          grep -Fq "['/media', 'Медиа']" apps/web/components/main-nav.tsx
+          grep -Fq "['/news', 'Новости']" apps/web/components/main-nav.tsx
+          test -z "$(
+            git diff --name-only -- \
+              apps/web/components/main-nav.tsx \
+              apps/web/app/services \
+              apps/web/app/media \
+              apps/web/app/news \
+              apps/api/prisma/schema.prisma
+          )"
+
+          # Tree behavior stays exactly as approved.
+          grep -Fq \
+            'event.target !== event.currentTarget' \
+            apps/web/components/home-dashboard.tsx
+          grep -Fq \
+            'data-expandable={hasChildren ? '"'"'true'"'"' : undefined}' \
+            apps/web/components/home-dashboard.tsx
+          test "$(
+            grep -F 'href={`/communities/${node.slug}`}' \
+              apps/web/components/home-dashboard.tsx |
+            wc -l |
+            tr -d ' '
+          )" = "1"
+
+          # Macro geometry: first obvious screenshot difference.
+          grep -Fq \
+            'width: min(calc(100vw - 20px), 1920px);' \
+            apps/web/app/globals.css
+          grep -Fq \
+            'grid-template-columns: 300px minmax(0, 1fr) 326px;' \
+            apps/web/app/globals.css
+
+          # Real content density: second/third obvious screenshot differences.
+          grep -Fq \
+            'initialData.overview?.discussed' \
+            apps/web/components/home-dashboard.tsx
+          grep -Fq \
+            'initialData.overview?.activePolls' \
+            apps/web/components/home-dashboard.tsx
+          grep -Fq \
+            'actualTopics' \
+            apps/web/components/home-dashboard.tsx
+          grep -Fq \
+            'discussedCandidates' \
+            apps/api/src/home/home.service.ts
+          grep -Fq \
+            'activePolls: polls.map' \
+            apps/api/src/home/home.service.ts
+
+          # One canonical homepage source; no new V40 override layer.
+          test "$(
+            grep -F '/* FORRUM_HOME_REFERENCE_V36_START' \
+              apps/web/app/globals.css |
+            wc -l |
+            tr -d ' '
+          )" = "1"
+
+          # Old validators were corrected instead of teaching new CSS to pass stale pixels.
+          grep -Fq \
+            'near-full shell' \
+            scripts/home-paper-graphite-v16-check.mjs
+          grep -Fq \
+            'reference-scale viewport width' \
+            scripts/home-reference-check.mjs
+
+          echo "V40 product/data/visual contract: PASS"
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm install \
+            --include=dev \
+            --no-audit \
+            --no-fund \
+            --package-lock=false
+
+          node -e "console.log('TypeScript:', require.resolve('typescript'))"
+
+      - name: Regenerate Prisma client from canonical schema
+        shell: bash
+        env:
+          DATABASE_URL: postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public
+        run: |
+          set -euo pipefail
+
+          npm run db:validate
+          npm run db:generate
+
+          test -d apps/api/src/generated/prisma
+          grep -R -Fq 'VoteClass' apps/api/src/generated/prisma
+
+          echo "V40 Prisma schema/client: PASS"
+
+      - name: Parse changed TypeScript
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node - <<'NODE'
+          const fs = require("fs");
+          const ts = require("typescript");
+
+          const files = [
+            ["apps/web/components/home-dashboard.tsx", ts.ScriptKind.TSX],
+            ["apps/api/src/home/home.service.ts", ts.ScriptKind.TS],
+          ];
+
+          let failed = false;
+
+          for (const [path, kind] of files) {
+            const source = fs.readFileSync(path, "utf8");
+            const file = ts.createSourceFile(
+              path,
+              source,
+              ts.ScriptTarget.Latest,
+              true,
+              kind,
+            );
+
+            for (const diagnostic of file.parseDiagnostics ?? []) {
+              failed = true;
+              const pos = file.getLineAndCharacterOfPosition(
+                diagnostic.start ?? 0,
+              );
+              console.error(
+                `${path}:${pos.line + 1}:${pos.character + 1} ` +
+                ts.flattenDiagnosticMessageText(
+                  diagnostic.messageText,
+                  "\n",
+                ),
+              );
+            }
+          }
+
+          if (failed) process.exit(1);
+          console.log("V40 changed TypeScript parser: PASS");
+          NODE
+
+      - name: Run static UX accessibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+
+          # Prisma output is generated build material; check authored source here.
+          git diff --check -- \
+            apps/api/src/home/home.service.ts \
+            apps/web/app/globals.css \
+            apps/web/components/home-dashboard.tsx \
+            scripts/home-paper-graphite-v16-check.mjs \
+            scripts/home-reference-check.mjs \
+            scripts/home-scale-polish-check.mjs
+
+      - name: Run relevant tests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/api --if-present
+          npm test -w @forrum/web --if-present
+
+      - name: Typecheck entire product
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm run typecheck
+
+      - name: Production build entire product
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf apps/web/.next
+          npm run build
+
+      - name: Visual 1-to-1 self-review and second production pass
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Difference 1 from the four screenshots: V39 was visibly too narrow.
+          grep -Fq             'width: min(calc(100vw - 20px), 1920px);'             apps/web/app/globals.css
+
+          # Difference 2: Discussed was just an empty strip despite real topics.
+          grep -Fq             'discussedCandidates'             apps/api/src/home/home.service.ts
+          grep -Fq             'initialData.overview?.discussed'             apps/web/components/home-dashboard.tsx
+
+          # Difference 3: Actual was one item and the page felt empty.
+          grep -Fq             'actualTopics'             apps/web/components/home-dashboard.tsx
+          grep -Fq             'actualProposal'             apps/web/components/home-dashboard.tsx
+
+          # Difference 4: Graphite was almost black; Paper page was too gray.
+          grep -Fq -- '--fvt-page: #151a1d;' apps/web/app/globals.css
+          grep -Fq -- '--fvt-page: #f7f5f1;' apps/web/app/globals.css
+
+          # Difference 5: header base rhythm was 64px.
+          grep -Fq             '.nav { min-height: 56px;'             apps/web/app/globals.css
+
+          # Tree interaction must remain unchanged after all visual work.
+          grep -Fq             'event.target !== event.currentTarget'             apps/web/components/home-dashboard.tsx
+          test "$(
+            grep -F 'href={`/communities/${node.slug}`}'               apps/web/components/home-dashboard.tsx |
+            wc -l |
+            tr -d ' '
+          )" = "1"
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/api --if-present
+          npm test -w @forrum/web --if-present
+
+          npm run typecheck
+          npm run build
+
+          git diff --check -- \
+            apps/api/src/home/home.service.ts \
+            apps/web/app/globals.css \
+            apps/web/components/home-dashboard.tsx \
+            scripts/home-paper-graphite-v16-check.mjs \
+            scripts/home-reference-check.mjs \
+            scripts/home-scale-polish-check.mjs
+
+          echo "V40 visual 1:1 second-pass production review: PASS"
+
+      - name: Restore build side effects and clean dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mapfile -t tracked_dirty < <(
+            git status \
+              --porcelain=v1 \
+              --untracked-files=no |
+            sed 's/^...//'
+          )
+
+          for path in "${tracked_dirty[@]}"; do
+            [ -n "$path" ] || continue
+
+            case "$path" in
+              apps/api/src/home/home.service.ts|\
+              apps/web/app/globals.css|\
+              apps/web/components/home-dashboard.tsx|\
+              scripts/home-paper-graphite-v16-check.mjs|\
+              scripts/home-reference-check.mjs|\
+              scripts/home-scale-polish-check.mjs)
+                continue
+                ;;
+            esac
+
+            git restore \
+              --staged \
+              --worktree \
+              -- "$path"
+          done
+
+          git clean -ffdx
+
+          test -z "$(
+            git status --porcelain=v1 --untracked-files=all |
+            sed 's/^...//' |
+            grep '^apps/api/src/generated/prisma/' || true
+          )"
+
+      - name: Final V40 pre-commit audit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          git diff --check
+
+          changed="$(
+            git diff --name-only |
+            sort
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              apps/api/src/home/home.service.ts \
+              apps/web/app/globals.css \
+              apps/web/components/home-dashboard.tsx \
+              scripts/home-paper-graphite-v16-check.mjs \
+              scripts/home-reference-check.mjs \
+              scripts/home-scale-polish-check.mjs |
+            sort
+          )"
+
+          test "$changed" = "$expected"
+
+          test -z "$(
+            git status --porcelain=v1 --untracked-files=all |
+            grep -vE \
+              '^( M|M |MM) (apps/api/src/home/home\.service\.ts|apps/web/app/globals\.css|apps/web/components/home-dashboard\.tsx|scripts/home-paper-graphite-v16-check\.mjs|scripts/home-reference-check\.mjs|scripts/home-scale-polish-check\.mjs)$' \
+              || true
+          )"
+
+          echo "V40 final source audit: PASS"
+
+      - name: Commit verified V40
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "FORRUM Home Composition V40 is already present."
+            exit 0
+          fi
+
+          git config user.name "forrum-actions"
+          git config user.email "actions@forrum.local"
+
+          git add \
+            apps/api/src/home/home.service.ts \
+            apps/web/app/globals.css \
+            apps/web/components/home-dashboard.tsx \
+            scripts/home-paper-graphite-v16-check.mjs \
+            scripts/home-reference-check.mjs \
+            scripts/home-scale-polish-check.mjs
+
+          git diff --cached --check
+          git commit -m "Align FORRUM homepage composition V40"
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Rebase and full V40 production audit
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          git rebase origin/main
+
+          npm install \
+            --include=dev \
+            --no-audit \
+            --no-fund \
+            --package-lock=false
+
+          DATABASE_URL='postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public' \
+            npm run db:validate
+          DATABASE_URL='postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public' \
+            npm run db:generate
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/api --if-present
+          npm test -w @forrum/web --if-present
+
+          npm run typecheck
+          npm run build
+
+          git restore \
+            --source=HEAD \
+            --staged \
+            --worktree \
+            -- .
+
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          echo "Post-rebase V40 production audit: PASS"
+
+      - name: Publish V40 safely
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+
+            remote="$(git rev-parse origin/main)"
+
+            if ! git merge-base --is-ancestor "$remote" HEAD; then
+              echo "origin/main advanced; rebasing and repeating V40 verification."
+
+              git rebase origin/main
+
+              npm install \
+                --include=dev \
+                --no-audit \
+                --no-fund \
+                --package-lock=false
+
+              DATABASE_URL='postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public' \
+                npm run db:validate
+              DATABASE_URL='postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public' \
+                npm run db:generate
+
+              node scripts/home-paper-graphite-v16-check.mjs
+              node scripts/home-reference-check.mjs
+              node scripts/home-scale-polish-check.mjs
+              node scripts/home-visual-theme-check.mjs
+
+              npm run validate:static
+              npm run validate:ux
+              npm run validate:a11y
+
+              npm test -w @forrum/contracts --if-present
+              npm test -w @forrum/api --if-present
+              npm test -w @forrum/web --if-present
+
+              npm run typecheck
+              npm run build
+
+              git restore \
+                --source=HEAD \
+                --staged \
+                --worktree \
+                -- .
+
+              git clean -ffdx
+              test -z "$(git status --porcelain)"
+            fi
+
+            git fetch origin main
+
+            if [ "$(git rev-parse origin/main)" != "$(git merge-base HEAD origin/main)" ]; then
+              continue
+            fi
+
+            if git push origin HEAD:main; then
+              echo "V40 push succeeded on attempt $attempt."
+              exit 0
+            fi
+          done
+
+          echo "::error::V40 could not be published safely."
+          exit 1
+
+      - name: Verify remote V40 commit
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+
+          echo "Published FORRUM Home Composition V40."
+
