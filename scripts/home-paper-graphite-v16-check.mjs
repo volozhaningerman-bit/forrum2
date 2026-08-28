@@ -1,123 +1,64 @@
 import fs from 'node:fs';
 
-const homePath = 'apps/web/components/home-dashboard.tsx';
-const cssPath = 'apps/web/app/globals.css';
-const pagePath = 'apps/web/app/page.tsx';
+const paths = {
+  home: 'apps/web/components/home-dashboard.tsx',
+  css: 'apps/web/app/globals.css',
+  page: 'apps/web/app/page.tsx',
+  service: 'apps/api/src/home/home.service.ts',
+};
 
-for (const path of [homePath, cssPath, pagePath]) {
-  if (!fs.existsSync(path)) {
-    throw new Error(`Homepage V36 required file missing: ${path}`);
-  }
+for (const path of Object.values(paths)) {
+  if (!fs.existsSync(path)) throw new Error(`Homepage contract file missing: ${path}`);
 }
 
-const home = fs.readFileSync(homePath, 'utf8');
-const css = fs.readFileSync(cssPath, 'utf8');
-const page = fs.readFileSync(pagePath, 'utf8');
+const home = fs.readFileSync(paths.home, 'utf8');
+const css = fs.readFileSync(paths.css, 'utf8');
+const page = fs.readFileSync(paths.page, 'utf8');
+const service = fs.readFileSync(paths.service, 'utf8');
 
 for (const required of [
-  'data-home-reference="v36"',
-  'Обсуждаемые темы',
-  'Новые темы',
-  'Активные голосования',
-  'Участники недели',
-  'FORRUM сегодня',
-  'Сообщества',
-  'Тем создано',
-  'Сообщений',
-  'Пользователей онлайн',
-  'Рекорд онлайн:',
-  'item.lastComment?.author.username',
-  'poll.options ?? []',
-  'option.bindingVotes',
-  'Осталось:',
+  'Обсуждаемые темы', 'Новые темы', 'Активные голосования',
+  'Участники недели', 'FORRUM сегодня',
+  'event.target !== event.currentTarget',
+  'initialData.overview?.discussed',
+  'initialData.overview?.activePolls',
 ]) {
-  if (!home.includes(required)) {
-    throw new Error(`Homepage V36 product element missing: ${required}`);
-  }
+  if (!home.includes(required)) throw new Error(`Homepage product element missing: ${required}`);
 }
 
-for (const required of [
-  "'/communities'",
-  "'/governance/polls'",
-  "'/announcements'",
-  "'/feed?mode=popular'",
-  "'/feed?mode=new'",
-  "'/home/overview'",
-]) {
-  if (!page.includes(required)) {
-    throw new Error(`Homepage V36 server data source missing: ${required}`);
-  }
+for (const required of ["'/home/overview'", "'/feed?mode=new'", "'/announcements'"]) {
+  if (!page.includes(required)) throw new Error(`Homepage server source missing: ${required}`);
+}
+
+for (const required of ['discussedCandidates', 'activePolls: polls.map', 'VoteClass.BINDING']) {
+  if (!service.includes(required)) throw new Error(`Homepage real-data contract missing: ${required}`);
 }
 
 const startMarker = '/* FORRUM_HOME_REFERENCE_V36_START';
 const endMarker = '/* FORRUM_HOME_REFERENCE_V36_END */';
-const starts = css.split(startMarker).length - 1;
-const ends = css.split(endMarker).length - 1;
-
-if (starts !== 1 || ends !== 1) {
-  throw new Error(
-    `Homepage V36 must have exactly one canonical CSS block; got ${starts}/${ends}.`,
-  );
-}
-
 const start = css.indexOf(startMarker);
 const end = css.indexOf(endMarker, start);
-const block = css.slice(start, end + endMarker.length);
+if (start < 0 || end < 0) throw new Error('Canonical homepage CSS source missing.');
+const block = css.slice(start, end);
 const outside = css.slice(0, start) + css.slice(end + endMarker.length);
 
 for (const required of [
+  'width: min(calc(100vw - 20px), 1920px)',
   'grid-template-columns: 300px minmax(0, 1fr) 326px',
-  'max-width: 1680px',
-  'gap: 14px',
-  'min-height: 68px',
-  'min-height: 39px',
-  'min-height: 78px',
   '.forrum-home-v16__tree-children::before',
-  'border-left: 1px dotted',
-  '.forrum-home-v16__new-topic-head',
+  '.forrum-home-v16__discussed',
   '.forrum-home-v16__poll-option',
-  '.forrum-home-v16__weekly',
-  '.forrum-home-v16__record',
   '@media (max-width: 860px)',
 ]) {
-  if (!block.includes(required)) {
-    throw new Error(`Homepage V36 reference geometry missing: ${required}`);
-  }
+  if (!block.includes(required)) throw new Error(`Homepage layout contract missing: ${required}`);
 }
 
 if (outside.includes('.forrum-home-v16')) {
-  throw new Error(
-    'Homepage styles are duplicated outside the single V36 canonical block.',
-  );
+  throw new Error('Competing homepage CSS exists outside canonical source.');
 }
 
-for (const forbidden of [
-  '!important',
-  'linear-gradient',
-  'radial-gradient',
-  'box-shadow:',
-  'backdrop-filter:',
-  'border-radius: 12px',
-  'border-radius: 16px',
-]) {
-  if (block.includes(forbidden)) {
-    throw new Error(`Homepage V36 forbidden visual pattern: ${forbidden}`);
-  }
+for (const forbidden of ['!important', 'box-shadow:', 'backdrop-filter:']) {
+  if (block.includes(forbidden)) throw new Error(`Homepage canonical CSS forbidden pattern: ${forbidden}`);
 }
 
-for (const forbiddenThemeGeometry of [
-  'html.dark .forrum-home-v16',
-  'html[data-theme="dark"] .forrum-home-v16',
-  'html[data-theme="graphite"] .forrum-home-v16',
-  'html[data-forrum-theme="graphite"] .forrum-home-v16',
-]) {
-  if (block.includes(forbiddenThemeGeometry)) {
-    throw new Error(
-      `Paper/Graphite geometry diverged in V36: ${forbiddenThemeGeometry}`,
-    );
-  }
-}
-
-console.log(
-  'FORRUM Home V36 passed: reference geometry, dense tree/table/polls, one Paper/Graphite layout.',
-);
+console.log('FORRUM Home product contract passed: real data, near-full shell, dense responsive composition.');

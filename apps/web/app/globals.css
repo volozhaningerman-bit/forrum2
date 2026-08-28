@@ -26,7 +26,7 @@ a:hover { color: var(--accent); }
 button { color: inherit; }
 .shell { width: min(1180px, calc(100% - 32px)); margin-inline: auto; }
 .header { position: sticky; top: 0; z-index: 40; border-bottom: 1px solid rgba(220, 226, 234, .95); background: rgba(255, 255, 255, .94); backdrop-filter: blur(14px); }
-.nav { min-height: 64px; display: flex; gap: 20px; align-items: center; }
+.nav { min-height: 56px; display: flex; gap: 20px; align-items: center; }
 .brand { font-size: 24px; font-weight: 950; letter-spacing: -.055em; }
 .main-links, .icon-links, .auth-actions, .profile-menu, .profile-trigger { display: flex; align-items: center; gap: 14px; }
 .main-links a { color: #3e485b; font-weight: 680; }
@@ -179,8 +179,8 @@ code { background: #eef1f6; padding: 2px 5px; border-radius: 5px; }
 /* v0.3 visual integration */
 .brand { display:flex; align-items:center; gap:10px; letter-spacing:-.035em; }
 .brand-mark { width:34px; height:34px; border-radius:8px; display:grid; place-items:center; color:#fff; background:linear-gradient(145deg,#3157d5,#0f6ae8); box-shadow:0 5px 14px rgba(49,87,213,.26); font-size:22px; font-weight:900; }
-.main-links { gap:30px; height:64px; }
-.main-links a { height:64px; display:flex; align-items:center; position:relative; font-size:15px; }
+.main-links { gap:28px; height:56px; }
+.main-links a { height:56px; display:flex; align-items:center; position:relative; font-size:14px; }
 .main-links a:hover::after { content:''; position:absolute; left:0; right:0; bottom:0; height:3px; border-radius:3px 3px 0 0; background:var(--accent); }
 .icon-with-badge { position:relative; }
 .nav-badge { position:absolute; right:0; top:0; min-width:17px; height:17px; border-radius:999px; display:grid; place-items:center; padding:0 4px; background:#2455d8; color:#fff; border:2px solid #fff; font-size:10px; line-height:1; font-weight:900; }
@@ -19448,7 +19448,7 @@ html[data-forrum-theme="graphite"] {
   position: relative;
   z-index: 40;
   width: 100%;
-  min-height: 58px;
+  min-height: 56px;
   border-bottom: 1px solid var(--forrum-shell-line) !important;
   background: var(--forrum-shell-surface) !important;
   color: var(--forrum-shell-text) !important;
@@ -19457,8 +19457,8 @@ html[data-forrum-theme="graphite"] {
 }
 
 [data-forrum-shell="header"] > * {
-  width: min(calc(100% - 32px), 1680px) !important;
-  max-width: 1680px !important;
+  width: min(calc(100% - 20px), 1920px) !important;
+  max-width: 1920px !important;
   min-width: 0;
   margin-inline: auto !important;
 }
@@ -19489,8 +19489,8 @@ html[data-forrum-theme="graphite"] {
 }
 
 [data-forrum-shell="footer"] > * {
-  width: min(calc(100% - 32px), 1680px) !important;
-  max-width: 1680px !important;
+  width: min(calc(100% - 20px), 1920px) !important;
+  max-width: 1920px !important;
   min-width: 0;
   margin-inline: auto !important;
 }
@@ -19538,21 +19538,21 @@ html[data-forrum-theme="graphite"] {
 
 /* FORRUM_HOME_REFERENCE_V36_START
    Canonical homepage reference geometry.
-   V39 viewport alignment: reference shell is centered against the viewport, not a constrained parent.
+   V40 composition alignment: near-full viewport shell, real dense home data, calmer typography.
    Paper and Graphite share one layout; theme differences come only from --fvt-* tokens.
 */
 .forrum-home-v16 {
   position: relative;
   left: 50%;
-  width: min(calc(100vw - 24px), 1680px);
-  max-width: 1680px;
+  width: min(calc(100vw - 20px), 1920px);
+  max-width: 1920px;
   margin-left: 0;
   margin-right: 0;
   transform: translateX(-50%);
   padding: 0 12px 26px;
   display: grid;
   grid-template-columns: 300px minmax(0, 1fr) 326px;
-  gap: 14px;
+  gap: 12px;
   align-items: start;
   color: var(--fvt-text);
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -19585,7 +19585,7 @@ html[data-forrum-theme="graphite"] {
 }
 
 .forrum-home-v16__center,
-.forrum-home-v16__rail { min-width: 0; display: grid; gap: 14px; }
+.forrum-home-v16__rail { min-width: 0; display: grid; gap: 10px; }
 
 .forrum-home-v16__side-head,
 .forrum-home-v16__panel-head {
@@ -19603,8 +19603,8 @@ html[data-forrum-theme="graphite"] {
   color: var(--fvt-text);
   font-size: 13px;
   line-height: 1.15;
-  font-weight: 750;
-  letter-spacing: 0.02em;
+  font-weight: 690;
+  letter-spacing: 0.014em;
   text-transform: uppercase;
 }
 .forrum-home-v16__panel-head > a {
@@ -19693,8 +19693,8 @@ html[data-forrum-theme="graphite"] {
   border-bottom: 0;
   background: var(--fvt-panel);
 }
-.forrum-home-v16__tree-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12.5px; font-weight: 610; }
-.forrum-home-v16__tree-root > .forrum-home-v16__tree-node > .forrum-home-v16__tree-row .forrum-home-v16__tree-name { font-size: 13px; font-weight: 740; }
+.forrum-home-v16__tree-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 540; }
+.forrum-home-v16__tree-root > .forrum-home-v16__tree-node > .forrum-home-v16__tree-row .forrum-home-v16__tree-name { font-size: 12.5px; font-weight: 650; }
 .forrum-home-v16__proposal {
   min-height: 42px; display: flex; align-items: center; justify-content: center; gap: 7px; margin-top: 9px;
   border: 1px dashed var(--fvt-line-strong); border-radius: 2px; background: var(--fvt-panel-soft); color: var(--fvt-text); font-size: 12.5px; font-weight: 650;
@@ -19714,7 +19714,7 @@ html[data-forrum-theme="graphite"] {
 .forrum-home-v16 .forrum-home-v16__topic-mark { image-rendering: pixelated; border-radius: 2px; }
 .forrum-home-v16__discussed-copy { min-width: 0; display: grid; gap: 3px; }
 .forrum-home-v16__topic-title { min-width: 0; display: flex; align-items: center; gap: 7px; }
-.forrum-home-v16__topic-title strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fvt-text); font-size: 14px; font-weight: 720; letter-spacing: -0.01em; }
+.forrum-home-v16__topic-title strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fvt-text); font-size: 13.5px; font-weight: 650; letter-spacing: -0.006em; }
 .forrum-home-v16__type { flex: 0 0 auto; padding: 2px 5px; border: 1px solid var(--fvt-line-strong); border-radius: 1px; color: var(--fvt-muted); font-size: 10px; line-height: 1.15; font-weight: 650; }
 .forrum-home-v16__type.type-guide { color: #25884b; border-color: #75aa88; }
 .forrum-home-v16__type.type-question { color: #bd3b35; border-color: #c98680; }
@@ -19735,8 +19735,8 @@ html[data-forrum-theme="graphite"] {
   grid-template-columns: minmax(320px, 2.6fr) minmax(105px, .75fr) minmax(98px, .72fr) 54px 66px minmax(142px, 1fr);
   column-gap: 10px; align-items: center; min-width: 0;
 }
-.forrum-home-v16__new-topic-head { min-height: 32px; border-bottom: 1px solid var(--fvt-line); color: var(--fvt-muted); font-size: 10.5px; font-weight: 620; }
-.forrum-home-v16__new-topic { min-height: 39px; border-bottom: 1px solid var(--fvt-line); color: var(--fvt-muted); font-size: 11.5px; }
+.forrum-home-v16__new-topic-head { min-height: 28px; border-bottom: 1px solid var(--fvt-line); color: var(--fvt-muted); font-size: 10.5px; font-weight: 620; }
+.forrum-home-v16__new-topic { min-height: 32px; border-bottom: 1px solid var(--fvt-line); color: var(--fvt-muted); font-size: 11.5px; }
 .forrum-home-v16__new-topic:last-child { border-bottom: 0; }
 .forrum-home-v16__new-topic:hover,
 .forrum-home-v16__new-topic:focus-visible { background: var(--fvt-hover); }
@@ -19745,7 +19745,7 @@ html[data-forrum-theme="graphite"] {
 .forrum-home-v16__new-topic-section,
 .forrum-home-v16__new-topic-author,
 .forrum-home-v16__new-topic-last { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.forrum-home-v16__new-topic-title { display: block; color: var(--fvt-text); font-size: 12px; font-weight: 650; letter-spacing: -0.004em; }
+.forrum-home-v16__new-topic-title { display: block; color: var(--fvt-text); font-size: 11.75px; font-weight: 580; letter-spacing: -0.002em; }
 .forrum-home-v16__new-topic-number { text-align: center; color: var(--fvt-text); font-variant-numeric: tabular-nums; }
 .forrum-home-v16__new-topic-last { text-align: right; color: var(--fvt-faint); }
 .forrum-home-v16__new-topic-last b { color: var(--fvt-muted); font-weight: 550; }
@@ -19771,7 +19771,7 @@ html[data-forrum-theme="graphite"] {
 .forrum-home-v16__actual:hover { background: var(--fvt-hover); }
 .forrum-home-v16 .forrum-home-v16__actual .community-mark { image-rendering: pixelated; border-radius: 2px; }
 .forrum-home-v16__actual > span:last-child { min-width: 0; display: grid; gap: 3px; }
-.forrum-home-v16__actual strong { overflow: hidden; text-overflow: ellipsis; color: var(--fvt-text); font-size: 12.5px; line-height: 1.22; font-weight: 700; }
+.forrum-home-v16__actual strong { overflow: hidden; text-overflow: ellipsis; color: var(--fvt-text); font-size: 12.25px; line-height: 1.22; font-weight: 620; }
 .forrum-home-v16__actual small { overflow: hidden; text-overflow: ellipsis; color: var(--fvt-muted); font-size: 10.5px; }
 
 .forrum-home-v16__tabs { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--fvt-line); }
@@ -19789,7 +19789,8 @@ html[data-forrum-theme="graphite"] {
 
 .forrum-home-v16__stats { margin: 0; padding: 5px 14px 8px; }
 .forrum-home-v16__stats > div { min-height: 40px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--fvt-line); }
-.forrum-home-v16__stats dt { color: var(--fvt-muted); font-size: 11.5px; }
+.forrum-home-v16__stats dt { display: flex; align-items: center; gap: 8px; color: var(--fvt-muted); font-size: 11.5px; }
+.forrum-home-v16__stats dt > span { width: 13px; color: var(--fvt-text); text-align: center; font-size: 12px; }
 .forrum-home-v16__stats dd { margin: 0; color: var(--fvt-text); font-size: 13.5px; font-weight: 720; font-variant-numeric: tabular-nums; }
 .forrum-home-v16__record { margin: 0 14px 10px; padding-top: 9px; border-top: 1px solid var(--fvt-line); color: var(--fvt-muted); font-size: 10.5px; }
 .forrum-home-v16__record strong { color: var(--fvt-text); font-weight: 650; }
@@ -19803,7 +19804,7 @@ html[data-forrum-theme="graphite"] {
 }
 
 @media (max-width: 1480px) {
-  .forrum-home-v16 { grid-template-columns: 276px minmax(0, 1fr) 292px; gap: 12px; }
+  .forrum-home-v16 { grid-template-columns: 276px minmax(0, 1fr) 292px; gap: 10px; }
   .forrum-home-v16__discussed { grid-template-columns: 44px minmax(0,1fr) 52px 64px 105px; gap: 8px; }
   .forrum-home-v16__new-topic-head,
   .forrum-home-v16__new-topic { grid-template-columns: minmax(250px, 2.1fr) minmax(96px,.72fr) minmax(90px,.68fr) 50px 62px minmax(118px,.9fr); column-gap: 8px; }
@@ -20098,20 +20099,20 @@ html[data-forrum-theme="graphite"] {
 :root {
   color-scheme: light;
 
-  --fvt-page: #ebe9e4;
-  --fvt-surface: #f3f1ec;
-  --fvt-panel: #f8f6f1;
-  --fvt-panel-soft: #efede7;
-  --fvt-line: #c4c1b9;
-  --fvt-line-strong: #8f8b82;
-  --fvt-text: #202224;
-  --fvt-muted: #666760;
-  --fvt-faint: #8b8981;
+  --fvt-page: #f7f5f1;
+  --fvt-surface: #faf8f4;
+  --fvt-panel: #faf8f3;
+  --fvt-panel-soft: #f2efe9;
+  --fvt-line: #d1cdc4;
+  --fvt-line-strong: #99958c;
+  --fvt-text: #292a29;
+  --fvt-muted: #6b6963;
+  --fvt-faint: #908c84;
   --fvt-accent: #1769ff;
   --fvt-accent-soft: #e7efff;
-  --fvt-hover: #eeece6;
+  --fvt-hover: #f1eee8;
   --fvt-focus: #0d5ee8;
-  --fvt-icon-bg: #f5f3ee;
+  --fvt-icon-bg: #f7f4ee;
   --fvt-texture:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='4' cy='5' r='.45' fill='%23202224' fill-opacity='.014'/%3E%3Ccircle cx='17' cy='9' r='.35' fill='%23202224' fill-opacity='.010'/%3E%3Ccircle cx='10' cy='20' r='.35' fill='%23202224' fill-opacity='.008'/%3E%3C/svg%3E");
 }
@@ -20122,20 +20123,20 @@ html[data-theme="graphite"],
 html[data-forrum-theme="graphite"] {
   color-scheme: dark;
 
-  --fvt-page: #101316;
-  --fvt-surface: #15191c;
-  --fvt-panel: #171b1e;
-  --fvt-panel-soft: #121619;
-  --fvt-line: #343a3f;
-  --fvt-line-strong: #596168;
-  --fvt-text: #e6e8e9;
-  --fvt-muted: #a1a7ac;
-  --fvt-faint: #7e858b;
+  --fvt-page: #151a1d;
+  --fvt-surface: #181d20;
+  --fvt-panel: #191e21;
+  --fvt-panel-soft: #161b1e;
+  --fvt-line: #363d42;
+  --fvt-line-strong: #596269;
+  --fvt-text: #d7dbdd;
+  --fvt-muted: #9aa2a7;
+  --fvt-faint: #767f85;
   --fvt-accent: #397cff;
   --fvt-accent-soft: #172641;
-  --fvt-hover: #1b2024;
+  --fvt-hover: #1e2428;
   --fvt-focus: #6d9cff;
-  --fvt-icon-bg: #121619;
+  --fvt-icon-bg: #171c1f;
   --fvt-texture:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='4' cy='5' r='.45' fill='%23ffffff' fill-opacity='.012'/%3E%3Ccircle cx='17' cy='9' r='.35' fill='%23ffffff' fill-opacity='.009'/%3E%3Ccircle cx='10' cy='20' r='.35' fill='%23ffffff' fill-opacity='.007'/%3E%3C/svg%3E");
 }

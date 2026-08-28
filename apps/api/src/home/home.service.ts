@@ -4,6 +4,7 @@ import {
   PublicationFormat,
   PublicationStatus,
   ReactionType,
+  VoteClass,
 } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 
@@ -29,6 +30,14 @@ type UserIdentity = {
 };
 
 const onlineRecordKey = 'home.recordOnline';
+
+function homeExcerpt(value: string) {
+  const normalized = value.replace(/\s+/g, ' ').trim();
+  if (!normalized) return 'Без описания.';
+  return normalized.length > 180
+    ? `${normalized.slice(0, 177).trimEnd()}...`
+    : normalized;
+}
 
 function getWeeklyUser(
   map: Map<string, WeeklyAccumulator>,
@@ -129,7 +138,7 @@ export class HomeService {
       weeklyComments,
       publicationReactions,
       commentReactions,
-      poll,
+      polls,
       proposal,
     ] = await Promise.all([
       this.prisma.user.count({
@@ -258,12 +267,13 @@ export class HomeService {
           },
         },
       }),
-      this.prisma.communityPoll.findFirst({
+      this.prisma.communityPoll.findMany({
         where: {
           status: PollStatus.OPEN,
           closesAt: { gt: now },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { closesAt: 'asc' },
+        take: 3,
         include: {
           community: {
             select: {
@@ -275,7 +285,9 @@ export class HomeService {
           options: {
             orderBy: { position: 'asc' },
             include: {
-              _count: { select: { votes: true } },
+              votes: {
+                select: { voteClass: true },
+              },
             },
           },
           votes: {
@@ -302,6 +314,94 @@ export class HomeService {
         },
       }),
     ]);
+
+    // FORRUM_HOME_COMPOSITION_V40_DATA
+    const discussedSince = new Date(
+      now.getTime() - 30 * 24 * 60 * 60 * 1000,
+    );
+
+    const discussedCandidates = await this.prisma.publication.findMany({
+      where: {
+        status: PublicationStatus.PUBLISHED,
+        format: PublicationFormat.TOPIC,
+        lastActivityAt: { gte: discussedSince },
+      },
+      orderBy: { lastActivityAt: 'desc' },
+      take: 30,
+      select: {
+        id: true,
+        slug: true,
+        type: true,
+        title: true,
+        body: true,
+        viewCount: true,
+        createdAt: true,
+        lastActivityAt: true,
+        author: {
+          select: {
+            username: true,
+            displayName: true,
+            avatarUrl: true,
+          },
+        },
+        community: {
+          select: {
+            slug: true,
+            name: true,
+            accentColor: true,
+            avatarUrl: true,
+          },
+        },
+        comments: {
+          where: { hiddenAt: null },
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          select: {
+            createdAt: true,
+            author: {
+              select: {
+                username: true,
+                displayName: true,
+              },
+            },
+          },
+        },
+        _count: {
+          select: {
+            comments: { where: { hiddenAt: null } },
+            reactions: true,
+          },
+        },
+      },
+    });
+
+    const discussed = discussedCandidates
+      .map((item) => ({
+        id: item.id,
+        slug: item.slug,
+        type: item.type,
+        title: item.title,
+        excerpt: homeExcerpt(item.body),
+        viewCount: item.viewCount,
+        createdAt: item.createdAt,
+        lastActivityAt: item.lastActivityAt,
+        commentCount: item._count.comments,
+        reactionCount: item._count.reactions,
+        author: item.author,
+        community: item.community,
+        lastComment: item.comments[0] ?? null,
+        score:
+          item._count.comments * 12 +
+          item._count.reactions * 5 +
+          Math.min(item.viewCount, 5000) / 50,
+      }))
+      .sort(
+        (left, right) =>
+          right.score - left.score ||
+          right.lastActivityAt.getTime() - left.lastActivityAt.getTime(),
+      )
+      .slice(0, 5)
+      .map(({ score: _score, ...item }) => item);
 
     const activity = new Map<string, WeeklyAccumulator>();
     const likes = new Map<string, WeeklyAccumulator>();
@@ -385,18 +485,38 @@ export class HomeService {
           (item) => item.topicCount + item.commentCount,
         ),
       },
-      poll: poll
+      discussed,
+      activePolls: polls.map((poll) => ({
+        id: poll.id,
+        title: poll.title,
+        closesAt: poll.closesAt,
+        status: poll.status,
+        createdAt: poll.createdAt,
+        community: poll.community,
+        options: poll.options.map((option) => ({
+          id: option.id,
+          label: option.label,
+          position: option.position,
+          bindingVotes: option.votes.filter(
+            (vote) => vote.voteClass === VoteClass.BINDING,
+          ).length,
+          advisoryVotes: option.votes.filter(
+            (vote) => vote.voteClass === VoteClass.ADVISORY,
+          ).length,
+        })),
+      })),
+      // Backward-compatible single poll summary for existing consumers.
+      poll: polls[0]
         ? {
-            id: poll.id,
-            title: poll.title,
-            closesAt: poll.closesAt,
-            community: poll.community,
-            totalVotes: poll.options.reduce(
-              (sum, option) =>
-                sum + option._count.votes,
+            id: polls[0].id,
+            title: polls[0].title,
+            closesAt: polls[0].closesAt,
+            community: polls[0].community,
+            totalVotes: polls[0].options.reduce(
+              (sum, option) => sum + option.votes.length,
               0,
             ),
-            viewerVoted: poll.votes.length > 0,
+            viewerVoted: polls[0].votes.length > 0,
           }
         : null,
       proposal: proposal

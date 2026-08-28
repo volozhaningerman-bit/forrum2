@@ -50,7 +50,46 @@ type WeeklyUser = {
   commentCount: number;
 };
 
+type HomeDiscussedTopic = {
+  id: string;
+  slug: string;
+  type: string;
+  title: string | null;
+  excerpt: string;
+  viewCount: number;
+  createdAt: string;
+  lastActivityAt?: string;
+  commentCount: number;
+  reactionCount: number;
+  author: {
+    username: string;
+    displayName: string;
+    avatarUrl?: string | null;
+  };
+  community: {
+    slug: string;
+    name: string;
+    accentColor?: string;
+    avatarUrl?: string | null;
+  };
+  lastComment?: {
+    createdAt: string;
+    author: { username: string; displayName: string };
+  } | null;
+};
+
+type HomeProposal = {
+  id: string;
+  name: string;
+  description: string;
+  supportCount: number;
+  author: { username: string; displayName: string };
+};
+
 type HomeOverview = {
+  discussed?: HomeDiscussedTopic[];
+  activePolls?: PollItem[];
+  proposal?: HomeProposal | null;
   stats: {
     communities: number;
     topics: number;
@@ -177,7 +216,12 @@ function topicRows(items: PublicationCardData[] | undefined) {
   return (items ?? []).filter((item) => item.format === 'TOPIC').slice(0, 5);
 }
 
-function lastReply(item: PublicationCardData) {
+function lastReply(item: {
+  lastComment?: { createdAt: string; author: { username: string } } | null;
+  author: { username: string };
+  lastActivityAt?: string;
+  createdAt: string;
+}) {
   return {
     username: item.lastComment?.author.username ?? item.author.username,
     createdAt: item.lastComment?.createdAt ?? item.lastActivityAt ?? item.createdAt,
@@ -292,7 +336,7 @@ function HomePanel({ title, href, children }: { title: string; href?: string; ch
   );
 }
 
-function DiscussedTopic({ item }: { item: PublicationCardData }) {
+function DiscussedTopic({ item }: { item: PublicationCardData | HomeDiscussedTopic }) {
   const reply = lastReply(item);
   return (
     <Link className="forrum-home-v16__discussed" href={`/p/${item.slug}`}>
@@ -384,16 +428,53 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
   );
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set(parentSlugs));
   const [weeklyMode, setWeeklyMode] = useState<'likes' | 'activity'>('likes');
-  const discussed = topicRows(initialData.feed);
+  const discussed = initialData.overview?.discussed?.length
+    ? initialData.overview.discussed
+    : topicRows(initialData.feed);
   const newest = topicRows(initialData.newFeed);
-  const activePolls = useMemo(
-    () => (initialData.polls ?? [])
-      .filter((poll) => poll.status.toUpperCase() === 'OPEN' && new Date(poll.closesAt).getTime() > Date.now())
-      .sort((a, b) => new Date(a.closesAt).getTime() - new Date(b.closesAt).getTime())
-      .slice(0, 3),
-    [initialData.polls],
+  const activePolls = useMemo(() => {
+    const now = Date.now();
+    const merged = [
+      ...(initialData.overview?.activePolls ?? []),
+      ...(initialData.polls ?? []),
+    ];
+    const unique = new Map<string, PollItem>();
+
+    for (const poll of merged) {
+      if (
+        poll.status.toUpperCase() !== 'OPEN' ||
+        new Date(poll.closesAt).getTime() <= now
+      ) {
+        continue;
+      }
+      if (!unique.has(poll.id)) unique.set(poll.id, poll);
+    }
+
+    return [...unique.values()]
+      .sort(
+        (a, b) =>
+          new Date(a.closesAt).getTime() -
+          new Date(b.closesAt).getTime(),
+      )
+      .slice(0, 3);
+  }, [initialData.overview?.activePolls, initialData.polls]);
+
+  const announcements = initialData.announcements ?? [];
+  const actualPoll = activePolls[0];
+  const actualProposal = initialData.overview?.proposal ?? null;
+  const actualReserved = Number(Boolean(actualPoll)) + Number(Boolean(actualProposal));
+  const actualAnnouncements = announcements.slice(0, Math.max(0, 3 - actualReserved));
+  const actualTopicSlots = Math.max(
+    0,
+    3 - actualReserved - actualAnnouncements.length,
   );
-  const announcements = (initialData.announcements ?? []).slice(0, 2);
+  const actualTopics = newest.slice(0, actualTopicSlots);
+  const actualCount =
+    actualAnnouncements.length +
+    actualTopics.length +
+    Number(Boolean(actualPoll)) +
+    Number(Boolean(actualProposal));
+
   const weekly = initialData.overview?.weekly[weeklyMode] ?? [];
   const stats = initialData.overview?.stats;
 
@@ -407,7 +488,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
   };
 
   return (
-    <div className="forrum-home-v16" data-home-reference="v36" data-home-polish="v39">
+    <div className="forrum-home-v16" data-home-reference="v36" data-home-polish="v40">
       <aside className="forrum-home-v16__tree">
         <div className="forrum-home-v16__side-head"><h2>Сообщества</h2></div>
         {tree.length ? (
@@ -428,7 +509,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
         <HomePanel title="Обсуждаемые темы" href="/feed?mode=popular">
           <div className="forrum-home-v16__discussed-list">
             {discussed.length ? discussed.map((item) => <DiscussedTopic key={item.id} item={item} />) : (
-              <p className="forrum-home-v16__empty">Обсуждаемых тем за последние 24 часа пока нет.</p>
+              <p className="forrum-home-v16__empty">Обсуждаемых тем пока нет.</p>
             )}
           </div>
         </HomePanel>
@@ -456,19 +537,31 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
       <aside className="forrum-home-v16__rail">
         <HomePanel title="Актуальное" href="/news">
           <div className="forrum-home-v16__actual-list">
-            {announcements.map((item) => (
-              <Link className="forrum-home-v16__actual" href={`/p/${item.slug}`} key={item.id}>
+            {actualAnnouncements.map((item) => (
+              <Link className="forrum-home-v16__actual" href={`/p/${item.slug}`} key={`announcement-${item.id}`}>
                 <CommunityMark name={item.community.name} url={item.community.avatarUrl ?? topicVisual(item.community.slug)} size={36} />
-                <span><strong>{item.title || 'Объявление'}</strong><small>{relativeTime(item.createdAt)}</small></span>
+                <span><strong>{item.title || 'Объявление'}</strong><small>Новость · {relativeTime(item.createdAt)}</small></span>
               </Link>
             ))}
-            {activePolls[0] && (
+            {actualPoll && (
               <Link className="forrum-home-v16__actual" href="/events?tab=polls">
-                <CommunityMark name={activePolls[0].community.name} url={topicVisual(activePolls[0].community.slug)} size={36} />
-                <span><strong>Активное голосование</strong><small>{activePolls[0].title}</small></span>
+                <CommunityMark name={actualPoll.community.name} url={topicVisual(actualPoll.community.slug)} size={36} />
+                <span><strong>Активное голосование</strong><small>{actualPoll.title}</small></span>
               </Link>
             )}
-            {!announcements.length && !activePolls.length && (
+            {actualProposal && (
+              <Link className="forrum-home-v16__actual" href="/communities/proposals">
+                <CommunityMark name="Предложения" url="/forrum-assets/topic-forrum.svg" size={36} />
+                <span><strong>Предложен раздел: {actualProposal.name}</strong><small>@{actualProposal.author.username} · {formatCount(actualProposal.supportCount)} поддержали</small></span>
+              </Link>
+            )}
+            {actualTopics.map((item) => (
+              <Link className="forrum-home-v16__actual" href={`/p/${item.slug}`} key={`topic-${item.id}`}>
+                <CommunityMark name={item.community.name} url={item.community.avatarUrl ?? topicVisual(item.community.slug)} size={36} />
+                <span><strong>{item.title?.trim() || 'Новая тема'}</strong><small>Новая тема · {item.community.name}</small></span>
+              </Link>
+            ))}
+            {!actualCount && (
               <p className="forrum-home-v16__empty">Важных обновлений сейчас нет.</p>
             )}
           </div>
@@ -497,10 +590,10 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
         <section className="forrum-home-v16__panel">
           <header className="forrum-home-v16__panel-head"><h2>FORRUM сегодня</h2></header>
           <dl className="forrum-home-v16__stats">
-            <div><dt>Сообщества</dt><dd>{formatMetric(stats?.communities)}</dd></div>
-            <div><dt>Тем создано</dt><dd>{formatMetric(stats?.topics)}</dd></div>
-            <div><dt>Сообщений</dt><dd>{formatMetric(stats?.messages)}</dd></div>
-            <div><dt>Пользователей онлайн</dt><dd>{formatMetric(stats?.usersOnline)}</dd></div>
+            <div><dt><span aria-hidden="true">◇</span>Сообщества</dt><dd>{formatMetric(stats?.communities)}</dd></div>
+            <div><dt><span aria-hidden="true">▣</span>Тем создано</dt><dd>{formatMetric(stats?.topics)}</dd></div>
+            <div><dt><span aria-hidden="true">▤</span>Сообщений</dt><dd>{formatMetric(stats?.messages)}</dd></div>
+            <div><dt><span aria-hidden="true">♙</span>Пользователей онлайн</dt><dd>{formatMetric(stats?.usersOnline)}</dd></div>
           </dl>
           <div className="forrum-home-v16__record">
             Рекорд онлайн: <strong>{formatMetric(stats?.recordOnline)}</strong>
