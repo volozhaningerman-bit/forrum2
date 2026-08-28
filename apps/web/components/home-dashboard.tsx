@@ -147,6 +147,31 @@ function communityVisual(
   return topicVisuals[slug] ?? avatarUrl ?? topicVisual(slug);
 }
 
+// FORRUM_HOME_CONTENT_VISUALS_V43
+// Content rows must not collapse into identical community pictures.
+// The mapping is deterministic and semantic: real publication type first,
+// community visual only as a fallback for an unknown future type.
+const publicationTypeVisuals: Record<string, string> = {
+  NEWS: '/forrum-assets/topic-news.svg',
+  QUESTION: '/forrum-assets/topic-question.svg',
+  CASE: '/forrum-assets/topic-case.svg',
+  DISCUSSION: '/forrum-assets/topic-discussion.svg',
+  GUIDE: '/forrum-assets/topic-guide.svg',
+  PROJECT: '/forrum-assets/topic-project.svg',
+  SERVICE: '/forrum-assets/topic-service.svg',
+  ANNOUNCEMENT: '/forrum-assets/topic-announcement.svg',
+};
+
+function topicContentVisual(item: {
+  type: string;
+  community: { slug: string; avatarUrl?: string | null };
+}) {
+  return (
+    publicationTypeVisuals[item.type.toUpperCase()] ??
+    communityVisual(item.community.slug, item.community.avatarUrl)
+  );
+}
+
 const publicationTypeName: Record<string, string> = {
   DISCUSSION: 'Обсуждение',
   QUESTION: 'Вопрос',
@@ -358,7 +383,7 @@ function DiscussedTopic({ item }: { item: PublicationCardData | HomeDiscussedTop
       <CommunityMark
         className="forrum-home-v16__topic-mark"
         name={item.community.name}
-        url={communityVisual(item.community.slug, item.community.avatarUrl)}
+        url={topicContentVisual(item)}
         size={46}
       />
       <span className="forrum-home-v16__discussed-copy">
@@ -589,7 +614,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
           <div className="forrum-home-v16__actual-list">
             {actualAnnouncements.map((item) => (
               <Link className="forrum-home-v16__actual" href={`/p/${item.slug}`} key={`announcement-${item.id}`}>
-                <CommunityMark name={item.community.name} url={communityVisual(item.community.slug, item.community.avatarUrl)} size={36} />
+                <CommunityMark name={item.community.name} url={topicContentVisual(item)} size={36} />
                 <span><strong>{item.title || 'Объявление'}</strong><small>Новость · {relativeTime(item.createdAt)}</small></span>
               </Link>
             ))}
@@ -607,7 +632,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
             )}
             {actualTopics.map((item) => (
               <Link className="forrum-home-v16__actual" href={`/p/${item.slug}`} key={`topic-${item.id}`}>
-                <CommunityMark name={item.community.name} url={communityVisual(item.community.slug, item.community.avatarUrl)} size={36} />
+                <CommunityMark name={item.community.name} url={topicContentVisual(item)} size={36} />
                 <span><strong>{item.title?.trim() || 'Новая тема'}</strong><small>Новая тема · {item.community.name}</small></span>
               </Link>
             ))}
