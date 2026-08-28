@@ -1,0 +1,665 @@
+name: FORRUM Home Content Visuals V43 Fixed
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-home-content-visuals-v43
+  cancel-in-progress: false
+
+jobs:
+  home-content-visuals-v43:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Inventory V42 baseline
+        id: baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+          for path in \
+            apps/web/components/home-dashboard.tsx \
+            apps/web/app/globals.css \
+            apps/web/components/main-nav.tsx \
+            apps/web/components/theme-toggle.tsx \
+            scripts/home-reference-check.mjs
+          do
+            test -f "$path"
+          done
+
+          grep -Fq 'data-home-polish="v42"' \
+            apps/web/components/home-dashboard.tsx
+
+          grep -Fq \
+            'width: min(calc(100vw - 32px), 1580px);' \
+            apps/web/app/globals.css
+          grep -Fq \
+            'grid-template-columns: 300px minmax(0, 1fr) 326px;' \
+            apps/web/app/globals.css
+
+          grep -Fq "['/services', 'Услуги']" \
+            apps/web/components/main-nav.tsx
+          grep -Fq "['/media', 'Медиа']" \
+            apps/web/components/main-nav.tsx
+          grep -Fq "['/news', 'Новости']" \
+            apps/web/components/main-nav.tsx
+
+          grep -Fq \
+            'communityVisual(poll.community.slug, poll.community.avatarUrl)' \
+            apps/web/components/home-dashboard.tsx
+
+          old_item_visuals="$(
+            grep -F \
+              'communityVisual(item.community.slug, item.community.avatarUrl)' \
+              apps/web/components/home-dashboard.tsx |
+            wc -l |
+            tr -d ' '
+          )"
+
+          test "$old_item_visuals" -eq 3
+
+          echo "V43 baseline: V42 is present and unchanged."
+
+      - name: Write V43 regression check first
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > scripts/home-content-visual-v43-check.mjs <<'NODE'
+          import fs from 'node:fs';
+
+          const sourcePath = 'apps/web/components/home-dashboard.tsx';
+          const source = fs.readFileSync(sourcePath, 'utf8');
+
+          const required = [
+            '// FORRUM_HOME_CONTENT_VISUALS_V43',
+            'const publicationTypeVisuals: Record<string, string> = {',
+            "NEWS: '/forrum-assets/topic-news.svg'",
+            "QUESTION: '/forrum-assets/topic-question.svg'",
+            "CASE: '/forrum-assets/topic-case.svg'",
+            "DISCUSSION: '/forrum-assets/topic-discussion.svg'",
+            "GUIDE: '/forrum-assets/topic-guide.svg'",
+            "PROJECT: '/forrum-assets/topic-project.svg'",
+            "SERVICE: '/forrum-assets/topic-service.svg'",
+            "ANNOUNCEMENT: '/forrum-assets/topic-announcement.svg'",
+            'function topicContentVisual(',
+            'url={topicContentVisual(item)}',
+            'communityVisual(poll.community.slug, poll.community.avatarUrl)',
+          ];
+
+          for (const marker of required) {
+            if (!source.includes(marker)) {
+              throw new Error(`V43 content-visual contract missing: ${marker}`);
+            }
+          }
+
+          const itemVisualCount = (
+            source.match(/url=\{topicContentVisual\(item\)\}/g) ?? []
+          ).length;
+
+          if (itemVisualCount !== 3) {
+            throw new Error(
+              `V43 expects exactly 3 topic/Actual content visuals; found ${itemVisualCount}.`,
+            );
+          }
+
+          if (
+            source.includes(
+              'url={communityVisual(item.community.slug, item.community.avatarUrl)}',
+            )
+          ) {
+            throw new Error(
+              'V43 left a community-level visual on a content row.',
+            );
+          }
+
+          const assetNames = [
+            'news',
+            'question',
+            'case',
+            'discussion',
+            'guide',
+            'project',
+            'service',
+            'announcement',
+          ];
+
+          for (const name of assetNames) {
+            const path = `apps/web/public/forrum-assets/topic-${name}.svg`;
+            if (!fs.existsSync(path)) {
+              throw new Error(`V43 pixel asset is missing: ${path}`);
+            }
+
+            const svg = fs.readFileSync(path, 'utf8');
+            if (!svg.includes('shape-rendering="crispEdges"')) {
+              throw new Error(`V43 asset is not pixel-crisp: ${path}`);
+            }
+            if (svg.includes('<linearGradient') || svg.includes('<radialGradient')) {
+              throw new Error(`V43 asset uses a forbidden gradient: ${path}`);
+            }
+          }
+
+          console.log(
+            'V43 content visuals: PASS — real topics get deterministic type visuals.',
+          );
+          NODE
+
+      - name: TDD RED — prove V42 does not satisfy V43
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if node scripts/home-content-visual-v43-check.mjs; then
+            echo "::error::V43 regression check unexpectedly passed before implementation."
+            exit 1
+          fi
+
+          echo "TDD RED confirmed: V42 still uses community-level visuals for content rows."
+
+      - name: Apply V43 content visual system
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('apps/web/components/home-dashboard.tsx')
+          source = path.read_text(encoding='utf-8')
+
+          marker = '// FORRUM_HOME_CONTENT_VISUALS_V43'
+
+          if marker in source:
+              print('V43 component patch already applied.')
+          else:
+              anchor = """function communityVisual(
+            slug: string,
+            avatarUrl?: string | null,
+          ) {
+            return topicVisuals[slug] ?? avatarUrl ?? topicVisual(slug);
+          }
+          """
+
+              if source.count(anchor) != 1:
+                  raise SystemExit(
+                      'V43 could not locate the single V42 communityVisual helper.'
+                  )
+
+              addition = """function communityVisual(
+            slug: string,
+            avatarUrl?: string | null,
+          ) {
+            return topicVisuals[slug] ?? avatarUrl ?? topicVisual(slug);
+          }
+
+          // FORRUM_HOME_CONTENT_VISUALS_V43
+          // Content rows must not collapse into identical community pictures.
+          // The mapping is deterministic and semantic: real publication type first,
+          // community visual only as a fallback for an unknown future type.
+          const publicationTypeVisuals: Record<string, string> = {
+            NEWS: '/forrum-assets/topic-news.svg',
+            QUESTION: '/forrum-assets/topic-question.svg',
+            CASE: '/forrum-assets/topic-case.svg',
+            DISCUSSION: '/forrum-assets/topic-discussion.svg',
+            GUIDE: '/forrum-assets/topic-guide.svg',
+            PROJECT: '/forrum-assets/topic-project.svg',
+            SERVICE: '/forrum-assets/topic-service.svg',
+            ANNOUNCEMENT: '/forrum-assets/topic-announcement.svg',
+          };
+
+          function topicContentVisual(item: {
+            type: string;
+            community: { slug: string; avatarUrl?: string | null };
+          }) {
+            return (
+              publicationTypeVisuals[item.type.toUpperCase()] ??
+              communityVisual(item.community.slug, item.community.avatarUrl)
+            );
+          }
+          """
+
+              source = source.replace(anchor, addition, 1)
+
+              old = (
+                  'url={communityVisual('
+                  'item.community.slug, item.community.avatarUrl)}'
+              )
+              count = source.count(old)
+
+              if count != 3:
+                  raise SystemExit(
+                      f'V43 expected exactly 3 V42 item visuals; found {count}.'
+                  )
+
+              source = source.replace(old, 'url={topicContentVisual(item)}')
+
+              path.write_text(
+                  '\n'.join(
+                      line.rstrip(' \t')
+                      for line in source.splitlines()
+                  ) + '\n',
+                  encoding='utf-8',
+              )
+
+              print('V43 component patch applied.')
+          PY
+
+          mkdir -p apps/web/public/forrum-assets
+
+          cat > apps/web/public/forrum-assets/topic-news.svg <<'SVG'
+          <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46" shape-rendering="crispEdges">
+            <rect width="46" height="46" fill="#18232b"/>
+            <rect x="3" y="3" width="40" height="40" fill="#1e83c7"/>
+            <rect x="3" y="3" width="40" height="3" fill="#9edcff"/>
+            <rect x="7" y="10" width="13" height="13" fill="#dff4ff"/>
+            <rect x="24" y="10" width="14" height="3" fill="#dff4ff"/>
+            <rect x="24" y="16" width="12" height="3" fill="#a8d8f5"/>
+            <rect x="7" y="28" width="31" height="3" fill="#dff4ff"/>
+            <rect x="7" y="34" width="24" height="3" fill="#a8d8f5"/>
+          </svg>
+          SVG
+
+          cat > apps/web/public/forrum-assets/topic-question.svg <<'SVG'
+          <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46" shape-rendering="crispEdges">
+            <rect width="46" height="46" fill="#261c1c"/>
+            <rect x="3" y="3" width="40" height="40" fill="#b84b49"/>
+            <rect x="12" y="10" width="19" height="4" fill="#fff0e8"/>
+            <rect x="31" y="14" width="4" height="8" fill="#fff0e8"/>
+            <rect x="23" y="22" width="12" height="4" fill="#fff0e8"/>
+            <rect x="19" y="26" width="8" height="7" fill="#fff0e8"/>
+            <rect x="19" y="36" width="8" height="4" fill="#ffd1c5"/>
+          </svg>
+          SVG
+
+          cat > apps/web/public/forrum-assets/topic-case.svg <<'SVG'
+          <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46" shape-rendering="crispEdges">
+            <rect width="46" height="46" fill="#252116"/>
+            <rect x="3" y="3" width="40" height="40" fill="#b47b17"/>
+            <rect x="8" y="31" width="6" height="7" fill="#fff1bd"/>
+            <rect x="17" y="25" width="6" height="13" fill="#fff1bd"/>
+            <rect x="26" y="18" width="6" height="20" fill="#fff1bd"/>
+            <rect x="35" y="10" width="4" height="28" fill="#fff1bd"/>
+            <rect x="8" y="10" width="15" height="3" fill="#ffe18b"/>
+          </svg>
+          SVG
+
+          cat > apps/web/public/forrum-assets/topic-discussion.svg <<'SVG'
+          <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46" shape-rendering="crispEdges">
+            <rect width="46" height="46" fill="#1d2225"/>
+            <rect x="3" y="3" width="40" height="40" fill="#59656c"/>
+            <rect x="7" y="9" width="25" height="15" fill="#edf2f3"/>
+            <rect x="11" y="24" width="6" height="5" fill="#edf2f3"/>
+            <rect x="15" y="13" width="13" height="3" fill="#68757c"/>
+            <rect x="14" y="27" width="25" height="11" fill="#b9c8cd"/>
+            <rect x="32" y="38" width="5" height="4" fill="#b9c8cd"/>
+            <rect x="19" y="31" width="14" height="3" fill="#59656c"/>
+          </svg>
+          SVG
+
+          cat > apps/web/public/forrum-assets/topic-guide.svg <<'SVG'
+          <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46" shape-rendering="crispEdges">
+            <rect width="46" height="46" fill="#17231e"/>
+            <rect x="3" y="3" width="40" height="40" fill="#31795c"/>
+            <rect x="9" y="8" width="28" height="31" fill="#e0f2e9"/>
+            <rect x="13" y="13" width="16" height="3" fill="#31795c"/>
+            <rect x="13" y="20" width="20" height="3" fill="#7faf99"/>
+            <rect x="13" y="27" width="17" height="3" fill="#7faf99"/>
+            <rect x="13" y="34" width="10" height="2" fill="#31795c"/>
+          </svg>
+          SVG
+
+          cat > apps/web/public/forrum-assets/topic-project.svg <<'SVG'
+          <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46" shape-rendering="crispEdges">
+            <rect width="46" height="46" fill="#211b29"/>
+            <rect x="3" y="3" width="40" height="40" fill="#69508d"/>
+            <rect x="8" y="9" width="13" height="10" fill="#eee4ff"/>
+            <rect x="26" y="9" width="12" height="10" fill="#c9b5e9"/>
+            <rect x="8" y="27" width="13" height="10" fill="#c9b5e9"/>
+            <rect x="26" y="27" width="12" height="10" fill="#eee4ff"/>
+            <rect x="21" y="13" width="5" height="3" fill="#eee4ff"/>
+            <rect x="14" y="19" width="3" height="8" fill="#eee4ff"/>
+            <rect x="32" y="19" width="3" height="8" fill="#eee4ff"/>
+            <rect x="21" y="31" width="5" height="3" fill="#eee4ff"/>
+          </svg>
+          SVG
+
+          cat > apps/web/public/forrum-assets/topic-service.svg <<'SVG'
+          <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46" shape-rendering="crispEdges">
+            <rect width="46" height="46" fill="#152427"/>
+            <rect x="3" y="3" width="40" height="40" fill="#2b7c82"/>
+            <rect x="10" y="11" width="26" height="23" fill="#d9f1f1"/>
+            <rect x="15" y="8" width="16" height="6" fill="#d9f1f1"/>
+            <rect x="10" y="18" width="26" height="4" fill="#2b7c82"/>
+            <rect x="20" y="24" width="6" height="6" fill="#2b7c82"/>
+            <rect x="8" y="34" width="30" height="4" fill="#a4d5d7"/>
+          </svg>
+          SVG
+
+          cat > apps/web/public/forrum-assets/topic-announcement.svg <<'SVG'
+          <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46" shape-rendering="crispEdges">
+            <rect width="46" height="46" fill="#292015"/>
+            <rect x="3" y="3" width="40" height="40" fill="#a9692f"/>
+            <rect x="8" y="18" width="16" height="12" fill="#fff0d5"/>
+            <rect x="24" y="14" width="8" height="20" fill="#fff0d5"/>
+            <rect x="32" y="10" width="5" height="28" fill="#f6cb89"/>
+            <rect x="12" y="30" width="6" height="8" fill="#fff0d5"/>
+            <rect x="38" y="19" width="4" height="4" fill="#fff0d5"/>
+            <rect x="38" y="27" width="4" height="4" fill="#fff0d5"/>
+          </svg>
+          SVG
+
+          git diff --check
+
+      - name: TDD GREEN — verify V43 behavior
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-content-visual-v43-check.mjs
+
+          grep -Fq 'data-home-polish="v42"' \
+            apps/web/components/home-dashboard.tsx
+
+          grep -Fq \
+            'communityVisual(poll.community.slug, poll.community.avatarUrl)' \
+            apps/web/components/home-dashboard.tsx
+
+          test "$(
+            grep -F \
+              'url={topicContentVisual(item)}' \
+              apps/web/components/home-dashboard.tsx |
+            wc -l |
+            tr -d ' '
+          )" = "3"
+
+          echo "TDD GREEN confirmed."
+
+      - name: Audit protected product scope
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          changed="$(
+            {
+              git diff --name-only
+              git ls-files --others --exclude-standard
+            } | sort -u
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              apps/web/components/home-dashboard.tsx \
+              apps/web/public/forrum-assets/topic-announcement.svg \
+              apps/web/public/forrum-assets/topic-case.svg \
+              apps/web/public/forrum-assets/topic-discussion.svg \
+              apps/web/public/forrum-assets/topic-guide.svg \
+              apps/web/public/forrum-assets/topic-news.svg \
+              apps/web/public/forrum-assets/topic-project.svg \
+              apps/web/public/forrum-assets/topic-question.svg \
+              apps/web/public/forrum-assets/topic-service.svg \
+              scripts/home-content-visual-v43-check.mjs |
+            sort
+          )"
+
+          echo "Detected V43 working-tree paths:"
+          printf '%s\n' "$changed"
+
+          if [ "$changed" != "$expected" ]; then
+            echo "::error::V43 changed files outside approved scope."
+            echo "Changed:"
+            printf '%s\n' "$changed"
+            echo "Expected:"
+            printf '%s\n' "$expected"
+            exit 1
+          fi
+
+          # Explicit product invariants.
+          test -z "$(
+            git diff --name-only -- \
+              apps/web/app/globals.css \
+              apps/web/components/main-nav.tsx \
+              apps/web/components/theme-toggle.tsx \
+              apps/web/app/page.tsx \
+              apps/api \
+              packages/contracts
+          )"
+
+          grep -Fq \
+            'width: min(calc(100vw - 32px), 1580px);' \
+            apps/web/app/globals.css
+          grep -Fq \
+            'grid-template-columns: 300px minmax(0, 1fr) 326px;' \
+            apps/web/app/globals.css
+
+          grep -Fq "['/services', 'Услуги']" \
+            apps/web/components/main-nav.tsx
+          grep -Fq "['/media', 'Медиа']" \
+            apps/web/components/main-nav.tsx
+          grep -Fq "['/news', 'Новости']" \
+            apps/web/components/main-nav.tsx
+
+          echo "V43 protected scope: PASS"
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm install \
+            --include=dev \
+            --no-audit \
+            --no-fund \
+            --package-lock=false
+
+      - name: Validate and regenerate Prisma
+        shell: bash
+        env:
+          DATABASE_URL: postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public
+        run: |
+          set -euo pipefail
+
+          npm run db:validate
+          npm run db:generate
+
+      - name: Static UX accessibility and homepage checks
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-content-visual-v43-check.mjs
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+
+          git diff --check -- \
+            apps/web/components/home-dashboard.tsx \
+            apps/web/public/forrum-assets \
+            scripts/home-content-visual-v43-check.mjs
+
+      - name: Run relevant tests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/api --if-present
+          npm test -w @forrum/web --if-present
+
+      - name: Typecheck entire product
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run typecheck
+
+      - name: Production build entire product
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf apps/web/.next
+          npm run build
+
+      - name: Production self-review
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Weakness 1: repeated community icons made unrelated topics look duplicated.
+          node scripts/home-content-visual-v43-check.mjs
+
+          # Weakness 2: do not "fix" visual density by changing the approved shell.
+          grep -Fq \
+            'max-width: 1580px;' \
+            apps/web/app/globals.css
+          grep -Fq \
+            'grid-template-columns: 300px minmax(0, 1fr) 326px;' \
+            apps/web/app/globals.css
+
+          # Weakness 3: content visuals must not leak into poll identity.
+          grep -Fq \
+            'communityVisual(poll.community.slug, poll.community.avatarUrl)' \
+            apps/web/components/home-dashboard.tsx
+
+          # No CSS override layer, no new !important, no fake records.
+          test -z "$(git diff --name-only -- apps/web/app/globals.css)"
+          ! git diff | grep -Fq '!important'
+          ! git diff | grep -Eq \
+            'fakePoll|fakeUser|mockPoll|mockUser|demoPoll|demoUser'
+
+          # Re-run the full product gate after self-review.
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/api --if-present
+          npm test -w @forrum/web --if-present
+          npm run typecheck
+          npm run build
+
+          echo "V43 production self-review: PASS"
+
+      - name: Restore generated build noise
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git restore \
+            --source=HEAD \
+            --staged \
+            --worktree \
+            -- apps/api/src/generated/prisma 2>/dev/null || true
+
+          rm -rf \
+            node_modules \
+            apps/web/.next \
+            apps/api/dist \
+            packages/contracts/dist
+
+          git diff --check
+
+          changed="$(
+            {
+              git diff --name-only
+              git ls-files --others --exclude-standard
+            } | sort -u
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              apps/web/components/home-dashboard.tsx \
+              apps/web/public/forrum-assets/topic-announcement.svg \
+              apps/web/public/forrum-assets/topic-case.svg \
+              apps/web/public/forrum-assets/topic-discussion.svg \
+              apps/web/public/forrum-assets/topic-guide.svg \
+              apps/web/public/forrum-assets/topic-news.svg \
+              apps/web/public/forrum-assets/topic-project.svg \
+              apps/web/public/forrum-assets/topic-question.svg \
+              apps/web/public/forrum-assets/topic-service.svg \
+              scripts/home-content-visual-v43-check.mjs |
+            sort
+          )"
+
+          test "$changed" = "$expected"
+
+      - name: Commit verified V43
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "FORRUM QA updater"
+          git config user.email "actions@users.noreply.github.com"
+
+          git add -- \
+            apps/web/components/home-dashboard.tsx \
+            apps/web/public/forrum-assets/topic-announcement.svg \
+            apps/web/public/forrum-assets/topic-case.svg \
+            apps/web/public/forrum-assets/topic-discussion.svg \
+            apps/web/public/forrum-assets/topic-guide.svg \
+            apps/web/public/forrum-assets/topic-news.svg \
+            apps/web/public/forrum-assets/topic-project.svg \
+            apps/web/public/forrum-assets/topic-question.svg \
+            apps/web/public/forrum-assets/topic-service.svg \
+            scripts/home-content-visual-v43-check.mjs
+
+          git commit -m "Refine FORRUM home content visuals V43"
+
+          test -z "$(git status --porcelain)"
+
+      - name: Publish only against unchanged main
+        shell: bash
+        env:
+          BASE_SHA: ${{ steps.baseline.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+
+          if [ "$(git rev-parse origin/main)" != "$BASE_SHA" ]; then
+            echo "::error::main advanced during V43 verification. Rerun this workflow so all checks execute against the newest code."
+            exit 1
+          fi
+
+          git push origin HEAD:main
+
+      - name: Verify remote V43
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+
+          git show origin/main:apps/web/components/home-dashboard.tsx \
+            | grep -Fq '// FORRUM_HOME_CONTENT_VISUALS_V43'
+
+          echo "Published FORRUM Home Content Visuals V43."
