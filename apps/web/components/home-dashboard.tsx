@@ -300,7 +300,7 @@ function DiscussedTopic({ item }: { item: PublicationCardData }) {
         className="forrum-home-v16__topic-mark"
         name={item.community.name}
         url={item.community.avatarUrl ?? topicVisual(item.community.slug)}
-        size={42}
+        size={46}
       />
       <span className="forrum-home-v16__discussed-copy">
         <span className="forrum-home-v16__topic-title">
@@ -351,7 +351,7 @@ function PollRow({ poll }: { poll: PollItem }) {
         className="forrum-home-v16__poll-mark"
         name={poll.community.name}
         url={topicVisual(poll.community.slug)}
-        size={38}
+        size={40}
       />
       <span className="forrum-home-v16__poll-copy">
         <strong>{poll.title}</strong>
@@ -407,7 +407,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
   };
 
   return (
-    <div className="forrum-home-v16" data-home-reference="v36" data-home-polish="v37">
+    <div className="forrum-home-v16" data-home-reference="v36" data-home-polish="v38">
       <aside className="forrum-home-v16__tree">
         <div className="forrum-home-v16__side-head"><h2>Сообщества</h2></div>
         {tree.length ? (
@@ -458,13 +458,13 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
           <div className="forrum-home-v16__actual-list">
             {announcements.map((item) => (
               <Link className="forrum-home-v16__actual" href={`/p/${item.slug}`} key={item.id}>
-                <CommunityMark name={item.community.name} url={item.community.avatarUrl ?? topicVisual(item.community.slug)} size={34} />
+                <CommunityMark name={item.community.name} url={item.community.avatarUrl ?? topicVisual(item.community.slug)} size={36} />
                 <span><strong>{item.title || 'Объявление'}</strong><small>{relativeTime(item.createdAt)}</small></span>
               </Link>
             ))}
             {activePolls[0] && (
               <Link className="forrum-home-v16__actual" href="/events?tab=polls">
-                <CommunityMark name={activePolls[0].community.name} url={topicVisual(activePolls[0].community.slug)} size={34} />
+                <CommunityMark name={activePolls[0].community.name} url={topicVisual(activePolls[0].community.slug)} size={36} />
                 <span><strong>Активное голосование</strong><small>{activePolls[0].title}</small></span>
               </Link>
             )}
