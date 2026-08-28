@@ -1,0 +1,604 @@
+name: FORRUM V44 — News Block
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-v44-news
+  cancel-in-progress: false
+
+jobs:
+  v44-news:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Baseline
+        id: baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== FORRUM V44 NEWS BLOCK ==="
+
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+          test -f apps/web/components/home-dashboard.tsx
+          test -f .github/workflows/forrum-v44-news.yml
+
+          grep -Fq 'FORRUM сегодня' \
+            apps/web/components/home-dashboard.tsx
+
+          grep -Fq 'title="Актуальное"' \
+            apps/web/components/home-dashboard.tsx
+
+          grep -Fq 'announcements' \
+            apps/web/components/home-dashboard.tsx
+
+          grep -Fq "['/services', 'Услуги']" \
+            apps/web/components/main-nav.tsx
+          grep -Fq "['/media', 'Медиа']" \
+            apps/web/components/main-nav.tsx
+          grep -Fq "['/news', 'Новости']" \
+            apps/web/components/main-nav.tsx
+
+      - name: Write regression check first
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > scripts/home-v44-news-check.mjs <<'NODE'
+          import fs from 'node:fs';
+
+          const source = fs.readFileSync(
+            'apps/web/components/home-dashboard.tsx',
+            'utf8',
+          );
+
+          const required = [
+            '// FORRUM_HOME_NEWS_V44',
+            'title="Новости FORRUM"',
+            'href="/news"',
+            'Новости FORRUM пока не опубликованы.',
+            'title="Актуальное"',
+            'href="/feed?mode=popular"',
+            'discussed.slice(0, 3).map((item) => (',
+          ];
+
+          for (const marker of required) {
+            if (!source.includes(marker)) {
+              throw new Error(`V44 marker missing: ${marker}`);
+            }
+          }
+
+          if (source.includes('FORRUM сегодня')) {
+            throw new Error('Legacy FORRUM today panel remains.');
+          }
+
+          const newsCount = (
+            source.match(/title="Новости FORRUM"/g) ?? []
+          ).length;
+
+          if (newsCount !== 1) {
+            throw new Error(
+              `Expected exactly one FORRUM news panel, got ${newsCount}.`,
+            );
+          }
+
+          console.log('V44 News regression check: PASS');
+          NODE
+
+      - name: TDD RED
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if node scripts/home-v44-news-check.mjs; then
+            echo "::error::V44 test unexpectedly passed before implementation."
+            exit 1
+          fi
+
+          echo "TDD RED confirmed."
+
+      - name: Apply V44
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('apps/web/components/home-dashboard.tsx')
+          source = path.read_text(encoding='utf-8')
+
+          marker = '// FORRUM_HOME_NEWS_V44'
+          if marker in source:
+              raise SystemExit('V44 is already present.')
+
+          def find_enclosing_section(text: str, needle: str):
+              pos = text.find(needle)
+              if pos < 0:
+                  raise SystemExit(f'Could not locate: {needle}')
+
+              start = text.rfind(
+                  '<section className="forrum-home-v16__panel">',
+                  0,
+                  pos,
+              )
+              if start < 0:
+                  raise SystemExit(
+                      f'Could not locate enclosing section for: {needle}'
+                  )
+
+              end = text.find('</section>', pos)
+              if end < 0:
+                  raise SystemExit(
+                      f'Could not locate section end for: {needle}'
+                  )
+
+              return start, end + len('</section>')
+
+          def remove_const_statement(text: str, name: str):
+              # Remove one top-level `const NAME = ...;` statement without
+              # depending on its formatting or number of lines.
+              match = re.search(
+                  rf'(?m)^  const {re.escape(name)}\b',
+                  text,
+              )
+              if not match:
+                  return text, False
+
+              start = match.start()
+              i = match.end()
+              paren = bracket = brace = 0
+              quote = None
+              escape = False
+
+              while i < len(text):
+                  ch = text[i]
+
+                  if quote is not None:
+                      if escape:
+                          escape = False
+                      elif ch == '\\':
+                          escape = True
+                      elif ch == quote:
+                          quote = None
+                      i += 1
+                      continue
+
+                  if ch in ("'", '"', '`'):
+                      quote = ch
+                      i += 1
+                      continue
+
+                  if ch == '(':
+                      paren += 1
+                  elif ch == ')':
+                      paren = max(0, paren - 1)
+                  elif ch == '[':
+                      bracket += 1
+                  elif ch == ']':
+                      bracket = max(0, bracket - 1)
+                  elif ch == '{':
+                      brace += 1
+                  elif ch == '}':
+                      brace = max(0, brace - 1)
+                  elif (
+                      ch == ';'
+                      and paren == 0
+                      and bracket == 0
+                      and brace == 0
+                  ):
+                      end = i + 1
+                      if end < len(text) and text[end] == '\n':
+                          end += 1
+                      return text[:start] + text[end:], True
+
+                  i += 1
+
+              raise SystemExit(
+                  f'Could not find end of const statement: {name}'
+              )
+
+          # Mark the exact production patch.
+          export_anchor = 'export function HomeDashboard({'
+          if source.count(export_anchor) != 1:
+              raise SystemExit(
+                  'Expected exactly one HomeDashboard export.'
+              )
+
+          source = source.replace(
+              export_anchor,
+              marker + '\n' + export_anchor,
+              1,
+          )
+
+          # A) Replace FORRUM Today panel.
+          section_start, section_end = find_enclosing_section(
+              source,
+              '<h2>FORRUM сегодня</h2>',
+          )
+
+          old_panel = source[section_start:section_end]
+          if 'forrum-home-v16__stats' not in old_panel:
+              raise SystemExit(
+                  'FORRUM today panel does not contain expected stats.'
+              )
+
+          # Discover derived stat variables used by the old panel so we can
+          # remove only declarations that become dead after replacement.
+          derived_names = set(
+              re.findall(
+                  r'formatCount\(\s*([A-Za-z_$][\w$]*)\s*\)',
+                  old_panel,
+              )
+          )
+
+          news_panel = (
+              '<HomePanel\n'
+              '          title="Новости FORRUM"\n'
+              '          href="/news"\n'
+              '        >\n'
+              '          <div className="forrum-home-v16__actual-list">\n'
+              '            {announcements.length ? (\n'
+              '              announcements.map((item) => (\n'
+              '                <Link\n'
+              '                  className="forrum-home-v16__actual"\n'
+              '                  href={`/p/${item.slug}`}\n'
+              '                  key={item.id}\n'
+              '                >\n'
+              '                  <CommunityMark\n'
+              '                    name={item.community.name}\n'
+              '                    url={\n'
+              "                      typeof topicContentVisual === 'function'\n"
+              '                        ? topicContentVisual(item)\n'
+              '                        : item.community.avatarUrl\n'
+              '                    }\n'
+              '                    size={30}\n'
+              '                  />\n'
+              '                  <span>\n'
+              "                    <strong>{item.title || 'Новость FORRUM'}</strong>\n"
+              '                    <small>{relativeTime(item.createdAt)}</small>\n'
+              '                  </span>\n'
+              '                </Link>\n'
+              '              ))\n'
+              '            ) : (\n'
+              '              <p className="forrum-home-v16__empty">\n'
+              '                Новости FORRUM пока не опубликованы.\n'
+              '              </p>\n'
+              '            )}\n'
+              '          </div>\n'
+              '        </HomePanel>'
+          )
+
+          # Do not emit a runtime `typeof` reference to an undeclared lexical
+          # helper. Use the helper only when V43 exists in current source.
+          if 'function topicContentVisual(' not in source:
+              news_panel = news_panel.replace(
+                  "url={\n"
+                  "                      typeof topicContentVisual === 'function'\n"
+                  "                        ? topicContentVisual(item)\n"
+                  "                        : item.community.avatarUrl\n"
+                  "                    }",
+                  "url={item.community.avatarUrl}",
+              )
+          else:
+              news_panel = news_panel.replace(
+                  "url={\n"
+                  "                      typeof topicContentVisual === 'function'\n"
+                  "                        ? topicContentVisual(item)\n"
+                  "                        : item.community.avatarUrl\n"
+                  "                    }",
+                  "url={topicContentVisual(item)}",
+              )
+
+          source = (
+              source[:section_start]
+              + news_panel
+              + source[section_end:]
+          )
+
+          # Remove only the derived values that the deleted panel used.
+          protected_names = {'communities', 'announcements'}
+          for name in sorted(derived_names - protected_names):
+              source, _ = remove_const_statement(source, name)
+
+          # B) Make Actual a genuine live-topic panel instead of duplicating
+          # the exact same announcements shown directly below.
+          actual_title = source.find('title="Актуальное"')
+          weekly_title = source.find('<h2>Участники недели</h2>')
+
+          if (
+              actual_title < 0
+              or weekly_title < 0
+              or weekly_title <= actual_title
+          ):
+              raise SystemExit('Could not locate Actual boundaries.')
+
+          actual = source[actual_title:weekly_title]
+
+          if 'announcements.map((item) => (' not in actual:
+              raise SystemExit(
+                  'Actual no longer contains the expected announcement map.'
+              )
+
+          actual = actual.replace(
+              'href="/news"',
+              'href="/feed?mode=popular"',
+              1,
+          )
+          actual = actual.replace(
+              'announcements.map((item) => (',
+              'discussed.slice(0, 3).map((item) => (',
+              1,
+          )
+          actual = actual.replace(
+              '!announcements.length',
+              '!discussed.length',
+              1,
+          )
+
+          source = (
+              source[:actual_title]
+              + actual
+              + source[weekly_title:]
+          )
+
+          path.write_text(
+              '\n'.join(
+                  line.rstrip(' \t')
+                  for line in source.splitlines()
+              ) + '\n',
+              encoding='utf-8',
+          )
+
+          print(
+              'V44 applied; removed dead derived stats:',
+              ', '.join(sorted(derived_names - protected_names)) or 'none',
+          )
+          PY
+
+          git diff --check
+
+      - name: TDD GREEN
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-v44-news-check.mjs
+          echo "TDD GREEN confirmed."
+
+      - name: Audit scope
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          changed="$(
+            {
+              git diff --name-only
+              git ls-files --others --exclude-standard
+            } | sort -u
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              apps/web/components/home-dashboard.tsx \
+              scripts/home-v44-news-check.mjs |
+            sort
+          )"
+
+          echo "Changed production/test paths:"
+          printf '%s\n' "$changed"
+
+          test "$changed" = "$expected"
+
+          test -z "$(
+            git diff --name-only -- \
+              apps/web/app/globals.css \
+              apps/web/components/main-nav.tsx \
+              apps/web/app/page.tsx \
+              apps/api \
+              packages/contracts
+          )"
+
+          ! git diff | grep -Eq \
+            'fakePoll|fakeUser|mockPoll|mockUser|demoPoll|demoUser'
+
+          echo "V44 scope audit: PASS"
+
+      - name: Stage verified intent
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git add -- \
+            apps/web/components/home-dashboard.tsx \
+            scripts/home-v44-news-check.mjs
+
+          git diff --cached --check
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm install \
+            --include=dev \
+            --no-audit \
+            --no-fund \
+            --package-lock=false
+
+      - name: Validate Prisma
+        shell: bash
+        env:
+          DATABASE_URL: postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public
+        run: |
+          set -euo pipefail
+
+          npm run db:validate
+          npm run db:generate
+
+      - name: Static UX and accessibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-v44-news-check.mjs
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+
+      - name: Relevant tests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/api --if-present
+          npm test -w @forrum/web --if-present
+
+      - name: Typecheck
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run typecheck
+
+      - name: Production build
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf apps/web/.next
+          npm run build
+
+      - name: Production self-review
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-v44-news-check.mjs
+
+          # Product invariants.
+          grep -Fq "['/services', 'Услуги']" \
+            apps/web/components/main-nav.tsx
+          grep -Fq "['/media', 'Медиа']" \
+            apps/web/components/main-nav.tsx
+          grep -Fq "['/news', 'Новости']" \
+            apps/web/components/main-nav.tsx
+
+          # No fake content or CSS layering in this pass.
+          ! git diff --cached | grep -Eq \
+            'fakePoll|fakeUser|mockPoll|mockUser|demoPoll|demoUser'
+          test -z "$(
+            git diff --cached --name-only -- apps/web/app/globals.css
+          )"
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/api --if-present
+          npm test -w @forrum/web --if-present
+          npm run typecheck
+          npm run build
+
+          echo "V44 production self-review: PASS"
+
+      - name: Restore build noise and remove workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Preserve the already-staged verified production/test patch.
+          git restore --worktree -- .
+          git clean -ffdx
+
+          # The workflow itself must not remain in the repository.
+          git rm .github/workflows/forrum-v44-news.yml
+
+          git diff --cached --check
+
+          staged="$(
+            git diff --cached --name-only |
+            sort
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              .github/workflows/forrum-v44-news.yml \
+              apps/web/components/home-dashboard.tsx \
+              scripts/home-v44-news-check.mjs |
+            sort
+          )"
+
+          echo "Final staged paths:"
+          printf '%s\n' "$staged"
+
+          test "$staged" = "$expected"
+
+      - name: Commit verified V44
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "FORRUM QA updater"
+          git config user.email "actions@users.noreply.github.com"
+
+          git commit -m "Replace home stats with FORRUM news V44"
+
+      - name: Publish only against unchanged main
+        shell: bash
+        env:
+          BASE_SHA: ${{ steps.baseline.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+
+          if [ "$(git rev-parse origin/main)" != "$BASE_SHA" ]; then
+            echo "::error::main advanced during V44 verification. Rerun V44."
+            exit 1
+          fi
+
+          git push origin HEAD:main
+
+      - name: Verify remote
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+
+          git show origin/main:apps/web/components/home-dashboard.tsx \
+            | grep -Fq '// FORRUM_HOME_NEWS_V44'
+
+          if git cat-file -e \
+            origin/main:.github/workflows/forrum-v44-news.yml \
+            2>/dev/null
+          then
+            echo "::error::V44 workflow did not self-delete."
+            exit 1
+          fi
+
+          echo "V44 published and workflow removed."
