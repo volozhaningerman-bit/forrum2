@@ -1,0 +1,859 @@
+name: FORRUM Home Visual Alignment V38
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-home-visual-alignment-v38
+  cancel-in-progress: false
+
+jobs:
+  homepage-v38:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Inventory deployed V37 baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          test -f apps/web/components/home-dashboard.tsx
+          test -f apps/web/app/globals.css
+          test -f apps/web/components/main-nav.tsx
+
+          grep -Fq \
+            'data-home-polish="v37"' \
+            apps/web/components/home-dashboard.tsx
+
+          grep -Fq \
+            'event.target !== event.currentTarget' \
+            apps/web/components/home-dashboard.tsx
+
+          grep -Fq \
+            'V37 visual alignment:' \
+            apps/web/app/globals.css
+
+          grep -Fq \
+            "['/services', 'Услуги']" \
+            apps/web/components/main-nav.tsx
+
+          grep -Fq \
+            "['/media', 'Медиа']" \
+            apps/web/components/main-nav.tsx
+
+          grep -Fq \
+            "['/news', 'Новости']" \
+            apps/web/components/main-nav.tsx
+
+          {
+            echo "## FORRUM Home Visual Alignment V38"
+            echo
+            echo "Reference images re-applied as visual specification."
+            echo
+            echo "| Area | V37 | V38 |"
+            echo "|---|---|---|"
+            echo "| Tree UX | approved and working | preserve exactly; no interaction rewrite |"
+            echo "| Discussed topics | correct structure | larger reference-scale pixel visual + title hierarchy |"
+            echo "| New topics | synthetic square marker | plain dense reference table; no invented marker |"
+            echo "| Empty discussed/polls | truthful but tall | compact truthful state; no fake data |"
+            echo "| Weekly empty state | still visually heavy | smaller truthful empty state |"
+            echo "| FORRUM today | correct metrics | reference row rhythm |"
+            echo "| Paper/Graphite | same geometry | same geometry retained |"
+            echo
+            echo "No backend, API, routes, navigation or tree mechanics are changed."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Write V38 frontend patch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > /tmp/forrum-home-visual-alignment-v38.py <<'PY'
+          from pathlib import Path
+
+          HOME = Path("apps/web/components/home-dashboard.tsx")
+          CSS = Path("apps/web/app/globals.css")
+
+          for path in (HOME, CSS):
+              if not path.exists():
+                  raise SystemExit(f"V38 required source missing: {path}")
+
+          home = HOME.read_text(encoding="utf-8")
+          css = CSS.read_text(encoding="utf-8")
+
+          OLD_MARKER = 'data-home-polish="v37"'
+          NEW_MARKER = 'data-home-polish="v38"'
+          CSS_START = "/* FORRUM_HOME_REFERENCE_V36_START"
+          CSS_END = "/* FORRUM_HOME_REFERENCE_V36_END */"
+
+          def replace_once(source: str, old: str, new: str, label: str) -> str:
+              count = source.count(old)
+              if count != 1:
+                  raise SystemExit(f"V38 expected one {label}; found {count}.")
+              return source.replace(old, new, 1)
+
+          def verify(home_source: str, css_source: str) -> None:
+              if NEW_MARKER not in home_source:
+                  raise SystemExit("V38 homepage marker missing.")
+              if OLD_MARKER in home_source:
+                  raise SystemExit("V38 old polish marker remains.")
+
+              # Tree mechanics are deliberately untouched from approved V37.
+              for marker in (
+                  "MouseEvent<HTMLDivElement>",
+                  "event.target !== event.currentTarget",
+                  "data-expandable={hasChildren ? 'true' : undefined}",
+                  'aria-label={`Открыть сообщество ${node.name}`}',
+              ):
+                  if marker not in home_source:
+                      raise SystemExit(f"V38 tree regression: {marker}")
+
+              if home_source.count('href={`/communities/${node.slug}`}') != 1:
+                  raise SystemExit(
+                      "V38 tree regression: navigation must remain only on icon + name."
+                  )
+
+              # Reference-scale image sizes when real content is present.
+              if home_source.count("size={46}") != 1:
+                  raise SystemExit("V38 discussed topic icon scale missing.")
+              if home_source.count("size={40}") != 1:
+                  raise SystemExit("V38 poll icon scale missing.")
+              if home_source.count("size={36}") != 2:
+                  raise SystemExit("V38 actual rail icon scale missing.")
+
+              start = css_source.find(CSS_START)
+              end = css_source.find(CSS_END, start)
+              if start < 0 or end < 0:
+                  raise SystemExit("V38 canonical homepage CSS block missing.")
+              block = css_source[start:end]
+
+              required = (
+                  "V38 final reference alignment:",
+                  "padding: 10px 12px 26px",
+                  "min-height: 42px",
+                  "grid-template-columns: 48px minmax(0, 1fr) 58px 70px 120px",
+                  "font-size: 14px",
+                  "min-height: 39px",
+                  "display: block; color: var(--fvt-text); font-size: 12.5px",
+                  "min-height: 44px",
+                  "min-height: 56px",
+                  "min-height: 40px",
+              )
+              for marker in required:
+                  if marker not in block:
+                      raise SystemExit(f"V38 visual contract missing: {marker}")
+
+              if ".forrum-home-v16__new-topic-title::before" in block:
+                  raise SystemExit(
+                      "V38 reference mismatch: synthetic square marker still in New topics."
+                  )
+
+              for forbidden in (
+                  "!important",
+                  "box-shadow:",
+                  "backdrop-filter:",
+                  "linear-gradient",
+                  "radial-gradient",
+              ):
+                  if forbidden in block:
+                      raise SystemExit(
+                          f"V38 canonical homepage uses forbidden style: {forbidden}"
+                      )
+
+              outside = css_source[:start] + css_source[end + len(CSS_END):]
+              if ".forrum-home-v16" in outside:
+                  raise SystemExit(
+                      "V38 found competing homepage CSS outside canonical source."
+                  )
+
+          # Idempotent replay.
+          if NEW_MARKER in home:
+              verify(home, css)
+              print("FORRUM Home Visual Alignment V38 already applied.")
+              raise SystemExit(0)
+
+          if OLD_MARKER not in home:
+              raise SystemExit(
+                  "V38 requires successfully deployed V37 homepage baseline."
+              )
+
+          home = replace_once(
+              home,
+              OLD_MARKER,
+              NEW_MARKER,
+              "homepage polish marker",
+          )
+
+          # Approved reference uses larger pixel visuals in the rich rows.
+          home = replace_once(
+              home,
+              "size={42}",
+              "size={46}",
+              "discussed topic CommunityMark size",
+          )
+          home = replace_once(
+              home,
+              "size={38}",
+              "size={40}",
+              "poll CommunityMark size",
+          )
+
+          actual_count = home.count("size={34}")
+          if actual_count != 2:
+              raise SystemExit(
+                  f"V38 expected two Actual rail CommunityMark sizes; found {actual_count}."
+              )
+          home = home.replace("size={34}", "size={36}")
+
+          start = css.find(CSS_START)
+          end = css.find(CSS_END, start)
+          if start < 0 or end < 0:
+              raise SystemExit("V38 requires canonical V36/V37 homepage CSS.")
+          end += len(CSS_END)
+          block = css[start:end]
+
+          block = replace_once(
+              block,
+              """   Canonical homepage reference geometry.
+             V37 visual alignment: stronger hierarchy, calmer paper texture, compact truthful empty states.
+             Paper and Graphite share one layout; theme differences come only from --fvt-* tokens.""",
+              """   Canonical homepage reference geometry.
+             V38 final reference alignment: approved density, richer topic rows, plain dense New topics table.
+             Paper and Graphite share one layout; theme differences come only from --fvt-* tokens.""",
+              "V38 canonical comment",
+          )
+
+          block = replace_once(
+              block,
+              """  padding: 14px 12px 26px;""",
+              """  padding: 10px 12px 26px;""",
+              "homepage top rhythm",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__side-head,
+          .forrum-home-v16__panel-head {
+            min-height: 44px;""",
+              """.forrum-home-v16__side-head,
+          .forrum-home-v16__panel-head {
+            min-height: 42px;""",
+              "panel header height",
+          )
+
+          block = replace_once(
+              block,
+              """  font-weight: 790;
+            letter-spacing: 0.018em;""",
+              """  font-weight: 750;
+            letter-spacing: 0.02em;""",
+              "panel heading weight",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__discussed {
+            min-width: 0; min-height: 68px; display: grid;
+            grid-template-columns: 44px minmax(0, 1fr) 58px 70px 120px;""",
+              """.forrum-home-v16__discussed {
+            min-width: 0; min-height: 68px; display: grid;
+            grid-template-columns: 48px minmax(0, 1fr) 58px 70px 120px;""",
+              "discussed topic reference columns",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__topic-title strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fvt-text); font-size: 13.5px; font-weight: 740; letter-spacing: -0.008em; }""",
+              """.forrum-home-v16__topic-title strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fvt-text); font-size: 14px; font-weight: 720; letter-spacing: -0.01em; }""",
+              "discussed topic title scale",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__new-topic-table { padding: 0 14px 6px; min-width: 0; }""",
+              """.forrum-home-v16__new-topic-table { padding: 0 14px 4px; min-width: 0; }""",
+              "new topics table bottom rhythm",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__new-topic:hover { background: var(--fvt-hover); }""",
+              """.forrum-home-v16__new-topic:hover,
+          .forrum-home-v16__new-topic:focus-visible { background: var(--fvt-hover); }""",
+              "new topic row hover/focus",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__new-topic-title { display: flex; align-items: center; gap: 7px; color: var(--fvt-text); font-size: 12.5px; font-weight: 700; letter-spacing: -0.008em; }""",
+              """.forrum-home-v16__new-topic-title { display: block; color: var(--fvt-text); font-size: 12.5px; font-weight: 700; letter-spacing: -0.008em; }""",
+              "plain reference new-topic title",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__new-topic-title::before { content: ""; width: 10px; height: 10px; flex: 0 0 10px; border: 1px solid var(--fvt-line-strong); background: var(--fvt-icon-bg); image-rendering: pixelated; }
+          """,
+              "",
+              "remove synthetic New topics marker",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__weekly-empty { margin: 0; min-height: 66px; display: flex; align-items: center; justify-content: center; padding: 12px 14px; color: var(--fvt-muted); font-size: 11px; line-height: 1.35; text-align: center; }""",
+              """.forrum-home-v16__weekly-empty { margin: 0; min-height: 56px; display: flex; align-items: center; justify-content: center; padding: 10px 14px; color: var(--fvt-muted); font-size: 11px; line-height: 1.35; text-align: center; }""",
+              "compact weekly empty state",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__stats > div { min-height: 38px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--fvt-line); }""",
+              """.forrum-home-v16__stats > div { min-height: 40px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--fvt-line); }""",
+              "FORRUM today reference row height",
+          )
+
+          block = replace_once(
+              block,
+              """  min-height: 50px;
+            display: flex;
+            align-items: center;""",
+              """  min-height: 44px;
+            display: flex;
+            align-items: center;""",
+              "compact empty blocks",
+          )
+
+          # Keep reference scale coherent at narrower desktops.
+          block = replace_once(
+              block,
+              """  .forrum-home-v16__discussed { grid-template-columns: 42px minmax(0,1fr) 52px 64px 105px; gap: 8px; }""",
+              """  .forrum-home-v16__discussed { grid-template-columns: 44px minmax(0,1fr) 52px 64px 105px; gap: 8px; }""",
+              "narrow discussed visual column",
+          )
+
+          css = css[:start] + block + css[end:]
+
+          # Normalize authored source only.
+          home = "\n".join(line.rstrip(" \t") for line in home.splitlines()) + "\n"
+          css = "\n".join(line.rstrip(" \t") for line in css.splitlines()) + "\n"
+
+          verify(home, css)
+
+          HOME.write_text(home, encoding="utf-8")
+          CSS.write_text(css, encoding="utf-8")
+
+          print(
+              "FORRUM Home Visual Alignment V38 applied: "
+              "reference-scale topic visuals, plain New topics table, tighter empty states."
+          )
+
+          PY
+
+          python3 -S - <<'PY'
+          from pathlib import Path
+
+          path = Path('/tmp/forrum-home-visual-alignment-v38.py')
+          compile(path.read_text(encoding='utf-8'), str(path), 'exec')
+          print('V38 embedded Python patch syntax: PASS')
+          PY
+
+      - name: Apply V38 visual alignment
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PYTHONDONTWRITEBYTECODE=1 \
+            python3 -S /tmp/forrum-home-visual-alignment-v38.py
+
+          git diff --check
+
+          changed="$(
+            git diff --name-only | sort
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              apps/web/app/globals.css \
+              apps/web/components/home-dashboard.tsx |
+            sort
+          )"
+
+          if [ -n "$changed" ]; then
+            test "$changed" = "$expected"
+          fi
+
+      - name: Audit V38 product and UX contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          home = Path(
+              'apps/web/components/home-dashboard.tsx'
+          ).read_text(encoding='utf-8')
+
+          css = Path(
+              'apps/web/app/globals.css'
+          ).read_text(encoding='utf-8')
+
+          # Product behavior: V37 tree is approved and must remain untouched.
+          for marker in (
+              'data-home-polish="v38"',
+              'MouseEvent<HTMLDivElement>',
+              'event.target !== event.currentTarget',
+              "data-expandable={hasChildren ? 'true' : undefined}",
+              'aria-label={`Открыть сообщество ${node.name}`}',
+          ):
+              if marker not in home:
+                  raise SystemExit(
+                      'V38 tree/product regression: ' + marker
+                  )
+
+          if home.count(
+              'href={`/communities/${node.slug}`}'
+          ) != 1:
+              raise SystemExit(
+                  'V38 tree navigation regressed: '
+                  'only folder icon + name may navigate.'
+              )
+
+          # No fake homepage data or route churn.
+          for forbidden in (
+              'fake',
+              'mockWeekly',
+              'mockPoll',
+          ):
+              if forbidden in home:
+                  raise SystemExit(
+                      'V38 introduced fake homepage data: ' + forbidden
+                  )
+
+          start = css.index(
+              '/* FORRUM_HOME_REFERENCE_V36_START'
+          )
+          end = css.index(
+              '/* FORRUM_HOME_REFERENCE_V36_END */',
+              start,
+          )
+          block = css[start:end]
+
+          for marker in (
+              'V38 final reference alignment:',
+              'padding: 10px 12px 26px',
+              'min-height: 42px',
+              'grid-template-columns: 48px minmax(0, 1fr) 58px 70px 120px',
+              'font-size: 14px',
+              'min-height: 39px',
+              'min-height: 44px',
+              'min-height: 56px',
+              'min-height: 40px',
+          ):
+              if marker not in block:
+                  raise SystemExit(
+                      'V38 visual reference contract missing: '
+                      + marker
+                  )
+
+          if '.forrum-home-v16__new-topic-title::before' in block:
+              raise SystemExit(
+                  'V38 New topics still contains the non-reference square marker.'
+              )
+
+          for forbidden in (
+              '!important',
+              'box-shadow:',
+              'backdrop-filter:',
+              'linear-gradient',
+              'radial-gradient',
+          ):
+              if forbidden in block:
+                  raise SystemExit(
+                      'V38 canonical homepage style regression: '
+                      + forbidden
+                  )
+
+          outside = (
+              css[:start]
+              + css[
+                  end
+                  + len('/* FORRUM_HOME_REFERENCE_V36_END */'):
+              ]
+          )
+          if '.forrum-home-v16' in outside:
+              raise SystemExit(
+                  'V38 found a competing homepage CSS layer.'
+              )
+
+          print('V38 product/reference audit: PASS')
+          PY
+
+          git diff --check
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm install             --include=dev             --no-audit             --no-fund             --package-lock=false
+
+      - name: Parse changed TypeScript
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node - <<'NODE'
+          const fs = require("fs");
+          const ts = require("typescript");
+
+          const path =
+            "apps/web/components/home-dashboard.tsx";
+
+          const source =
+            fs.readFileSync(path, "utf8");
+
+          const file = ts.createSourceFile(
+            path,
+            source,
+            ts.ScriptTarget.Latest,
+            true,
+            ts.ScriptKind.TSX,
+          );
+
+          const diagnostics =
+            file.parseDiagnostics ?? [];
+
+          if (diagnostics.length) {
+            for (const diagnostic of diagnostics) {
+              const pos =
+                file.getLineAndCharacterOfPosition(
+                  diagnostic.start ?? 0,
+                );
+
+              console.error(
+                `${path}:${pos.line + 1}:${pos.character + 1} ` +
+                ts.flattenDiagnosticMessageText(
+                  diagnostic.messageText,
+                  "\n",
+                ),
+              );
+            }
+
+            process.exit(1);
+          }
+
+          console.log(
+            "V38 changed TSX parser: PASS",
+          );
+          NODE
+
+      - name: Run static UX accessibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          git diff --check
+
+      - name: Run relevant tests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/web --if-present
+
+      - name: Typecheck relevant workspaces
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm run typecheck -w @forrum/contracts
+          npm run typecheck -w @forrum/web
+
+      - name: Production build relevant workspaces
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf apps/web/.next
+
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/web
+
+      - name: Self-review and second pass
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          before="$(
+            git diff |
+            sha256sum |
+            cut -d' ' -f1
+          )"
+
+          PYTHONDONTWRITEBYTECODE=1 \
+            python3 -S /tmp/forrum-home-visual-alignment-v38.py
+
+          after="$(
+            git diff |
+            sha256sum |
+            cut -d' ' -f1
+          )"
+
+          test "$before" = "$after"
+
+          # First draft weakness found and fixed before delivery:
+          # V37 invented a square marker for New topics that does not exist
+          # in the approved reference. V38 removes it instead of styling it harder.
+          if grep -Fq \
+            '.forrum-home-v16__new-topic-title::before' \
+            apps/web/app/globals.css
+          then
+            echo "::error::V38 self-review: synthetic New topics marker returned."
+            exit 1
+          fi
+
+          # Second weakness found and fixed:
+          # increasing the 42px discussed-topic image without widening its visual
+          # column would squeeze the reference row. V38 pairs 46px art with 48px slot.
+          grep -Fq \
+            'size={46}' \
+            apps/web/components/home-dashboard.tsx
+
+          grep -Fq \
+            'grid-template-columns: 48px minmax(0, 1fr) 58px 70px 120px' \
+            apps/web/app/globals.css
+
+          # Approved tree interaction remains exactly the V37 behavior.
+          grep -Fq \
+            'event.target !== event.currentTarget' \
+            apps/web/components/home-dashboard.tsx
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          npm run typecheck -w @forrum/web
+          git diff --check
+
+          echo "V38 second-pass self-review: PASS"
+
+      - name: Restore build side effects and clean dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mapfile -t tracked_dirty < <(
+            git status               --porcelain=v1               --untracked-files=no |
+            sed 's/^...//'
+          )
+
+          for path in "${tracked_dirty[@]}"; do
+            [ -n "$path" ] || continue
+
+            case "$path" in
+              apps/web/components/home-dashboard.tsx|              apps/web/app/globals.css)
+                continue
+                ;;
+            esac
+
+            git restore               --staged               --worktree               -- "$path"
+          done
+
+          git clean -ffdx
+
+      - name: Final V38 pre-commit audit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          git diff --check
+
+          changed="$(
+            git diff --name-only | sort
+          )"
+
+          expected="$(
+            printf '%s\n'               apps/web/app/globals.css               apps/web/components/home-dashboard.tsx |
+            sort
+          )"
+
+          if [ -n "$changed" ]; then
+            test "$changed" = "$expected"
+          fi
+
+          test -z "$(
+            git status --porcelain=v1 --untracked-files=all |
+            grep -vE               '^( M|M |MM) (apps/web/app/globals\.css|apps/web/components/home-dashboard\.tsx)$'               || true
+          )"
+
+      - name: Commit verified V38
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "FORRUM Home Visual Alignment V38 is already present."
+            exit 0
+          fi
+
+          git config user.name "forrum-actions"
+          git config user.email "actions@forrum.local"
+
+          git add             apps/web/components/home-dashboard.tsx             apps/web/app/globals.css
+
+          git diff --cached --check
+
+          git commit -m             "Polish FORRUM homepage reference V38"
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Rebase and full V38 production audit
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          git rebase origin/main
+
+          npm install             --include=dev             --no-audit             --no-fund             --package-lock=false
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/web --if-present
+          npm run typecheck -w @forrum/contracts
+          npm run typecheck -w @forrum/web
+
+          rm -rf apps/web/.next
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/web
+
+          git restore             --source=HEAD             --staged             --worktree             -- .
+
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          echo "Post-rebase V38 production audit: PASS"
+
+      - name: Publish V38 safely
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+
+            remote="$(
+              git rev-parse origin/main
+            )"
+
+            if ! git merge-base               --is-ancestor               "$remote"               HEAD
+            then
+              echo                 "origin/main advanced; rebasing and repeating V38 verification."
+
+              git rebase origin/main
+
+              npm install                 --include=dev                 --no-audit                 --no-fund                 --package-lock=false
+
+              node scripts/home-paper-graphite-v16-check.mjs
+              node scripts/home-reference-check.mjs
+              node scripts/home-scale-polish-check.mjs
+              node scripts/home-visual-theme-check.mjs
+
+              npm run validate:static
+              npm run validate:ux
+              npm run validate:a11y
+              npm test -w @forrum/contracts --if-present
+              npm test -w @forrum/web --if-present
+              npm run typecheck -w @forrum/contracts
+              npm run typecheck -w @forrum/web
+
+              rm -rf apps/web/.next
+              npm run build -w @forrum/contracts
+              npm run build -w @forrum/web
+
+              git restore                 --source=HEAD                 --staged                 --worktree                 -- .
+
+              git clean -ffdx
+              test -z "$(git status --porcelain)"
+            fi
+
+            git fetch origin main
+
+            if [ "$(
+              git rev-parse origin/main
+            )" != "$(
+              git merge-base HEAD origin/main
+            )" ]; then
+              continue
+            fi
+
+            if git push origin HEAD:main; then
+              echo "V38 push succeeded on attempt $attempt."
+              exit 0
+            fi
+          done
+
+          echo "::error::V38 could not be published safely."
+          exit 1
+
+      - name: Verify remote V38 commit
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+
+          test "$(
+            git rev-parse HEAD
+          )" = "$(
+            git rev-parse origin/main
+          )"
+
+          echo             "Published FORRUM Home Visual Alignment V38."
