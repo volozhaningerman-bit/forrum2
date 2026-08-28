@@ -484,6 +484,7 @@ function PollRow({ poll }: { poll: PollItem }) {
   );
 }
 
+// FORRUM_HOME_V45_RIGHT_RAIL_NEWS
 export function HomeDashboard({ initialData }: { initialData: HomeInitialData }) {
   const communities = initialData.communities ?? [];
   const tree = useMemo(() => buildTree(communities), [communities]);
@@ -610,34 +611,44 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
       </main>
 
       <aside className="forrum-home-v16__rail">
-        <HomePanel title="Актуальное" href="/news">
+        <HomePanel
+          title="Актуальное"
+          href="/feed?mode=popular"
+        >
           <div className="forrum-home-v16__actual-list">
-            {actualAnnouncements.map((item) => (
-              <Link className="forrum-home-v16__actual" href={`/p/${item.slug}`} key={`announcement-${item.id}`}>
-                <CommunityMark name={item.community.name} url={topicContentVisual(item)} size={36} />
-                <span><strong>{item.title || 'Объявление'}</strong><small>Новость · {relativeTime(item.createdAt)}</small></span>
-              </Link>
-            ))}
-            {actualPoll && (
-              <Link className="forrum-home-v16__actual" href="/events?tab=polls">
-                <CommunityMark name={actualPoll.community.name} url={topicVisual(actualPoll.community.slug)} size={36} />
-                <span><strong>Активное голосование</strong><small>{actualPoll.title}</small></span>
-              </Link>
+            {discussed.length ? (
+              discussed.slice(0, 3).map((item) => (
+                <Link
+                  className="forrum-home-v16__actual"
+                  href={`/p/${item.slug}`}
+                  key={item.id}
+                >
+                  <CommunityMark
+                    name={item.community.name}
+                    url={topicContentVisual(item)}
+                    size={30}
+                  />
+                  <span>
+                    <strong>{item.title || 'Актуальная тема'}</strong>
+                    <small>{item.community.name}</small>
+                  </span>
+                </Link>
+              ))
+            ) : (
+              <p className="forrum-home-v16__empty">
+                Актуальных тем сейчас нет.
+              </p>
             )}
-            {actualProposal && (
-              <Link className="forrum-home-v16__actual" href="/communities/proposals">
-                <CommunityMark name="Предложения" url="/forrum-assets/topic-forrum.svg" size={36} />
-                <span><strong>Предложен раздел: {actualProposal.name}</strong><small>@{actualProposal.author.username} · {formatCount(actualProposal.supportCount)} поддержали</small></span>
+            {activePolls[0] && (
+              <Link className="forrum-home-v16__actual" href="/events">
+                <span className="forrum-home-v16__actual-symbol" aria-hidden="true">
+                  ▥
+                </span>
+                <span>
+                  <strong>Активное голосование</strong>
+                  <small>{activePolls[0].title}</small>
+                </span>
               </Link>
-            )}
-            {actualTopics.map((item) => (
-              <Link className="forrum-home-v16__actual" href={`/p/${item.slug}`} key={`topic-${item.id}`}>
-                <CommunityMark name={item.community.name} url={topicContentVisual(item)} size={36} />
-                <span><strong>{item.title?.trim() || 'Новая тема'}</strong><small>Новая тема · {item.community.name}</small></span>
-              </Link>
-            ))}
-            {!actualCount && (
-              <p className="forrum-home-v16__empty">Важных обновлений сейчас нет.</p>
             )}
           </div>
         </HomePanel>
@@ -676,19 +687,36 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
           <Link className="forrum-home-v16__rail-footer" href="/users">Смотреть рейтинг <span aria-hidden="true">→</span></Link>
         </section>
 
-        <section className="forrum-home-v16__panel">
-          <header className="forrum-home-v16__panel-head"><h2>FORRUM сегодня</h2></header>
-          <dl className="forrum-home-v16__stats">
-            <div><dt><span aria-hidden="true">◇</span>Сообщества</dt><dd>{formatMetric(stats?.communities)}</dd></div>
-            <div><dt><span aria-hidden="true">▣</span>Тем создано</dt><dd>{formatMetric(stats?.topics)}</dd></div>
-            <div><dt><span aria-hidden="true">▤</span>Сообщений</dt><dd>{formatMetric(stats?.messages)}</dd></div>
-            <div><dt><span aria-hidden="true">♙</span>Пользователей онлайн</dt><dd>{formatMetric(stats?.usersOnline)}</dd></div>
-          </dl>
-          <div className="forrum-home-v16__record">
-            Рекорд онлайн: <strong>{formatMetric(stats?.recordOnline)}</strong>
-            {stats?.recordOnlineAt ? ` — ${formatRecordDate(stats.recordOnlineAt)}` : ''}
+        <HomePanel
+          title="Новости FORRUM"
+          href="/news"
+        >
+          <div className="forrum-home-v16__actual-list">
+            {announcements.length ? (
+              announcements.map((item) => (
+                <Link
+                  className="forrum-home-v16__actual"
+                  href={`/p/${item.slug}`}
+                  key={item.id}
+                >
+                  <CommunityMark
+                    name={item.community.name}
+                    url={topicContentVisual(item)}
+                    size={30}
+                  />
+                  <span>
+                    <strong>{item.title || 'Новость FORRUM'}</strong>
+                    <small>{relativeTime(item.createdAt)}</small>
+                  </span>
+                </Link>
+              ))
+            ) : (
+              <p className="forrum-home-v16__empty">
+                Новости FORRUM пока не опубликованы.
+              </p>
+            )}
           </div>
-        </section>
+        </HomePanel>
       </aside>
     </div>
   );
