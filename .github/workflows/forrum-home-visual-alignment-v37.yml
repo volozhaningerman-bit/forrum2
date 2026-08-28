@@ -1,0 +1,1207 @@
+name: FORRUM Home Visual Alignment V37
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-home-visual-alignment-v37
+  cancel-in-progress: false
+
+jobs:
+  homepage-v37:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Inventory deployed V36 baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          test -f apps/web/components/home-dashboard.tsx
+          test -f apps/web/app/globals.css
+          test -f apps/web/components/main-nav.tsx
+
+          grep -Fq             'data-home-reference="v36"'             apps/web/components/home-dashboard.tsx
+
+          grep -Fq             '/* FORRUM_HOME_REFERENCE_V36_START'             apps/web/app/globals.css
+
+          grep -Fq             '/* FORRUM_VISUAL_THEME_START'             apps/web/app/globals.css
+
+          grep -Fq             "['/services', 'Услуги']"             apps/web/components/main-nav.tsx
+
+          grep -Fq             "['/media', 'Медиа']"             apps/web/components/main-nav.tsx
+
+          grep -Fq             "['/news', 'Новости']"             apps/web/components/main-nav.tsx
+
+          {
+            echo "## FORRUM Home Visual Alignment V37"
+            echo
+            echo "| Reference requirement | Existing V36 | V37 action |"
+            echo "|---|---|---|"
+            echo "| Community tree | hierarchy works, row semantics unclear | blank row area toggles; only icon/name navigate |"
+            echo "| Discussed topics | correct data/structure | stronger title/excerpt hierarchy |"
+            echo "| New topics | dense but table-like | wider title, stronger type, pixel marker |"
+            echo "| Polls | real data + options + time | preserve behavior; polish only |"
+            echo "| Weekly ranking | truthful but empty state too tall | compact empty state |"
+            echo "| FORRUM today | correct metrics | denser rows |"
+            echo "| Paper background | visible horizontal ruling | subtle 24px grain without ruled line |"
+            echo "| Paper/Graphite | shared geometry | preserve token-only theme difference |"
+            echo
+            echo "No backend/API/routes are changed in V37."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Write V37 frontend patch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > /tmp/forrum-home-visual-alignment-v37.py <<'PY'
+          from pathlib import Path
+          import re
+
+          HOME = Path("apps/web/components/home-dashboard.tsx")
+          CSS = Path("apps/web/app/globals.css")
+
+          for path in (HOME, CSS):
+              if not path.exists():
+                  raise SystemExit(f"V37 required source missing: {path}")
+
+          home = HOME.read_text(encoding="utf-8")
+          css = CSS.read_text(encoding="utf-8")
+
+          HOME_START = 'data-home-reference="v36"'
+          POLISH_MARKER = 'data-home-polish="v37"'
+          CSS_START = "/* FORRUM_HOME_REFERENCE_V36_START"
+          CSS_END = "/* FORRUM_HOME_REFERENCE_V36_END */"
+          CSS_POLISH = "V37 visual alignment:"
+          THEME_START = "/* FORRUM_VISUAL_THEME_START"
+          THEME_END = "/* FORRUM_VISUAL_THEME_END */"
+
+          def verify_v37(home_source: str, css_source: str) -> None:
+              for marker in (
+                  HOME_START,
+                  POLISH_MARKER,
+                  "MouseEvent<HTMLDivElement>",
+                  'data-expandable={hasChildren ? \'true\' : undefined}',
+                  "event.target !== event.currentTarget",
+                  'aria-label={`Открыть сообщество ${node.name}`}',
+              ):
+                  if marker not in home_source:
+                      raise SystemExit(f"V37 tree/product marker missing: {marker}")
+
+              if (
+                  home_source.count(
+                      'href={`/communities/${node.slug}`}'
+                  )
+                  != 1
+              ):
+                  raise SystemExit(
+                      "V37 tree must have one community navigation link."
+                  )
+
+              start = css_source.find(CSS_START)
+              end = css_source.find(CSS_END, start)
+
+              if start < 0 or end < 0:
+                  raise SystemExit("V37 canonical homepage CSS block missing.")
+
+              block = css_source[start:end]
+
+              required_css = (
+                  CSS_POLISH,
+                  'grid-template-columns: 300px minmax(0, 1fr) 326px',
+                  'gap: 14px',
+                  'min-height: 44px',
+                  'min-height: 68px',
+                  'min-height: 39px',
+                  'min-height: 78px',
+                  '.forrum-home-v16__tree-row[data-expandable="true"]',
+                  'max-width: calc(100% - 54px)',
+                  'flex: 0 1 auto',
+                  'minmax(320px, 2.6fr)',
+                  'font-size: 13.5px',
+                  'min-height: 66px',
+                  'min-height: 38px',
+                  'min-height: 50px',
+                  'border-left-color: var(--fh-line-strong)',
+                  'border-top-color: var(--fh-line-strong)',
+              )
+
+              for marker in required_css:
+                  if marker not in block:
+                      raise SystemExit(
+                          f"V37 visual contract missing: {marker}"
+                      )
+
+              for forbidden in (
+                  "!important",
+                  "linear-gradient",
+                  "radial-gradient",
+                  "box-shadow:",
+                  "backdrop-filter:",
+              ):
+                  if forbidden in block:
+                      raise SystemExit(
+                          f"V37 canonical homepage uses forbidden style: {forbidden}"
+                      )
+
+              outside = (
+                  css_source[:start]
+                  + css_source[end + len(CSS_END):]
+              )
+
+              if ".forrum-home-v16" in outside:
+                  raise SystemExit(
+                      "V37 found competing homepage CSS outside canonical source."
+                  )
+
+              theme_start = css_source.find(THEME_START)
+              theme_end = css_source.find(THEME_END, theme_start)
+
+              if theme_start < 0 or theme_end < 0:
+                  raise SystemExit("V37 visual-theme token block missing.")
+
+              theme = css_source[theme_start:theme_end]
+
+              if "background-size: 24px 24px" not in theme:
+                  raise SystemExit("V37 subtle paper texture size missing.")
+
+              if theme.count("width='24' height='24'") != 2:
+                  raise SystemExit(
+                      "V37 Paper/Graphite textures are not paired."
+                  )
+
+              if "%3Cpath" in theme:
+                  raise SystemExit(
+                      "V37 paper texture still contains visible ruled lines."
+                  )
+
+          # Idempotent second pass.
+          if POLISH_MARKER in home:
+              verify_v37(home, css)
+              print("FORRUM Home Visual Alignment V37 already applied.")
+              raise SystemExit(0)
+
+          if HOME_START not in home:
+              raise SystemExit(
+                  "V37 requires the successfully deployed V36 homepage baseline."
+              )
+
+          # -------------------------------------------------------------------
+          # Tree UX:
+          # - blank row area expands/collapses a parent;
+          # - arrow button still expands/collapses;
+          # - ONLY folder icon + community name navigate;
+          # - count is not a navigation target.
+          # -------------------------------------------------------------------
+
+          old_import = (
+              "import type { CSSProperties, ReactNode } from 'react';"
+          )
+          new_import = (
+              "import type { CSSProperties, MouseEvent, ReactNode } "
+              "from 'react';"
+          )
+
+          if home.count(old_import) != 1:
+              raise SystemExit("V37 could not isolate React type import.")
+
+          home = home.replace(old_import, new_import, 1)
+
+          old_tree = """function TreeBranch({
+            node,
+            depth,
+            expanded,
+            onToggle,
+          }: {
+            node: TreeNode;
+            depth: number;
+            expanded: Set<string>;
+            onToggle: (slug: string) => void;
+          }) {
+            const hasChildren = node.children.length > 0;
+            const isOpen = expanded.has(node.slug);
+            return (
+              <li className="forrum-home-v16__tree-node" style={{ '--tree-depth': depth } as CSSProperties}>
+                <div className="forrum-home-v16__tree-row">
+                  {hasChildren ? (
+                    <button
+                      className="forrum-home-v16__tree-toggle"
+                      type="button"
+                      aria-expanded={isOpen}
+                      aria-label={isOpen ? `Свернуть ${node.name}` : `Развернуть ${node.name}`}
+                      onClick={() => onToggle(node.slug)}
+                    >
+                      <span aria-hidden="true">{isOpen ? '⌄' : '›'}</span>
+                    </button>
+                  ) : (
+                    <span className="forrum-home-v16__tree-spacer" aria-hidden="true" />
+                  )}
+                  <Link className="forrum-home-v16__tree-link" href={`/communities/${node.slug}`}>
+                    <span className="forrum-home-v16__tree-folder" aria-hidden="true" />
+                    <span className="forrum-home-v16__tree-name">{node.name}</span>
+                    <span className="forrum-home-v16__tree-count">{formatCount(node.subscriberCount)}</span>
+                  </Link>
+                </div>
+                {hasChildren && isOpen && (
+                  <ul className="forrum-home-v16__tree-children">
+                    {node.children.map((child) => (
+                      <TreeBranch
+                        key={child.id}
+                        node={child}
+                        depth={depth + 1}
+                        expanded={expanded}
+                        onToggle={onToggle}
+                      />
+                    ))}
+                  </ul>
+                )}
+              </li>
+            );
+          }"""
+
+          new_tree = """function TreeBranch({
+            node,
+            depth,
+            expanded,
+            onToggle,
+          }: {
+            node: TreeNode;
+            depth: number;
+            expanded: Set<string>;
+            onToggle: (slug: string) => void;
+          }) {
+            const hasChildren = node.children.length > 0;
+            const isOpen = expanded.has(node.slug);
+
+            const onRowClick = (
+              event: MouseEvent<HTMLDivElement>,
+            ) => {
+              if (
+                !hasChildren ||
+                event.target !== event.currentTarget
+              ) {
+                return;
+              }
+
+              onToggle(node.slug);
+            };
+
+            return (
+              <li
+                className="forrum-home-v16__tree-node"
+                style={{ '--tree-depth': depth } as CSSProperties}
+              >
+                <div
+                  className="forrum-home-v16__tree-row"
+                  data-expandable={hasChildren ? 'true' : undefined}
+                  onClick={onRowClick}
+                >
+                  {hasChildren ? (
+                    <button
+                      className="forrum-home-v16__tree-toggle"
+                      type="button"
+                      aria-expanded={isOpen}
+                      aria-label={
+                        isOpen
+                          ? `Свернуть ${node.name}`
+                          : `Развернуть ${node.name}`
+                      }
+                      onClick={() => onToggle(node.slug)}
+                    >
+                      <span aria-hidden="true">
+                        {isOpen ? '⌄' : '›'}
+                      </span>
+                    </button>
+                  ) : (
+                    <span
+                      className="forrum-home-v16__tree-spacer"
+                      aria-hidden="true"
+                    />
+                  )}
+
+                  <Link
+                    className="forrum-home-v16__tree-link"
+                    href={`/communities/${node.slug}`}
+                    aria-label={`Открыть сообщество ${node.name}`}
+                  >
+                    <span
+                      className="forrum-home-v16__tree-folder"
+                      aria-hidden="true"
+                    />
+                    <span className="forrum-home-v16__tree-name">
+                      {node.name}
+                    </span>
+                  </Link>
+
+                  <span className="forrum-home-v16__tree-count">
+                    {formatCount(node.subscriberCount)}
+                  </span>
+                </div>
+
+                {hasChildren && isOpen && (
+                  <ul className="forrum-home-v16__tree-children">
+                    {node.children.map((child) => (
+                      <TreeBranch
+                        key={child.id}
+                        node={child}
+                        depth={depth + 1}
+                        expanded={expanded}
+                        onToggle={onToggle}
+                      />
+                    ))}
+                  </ul>
+                )}
+              </li>
+            );
+          }"""
+
+          if home.count(old_tree) != 1:
+              raise SystemExit(
+                  "V37 could not isolate the deployed V36 tree component."
+              )
+
+          home = home.replace(old_tree, new_tree, 1)
+
+          old_root = (
+              '<div className="forrum-home-v16" '
+              'data-home-reference="v36">'
+          )
+          new_root = (
+              '<div className="forrum-home-v16" '
+              'data-home-reference="v36" '
+              'data-home-polish="v37">'
+          )
+
+          if home.count(old_root) != 1:
+              raise SystemExit("V37 could not isolate homepage root.")
+
+          home = home.replace(old_root, new_root, 1)
+
+          # -------------------------------------------------------------------
+          # Canonical homepage CSS: edit the existing source, no V37 override
+          # layer is appended.
+          # -------------------------------------------------------------------
+
+          start = css.find(CSS_START)
+          end = css.find(CSS_END, start)
+
+          if start < 0 or end < 0:
+              raise SystemExit(
+                  "V37 requires the single V36 canonical homepage CSS block."
+              )
+
+          end += len(CSS_END)
+          block = css[start:end]
+
+          def replace_once(
+              source: str,
+              old: str,
+              new: str,
+              label: str,
+          ) -> str:
+              count = source.count(old)
+
+              if count != 1:
+                  raise SystemExit(
+                      f"V37 expected one {label}; found {count}."
+                  )
+
+              return source.replace(old, new, 1)
+
+          block = replace_once(
+              block,
+              """   Canonical homepage reference geometry.
+             Paper and Graphite share one layout; theme differences come only from --fvt-* tokens.""",
+              """   Canonical homepage reference geometry.
+             V37 visual alignment: stronger hierarchy, calmer paper texture, compact truthful empty states.
+             Paper and Graphite share one layout; theme differences come only from --fvt-* tokens.""",
+              "canonical V37 comment",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__side-head h2,
+          .forrum-home-v16__panel-head h2 {
+            margin: 0;
+            color: var(--fvt-text);
+            font-size: 13px;
+            line-height: 1.15;
+            font-weight: 760;
+            letter-spacing: 0.012em;
+            text-transform: uppercase;
+          }""",
+              """.forrum-home-v16__side-head h2,
+          .forrum-home-v16__panel-head h2 {
+            margin: 0;
+            color: var(--fvt-text);
+            font-size: 13px;
+            line-height: 1.15;
+            font-weight: 790;
+            letter-spacing: 0.018em;
+            text-transform: uppercase;
+          }""",
+              "panel heading typography",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__tree-row { min-height: 32px; display: flex; align-items: center; min-width: 0; }
+          .forrum-home-v16__tree-toggle,
+          .forrum-home-v16__tree-spacer { width: 21px; height: 31px; flex: 0 0 21px; }
+          .forrum-home-v16__tree-toggle {
+            display: grid; place-items: center; margin: 0; padding: 0; border: 0; background: transparent;
+            color: var(--fvt-muted); cursor: pointer; font: inherit;
+          }
+          .forrum-home-v16__tree-toggle:hover { color: var(--fvt-accent); }
+          .forrum-home-v16__tree-link {
+            min-width: 0; flex: 1 1 auto; display: grid;
+            grid-template-columns: 18px minmax(0, 1fr) auto;
+            gap: 7px; align-items: center; min-height: 31px; padding: 2px 4px; border-radius: 0; color: var(--fvt-text);
+          }
+          .forrum-home-v16__tree-row:hover .forrum-home-v16__tree-link { background: var(--fvt-hover); }
+          .forrum-home-v16__tree-row:hover .forrum-home-v16__tree-name { color: var(--fvt-accent); }""",
+              """.forrum-home-v16__tree-row {
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            min-width: 0;
+            border-radius: 1px;
+          }
+          .forrum-home-v16__tree-row[data-expandable="true"] { cursor: pointer; }
+          .forrum-home-v16__tree-row[data-expandable="true"]:hover { background: var(--fvt-hover); }
+          .forrum-home-v16__tree-toggle,
+          .forrum-home-v16__tree-spacer { width: 21px; height: 31px; flex: 0 0 21px; }
+          .forrum-home-v16__tree-toggle {
+            display: grid; place-items: center; margin: 0; padding: 0; border: 0; background: transparent;
+            color: var(--fvt-muted); cursor: pointer; font: inherit;
+          }
+          .forrum-home-v16__tree-row[data-expandable="true"]:hover .forrum-home-v16__tree-toggle,
+          .forrum-home-v16__tree-toggle:hover { color: var(--fvt-accent); }
+          .forrum-home-v16__tree-link {
+            min-width: 0;
+            max-width: calc(100% - 54px);
+            flex: 0 1 auto;
+            display: inline-flex;
+            gap: 7px;
+            align-items: center;
+            min-height: 31px;
+            padding: 2px 4px;
+            border-radius: 0;
+            color: var(--fvt-text);
+          }
+          .forrum-home-v16__tree-link:hover .forrum-home-v16__tree-name { color: var(--fvt-accent); }
+          .forrum-home-v16__tree-count {
+            margin-left: auto;
+            padding-right: 4px;
+            color: var(--fvt-muted);
+            font-size: 10.5px;
+            font-variant-numeric: tabular-nums;
+          }""",
+              "tree row interaction styles",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__tree-count { color: var(--fvt-muted); font-size: 10.5px; font-variant-numeric: tabular-nums; }
+          """,
+              "",
+              "old tree count rule",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__topic-title strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fvt-text); font-size: 13px; font-weight: 700; }""",
+              """.forrum-home-v16__topic-title strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fvt-text); font-size: 13.5px; font-weight: 740; letter-spacing: -0.008em; }""",
+              "discussed topic title",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__topic-excerpt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fvt-muted); font-size: 11px; }""",
+              """.forrum-home-v16__topic-excerpt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--fvt-muted); font-size: 11.5px; line-height: 1.25; }""",
+              "discussed topic excerpt",
+          )
+
+          block = replace_once(
+              block,
+              """  grid-template-columns: minmax(260px, 2fr) minmax(130px, 1fr) minmax(116px, .9fr) 62px 78px minmax(142px, 1fr);
+            column-gap: 12px; align-items: center; min-width: 0;""",
+              """  grid-template-columns: minmax(320px, 2.6fr) minmax(105px, .75fr) minmax(98px, .72fr) 54px 66px minmax(142px, 1fr);
+            column-gap: 10px; align-items: center; min-width: 0;""",
+              "desktop new-topics columns",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__new-topic-title { display: flex; align-items: center; gap: 7px; color: var(--fvt-text); font-size: 12px; font-weight: 650; }""",
+              """.forrum-home-v16__new-topic-title { display: flex; align-items: center; gap: 7px; color: var(--fvt-text); font-size: 12.5px; font-weight: 700; letter-spacing: -0.008em; }""",
+              "new-topic title hierarchy",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__new-topic-title::before { content: ""; width: 9px; height: 9px; flex: 0 0 9px; border: 1px solid var(--fvt-line-strong); background: var(--fvt-panel-soft); image-rendering: pixelated; }""",
+              """.forrum-home-v16__new-topic-title::before { content: ""; width: 10px; height: 10px; flex: 0 0 10px; border: 1px solid var(--fvt-line-strong); background: var(--fvt-icon-bg); image-rendering: pixelated; }""",
+              "new-topic pixel marker",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__actual strong { overflow: hidden; text-overflow: ellipsis; color: var(--fvt-text); font-size: 12.5px; line-height: 1.25; }""",
+              """.forrum-home-v16__actual strong { overflow: hidden; text-overflow: ellipsis; color: var(--fvt-text); font-size: 12.5px; line-height: 1.22; font-weight: 700; }""",
+              "actual item typography",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__weekly-empty { margin: 0; min-height: 92px; display: grid; place-items: center; padding: 16px; color: var(--fvt-muted); font-size: 11px; text-align: center; }""",
+              """.forrum-home-v16__weekly-empty { margin: 0; min-height: 66px; display: flex; align-items: center; justify-content: center; padding: 12px 14px; color: var(--fvt-muted); font-size: 11px; line-height: 1.35; text-align: center; }""",
+              "weekly empty state",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__stats > div { min-height: 41px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--fvt-line); }""",
+              """.forrum-home-v16__stats > div { min-height: 38px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--fvt-line); }""",
+              "FORRUM today row density",
+          )
+
+          block = replace_once(
+              block,
+              """.forrum-home-v16__empty { margin: 0; padding: 18px 14px; color: var(--fvt-muted); font-size: 11.5px; line-height: 1.45; }""",
+              """.forrum-home-v16__empty { margin: 0; padding: 12px 14px; color: var(--fvt-muted); font-size: 11.5px; line-height: 1.4; }
+          .forrum-home-v16__discussed-list > .forrum-home-v16__empty,
+          .forrum-home-v16__poll-list > .forrum-home-v16__empty,
+          .forrum-home-v16__actual-list > .forrum-home-v16__empty {
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+          }""",
+              "compact truthful empty states",
+          )
+
+          block = replace_once(
+              block,
+              """  .forrum-home-v16__new-topic-head,
+            .forrum-home-v16__new-topic { grid-template-columns: minmax(220px, 1.8fr) minmax(110px,.9fr) minmax(100px,.8fr) 56px 70px minmax(120px,.9fr); column-gap: 9px; }""",
+              """  .forrum-home-v16__new-topic-head,
+            .forrum-home-v16__new-topic { grid-template-columns: minmax(250px, 2.1fr) minmax(96px,.72fr) minmax(90px,.68fr) 50px 62px minmax(118px,.9fr); column-gap: 8px; }""",
+              "narrow desktop new-topics columns",
+          )
+
+          css = css[:start] + block + css[end:]
+
+          # -------------------------------------------------------------------
+          # Paper texture: remove the visible ruled-line pattern and keep only
+          # extremely subtle paper grain. Geometry remains token-independent.
+          # -------------------------------------------------------------------
+
+          theme_start = css.find(THEME_START)
+          theme_end = css.find(THEME_END, theme_start)
+
+          if theme_start < 0 or theme_end < 0:
+              raise SystemExit("V37 could not isolate visual-theme token source.")
+
+          theme_end += len(THEME_END)
+          theme = css[theme_start:theme_end]
+
+          texture_pattern = re.compile(
+              r"--fvt-texture:\s*"
+              r'url\("data:image/svg\+xml,[^"]+"\);'
+          )
+
+          matches = list(texture_pattern.finditer(theme))
+
+          if len(matches) != 2:
+              raise SystemExit(
+                  f"V37 expected Paper + Graphite texture tokens; found {len(matches)}."
+              )
+
+          light_texture = (
+              "--fvt-texture:\n"
+              "    url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
+              "width='24' height='24' viewBox='0 0 24 24'%3E"
+              "%3Ccircle cx='4' cy='5' r='.45' fill='%23202224' fill-opacity='.014'/%3E"
+              "%3Ccircle cx='17' cy='9' r='.35' fill='%23202224' fill-opacity='.010'/%3E"
+              "%3Ccircle cx='10' cy='20' r='.35' fill='%23202224' fill-opacity='.008'/%3E"
+              "%3C/svg%3E\");"
+          )
+
+          dark_texture = (
+              "--fvt-texture:\n"
+              "    url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
+              "width='24' height='24' viewBox='0 0 24 24'%3E"
+              "%3Ccircle cx='4' cy='5' r='.45' fill='%23ffffff' fill-opacity='.012'/%3E"
+              "%3Ccircle cx='17' cy='9' r='.35' fill='%23ffffff' fill-opacity='.009'/%3E"
+              "%3Ccircle cx='10' cy='20' r='.35' fill='%23ffffff' fill-opacity='.007'/%3E"
+              "%3C/svg%3E\");"
+          )
+
+          parts = []
+          cursor = 0
+
+          for index, match in enumerate(matches):
+              parts.append(theme[cursor:match.start()])
+              parts.append(
+                  light_texture if index == 0 else dark_texture
+              )
+              cursor = match.end()
+
+          parts.append(theme[cursor:])
+          theme = "".join(parts)
+
+          if theme.count("background-size: 12px 12px;") != 1:
+              raise SystemExit(
+                  "V37 expected one visual-theme texture size declaration."
+              )
+
+          theme = theme.replace(
+              "background-size: 12px 12px;",
+              "background-size: 24px 24px;",
+              1,
+          )
+
+          css = (
+              css[:theme_start]
+              + theme
+              + css[theme_end:]
+          )
+
+          # Normalize only authored CSS whitespace.
+          css = "\n".join(
+              line.rstrip(" \t")
+              for line in css.splitlines()
+          ) + "\n"
+
+          home = "\n".join(
+              line.rstrip(" \t")
+              for line in home.splitlines()
+          ) + "\n"
+
+          verify_v37(home, css)
+
+          HOME.write_text(home, encoding="utf-8")
+          CSS.write_text(css, encoding="utf-8")
+
+          print(
+              "FORRUM Home Visual Alignment V37 applied: "
+              "tree UX, topic hierarchy, compact rail/empty states, subtle paper grain."
+          )
+          PY
+
+          python3 -S - <<'PY'
+          from pathlib import Path
+
+          path = Path(
+              '/tmp/forrum-home-visual-alignment-v37.py'
+          )
+
+          compile(
+              path.read_text(encoding='utf-8'),
+              str(path),
+              'exec',
+          )
+
+          print('V37 embedded Python patch syntax: PASS')
+          PY
+
+      - name: Apply V37 visual alignment
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          PYTHONDONTWRITEBYTECODE=1 python3 -S /tmp/forrum-home-visual-alignment-v37.py
+
+          git diff --check
+
+          changed="$(
+            git diff --name-only | sort
+          )"
+
+          expected="$(
+            printf '%s\n'               apps/web/app/globals.css               apps/web/components/home-dashboard.tsx |
+            sort
+          )"
+
+          if [ -n "$changed" ]; then
+            test "$changed" = "$expected"
+          fi
+
+      - name: Audit V37 product and UX contract
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          home = Path(
+              'apps/web/components/home-dashboard.tsx'
+          ).read_text(encoding='utf-8')
+
+          css = Path(
+              'apps/web/app/globals.css'
+          ).read_text(encoding='utf-8')
+
+          required_home = (
+              'data-home-polish="v37"',
+              'MouseEvent<HTMLDivElement>',
+              'event.target !== event.currentTarget',
+              "data-expandable={hasChildren ? 'true' : undefined}",
+              'aria-label={`Открыть сообщество ${node.name}`}',
+          )
+
+          for marker in required_home:
+              if marker not in home:
+                  raise SystemExit(
+                      'V37 tree UX contract missing: '
+                      + marker
+                  )
+
+          if home.count(
+              'href={`/communities/${node.slug}`}'
+          ) != 1:
+              raise SystemExit(
+                  'V37 must expose exactly one navigation link '
+                  'per tree branch: folder icon + name.'
+              )
+
+          start = css.index(
+              '/* FORRUM_HOME_REFERENCE_V36_START'
+          )
+          end = css.index(
+              '/* FORRUM_HOME_REFERENCE_V36_END */',
+              start,
+          )
+          block = css[start:end]
+
+          required_css = (
+              'V37 visual alignment:',
+              'font-size: 13.5px',
+              'minmax(320px, 2.6fr)',
+              'min-height: 66px',
+              'min-height: 38px',
+              'min-height: 50px',
+              '.forrum-home-v16__tree-row[data-expandable="true"]',
+          )
+
+          for marker in required_css:
+              if marker not in block:
+                  raise SystemExit(
+                      'V37 visual reference contract missing: '
+                      + marker
+                  )
+
+          theme_start = css.index(
+              '/* FORRUM_VISUAL_THEME_START'
+          )
+          theme_end = css.index(
+              '/* FORRUM_VISUAL_THEME_END */',
+              theme_start,
+          )
+          theme = css[theme_start:theme_end]
+
+          if theme.count(
+              "width='24' height='24'"
+          ) != 2:
+              raise SystemExit(
+                  'V37 Paper/Graphite texture pairing failed.'
+              )
+
+          if '%3Cpath' in theme:
+              raise SystemExit(
+                  'V37 paper background still has ruled lines.'
+              )
+
+          if 'background-size: 24px 24px' not in theme:
+              raise SystemExit(
+                  'V37 subtle paper grain scale missing.'
+              )
+
+          print(
+              'V37 product/UX reference audit: PASS'
+          )
+          PY
+
+          git diff --check
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm install             --include=dev             --no-audit             --no-fund             --package-lock=false
+
+      - name: Parse changed TypeScript
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node - <<'NODE'
+          const fs = require("fs");
+          const ts = require("typescript");
+
+          const path =
+            "apps/web/components/home-dashboard.tsx";
+
+          const source =
+            fs.readFileSync(path, "utf8");
+
+          const file = ts.createSourceFile(
+            path,
+            source,
+            ts.ScriptTarget.Latest,
+            true,
+            ts.ScriptKind.TSX,
+          );
+
+          const diagnostics =
+            file.parseDiagnostics ?? [];
+
+          if (diagnostics.length) {
+            for (const diagnostic of diagnostics) {
+              const pos =
+                file.getLineAndCharacterOfPosition(
+                  diagnostic.start ?? 0,
+                );
+
+              console.error(
+                `${path}:${pos.line + 1}:${pos.character + 1} ` +
+                ts.flattenDiagnosticMessageText(
+                  diagnostic.messageText,
+                  "\n",
+                ),
+              );
+            }
+
+            process.exit(1);
+          }
+
+          console.log(
+            "V37 changed TSX parser: PASS",
+          );
+          NODE
+
+      - name: Run static UX accessibility checks
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          git diff --check
+
+      - name: Run relevant tests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/web --if-present
+
+      - name: Typecheck relevant workspaces
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm run typecheck -w @forrum/contracts
+          npm run typecheck -w @forrum/web
+
+      - name: Production build relevant workspaces
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf apps/web/.next
+
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/web
+
+      - name: Self-review and second pass
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          before="$(
+            git diff |
+            sha256sum |
+            cut -d' ' -f1
+          )"
+
+          PYTHONDONTWRITEBYTECODE=1 python3 -S /tmp/forrum-home-visual-alignment-v37.py
+
+          after="$(
+            git diff |
+            sha256sum |
+            cut -d' ' -f1
+          )"
+
+          test "$before" = "$after"
+
+          # First draft weakness found and fixed before delivery:
+          # a full-width tree link would make the count/row navigate.
+          # Final V37 link wraps ONLY folder icon + name, while only
+          # direct clicks on blank row background toggle a parent.
+          grep -Fq             'event.target !== event.currentTarget'             apps/web/components/home-dashboard.tsx
+
+          grep -Fq             'max-width: calc(100% - 54px)'             apps/web/app/globals.css
+
+          # Second visual weakness found and fixed:
+          # 12px ruled texture read as notebook lines instead of paper grain.
+          python3 - <<'PY'
+          from pathlib import Path
+
+          css = Path(
+              'apps/web/app/globals.css'
+          ).read_text(encoding='utf-8')
+
+          start = css.index(
+              '/* FORRUM_VISUAL_THEME_START'
+          )
+          end = css.index(
+              '/* FORRUM_VISUAL_THEME_END */',
+              start,
+          )
+          theme = css[start:end]
+
+          if '%3Cpath' in theme:
+              raise SystemExit(
+                  'V37 self-review: ruled paper texture returned.'
+              )
+
+          if theme.count(
+              "width='24' height='24'"
+          ) != 2:
+              raise SystemExit(
+                  'V37 self-review: Paper/Graphite grain diverged.'
+              )
+
+          print(
+              'V37 self-review visual weaknesses: FIXED'
+          )
+          PY
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          npm run typecheck -w @forrum/web
+          git diff --check
+
+      - name: Restore build side effects and clean dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mapfile -t tracked_dirty < <(
+            git status               --porcelain=v1               --untracked-files=no |
+            sed 's/^...//'
+          )
+
+          for path in "${tracked_dirty[@]}"; do
+            [ -n "$path" ] || continue
+
+            case "$path" in
+              apps/web/components/home-dashboard.tsx|              apps/web/app/globals.css)
+                continue
+                ;;
+            esac
+
+            git restore               --staged               --worktree               -- "$path"
+          done
+
+          git clean -ffdx
+
+      - name: Final V37 pre-commit audit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          git diff --check
+
+          changed="$(
+            git diff --name-only | sort
+          )"
+
+          expected="$(
+            printf '%s\n'               apps/web/app/globals.css               apps/web/components/home-dashboard.tsx |
+            sort
+          )"
+
+          if [ -n "$changed" ]; then
+            test "$changed" = "$expected"
+          fi
+
+          test -z "$(
+            git status --porcelain=v1 --untracked-files=all |
+            grep -vE               '^( M|M |MM) (apps/web/app/globals\.css|apps/web/components/home-dashboard\.tsx)$'               || true
+          )"
+
+      - name: Commit verified V37
+        id: commit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "FORRUM Home Visual Alignment V37 is already present."
+            exit 0
+          fi
+
+          git config user.name "forrum-actions"
+          git config user.email "actions@forrum.local"
+
+          git add             apps/web/components/home-dashboard.tsx             apps/web/app/globals.css
+
+          git diff --cached --check
+
+          git commit -m             "Polish FORRUM homepage reference V37"
+
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Rebase and full V37 production audit
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          git rebase origin/main
+
+          npm install             --include=dev             --no-audit             --no-fund             --package-lock=false
+
+          node scripts/home-paper-graphite-v16-check.mjs
+          node scripts/home-reference-check.mjs
+          node scripts/home-scale-polish-check.mjs
+          node scripts/home-visual-theme-check.mjs
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/web --if-present
+          npm run typecheck -w @forrum/contracts
+          npm run typecheck -w @forrum/web
+
+          rm -rf apps/web/.next
+          npm run build -w @forrum/contracts
+          npm run build -w @forrum/web
+
+          git restore             --source=HEAD             --staged             --worktree             -- .
+
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          echo "Post-rebase V37 production audit: PASS"
+
+      - name: Publish V37 safely
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+
+            remote="$(
+              git rev-parse origin/main
+            )"
+
+            if ! git merge-base               --is-ancestor               "$remote"               HEAD
+            then
+              echo                 "origin/main advanced; rebasing and repeating V37 verification."
+
+              git rebase origin/main
+
+              npm install                 --include=dev                 --no-audit                 --no-fund                 --package-lock=false
+
+              node scripts/home-paper-graphite-v16-check.mjs
+              node scripts/home-reference-check.mjs
+              node scripts/home-scale-polish-check.mjs
+              node scripts/home-visual-theme-check.mjs
+
+              npm run validate:static
+              npm run validate:ux
+              npm run validate:a11y
+              npm test -w @forrum/contracts --if-present
+              npm test -w @forrum/web --if-present
+              npm run typecheck -w @forrum/contracts
+              npm run typecheck -w @forrum/web
+
+              rm -rf apps/web/.next
+              npm run build -w @forrum/contracts
+              npm run build -w @forrum/web
+
+              git restore                 --source=HEAD                 --staged                 --worktree                 -- .
+
+              git clean -ffdx
+              test -z "$(git status --porcelain)"
+            fi
+
+            git fetch origin main
+
+            if [ "$(
+              git rev-parse origin/main
+            )" != "$(
+              git merge-base HEAD origin/main
+            )" ]; then
+              continue
+            fi
+
+            if git push origin HEAD:main; then
+              echo "V37 push succeeded on attempt $attempt."
+              exit 0
+            fi
+          done
+
+          echo "::error::V37 could not be published safely."
+          exit 1
+
+      - name: Verify remote V37 commit
+        if: steps.commit.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+
+          test "$(
+            git rev-parse HEAD
+          )" = "$(
+            git rev-parse origin/main
+          )"
+
+          echo             "Published FORRUM Home Visual Alignment V37."
