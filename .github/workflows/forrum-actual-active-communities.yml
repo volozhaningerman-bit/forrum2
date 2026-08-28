@@ -1,0 +1,447 @@
+name: FORRUM Actual — Active Communities
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-actual-active-communities
+  cancel-in-progress: false
+
+jobs:
+  actual-active-communities:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+
+      - name: Baseline
+        id: baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== FORRUM ACTUAL — ACTIVE COMMUNITIES ==="
+
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+          test -f apps/web/components/home-dashboard.tsx
+          test -f .github/workflows/forrum-actual-active-communities.yml
+
+          grep -Fq '// FORRUM_HOME_V45_RIGHT_RAIL_NEWS' \
+            apps/web/components/home-dashboard.tsx
+          grep -Fq 'title="Новости FORRUM"' \
+            apps/web/components/home-dashboard.tsx
+          grep -Fq 'title="Актуальное"' \
+            apps/web/components/home-dashboard.tsx
+
+      - name: Write failing regression check
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          cat > scripts/home-actual-active-communities-check.mjs <<'NODE'
+          import fs from 'node:fs';
+
+          const source = fs.readFileSync(
+            'apps/web/components/home-dashboard.tsx',
+            'utf8',
+          );
+
+          for (const marker of [
+            '// FORRUM_HOME_ACTUAL_ACTIVE_COMMUNITIES',
+            'function activeCommunityRows(items: Community[])',
+            'const activeCommunities = activeCommunityRows(communities);',
+            'href="/communities"',
+            'activeCommunities.map((community) => (',
+            'href={`/communities/${community.slug}`}',
+          ]) {
+            if (!source.includes(marker)) {
+              throw new Error(`Missing marker: ${marker}`);
+            }
+          }
+
+          const actualStart = source.indexOf('title="Актуальное"');
+          const weeklyStart = source.indexOf('<h2>Участники недели</h2>');
+
+          if (actualStart < 0 || weeklyStart <= actualStart) {
+            throw new Error('Could not locate Actual boundaries.');
+          }
+
+          const actual = source.slice(actualStart, weeklyStart);
+
+          if (actual.includes('discussed.slice(0, 3).map((item) => (')) {
+            throw new Error(
+              'Actual still duplicates discussed topics.',
+            );
+          }
+
+          console.log('Actual Active Communities: PASS');
+          NODE
+
+      - name: TDD RED
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if node scripts/home-actual-active-communities-check.mjs; then
+            echo "::error::Check unexpectedly passed before implementation."
+            exit 1
+          fi
+
+          echo "TDD RED confirmed."
+
+      - name: Apply production patch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('apps/web/components/home-dashboard.tsx')
+          source = path.read_text(encoding='utf-8')
+
+          marker = '// FORRUM_HOME_ACTUAL_ACTIVE_COMMUNITIES'
+          if marker in source:
+              raise SystemExit('Patch already exists.')
+
+          def replace_home_panel(text, title, replacement):
+              needle = f'title="{title}"'
+              pos = text.find(needle)
+              if pos < 0:
+                  raise SystemExit(f'Could not find panel title: {title}')
+
+              start = text.rfind('<HomePanel', 0, pos)
+              end = text.find('</HomePanel>', pos)
+
+              if start < 0 or end < 0:
+                  raise SystemExit(f'Could not locate panel bounds: {title}')
+
+              end += len('</HomePanel>')
+              return text[:start] + replacement + text[end:]
+
+          topic_row_anchor = '\nfunction TopicRow({'
+          if source.count(topic_row_anchor) != 1:
+              raise SystemExit('Unexpected TopicRow anchor count.')
+
+          helper_lines = [
+              '',
+              marker,
+              'function activeCommunityRows(items: Community[]) {',
+              '  return [...items]',
+              '    .sort((a, b) => {',
+              '      const recentDelta =',
+              '        (b.recentPublicationCount ?? 0) -',
+              '        (a.recentPublicationCount ?? 0);',
+              '',
+              '      if (recentDelta !== 0) return recentDelta;',
+              '',
+              '      const subscriberDelta =',
+              '        (b.subscriberCount ?? 0) -',
+              '        (a.subscriberCount ?? 0);',
+              '',
+              '      if (subscriberDelta !== 0) return subscriberDelta;',
+              '',
+              "      return a.name.localeCompare(b.name, 'ru');",
+              '    })',
+              '    .slice(0, 3);',
+              '}',
+          ]
+          helper = '\n'.join(helper_lines)
+
+          source = source.replace(
+              topic_row_anchor,
+              helper + topic_row_anchor,
+              1,
+          )
+
+          newest_anchor = '  const newest = topicRows(initialData.newFeed);\n'
+          if source.count(newest_anchor) != 1:
+              raise SystemExit('Unexpected newest anchor count.')
+
+          source = source.replace(
+              newest_anchor,
+              newest_anchor
+              + '  const activeCommunities = activeCommunityRows(communities);\n',
+              1,
+          )
+
+          actual_lines = [
+              '<HomePanel',
+              '          title="Актуальное"',
+              '          href="/communities"',
+              '        >',
+              '          <div className="forrum-home-v16__actual-list">',
+              '            {activePolls[0] && (',
+              '              <Link',
+              '                className="forrum-home-v16__actual"',
+              '                href="/events"',
+              '              >',
+              '                <span',
+              '                  className="forrum-home-v16__actual-symbol"',
+              '                  aria-hidden="true"',
+              '                >',
+              '                  ▥',
+              '                </span>',
+              '                <span>',
+              '                  <strong>Активное голосование</strong>',
+              '                  <small>{activePolls[0].title}</small>',
+              '                </span>',
+              '              </Link>',
+              '            )}',
+              '            {activeCommunities.map((community) => (',
+              '              <Link',
+              '                className="forrum-home-v16__actual"',
+              '                href={`/communities/${community.slug}`}',
+              '                key={community.id}',
+              '              >',
+              '                <CommunityMark',
+              '                  name={community.name}',
+              '                  url={community.avatarUrl}',
+              '                  size={30}',
+              '                />',
+              '                <span>',
+              '                  <strong>{community.name}</strong>',
+              '                  <small>',
+              '                    {(community.recentPublicationCount ?? 0) > 0',
+              '                      ? `${formatCount(',
+              '                          community.recentPublicationCount,',
+              '                        )} новых тем за 24 ч.`',
+              '                      : `${formatCount(',
+              '                          community.subscriberCount,',
+              '                        )} подписчиков`}',
+              '                  </small>',
+              '                </span>',
+              '              </Link>',
+              '            ))}',
+              '            {!activeCommunities.length &&',
+              '              !activePolls.length && (',
+              '                <p className="forrum-home-v16__empty">',
+              '                  Актуальных обновлений сейчас нет.',
+              '                </p>',
+              '              )}',
+              '          </div>',
+              '        </HomePanel>',
+          ]
+
+          source = replace_home_panel(
+              source,
+              'Актуальное',
+              '\n'.join(actual_lines),
+          )
+
+          path.write_text(
+              '\n'.join(
+                  line.rstrip(' \t')
+                  for line in source.splitlines()
+              ) + '\n',
+              encoding='utf-8',
+          )
+
+          print('Actual Active Communities patch applied.')
+          PY
+
+          git diff --check
+
+      - name: TDD GREEN
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/home-actual-active-communities-check.mjs
+          echo "TDD GREEN confirmed."
+
+      - name: Scope audit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          changed="$(
+            {
+              git diff --name-only
+              git ls-files --others --exclude-standard
+            } | sort -u
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              apps/web/components/home-dashboard.tsx \
+              scripts/home-actual-active-communities-check.mjs |
+            sort
+          )"
+
+          printf 'Changed paths:\n%s\n' "$changed"
+          test "$changed" = "$expected"
+
+          test -z "$(
+            git diff --name-only -- \
+              apps/web/app/globals.css \
+              apps/web/components/main-nav.tsx \
+              apps/web/app/page.tsx \
+              apps/api \
+              packages/contracts
+          )"
+
+          ! git diff | grep -Eq \
+            'fakePoll|fakeUser|mockPoll|mockUser|demoPoll|demoUser'
+
+      - name: Stage verified patch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git add -- \
+            apps/web/components/home-dashboard.tsx \
+            scripts/home-actual-active-communities-check.mjs
+
+          git diff --cached --check
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          npm install \
+            --include=dev \
+            --no-audit \
+            --no-fund \
+            --package-lock=false
+
+      - name: Validate Prisma
+        shell: bash
+        env:
+          DATABASE_URL: postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public
+        run: |
+          set -euo pipefail
+          npm run db:validate
+          npm run db:generate
+
+      - name: Full product verification
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-actual-active-communities-check.mjs
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/api --if-present
+          npm test -w @forrum/web --if-present
+
+          npm run typecheck
+
+          rm -rf apps/web/.next
+          npm run build
+
+      - name: Production self-review
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          node scripts/home-actual-active-communities-check.mjs
+
+          grep -Fq '// FORRUM_HOME_V45_RIGHT_RAIL_NEWS' \
+            apps/web/components/home-dashboard.tsx
+          grep -Fq 'title="Новости FORRUM"' \
+            apps/web/components/home-dashboard.tsx
+
+          test -z "$(
+            git diff --cached --name-only -- apps/web/app/globals.css
+          )"
+
+          ! git diff --cached | grep -Eq \
+            'fakePoll|fakeUser|mockPoll|mockUser|demoPoll|demoUser'
+
+          npm run typecheck
+          npm run build
+
+          echo "Production self-review: PASS"
+
+      - name: Restore generated noise and self-delete
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git restore --worktree -- .
+          git clean -ffdx
+
+          git rm .github/workflows/forrum-actual-active-communities.yml
+
+          git diff --cached --check
+
+          staged="$(git diff --cached --name-only | sort)"
+          expected="$(
+            printf '%s\n' \
+              .github/workflows/forrum-actual-active-communities.yml \
+              apps/web/components/home-dashboard.tsx \
+              scripts/home-actual-active-communities-check.mjs |
+            sort
+          )"
+
+          printf 'Final staged paths:\n%s\n' "$staged"
+          test "$staged" = "$expected"
+
+      - name: Commit verified patch
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "FORRUM QA updater"
+          git config user.email "actions@users.noreply.github.com"
+
+          git commit -m "Make home Actual block distinct"
+
+      - name: Publish only against unchanged main
+        shell: bash
+        env:
+          BASE_SHA: ${{ steps.baseline.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+
+          if [ "$(git rev-parse origin/main)" != "$BASE_SHA" ]; then
+            echo "::error::main advanced during verification. Rerun the workflow."
+            exit 1
+          fi
+
+          git push origin HEAD:main
+
+      - name: Verify remote
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+
+          git show origin/main:apps/web/components/home-dashboard.tsx \
+            | grep -Fq '// FORRUM_HOME_ACTUAL_ACTIVE_COMMUNITIES'
+
+          if git cat-file -e \
+            origin/main:.github/workflows/forrum-actual-active-communities.yml \
+            2>/dev/null
+          then
+            echo "::error::Workflow did not self-delete."
+            exit 1
+          fi
+
+          echo "Actual Active Communities published and workflow removed."
