@@ -1,0 +1,232 @@
+name: FORRUM Workflows RESET
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-workflows-reset
+  cancel-in-progress: false
+
+jobs:
+  reset-workflows:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout canonical main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Baseline safety check
+        id: baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "=== FORRUM WORKFLOWS RESET ==="
+
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+          test -f .github/workflows/deploy-forrum-web.yml
+          test -f .github/workflows/deploy-forrum-api.yml
+          test -f .github/workflows/forrum-workflows-reset.yml
+
+          echo
+          echo "Before cleanup:"
+          find .github/workflows \
+            -maxdepth 1 \
+            -type f \
+            -printf '%f\n' \
+            | sort
+
+      - name: Remove every legacy patch workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          find .github/workflows \
+            -maxdepth 1 \
+            -type f \
+            ! -name 'deploy-forrum-web.yml' \
+            ! -name 'deploy-forrum-api.yml' \
+            ! -name 'forrum-workflows-reset.yml' \
+            -delete
+
+          echo
+          echo "After legacy cleanup:"
+          find .github/workflows \
+            -maxdepth 1 \
+            -type f \
+            -printf '%f\n' \
+            | sort
+
+          count="$(
+            find .github/workflows \
+              -maxdepth 1 \
+              -type f \
+              | wc -l \
+              | tr -d ' '
+          )"
+
+          test "$count" = "3"
+          test -f .github/workflows/deploy-forrum-web.yml
+          test -f .github/workflows/deploy-forrum-api.yml
+          test -f .github/workflows/forrum-workflows-reset.yml
+
+          git diff --check
+
+      - name: Verify deploy workflows were not modified
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          test -z "$(
+            git diff --name-only -- \
+              .github/workflows/deploy-forrum-web.yml \
+              .github/workflows/deploy-forrum-api.yml
+          )"
+
+          grep -Fq 'workflow_dispatch' \
+            .github/workflows/deploy-forrum-web.yml
+
+          grep -Fq 'workflow_dispatch' \
+            .github/workflows/deploy-forrum-api.yml
+
+          echo "Deploy workflows protected."
+
+      - name: Delete cleanup workflow itself
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -f .github/workflows/forrum-workflows-reset.yml
+
+          remaining="$(
+            find .github/workflows \
+              -maxdepth 1 \
+              -type f \
+              -printf '%f\n' \
+              | sort
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              deploy-forrum-api.yml \
+              deploy-forrum-web.yml \
+              | sort
+          )"
+
+          echo
+          echo "Final workflow folder:"
+          printf '%s\n' "$remaining"
+
+          test "$remaining" = "$expected"
+
+          git diff --check
+
+      - name: Audit deletion-only scope
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Nothing outside .github/workflows may change.
+          outside="$(
+            git status --short \
+              | awk '{print $2}' \
+              | grep -v '^\.github/workflows/' \
+              || true
+          )"
+
+          if [ -n "$outside" ]; then
+            echo "::error::Cleanup touched files outside .github/workflows:"
+            printf '%s\n' "$outside"
+            exit 1
+          fi
+
+          # The only files left in the folder must be the two deploy workflows.
+          test "$(
+            find .github/workflows \
+              -maxdepth 1 \
+              -type f \
+              | wc -l \
+              | tr -d ' '
+          )" = "2"
+
+          echo "Deletion-only audit: PASS"
+
+      - name: Commit clean workflow folder
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "FORRUM workflow cleaner"
+          git config user.email "actions@users.noreply.github.com"
+
+          git add -A .github/workflows
+
+          echo "Files being removed:"
+          git diff --cached --name-status
+
+          # Deploy files must not be staged as modified/deleted.
+          test -z "$(
+            git diff --cached --name-only -- \
+              .github/workflows/deploy-forrum-web.yml \
+              .github/workflows/deploy-forrum-api.yml
+          )"
+
+          git commit -m "Clean legacy FORRUM workflows"
+
+      - name: Publish only against unchanged main
+        shell: bash
+        env:
+          BASE_SHA: ${{ steps.baseline.outputs.base_sha }}
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+
+          if [ "$(git rev-parse origin/main)" != "$BASE_SHA" ]; then
+            echo "::error::main advanced during cleanup. Rerun FORRUM Workflows RESET."
+            exit 1
+          fi
+
+          git push origin HEAD:main
+
+      - name: Verify remote result
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+
+          remote_files="$(
+            git ls-tree \
+              --name-only \
+              origin/main:.github/workflows \
+              | sort
+          )"
+
+          expected="$(
+            printf '%s\n' \
+              deploy-forrum-api.yml \
+              deploy-forrum-web.yml \
+              | sort
+          )"
+
+          echo
+          echo "Remote workflow folder:"
+          printf '%s\n' "$remote_files"
+
+          test "$remote_files" = "$expected"
+
+          echo "FORRUM workflow folder is clean."
