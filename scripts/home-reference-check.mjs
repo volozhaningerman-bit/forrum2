@@ -13,7 +13,7 @@ if (!nav.includes("api<ActivityItem[]>('/news')")) throw new Error('Existing New
 if (nav.includes('String(href)')) throw new Error('String(href) workaround returned.');
 
 for (const marker of [
-  'data-home-reference="v36"', 'data-home-polish="v40"',
+  'data-home-reference="v36"', 'data-home-polish="v42"',
   'forrum-home-v16__tree', 'forrum-home-v16__discussed',
   'forrum-home-v16__new-topic-table', 'forrum-home-v16__poll-list',
   'forrum-home-v16__weekly', 'forrum-home-v16__stats',
@@ -26,7 +26,7 @@ const end = css.indexOf('/* FORRUM_HOME_REFERENCE_V36_END */', start);
 if (start < 0 || end < 0) throw new Error('Canonical homepage CSS missing.');
 const block = css.slice(start, end);
 
-if (!block.includes('width: min(calc(100vw - 20px), 1920px)')) throw new Error('Homepage does not use reference-scale viewport width.');
+if (!block.includes('width: min(calc(100vw - 32px), 1580px)')) throw new Error('Homepage does not use reference-scale centered desktop width.');
 if (!block.includes('grid-template-columns: 300px minmax(0, 1fr) 326px')) throw new Error('Three-column reference geometry missing.');
 if (!block.includes('border-left: 1px dotted')) throw new Error('Visible community hierarchy missing.');
 

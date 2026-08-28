@@ -43,7 +43,7 @@ const block = css.slice(start, end);
 const outside = css.slice(0, start) + css.slice(end + endMarker.length);
 
 for (const required of [
-  'width: min(calc(100vw - 20px), 1920px)',
+  'width: min(calc(100vw - 32px), 1580px)',
   'grid-template-columns: 300px minmax(0, 1fr) 326px',
   '.forrum-home-v16__tree-children::before',
   '.forrum-home-v16__discussed',
@@ -61,4 +61,4 @@ for (const forbidden of ['!important', 'box-shadow:', 'backdrop-filter:']) {
   if (block.includes(forbidden)) throw new Error(`Homepage canonical CSS forbidden pattern: ${forbidden}`);
 }
 
-console.log('FORRUM Home product contract passed: real data, near-full shell, dense responsive composition.');
+console.log('FORRUM Home product contract passed: real data, centered 1580px shell, dense responsive composition.');

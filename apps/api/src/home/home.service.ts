@@ -16,6 +16,7 @@ type WeeklyUser = {
   reactionCount: number;
   topicCount: number;
   commentCount: number;
+  presenceCount: number;
 };
 
 type WeeklyAccumulator = WeeklyUser & {
@@ -56,6 +57,7 @@ function getWeeklyUser(
     reactionCount: 0,
     topicCount: 0,
     commentCount: 0,
+    presenceCount: 0,
   };
 
   map.set(user.id, created);
@@ -75,6 +77,7 @@ function topWeekly(
       reactionCount: item.reactionCount,
       topicCount: item.topicCount,
       commentCount: item.commentCount,
+      presenceCount: item.presenceCount,
     }))
     .filter((item) => item.score > 0)
     .sort(
@@ -134,6 +137,7 @@ export class HomeService {
       messages,
       onlineSessions,
       recordSetting,
+      weeklyActiveUsers,
       weeklyTopics,
       weeklyComments,
       publicationReactions,
@@ -179,6 +183,19 @@ export class HomeService {
       }),
       this.prisma.platformSetting.findUnique({
         where: { key: onlineRecordKey },
+      }),
+      this.prisma.user.findMany({
+        where: {
+          lastSeenAt: { gte: weekAgo },
+        },
+        orderBy: { lastSeenAt: 'desc' },
+        take: 100,
+        select: {
+          id: true,
+          username: true,
+          displayName: true,
+          avatarUrl: true,
+        },
       }),
       this.prisma.publication.findMany({
         where: {
@@ -280,6 +297,7 @@ export class HomeService {
               slug: true,
               name: true,
               accentColor: true,
+              avatarUrl: true,
             },
           },
           options: {
@@ -315,7 +333,7 @@ export class HomeService {
       }),
     ]);
 
-    // FORRUM_HOME_COMPOSITION_V40_DATA
+    // FORRUM_HOME_COMPLETION_V42_DATA
     const discussedSince = new Date(
       now.getTime() - 30 * 24 * 60 * 60 * 1000,
     );
@@ -406,6 +424,13 @@ export class HomeService {
     const activity = new Map<string, WeeklyAccumulator>();
     const likes = new Map<string, WeeklyAccumulator>();
 
+    // A real weekly activity ranking should not disappear just because a user
+    // read/browsed without creating a topic. Presence is a low-weight real
+    // activity signal; topics/comments keep the meaningful weight.
+    for (const user of weeklyActiveUsers) {
+      getWeeklyUser(activity, user).presenceCount += 1;
+    }
+
     for (const item of weeklyTopics) {
       getWeeklyUser(activity, item.author).topicCount += 1;
     }
@@ -482,13 +507,18 @@ export class HomeService {
         ),
         activity: topWeekly(
           activity,
-          (item) => item.topicCount + item.commentCount,
+          (item) =>
+            item.topicCount * 3 +
+            item.commentCount * 2 +
+            item.presenceCount,
         ),
       },
       discussed,
       activePolls: polls.map((poll) => ({
         id: poll.id,
         title: poll.title,
+        description: poll.description,
+        kind: poll.kind,
         closesAt: poll.closesAt,
         status: poll.status,
         createdAt: poll.createdAt,

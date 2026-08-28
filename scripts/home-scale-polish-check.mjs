@@ -6,7 +6,7 @@ if (start < 0 || end < 0) throw new Error('Canonical homepage CSS missing.');
 const block = css.slice(start, end);
 
 for (const marker of [
-  'width: min(calc(100vw - 20px), 1920px)',
+  'width: min(calc(100vw - 32px), 1580px)',
   'grid-template-columns: 300px minmax(0, 1fr) 326px',
   '.forrum-home-v16__discussed',
   '.forrum-home-v16__new-topic',

@@ -33,11 +33,18 @@ type PollOption = {
 type PollItem = {
   id: string;
   title: string;
+  description?: string;
+  kind?: string;
   closesAt: string;
   status: string;
   createdAt?: string;
   options?: PollOption[];
-  community: { slug: string; name: string; accentColor?: string };
+  community: {
+    slug: string;
+    name: string;
+    accentColor?: string;
+    avatarUrl?: string | null;
+  };
 };
 
 type WeeklyUser = {
@@ -48,6 +55,7 @@ type WeeklyUser = {
   reactionCount: number;
   topicCount: number;
   commentCount: number;
+  presenceCount?: number;
 };
 
 type HomeDiscussedTopic = {
@@ -130,6 +138,13 @@ const topicVisuals: Record<string, string> = {
 
 function topicVisual(slug: string) {
   return topicVisuals[slug] ?? '/forrum-assets/topic-default.svg';
+}
+
+function communityVisual(
+  slug: string,
+  avatarUrl?: string | null,
+) {
+  return topicVisuals[slug] ?? avatarUrl ?? topicVisual(slug);
 }
 
 const publicationTypeName: Record<string, string> = {
@@ -343,7 +358,7 @@ function DiscussedTopic({ item }: { item: PublicationCardData | HomeDiscussedTop
       <CommunityMark
         className="forrum-home-v16__topic-mark"
         name={item.community.name}
-        url={item.community.avatarUrl ?? topicVisual(item.community.slug)}
+        url={communityVisual(item.community.slug, item.community.avatarUrl)}
         size={46}
       />
       <span className="forrum-home-v16__discussed-copy">
@@ -388,33 +403,58 @@ function NewTopic({ item }: { item: PublicationCardData }) {
 
 function PollRow({ poll }: { poll: PollItem }) {
   const options = poll.options ?? [];
-  const total = options.reduce((sum, option) => sum + Math.max(0, option.bindingVotes), 0);
+  const totalBinding = options.reduce(
+    (sum, option) => sum + Math.max(0, option.bindingVotes),
+    0,
+  );
+  const totalAdvisory = options.reduce(
+    (sum, option) => sum + Math.max(0, option.advisoryVotes),
+    0,
+  );
+  const outcomeTotal = totalBinding > 0 ? totalBinding : totalAdvisory;
+  const totalVotes = totalBinding + totalAdvisory;
+
   return (
     <Link className="forrum-home-v16__poll" href="/events?tab=polls">
       <CommunityMark
         className="forrum-home-v16__poll-mark"
         name={poll.community.name}
-        url={topicVisual(poll.community.slug)}
+        url={communityVisual(poll.community.slug, poll.community.avatarUrl)}
         size={40}
       />
       <span className="forrum-home-v16__poll-copy">
         <strong>{poll.title}</strong>
-        <small>Голосов: {formatCount(total)}</small>
+        <small>
+          Голосов: {formatCount(totalVotes)}
+          {totalBinding > 0 && totalAdvisory > 0
+            ? ` · решающих ${formatCount(totalBinding)}`
+            : ''}
+        </small>
       </span>
       <span className="forrum-home-v16__poll-options">
         {options.map((option) => {
-          const percent = total > 0 ? Math.round((option.bindingVotes / total) * 100) : 0;
+          const votes = totalBinding > 0
+            ? option.bindingVotes
+            : option.advisoryVotes;
+          const percent = outcomeTotal > 0
+            ? Math.round((votes / outcomeTotal) * 100)
+            : 0;
+
           return (
             <span className="forrum-home-v16__poll-option" key={option.id}>
               <span>{option.label}</span>
-              <i aria-hidden="true"><b style={{ width: `${percent}%` }} /></i>
-              <em>{formatCount(option.bindingVotes)}</em>
+              <i aria-hidden="true">
+                <b style={{ width: `${percent}%` }} />
+              </i>
+              <em>{formatCount(votes)}</em>
               <strong>{percent}%</strong>
             </span>
           );
         })}
       </span>
-      <span className="forrum-home-v16__poll-time">Осталось: {pollTimeLeft(poll.closesAt)}</span>
+      <span className="forrum-home-v16__poll-time">
+        Осталось: {pollTimeLeft(poll.closesAt)}
+      </span>
     </Link>
   );
 }
@@ -427,7 +467,17 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
     [communities],
   );
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set(parentSlugs));
-  const [weeklyMode, setWeeklyMode] = useState<'likes' | 'activity'>('likes');
+  const initialWeeklyLikes = initialData.overview?.weekly.likes ?? [];
+  const initialWeeklyActivity = initialData.overview?.weekly.activity ?? [];
+  const initialWeeklyMode: 'likes' | 'activity' =
+    initialWeeklyLikes.length > 0
+      ? 'likes'
+      : initialWeeklyActivity.length > 0
+        ? 'activity'
+        : 'likes';
+  const [weeklyMode, setWeeklyMode] = useState<'likes' | 'activity'>(
+    initialWeeklyMode,
+  );
   const discussed = initialData.overview?.discussed?.length
     ? initialData.overview.discussed
     : topicRows(initialData.feed);
@@ -488,7 +538,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
   };
 
   return (
-    <div className="forrum-home-v16" data-home-reference="v36" data-home-polish="v40">
+    <div className="forrum-home-v16" data-home-reference="v36" data-home-polish="v42">
       <aside className="forrum-home-v16__tree">
         <div className="forrum-home-v16__side-head"><h2>Сообщества</h2></div>
         {tree.length ? (
@@ -539,7 +589,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
           <div className="forrum-home-v16__actual-list">
             {actualAnnouncements.map((item) => (
               <Link className="forrum-home-v16__actual" href={`/p/${item.slug}`} key={`announcement-${item.id}`}>
-                <CommunityMark name={item.community.name} url={item.community.avatarUrl ?? topicVisual(item.community.slug)} size={36} />
+                <CommunityMark name={item.community.name} url={communityVisual(item.community.slug, item.community.avatarUrl)} size={36} />
                 <span><strong>{item.title || 'Объявление'}</strong><small>Новость · {relativeTime(item.createdAt)}</small></span>
               </Link>
             ))}
@@ -557,7 +607,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
             )}
             {actualTopics.map((item) => (
               <Link className="forrum-home-v16__actual" href={`/p/${item.slug}`} key={`topic-${item.id}`}>
-                <CommunityMark name={item.community.name} url={item.community.avatarUrl ?? topicVisual(item.community.slug)} size={36} />
+                <CommunityMark name={item.community.name} url={communityVisual(item.community.slug, item.community.avatarUrl)} size={36} />
                 <span><strong>{item.title?.trim() || 'Новая тема'}</strong><small>Новая тема · {item.community.name}</small></span>
               </Link>
             ))}
@@ -579,11 +629,25 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
                 <span className="forrum-home-v16__weekly-rank">{index + 1}</span>
                 <Avatar name={user.displayName} url={user.avatarUrl} size={30} />
                 <Link href={`/u/${user.username}`}>@{user.username}</Link>
-                <strong>{weeklyMode === 'likes' ? '♡' : '↻'} {formatCount(user.score)}</strong>
+                <strong
+                  title={
+                    weeklyMode === 'likes'
+                      ? `Симпатий за 7 дней: ${formatCount(user.reactionCount)}`
+                      : `Тем ${formatCount(user.topicCount)} · комментариев ${formatCount(user.commentCount)} · активность ${formatCount(user.presenceCount)}`
+                  }
+                >
+                  {weeklyMode === 'likes' ? '♡' : '↻'} {formatCount(user.score)}
+                </strong>
               </li>
             ))}
           </ol>
-          {!weekly.length && <p className="forrum-home-v16__weekly-empty">За эту неделю рейтинг ещё не сформировался.</p>}
+          {!weekly.length && (
+            <p className="forrum-home-v16__weekly-empty">
+              {weeklyMode === 'likes'
+                ? 'За последние 7 дней симпатий ещё нет.'
+                : 'За последние 7 дней активности ещё нет.'}
+            </p>
+          )}
           <Link className="forrum-home-v16__rail-footer" href="/users">Смотреть рейтинг <span aria-hidden="true">→</span></Link>
         </section>
 
