@@ -490,6 +490,7 @@ function PollRow({ poll }: { poll: PollItem }) {
 // FORRUM_HOME_PRODUCTION_POLISH_V46
 // 4RRUM_HOME_TREE_COUNTS_REMOVED
 // 4RRUM_HOME_V4
+// 4RRUM_HOME_09_POLISH
 export function HomeDashboard({ initialData }: { initialData: HomeInitialData }) {
   const communities = initialData.communities ?? [];
 
@@ -502,9 +503,9 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
   const initialWeeklyLikes = initialData.overview?.weekly.likes ?? [];
   const initialWeeklyActivity = initialData.overview?.weekly.activity ?? [];
   const initialWeeklyMode: 'likes' | 'activity' = 'activity';
-  const [weeklyMode, setWeeklyMode] = useState<'likes' | 'activity'>(
-    initialWeeklyMode,
-  );
+  const [weeklyMode, setWeeklyMode] = useState<
+    'likes' | 'activity'
+  >('activity');
   const discussed = initialData.overview?.discussed?.length
     ? initialData.overview.discussed
     : topicRows(initialData.feed);
@@ -740,7 +741,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
           </div>
         </HomePanel>
         {/* 4RRUM_HOME_START_RAIL */}
-        <HomePanel title="Старт 4RRUM" href="/rules">
+        <HomePanel title="Старт 4RRUM">
           <div className="forrum-home-v16__start-list">
             <Link className="forrum-home-v16__start-link" href="/#propose-section">
               <strong>Предложить раздел</strong>
