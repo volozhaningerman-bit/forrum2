@@ -485,6 +485,7 @@ function PollRow({ poll }: { poll: PollItem }) {
 }
 
 // FORRUM_HOME_V45_RIGHT_RAIL_NEWS
+// FORRUM_HOME_PRODUCTION_POLISH_V46
 export function HomeDashboard({ initialData }: { initialData: HomeInitialData }) {
   const communities = initialData.communities ?? [];
 
@@ -677,7 +678,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
             <button type="button" role="tab" aria-selected={weeklyMode === 'activity'} className={weeklyMode === 'activity' ? 'is-active' : ''} onClick={() => setWeeklyMode('activity')}>По активности</button>
           </div>
           <ol className="forrum-home-v16__weekly">
-            {weekly.map((user, index) => (
+            {weekly.slice(0, 5).map((user, index) => (
               <li key={user.username}>
                 <span className="forrum-home-v16__weekly-rank">{index + 1}</span>
                 <Avatar name={user.displayName} url={user.avatarUrl} size={30} />
@@ -710,7 +711,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
         >
           <div className="forrum-home-v16__actual-list">
             {announcements.length ? (
-              announcements.map((item) => (
+              announcements.slice(0, 3).map((item) => (
                 <Link
                   className="forrum-home-v16__actual"
                   href={`/p/${item.slug}`}

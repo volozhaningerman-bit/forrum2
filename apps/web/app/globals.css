@@ -19850,6 +19850,103 @@ html[data-forrum-theme="graphite"] {
   .forrum-home-v16__poll-time { justify-self: start; }
   .forrum-home-v16__poll-option { grid-template-columns: minmax(90px,1fr) minmax(70px,1.2fr) 32px 34px; gap: 5px; }
 }
+
+/* FORRUM_HOME_PRODUCTION_POLISH_V46_START */
+/*
+ * Final production pass over the approved homepage.
+ * No new cards, statistics or SaaS-style decoration.
+ * Geometry stays identical in Paper and Graphite.
+ */
+@media (min-width: 1241px) {
+  .forrum-home-v16__tree-count {
+    color: var(--fvt-faint);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .forrum-home-v16__tree-children::before {
+    border-left-color: var(--fvt-line);
+  }
+
+  .forrum-home-v16__topic-excerpt {
+    color: var(--fvt-muted);
+  }
+
+  .forrum-home-v16__topic-meta {
+    color: var(--fvt-faint);
+  }
+
+  .forrum-home-v16__topic-meta span:first-child {
+    color: var(--fvt-muted);
+    font-weight: 500;
+  }
+
+  .forrum-home-v16__discussion-stat {
+    color: var(--fvt-faint);
+    font-size: 10.75px;
+    font-weight: 500;
+  }
+
+  .forrum-home-v16__last-message {
+    color: var(--fvt-faint);
+  }
+
+  .forrum-home-v16__last-message strong {
+    color: var(--fvt-muted);
+    font-weight: 500;
+  }
+
+  .forrum-home-v16__new-topic-title {
+    color: var(--fvt-text);
+    font-weight: 620;
+  }
+
+  .forrum-home-v16__new-topic-section,
+  .forrum-home-v16__new-topic-author {
+    color: var(--fvt-muted);
+  }
+
+  .forrum-home-v16__new-topic-number,
+  .forrum-home-v16__new-topic-last {
+    color: var(--fvt-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .forrum-home-v16__new-topic-last b {
+    color: var(--fvt-muted);
+    font-weight: 500;
+  }
+
+  .forrum-home-v16__weekly li {
+    min-height: 38px;
+  }
+
+  .forrum-home-v16__weekly li > strong {
+    color: var(--fvt-muted);
+    font-weight: 560;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .forrum-home-v16__actual strong,
+  .forrum-home-v16__news-item strong {
+    font-weight: 610;
+  }
+}
+
+@media (min-width: 1481px) {
+  .forrum-home-v16__new-topic-head,
+  .forrum-home-v16__new-topic {
+    grid-template-columns: minmax(360px, 2.65fr)
+      minmax(118px, .88fr)
+      minmax(102px, .78fr)
+      52px
+      68px
+      minmax(150px, 1.05fr);
+    column-gap: 10px;
+  }
+}
+/* FORRUM_HOME_PRODUCTION_POLISH_V46_END */
+
 /* FORRUM_HOME_REFERENCE_V36_END */
 /* FORRUM_GLOBAL_SHELL_V16_1_END */
 
@@ -20494,3 +20591,20 @@ html[data-forrum-theme="graphite"] .brand:hover,
 html[data-forrum-theme="graphite"] .brand:focus-visible {
   color: var(--fvt-text, var(--text));
 }
+/* FORRUM_HEADER_PRODUCTION_POLISH_V46_START */
+@media (min-width: 1241px) {
+  .header-search {
+    width: min(330px, 25vw);
+  }
+
+  .auth-actions {
+    gap: 12px;
+  }
+
+  .auth-actions .button.small {
+    min-height: 32px;
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+/* FORRUM_HEADER_PRODUCTION_POLISH_V46_END */
