@@ -1,0 +1,937 @@
+name: Главная — 15
+run-name: Главная — 15
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: home-15
+  cancel-in-progress: false
+
+jobs:
+  home-15:
+    name: Главная — 15
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: 01. Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: 02. Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: 03. База
+        id: baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+          echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+          grep -Fq '4RRUM_HOME_13_POLISH' apps/web/components/home-dashboard.tsx
+          grep -Fq '4RRUM_HOME_13_POLISH' apps/web/app/globals.css
+          grep -Fq '4RRUM_HEADER_SEARCH_13' apps/web/components/header-search.tsx
+          grep -Fq '4RRUM_HOME_13_WEEKLY_REAL_USERS' apps/web/components/home-dashboard.tsx
+          grep -Fq 'forrum-home-v16__discussed-head' apps/web/components/home-dashboard.tsx
+          grep -Fq 'title="Старт 4RRUM"' apps/web/components/home-dashboard.tsx
+          grep -Fq "'FORRUM Start' ? 'Старт 4RRUM'" apps/web/components/home-dashboard.tsx
+          grep -Fq 'title="Новости 4RRUM"' apps/web/components/home-dashboard.tsx
+
+          echo "База Главная — 13 подтверждена."
+
+      - name: 04. Контракт
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/home-15-check.mjs <<'JS'
+          import fs from 'node:fs';
+
+          const home = fs.readFileSync(
+            'apps/web/components/home-dashboard.tsx',
+            'utf8',
+          );
+          const css = fs.readFileSync(
+            'apps/web/app/globals.css',
+            'utf8',
+          );
+          const search = fs.readFileSync(
+            'apps/web/components/header-search.tsx',
+            'utf8',
+          );
+
+          function fail(message) {
+            throw new Error(message);
+          }
+
+          if (!home.includes('4RRUM_HOME_15_FINISH')) {
+            fail('Missing Home 15 marker.');
+          }
+          if (!css.includes('4RRUM_HOME_15_FINISH')) {
+            fail('Missing Home 15 CSS marker.');
+          }
+
+          for (const phrase of [
+            'Поиск по форуму',
+            'Поиск по темам',
+            'Поиск по сообщениям',
+          ]) {
+            if (!search.includes(phrase)) {
+              fail(`Search phrase missing: ${phrase}`);
+            }
+          }
+
+          const discussedHead = home.match(
+            /className="forrum-home-v16__discussed-head"[\s\S]{0,320}?<\/div>/,
+          );
+          if (!discussedHead) {
+            fail('Discussed header missing.');
+          }
+          for (const label of ['Ответы', 'Просмотры', 'Последнее']) {
+            if (!discussedHead[0].includes(`>${label}<`)) {
+              fail(`Discussed header missing label: ${label}`);
+            }
+          }
+          if (discussedHead[0].includes('Активность')) {
+            fail('Discussed header still says Активность.');
+          }
+
+          const stats = home.match(
+            /className="[^"]*forrum-home-v16__topic-stats[^"]*"[\s\S]{0,1200}?<\/span>\s*<\/span>/,
+          );
+          if (!stats) {
+            fail('Discussed stats block missing.');
+          }
+          for (const marker of [
+            'className="forrum-home-v16__topic-stat"',
+            'title="Ответы"',
+            'title="Просмотры"',
+            'className="forrum-home-v16__topic-last-author"',
+            'className="forrum-home-v16__topic-last-time"',
+            '@{item.author.username}',
+            '{relativeTime(item.lastActivityAt || item.createdAt)}',
+          ]) {
+            if (!stats[0].includes(marker)) {
+              fail(`Discussed stats missing: ${marker}`);
+            }
+          }
+          if (/[◫◉]/.test(stats[0])) {
+            fail('Mystery discussed-topic glyph remains.');
+          }
+          const authorPos = stats[0].indexOf('@{item.author.username}');
+          const timePos = stats[0].indexOf(
+            '{relativeTime(item.lastActivityAt || item.createdAt)}',
+          );
+          if (authorPos < 0 || timePos < 0 || authorPos >= timePos) {
+            fail('Discussed last activity must show user before time.');
+          }
+
+          if (!home.includes("'FORRUM Start' ? 'О 4RRUM'")) {
+            fail('Tree system section must display as О 4RRUM.');
+          }
+          if (!home.includes('title="Начать"')) {
+            fail('Right rail action panel must be titled Начать.');
+          }
+          if (home.includes('title="Старт 4RRUM"')) {
+            fail('Old Start panel title remains.');
+          }
+
+          for (const marker of [
+            'Первый Розыск 4RRUM',
+            'Скоро · откроет новый этап проекта',
+            'Как устроен старт 4RRUM',
+            'Заявки, кураторы и правила запуска',
+            'href="/communities/proposals"',
+            'href="/rules"',
+          ]) {
+            if (!home.includes(marker)) {
+              fail(`News project item missing: ${marker}`);
+            }
+          }
+
+          for (const marker of [
+            '4RRUM_HOME_15_FINISH',
+            '.forrum-home-v16__weekly-user',
+            'color: var(--accent)',
+            '.forrum-home-v16__weekly-score',
+            'color: var(--text)',
+            '.forrum-home-v16__weekly-rank',
+            'color: var(--muted)',
+            'opacity: 1',
+          ]) {
+            if (!css.includes(marker)) {
+              fail(`Weekly contrast CSS missing: ${marker}`);
+            }
+          }
+
+          for (const marker of [
+            '.forrum-home-v16__new-topic',
+            'min-height: 31px',
+            '.forrum-home-v16__new-topic-title',
+            'font-weight: 650',
+          ]) {
+            if (!css.includes(marker)) {
+              fail(`New-topic polish missing: ${marker}`);
+            }
+          }
+
+          const newLast = home.match(
+            /className="forrum-home-v16__new-topic-last"[\s\S]{0,260}?<\/span>/,
+          );
+          if (!newLast) {
+            fail('New-topic last-message cell missing.');
+          }
+          const newAuthor = newLast[0].indexOf('@{item.author.username}');
+          const newTime = newLast[0].indexOf(
+            '{relativeTime(item.lastActivityAt || item.createdAt)}',
+          );
+          if (newAuthor < 0 || newTime < 0 || newAuthor >= newTime) {
+            fail('New-topic last message regressed.');
+          }
+
+          console.log('Главная — 15 contract: PASS');
+          JS
+
+          node --check /tmp/home-15-check.mjs
+
+      - name: 05. RED
+        shell: bash
+        run: |
+          set -euo pipefail
+          if node /tmp/home-15-check.mjs; then
+            echo "::error::Контракт неожиданно прошёл до патча."
+            exit 1
+          fi
+          echo "RED: PASS — Главная — 13 ещё не соответствует Главная — 15."
+
+      - name: 06. Зависимости
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --include=dev --no-audit --no-fund --package-lock=false
+
+      - name: 07. Диагностика
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "=== Discussed head ==="
+          grep -n -A8 -B3 'forrum-home-v16__discussed-head' apps/web/components/home-dashboard.tsx | head -80 || true
+
+          echo "=== Discussed metric JSX ==="
+          grep -n -A20 -B10 'title="Ответы"' apps/web/components/home-dashboard.tsx | head -140 || true
+          grep -n -A20 -B10 'title="Просмотры"' apps/web/components/home-dashboard.tsx | head -140 || true
+          grep -n -A20 -B10 'forrum-home-v16__topic-time' apps/web/components/home-dashboard.tsx | head -140 || true
+
+          echo "=== Weekly ==="
+          grep -n -A60 -B5 'forrum-home-v16__weekly-list' apps/web/components/home-dashboard.tsx | head -160 || true
+
+          echo "=== News / Start ==="
+          grep -n -A90 -B5 'title="Новости 4RRUM"' apps/web/components/home-dashboard.tsx | head -180 || true
+
+      - name: 08. Патч
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/home-15.py <<'PY'
+          from pathlib import Path
+          import re
+
+          HOME = Path('apps/web/components/home-dashboard.tsx')
+          home = HOME.read_text(encoding='utf-8')
+
+          if '4RRUM_HOME_15_FINISH' in home:
+              raise SystemExit('Главная — 15 уже применена.')
+
+          for required in [
+              '4RRUM_HOME_13_POLISH',
+              '4RRUM_HOME_13_WEEKLY_REAL_USERS',
+              'forrum-home-v16__discussed-head',
+              'title="Ответы"',
+              'title="Просмотры"',
+              'forrum-home-v16__topic-time',
+              'title="Новости 4RRUM"',
+              'title="Старт 4RRUM"',
+          ]:
+              if required not in home:
+                  raise SystemExit(f'Не найдена база Главная — 13: {required}')
+
+          def opening_tag_end(text: str, start: int) -> int:
+              quote = None
+              escaped = False
+              brace = 0
+              i = start
+              while i < len(text):
+                  ch = text[i]
+                  if quote is not None:
+                      if escaped:
+                          escaped = False
+                      elif ch == '\\':
+                          escaped = True
+                      elif ch == quote:
+                          quote = None
+                      i += 1
+                      continue
+                  if ch in ("'", '"', '`'):
+                      quote = ch
+                  elif ch == '{':
+                      brace += 1
+                  elif ch == '}':
+                      brace = max(0, brace - 1)
+                  elif ch == '>' and brace == 0:
+                      return i
+                  i += 1
+              raise SystemExit('JSX opening tag end not found.')
+
+          def element_bounds_by_class(text: str, tag: str, class_name: str):
+              class_matches = list(re.finditer(
+                  rf'className\s*=\s*(["\']){re.escape(class_name)}\1',
+                  text,
+              ))
+              if len(class_matches) != 1:
+                  raise SystemExit(
+                      f'Expected one {class_name}, found {len(class_matches)}.'
+                  )
+              class_match = class_matches[0]
+              start = text.rfind(f'<{tag}', 0, class_match.start())
+              if start < 0:
+                  raise SystemExit(f'Opening {tag} not found: {class_name}')
+              open_end = opening_tag_end(text, start)
+              if not (start <= class_match.start() <= open_end):
+                  raise SystemExit(f'Class outside opening tag: {class_name}')
+
+              token_re = re.compile(rf'<{tag}\b|</{tag}\s*>', re.I)
+              depth = 1
+              for token in token_re.finditer(text, open_end + 1):
+                  if token.group(0).lower().startswith(f'<{tag}'.lower()):
+                      depth += 1
+                  else:
+                      depth -= 1
+                      if depth == 0:
+                          return start, open_end, token.start(), token.end()
+              raise SystemExit(f'Closing {tag} not found: {class_name}')
+
+          # A. "Активность" duplicated the meaning of the discussed block.
+          d_start, _, _, d_close_end = element_bounds_by_class(
+              home,
+              'div',
+              'forrum-home-v16__discussed-head',
+          )
+          discussed = home[d_start:d_close_end]
+          discussed, count = re.subn(
+              r'>\s*Активность\s*<',
+              '>Последнее<',
+              discussed,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit('Не удалось заменить Активность на Последнее.')
+          home = home[:d_start] + discussed + home[d_close_end:]
+
+          # B. Discussed rows: plain numbers; author first, time second.
+          # Home 13 does not guarantee the topic-stats class in JSX. Find the
+          # real common container from stable metric titles and topic-time.
+          def element_bounds_from_start(text: str, start: int, tag: str):
+              open_end = opening_tag_end(text, start)
+              token_re = re.compile(rf'<{tag}\b|</{tag}\s*>', re.I)
+              depth = 1
+              for token in token_re.finditer(text, open_end + 1):
+                  if token.group(0).lower().startswith(f'<{tag}'.lower()):
+                      depth += 1
+                  else:
+                      depth -= 1
+                      if depth == 0:
+                          return open_end, token.start(), token.end()
+              raise SystemExit(f'Closing {tag} not found from offset {start}.')
+
+          replies_pos = home.find('title="Ответы"')
+          views_pos = home.find('title="Просмотры"')
+          time_pos = home.find('forrum-home-v16__topic-time')
+          if min(replies_pos, views_pos, time_pos) < 0:
+              raise SystemExit('Discussed metric anchors are incomplete.')
+
+          stats = None
+          search_from = max(0, replies_pos - 3200)
+          candidates = [
+              match.start()
+              for match in re.finditer(r'<span\b', home[search_from:replies_pos], re.I)
+          ]
+          candidates = [search_from + pos for pos in candidates]
+          for candidate in reversed(candidates):
+              try:
+                  open_end, close_start, close_end = element_bounds_from_start(
+                      home, candidate, 'span'
+                  )
+              except SystemExit:
+                  continue
+              segment = home[candidate:close_end]
+              if (
+                  'title="Ответы"' in segment
+                  and 'title="Просмотры"' in segment
+                  and 'forrum-home-v16__topic-time' in segment
+                  and 'formatCount(item.commentCount)' in segment
+                  and 'formatCount(item.viewCount)' in segment
+              ):
+                  stats = (candidate, open_end, close_start, close_end)
+                  break
+
+          if stats is None:
+              raise SystemExit(
+                  'Could not locate the real discussed metrics container.'
+              )
+
+          s_start, s_open_end, s_close_start, s_close_end = stats
+          opening = home[s_start:s_open_end + 1]
+          old_stats = home[s_start:s_close_end]
+          if 'forrum-home-v16__topic-copy' in old_stats:
+              raise SystemExit('Unsafe metrics container reached topic copy.')
+
+          class_match = re.search(r'className\s*=\s*"([^"]*)"', opening)
+          if class_match:
+              classes = class_match.group(1).split()
+              if 'forrum-home-v16__topic-stats' not in classes:
+                  classes.append('forrum-home-v16__topic-stats')
+              class_value = ' '.join(dict.fromkeys(classes))
+              opening = (
+                  opening[:class_match.start(1)]
+                  + class_value
+                  + opening[class_match.end(1):]
+              )
+          else:
+              opening = opening.replace(
+                  '<span',
+                  '<span className="forrum-home-v16__topic-stats"',
+                  1,
+              )
+
+          stats_body = r'''
+            <span
+              className="forrum-home-v16__topic-stat"
+              title="Ответы"
+            >
+              {formatCount(item.commentCount)}
+            </span>
+            <span
+              className="forrum-home-v16__topic-stat"
+              title="Просмотры"
+            >
+              {formatCount(item.viewCount)}
+            </span>
+            <span className="forrum-home-v16__topic-time">
+              <span className="forrum-home-v16__topic-last-author">
+                @{item.author.username}
+              </span>
+              <span className="forrum-home-v16__topic-last-time">
+                {relativeTime(item.lastActivityAt || item.createdAt)}
+              </span>
+            </span>
+          '''
+          home = (
+              home[:s_start]
+              + opening
+              + stats_body
+              + home[s_close_start:]
+          )
+
+          # C. System navigation and right-rail action panel get distinct names.
+          old_tree = "'FORRUM Start' ? 'Старт 4RRUM'"
+          new_tree = "'FORRUM Start' ? 'О 4RRUM'"
+          if old_tree not in home:
+              raise SystemExit('Tree display label Старт 4RRUM not found.')
+          home = home.replace(old_tree, new_tree, 1)
+
+          title_pattern = re.compile(r'title\s*=\s*(["\'])Старт 4RRUM\1')
+          home, title_count = title_pattern.subn('title="Начать"', home, count=1)
+          if title_count != 1:
+              raise SystemExit('Right rail Старт 4RRUM title not found exactly once.')
+
+          # D. Keep real announcements and add two explicit project notices.
+          news_title = home.find('title="Новости 4RRUM"')
+          if news_title < 0:
+              raise SystemExit('Новости 4RRUM panel not found.')
+          news_open = home.rfind('<HomePanel', 0, news_title)
+          news_close = home.find('</HomePanel>', news_title)
+          if news_open < 0 or news_close < 0:
+              raise SystemExit('Новости 4RRUM panel bounds not found.')
+          news_close += len('</HomePanel>')
+          news_panel = home[news_open:news_close]
+
+          if 'Первый Розыск 4RRUM' in news_panel:
+              raise SystemExit('Launch news links already exist unexpectedly.')
+
+          list_match = re.search(
+              r'<div\s+className="forrum-home-v16__actual-list"\s*>',
+              news_panel,
+          )
+          if not list_match:
+              raise SystemExit('News actual-list not found.')
+          list_close = news_panel.find('</div>', list_match.end())
+          if list_close < 0:
+              raise SystemExit('News actual-list closing div not found.')
+
+          launch_news = r'''
+            <Link
+              className="forrum-home-v16__actual forrum-home-v16__project-news"
+              href="/communities/proposals"
+            >
+              <span
+                className="forrum-home-v16__actual-symbol"
+                aria-hidden="true"
+              >
+                ⌕
+              </span>
+              <span>
+                <strong>Первый Розыск 4RRUM</strong>
+                <small>Скоро · откроет новый этап проекта</small>
+              </span>
+            </Link>
+            <Link
+              className="forrum-home-v16__actual forrum-home-v16__project-news"
+              href="/rules"
+            >
+              <span
+                className="forrum-home-v16__actual-symbol"
+                aria-hidden="true"
+              >
+                i
+              </span>
+              <span>
+                <strong>Как устроен старт 4RRUM</strong>
+                <small>Заявки, кураторы и правила запуска</small>
+              </span>
+            </Link>
+          '''
+
+          news_panel = news_panel[:list_close] + launch_news + news_panel[list_close:]
+          home = home[:news_open] + news_panel + home[news_close:]
+
+          export_anchor = 'export function HomeDashboard({'
+          if home.count(export_anchor) != 1:
+              raise SystemExit('Unexpected HomeDashboard export count.')
+          home = home.replace(
+              export_anchor,
+              '// 4RRUM_HOME_15_FINISH\n' + export_anchor,
+              1,
+          )
+
+          home = '\n'.join(
+              line.rstrip(' \t') for line in home.splitlines()
+          ).rstrip() + '\n'
+          HOME.write_text(home, encoding='utf-8')
+          print('Главная — 15 product patch applied.')
+          PY
+
+          cat > /tmp/home-15.css <<'CSS'
+          /* 4RRUM_HOME_15_FINISH */
+
+          /* Discussed topics: pure numbers and an explicit last user/time cell. */
+          .forrum-home-v16__discussed-head,
+          .forrum-home-v16__topic-stats {
+            width: 254px !important;
+            min-width: 254px !important;
+            grid-template-columns: 54px 68px 112px !important;
+            column-gap: 10px !important;
+          }
+
+          .forrum-home-v16__discussed-head > span,
+          .forrum-home-v16__topic-stat {
+            text-align: center !important;
+          }
+
+          .forrum-home-v16__topic-stat {
+            color: var(--text) !important;
+            font-size: 10.5px !important;
+            font-variant-numeric: tabular-nums !important;
+            font-weight: 550 !important;
+          }
+
+          .forrum-home-v16__topic-stat::before,
+          .forrum-home-v16__topic-stat::after,
+          .forrum-home-v16__topic-stat > [aria-hidden="true"],
+          .forrum-home-v16__topic-stat svg,
+          .forrum-home-v16__topic-stats [data-metric-label]::before,
+          .forrum-home-v16__topic-stats [data-metric-label]::after {
+            content: none !important;
+            display: none !important;
+          }
+
+          .forrum-home-v16__topic-time {
+            display: grid !important;
+            min-width: 0 !important;
+            gap: 1px !important;
+            justify-items: center !important;
+            text-align: center !important;
+            white-space: normal !important;
+          }
+
+          .forrum-home-v16__topic-last-author {
+            max-width: 100% !important;
+            overflow: hidden !important;
+            color: var(--text) !important;
+            font-size: 10px !important;
+            font-weight: 600 !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+          }
+
+          .forrum-home-v16__topic-last-time {
+            color: var(--muted) !important;
+            font-size: 9.5px !important;
+            font-weight: 450 !important;
+            line-height: 1.15 !important;
+            white-space: nowrap !important;
+          }
+
+          /* New topics: a little more breathing room without turning rows into cards. */
+          .forrum-home-v16__new-topic {
+            min-height: 31px !important;
+            padding-top: 5px !important;
+            padding-bottom: 5px !important;
+          }
+
+          .forrum-home-v16__new-topic-title {
+            color: var(--text) !important;
+            font-weight: 650 !important;
+          }
+
+          /* Weekly ranking: use the home palette, not global light-theme tokens. */
+          .forrum-home-v16__weekly-row,
+          .forrum-home-v16__weekly-rank,
+          .forrum-home-v16__weekly-avatar,
+          .forrum-home-v16__weekly-user,
+          .forrum-home-v16__weekly-score {
+            opacity: 1 !important;
+            filter: none !important;
+          }
+
+          .forrum-home-v16__weekly-row {
+            color: var(--text) !important;
+          }
+
+          .forrum-home-v16__weekly-rank {
+            color: var(--muted) !important;
+          }
+
+          .forrum-home-v16__weekly-avatar {
+            border-color: var(--line-strong) !important;
+            background: var(--surface-soft) !important;
+            color: var(--text) !important;
+          }
+
+          .forrum-home-v16__weekly-user {
+            color: var(--accent) !important;
+          }
+
+          .forrum-home-v16__weekly-score {
+            color: var(--text) !important;
+          }
+
+          html.dark .forrum-home-v16__weekly-row,
+          html[data-forrum-theme="graphite"] .forrum-home-v16__weekly-row {
+            color: var(--text) !important;
+          }
+
+          html.dark .forrum-home-v16__weekly-user,
+          html[data-forrum-theme="graphite"] .forrum-home-v16__weekly-user {
+            color: var(--accent) !important;
+          }
+
+          html.dark .forrum-home-v16__weekly-score,
+          html[data-forrum-theme="graphite"] .forrum-home-v16__weekly-score {
+            color: var(--text) !important;
+          }
+
+          .forrum-home-v16__project-news .forrum-home-v16__actual-symbol {
+            border-color: var(--line-strong) !important;
+            background: var(--surface-soft) !important;
+            color: var(--text) !important;
+          }
+
+          @media (max-width: 1280px) and (min-width: 961px) {
+            .forrum-home-v16__discussed-head,
+            .forrum-home-v16__topic-stats {
+              width: 234px !important;
+              min-width: 234px !important;
+              grid-template-columns: 48px 58px 108px !important;
+              column-gap: 7px !important;
+            }
+          }
+          CSS
+
+          python3 -m py_compile /tmp/home-15.py
+          python3 /tmp/home-15.py
+          cat /tmp/home-15.css >> apps/web/app/globals.css
+
+          python3 - <<'PY'
+          from pathlib import Path
+          for rel in [
+              'apps/web/app/globals.css',
+              'apps/web/components/home-dashboard.tsx',
+          ]:
+              path = Path(rel)
+              text = path.read_text(encoding='utf-8')
+              path.write_text(
+                  '\n'.join(
+                      line.rstrip(' \t') for line in text.splitlines()
+                  ).rstrip() + '\n',
+                  encoding='utf-8',
+              )
+          PY
+
+          git diff --check
+
+      - name: 09. GREEN
+        shell: bash
+        run: |
+          set -euo pipefail
+          node /tmp/home-15-check.mjs
+          echo "GREEN: PASS"
+
+      - name: 10. Scope
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          changed="$({
+            git diff --name-only
+            git ls-files --others --exclude-standard |
+              awk '!/(^|\/)(node_modules|\.next|dist|coverage|\.turbo)(\/|$)/'
+          } | sort -u)"
+
+          required="$(printf '%s\n' \
+            apps/web/app/globals.css \
+            apps/web/components/home-dashboard.tsx | sort)"
+          allowed="$required"
+
+          printf 'Changed:\n%s\n' "$changed"
+
+          while IFS= read -r file; do
+            test -n "$file" || continue
+            printf '%s\n' "$changed" | grep -Fxq "$file" || {
+              echo "::error::Required file did not change: $file"
+              exit 1
+            }
+          done <<< "$required"
+
+          unexpected="$(comm -23 \
+            <(printf '%s\n' "$changed" | sed '/^$/d' | sort -u) \
+            <(printf '%s\n' "$allowed" | sed '/^$/d' | sort -u))"
+
+          if [ -n "$unexpected" ]; then
+            echo "::error::Unexpected files changed:"
+            printf '%s\n' "$unexpected"
+            exit 1
+          fi
+
+          test -z "$(git diff --name-only -- \
+            apps/api \
+            packages/contracts \
+            apps/web/components/header-search.tsx \
+            apps/web/components/site-header.tsx \
+            apps/web/components/main-nav.tsx \
+            apps/web/components/theme-toggle.tsx \
+            apps/web/components/auth-actions.tsx)"
+
+          git diff --check
+          echo "Scope: PASS"
+
+      - name: 11. Stage
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- \
+            apps/web/app/globals.css \
+            apps/web/components/home-dashboard.tsx
+          git diff --cached --check
+
+          staged="$(git diff --cached --name-only | sort -u)"
+          printf 'Staged:\n%s\n' "$staged"
+          test "$staged" = $'apps/web/app/globals.css\napps/web/components/home-dashboard.tsx'
+          echo "Stage: PASS"
+
+      - name: 12. Prisma
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run db:validate
+          npm run db:generate
+
+      - name: 13. UX
+        shell: bash
+        run: |
+          set -euo pipefail
+          node /tmp/home-15-check.mjs
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+
+      - name: 14. Тесты
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm test -w @forrum/contracts --if-present
+          npm test -w @forrum/api --if-present
+          npm test -w @forrum/web --if-present
+
+      - name: 15. Typecheck
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run typecheck
+
+      - name: 16. Build
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf apps/web/.next
+          npm run build
+
+      - name: 17. Аудит
+        shell: bash
+        run: |
+          set -euo pipefail
+          node /tmp/home-15-check.mjs
+
+          grep -Fq '4RRUM_HOME_15_FINISH' apps/web/components/home-dashboard.tsx
+          grep -Fq '4RRUM_HOME_15_FINISH' apps/web/app/globals.css
+          grep -Fq '>Последнее<' apps/web/components/home-dashboard.tsx
+          grep -Fq 'title="Начать"' apps/web/components/home-dashboard.tsx
+          grep -Fq "'FORRUM Start' ? 'О 4RRUM'" apps/web/components/home-dashboard.tsx
+          grep -Fq 'Первый Розыск 4RRUM' apps/web/components/home-dashboard.tsx
+          grep -Fq 'Как устроен старт 4RRUM' apps/web/components/home-dashboard.tsx
+          grep -Fq 'className="forrum-home-v16__topic-last-author"' apps/web/components/home-dashboard.tsx
+          grep -Fq '{relativeTime(item.lastActivityAt || item.createdAt)}' apps/web/components/home-dashboard.tsx
+
+          ! grep -Fq 'title="Старт 4RRUM"' apps/web/components/home-dashboard.tsx
+          test -z "$(git diff --cached --name-only -- apps/api packages/contracts)"
+
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          npm run typecheck
+          rm -rf apps/web/.next
+          npm run build
+
+          echo "Аудит Главная — 15: PASS"
+
+      - name: 18. Cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf \
+            node_modules \
+            apps/web/.next \
+            apps/api/dist \
+            packages/contracts/dist \
+            coverage \
+            .turbo
+
+          git restore --worktree -- .
+          git clean -ffdx
+
+          git rm .github/workflows/home-15.yml
+
+          for old_workflow in \
+            .github/workflows/home-10.yml \
+            .github/workflows/home-11.yml \
+            .github/workflows/home-12.yml \
+            .github/workflows/home-13.yml \
+            .github/workflows/home-14.yml
+          do
+            if git ls-files --error-unmatch "$old_workflow" >/dev/null 2>&1; then
+              git rm "$old_workflow"
+            fi
+          done
+
+          git diff --cached --check
+
+          staged="$(git diff --cached --name-only | sort -u)"
+          printf 'Final staged:\n%s\n' "$staged"
+
+          for required in \
+            .github/workflows/home-15.yml \
+            apps/web/app/globals.css \
+            apps/web/components/home-dashboard.tsx
+          do
+            printf '%s\n' "$staged" | grep -Fxq "$required" || {
+              echo "::error::Required staged file missing: $required"
+              exit 1
+            }
+          done
+
+          unexpected="$(printf '%s\n' "$staged" | grep -Ev \
+            '^(\.github/workflows/home-(10|11|12|13|14|15)\.yml|apps/web/app/globals\.css|apps/web/components/home-dashboard\.tsx)$' || true)"
+
+          if [ -n "$unexpected" ]; then
+            echo "::error::Unexpected final staged files:"
+            printf '%s\n' "$unexpected"
+            exit 1
+          fi
+
+          echo "Cleanup: PASS"
+
+      - name: 19. Commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "4RRUM updater"
+          git config user.email "actions@users.noreply.github.com"
+          git commit -m "Polish 4RRUM home page 15"
+
+      - name: 20. Push
+        env:
+          BASE_SHA: ${{ steps.baseline.outputs.base_sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          if [ "$(git rev-parse origin/main)" != "$BASE_SHA" ]; then
+            echo "::error::main изменился во время проверки. Запусти Главная — 15 ещё раз."
+            exit 1
+          fi
+          git push origin HEAD:main
+
+      - name: 21. Verify
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+
+          git show origin/main:apps/web/components/home-dashboard.tsx |
+            grep -Fq '4RRUM_HOME_15_FINISH'
+          git show origin/main:apps/web/app/globals.css |
+            grep -Fq '4RRUM_HOME_15_FINISH'
+          git show origin/main:apps/web/components/home-dashboard.tsx |
+            grep -Fq 'title="Начать"'
+          git show origin/main:apps/web/components/home-dashboard.tsx |
+            grep -Fq "'FORRUM Start' ? 'О 4RRUM'"
+          git show origin/main:apps/web/components/home-dashboard.tsx |
+            grep -Fq 'Первый Розыск 4RRUM'
+          git show origin/main:apps/web/components/home-dashboard.tsx |
+            grep -Fq 'className="forrum-home-v16__topic-last-author"'
+
+          for obsolete in \
+            .github/workflows/home-10.yml \
+            .github/workflows/home-11.yml \
+            .github/workflows/home-12.yml \
+            .github/workflows/home-13.yml \
+            .github/workflows/home-14.yml \
+            .github/workflows/home-15.yml
+          do
+            if git cat-file -e "origin/main:$obsolete" 2>/dev/null; then
+              echo "::error::Одноразовый workflow не удалился: $obsolete"
+              exit 1
+            fi
+          done
+
+          echo "Главная — 15 опубликована."
