@@ -1,0 +1,244 @@
+name: Главная — 07
+'on':
+  workflow_dispatch: null
+permissions:
+  contents: write
+concurrency:
+  group: home-07
+  cancel-in-progress: false
+jobs:
+  home-07:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+    - name: 01. Checkout
+      uses: actions/checkout@v5
+      with:
+        ref: main
+        fetch-depth: 0
+    - name: 02. Node
+      uses: actions/setup-node@v5
+      with:
+        node-version: '24'
+    - name: 03. База
+      id: baseline
+      shell: bash
+      run: 'set -euo pipefail
+
+        git reset --hard HEAD
+
+        git clean -ffdx
+
+        test -z "$(git status --porcelain)"
+
+        echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+
+        grep -Fq ''4RRUM_HOME_FINAL_UX_POLISH_V2'' apps/web/components/home-dashboard.tsx
+
+        grep -Fq ''4RRUM_HOME_START_RAIL'' apps/web/components/home-dashboard.tsx
+
+        grep -Fq ''<HeaderSearch />'' apps/web/components/site-header.tsx
+
+        grep -Fq ''<ThemeToggle />'' apps/web/components/main-nav.tsx
+
+        grep -Fq ''theme-toggle-v2'' apps/web/components/theme-toggle.tsx
+
+
+        echo "База Главная — 03 подтверждена."
+
+        '
+    - name: 04. Контракт
+      shell: bash
+      run: 'set -euo pipefail
+
+        python3 - <<''PY''
+
+        from pathlib import Path
+
+        Path(''scripts/home-07-check.mjs'').write_text(''import fs from \''node:fs\'';\n\nconst read = (path) => fs.readFileSync(path, \''utf8\'');\n\nconst home = read(\''apps/web/components/home-dashboard.tsx\'');\nconst header = read(\''apps/web/components/site-header.tsx\'');\nconst mainNav = read(\''apps/web/components/main-nav.tsx\'');\nconst search = read(\''apps/web/components/header-search.tsx\'');\nconst css = read(\''apps/web/app/globals.css\'');\n\nfunction need(source, marker, label) {\n  if (!source.includes(marker)) {\n    throw new Error(`${label}: missing ${marker}`);\n  }\n}\n\nfunction count(source, marker) {\n  return source.split(marker).length - 1;\n}\n\n// One theme control only: MainNav owns it, SiteHeader must not duplicate it.\nif (count(mainNav, \''<ThemeToggle />\'') !== 1) {\n  throw new Error(\''MainNav must mount exactly one ThemeToggle.\'');\n}\nif (header.includes(\''<ThemeToggle />\'')) {\n  throw new Error(\''SiteHeader still duplicates ThemeToggle.\'');\n}\nif
+        (header.includes("from \''./theme-toggle\''")) {\n  throw new Error(\''SiteHeader still imports ThemeToggle directly.\'');\n}\n\n// Search animates only when empty and unfocused.\nfor (const marker of [\n  \''const [query, setQuery]\'',\n  \''const [focused, setFocused]\'',\n  \''onFocus={() => setFocused(true)}\'',\n  \''onBlur={() => setFocused(false)}\'',\n  \''onChange={(event) => setQuery(event.target.value)}\'',\n  "\''Поиск...\''",\n  "prefers-reduced-motion: reduce",\n]) {\n  need(search, marker, \''search\'');\n}\n\n// Home polish.\nfor (const marker of [\n  \''4RRUM_HOME_V4\'',\n  \''function communityDisplayName(\'',\n  "\''FORRUM Start\'' ? \''4RRUM Start\''",\n  \''forrum-home-v16__discussed-head\'',\n  \''forrum-home-v16__topic-stat\'',\n  "setWeeklyMode",\n]) {\n  need(home, marker, \''home\'');\n}\n\nconst weeklyDeclaration = home.match(\n  /const\\s+\\[weeklyMode,\\s*setWeeklyMode\\]\\s*=\\s*useState<[\\s\\S]{0,160}?\''likes\''\\s*\\|\\s*\''activity\''[\\s\\S]{0,100}?>\\s*\\(([\\s\\S]{0,180}?)\\);/\n);\n\nif
+        (!weeklyDeclaration) {\n  throw new Error(\''weeklyMode declaration is missing.\'');\n}\n\nconst weeklyInitializer = weeklyDeclaration[1].trim().replace(/,$/, \''\'').trim();\n\nif (weeklyInitializer === \''initialWeeklyMode\'') {\n  if (\n    !/const\\s+initialWeeklyMode\\b[\\s\\S]{0,220}?=\\s*\''activity\''\\s*;/.test(home)\n  ) {\n    throw new Error(\n      \''initialWeeklyMode must resolve to activity.\'',\n    );\n  }\n} else if (weeklyInitializer !== "\''activity\''") {\n  throw new Error(\n    `Weekly participants must open on activity; got ${weeklyInitializer}`,\n  );\n}\n\nif (home.includes(\''data-metric-label="Ответы"\'')) {\n  throw new Error(\''Discussed replies still use noisy inline label.\'');\n}\nif (home.includes(\''data-metric-label="Просм."\'')) {\n  throw new Error(\''Discussed views still use noisy inline label.\'');\n}\nif (/aria-hidden="true">\\s*[◫◉]\\s*</.test(home)) {\n  throw new Error(\''Old unclear discussed-topic stat icons remain.\'');\n}\n\n// CSS
+        contract.\nfor (const marker of [\n  \''/* 4RRUM_HOME_V4 */\'',\n  \''.forrum-home-v16__discussed-head\'',\n  \''.forrum-home-v16__topic-stat\'',\n  \''.header-search\'',\n  \''.theme-toggle-v2:hover\'',\n  \''.icon-links a:hover\'',\n  \''.auth-actions > a:not(.button):hover\'',\n]) {\n  need(css, marker, \''css\'');\n}\n\nconsole.log(\''Главная — 07 contract: PASS\'');\n'', encoding=''utf-8'')
+
+        PY
+
+        node --check scripts/home-07-check.mjs
+
+        '
+    - name: 05. RED
+      shell: bash
+      run: "set -euo pipefail\nif node scripts/home-07-check.mjs; then\n  echo \"::error::Контракт неожиданно прошёл до изменений.\"\n  exit 1\nfi\necho \"RED: PASS\"\n"
+    - name: 06. Зависимости
+      shell: bash
+      run: 'set -euo pipefail
+
+        npm install --include=dev --no-audit --no-fund --package-lock=false
+
+        '
+    - name: 07. Поиск
+      shell: bash
+      run: 'set -euo pipefail
+
+        python3 - <<''PY''
+
+        from pathlib import Path
+
+        Path(''apps/web/components/header-search.tsx'').write_text(''\''use client\'';\n\nimport { useEffect, useState } from \''react\'';\nimport { SearchIcon } from \''./icons\'';\n\nconst frames = [\n  \''П\'',\n  \''По\'',\n  \''Пои\'',\n  \''Поис\'',\n  \''Поиск\'',\n  \''Поиск.\'',\n  \''Поиск..\'',\n  \''Поиск...\'',\n  \''Поиск.\'',\n  \''Поиск..\'',\n  \''Поиск...\'',\n  \''Поиск.\'',\n  \''Поиск..\'',\n  \''Поиск...\'',\n  \''Поиск.\'',\n  \''Поиск..\'',\n  \''Поиск...\'',\n  \''Поиск.\'',\n  \''Поиск..\'',\n  \''Поиск...\'',\n  \''\'',\n] as const;\n\nexport function HeaderSearch() {\n  const [query, setQuery] = useState(\''\'');\n  const [focused, setFocused] = useState(false);\n  const [placeholder, setPlaceholder] = useState(\''Поиск\'');\n\n  useEffect(() => {\n    if (focused || query) {\n      setPlaceholder(\''Поиск\'');\n      return;\n    }\n\n    const media = window.matchMedia(\n      \''(prefers-reduced-motion: reduce)\'',\n    );\n\n    if (media.matches) {\n      setPlaceholder(\''Поиск\'');\n      return;\n    }\n\n    let
+        index = 0;\n    setPlaceholder(frames[index]);\n\n    const timer = window.setInterval(() => {\n      index = (index + 1) % frames.length;\n      setPlaceholder(frames[index]);\n    }, 330);\n\n    return () => window.clearInterval(timer);\n  }, [focused, query]);\n\n  return (\n    <form className="header-search" action="/search" role="search">\n      <input\n        name="q"\n        value={query}\n        aria-label="Поиск по 4RRUM"\n        placeholder={placeholder}\n        autoComplete="off"\n        onFocus={() => setFocused(true)}\n        onBlur={() => setFocused(false)}\n        onChange={(event) => setQuery(event.target.value)}\n      />\n      <button type="submit" aria-label="Найти">\n        <SearchIcon />\n      </button>\n    </form>\n  );\n}\n'', encoding=''utf-8'')
+
+        PY
+
+        '
+    - name: 08. Патч
+      shell: bash
+      run: "set -euo pipefail\npython3 - <<'PY'\nfrom pathlib import Path\nPath('/tmp/home-07.py').write_text('from pathlib import Path\\nimport re\\n\\nHOME = Path(\\'apps/web/components/home-dashboard.tsx\\')\\nHEADER = Path(\\'apps/web/components/site-header.tsx\\')\\n\\nhome = HOME.read_text(encoding=\\'utf-8\\')\\nheader = HEADER.read_text(encoding=\\'utf-8\\')\\n\\nif \\'4RRUM_HOME_V4\\' in home:\\n    raise SystemExit(\\'Главная — 07 уже применена.\\')\\n\\nif \\'4RRUM_HOME_FINAL_UX_POLISH_V2\\' not in home:\\n    raise SystemExit(\\n        \\'Ожидалась успешная Главная — 03: \\'\\n        \\'marker 4RRUM_HOME_FINAL_UX_POLISH_V2 не найден.\\'\\n    )\\n\\n# ---------------------------------------------------------\\n# A. Exactly one theme toggle.\\n# MainNav already owns ThemeToggle; SiteHeader must not.\\n# ---------------------------------------------------------\\nheader = re.sub(\\n    r\"(?m)^\\\\s*import\\\\s+\\\\{\\\\s*ThemeToggle\\\\s*\\\\}\\\\s+from\\\\s+[\\'\\\\\"]\\\\\
+        ./theme-toggle[\\'\\\\\"];\\\\s*\\\\n?\",\\n    \\'\\',\\n    header,\\n)\\nheader = re.sub(\\n    r\"(?m)^[ \\\\t]*<ThemeToggle\\\\s*/>[ \\\\t]*\\\\n?\",\\n    \\'\\',\\n    header,\\n)\\n\\nif \\'<HeaderSearch />\\' not in header:\\n    raise SystemExit(\\'HeaderSearch mount lost before V4.\\')\\n\\n# ---------------------------------------------------------\\n# B. Display-only rename for legacy FORRUM Start community.\\n# ---------------------------------------------------------\\ntree_start = home.find(\\'function TreeBranch(\\')\\nif tree_start < 0:\\n    raise SystemExit(\\'TreeBranch not found.\\')\\n\\ntree_end = home.find(\\'function HomePanel(\\', tree_start)\\nif tree_end < 0:\\n    raise SystemExit(\\'TreeBranch end not found.\\')\\n\\ntree_block = home[tree_start:tree_end]\\n\\nif \\'function communityDisplayName(\\' not in home:\\n    helper = (\\n        \"function communityDisplayName(name: string) {\\\\n\"\\n        \"  return name === \\'FORRUM Start\\' ? \\'4RRUM\
+        \ Start\\' : name;\\\\n\"\\n        \"}\\\\n\\\\n\"\\n    )\\n    home = home[:tree_start] + helper + home[tree_start:]\\n    tree_start += len(helper)\\n    tree_end += len(helper)\\n    tree_block = home[tree_start:tree_end]\\n\\ntree_block = tree_block.replace(\\n    \\'${node.name}\\',\\n    \\'${communityDisplayName(node.name)}\\',\\n)\\ntree_block = tree_block.replace(\\n    \\'{node.name}\\',\\n    \\'{communityDisplayName(node.name)}\\',\\n)\\nhome = home[:tree_start] + tree_block + home[tree_end:]\\n\\n# ---------------------------------------------------------\\n# C. Participants: open real activity ranking by default.\\n# ---------------------------------------------------------\\ndef replace_const_initializer(\\n    text: str,\\n    name: str,\\n    replacement: str,\\n):\\n    match = re.search(\\n        rf\\'(?m)^[ \\\\t]*const[ \\\\t]+{re.escape(name)}\\\\b\\',\\n        text,\\n    )\\n    if not match:\\n        return text, None\\n\\n    equals = text.find(\\'=\\\
+        ', match.end())\\n    if equals < 0:\\n        raise SystemExit(\\n            f\\'Could not locate \"=\" for const {name}.\\'\\n        )\\n\\n    # Do not accidentally cross into a later statement.\\n    semicolon_before_equals = text.find(\\';\\', match.end(), equals)\\n    if semicolon_before_equals >= 0:\\n        raise SystemExit(\\n            f\\'Unexpected declaration shape for const {name}.\\'\\n        )\\n\\n    i = equals + 1\\n    paren = bracket = brace = 0\\n    quote = None\\n    escaped = False\\n    line_comment = False\\n    block_comment = False\\n\\n    while i < len(text):\\n        ch = text[i]\\n        nxt = text[i + 1] if i + 1 < len(text) else \\'\\'\\n\\n        if line_comment:\\n            if ch == \\'\\\\n\\':\\n                line_comment = False\\n            i += 1\\n            continue\\n\\n        if block_comment:\\n            if ch == \\'*\\' and nxt == \\'/\\':\\n                block_comment = False\\n                i += 2\\n        \
+        \        continue\\n            i += 1\\n            continue\\n\\n        if quote is not None:\\n            if escaped:\\n                escaped = False\\n            elif ch == \\'\\\\\\\\\\':\\n                escaped = True\\n            elif ch == quote:\\n                quote = None\\n            i += 1\\n            continue\\n\\n        if ch == \\'/\\' and nxt == \\'/\\':\\n            line_comment = True\\n            i += 2\\n            continue\\n\\n        if ch == \\'/\\' and nxt == \\'*\\':\\n            block_comment = True\\n            i += 2\\n            continue\\n\\n        if ch in (\"\\'\", \\'\"\\', \\'`\\'):\\n            quote = ch\\n            i += 1\\n            continue\\n\\n        if ch == \\'(\\':\\n            paren += 1\\n        elif ch == \\')\\':\\n            paren = max(0, paren - 1)\\n        elif ch == \\'[\\':\\n            bracket += 1\\n        elif ch == \\']\\':\\n            bracket = max(0, bracket - 1)\\n        elif ch ==\
+        \ \\'{\\':\\n            brace += 1\\n        elif ch == \\'}\\':\\n            brace = max(0, brace - 1)\\n        elif (\\n            ch == \\';\\'\\n            and paren == 0\\n            and bracket == 0\\n            and brace == 0\\n        ):\\n            old = text[equals + 1:i].strip()\\n            return (\\n                text[:equals + 1]\\n                + \\' \\'\\n                + replacement\\n                + text[i:],\\n                old,\\n            )\\n\\n        i += 1\\n\\n    raise SystemExit(\\n        f\\'Could not find declaration end for const {name}.\\'\\n    )\\n\\n\\nweekly_start = home.find(\\n    \\'const [weeklyMode, setWeeklyMode] = useState<\\'\\n)\\nif weekly_start < 0:\\n    raise SystemExit(\\'weeklyMode declaration not found.\\')\\n\\nweekly_end = home.find(\\');\\', weekly_start)\\nif weekly_end < 0:\\n    raise SystemExit(\\'weeklyMode declaration end not found.\\')\\n\\nweekly_end += len(\\');\\')\\nweekly_block = home[weekly_start:weekly_end]\\\
+        n\\nif re.search(\\n    r\">\\\\s*\\\\(\\\\s*\\'activity\\'\\\\s*,?\\\\s*\\\\);$\",\\n    weekly_block,\\n    re.S,\\n):\\n    pass\\n\\nelif \\'initialWeeklyMode\\' in weekly_block:\\n    home, old_initial_weekly = replace_const_initializer(\\n        home,\\n        \\'initialWeeklyMode\\',\\n        \"\\'activity\\'\",\\n    )\\n    if old_initial_weekly is None:\\n        raise SystemExit(\\n            \\'weeklyMode uses initialWeeklyMode, but its \\'\\n            \\'declaration was not found.\\'\\n        )\\n\\nelif re.search(\\n    r\">\\\\s*\\\\(\\\\s*\\'likes\\'\\\\s*,?\\\\s*\\\\);$\",\\n    weekly_block,\\n    re.S,\\n):\\n    last_likes = weekly_block.rfind(\"\\'likes\\'\")\\n    if last_likes < 0:\\n        raise SystemExit(\\n            \\'weeklyMode likes initial value not found.\\'\\n        )\\n\\n    weekly_block = (\\n        weekly_block[:last_likes]\\n        + \"\\'activity\\'\"\\n        + weekly_block[last_likes + len(\"\\'likes\\'\"):]\\n    )\\n    home\
+        \ = (\\n        home[:weekly_start]\\n        + weekly_block\\n        + home[weekly_end:]\\n    )\\n\\nelse:\\n    raise SystemExit(\\n        \\'weeklyMode has an unsupported initializer: \\'\\n        + repr(weekly_block)\\n    )\\n\\n# Verify the result structurally before touching the next section.\\nweekly_start = home.find(\\n    \\'const [weeklyMode, setWeeklyMode] = useState<\\'\\n)\\nweekly_end = home.find(\\');\\', weekly_start) + len(\\');\\')\\nweekly_block = home[weekly_start:weekly_end]\\n\\nif \\'initialWeeklyMode\\' in weekly_block:\\n    initial_match = re.search(\\n        r\"(?m)^[ \\\\t]*const[ \\\\t]+initialWeeklyMode\\\\b\"\\n        r\"[\\\\s\\\\S]*?=[ \\\\t\\\\n\\\\r]*\\'activity\\'[ \\\\t\\\\n\\\\r]*;\",\\n        home,\\n    )\\n    if not initial_match:\\n        raise SystemExit(\\n            \\'initialWeeklyMode was not normalized to activity.\\'\\n        )\\nelif not re.search(\\n    r\">\\\\s*\\\\(\\\\s*\\'activity\\'\\\\s*,?\\\\s*\\\\);$\",\\n \
+        \   weekly_block,\\n    re.S,\\n):\\n    raise SystemExit(\\n        \\'weeklyMode did not resolve to activity.\\'\\n    )\\n\\n# ---------------------------------------------------------\\n# D. Discussed topics: real column legend, numbers only.\\n# IMPORTANT: locate the UI by stable JSX attributes/classes, not by\\n# helper-function names. The component may be renamed/refactored.\\n# ---------------------------------------------------------\\nhome = re.sub(\\n    r\\'\\\\s+data-metric-label=\"Ответы\"\\',\\n    \\'\\',\\n    home,\\n)\\nhome = re.sub(\\n    r\\'\\\\s+data-metric-label=\"Просм\\\\.\"\\',\\n    \\'\\',\\n    home,\\n)\\n\\ndef ensure_metric_class(\\n    text: str,\\n    title: str,\\n) -> str:\\n    pattern = re.compile(\\n        r\\'<span(?P<attrs>[^<>]*\\\\btitle\\\\s*=\\\\s*\"\\'\\n        + re.escape(title)\\n        + r\\'\"[^<>]*)>\\',\\n        re.S,\\n    )\\n    matches = list(pattern.finditer(text))\\n\\n    if len(matches) != 1:\\n        raise SystemExit(\\\
+        n            f\\'Expected exactly one metric span \"{title}\", \\'\\n            f\\'found {len(matches)}.\\'\\n        )\\n\\n    match = matches[0]\\n    opening = match.group(0)\\n\\n    if \\'forrum-home-v16__topic-stat\\' in opening:\\n        return text\\n\\n    class_match = re.search(\\n        r\\'className\\\\s*=\\\\s*\"([^\"]*)\"\\',\\n        opening,\\n        re.S,\\n    )\\n\\n    if class_match:\\n        classes = class_match.group(1).split()\\n        classes.append(\\'forrum-home-v16__topic-stat\\')\\n        new_opening = (\\n            opening[:class_match.start(1)]\\n            + \\' \\'.join(dict.fromkeys(classes))\\n            + opening[class_match.end(1):]\\n        )\\n    else:\\n        new_opening = opening.replace(\\n            \\'<span\\',\\n            \\'<span className=\"forrum-home-v16__topic-stat\"\\',\\n            1,\\n        )\\n\\n    return (\\n        text[:match.start()]\\n        + new_opening\\n        + text[match.end():]\\n   \
+        \ )\\n\\n\\nhome = ensure_metric_class(home, \\'Ответы\\')\\nhome = ensure_metric_class(home, \\'Просмотры\\')\\n\\n# Remove only the old visual glyphs; accessible title attributes remain.\\nhome, reply_glyph_count = re.subn(\\n    r\\'\\\\s*<span\\\\s+aria-hidden=\"true\">\\\\s*◫\\\\s*</span>\\',\\n    \\'\\',\\n    home,\\n    count=1,\\n)\\nhome, view_glyph_count = re.subn(\\n    r\\'\\\\s*<span\\\\s+aria-hidden=\"true\">\\\\s*◉\\\\s*</span>\\',\\n    \\'\\',\\n    home,\\n    count=1,\\n)\\n\\n# Zero is valid when a previous safe transform already removed the glyph.\\nif reply_glyph_count not in (0, 1):\\n    raise SystemExit(\\'Unexpected replies glyph count.\\')\\nif view_glyph_count not in (0, 1):\\n    raise SystemExit(\\'Unexpected views glyph count.\\')\\n\\nif re.search(\\n    r\\'aria-hidden=\"true\">\\\\s*[◫◉]\\\\s*</\\',\\n    home,\\n):\\n    raise SystemExit(\\n        \\'Old discussed-topic statistic glyphs remain.\\'\\n    )\\n\\nif home.count(\\'forrum-home-v16__topic-stat\\\
+        ') < 2:\\n    raise SystemExit(\\n        \\'Could not establish both discussed metric cells.\\'\\n    )\\n\\nif \\'forrum-home-v16__discussed-head\\' not in home:\\n    panel_pos = home.find(\\'title=\"Обсуждаемые темы\"\\')\\n    if panel_pos < 0:\\n        raise SystemExit(\\'Discussed panel not found.\\')\\n\\n    list_pos = home.find(\\n        \\'className=\"forrum-home-v16__topic-list\"\\',\\n        panel_pos,\\n    )\\n    if list_pos < 0:\\n        raise SystemExit(\\'Discussed topic list not found.\\')\\n\\n    list_open = home.rfind(\\'<div\\', panel_pos, list_pos + 1)\\n    if list_open < 0:\\n        raise SystemExit(\\n            \\'Discussed topic-list opening element not found.\\'\\n        )\\n\\n    legend = (\\n        \\'<div className=\"forrum-home-v16__discussed-head\" \\'\\n        \\'aria-hidden=\"true\">\\\\n\\'\\n        \\'            <span>Ответы</span>\\\\n\\'\\n        \\'            <span>Просмотры</span>\\\\n\\'\\n        \\'            <span>Активность</span>\\\
+        \\n\\'\\n        \\'          </div>\\\\n\\'\\n        \\'          \\'\\n    )\\n    home = home[:list_open] + legend + home[list_open:]\\n\\n# ---------------------------------------------------------\\n# E. V4 marker + normalization.\\n# ---------------------------------------------------------\\nexport_anchor = \\'export function HomeDashboard({\\'\\nif home.count(export_anchor) != 1:\\n    raise SystemExit(\\'Unexpected HomeDashboard export count.\\')\\n\\nhome = home.replace(\\n    export_anchor,\\n    \\'// 4RRUM_HOME_V4\\\\n\\' + export_anchor,\\n    1,\\n)\\n\\ndef clean(text: str) -> str:\\n    return \\'\\\\n\\'.join(\\n        line.rstrip(\\' \\\\t\\')\\n        for line in text.splitlines()\\n    ).rstrip() + \\'\\\\n\\'\\n\\nHOME.write_text(clean(home), encoding=\\'utf-8\\')\\nHEADER.write_text(clean(header), encoding=\\'utf-8\\')\\n\\nprint(\\'Главная — 07 patch applied.\\')\\n', encoding='utf-8')\nPath('/tmp/home-07.css').write_text('\\n/* 4RRUM_HOME_V4 */\\n\\n/*\
+        \ One quiet, native theme control. */\\n.theme-toggle-v2 {\\n  flex: 0 0 32px !important;\\n  width: 32px !important;\\n  height: 32px !important;\\n  border-color: transparent !important;\\n  background: transparent !important;\\n}\\n.theme-toggle-v2:hover,\\n.theme-toggle-v2:focus-visible {\\n  border-color: var(--line) !important;\\n  background: rgba(127, 127, 120, .08) !important;\\n  color: inherit !important;\\n}\\n\\n/* Search stays compact; animation is handled in the component. */\\n.header-search {\\n  width: min(252px, 20vw) !important;\\n  min-height: 32px !important;\\n}\\n.header-search input,\\n.header-search button {\\n  min-height: 30px !important;\\n}\\n.header-search input {\\n  font-size: 11.5px !important;\\n}\\n.header-search button {\\n  width: 32px !important;\\n}\\n\\n/* Clear discussed-topic columns instead of tiny symbols + inline words. */\\n.forrum-home-v16__discussed-head {\\n  display: grid;\\n  grid-template-columns: 52px 62px 78px;\\n  justify-content:\
+        \ end;\\n  column-gap: 8px;\\n  padding: 5px 13px 5px 0;\\n  border-bottom: 1px solid var(--line);\\n  color: var(--muted);\\n  font-size: 9px;\\n  font-weight: 600;\\n  line-height: 1.1;\\n  text-align: right;\\n}\\n.forrum-home-v16__topic-stats {\\n  display: grid !important;\\n  grid-template-columns: 52px 62px 78px !important;\\n  justify-content: end;\\n  align-items: center;\\n  column-gap: 8px !important;\\n  min-width: 208px;\\n  text-align: right;\\n}\\n.forrum-home-v16__topic-stat {\\n  display: block !important;\\n  min-width: 0;\\n  color: inherit;\\n  font-size: 10px;\\n  font-variant-numeric: tabular-nums;\\n  white-space: nowrap;\\n}\\n.forrum-home-v16__topic-time {\\n  min-width: 0;\\n  white-space: normal !important;\\n}\\n\\n/* Disable V3 inline pseudo-labels if another data metric appears here. */\\n.forrum-home-v16__topic-stats [data-metric-label]::before {\\n  content: none !important;\\n}\\n\\n/* Header hovers: subtle neutral feedback; blue is reserved for state/accent.\
+        \ */\\n.icon-links a:hover,\\n.icon-links a:focus-visible,\\n.auth-actions > a:not(.button):hover,\\n.auth-actions > a:not(.button):focus-visible {\\n  border-color: var(--line) !important;\\n  background: rgba(127, 127, 120, .07) !important;\\n  color: inherit !important;\\n  outline: none;\\n}\\n.icon-links a:hover svg,\\n.icon-links a:focus-visible svg {\\n  color: currentColor !important;\\n}\\n.header .auth-actions .button:hover,\\n.header .auth-actions .button:focus-visible {\\n  filter: brightness(.96);\\n  transform: none;\\n}\\n\\n/* Right rail reads as one intentional stack, not floating fragments. */\\n.forrum-home-v16__rail {\\n  gap: 10px !important;\\n}\\n.forrum-home-v16__rail .forrum-home-v16__panel {\\n  min-width: 0;\\n}\\n.forrum-home-v16__weekly-empty {\\n  min-height: 72px;\\n}\\n\\n/* Preserve 4RRUM brand contrast on hover in both themes. */\\n.brand:hover,\\n.brand:focus-visible {\\n  color: inherit !important;\\n}\\nhtml.dark .brand:hover,\\nhtml.dark .brand:focus-visible,\\\
+        nhtml[data-forrum-theme=\"graphite\"] .brand:hover,\\nhtml[data-forrum-theme=\"graphite\"] .brand:focus-visible {\\n  color: #fff !important;\\n}\\n\\n@media (max-width: 1280px) and (min-width: 961px) {\\n  .forrum-home-v16__discussed-head,\\n  .forrum-home-v16__topic-stats {\\n    grid-template-columns: 46px 54px 72px !important;\\n    column-gap: 6px !important;\\n  }\\n\\n  .forrum-home-v16__topic-stats {\\n    min-width: 184px;\\n  }\\n\\n  .header-search {\\n    width: min(228px, 19vw) !important;\\n  }\\n}\\n\\n@media (prefers-reduced-motion: reduce) {\\n  .theme-toggle-v2,\\n  .header-search,\\n  .icon-links a,\\n  .auth-actions > a {\\n    transition: none !important;\\n  }\\n}\\n', encoding='utf-8')\nPY\npython3 /tmp/home-07.py\ncat /tmp/home-07.css >> apps/web/app/globals.css\npython3 - <<'PY'\nfrom pathlib import Path\nfor rel in [\n  'apps/web/app/globals.css',\n  'apps/web/components/header-search.tsx',\n  'apps/web/components/home-dashboard.tsx',\n  'apps/web/components/site-header.tsx',\n\
+        \  'scripts/home-07-check.mjs',\n]:\n    p = Path(rel)\n    text = p.read_text(encoding='utf-8')\n    p.write_text('\\n'.join(line.rstrip(' \\t') for line in text.splitlines()).rstrip() + '\\n', encoding='utf-8')\nPY\ngit diff --check\n"
+    - name: 09. GREEN
+      shell: bash
+      run: 'set -euo pipefail
+
+        node scripts/home-07-check.mjs
+
+        echo "GREEN: PASS"
+
+        '
+    - name: 10. Scope
+      shell: bash
+      run: "set -euo pipefail\nchanged=\"$(\n  {\n    git diff --name-only\n    git ls-files --others --exclude-standard |\n      awk '!/(^|\\/)(node_modules|\\.next|dist|coverage|\\.turbo)(\\/|$)/'\n  } | sort -u\n)\"\nexpected=\"$(\n  printf '%s\\n'     apps/web/app/globals.css     apps/web/components/header-search.tsx     apps/web/components/home-dashboard.tsx     apps/web/components/site-header.tsx     scripts/home-07-check.mjs |\n  sort\n)\"\nprintf 'Changed:\\n%s\\n' \"$changed\"\ntest \"$changed\" = \"$expected\"\n\ntest -z \"$(\n  git diff --name-only --     apps/api     packages/contracts     apps/web/components/main-nav.tsx     apps/web/components/theme-toggle.tsx     apps/web/components/auth-actions.tsx\n)\"\ngit diff --check\necho \"Scope: PASS\"\n"
+    - name: 11. Stage
+      shell: bash
+      run: 'set -euo pipefail
+
+        git add --   apps/web/app/globals.css   apps/web/components/header-search.tsx   apps/web/components/home-dashboard.tsx   apps/web/components/site-header.tsx   scripts/home-07-check.mjs
+
+        git diff --cached --check
+
+        '
+    - name: 12. Prisma
+      shell: bash
+      env:
+        DATABASE_URL: postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public
+      run: 'set -euo pipefail
+
+        npm run db:validate
+
+        npm run db:generate
+
+        '
+    - name: 13. UX
+      shell: bash
+      run: 'set -euo pipefail
+
+        node scripts/home-07-check.mjs
+
+        npm run validate:static
+
+        npm run validate:ux
+
+        npm run validate:a11y
+
+        '
+    - name: 14. Тесты
+      shell: bash
+      run: 'set -euo pipefail
+
+        npm test -w @forrum/contracts --if-present
+
+        npm test -w @forrum/api --if-present
+
+        npm test -w @forrum/web --if-present
+
+        '
+    - name: 15. Typecheck
+      shell: bash
+      run: 'set -euo pipefail
+
+        npm run typecheck
+
+        '
+    - name: 16. Build
+      shell: bash
+      run: 'set -euo pipefail
+
+        rm -rf apps/web/.next
+
+        npm run build
+
+        '
+    - name: 17. Аудит
+      shell: bash
+      run: 'set -euo pipefail
+
+        node scripts/home-07-check.mjs
+
+
+        grep -Fq ''FORRUM_HOME_TABLE_OVERFLOW_FIX'' apps/web/app/globals.css
+
+        grep -Fq ''FORRUM_HOME_CONTEXTUAL_ACTUAL'' apps/web/components/home-dashboard.tsx
+
+        grep -Fq ''4RRUM_HOME_FINAL_UX_POLISH_V2'' apps/web/components/home-dashboard.tsx
+
+        grep -Fq ''4RRUM_HOME_V4'' apps/web/components/home-dashboard.tsx
+
+        grep -Fq ''1580px'' apps/web/app/globals.css
+
+
+        test -z "$(git diff --cached --name-only -- apps/api packages/contracts)"
+
+        npm run validate:static
+
+        npm run validate:ux
+
+        npm run validate:a11y
+
+        npm run typecheck
+
+        rm -rf apps/web/.next
+
+        npm run build
+
+
+        echo "Аудит Главная — 07: PASS"
+
+        '
+    - name: 18. Cleanup
+      shell: bash
+      run: "set -euo pipefail\nrm -rf node_modules apps/web/.next apps/api/dist packages/contracts/dist coverage .turbo\ngit restore --worktree -- .\ngit clean -ffdx\ngit rm .github/workflows/home-07.yml\ngit diff --cached --check\n\nstaged=\"$(git diff --cached --name-only | sort)\"\nexpected=\"$(\n  printf '%s\\n'     .github/workflows/home-07.yml     apps/web/app/globals.css     apps/web/components/header-search.tsx     apps/web/components/home-dashboard.tsx     apps/web/components/site-header.tsx     scripts/home-07-check.mjs |\n  sort\n)\"\nprintf 'Final staged:\\n%s\\n' \"$staged\"\ntest \"$staged\" = \"$expected\"\n"
+    - name: 19. Commit
+      shell: bash
+      run: 'set -euo pipefail
+
+        git config user.name "4RRUM updater"
+
+        git config user.email "actions@users.noreply.github.com"
+
+        git commit -m "Polish 4RRUM home page 07"
+
+        '
+    - name: 20. Push
+      shell: bash
+      env:
+        BASE_SHA: ${{ steps.baseline.outputs.base_sha }}
+      run: "set -euo pipefail\ngit fetch origin main\nif [ \"$(git rev-parse origin/main)\" != \"$BASE_SHA\" ]; then\n  echo \"::error::main изменился во время проверки. Запусти файл ещё раз.\"\n  exit 1\nfi\ngit push origin HEAD:main\n"
+    - name: 21. Verify
+      shell: bash
+      run: "set -euo pipefail\ngit fetch origin main\ntest \"$(git rev-parse HEAD)\" = \"$(git rev-parse origin/main)\"\n\ngit show origin/main:apps/web/components/home-dashboard.tsx |\n  grep -Fq '4RRUM_HOME_V4'\n\nif git show origin/main:apps/web/components/site-header.tsx |\n  grep -Fq '<ThemeToggle />'; then\n  echo \"::error::SiteHeader снова содержит второй ThemeToggle.\"\n  exit 1\nfi\n\ngit show origin/main:apps/web/components/main-nav.tsx |\n  grep -Fq '<ThemeToggle />'\n\nif git cat-file -e origin/main:.github/workflows/home-07.yml 2>/dev/null; then\n  echo \"::error::Одноразовый workflow не удалился.\"\n  exit 1\nfi\n\necho \"Главная — 07 опубликована.\"\n"
+    name: Главная — 07
+run-name: Главная — 07
