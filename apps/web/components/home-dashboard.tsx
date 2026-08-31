@@ -269,7 +269,7 @@ function lastReply(item: {
 }
 
 function communityDisplayName(name: string) {
-  return name === 'FORRUM Start' ? '4RRUM Start' : name;
+  return name === 'FORRUM Start' ? 'Старт 4RRUM' : name;
 }
 
 function TreeBranch({
@@ -422,8 +422,8 @@ function NewTopic({ item }: { item: PublicationCardData }) {
       <span className="forrum-home-v16__new-topic-number">{formatCount(item.commentCount)}</span>
       <span className="forrum-home-v16__new-topic-number">{formatCount(item.viewCount)}</span>
       <span className="forrum-home-v16__new-topic-last">
-        {relativeTime(reply.createdAt)} <b>@{reply.username}</b>
-      </span>
+          @{item.author.username} · {relativeTime(item.lastActivityAt || item.createdAt)}
+        </span>
     </Link>
   );
 }
@@ -491,6 +491,7 @@ function PollRow({ poll }: { poll: PollItem }) {
 // 4RRUM_HOME_TREE_COUNTS_REMOVED
 // 4RRUM_HOME_V4
 // 4RRUM_HOME_09_POLISH
+// 4RRUM_HOME_13_POLISH
 export function HomeDashboard({ initialData }: { initialData: HomeInitialData }) {
   const communities = initialData.communities ?? [];
 
@@ -506,6 +507,91 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
   const [weeklyMode, setWeeklyMode] = useState<
     'likes' | 'activity'
   >('activity');
+
+  // 4RRUM_HOME_13_WEEKLY_REAL_USERS
+  const weeklyParticipants = useMemo(() => {
+    const topicMap = new Map<
+      string,
+      PublicationCardData
+    >();
+
+    [
+      ...(initialData.feed ?? []),
+      ...(initialData.newFeed ?? []),
+    ]
+      .filter((item) => item.format === 'TOPIC')
+      .forEach((item) => topicMap.set(item.id, item));
+
+    const users = new Map<
+      string,
+      {
+        username: string;
+        displayName: string;
+        avatarUrl?: string | null;
+        likes: number;
+        activity: number;
+        latest: number;
+      }
+    >();
+
+    topicMap.forEach((item) => {
+      const username = item.author.username;
+      const current = users.get(username) ?? {
+        username,
+        displayName:
+          item.author.displayName || username,
+        avatarUrl: item.author.avatarUrl,
+        likes: 0,
+        activity: 0,
+        latest: 0,
+      };
+
+      current.likes += item.reactionCount ?? 0;
+      current.activity +=
+        1 +
+        Math.min(
+          item.recentCommentCount ??
+            item.commentCount ??
+            0,
+          25,
+        );
+
+      const activityAt = new Date(
+        item.lastActivityAt || item.createdAt,
+      ).getTime();
+
+      if (Number.isFinite(activityAt)) {
+        current.latest = Math.max(
+          current.latest,
+          activityAt,
+        );
+      }
+
+      users.set(username, current);
+    });
+
+    const metric =
+      weeklyMode === 'likes'
+        ? 'likes'
+        : 'activity';
+
+    return [...users.values()]
+      .sort(
+        (a, b) =>
+          b[metric] - a[metric] ||
+          b.latest - a.latest ||
+          a.username.localeCompare(
+            b.username,
+            'ru',
+          ),
+      )
+      .slice(0, 5);
+  }, [
+    initialData.feed,
+    initialData.newFeed,
+    weeklyMode,
+  ]);
+
   const discussed = initialData.overview?.discussed?.length
     ? initialData.overview.discussed
     : topicRows(initialData.feed);
@@ -677,37 +763,112 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
       )}
 
         <section className="forrum-home-v16__panel">
-          <header className="forrum-home-v16__panel-head"><h2>Участники недели</h2></header>
-          <div className="forrum-home-v16__tabs" role="tablist" aria-label="Рейтинг недели">
-            <button type="button" role="tab" aria-selected={weeklyMode === 'likes'} className={weeklyMode === 'likes' ? 'is-active' : ''} onClick={() => setWeeklyMode('likes')}>По симпатиям</button>
-            <button type="button" role="tab" aria-selected={weeklyMode === 'activity'} className={weeklyMode === 'activity' ? 'is-active' : ''} onClick={() => setWeeklyMode('activity')}>По активности</button>
+          <header className="forrum-home-v16__panel-head">
+            <h2>Участники недели</h2>
+          </header>
+          <div
+            className="forrum-home-v16__tabs"
+            role="tablist"
+            aria-label="Рейтинг недели"
+          >
+            <button
+              type="button"
+              role="tab"
+              aria-selected={weeklyMode === 'likes'}
+              aria-controls="weekly-ranking-panel"
+              className={
+                weeklyMode === 'likes'
+                  ? 'is-active'
+                  : ''
+              }
+              onClick={() => setWeeklyMode('likes')}
+            >
+              По симпатиям
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={weeklyMode === 'activity'}
+              aria-controls="weekly-ranking-panel"
+              className={
+                weeklyMode === 'activity'
+                  ? 'is-active'
+                  : ''
+              }
+              onClick={() => setWeeklyMode('activity')}
+            >
+              По активности
+            </button>
           </div>
-          <ol className="forrum-home-v16__weekly">
-            {weekly.slice(0, 5).map((user, index) => (
-              <li key={user.username}>
-                <span className="forrum-home-v16__weekly-rank">{index + 1}</span>
-                <Avatar name={user.displayName} url={user.avatarUrl} size={30} />
-                <Link href={`/u/${user.username}`}>@{user.username}</Link>
-                <strong
-                  title={
+          <div
+            className="forrum-home-v16__weekly-list"
+            id="weekly-ranking-panel"
+            role="tabpanel"
+          >
+            {weeklyParticipants.length ? (
+              weeklyParticipants.map(
+                (participant, index) => {
+                  const initials = (
+                    participant.displayName ||
+                    participant.username
+                  )
+                    .split(/\s+/)
+                    .filter(Boolean)
+                    .map((part) => part[0])
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase();
+
+                  const score =
                     weeklyMode === 'likes'
-                      ? `Симпатий за 7 дней: ${formatCount(user.reactionCount)}`
-                      : `Тем ${formatCount(user.topicCount)} · комментариев ${formatCount(user.commentCount)} · активность ${formatCount(user.presenceCount)}`
-                  }
-                >
-                  {weeklyMode === 'likes' ? '♡' : '↻'} {formatCount(user.score)}
-                </strong>
-              </li>
-            ))}
-          </ol>
-          {!weekly.length && (
-            <p className="forrum-home-v16__weekly-empty">
-              {weeklyMode === 'likes'
-                ? 'За последние 7 дней симпатий ещё нет.'
-                : 'За последние 7 дней активности ещё нет.'}
-            </p>
-          )}
-          <Link className="forrum-home-v16__rail-footer" href="/users">Смотреть рейтинг <span aria-hidden="true">→</span></Link>
+                      ? participant.likes
+                      : participant.activity;
+
+                  return (
+                    <Link
+                      className="forrum-home-v16__weekly-row"
+                      href={`/u/${participant.username}`}
+                      key={participant.username}
+                    >
+                      <span className="forrum-home-v16__weekly-rank">
+                        {index + 1}
+                      </span>
+                      <span
+                        className="forrum-home-v16__weekly-avatar"
+                        aria-hidden="true"
+                      >
+                        {initials || '4R'}
+                      </span>
+                      <strong className="forrum-home-v16__weekly-user">
+                        @{participant.username}
+                      </strong>
+                      <span
+                        className="forrum-home-v16__weekly-score"
+                        aria-label={
+                          weeklyMode === 'likes'
+                            ? `Симпатии: ${score}`
+                            : `Активность: ${score}`
+                        }
+                      >
+                        {score}
+                      </span>
+                    </Link>
+                  );
+                },
+              )
+            ) : (
+              <p className="forrum-home-v16__weekly-empty">
+                За эту неделю активности пока нет.
+              </p>
+            )}
+          </div>
+          <Link
+            className="forrum-home-v16__weekly-more"
+            href="/users"
+          >
+            Смотреть рейтинг
+            <span aria-hidden="true">→</span>
+          </Link>
         </section>
 
         <HomePanel

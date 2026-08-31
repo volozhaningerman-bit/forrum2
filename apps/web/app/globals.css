@@ -21166,3 +21166,190 @@ html[data-forrum-theme="graphite"] .forrum-home-v16__rail small {
     min-width: 198px !important;
   }
 }
+
+/* 4RRUM_HOME_13_POLISH */
+
+/* Discussed topics: labels and values use the exact same grid. */
+.forrum-home-v16__discussed-head,
+.forrum-home-v16__topic-stats {
+  display: grid !important;
+  width: 244px !important;
+  min-width: 244px !important;
+  grid-template-columns: 58px 72px 90px !important;
+  column-gap: 8px !important;
+  align-items: center !important;
+  justify-content: stretch !important;
+  padding-left: 0 !important;
+  padding-right: 8px !important;
+  margin-left: auto !important;
+  text-align: center !important;
+}
+
+.forrum-home-v16__discussed-head {
+  padding-top: 7px !important;
+  padding-bottom: 7px !important;
+}
+
+.forrum-home-v16__discussed-head > span,
+.forrum-home-v16__topic-stats > span,
+.forrum-home-v16__topic-stat,
+.forrum-home-v16__topic-time {
+  min-width: 0 !important;
+  width: auto !important;
+  text-align: center !important;
+  justify-self: stretch !important;
+}
+
+.forrum-home-v16__topic-stat::before,
+.forrum-home-v16__topic-stat::after,
+.forrum-home-v16__topic-stat > [aria-hidden="true"],
+.forrum-home-v16__topic-stat svg,
+.forrum-home-v16__topic-stats [data-metric-label]::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* New topics: give "last message" enough room for @user · time. */
+.forrum-home-v16__new-topic-head,
+.forrum-home-v16__new-topic {
+  grid-template-columns:
+    minmax(0, 2.35fr)
+    minmax(0, .74fr)
+    minmax(0, .70fr)
+    44px
+    58px
+    minmax(138px, 1.12fr) !important;
+}
+
+.forrum-home-v16__new-topic-last {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Weekly users: five compact real profile rows fill the right rail. */
+.forrum-home-v16__weekly-list {
+  display: grid !important;
+  min-width: 0 !important;
+}
+
+.forrum-home-v16__weekly-row {
+  display: grid !important;
+  grid-template-columns: 18px 28px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  column-gap: 8px !important;
+  min-height: 42px !important;
+  padding: 6px 10px !important;
+  border-top: 1px solid var(--line) !important;
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+.forrum-home-v16__weekly-row:first-child {
+  border-top: 0 !important;
+}
+
+.forrum-home-v16__weekly-row:hover,
+.forrum-home-v16__weekly-row:focus-visible {
+  background: rgba(127, 127, 120, .07) !important;
+  color: inherit !important;
+  outline: none !important;
+}
+
+.forrum-home-v16__weekly-rank {
+  color: var(--muted) !important;
+  font-variant-numeric: tabular-nums !important;
+  text-align: center !important;
+}
+
+.forrum-home-v16__weekly-avatar {
+  display: grid !important;
+  width: 26px !important;
+  height: 26px !important;
+  place-items: center !important;
+  overflow: hidden !important;
+  border: 1px solid var(--line-strong) !important;
+  border-radius: 50% !important;
+  background: var(--surface-soft) !important;
+  color: var(--text) !important;
+  font-size: 8.5px !important;
+  font-weight: 750 !important;
+  letter-spacing: -.02em !important;
+}
+
+.forrum-home-v16__weekly-user {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  color: var(--accent) !important;
+  font-size: 10.75px !important;
+  font-weight: 650 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.forrum-home-v16__weekly-score {
+  min-width: 22px !important;
+  color: var(--text) !important;
+  font-size: 10.5px !important;
+  font-variant-numeric: tabular-nums !important;
+  font-weight: 650 !important;
+  text-align: right !important;
+}
+
+.forrum-home-v16__weekly-more {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 8px 10px !important;
+  border-top: 1px solid var(--line) !important;
+  color: inherit !important;
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+}
+
+.forrum-home-v16__weekly-more:hover,
+.forrum-home-v16__weekly-more:focus-visible {
+  background: rgba(127, 127, 120, .07) !important;
+  color: var(--accent) !important;
+  outline: none !important;
+}
+
+html.dark .forrum-home-v16__weekly-row:hover,
+html.dark .forrum-home-v16__weekly-row:focus-visible,
+html.dark .forrum-home-v16__weekly-more:hover,
+html.dark .forrum-home-v16__weekly-more:focus-visible,
+html[data-forrum-theme="graphite"] .forrum-home-v16__weekly-row:hover,
+html[data-forrum-theme="graphite"] .forrum-home-v16__weekly-row:focus-visible,
+html[data-forrum-theme="graphite"] .forrum-home-v16__weekly-more:hover,
+html[data-forrum-theme="graphite"] .forrum-home-v16__weekly-more:focus-visible {
+  background: rgba(255, 255, 255, .045) !important;
+}
+
+@media (max-width: 1280px) and (min-width: 961px) {
+  .forrum-home-v16__discussed-head,
+  .forrum-home-v16__topic-stats {
+    width: 222px !important;
+    min-width: 222px !important;
+    grid-template-columns: 52px 64px 82px !important;
+    column-gap: 8px !important;
+  }
+
+  .forrum-home-v16__new-topic-head,
+  .forrum-home-v16__new-topic {
+    grid-template-columns:
+      minmax(0, 2.2fr)
+      minmax(0, .74fr)
+      minmax(0, .68fr)
+      42px
+      54px
+      minmax(126px, 1fr) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forrum-home-v16__weekly-row,
+  .forrum-home-v16__weekly-more {
+    transition: none !important;
+  }
+}
