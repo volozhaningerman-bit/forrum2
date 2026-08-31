@@ -268,6 +268,10 @@ function lastReply(item: {
   };
 }
 
+function communityDisplayName(name: string) {
+  return name === 'FORRUM Start' ? '4RRUM Start' : name;
+}
+
 function TreeBranch({
   node,
   depth,
@@ -312,8 +316,8 @@ function TreeBranch({
             aria-expanded={isOpen}
             aria-label={
               isOpen
-                ? `Свернуть ${node.name}`
-                : `Развернуть ${node.name}`
+                ? `Свернуть ${communityDisplayName(node.name)}`
+                : `Развернуть ${communityDisplayName(node.name)}`
             }
             onClick={() => onToggle(node.slug)}
           >
@@ -331,14 +335,14 @@ function TreeBranch({
         <Link
           className="forrum-home-v16__tree-link"
           href={`/communities/${node.slug}`}
-          aria-label={`Открыть сообщество ${node.name}`}
+          aria-label={`Открыть сообщество ${communityDisplayName(node.name)}`}
         >
           <span
             className="forrum-home-v16__tree-folder"
             aria-hidden="true"
           />
           <span className="forrum-home-v16__tree-name">
-            {node.name}
+            {communityDisplayName(node.name)}
           </span>
         </Link>
 
@@ -398,8 +402,8 @@ function DiscussedTopic({ item }: { item: PublicationCardData | HomeDiscussedTop
           <span>{relativeTime(item.createdAt)}</span>
         </span>
       </span>
-      <span className="forrum-home-v16__discussion-stat" data-metric-label="Ответы" title="Ответы">▣ {formatCount(item.commentCount)}</span>
-      <span className="forrum-home-v16__discussion-stat" data-metric-label="Просм." title="Просмотры">◉ {formatCount(item.viewCount)}</span>
+      <span className="forrum-home-v16__discussion-stat forrum-home-v16__topic-stat" title="Ответы">▣ {formatCount(item.commentCount)}</span>
+      <span className="forrum-home-v16__discussion-stat forrum-home-v16__topic-stat" title="Просмотры">◉ {formatCount(item.viewCount)}</span>
       <span className="forrum-home-v16__last-message">
         <strong>{relativeTime(reply.createdAt)}</strong>
         <small>@{reply.username}</small>
@@ -485,6 +489,7 @@ function PollRow({ poll }: { poll: PollItem }) {
 // FORRUM_HOME_V45_RIGHT_RAIL_NEWS
 // FORRUM_HOME_PRODUCTION_POLISH_V46
 // 4RRUM_HOME_TREE_COUNTS_REMOVED
+// 4RRUM_HOME_V4
 export function HomeDashboard({ initialData }: { initialData: HomeInitialData }) {
   const communities = initialData.communities ?? [];
 
@@ -496,12 +501,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set(parentSlugs));
   const initialWeeklyLikes = initialData.overview?.weekly.likes ?? [];
   const initialWeeklyActivity = initialData.overview?.weekly.activity ?? [];
-  const initialWeeklyMode: 'likes' | 'activity' =
-    initialWeeklyLikes.length > 0
-      ? 'likes'
-      : initialWeeklyActivity.length > 0
-        ? 'activity'
-        : 'likes';
+  const initialWeeklyMode: 'likes' | 'activity' = 'activity';
   const [weeklyMode, setWeeklyMode] = useState<'likes' | 'activity'>(
     initialWeeklyMode,
   );
@@ -594,6 +594,11 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
 
       <main className="forrum-home-v16__center">
         <HomePanel title="Обсуждаемые темы" href="/feed?mode=popular">
+          <div className="forrum-home-v16__discussed-head" aria-hidden="true">
+            <span>Ответы</span>
+            <span>Просмотры</span>
+            <span>Активность</span>
+          </div>
           <div className="forrum-home-v16__discussed-list">
             {discussed.length ? discussed.map((item) => <DiscussedTopic key={item.id} item={item} />) : (
               <p className="forrum-home-v16__empty">Обсуждаемых тем пока нет.</p>

@@ -10,8 +10,6 @@ import {
 } from './icons';
 import { NavCounters } from './nav-counters';
 import { MainNav } from './main-nav';
-
-import { ThemeToggle } from './theme-toggle';
 export function SiteHeader() {
   return (
     <>
@@ -27,7 +25,6 @@ export function SiteHeader() {
           </Link>
 
           <MainNav />
-          <ThemeToggle />
 
           <span className="grow" />
 

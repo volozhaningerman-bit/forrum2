@@ -20939,3 +20939,145 @@ html[data-forrum-theme="graphite"] .forrum-home-v16__start-link:focus-visible {
     transition: none !important;
   }
 }
+
+/* 4RRUM_HOME_V4 */
+
+/* One quiet, native theme control. */
+.theme-toggle-v2 {
+  flex: 0 0 32px !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-color: transparent !important;
+  background: transparent !important;
+}
+.theme-toggle-v2:hover,
+.theme-toggle-v2:focus-visible {
+  border-color: var(--line) !important;
+  background: rgba(127, 127, 120, .08) !important;
+  color: inherit !important;
+}
+
+/* Search stays compact; animation is handled in the component. */
+.header-search {
+  width: min(252px, 20vw) !important;
+  min-height: 32px !important;
+}
+.header-search input,
+.header-search button {
+  min-height: 30px !important;
+}
+.header-search input {
+  font-size: 11.5px !important;
+}
+.header-search button {
+  width: 32px !important;
+}
+
+/* Clear discussed-topic columns instead of tiny symbols + inline words. */
+.forrum-home-v16__discussed-head {
+  display: grid;
+  grid-template-columns: 52px 62px 78px;
+  justify-content: end;
+  column-gap: 8px;
+  padding: 5px 13px 5px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.1;
+  text-align: right;
+}
+.forrum-home-v16__topic-stats {
+  display: grid !important;
+  grid-template-columns: 52px 62px 78px !important;
+  justify-content: end;
+  align-items: center;
+  column-gap: 8px !important;
+  min-width: 208px;
+  text-align: right;
+}
+.forrum-home-v16__topic-stat {
+  display: block !important;
+  min-width: 0;
+  color: inherit;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.forrum-home-v16__topic-time {
+  min-width: 0;
+  white-space: normal !important;
+}
+
+/* Disable V3 inline pseudo-labels if another data metric appears here. */
+.forrum-home-v16__topic-stats [data-metric-label]::before {
+  content: none !important;
+}
+
+/* Header hovers: subtle neutral feedback; blue is reserved for state/accent. */
+.icon-links a:hover,
+.icon-links a:focus-visible,
+.auth-actions > a:not(.button):hover,
+.auth-actions > a:not(.button):focus-visible {
+  border-color: var(--line) !important;
+  background: rgba(127, 127, 120, .07) !important;
+  color: inherit !important;
+  outline: none;
+}
+.icon-links a:hover svg,
+.icon-links a:focus-visible svg {
+  color: currentColor !important;
+}
+.header .auth-actions .button:hover,
+.header .auth-actions .button:focus-visible {
+  filter: brightness(.96);
+  transform: none;
+}
+
+/* Right rail reads as one intentional stack, not floating fragments. */
+.forrum-home-v16__rail {
+  gap: 10px !important;
+}
+.forrum-home-v16__rail .forrum-home-v16__panel {
+  min-width: 0;
+}
+.forrum-home-v16__weekly-empty {
+  min-height: 72px;
+}
+
+/* Preserve 4RRUM brand contrast on hover in both themes. */
+.brand:hover,
+.brand:focus-visible {
+  color: inherit !important;
+}
+html.dark .brand:hover,
+html.dark .brand:focus-visible,
+html[data-forrum-theme="graphite"] .brand:hover,
+html[data-forrum-theme="graphite"] .brand:focus-visible {
+  color: #fff !important;
+}
+
+@media (max-width: 1280px) and (min-width: 961px) {
+  .forrum-home-v16__discussed-head,
+  .forrum-home-v16__topic-stats {
+    grid-template-columns: 46px 54px 72px !important;
+    column-gap: 6px !important;
+  }
+
+  .forrum-home-v16__topic-stats {
+    min-width: 184px;
+  }
+
+  .header-search {
+    width: min(228px, 19vw) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle-v2,
+  .header-search,
+  .icon-links a,
+  .auth-actions > a {
+    transition: none !important;
+  }
+}
