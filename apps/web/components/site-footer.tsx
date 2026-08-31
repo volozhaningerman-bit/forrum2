@@ -14,7 +14,7 @@ export function SiteFooter() {
     <footer data-forrum-shell="footer" className={`site-footer ${isHome ? 'site-footer-home' : ''}`}>
       <div className="site-footer-inner">
         <span className="site-footer-copy">
-          © FORRUM, {new Date().getFullYear()}
+          © 4RRUM, {new Date().getFullYear()}
         </span>
 
         <nav className="site-footer-nav" aria-label="Ссылки в подвале">

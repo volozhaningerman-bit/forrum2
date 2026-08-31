@@ -1,121 +1,71 @@
-"use client";
+'use client';
 
-// FORRUM_THEME_TOGGLE_V1
-// FORRUM_THEME_TOGGLE_V23
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from 'react';
 
-type ForumTheme = "paper" | "graphite";
-
-const STORAGE_KEY = "forrum.theme";
+type ForumTheme = 'paper' | 'graphite';
 
 function applyTheme(theme: ForumTheme) {
   const root = document.documentElement;
-  const isGraphite = theme === "graphite";
+  const dark = theme === 'graphite';
 
-  root.dataset.theme = theme;
   root.dataset.forrumTheme = theme;
-  root.classList.toggle("dark", isGraphite);
-  root.style.colorScheme = isGraphite ? "dark" : "light";
+  root.classList.toggle('dark', dark);
+  root.style.colorScheme = dark ? 'dark' : 'light';
+  window.localStorage.setItem('forrum-theme', theme);
 }
 
-function readInitialTheme(): ForumTheme {
-  const root = document.documentElement;
-  const current =
-    root.dataset.forrumTheme ??
-    root.dataset.theme;
+function MoonIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a7.5 7.5 0 1 0 11.2 11.2Z" />
+    </svg>
+  );
+}
 
-  if (current === "paper" || current === "graphite") {
-    return current;
-  }
-
-  const stored =
-    window.localStorage.getItem(STORAGE_KEY);
-
-  if (stored === "paper" || stored === "graphite") {
-    return stored;
-  }
-
-  return root.classList.contains("dark")
-    ? "graphite"
-    : "paper";
+function SunIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="3.5" />
+      <path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6" />
+    </svg>
+  );
 }
 
 export function ThemeToggle() {
-  const [theme, setTheme] =
-    useState<ForumTheme>("paper");
+  const [theme, setTheme] = useState<ForumTheme>('paper');
 
-  useEffect(() => {
-    const initial = readInitialTheme();
+  useLayoutEffect(() => {
+    const root = document.documentElement;
+    const saved = window.localStorage.getItem('forrum-theme');
+    const initial: ForumTheme =
+      saved === 'graphite' ||
+      root.dataset.forrumTheme === 'graphite' ||
+      root.classList.contains('dark')
+        ? 'graphite'
+        : 'paper';
 
-    applyTheme(initial);
     setTheme(initial);
-
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key !== STORAGE_KEY) {
-        return;
-      }
-
-      if (
-        event.newValue !== "paper" &&
-        event.newValue !== "graphite"
-      ) {
-        return;
-      }
-
-      applyTheme(event.newValue);
-      setTheme(event.newValue);
-    };
-
-    window.addEventListener(
-      "storage",
-      handleStorage,
-    );
-
-    return () => {
-      window.removeEventListener(
-        "storage",
-        handleStorage,
-      );
-    };
+    applyTheme(initial);
   }, []);
 
-  const isGraphite = theme === "graphite";
-  const targetTheme: ForumTheme =
-    isGraphite ? "paper" : "graphite";
-
-  const toggleTheme = () => {
-    applyTheme(targetTheme);
-
-    window.localStorage.setItem(
-      STORAGE_KEY,
-      targetTheme,
-    );
-
-    setTheme(targetTheme);
-  };
+  const dark = theme === 'graphite';
+  const label = dark
+    ? 'Включить светлую тему'
+    : 'Включить тёмную тему';
 
   return (
     <button
       type="button"
-      className="forrum-theme-toggle"
-      data-theme-state={theme}
-      aria-label={
-        isGraphite
-          ? "Включить светлую тему Paper"
-          : "Включить тёмную тему Graphite"
-      }
-      aria-pressed={isGraphite}
-      title={
-        isGraphite
-          ? "Paper"
-          : "Graphite"
-      }
-      onClick={toggleTheme}
+      className="theme-toggle-v2"
+      aria-label={label}
+      title={label}
+      onClick={() => {
+        const next: ForumTheme = dark ? 'paper' : 'graphite';
+        setTheme(next);
+        applyTheme(next);
+      }}
     >
-      <span
-        className="forrum-theme-toggle__icon"
-        aria-hidden="true"
-      />
+      {dark ? <SunIcon /> : <MoonIcon />}
     </button>
   );
 }

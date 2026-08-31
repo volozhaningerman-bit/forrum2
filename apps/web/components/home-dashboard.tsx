@@ -342,9 +342,7 @@ function TreeBranch({
           </span>
         </Link>
 
-        <span className="forrum-home-v16__tree-count">
-          {formatCount(node.subscriberCount)}
-        </span>
+
       </div>
 
       {hasChildren && isOpen && (
@@ -400,8 +398,8 @@ function DiscussedTopic({ item }: { item: PublicationCardData | HomeDiscussedTop
           <span>{relativeTime(item.createdAt)}</span>
         </span>
       </span>
-      <span className="forrum-home-v16__discussion-stat" title="Ответы">▣ {formatCount(item.commentCount)}</span>
-      <span className="forrum-home-v16__discussion-stat" title="Просмотры">◉ {formatCount(item.viewCount)}</span>
+      <span className="forrum-home-v16__discussion-stat" data-metric-label="Ответы" title="Ответы">▣ {formatCount(item.commentCount)}</span>
+      <span className="forrum-home-v16__discussion-stat" data-metric-label="Просм." title="Просмотры">◉ {formatCount(item.viewCount)}</span>
       <span className="forrum-home-v16__last-message">
         <strong>{relativeTime(reply.createdAt)}</strong>
         <small>@{reply.username}</small>
@@ -486,6 +484,7 @@ function PollRow({ poll }: { poll: PollItem }) {
 
 // FORRUM_HOME_V45_RIGHT_RAIL_NEWS
 // FORRUM_HOME_PRODUCTION_POLISH_V46
+// 4RRUM_HOME_TREE_COUNTS_REMOVED
 export function HomeDashboard({ initialData }: { initialData: HomeInitialData }) {
   const communities = initialData.communities ?? [];
 
@@ -706,7 +705,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
         </section>
 
         <HomePanel
-          title="Новости FORRUM"
+          title="Новости 4RRUM"
           href="/news"
         >
           <div className="forrum-home-v16__actual-list">
@@ -723,19 +722,38 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
                     size={30}
                   />
                   <span>
-                    <strong>{item.title || 'Новость FORRUM'}</strong>
+                    <strong>{item.title || 'Новость 4RRUM'}</strong>
                     <small>{relativeTime(item.createdAt)}</small>
                   </span>
                 </Link>
               ))
             ) : (
               <p className="forrum-home-v16__empty">
-                Новости FORRUM пока не опубликованы.
+                Новости 4RRUM пока не опубликованы.
               </p>
             )}
+          </div>
+        </HomePanel>
+        {/* 4RRUM_HOME_START_RAIL */}
+        <HomePanel title="Старт 4RRUM" href="/rules">
+          <div className="forrum-home-v16__start-list">
+            <Link className="forrum-home-v16__start-link" href="/#propose-section">
+              <strong>Предложить раздел</strong>
+              <small>Запустить новое направление сообщества</small>
+            </Link>
+            <Link className="forrum-home-v16__start-link" href="/#become-curator">
+              <strong>Стать куратором</strong>
+              <small>Взять ответственность за развитие раздела</small>
+            </Link>
+            <Link className="forrum-home-v16__start-link" href="/support">
+              <strong>Обратная связь</strong>
+              <small>Сообщить об ошибке или предложить улучшение</small>
+            </Link>
           </div>
         </HomePanel>
       </aside>
     </div>
   );
 }
+
+/* 4RRUM_HOME_FINAL_UX_POLISH_V2 */

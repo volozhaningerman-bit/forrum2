@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { HeaderSearch } from './header-search';
 import { AuthActions } from './auth-actions';
 import {
   GridIcon,
@@ -10,6 +11,7 @@ import {
 import { NavCounters } from './nav-counters';
 import { MainNav } from './main-nav';
 
+import { ThemeToggle } from './theme-toggle';
 export function SiteHeader() {
   return (
     <>
@@ -18,33 +20,18 @@ export function SiteHeader() {
           <Link
             className="brand"
             href="/"
-            aria-label="FORRUM"
+            aria-label="4RRUM"
           >
-            <span
-              className="brand-mark"
-              aria-hidden="true"
-            />
-            <span aria-hidden="true">FORRUM</span>
+            <span className="brand-mark" aria-hidden="true">4</span>
+            <span aria-hidden="true">4RRUM</span>
           </Link>
 
           <MainNav />
+          <ThemeToggle />
 
           <span className="grow" />
 
-          <form
-            className="header-search"
-            action="/search"
-            role="search"
-          >
-            <input
-              name="q"
-              aria-label="Поиск по FORRUM"
-              placeholder="Поиск по форуму, темам и сообщениям…"
-            />
-            <button type="submit" aria-label="Найти">
-              <SearchIcon />
-            </button>
-          </form>
+          <HeaderSearch />
 
           <nav
             className="icon-links"
