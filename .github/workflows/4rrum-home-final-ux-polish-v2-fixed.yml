@@ -1,0 +1,270 @@
+name: 4RRUM Home — Final UX Polish V2 AST Safe FIX
+'on':
+  workflow_dispatch: null
+permissions:
+  contents: write
+concurrency:
+  group: 4rrum-home-final-ux-polish-v2
+  cancel-in-progress: false
+jobs:
+  home-final-ux-polish-v2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+    - name: Checkout main
+      uses: actions/checkout@v5
+      with:
+        ref: main
+        fetch-depth: 0
+    - name: Setup Node
+      uses: actions/setup-node@v5
+      with:
+        node-version: '24'
+    - name: Baseline
+      id: baseline
+      shell: bash
+      run: 'set -euo pipefail
+
+        echo "=== 4RRUM FINAL UX POLISH V2 — AST SAFE ==="
+
+        git reset --hard HEAD
+
+        git clean -ffdx
+
+        test -z "$(git status --porcelain)"
+
+        echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+
+        test -f apps/web/components/home-dashboard.tsx
+
+        test -f apps/web/components/site-header.tsx
+
+        test -f apps/web/components/site-footer.tsx
+
+        test -f apps/web/app/layout.tsx
+
+        test -f apps/web/app/globals.css
+
+        test -f .github/workflows/4rrum-home-final-ux-polish-v2.yml
+
+
+        grep -Fq ''FORRUM_HOME_TABLE_OVERFLOW_FIX'' apps/web/app/globals.css
+
+        grep -Fq ''FORRUM_HOME_CONTEXTUAL_ACTUAL'' apps/web/components/home-dashboard.tsx
+
+        grep -Fq ''title="Новости FORRUM"'' apps/web/components/home-dashboard.tsx
+
+        echo "Baseline: PASS"
+
+        '
+    - name: Write failing regression contract
+      shell: bash
+      run: 'set -euo pipefail
+
+        python3 - <<''PY''
+
+        from pathlib import Path
+
+        Path(''scripts/home-final-ux-polish-v2-check.mjs'').write_text(''import fs from \''node:fs\'';\n\nconst read = (path) => fs.readFileSync(path, \''utf8\'');\nconst exists = (path) => fs.existsSync(path);\n\nconst home = read(\''apps/web/components/home-dashboard.tsx\'');\nconst header = read(\''apps/web/components/site-header.tsx\'');\nconst footer = read(\''apps/web/components/site-footer.tsx\'');\nconst layout = read(\''apps/web/app/layout.tsx\'');\nconst css = read(\''apps/web/app/globals.css\'');\nconst search = exists(\''apps/web/components/header-search.tsx\'')\n  ? read(\''apps/web/components/header-search.tsx\'')\n  : \''\'';\nconst theme = exists(\''apps/web/components/theme-toggle.tsx\'')\n  ? read(\''apps/web/components/theme-toggle.tsx\'')\n  : \''\'';\n\nconst need = (source, marker, label) => {\n  if (!source.includes(marker)) {\n    throw new Error(`${label}: missing ${marker}`);\n  }\n};\n\nneed(header, \''aria-label="4RRUM"\'', \''brand\'');\nneed(header, \''>4RRUM</span>\'',
+        \''brand\'');\nneed(footer, \''© 4RRUM\'', \''footer\'');\nneed(layout, \''4RRUM\'', \''metadata\'');\nneed(home, \''title="Новости 4RRUM"\'', \''news\'');\n\nneed(header, \''<HeaderSearch />\'', \''search mount\'');\nneed(search, "\''Поиск...\''", \''search animation\'');\nneed(search, \''prefers-reduced-motion: reduce\'', \''reduced motion\'');\nneed(search, \''aria-label="Поиск по 4RRUM"\'', \''search accessibility\'');\n\nneed(header, \''<ThemeToggle />\'', \''theme mount\'');\nneed(theme, \''theme-toggle-v2\'', \''theme control\'');\nneed(theme, \''Включить тёмную тему\'', \''theme action\'');\nneed(theme, \''Включить светлую тему\'', \''theme action\'');\n\nneed(home, \''4RRUM_HOME_TREE_COUNTS_REMOVED\'', \''tree cleanup\'');\nneed(home, \''data-metric-label="Ответы"\'', \''reply metric\'');\nneed(home, \''data-metric-label="Просм."\'', \''view metric\'');\nneed(home, \''4RRUM_HOME_START_RAIL\'', \''right rail\'');\nneed(home, \''title="Старт 4RRUM"\'', \''right rail\'');\n\nfor
+        (const marker of [\n  \''/* 4RRUM_HOME_FINAL_UX_POLISH_V2 */\'',\n  \''.theme-toggle-v2\'',\n  \''.header-search\'',\n  \''[data-metric-label]\'',\n  \''.forrum-home-v16__new-topic-title\'',\n  \''.forrum-home-v16__start-list\'',\n  \''.icon-links a:hover\'',\n  \''.auth-actions > a:not(.button):hover\'',\n]) {\n  need(css, marker, \''css\'');\n}\n\nif (/fakeUser|fakeParticipant|fakeNews|demoParticipant/.test(home)) {\n  throw new Error(\''Fake engagement data introduced.\'');\n}\n\nconsole.log(\''4RRUM final UX V2 contract: PASS\'');\n'', encoding=''utf-8'')
+
+        PY
+
+        node --check scripts/home-final-ux-polish-v2-check.mjs
+
+        '
+    - name: TDD RED
+      shell: bash
+      run: "set -euo pipefail\nif node scripts/home-final-ux-polish-v2-check.mjs; then\n  echo \"::error::Regression contract unexpectedly passed before implementation.\"\n  exit 1\nfi\necho \"TDD RED confirmed.\"\n"
+    - name: Install dependencies before AST transform
+      shell: bash
+      run: 'set -euo pipefail
+
+        npm install --include=dev --no-audit --no-fund --package-lock=false
+
+        node -e "require(''typescript''); console.log(''TypeScript AST available'')"
+
+        '
+    - name: Create new header controls
+      shell: bash
+      run: 'set -euo pipefail
+
+        python3 - <<''PY''
+
+        from pathlib import Path
+
+        Path(''apps/web/components/header-search.tsx'').write_text(''\''use client\'';\n\nimport { useEffect, useState } from \''react\'';\nimport { SearchIcon } from \''./icons\'';\n\nconst frames = [\n  \''П\'',\n  \''По\'',\n  \''Пои\'',\n  \''Поис\'',\n  \''Поиск\'',\n  \''Поиск.\'',\n  \''Поиск..\'',\n  \''Поиск...\'',\n  \''Поиск.\'',\n  \''Поиск..\'',\n  \''Поиск...\'',\n  \''Поиск.\'',\n  \''Поиск..\'',\n  \''Поиск...\'',\n  \''Поиск.\'',\n  \''Поиск..\'',\n  \''Поиск...\'',\n  \''Поиск.\'',\n  \''Поиск..\'',\n  \''Поиск...\'',\n  \''\'',\n] as const;\n\nexport function HeaderSearch() {\n  const [placeholder, setPlaceholder] = useState(\''Поиск\'');\n\n  useEffect(() => {\n    const media = window.matchMedia(\''(prefers-reduced-motion: reduce)\'');\n    if (media.matches) {\n      setPlaceholder(\''Поиск по 4RRUM\'');\n      return;\n    }\n\n    let index = 0;\n    const timer = window.setInterval(() => {\n      setPlaceholder(frames[index] ?? \''Поиск\'');\n      index = (index
+        + 1) % frames.length;\n    }, 330);\n\n    return () => window.clearInterval(timer);\n  }, []);\n\n  return (\n    <form className="header-search" action="/search" role="search">\n      <input\n        name="q"\n        aria-label="Поиск по 4RRUM"\n        placeholder={placeholder}\n        autoComplete="off"\n      />\n      <button type="submit" aria-label="Найти">\n        <SearchIcon />\n      </button>\n    </form>\n  );\n}\n'', encoding=''utf-8'')
+
+        Path(''apps/web/components/theme-toggle.tsx'').write_text(''\''use client\'';\n\nimport { useLayoutEffect, useState } from \''react\'';\n\ntype ForumTheme = \''paper\'' | \''graphite\'';\n\nfunction applyTheme(theme: ForumTheme) {\n  const root = document.documentElement;\n  const dark = theme === \''graphite\'';\n\n  root.dataset.forrumTheme = theme;\n  root.classList.toggle(\''dark\'', dark);\n  root.style.colorScheme = dark ? \''dark\'' : \''light\'';\n  window.localStorage.setItem(\''forrum-theme\'', theme);\n}\n\nfunction MoonIcon() {\n  return (\n    <svg viewBox="0 0 24 24" aria-hidden="true">\n      <path d="M20 15.2A8.5 8.5 0 0 1 8.8 4a7.5 7.5 0 1 0 11.2 11.2Z" />\n    </svg>\n  );\n}\n\nfunction SunIcon() {\n  return (\n    <svg viewBox="0 0 24 24" aria-hidden="true">\n      <circle cx="12" cy="12" r="3.5" />\n      <path d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6" />\n    </svg>\n  );\n}\n\nexport function
+        ThemeToggle() {\n  const [theme, setTheme] = useState<ForumTheme>(\''paper\'');\n\n  useLayoutEffect(() => {\n    const root = document.documentElement;\n    const saved = window.localStorage.getItem(\''forrum-theme\'');\n    const initial: ForumTheme =\n      saved === \''graphite\'' ||\n      root.dataset.forrumTheme === \''graphite\'' ||\n      root.classList.contains(\''dark\'')\n        ? \''graphite\''\n        : \''paper\'';\n\n    setTheme(initial);\n    applyTheme(initial);\n  }, []);\n\n  const dark = theme === \''graphite\'';\n  const label = dark\n    ? \''Включить светлую тему\''\n    : \''Включить тёмную тему\'';\n\n  return (\n    <button\n      type="button"\n      className="theme-toggle-v2"\n      aria-label={label}\n      title={label}\n      onClick={() => {\n        const next: ForumTheme = dark ? \''paper\'' : \''graphite\'';\n        setTheme(next);\n        applyTheme(next);\n      }}\n    >\n      {dark ? <SunIcon /> : <MoonIcon />}\n    </button>\n  );\n}\n'',
+        encoding=''utf-8'')
+
+        PY
+
+        '
+    - name: Apply AST-safe production patch
+      shell: bash
+      run: 'set -euo pipefail
+
+        python3 - <<''PY''
+
+        from pathlib import Path
+
+        Path(''/tmp/4rrum-apply-v2.mjs'').write_text(''import fs from \''node:fs\'';\nimport { createRequire } from \''node:module\'';\n\nconst requireFromRepo = createRequire(process.cwd() + \''/package.json\'');\nconst ts = requireFromRepo(\''typescript\'');\n\nconst homePath = \''apps/web/components/home-dashboard.tsx\'';\nlet home = fs.readFileSync(homePath, \''utf8\'');\n\nif (home.includes(\''4RRUM_HOME_FINAL_UX_POLISH_V2\'')) {\n  throw new Error(\''V2 is already applied.\'');\n}\n\nfunction parse(text) {\n  return ts.createSourceFile(\n    homePath,\n    text,\n    ts.ScriptTarget.Latest,\n    true,\n    ts.ScriptKind.TSX,\n  );\n}\n\nfunction jsxOpening(node) {\n  if (ts.isJsxElement(node)) return node.openingElement;\n  if (ts.isJsxSelfClosingElement(node)) return node;\n  return null;\n}\n\nfunction openingHasClass(node, pattern) {\n  const opening = jsxOpening(node);\n  if (!opening) return false;\n  const text = opening.getText();\n  return /className=/.test(text) && pattern.test(text);\n}\n\nfunction
+        treeContext(node) {\n  let current = node;\n  let depth = 0;\n  while (current && depth < 12) {\n    if (\n      (ts.isJsxElement(current) || ts.isJsxSelfClosingElement(current)) &&\n      openingHasClass(current, /(tree|hierarch|communit)/i)\n    ) {\n      return true;\n    }\n    current = current.parent;\n    depth += 1;\n  }\n  return false;\n}\n\nfunction smallestJsxCountRanges(text) {\n  const sf = parse(text);\n  const candidates = [];\n\n  function visit(node) {\n    const source = node.getText(sf);\n\n    if (\n      ts.isJsxExpression(node) &&\n      /\\.(publicationCount|recentPublicationCount)\\b/.test(source) &&\n      treeContext(node)\n    ) {\n      candidates.push([node.getStart(sf), node.getEnd()]);\n      return;\n    }\n\n    if (\n      ts.isJsxElement(node) &&\n      /\\.(publicationCount|recentPublicationCount)\\b/.test(source) &&\n      treeContext(node)\n    ) {\n      const childContains = node.children.some((child) =>\n        /\\.(publicationCount|recentPublicationCount)\\b/.test(child.getText(sf)),\n      );\n      if
+        (!childContains) {\n        candidates.push([node.getStart(sf), node.getEnd()]);\n        return;\n      }\n    }\n\n    ts.forEachChild(node, visit);\n  }\n\n  visit(sf);\n\n  // Prefer JSX elements over bare expressions when the ranges overlap.\n  const unique = [];\n  for (const range of candidates.sort((a, b) => (a[1] - a[0]) - (b[1] - b[0]))) {\n    if (!unique.some(([s, e]) => s <= range[0] && e >= range[1])) {\n      unique.push(range);\n    }\n  }\n  return unique;\n}\n\nconst ranges = smallestJsxCountRanges(home);\nif (!ranges.length) {\n  const refs = [...home.matchAll(/\\.(publicationCount|recentPublicationCount)\\b/g)]\n    .slice(0, 12)\n    .map((match) => {\n      const start = Math.max(0, match.index - 180);\n      const end = Math.min(home.length, match.index + 220);\n      return home.slice(start, end).replace(/\\n/g, \'' \'');\n    });\n\n  console.error(\''No tree count JSX range discovered.\'');\n  console.error(\''Count references for diagnosis:\'');\n  for
+        (const ref of refs) console.error(\''---\'', ref);\n  throw new Error(\''Could not safely identify hierarchy count JSX.\'');\n}\n\nfor (const [start, end] of ranges.sort((a, b) => b[0] - a[0])) {\n  home = home.slice(0, start) + home.slice(end);\n}\n\nhome = home.replace(\n  /export function HomeDashboard\\(/,\n  \''// 4RRUM_HOME_TREE_COUNTS_REMOVED\\nexport function HomeDashboard(\'',\n);\n\n// Visible brand.\nhome = home\n  .replaceAll(\''title="Новости FORRUM"\'', \''title="Новости 4RRUM"\'')\n  .replaceAll(\''Новости FORRUM пока не опубликованы.\'', \''Новости 4RRUM пока не опубликованы.\'')\n  .replaceAll("\''Новость FORRUM\''", "\''Новость 4RRUM\''")\n  .replaceAll(\''"Новость FORRUM"\'', \''"Новость 4RRUM"\'')\n  .replaceAll(\''Объявление FORRUM\'', \''Объявление 4RRUM\'');\n\nfunction addDataMetric(source, russianLabel, shortLabel) {\n  if (source.includes(`data-metric-label="${shortLabel}"`)) return source;\n\n  const directPatterns = [\n    new RegExp(`title="${russianLabel}"`),\n    new
+        RegExp(`aria-label="${russianLabel}"`),\n  ];\n\n  for (const pattern of directPatterns) {\n    if (pattern.test(source)) {\n      return source.replace(\n        pattern,\n        (match) => `data-metric-label="${shortLabel}" ${match}`,\n      );\n    }\n  }\n\n  return source;\n}\n\nhome = addDataMetric(home, \''Ответы\'', \''Ответы\'');\nhome = addDataMetric(home, \''Просмотры\'', \''Просм.\'');\n\nif (!home.includes(\''data-metric-label="Ответы"\'')) {\n  throw new Error(\''Could not safely label replies metric.\'');\n}\nif (!home.includes(\''data-metric-label="Просм."\'')) {\n  throw new Error(\''Could not safely label views metric.\'');\n}\n\n// Right rail: real project actions, not fake participants/news.\nif (!home.includes(\''4RRUM_HOME_START_RAIL\'')) {\n  const newsPos = home.indexOf(\''title="Новости 4RRUM"\'');\n  if (newsPos < 0) throw new Error(\''News 4RRUM panel not found.\'');\n\n  const closePos = home.indexOf(\''</HomePanel>\'', newsPos);\n  if (closePos < 0)
+        throw new Error(\''News 4RRUM panel end not found.\'');\n\n  const end = closePos + \''</HomePanel>\''.length;\n  const startRail = `\n        {/* 4RRUM_HOME_START_RAIL */}\n        <HomePanel title="Старт 4RRUM" href="/rules">\n          <div className="forrum-home-v16__start-list">\n            <Link className="forrum-home-v16__start-link" href="/#propose-section">\n              <strong>Предложить раздел</strong>\n              <small>Запустить новое направление сообщества</small>\n            </Link>\n            <Link className="forrum-home-v16__start-link" href="/#become-curator">\n              <strong>Стать куратором</strong>\n              <small>Взять ответственность за развитие раздела</small>\n            </Link>\n            <Link className="forrum-home-v16__start-link" href="/support">\n              <strong>Обратная связь</strong>\n              <small>Сообщить об ошибке или предложить улучшение</small>\n            </Link>\n          </div>\n        </HomePanel>`;\n\n  home
+        = home.slice(0, end) + startRail + home.slice(end);\n}\n\nfs.writeFileSync(\n  homePath,\n  home.replace(/\\s+$/g, \''\'') + \''\\n\'',\n  \''utf8\'',\n);\n\n// Header: patch current file minimally instead of replacing it wholesale.\nconst headerPath = \''apps/web/components/site-header.tsx\'';\nlet header = fs.readFileSync(headerPath, \''utf8\'');\n\nheader = header\n  .replaceAll(\''aria-label="FORRUM"\'', \''aria-label="4RRUM"\'')\n  .replaceAll(\''>FORRUM</span>\'', \''>4RRUM</span>\'');\n\nif (header.includes(\''className="brand-mark"\'')) {\n  header = header.replace(\n    /<span\\s+className="brand-mark"\\s+aria-hidden="true"\\s*\\/>/m,\n    \''<span className="brand-mark" aria-hidden="true">4</span>\'',\n  );\n}\n\nif (!header.includes("from \''./header-search\''")) {\n  header = header.replace(\n    /import Link from \''next\\/link\'';\\s*/,\n    `import Link from \''next/link\'';\\nimport { HeaderSearch } from \''./header-search\'';\\n`,\n  );\n}\n\nif (!header.includes("from
+        \''./theme-toggle\''")) {\n  const mainNavImport = /import \\{ MainNav \\} from \''\\.\\/main-nav\'';\\s*/;\n  if (!mainNavImport.test(header)) {\n    throw new Error(\''MainNav import anchor not found in current header.\'');\n  }\n  header = header.replace(\n    mainNavImport,\n    (match) => `${match}import { ThemeToggle } from \''./theme-toggle\'';\\n`,\n  );\n}\n\nif (!header.includes(\''<HeaderSearch />\'')) {\n  const formPattern =\n    /<form[\\s\\S]*?className="header-search"[\\s\\S]*?<\\/form>/m;\n  if (!formPattern.test(header)) {\n    throw new Error(\''Current header search form not found.\'');\n  }\n  header = header.replace(formPattern, \''<HeaderSearch />\'');\n}\n\nif (!header.includes(\''<ThemeToggle />\'')) {\n  if (!header.includes(\''<MainNav />\'')) {\n    throw new Error(\''MainNav mount not found.\'');\n  }\n  header = header.replace(\n    \''<MainNav />\'',\n    \''<MainNav />\\n          <ThemeToggle />\'',\n  );\n}\n\nfs.writeFileSync(headerPath, header.replace(/\\s+$/g,
+        \''\'') + \''\\n\'', \''utf8\'');\n\n// Footer and metadata: visible branding only.\nconst footerPath = \''apps/web/components/site-footer.tsx\'';\nlet footer = fs.readFileSync(footerPath, \''utf8\'');\nfooter = footer.replace(/FORRUM/g, \''4RRUM\'');\nfs.writeFileSync(footerPath, footer, \''utf8\'');\n\nconst layoutPath = \''apps/web/app/layout.tsx\'';\nlet layout = fs.readFileSync(layoutPath, \''utf8\'');\nlayout = layout.replace(/FORRUM/g, \''4RRUM\'');\nfs.writeFileSync(layoutPath, layout, \''utf8\'');\n\nconsole.log(\''AST/minimal transformation complete.\'');\nconsole.log(\''Removed tree count ranges:\'', ranges.length);\n'', encoding=''utf-8'')
+
+        Path(''/tmp/4rrum-css-v2.txt'').write_text(''\n/* 4RRUM_HOME_FINAL_UX_POLISH_V2 */\n.brand-mark {\n  display: inline-grid !important;\n  place-items: center;\n  flex: 0 0 auto;\n  font-weight: 800;\n  line-height: 1;\n}\n.brand-mark::before,\n.brand-mark::after {\n  display: none !important;\n  content: none !important;\n}\n\n.header-search {\n  width: min(292px, 22vw) !important;\n  min-height: 34px !important;\n  border-radius: 3px !important;\n  transition: border-color 140ms ease, background-color 140ms ease;\n}\n.header-search:focus-within {\n  border-color: #8b8b85 !important;\n}\n.header-search input {\n  min-height: 32px !important;\n  padding-inline: 10px !important;\n  font-size: 11.5px !important;\n}\n.header-search button {\n  width: 34px !important;\n  min-height: 32px !important;\n  border-radius: 0 2px 2px 0 !important;\n  transition: background-color 140ms ease, color 140ms ease;\n}\n.header-search button:hover,\n.header-search button:focus-visible {\n  background:
+        #eeeeeb !important;\n  color: #11110f !important;\n  outline: none;\n}\n\n.theme-toggle-v2 {\n  display: inline-grid;\n  place-items: center;\n  width: 34px;\n  height: 34px;\n  flex: 0 0 34px;\n  padding: 0;\n  border: 1px solid transparent;\n  border-radius: 3px;\n  background: transparent;\n  color: #383835;\n  cursor: pointer;\n  transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease;\n}\n.theme-toggle-v2 svg {\n  width: 18px;\n  height: 18px;\n  fill: none;\n  stroke: currentColor;\n  stroke-width: 1.65;\n  stroke-linecap: round;\n  stroke-linejoin: round;\n}\n.theme-toggle-v2:hover,\n.theme-toggle-v2:focus-visible {\n  border-color: #c9c9c4;\n  background: #f0f0ed;\n  color: #11110f;\n  outline: none;\n}\n\n.icon-links a,\n.auth-actions > a,\n.forrum-home-v16__actual,\n.forrum-home-v16__start-link {\n  transition: border-color 140ms ease, background-color 140ms ease, color 140ms ease, filter 140ms ease;\n}\n.icon-links a {\n  border: 1px solid transparent
+        !important;\n}\n.icon-links a:hover,\n.icon-links a:focus-visible,\n.auth-actions > a:not(.button):hover,\n.auth-actions > a:not(.button):focus-visible {\n  border-color: #c9c9c4 !important;\n  background: #f0f0ed !important;\n  color: #11110f !important;\n  outline: none;\n}\n.auth-actions > a:not(.button) {\n  padding: 7px 9px;\n  border: 1px solid transparent;\n  border-radius: 3px;\n}\n.header .auth-actions .button:hover,\n.header .auth-actions .button:focus-visible {\n  filter: brightness(.94);\n  outline: none;\n}\n\n.home-stage-one [data-metric-label],\n.forrum-home-v16 [data-metric-label] {\n  display: inline-flex;\n  align-items: center;\n  gap: 3px;\n  min-width: 0;\n  color: #555550;\n  font-size: 10px;\n  font-variant-numeric: tabular-nums;\n  line-height: 1.2;\n  white-space: nowrap;\n}\n.home-stage-one [data-metric-label]::before,\n.forrum-home-v16 [data-metric-label]::before {\n  content: attr(data-metric-label) " ";\n  color: #777772;\n  font-size: 9.5px;\n  font-weight:
+        500;\n}\n.home-stage-one [data-metric-label] > svg,\n.forrum-home-v16 [data-metric-label] > svg {\n  display: none !important;\n}\n\n.forrum-home-v16__new-topic-head {\n  font-size: 10.5px !important;\n}\n.forrum-home-v16__new-topic {\n  min-height: 31px;\n  font-size: 11.5px !important;\n  line-height: 1.32;\n}\n.forrum-home-v16__new-topic-title {\n  font-size: 12px !important;\n  font-weight: 650 !important;\n  line-height: 1.3;\n}\n.forrum-home-v16__new-topic-section,\n.forrum-home-v16__new-topic-author,\n.forrum-home-v16__new-topic-last {\n  font-size: 11.25px !important;\n}\n.forrum-home-v16__new-topic-head,\n.forrum-home-v16__new-topic {\n  grid-template-columns:\n    minmax(0, 2.7fr)\n    minmax(0, .82fr)\n    minmax(0, .72fr)\n    46px\n    58px\n    minmax(0, 1.08fr) !important;\n  column-gap: 9px !important;\n}\n\n.forrum-home-v16__actual:hover,\n.forrum-home-v16__actual:focus-visible,\n.forrum-home-v16__start-link:hover,\n.forrum-home-v16__start-link:focus-visible {\n  background:
+        #f0f0ed !important;\n  color: #11110f !important;\n  outline: none;\n}\n\n.forrum-home-v16__start-list {\n  display: grid;\n  min-width: 0;\n}\n.forrum-home-v16__start-link {\n  display: grid;\n  min-width: 0;\n  gap: 2px;\n  padding: 9px 10px;\n  border-top: 1px solid var(--line);\n  color: inherit;\n  text-decoration: none;\n}\n.forrum-home-v16__start-link:first-child {\n  border-top: 0;\n}\n.forrum-home-v16__start-link strong {\n  overflow: hidden;\n  font-size: 11.5px;\n  line-height: 1.25;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.forrum-home-v16__start-link small {\n  overflow: hidden;\n  color: #74746f;\n  font-size: 9.75px;\n  line-height: 1.3;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n\nhtml.dark .theme-toggle-v2,\nhtml[data-forrum-theme="graphite"] .theme-toggle-v2 {\n  color: #d3d8db;\n}\nhtml.dark .theme-toggle-v2:hover,\nhtml.dark .theme-toggle-v2:focus-visible,\nhtml[data-forrum-theme="graphite"] .theme-toggle-v2:hover,\nhtml[data-forrum-theme="graphite"]
+        .theme-toggle-v2:focus-visible,\nhtml.dark .icon-links a:hover,\nhtml.dark .icon-links a:focus-visible,\nhtml[data-forrum-theme="graphite"] .icon-links a:hover,\nhtml[data-forrum-theme="graphite"] .icon-links a:focus-visible,\nhtml.dark .auth-actions > a:not(.button):hover,\nhtml.dark .auth-actions > a:not(.button):focus-visible,\nhtml[data-forrum-theme="graphite"] .auth-actions > a:not(.button):hover,\nhtml[data-forrum-theme="graphite"] .auth-actions > a:not(.button):focus-visible,\nhtml.dark .forrum-home-v16__actual:hover,\nhtml.dark .forrum-home-v16__actual:focus-visible,\nhtml.dark .forrum-home-v16__start-link:hover,\nhtml.dark .forrum-home-v16__start-link:focus-visible,\nhtml[data-forrum-theme="graphite"] .forrum-home-v16__actual:hover,\nhtml[data-forrum-theme="graphite"] .forrum-home-v16__actual:focus-visible,\nhtml[data-forrum-theme="graphite"] .forrum-home-v16__start-link:hover,\nhtml[data-forrum-theme="graphite"] .forrum-home-v16__start-link:focus-visible {\n  border-color:
+        #4b5358 !important;\n  background: #252b2f !important;\n  color: #fff !important;\n}\n\n@media (max-width: 1480px) and (min-width: 961px) {\n  .forrum-home-v16__new-topic-head,\n  .forrum-home-v16__new-topic {\n    grid-template-columns:\n      minmax(0, 2.5fr)\n      minmax(0, .76fr)\n      minmax(0, .68fr)\n      44px\n      54px\n      minmax(0, 1fr) !important;\n    column-gap: 7px !important;\n  }\n\n  .header-search {\n    width: min(265px, 21vw) !important;\n  }\n}\n\n@media (prefers-reduced-motion: reduce) {\n  .theme-toggle-v2,\n  .header-search,\n  .header-search button,\n  .icon-links a,\n  .auth-actions > a,\n  .forrum-home-v16__actual,\n  .forrum-home-v16__start-link {\n    transition: none !important;\n  }\n}\n'', encoding=''utf-8'')
+
+        PY
+
+        node /tmp/4rrum-apply-v2.mjs
+
+        cat /tmp/4rrum-css-v2.txt >> apps/web/app/globals.css
+
+        printf ''\n/* 4RRUM_HOME_FINAL_UX_POLISH_V2 */\n'' >> apps/web/components/home-dashboard.tsx
+
+        git diff --check
+
+        '
+    - name: TDD GREEN
+      shell: bash
+      run: 'set -euo pipefail
+
+        node scripts/home-final-ux-polish-v2-check.mjs
+
+        echo "TDD GREEN confirmed."
+
+        '
+    - name: Audit exact scope
+      shell: bash
+      run: "set -euo pipefail\nchanged=\"$(\n  {\n    git diff --name-only\n    git ls-files --others --exclude-standard\n  } | sort -u\n)\"\nexpected=\"$(\n  printf '%s\n'     apps/web/app/globals.css     apps/web/app/layout.tsx     apps/web/components/header-search.tsx     apps/web/components/home-dashboard.tsx     apps/web/components/site-footer.tsx     apps/web/components/site-header.tsx     apps/web/components/theme-toggle.tsx     scripts/home-final-ux-polish-v2-check.mjs |\n  sort\n)\"\nprintf 'Changed:\\n%s\\n' \"$changed\"\ntest \"$changed\" = \"$expected\"\n\ntest -z \"$(\n  git diff --name-only --     apps/api     packages/contracts     apps/web/components/auth-actions.tsx     apps/web/components/main-nav.tsx\n)\"\n! git diff | grep -Eq 'fakeUser|fakeParticipant|fakeNews|demoParticipant'\ngit diff --check\necho \"Scope audit: PASS\"\n"
+    - name: Stage intended change
+      shell: bash
+      run: 'set -euo pipefail
+
+        git add --   apps/web/app/globals.css   apps/web/app/layout.tsx   apps/web/components/header-search.tsx   apps/web/components/home-dashboard.tsx   apps/web/components/site-footer.tsx   apps/web/components/site-header.tsx   apps/web/components/theme-toggle.tsx   scripts/home-final-ux-polish-v2-check.mjs
+
+        git diff --cached --check
+
+        '
+    - name: Validate Prisma
+      shell: bash
+      env:
+        DATABASE_URL: postgresql://forrum:forrum@127.0.0.1:5432/forrum_ci?schema=public
+      run: 'set -euo pipefail
+
+        npm run db:validate
+
+        npm run db:generate
+
+        '
+    - name: Static UX accessibility checks
+      shell: bash
+      run: 'set -euo pipefail
+
+        node scripts/home-final-ux-polish-v2-check.mjs
+
+        npm run validate:static
+
+        npm run validate:ux
+
+        npm run validate:a11y
+
+        '
+    - name: Relevant tests
+      shell: bash
+      run: 'set -euo pipefail
+
+        npm test -w @forrum/contracts --if-present
+
+        npm test -w @forrum/api --if-present
+
+        npm test -w @forrum/web --if-present
+
+        '
+    - name: Typecheck entire product
+      shell: bash
+      run: 'set -euo pipefail
+
+        npm run typecheck
+
+        '
+    - name: Production build entire product
+      shell: bash
+      run: 'set -euo pipefail
+
+        rm -rf apps/web/.next
+
+        npm run build
+
+        '
+    - name: Production self-review
+      shell: bash
+      run: 'set -euo pipefail
+
+        node scripts/home-final-ux-polish-v2-check.mjs
+
+
+        grep -Fq ''FORRUM_HOME_TABLE_OVERFLOW_FIX'' apps/web/app/globals.css
+
+        grep -Fq ''FORRUM_HOME_CONTEXTUAL_ACTUAL'' apps/web/components/home-dashboard.tsx
+
+        grep -Fq ''1580px'' apps/web/app/globals.css
+
+
+        test -z "$(git diff --cached --name-only -- apps/api packages/contracts)"
+
+        ! git diff --cached | grep -Eq ''fakeUser|fakeParticipant|fakeNews|demoParticipant''
+
+
+        npm run validate:static
+
+        npm run validate:ux
+
+        npm run validate:a11y
+
+        npm run typecheck
+
+        npm run build
+
+        echo "Production self-review: PASS"
+
+        '
+    - name: Restore generated noise and self-delete
+      shell: bash
+      run: "set -euo pipefail\ngit restore --worktree -- .\ngit clean -ffdx\ngit rm .github/workflows/4rrum-home-final-ux-polish-v2.yml\ngit diff --cached --check\n\nstaged=\"$(git diff --cached --name-only | sort)\"\nexpected=\"$(\n  printf '%s\n'     .github/workflows/4rrum-home-final-ux-polish-v2.yml     apps/web/app/globals.css     apps/web/app/layout.tsx     apps/web/components/header-search.tsx     apps/web/components/home-dashboard.tsx     apps/web/components/site-footer.tsx     apps/web/components/site-header.tsx     apps/web/components/theme-toggle.tsx     scripts/home-final-ux-polish-v2-check.mjs |\n  sort\n)\"\nprintf 'Final staged:\\n%s\\n' \"$staged\"\ntest \"$staged\" = \"$expected\"\n"
+    - name: Commit verified change
+      shell: bash
+      run: 'set -euo pipefail
+
+        git config user.name "4RRUM QA updater"
+
+        git config user.email "actions@users.noreply.github.com"
+
+        git commit -m "Polish 4RRUM home UX with AST-safe transform"
+
+        '
+    - name: Publish only against unchanged main
+      shell: bash
+      env:
+        BASE_SHA: ${{ steps.baseline.outputs.base_sha }}
+      run: "set -euo pipefail\ngit fetch origin main\nif [ \"$(git rev-parse origin/main)\" != \"$BASE_SHA\" ]; then\n  echo \"::error::main advanced during verification. Rerun workflow.\"\n  exit 1\nfi\ngit push origin HEAD:main\n"
+    - name: Verify remote
+      shell: bash
+      run: "set -euo pipefail\ngit fetch origin main\ntest \"$(git rev-parse HEAD)\" = \"$(git rev-parse origin/main)\"\ngit show origin/main:apps/web/components/site-header.tsx | grep -Fq 'aria-label=\"4RRUM\"'\ngit show origin/main:apps/web/components/home-dashboard.tsx | grep -Fq '4RRUM_HOME_TREE_COUNTS_REMOVED'\ngit show origin/main:apps/web/app/globals.css | grep -Fq '4RRUM_HOME_FINAL_UX_POLISH_V2'\n\nif git cat-file -e origin/main:.github/workflows/4rrum-home-final-ux-polish-v2.yml 2>/dev/null; then\n  echo \"::error::One-time workflow did not self-delete.\"\n  exit 1\nfi\necho \"4RRUM final UX V2 published and workflow removed.\"\n"
