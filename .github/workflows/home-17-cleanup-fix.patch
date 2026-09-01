@@ -1,6 +1,0 @@
-*** Begin Patch
-*** Update File: .github/workflows/home-17.yml
-@@
--          ^(\.github/workflows/home-(10|11|12|13|14|15|16)\.yml|apps/web/app/globals\.css|apps/web/components/home-dashboard\.tsx)$
-+          ^(\.github/workflows/home-(10|11|12|13|14|15|16|17)\.yml|apps/web/app/globals\.css|apps/web/components/home-dashboard\.tsx)$
-*** End Patch
