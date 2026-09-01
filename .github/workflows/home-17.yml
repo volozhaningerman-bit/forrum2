@@ -697,7 +697,7 @@ jobs:
           done
 
           unexpected="$(printf '%s\n' "$staged" | grep -Ev \
-            '^(\.github/workflows/home-(10|11|12|13|14|15|16)\.yml|apps/web/app/globals\.css|apps/web/components/home-dashboard\.tsx)$' || true)"
+            ^(\.github/workflows/home-(10|11|12|13|14|15|16|17)\.yml|apps/web/app/globals\.css|apps/web/components/home-dashboard\.tsx)$
 
           if [ -n "$unexpected" ]; then
             echo "::error::Unexpected final staged files:"
