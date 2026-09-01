@@ -1,0 +1,258 @@
+name: Главная — 18
+run-name: Главная — 18
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-home-18
+  cancel-in-progress: false
+
+jobs:
+  home-18:
+    name: Главная — 18
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: 01. Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: 02. Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - name: 03. Проверка базы и backup
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git reset --hard HEAD
+          git clean -ffdx
+          test -z "$(git status --porcelain)"
+
+          test -f apps/web/components/home-dashboard.tsx
+          test -f apps/web/app/globals.css
+          test -f package.json
+
+          grep -Fq 'function DiscussedTopic' apps/web/components/home-dashboard.tsx
+          grep -Fq 'className="forrum-home-v16__tree-row"' apps/web/components/home-dashboard.tsx
+          grep -Fq 'className="forrum-home-v16__weekly-row"' apps/web/components/home-dashboard.tsx
+          grep -Fq 'title="Новости 4RRUM"' apps/web/components/home-dashboard.tsx
+          grep -Fq 'title="Старт 4RRUM"' apps/web/components/home-dashboard.tsx
+
+          backup_dir="${RUNNER_TEMP}/forrum-home-18-backup"
+          mkdir -p "$backup_dir/apps/web/components" "$backup_dir/apps/web/app"
+          cp apps/web/components/home-dashboard.tsx "$backup_dir/apps/web/components/home-dashboard.tsx"
+          cp apps/web/app/globals.css "$backup_dir/apps/web/app/globals.css"
+          sha256sum             "$backup_dir/apps/web/components/home-dashboard.tsx"             "$backup_dir/apps/web/app/globals.css"
+
+          echo "BASE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: 04. Применить HOME UI 18
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          from base64 import b64decode
+          from pathlib import Path
+
+          home_path = Path('apps/web/components/home-dashboard.tsx')
+          css_path = Path('apps/web/app/globals.css')
+          home = home_path.read_text(encoding='utf-8')
+          css = css_path.read_text(encoding='utf-8')
+
+          if 'forrum-home-v18__system-nav' in home or 'forrum-home-v18__system-nav' in css:
+              raise SystemExit('HOME UI 18 уже применён либо применён частично.')
+
+          def decode(value: str) -> str:
+              return b64decode(value).decode('utf-8')
+
+          replacements = [
+              ("Название системного сообщества", "cmV0dXJuIG5hbWUgPT09ICdGT1JSVU0gU3RhcnQnID8gJ9Ch0YLQsNGA0YIgNFJSVU0nIDogbmFtZTs=", "cmV0dXJuIG5hbWUgPT09ICdGT1JSVU0gU3RhcnQnID8gJ9CeIEZPUlJVTScgOiBuYW1lOw=="),
+              ("Подписчики корневых сообществ", "ICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X190cmVlLW5hbWUiPgogICAgICAgICAgICB7Y29tbXVuaXR5RGlzcGxheU5hbWUobm9kZS5uYW1lKX0KICAgICAgICAgIDwvc3Bhbj4=", "ICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X190cmVlLW5hbWUiPgogICAgICAgICAgICB7Y29tbXVuaXR5RGlzcGxheU5hbWUobm9kZS5uYW1lKX0KICAgICAgICAgIDwvc3Bhbj4KICAgICAgICAgIHtkZXB0aCA9PT0gMCAmJiAoCiAgICAgICAgICAgIDxzcGFuCiAgICAgICAgICAgICAgY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MThfX3RyZWUtc3Vic2NyaWJlcnMiCiAgICAgICAgICAgICAgdGl0bGU9e2Ake2Zvcm1hdENvdW50KG5vZGUuc3Vic2NyaWJlckNvdW50KX0g0L/QvtC00L/QuNGB0YfQuNC60L7QsmB9CiAgICAgICAgICAgID4KICAgICAgICAgICAgICB7Zm9ybWF0Q291bnQobm9kZS5zdWJzY3JpYmVyQ291bnQpfQogICAgICAgICAgICA8L3NwYW4+CiAgICAgICAgICApfQ=="),
+              ("Системная навигация", "ICAgICAgICA8TGluayBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fcHJvcG9zYWwiIGhyZWY9Ii9jb21tdW5pdGllcy9wcm9wb3NhbHMiPgogICAgICAgICAgPHNwYW4gYXJpYS1oaWRkZW49InRydWUiPuKKnjwvc3Bhbj4g0J/RgNC10LTQu9C+0LbQuNGC0Ywg0YHQvtC+0LHRidC10YHRgtCy0L4KICAgICAgICA8L0xpbms+", "ICAgICAgICA8bmF2CiAgICAgICAgICBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxOF9fc3lzdGVtLW5hdiIKICAgICAgICAgIGFyaWEtbGFiZWw9ItCg0LDQt9C00LXQu9GLIEZPUlJVTSIKICAgICAgICA+CiAgICAgICAgICA8TGluayBocmVmPSIvbWVkaWEiPjxzcGFuPtCc0LXQtNC40LA8L3NwYW4+PHNwYW4gYXJpYS1oaWRkZW49InRydWUiPuKGkjwvc3Bhbj48L0xpbms+CiAgICAgICAgICA8TGluayBocmVmPSIvc2VydmljZXMiPjxzcGFuPtCj0YHQu9GD0LPQuDwvc3Bhbj48c3BhbiBhcmlhLWhpZGRlbj0idHJ1ZSI+4oaSPC9zcGFuPjwvTGluaz4KICAgICAgICAgIDxMaW5rIGhyZWY9Ii9uZXdzIj48c3Bhbj7QndC+0LLQvtGB0YLQuCBGT1JSVU08L3NwYW4+PHNwYW4gYXJpYS1oaWRkZW49InRydWUiPuKGkjwvc3Bhbj48L0xpbms+CiAgICAgICAgICA8TGluayBocmVmPSIvd2VsY29tZSI+PHNwYW4+0J3QsNGH0LDRgtGMPC9zcGFuPjxzcGFuIGFyaWEtaGlkZGVuPSJ0cnVlIj7ihpI8L3NwYW4+PC9MaW5rPgogICAgICAgIDwvbmF2PgogICAgICAgIDxMaW5rIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X19wcm9wb3NhbCIgaHJlZj0iL2NvbW11bml0aWVzL3Byb3Bvc2FscyI+CiAgICAgICAgICA8c3BhbiBhcmlhLWhpZGRlbj0idHJ1ZSI+4oqePC9zcGFuPiDQn9GA0LXQtNC70L7QttC40YLRjCDRgdC+0L7QsdGJ0LXRgdGC0LLQvgogICAgICAgIDwvTGluaz4="),
+              ("Строка обсуждаемой темы", "ZnVuY3Rpb24gRGlzY3Vzc2VkVG9waWMoeyBpdGVtIH06IHsgaXRlbTogUHVibGljYXRpb25DYXJkRGF0YSB8IEhvbWVEaXNjdXNzZWRUb3BpYyB9KSB7CiAgY29uc3QgcmVwbHkgPSBsYXN0UmVwbHkoaXRlbSk7CiAgcmV0dXJuICgKICAgIDxMaW5rIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X19kaXNjdXNzZWQiIGhyZWY9e2AvcC8ke2l0ZW0uc2x1Z31gfT4KICAgICAgPENvbW11bml0eU1hcmsKICAgICAgICBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fdG9waWMtbWFyayIKICAgICAgICBuYW1lPXtpdGVtLmNvbW11bml0eS5uYW1lfQogICAgICAgIHVybD17dG9waWNDb250ZW50VmlzdWFsKGl0ZW0pfQogICAgICAgIHNpemU9ezQ2fQogICAgICAvPgogICAgICA8c3BhbiBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fZGlzY3Vzc2VkLWNvcHkiPgogICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X190b3BpYy10aXRsZSI+CiAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9e2Bmb3JydW0taG9tZS12MTZfX3R5cGUgdHlwZS0ke2l0ZW0udHlwZS50b0xvd2VyQ2FzZSgpfWB9PgogICAgICAgICAgICB7cHVibGljYXRpb25UeXBlTmFtZVtpdGVtLnR5cGVdID8/ICfQotC10LzQsCd9CiAgICAgICAgICA8L3NwYW4+CiAgICAgICAgICA8c3Ryb25nPntpdGVtLnRpdGxlPy50cmltKCkgfHwgJ9Ci0LXQvNCwINCx0LXQtyDQt9Cw0LPQvtC70L7QstC60LAnfTwvc3Ryb25nPgogICAgICAgIDwvc3Bhbj4KICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fdG9waWMtZXhjZXJwdCI+e2l0ZW0uZXhjZXJwdH08L3NwYW4+CiAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX3RvcGljLW1ldGEiPgogICAgICAgICAgPHNwYW4+QHtpdGVtLmF1dGhvci51c2VybmFtZX08L3NwYW4+CiAgICAgICAgICA8c3BhbiBhcmlhLWhpZGRlbj0idHJ1ZSI+4oaSPC9zcGFuPgogICAgICAgICAgPHNwYW4+e3JlbGF0aXZlVGltZShpdGVtLmNyZWF0ZWRBdCl9PC9zcGFuPgogICAgICAgIDwvc3Bhbj4KICAgICAgPC9zcGFuPgogICAgICA8c3BhbiBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fZGlzY3Vzc2lvbi1zdGF0IGZvcnJ1bS1ob21lLXYxNl9fdG9waWMtc3RhdCIgdGl0bGU9ItCe0YLQstC10YLRiyI+4pajIHtmb3JtYXRDb3VudChpdGVtLmNvbW1lbnRDb3VudCl9PC9zcGFuPgogICAgICA8c3BhbiBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fZGlzY3Vzc2lvbi1zdGF0IGZvcnJ1bS1ob21lLXYxNl9fdG9waWMtc3RhdCIgdGl0bGU9ItCf0YDQvtGB0LzQvtGC0YDRiyI+4peJIHtmb3JtYXRDb3VudChpdGVtLnZpZXdDb3VudCl9PC9zcGFuPgogICAgICA8c3BhbiBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fbGFzdC1tZXNzYWdlIj4KICAgICAgICA8c3Ryb25nPntyZWxhdGl2ZVRpbWUocmVwbHkuY3JlYXRlZEF0KX08L3N0cm9uZz4KICAgICAgICA8c21hbGw+QHtyZXBseS51c2VybmFtZX08L3NtYWxsPgogICAgICA8L3NwYW4+CiAgICA8L0xpbms+CiAgKTsKfQ==", "ZnVuY3Rpb24gRGlzY3Vzc2VkVG9waWMoeyBpdGVtIH06IHsgaXRlbTogUHVibGljYXRpb25DYXJkRGF0YSB8IEhvbWVEaXNjdXNzZWRUb3BpYyB9KSB7CiAgY29uc3QgcmVwbHkgPSBsYXN0UmVwbHkoaXRlbSk7CiAgcmV0dXJuICgKICAgIDxMaW5rCiAgICAgIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X19kaXNjdXNzZWQgZm9ycnVtLWhvbWUtdjE4X19kaXNjdXNzZWQiCiAgICAgIGhyZWY9e2AvcC8ke2l0ZW0uc2x1Z31gfQogICAgPgogICAgICA8Q29tbXVuaXR5TWFyawogICAgICAgIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X190b3BpYy1tYXJrIgogICAgICAgIG5hbWU9e2l0ZW0uY29tbXVuaXR5Lm5hbWV9CiAgICAgICAgdXJsPXt0b3BpY0NvbnRlbnRWaXN1YWwoaXRlbSl9CiAgICAgICAgc2l6ZT17NDZ9CiAgICAgIC8+CiAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X19kaXNjdXNzZWQtY29weSI+CiAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX3RvcGljLXRpdGxlIj4KICAgICAgICAgIDxzcGFuCiAgICAgICAgICAgIGNsYXNzTmFtZT17YGZvcnJ1bS1ob21lLXYxNl9fdHlwZSBmb3JydW0taG9tZS12MThfX3RvcGljLXR5cGUgdHlwZS0ke2l0ZW0udHlwZS50b0xvd2VyQ2FzZSgpfWB9CiAgICAgICAgICA+CiAgICAgICAgICAgICN7cHVibGljYXRpb25UeXBlTmFtZVtpdGVtLnR5cGVdID8/ICfQotC10LzQsCd9CiAgICAgICAgICA8L3NwYW4+CiAgICAgICAgICA8c3Ryb25nPntpdGVtLnRpdGxlPy50cmltKCkgfHwgJ9Ci0LXQvNCwINCx0LXQtyDQt9Cw0LPQvtC70L7QstC60LAnfTwvc3Ryb25nPgogICAgICAgIDwvc3Bhbj4KICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fdG9waWMtZXhjZXJwdCI+e2l0ZW0uZXhjZXJwdH08L3NwYW4+CiAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX3RvcGljLW1ldGEgZm9ycnVtLWhvbWUtdjE4X190b3BpYy1tZXRhIj4KICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE4X190b3BpYy1hdXRob3IiPkB7aXRlbS5hdXRob3IudXNlcm5hbWV9PC9zcGFuPgogICAgICAgICAgPHNwYW4gYXJpYS1oaWRkZW49InRydWUiPsK3PC9zcGFuPgogICAgICAgICAgPHNwYW4+e2NvbW11bml0eURpc3BsYXlOYW1lKGl0ZW0uY29tbXVuaXR5Lm5hbWUpfTwvc3Bhbj4KICAgICAgICA8L3NwYW4+CiAgICAgIDwvc3Bhbj4KICAgICAgPHNwYW4KICAgICAgICBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fZGlzY3Vzc2lvbi1zdGF0IGZvcnJ1bS1ob21lLXYxNl9fdG9waWMtc3RhdCIKICAgICAgICB0aXRsZT0i0J7RgtCy0LXRgtGLIgogICAgICA+CiAgICAgICAge2Zvcm1hdENvdW50KGl0ZW0uY29tbWVudENvdW50KX0KICAgICAgPC9zcGFuPgogICAgICA8c3BhbgogICAgICAgIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X19kaXNjdXNzaW9uLXN0YXQgZm9ycnVtLWhvbWUtdjE2X190b3BpYy1zdGF0IgogICAgICAgIHRpdGxlPSLQn9GA0L7RgdC80L7RgtGA0YsiCiAgICAgID4KICAgICAgICB7Zm9ybWF0Q291bnQoaXRlbS52aWV3Q291bnQpfQogICAgICA8L3NwYW4+CiAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X19sYXN0LW1lc3NhZ2UgZm9ycnVtLWhvbWUtdjE4X19sYXN0LW1lc3NhZ2UiPgogICAgICAgIDxzdHJvbmc+QHtyZXBseS51c2VybmFtZX08L3N0cm9uZz4KICAgICAgICA8c21hbGw+e3JlbGF0aXZlVGltZShyZXBseS5jcmVhdGVkQXQpfTwvc21hbGw+CiAgICAgIDwvc3Bhbj4KICAgIDwvTGluaz4KICApOwp9"),
+              ("Последнее сообщение новой темы", "ICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX25ldy10b3BpYy1sYXN0Ij4KICAgICAgICAgIEB7aXRlbS5hdXRob3IudXNlcm5hbWV9IMK3IHtyZWxhdGl2ZVRpbWUoaXRlbS5sYXN0QWN0aXZpdHlBdCB8fCBpdGVtLmNyZWF0ZWRBdCl9CiAgICAgICAgPC9zcGFuPg==", "ICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX25ldy10b3BpYy1sYXN0IGZvcnJ1bS1ob21lLXYxOF9fbmV3LXRvcGljLWxhc3QiPgogICAgICAgIDxzdHJvbmc+QHtyZXBseS51c2VybmFtZX08L3N0cm9uZz4KICAgICAgICA8c21hbGw+e3JlbGF0aXZlVGltZShyZXBseS5jcmVhdGVkQXQpfTwvc21hbGw+CiAgICAgIDwvc3Bhbj4="),
+              ("Шапка обсуждаемых тем", "ICAgICAgICAgICAgPHNwYW4+0J7RgtCy0LXRgtGLPC9zcGFuPgogICAgICAgICAgICA8c3Bhbj7Qn9GA0L7RgdC80L7RgtGA0Ys8L3NwYW4+CiAgICAgICAgICAgIDxzcGFuPtCQ0LrRgtC40LLQvdC+0YHRgtGMPC9zcGFuPg==", "ICAgICAgICAgICAgPHNwYW4+0J7RgtCy0LXRgtGLPC9zcGFuPgogICAgICAgICAgICA8c3Bhbj7Qn9GA0L7RgdC80L7RgtGA0Ys8L3NwYW4+CiAgICAgICAgICAgIDxzcGFuPtCf0L7RgdC70LXQtNC90LXQtTwvc3Bhbj4="),
+              ("Расчёт инициалов рейтинга", "ICAgICAgICAgICAgICAgICAgY29uc3QgaW5pdGlhbHMgPSAoCiAgICAgICAgICAgICAgICAgICAgcGFydGljaXBhbnQuZGlzcGxheU5hbWUgfHwKICAgICAgICAgICAgICAgICAgICBwYXJ0aWNpcGFudC51c2VybmFtZQogICAgICAgICAgICAgICAgICApCiAgICAgICAgICAgICAgICAgICAgLnNwbGl0KC9ccysvKQogICAgICAgICAgICAgICAgICAgIC5maWx0ZXIoQm9vbGVhbikKICAgICAgICAgICAgICAgICAgICAubWFwKChwYXJ0KSA9PiBwYXJ0WzBdKQogICAgICAgICAgICAgICAgICAgIC5qb2luKCcnKQogICAgICAgICAgICAgICAgICAgIC5zbGljZSgwLCAyKQogICAgICAgICAgICAgICAgICAgIC50b1VwcGVyQ2FzZSgpOwoK", ""),
+              ("Аватар участника недели", "ICAgICAgICAgICAgICAgICAgICAgIDxzcGFuCiAgICAgICAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X193ZWVrbHktYXZhdGFyIgogICAgICAgICAgICAgICAgICAgICAgICBhcmlhLWhpZGRlbj0idHJ1ZSIKICAgICAgICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgICAgICAge2luaXRpYWxzIHx8ICc0Uid9CiAgICAgICAgICAgICAgICAgICAgICA8L3NwYW4+", "ICAgICAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X193ZWVrbHktYXZhdGFyIj4KICAgICAgICAgICAgICAgICAgICAgICAgPEF2YXRhcgogICAgICAgICAgICAgICAgICAgICAgICAgIG5hbWU9e3BhcnRpY2lwYW50LmRpc3BsYXlOYW1lIHx8IHBhcnRpY2lwYW50LnVzZXJuYW1lfQogICAgICAgICAgICAgICAgICAgICAgICAgIHNpemU9ezI2fQogICAgICAgICAgICAgICAgICAgICAgICAgIHVybD17cGFydGljaXBhbnQuYXZhdGFyVXJsfQogICAgICAgICAgICAgICAgICAgICAgICAvPgogICAgICAgICAgICAgICAgICAgICAgPC9zcGFuPg=="),
+              ("Подпись результата участника недели", "ICAgICAgICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgICAgICAge3Njb3JlfQogICAgICAgICAgICAgICAgICAgICAgPC9zcGFuPg==", "ICAgICAgICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgICAgICAgPHN0cm9uZz57c2NvcmV9PC9zdHJvbmc+CiAgICAgICAgICAgICAgICAgICAgICAgIDxzbWFsbD57d2Vla2x5TW9kZSA9PT0gJ2xpa2VzJyA/ICfRgdC40LzQv9Cw0YLQuNC5JyA6ICfQsdCw0LvQu9C+0LInfTwvc21hbGw+CiAgICAgICAgICAgICAgICAgICAgICA8L3NwYW4+"),
+              ("Новости проекта и блок О FORRUM", "ICAgICAgICA8SG9tZVBhbmVsCiAgICAgICAgICB0aXRsZT0i0J3QvtCy0L7RgdGC0LggNFJSVU0iCiAgICAgICAgICBocmVmPSIvbmV3cyIKICAgICAgICA+CiAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X19hY3R1YWwtbGlzdCI+CiAgICAgICAgICAgIHthbm5vdW5jZW1lbnRzLmxlbmd0aCA/ICgKICAgICAgICAgICAgICBhbm5vdW5jZW1lbnRzLnNsaWNlKDAsIDMpLm1hcCgoaXRlbSkgPT4gKAogICAgICAgICAgICAgICAgPExpbmsKICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX2FjdHVhbCIKICAgICAgICAgICAgICAgICAgaHJlZj17YC9wLyR7aXRlbS5zbHVnfWB9CiAgICAgICAgICAgICAgICAgIGtleT17aXRlbS5pZH0KICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgPENvbW11bml0eU1hcmsKICAgICAgICAgICAgICAgICAgICBuYW1lPXtpdGVtLmNvbW11bml0eS5uYW1lfQogICAgICAgICAgICAgICAgICAgIHVybD17dG9waWNDb250ZW50VmlzdWFsKGl0ZW0pfQogICAgICAgICAgICAgICAgICAgIHNpemU9ezMwfQogICAgICAgICAgICAgICAgICAvPgogICAgICAgICAgICAgICAgICA8c3Bhbj4KICAgICAgICAgICAgICAgICAgICA8c3Ryb25nPntpdGVtLnRpdGxlIHx8ICfQndC+0LLQvtGB0YLRjCA0UlJVTSd9PC9zdHJvbmc+CiAgICAgICAgICAgICAgICAgICAgPHNtYWxsPntyZWxhdGl2ZVRpbWUoaXRlbS5jcmVhdGVkQXQpfTwvc21hbGw+CiAgICAgICAgICAgICAgICAgIDwvc3Bhbj4KICAgICAgICAgICAgICAgIDwvTGluaz4KICAgICAgICAgICAgICApKQogICAgICAgICAgICApIDogKAogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X19lbXB0eSI+CiAgICAgICAgICAgICAgICDQndC+0LLQvtGB0YLQuCA0UlJVTSDQv9C+0LrQsCDQvdC1INC+0L/Rg9Cx0LvQuNC60L7QstCw0L3Riy4KICAgICAgICAgICAgICA8L3A+CiAgICAgICAgICAgICl9CiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L0hvbWVQYW5lbD4KICAgICAgICB7LyogNFJSVU1fSE9NRV9TVEFSVF9SQUlMICovfQogICAgICAgIDxIb21lUGFuZWwgdGl0bGU9ItCh0YLQsNGA0YIgNFJSVU0iPgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fc3RhcnQtbGlzdCI+CiAgICAgICAgICAgIDxMaW5rIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X19zdGFydC1saW5rIiBocmVmPSIvI3Byb3Bvc2Utc2VjdGlvbiI+CiAgICAgICAgICAgICAgPHN0cm9uZz7Qn9GA0LXQtNC70L7QttC40YLRjCDRgNCw0LfQtNC10Ls8L3N0cm9uZz4KICAgICAgICAgICAgICA8c21hbGw+0JfQsNC/0YPRgdGC0LjRgtGMINC90L7QstC+0LUg0L3QsNC/0YDQsNCy0LvQtdC90LjQtSDRgdC+0L7QsdGJ0LXRgdGC0LLQsDwvc21hbGw+CiAgICAgICAgICAgIDwvTGluaz4KICAgICAgICAgICAgPExpbmsgY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX3N0YXJ0LWxpbmsiIGhyZWY9Ii8jYmVjb21lLWN1cmF0b3IiPgogICAgICAgICAgICAgIDxzdHJvbmc+0KHRgtCw0YLRjCDQutGD0YDQsNGC0L7RgNC+0Lw8L3N0cm9uZz4KICAgICAgICAgICAgICA8c21hbGw+0JLQt9GP0YLRjCDQvtGC0LLQtdGC0YHRgtCy0LXQvdC90L7RgdGC0Ywg0LfQsCDRgNCw0LfQstC40YLQuNC1INGA0LDQt9C00LXQu9CwPC9zbWFsbD4KICAgICAgICAgICAgPC9MaW5rPgogICAgICAgICAgICA8TGluayBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fc3RhcnQtbGluayIgaHJlZj0iL3N1cHBvcnQiPgogICAgICAgICAgICAgIDxzdHJvbmc+0J7QsdGA0LDRgtC90LDRjyDRgdCy0Y/Qt9GMPC9zdHJvbmc+CiAgICAgICAgICAgICAgPHNtYWxsPtCh0L7QvtCx0YnQuNGC0Ywg0L7QsSDQvtGI0LjQsdC60LUg0LjQu9C4INC/0YDQtdC00LvQvtC20LjRgtGMINGD0LvRg9GH0YjQtdC90LjQtTwvc21hbGw+CiAgICAgICAgICAgIDwvTGluaz4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvSG9tZVBhbmVsPgo=", "ICAgICAgICA8SG9tZVBhbmVsCiAgICAgICAgICB0aXRsZT0i0J3QvtCy0L7RgdGC0LggRk9SUlVNIgogICAgICAgICAgaHJlZj0iL25ld3MiCiAgICAgICAgPgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fYWN0dWFsLWxpc3QiPgogICAgICAgICAgICB7YW5ub3VuY2VtZW50cy5sZW5ndGggPyAoCiAgICAgICAgICAgICAgYW5ub3VuY2VtZW50cy5zbGljZSgwLCAzKS5tYXAoKGl0ZW0pID0+ICgKICAgICAgICAgICAgICAgIDxMaW5rCiAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iZm9ycnVtLWhvbWUtdjE2X19hY3R1YWwiCiAgICAgICAgICAgICAgICAgIGhyZWY9e2AvcC8ke2l0ZW0uc2x1Z31gfQogICAgICAgICAgICAgICAgICBrZXk9e2l0ZW0uaWR9CiAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgIDxDb21tdW5pdHlNYXJrCiAgICAgICAgICAgICAgICAgICAgbmFtZT17aXRlbS5jb21tdW5pdHkubmFtZX0KICAgICAgICAgICAgICAgICAgICB1cmw9e3RvcGljQ29udGVudFZpc3VhbChpdGVtKX0KICAgICAgICAgICAgICAgICAgICBzaXplPXszMH0KICAgICAgICAgICAgICAgICAgLz4KICAgICAgICAgICAgICAgICAgPHNwYW4+CiAgICAgICAgICAgICAgICAgICAgPHN0cm9uZz57aXRlbS50aXRsZSB8fCAn0J3QvtCy0L7RgdGC0YwgRk9SUlVNJ308L3N0cm9uZz4KICAgICAgICAgICAgICAgICAgICA8c21hbGw+e3JlbGF0aXZlVGltZShpdGVtLmNyZWF0ZWRBdCl9PC9zbWFsbD4KICAgICAgICAgICAgICAgICAgPC9zcGFuPgogICAgICAgICAgICAgICAgPC9MaW5rPgogICAgICAgICAgICAgICkpCiAgICAgICAgICAgICkgOiAoCiAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX2VtcHR5Ij4KICAgICAgICAgICAgICAgINCd0L7QstC+0YHRgtC4IEZPUlJVTSDQv9C+0LrQsCDQvdC1INC+0L/Rg9Cx0LvQuNC60L7QstCw0L3Riy4KICAgICAgICAgICAgICA8L3A+CiAgICAgICAgICAgICl9CiAgICAgICAgICAgIDxMaW5rCiAgICAgICAgICAgICAgY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX2FjdHVhbCBmb3JydW0taG9tZS12MThfX3Byb2plY3QtbmV3cyIKICAgICAgICAgICAgICBocmVmPSIvY29tbXVuaXRpZXMvcHJvcG9zYWxzIgogICAgICAgICAgICA+CiAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX2FjdHVhbC1zeW1ib2wiIGFyaWEtaGlkZGVuPSJ0cnVlIj7ijJU8L3NwYW4+CiAgICAgICAgICAgICAgPHNwYW4+CiAgICAgICAgICAgICAgICA8c3Ryb25nPtCf0LXRgNCy0YvQuSDQoNC+0LfRi9GB0LogRk9SUlVNPC9zdHJvbmc+CiAgICAgICAgICAgICAgICA8c21hbGw+0J7RgtC60YDQvtC10YIg0L3QvtCy0YvQuSDRjdGC0LDQvyDQv9GA0L7QtdC60YLQsDwvc21hbGw+CiAgICAgICAgICAgICAgPC9zcGFuPgogICAgICAgICAgICA8L0xpbms+CiAgICAgICAgICAgIDxMaW5rCiAgICAgICAgICAgICAgY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX2FjdHVhbCBmb3JydW0taG9tZS12MThfX3Byb2plY3QtbmV3cyIKICAgICAgICAgICAgICBocmVmPSIvcnVsZXMiCiAgICAgICAgICAgID4KICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fYWN0dWFsLXN5bWJvbCIgYXJpYS1oaWRkZW49InRydWUiPmk8L3NwYW4+CiAgICAgICAgICAgICAgPHNwYW4+CiAgICAgICAgICAgICAgICA8c3Ryb25nPtCa0LDQuiDRgNCw0LfQstC40LLQsNC10YLRgdGPIEZPUlJVTTwvc3Ryb25nPgogICAgICAgICAgICAgICAgPHNtYWxsPtCX0LDRj9Cy0LrQuCwg0LrRg9GA0LDRgtC+0YDRiyDQuCDQv9GA0LDQstC40LvQsCDQt9Cw0L/Rg9GB0LrQsDwvc21hbGw+CiAgICAgICAgICAgICAgPC9zcGFuPgogICAgICAgICAgICA8L0xpbms+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L0hvbWVQYW5lbD4KCiAgICAgICAgPEhvbWVQYW5lbCB0aXRsZT0i0J4gRk9SUlVNIj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX3N0YXJ0LWxpc3QiPgogICAgICAgICAgICA8TGluayBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fc3RhcnQtbGluayIgaHJlZj0iL3J1bGVzIj4KICAgICAgICAgICAgICA8c3Ryb25nPtCa0LDQuiDRg9GB0YLRgNC+0LXQvSBGT1JSVU08L3N0cm9uZz4KICAgICAgICAgICAgICA8c21hbGw+0J/RgNCw0LLQuNC70LAsINGA0L7Qu9C4INC4INGD0YHRgtGA0L7QudGB0YLQstC+INGB0L7QvtCx0YnQtdGB0YLQstCwPC9zbWFsbD4KICAgICAgICAgICAgPC9MaW5rPgogICAgICAgICAgICA8TGluayBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fc3RhcnQtbGluayIgaHJlZj0iL2NvbW11bml0aWVzL3Byb3Bvc2FscyI+CiAgICAgICAgICAgICAgPHN0cm9uZz7Qn9GA0LXQtNC70L7QttC40YLRjCDRgNCw0LfQtNC10Ls8L3N0cm9uZz4KICAgICAgICAgICAgICA8c21hbGw+0JfQsNC/0YPRgdGC0LjRgtGMINC90L7QstC+0LUg0L3QsNC/0YDQsNCy0LvQtdC90LjQtSDRgdC+0L7QsdGJ0LXRgdGC0LLQsDwvc21hbGw+CiAgICAgICAgICAgIDwvTGluaz4KICAgICAgICAgICAgPExpbmsgY2xhc3NOYW1lPSJmb3JydW0taG9tZS12MTZfX3N0YXJ0LWxpbmsiIGhyZWY9Ii8jYmVjb21lLWN1cmF0b3IiPgogICAgICAgICAgICAgIDxzdHJvbmc+0KHRgtCw0YLRjCDQutGD0YDQsNGC0L7RgNC+0Lw8L3N0cm9uZz4KICAgICAgICAgICAgICA8c21hbGw+0JLQt9GP0YLRjCDQvtGC0LLQtdGC0YHRgtCy0LXQvdC90L7RgdGC0Ywg0LfQsCDRgNCw0LfQstC40YLQuNC1INGA0LDQt9C00LXQu9CwPC9zbWFsbD4KICAgICAgICAgICAgPC9MaW5rPgogICAgICAgICAgICA8TGluayBjbGFzc05hbWU9ImZvcnJ1bS1ob21lLXYxNl9fc3RhcnQtbGluayIgaHJlZj0iL3N1cHBvcnQiPgogICAgICAgICAgICAgIDxzdHJvbmc+0J7QsdGA0LDRgtC90LDRjyDRgdCy0Y/Qt9GMPC9zdHJvbmc+CiAgICAgICAgICAgICAgPHNtYWxsPtCh0L7QvtCx0YnQuNGC0Ywg0L7QsSDQvtGI0LjQsdC60LUg0LjQu9C4INC/0YDQtdC00LvQvtC20LjRgtGMINGD0LvRg9GH0YjQtdC90LjQtTwvc21hbGw+CiAgICAgICAgICAgIDwvTGluaz4KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvSG9tZVBhbmVsPgo="),
+          ]
+
+          for label, old_encoded, new_encoded in replacements:
+              old = decode(old_encoded)
+              new = decode(new_encoded)
+              count = home.count(old)
+              if count != 1:
+                  raise SystemExit(
+                      f'{label}: ожидалось одно точное совпадение, найдено {count}.'
+                  )
+              home = home.replace(old, new, 1)
+
+          css_addition = decode("Ci5mb3JydW0taG9tZS12MThfX3RyZWUtc3Vic2NyaWJlcnMgewogIGZsZXg6IDAgMCBhdXRvOwogIG1hcmdpbi1sZWZ0OiBhdXRvOwogIGNvbG9yOiB2YXIoLS1tdXRlZCk7CiAgZm9udC1zaXplOiA5cHg7CiAgZm9udC12YXJpYW50LW51bWVyaWM6IHRhYnVsYXItbnVtczsKICBsaW5lLWhlaWdodDogMTsKfQoKLmZvcnJ1bS1ob21lLXYxNl9fdHJlZS1jaGlsZHJlbiB7CiAgcG9zaXRpb246IHJlbGF0aXZlOwp9CgouZm9ycnVtLWhvbWUtdjE2X190cmVlLWNoaWxkcmVuOjpiZWZvcmUgewogIHBvc2l0aW9uOiBhYnNvbHV0ZTsKICB0b3A6IDA7CiAgYm90dG9tOiA3cHg7CiAgbGVmdDogMTRweDsKICBib3JkZXItbGVmdDogMXB4IHNvbGlkIHZhcigtLWxpbmUpOwogIGNvbnRlbnQ6ICcnOwogIHBvaW50ZXItZXZlbnRzOiBub25lOwp9CgouZm9ycnVtLWhvbWUtdjE2X190cmVlLWNoaWxkcmVuIC5mb3JydW0taG9tZS12MTZfX3RyZWUtcm93OjpiZWZvcmUgewogIHdpZHRoOiA3cHg7CiAgbWFyZ2luLXJpZ2h0OiAycHg7CiAgYm9yZGVyLXRvcDogMXB4IHNvbGlkIHZhcigtLWxpbmUpOwogIGNvbnRlbnQ6ICcnOwp9CgouZm9ycnVtLWhvbWUtdjE4X19zeXN0ZW0tbmF2IHsKICBkaXNwbGF5OiBncmlkOwogIGdyaWQtdGVtcGxhdGUtY29sdW1uczogcmVwZWF0KDIsIG1pbm1heCgwLCAxZnIpKTsKICBib3JkZXItdG9wOiAxcHggc29saWQgdmFyKC0tbGluZSk7CiAgYm9yZGVyLWJvdHRvbTogMXB4IHNvbGlkIHZhcigtLWxpbmUpOwp9CgouZm9ycnVtLWhvbWUtdjE4X19zeXN0ZW0tbmF2IGEgewogIGRpc3BsYXk6IGZsZXg7CiAgbWluLXdpZHRoOiAwOwogIG1pbi1oZWlnaHQ6IDMwcHg7CiAgYWxpZ24taXRlbXM6IGNlbnRlcjsKICBqdXN0aWZ5LWNvbnRlbnQ6IHNwYWNlLWJldHdlZW47CiAgZ2FwOiA2cHg7CiAgcGFkZGluZzogNnB4IDhweDsKICBjb2xvcjogdmFyKC0tdGV4dCk7CiAgZm9udC1zaXplOiAxMHB4OwogIGZvbnQtd2VpZ2h0OiA2MDA7CiAgdGV4dC1kZWNvcmF0aW9uOiBub25lOwp9CgouZm9ycnVtLWhvbWUtdjE4X19zeXN0ZW0tbmF2IGE6bnRoLWNoaWxkKG9kZCkgewogIGJvcmRlci1yaWdodDogMXB4IHNvbGlkIHZhcigtLWxpbmUpOwp9CgouZm9ycnVtLWhvbWUtdjE4X19zeXN0ZW0tbmF2IGE6bnRoLWNoaWxkKC1uICsgMikgewogIGJvcmRlci1ib3R0b206IDFweCBzb2xpZCB2YXIoLS1saW5lKTsKfQoKLmZvcnJ1bS1ob21lLXYxOF9fc3lzdGVtLW5hdiBhOmhvdmVyLAouZm9ycnVtLWhvbWUtdjE4X19zeXN0ZW0tbmF2IGE6Zm9jdXMtdmlzaWJsZSB7CiAgYmFja2dyb3VuZDogdmFyKC0tc3VyZmFjZS1zb2Z0KTsKICBjb2xvcjogdmFyKC0tYWNjZW50KTsKfQoKLmZvcnJ1bS1ob21lLXYxOF9fZGlzY3Vzc2VkIHsKICBncmlkLXRlbXBsYXRlLWNvbHVtbnM6IDQ2cHggbWlubWF4KDAsIDFmcikgNTJweCA2NHB4IDExMnB4ICFpbXBvcnRhbnQ7CiAgY29sdW1uLWdhcDogOXB4ICFpbXBvcnRhbnQ7Cn0KCi5mb3JydW0taG9tZS12MTZfX2Rpc2N1c3NlZC1oZWFkIHsKICB3aWR0aDogMjQ2cHggIWltcG9ydGFudDsKICBtaW4td2lkdGg6IDI0NnB4ICFpbXBvcnRhbnQ7CiAgbWFyZ2luLWxlZnQ6IGF1dG8gIWltcG9ydGFudDsKICBncmlkLXRlbXBsYXRlLWNvbHVtbnM6IDUycHggNjRweCAxMTJweCAhaW1wb3J0YW50OwogIGNvbHVtbi1nYXA6IDlweCAhaW1wb3J0YW50Owp9CgouZm9ycnVtLWhvbWUtdjE4X190b3BpYy10eXBlIHsKICBib3JkZXI6IDAgIWltcG9ydGFudDsKICBiYWNrZ3JvdW5kOiB0cmFuc3BhcmVudCAhaW1wb3J0YW50OwogIGNvbG9yOiB2YXIoLS1hY2NlbnQpICFpbXBvcnRhbnQ7CiAgZm9udC1zaXplOiA5cHggIWltcG9ydGFudDsKICBmb250LXdlaWdodDogNzUwICFpbXBvcnRhbnQ7CiAgbGV0dGVyLXNwYWNpbmc6IDAuMDJlbTsKICBwYWRkaW5nOiAwICFpbXBvcnRhbnQ7Cn0KCi5mb3JydW0taG9tZS12MThfX2Rpc2N1c3NlZCAuZm9ycnVtLWhvbWUtdjE2X190b3BpYy10aXRsZSBzdHJvbmcgewogIGNvbG9yOiB2YXIoLS10ZXh0KSAhaW1wb3J0YW50OwogIGZvbnQtc2l6ZTogMTJweCAhaW1wb3J0YW50OwogIGZvbnQtd2VpZ2h0OiA3MDAgIWltcG9ydGFudDsKICBsaW5lLWhlaWdodDogMS4yMiAhaW1wb3J0YW50Owp9CgouZm9ycnVtLWhvbWUtdjE4X190b3BpYy1tZXRhIHsKICBnYXA6IDVweCAhaW1wb3J0YW50OwogIGNvbG9yOiB2YXIoLS1tdXRlZCkgIWltcG9ydGFudDsKfQoKLmZvcnJ1bS1ob21lLXYxOF9fdG9waWMtYXV0aG9yIHsKICBjb2xvcjogdmFyKC0tdGV4dCkgIWltcG9ydGFudDsKICBmb250LXdlaWdodDogNjAwICFpbXBvcnRhbnQ7Cn0KCi5mb3JydW0taG9tZS12MThfX2Rpc2N1c3NlZCAuZm9ycnVtLWhvbWUtdjE2X19kaXNjdXNzaW9uLXN0YXQgewogIGNvbG9yOiB2YXIoLS10ZXh0KSAhaW1wb3J0YW50OwogIGZvbnQtc2l6ZTogMTBweCAhaW1wb3J0YW50OwogIGZvbnQtdmFyaWFudC1udW1lcmljOiB0YWJ1bGFyLW51bXM7CiAgZm9udC13ZWlnaHQ6IDYwMCAhaW1wb3J0YW50OwogIHRleHQtYWxpZ246IGNlbnRlciAhaW1wb3J0YW50Owp9CgouZm9ycnVtLWhvbWUtdjE4X19sYXN0LW1lc3NhZ2UgewogIGRpc3BsYXk6IGdyaWQgIWltcG9ydGFudDsKICBtaW4td2lkdGg6IDA7CiAgYWxpZ24tY29udGVudDogY2VudGVyOwogIGp1c3RpZnktaXRlbXM6IGNlbnRlcjsKICBnYXA6IDJweDsKICB0ZXh0LWFsaWduOiBjZW50ZXIgIWltcG9ydGFudDsKfQoKLmZvcnJ1bS1ob21lLXYxOF9fbGFzdC1tZXNzYWdlIHN0cm9uZywKLmZvcnJ1bS1ob21lLXYxOF9fbGFzdC1tZXNzYWdlIHNtYWxsIHsKICBkaXNwbGF5OiBibG9jazsKICBtYXgtd2lkdGg6IDEwMCU7CiAgb3ZlcmZsb3c6IGhpZGRlbjsKICB0ZXh0LW92ZXJmbG93OiBlbGxpcHNpczsKICB3aGl0ZS1zcGFjZTogbm93cmFwOwp9CgouZm9ycnVtLWhvbWUtdjE4X19sYXN0LW1lc3NhZ2Ugc3Ryb25nIHsKICBjb2xvcjogdmFyKC0tdGV4dCkgIWltcG9ydGFudDsKICBmb250LXNpemU6IDEwcHggIWltcG9ydGFudDsKICBmb250LXdlaWdodDogNjUwICFpbXBvcnRhbnQ7Cn0KCi5mb3JydW0taG9tZS12MThfX2xhc3QtbWVzc2FnZSBzbWFsbCB7CiAgY29sb3I6IHZhcigtLW11dGVkKSAhaW1wb3J0YW50OwogIGZvbnQtc2l6ZTogOXB4ICFpbXBvcnRhbnQ7Cn0KCi5mb3JydW0taG9tZS12MThfX25ldy10b3BpYy1sYXN0IHsKICBkaXNwbGF5OiBncmlkICFpbXBvcnRhbnQ7CiAgbWluLXdpZHRoOiAwOwogIGdhcDogMXB4Owp9CgouZm9ycnVtLWhvbWUtdjE4X19uZXctdG9waWMtbGFzdCBzdHJvbmcsCi5mb3JydW0taG9tZS12MThfX25ldy10b3BpYy1sYXN0IHNtYWxsIHsKICBvdmVyZmxvdzogaGlkZGVuOwogIHRleHQtb3ZlcmZsb3c6IGVsbGlwc2lzOwogIHdoaXRlLXNwYWNlOiBub3dyYXA7Cn0KCi5mb3JydW0taG9tZS12MThfX25ldy10b3BpYy1sYXN0IHN0cm9uZyB7CiAgY29sb3I6IHZhcigtLXRleHQpOwogIGZvbnQtc2l6ZTogOS41cHg7Cn0KCi5mb3JydW0taG9tZS12MThfX25ldy10b3BpYy1sYXN0IHNtYWxsIHsKICBjb2xvcjogdmFyKC0tbXV0ZWQpOwogIGZvbnQtc2l6ZTogOXB4Owp9CgouZm9ycnVtLWhvbWUtdjE2X193ZWVrbHktYXZhdGFyIHsKICBvdmVyZmxvdzogaGlkZGVuOwogIGJvcmRlcjogMCAhaW1wb3J0YW50OwogIGJhY2tncm91bmQ6IHRyYW5zcGFyZW50ICFpbXBvcnRhbnQ7Cn0KCi5mb3JydW0taG9tZS12MTZfX3dlZWtseS1hdmF0YXIgLmF2YXRhciB7CiAgZGlzcGxheTogaW5saW5lLWZsZXg7CiAgd2lkdGg6IDI2cHggIWltcG9ydGFudDsKICBoZWlnaHQ6IDI2cHggIWltcG9ydGFudDsKICBhbGlnbi1pdGVtczogY2VudGVyOwogIGp1c3RpZnktY29udGVudDogY2VudGVyOwp9CgouZm9ycnVtLWhvbWUtdjE2X193ZWVrbHktc2NvcmUgewogIGRpc3BsYXk6IGdyaWQgIWltcG9ydGFudDsKICBqdXN0aWZ5LWl0ZW1zOiBlbmQ7CiAgZ2FwOiAxcHg7CiAgY29sb3I6IHZhcigtLXRleHQpICFpbXBvcnRhbnQ7CiAgbGluZS1oZWlnaHQ6IDE7Cn0KCi5mb3JydW0taG9tZS12MTZfX3dlZWtseS1zY29yZSBzdHJvbmcgewogIGZvbnQtc2l6ZTogMTBweDsKICBmb250LXZhcmlhbnQtbnVtZXJpYzogdGFidWxhci1udW1zOwp9CgouZm9ycnVtLWhvbWUtdjE2X193ZWVrbHktc2NvcmUgc21hbGwgewogIGNvbG9yOiB2YXIoLS1tdXRlZCk7CiAgZm9udC1zaXplOiA4cHg7CiAgZm9udC13ZWlnaHQ6IDQ1MDsKfQoKLmZvcnJ1bS1ob21lLXYxOF9fcHJvamVjdC1uZXdzIHsKICBiYWNrZ3JvdW5kOiB2YXIoLS1zdXJmYWNlLXNvZnQpOwp9CgouZm9ycnVtLWhvbWUtdjE4X19wcm9qZWN0LW5ld3MgLmZvcnJ1bS1ob21lLXYxNl9fYWN0dWFsLXN5bWJvbCB7CiAgYm9yZGVyLWNvbG9yOiB2YXIoLS1saW5lLXN0cm9uZyk7CiAgY29sb3I6IHZhcigtLWFjY2VudCk7Cn0KCkBtZWRpYSAobWF4LXdpZHRoOiAxMjgwcHgpIGFuZCAobWluLXdpZHRoOiA5NjFweCkgewogIC5mb3JydW0taG9tZS12MThfX2Rpc2N1c3NlZCB7CiAgICBncmlkLXRlbXBsYXRlLWNvbHVtbnM6IDQ0cHggbWlubWF4KDAsIDFmcikgNDZweCA1NnB4IDEwNHB4ICFpbXBvcnRhbnQ7CiAgICBjb2x1bW4tZ2FwOiA3cHggIWltcG9ydGFudDsKICB9CgogIC5mb3JydW0taG9tZS12MTZfX2Rpc2N1c3NlZC1oZWFkIHsKICAgIHdpZHRoOiAyMjBweCAhaW1wb3J0YW50OwogICAgbWluLXdpZHRoOiAyMjBweCAhaW1wb3J0YW50OwogICAgZ3JpZC10ZW1wbGF0ZS1jb2x1bW5zOiA0NnB4IDU2cHggMTA0cHggIWltcG9ydGFudDsKICAgIGNvbHVtbi1nYXA6IDdweCAhaW1wb3J0YW50OwogIH0KfQoKQG1lZGlhIChtYXgtd2lkdGg6IDk2MHB4KSB7CiAgLmZvcnJ1bS1ob21lLXYxOF9fZGlzY3Vzc2VkIHsKICAgIGdyaWQtdGVtcGxhdGUtY29sdW1uczogNDBweCBtaW5tYXgoMCwgMWZyKSAxMDRweCAhaW1wb3J0YW50OwogIH0KCiAgLmZvcnJ1bS1ob21lLXYxOF9fZGlzY3Vzc2VkIC5mb3JydW0taG9tZS12MTZfX3RvcGljLXN0YXQsCiAgLmZvcnJ1bS1ob21lLXYxNl9fZGlzY3Vzc2VkLWhlYWQgewogICAgZGlzcGxheTogbm9uZSAhaW1wb3J0YW50OwogIH0KfQoKQG1lZGlhIChtYXgtd2lkdGg6IDUyMHB4KSB7CiAgLmZvcnJ1bS1ob21lLXYxOF9fc3lzdGVtLW5hdiB7CiAgICBncmlkLXRlbXBsYXRlLWNvbHVtbnM6IDFmcjsKICB9CgogIC5mb3JydW0taG9tZS12MThfX3N5c3RlbS1uYXYgYTpudGgtY2hpbGQob2RkKSB7CiAgICBib3JkZXItcmlnaHQ6IDA7CiAgfQoKICAuZm9ycnVtLWhvbWUtdjE4X19zeXN0ZW0tbmF2IGE6bm90KDpsYXN0LWNoaWxkKSB7CiAgICBib3JkZXItYm90dG9tOiAxcHggc29saWQgdmFyKC0tbGluZSk7CiAgfQoKICAuZm9ycnVtLWhvbWUtdjE4X19kaXNjdXNzZWQgewogICAgZ3JpZC10ZW1wbGF0ZS1jb2x1bW5zOiAzNnB4IG1pbm1heCgwLCAxZnIpICFpbXBvcnRhbnQ7CiAgfQoKICAuZm9ycnVtLWhvbWUtdjE4X19sYXN0LW1lc3NhZ2UgewogICAgZ3JpZC1jb2x1bW46IDI7CiAgICBqdXN0aWZ5LWl0ZW1zOiBzdGFydDsKICAgIG1hcmdpbi10b3A6IDNweDsKICAgIHRleHQtYWxpZ246IGxlZnQgIWltcG9ydGFudDsKICB9Cn0K")
+          home = '\n'.join(line.rstrip(' \t') for line in home.splitlines()).rstrip() + '\n'
+          css = '\n'.join(line.rstrip(' \t') for line in css.splitlines()).rstrip()
+          css = css + '\n' + css_addition.strip('\n') + '\n'
+
+          home_path.write_text(home, encoding='utf-8')
+          css_path.write_text(css, encoding='utf-8')
+          PY
+
+          git diff --check
+
+      - name: 05. Проверить изменения V18
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          home = Path('apps/web/components/home-dashboard.tsx').read_text(encoding='utf-8')
+          css = Path('apps/web/app/globals.css').read_text(encoding='utf-8')
+
+          home_required = [
+              'forrum-home-v18__system-nav',
+              'forrum-home-v18__tree-subscribers',
+              'forrum-home-v18__discussed',
+              'forrum-home-v18__topic-type',
+              'forrum-home-v18__last-message',
+              'forrum-home-v18__new-topic-last',
+              'title="Новости FORRUM"',
+              'title="О FORRUM"',
+              'Первый Розыск FORRUM',
+              'Как развивается FORRUM',
+              'href="/media"',
+              'href="/services"',
+              'href="/welcome"',
+              '<span>Последнее</span>',
+          ]
+          css_required = [
+              '.forrum-home-v18__system-nav',
+              '.forrum-home-v18__tree-subscribers',
+              '.forrum-home-v18__discussed',
+              '.forrum-home-v18__topic-type',
+              '.forrum-home-v18__last-message',
+              '.forrum-home-v18__new-topic-last',
+              '.forrum-home-v18__project-news',
+          ]
+
+          for value in home_required:
+              if value not in home:
+                  raise SystemExit(f'Не найден результат V18 в TSX: {value}')
+          for value in css_required:
+              if value not in css:
+                  raise SystemExit(f'Не найден стиль V18: {value}')
+
+          forbidden_ui = [
+              'title="Новости 4RRUM"',
+              'title="Старт 4RRUM"',
+              "'Новость 4RRUM'",
+              'Новости 4RRUM пока не опубликованы.',
+              '<span>Активность</span>',
+          ]
+          for value in forbidden_ui:
+              if value in home:
+                  raise SystemExit(f'Остался старый интерфейс: {value}')
+
+          if home.count('forrum-home-v18__system-nav') != 1:
+              raise SystemExit('Системная навигация V18 добавлена не один раз.')
+          if home.count('function DiscussedTopic') != 1:
+              raise SystemExit('DiscussedTopic должен существовать ровно один раз.')
+          PY
+
+          changed="$(git diff --name-only | sort -u)"
+          expected="$(printf '%s\n'             apps/web/app/globals.css             apps/web/components/home-dashboard.tsx | sort -u)"
+
+          printf 'Изменённые файлы:\n%s\n' "$changed"
+          test "$changed" = "$expected"
+          test -z "$(git diff --name-only -- apps/api packages/contracts)"
+          git diff --check
+
+      - name: 06. Установить зависимости
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --include=dev --no-audit --no-fund --package-lock=false
+
+      - name: 07. Typecheck
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run typecheck
+
+      - name: 08. Build
+        shell: bash
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+        run: |
+          set -euo pipefail
+          npm run build
+
+      - name: 09. Stage и аудит
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git add --             apps/web/app/globals.css             apps/web/components/home-dashboard.tsx
+
+          git diff --cached --check
+          staged="$(git diff --cached --name-only | sort -u)"
+          expected="$(printf '%s\n'             apps/web/app/globals.css             apps/web/components/home-dashboard.tsx | sort -u)"
+
+          printf 'Подготовлено к commit:\n%s\n' "$staged"
+          test "$staged" = "$expected"
+
+          git diff --cached --stat
+          git diff --cached --             apps/web/components/home-dashboard.tsx | sed -n '1,260p'
+
+      - name: 10. Commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "FORRUM updater"
+          git config user.email "actions@users.noreply.github.com"
+          git commit -m "Implement FORRUM Home UI 18"
+
+      - name: 11. Push
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          if [ "$(git rev-parse origin/main)" != "$BASE_SHA" ]; then
+            echo "::error::main изменился во время проверки. Запустите workflow ещё раз."
+            exit 1
+          fi
+
+          git push origin HEAD:main
+
+      - name: 12. Проверить публикацию commit
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+
+          git show origin/main:apps/web/components/home-dashboard.tsx |
+            grep -Fq 'forrum-home-v18__system-nav'
+          git show origin/main:apps/web/components/home-dashboard.tsx |
+            grep -Fq 'Первый Розыск FORRUM'
+          git show origin/main:apps/web/components/home-dashboard.tsx |
+            grep -Fq 'title="О FORRUM"'
+          git show origin/main:apps/web/app/globals.css |
+            grep -Fq '.forrum-home-v18__discussed'
+
+          echo "Главная — 18: применена, проверена и отправлена в main."
+
