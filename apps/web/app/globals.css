@@ -21353,3 +21353,444 @@ html[data-forrum-theme="graphite"] .forrum-home-v16__weekly-more:focus-visible {
     transition: none !important;
   }
 }
+
+/* 4RRUM HOME 18: hierarchy, discovery streams and expanded discussions */
+.forrum-home-v16__tree-node {
+  position: relative;
+}
+
+.forrum-home-v16__tree-children {
+  position: relative;
+  margin-left: 12px !important;
+  padding-left: 12px !important;
+}
+
+.forrum-home-v16__tree-children::before {
+  position: absolute;
+  top: 0;
+  bottom: 8px;
+  left: 4px;
+  border-left: 1px solid var(--line-strong);
+  content: '';
+  opacity: .72;
+  pointer-events: none;
+}
+
+.forrum-home-v16__tree-children > .forrum-home-v16__tree-node > .forrum-home-v16__tree-row::before {
+  width: 8px;
+  margin-left: -8px;
+  border-top: 1px solid var(--line-strong);
+  content: '';
+  opacity: .72;
+}
+
+.forrum-home-v16__tree-toggle {
+  display: inline-grid !important;
+  width: 18px !important;
+  height: 18px !important;
+  flex: 0 0 18px !important;
+  place-items: center;
+  border: 1px solid var(--line-strong) !important;
+  background: var(--surface-soft) !important;
+  color: var(--text) !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+.forrum-home-v16__tree-toggle:hover,
+.forrum-home-v16__tree-toggle:focus-visible {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+
+.forrum-home-v16__tree-row[data-expandable='true'] {
+  cursor: pointer;
+}
+
+.forrum-home-v16__tree-row[data-expandable='true']:hover .forrum-home-v16__tree-name {
+  color: var(--accent);
+}
+
+.forrum-home-v18__discovery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.forrum-home-v18__discovery-grid > .forrum-home-v16__panel {
+  min-width: 0;
+  height: 286px;
+  overflow: hidden;
+}
+
+.forrum-home-v18__panel-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.forrum-home-v18__media-list {
+  display: grid;
+}
+
+.forrum-home-v18__media-item {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 9px;
+  min-height: 60px;
+  align-items: center;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.forrum-home-v18__media-item:hover,
+.forrum-home-v18__media-item:focus-visible {
+  background: var(--surface-soft);
+}
+
+.forrum-home-v18__media-mark,
+.forrum-home-v18__topic-mark {
+  overflow: hidden;
+  border: 1px solid var(--line-strong) !important;
+  background: var(--surface-soft);
+  box-shadow: 2px 2px 0 var(--line);
+}
+
+.forrum-home-v18__media-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.forrum-home-v18__media-copy strong,
+.forrum-home-v18__media-copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.forrum-home-v18__media-copy strong {
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.forrum-home-v18__media-copy small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.forrum-home-v18__topic-type {
+  width: fit-content;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 2px 5px !important;
+  border: 1px solid color-mix(in srgb, var(--accent) 52%, var(--line)) !important;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface-soft)) !important;
+  color: var(--accent) !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  letter-spacing: .035em;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.forrum-home-v18__topic-type.type-news,
+.forrum-home-v18__topic-type.type-announcement {
+  border-color: color-mix(in srgb, #ff5c35 60%, var(--line)) !important;
+  background: color-mix(in srgb, #ff5c35 12%, var(--surface-soft)) !important;
+  color: #d94a27 !important;
+}
+
+.forrum-home-v18__topic-type.type-guide {
+  border-color: color-mix(in srgb, #16a36a 58%, var(--line)) !important;
+  background: color-mix(in srgb, #16a36a 11%, var(--surface-soft)) !important;
+  color: #118054 !important;
+}
+
+.forrum-home-v18__topic-type.type-question {
+  border-color: color-mix(in srgb, #8b5cf6 58%, var(--line)) !important;
+  background: color-mix(in srgb, #8b5cf6 11%, var(--surface-soft)) !important;
+  color: #7142dc !important;
+}
+
+.forrum-home-v18__topic-type.type-service {
+  border-color: color-mix(in srgb, #0c8da8 58%, var(--line)) !important;
+  background: color-mix(in srgb, #0c8da8 11%, var(--surface-soft)) !important;
+  color: #08788f !important;
+}
+
+.forrum-home-v18__service-window {
+  height: 244px;
+  overflow: hidden;
+  position: relative;
+}
+
+.forrum-home-v18__service-window::before,
+.forrum-home-v18__service-window::after {
+  position: absolute;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  height: 14px;
+  content: '';
+  pointer-events: none;
+}
+
+.forrum-home-v18__service-window::before {
+  top: 0;
+  background: linear-gradient(var(--surface, #fff), transparent);
+}
+
+.forrum-home-v18__service-window::after {
+  bottom: 0;
+  background: linear-gradient(transparent, var(--surface, #fff));
+}
+
+.forrum-home-v18__service-track {
+  display: grid;
+}
+
+.forrum-home-v18__service-window[data-animated='true'] .forrum-home-v18__service-track {
+  animation: forrum-home-v18-services 24s linear infinite;
+}
+
+.forrum-home-v18__service-window:hover .forrum-home-v18__service-track,
+.forrum-home-v18__service-window:focus-within .forrum-home-v18__service-track {
+  animation-play-state: paused;
+}
+
+.forrum-home-v18__service-item {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+  min-height: 49px;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--line);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.forrum-home-v18__service-item:hover,
+.forrum-home-v18__service-item:focus-visible {
+  background: var(--surface-soft);
+}
+
+.forrum-home-v18__service-signal {
+  width: 6px;
+  height: 6px;
+  border: 1px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 32%, transparent);
+}
+
+.forrum-home-v18__service-item > span:not(.forrum-home-v18__service-signal) {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.forrum-home-v18__service-item strong,
+.forrum-home-v18__service-item small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.forrum-home-v18__service-item strong {
+  font-size: 10px;
+}
+
+.forrum-home-v18__service-item small,
+.forrum-home-v18__service-item em {
+  color: var(--muted);
+  font-size: 8px;
+  font-style: normal;
+}
+
+@keyframes forrum-home-v18-services {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+.forrum-home-v18__discussed {
+  grid-template-columns: 46px minmax(0, 1fr) 52px 64px 118px !important;
+  column-gap: 9px !important;
+}
+
+.forrum-home-v16__discussed-head {
+  width: 252px !important;
+  min-width: 252px !important;
+  margin-left: auto !important;
+  grid-template-columns: 52px 64px 118px !important;
+  column-gap: 9px !important;
+}
+
+.forrum-home-v18__discussed .forrum-home-v16__topic-title {
+  align-items: center;
+  gap: 6px;
+}
+
+.forrum-home-v18__discussed .forrum-home-v16__topic-title strong {
+  color: var(--text) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1.24 !important;
+}
+
+.forrum-home-v18__discussed .forrum-home-v16__topic-excerpt {
+  margin-top: 4px;
+}
+
+.forrum-home-v18__discussed .forrum-home-v16__discussion-stat {
+  color: var(--text) !important;
+  font-size: 10px !important;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650 !important;
+  text-align: center !important;
+}
+
+.forrum-home-v18__last-message {
+  display: grid !important;
+  min-width: 0;
+  align-content: center;
+  justify-items: end;
+  gap: 2px;
+  text-align: right !important;
+}
+
+.forrum-home-v18__last-message strong,
+.forrum-home-v18__last-message small {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.forrum-home-v18__last-message strong {
+  color: var(--text) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+}
+
+.forrum-home-v18__last-message small {
+  color: var(--muted) !important;
+  font-size: 9px !important;
+}
+
+.forrum-home-v18__expand-button {
+  display: inline-flex;
+  min-height: 24px;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 7px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface-soft);
+  color: var(--text);
+  font: inherit;
+  font-size: 9px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.forrum-home-v18__expand-button:hover,
+.forrum-home-v18__expand-button:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.forrum-home-v18__pagination {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.forrum-home-v18__pagination button {
+  width: fit-content;
+  padding: 4px 7px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface-soft);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.forrum-home-v18__pagination button:last-child {
+  justify-self: end;
+}
+
+.forrum-home-v18__pagination button:disabled {
+  cursor: default;
+  opacity: .38;
+}
+
+@media (max-width: 1280px) and (min-width: 961px) {
+  .forrum-home-v18__discussed {
+    grid-template-columns: 42px minmax(0, 1fr) 46px 54px 104px !important;
+    column-gap: 7px !important;
+  }
+
+  .forrum-home-v16__discussed-head {
+    width: 218px !important;
+    min-width: 218px !important;
+    grid-template-columns: 46px 54px 104px !important;
+    column-gap: 7px !important;
+  }
+}
+
+@media (max-width: 960px) {
+  .forrum-home-v18__discussed {
+    grid-template-columns: 40px minmax(0, 1fr) 106px !important;
+  }
+
+  .forrum-home-v18__discussed .forrum-home-v16__topic-stat,
+  .forrum-home-v16__discussed-head {
+    display: none !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .forrum-home-v18__discovery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .forrum-home-v18__panel-actions {
+    gap: 7px;
+  }
+
+  .forrum-home-v18__discussed {
+    grid-template-columns: 36px minmax(0, 1fr) !important;
+  }
+
+  .forrum-home-v18__last-message {
+    grid-column: 2;
+    justify-items: start;
+    margin-top: 3px;
+    text-align: left !important;
+  }
+
+  .forrum-home-v18__pagination {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .forrum-home-v18__pagination span {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forrum-home-v18__service-window[data-animated='true'] .forrum-home-v18__service-track {
+    animation: none;
+  }
+}

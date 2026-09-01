@@ -269,7 +269,7 @@ function lastReply(item: {
 }
 
 function communityDisplayName(name: string) {
-  return name === 'FORRUM Start' ? 'Старт 4RRUM' : name;
+  return name === 'FORRUM Start' ? 'О FORRUM' : name;
 }
 
 function TreeBranch({
@@ -366,12 +366,27 @@ function TreeBranch({
   );
 }
 
-function HomePanel({ title, href, children }: { title: string; href?: string; children: ReactNode }) {
+function HomePanel({
+  title,
+  href,
+  action,
+  children,
+}: {
+  title: string;
+  href?: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <section className="forrum-home-v16__panel">
       <header className="forrum-home-v16__panel-head">
         <h2>{title}</h2>
-        {href && <Link href={href}>Смотреть все <span aria-hidden="true">→</span></Link>}
+        {(action || href) && (
+          <span className="forrum-home-v18__panel-actions">
+            {action}
+            {href && <Link href={href}>Смотреть все <span aria-hidden="true">→</span></Link>}
+          </span>
+        )}
       </header>
       {children}
     </section>
@@ -381,49 +396,61 @@ function HomePanel({ title, href, children }: { title: string; href?: string; ch
 function DiscussedTopic({ item }: { item: PublicationCardData | HomeDiscussedTopic }) {
   const reply = lastReply(item);
   return (
-    <Link className="forrum-home-v16__discussed" href={`/p/${item.slug}`}>
+    <Link className="forrum-home-v16__discussed forrum-home-v18__discussed" href={`/p/${item.slug}`}>
       <CommunityMark
-        className="forrum-home-v16__topic-mark"
+        className="forrum-home-v16__topic-mark forrum-home-v18__topic-mark"
         name={item.community.name}
         url={topicContentVisual(item)}
         size={46}
       />
       <span className="forrum-home-v16__discussed-copy">
         <span className="forrum-home-v16__topic-title">
-          <span className={`forrum-home-v16__type type-${item.type.toLowerCase()}`}>
-            {publicationTypeName[item.type] ?? 'Тема'}
+          <span className={`forrum-home-v16__type forrum-home-v18__topic-type type-${item.type.toLowerCase()}`}>
+            #{publicationTypeName[item.type] ?? 'Тема'}
           </span>
           <strong>{item.title?.trim() || 'Тема без заголовка'}</strong>
         </span>
         <span className="forrum-home-v16__topic-excerpt">{item.excerpt}</span>
-        <span className="forrum-home-v16__topic-meta">
-          <span>@{item.author.username}</span>
-          <span aria-hidden="true">→</span>
-          <span>{relativeTime(item.createdAt)}</span>
-        </span>
       </span>
-      <span className="forrum-home-v16__discussion-stat forrum-home-v16__topic-stat" title="Ответы">▣ {formatCount(item.commentCount)}</span>
-      <span className="forrum-home-v16__discussion-stat forrum-home-v16__topic-stat" title="Просмотры">◉ {formatCount(item.viewCount)}</span>
-      <span className="forrum-home-v16__last-message">
-        <strong>{relativeTime(reply.createdAt)}</strong>
-        <small>@{reply.username}</small>
+      <span className="forrum-home-v16__discussion-stat forrum-home-v16__topic-stat" title="Ответы">{formatCount(item.commentCount)}</span>
+      <span className="forrum-home-v16__discussion-stat forrum-home-v16__topic-stat" title="Просмотры">{formatCount(item.viewCount)}</span>
+      <span className="forrum-home-v16__last-message forrum-home-v18__last-message">
+        <strong>@{reply.username}</strong>
+        <small>{relativeTime(reply.createdAt)}</small>
       </span>
     </Link>
   );
 }
 
-function NewTopic({ item }: { item: PublicationCardData }) {
-  const reply = lastReply(item);
+function MediaNotice({ item }: { item: PublicationCardData }) {
   return (
-    <Link className="forrum-home-v16__new-topic" href={`/p/${item.slug}`}>
-      <span className="forrum-home-v16__new-topic-title">{item.title?.trim() || 'Тема без заголовка'}</span>
-      <span className="forrum-home-v16__new-topic-section">{item.community.name}</span>
-      <span className="forrum-home-v16__new-topic-author">@{item.author.username}</span>
-      <span className="forrum-home-v16__new-topic-number">{formatCount(item.commentCount)}</span>
-      <span className="forrum-home-v16__new-topic-number">{formatCount(item.viewCount)}</span>
-      <span className="forrum-home-v16__new-topic-last">
-          @{item.author.username} · {relativeTime(item.lastActivityAt || item.createdAt)}
+    <Link className="forrum-home-v18__media-item" href={`/p/${item.slug}`}>
+      <CommunityMark
+        className="forrum-home-v18__media-mark"
+        name={item.community.name}
+        url={topicContentVisual(item)}
+        size={38}
+      />
+      <span className="forrum-home-v18__media-copy">
+        <span className={`forrum-home-v18__topic-type type-${item.type.toLowerCase()}`}>
+          #{publicationTypeName[item.type] ?? 'Медиа'}
         </span>
+        <strong>{item.title?.trim() || 'Медиа-событие 4RRUM'}</strong>
+        <small>@{item.author.username} · {relativeTime(item.createdAt)}</small>
+      </span>
+    </Link>
+  );
+}
+
+function ServiceNotice({ item }: { item: PublicationCardData }) {
+  return (
+    <Link className="forrum-home-v18__service-item" href={`/p/${item.slug}`}>
+      <span className="forrum-home-v18__service-signal" aria-hidden="true" />
+      <span>
+        <strong>{item.title?.trim() || 'Услуга без заголовка'}</strong>
+        <small>#{publicationTypeName[item.type] ?? 'Услуга'} · @{item.author.username}</small>
+      </span>
+      <em>{relativeTime(item.createdAt)}</em>
     </Link>
   );
 }
@@ -507,6 +534,8 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
   const [weeklyMode, setWeeklyMode] = useState<
     'likes' | 'activity'
   >('activity');
+  const [discussedExpanded, setDiscussedExpanded] = useState(false);
+  const [discussedPage, setDiscussedPage] = useState(0);
 
   // 4RRUM_HOME_13_WEEKLY_REAL_USERS
   const weeklyParticipants = useMemo(() => {
@@ -592,10 +621,68 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
     weeklyMode,
   ]);
 
-  const discussed = initialData.overview?.discussed?.length
-    ? initialData.overview.discussed
-    : topicRows(initialData.feed);
   const newest = topicRows(initialData.newFeed);
+  const contentItems = useMemo(
+    () => [
+      ...(initialData.feed ?? []),
+      ...(initialData.newFeed ?? []),
+    ].filter((item) => item.format === 'TOPIC'),
+    [initialData.feed, initialData.newFeed],
+  );
+  const discussedPool = useMemo(() => {
+    const unique = new Map<
+      string,
+      PublicationCardData | HomeDiscussedTopic
+    >();
+
+    for (const item of initialData.overview?.discussed ?? []) {
+      unique.set(item.id, item);
+    }
+    for (const item of contentItems) {
+      if (!unique.has(item.id)) unique.set(item.id, item);
+    }
+
+    return [...unique.values()];
+  }, [initialData.overview?.discussed, contentItems]);
+  const mediaItems = useMemo(() => {
+    const unique = new Map<string, PublicationCardData>();
+    for (const item of [
+      ...(initialData.announcements ?? []),
+      ...contentItems,
+    ]) {
+      if (
+        ['NEWS', 'ANNOUNCEMENT', 'PROJECT'].includes(item.type) &&
+        !unique.has(item.id)
+      ) {
+        unique.set(item.id, item);
+      }
+    }
+    return [...unique.values()].slice(0, 4);
+  }, [initialData.announcements, contentItems]);
+  const serviceItems = useMemo(
+    () => contentItems
+      .filter((item) => item.type === 'SERVICE')
+      .slice(0, 8),
+    [contentItems],
+  );
+  const serviceLoop = serviceItems.length > 2
+    ? [...serviceItems, ...serviceItems]
+    : serviceItems;
+  const discussedPageSize = 8;
+  const discussedPageCount = Math.max(
+    1,
+    Math.ceil(discussedPool.length / discussedPageSize),
+  );
+  const safeDiscussedPage = Math.min(
+    discussedPage,
+    discussedPageCount - 1,
+  );
+  const discussedVisible = discussedExpanded
+    ? discussedPool.slice(
+      safeDiscussedPage * discussedPageSize,
+      (safeDiscussedPage + 1) * discussedPageSize,
+    )
+    : discussedPool.slice(0, 5);
   const activePolls = useMemo(() => {
     const now = Date.now();
     const merged = [
@@ -680,28 +767,84 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
       </aside>
 
       <main className="forrum-home-v16__center">
-        <HomePanel title="Обсуждаемые темы" href="/feed?mode=popular">
+        <div className="forrum-home-v18__discovery-grid">
+          <HomePanel title="Медиа" href="/media">
+            <div className="forrum-home-v18__media-list">
+              {mediaItems.length ? mediaItems.map((item) => (
+                <MediaNotice key={item.id} item={item} />
+              )) : (
+                <p className="forrum-home-v16__empty">
+                  Эфиры и новости подключённых медиа появятся здесь.
+                </p>
+              )}
+            </div>
+          </HomePanel>
+
+          <HomePanel title="Услуги" href="/services">
+            <div
+              className="forrum-home-v18__service-window"
+              data-animated={serviceItems.length > 2 ? 'true' : undefined}
+            >
+              <div className="forrum-home-v18__service-track">
+                {serviceLoop.length ? serviceLoop.map((item, index) => (
+                  <ServiceNotice key={`${item.id}-${index}`} item={item} />
+                )) : (
+                  <p className="forrum-home-v16__empty">
+                    Новые услуги участников появятся здесь.
+                  </p>
+                )}
+              </div>
+            </div>
+          </HomePanel>
+        </div>
+
+        <HomePanel
+          title="Обсуждаемые темы"
+          href="/feed?mode=popular"
+          action={discussedPool.length > 5 ? (
+            <button
+              className="forrum-home-v18__expand-button"
+              type="button"
+              aria-expanded={discussedExpanded}
+              onClick={() => {
+                setDiscussedExpanded((current) => !current);
+                setDiscussedPage(0);
+              }}
+            >
+              {discussedExpanded ? 'Свернуть' : 'Развернуть'}
+              <span aria-hidden="true">{discussedExpanded ? '↑' : '↓'}</span>
+            </button>
+          ) : undefined}
+        >
           <div className="forrum-home-v16__discussed-head" aria-hidden="true">
             <span>Ответы</span>
             <span>Просмотры</span>
-            <span>Активность</span>
+            <span>Последнее</span>
           </div>
           <div className="forrum-home-v16__discussed-list">
-            {discussed.length ? discussed.map((item) => <DiscussedTopic key={item.id} item={item} />) : (
+            {discussedVisible.length ? discussedVisible.map((item) => <DiscussedTopic key={item.id} item={item} />) : (
               <p className="forrum-home-v16__empty">Обсуждаемых тем пока нет.</p>
             )}
           </div>
-        </HomePanel>
-
-        <HomePanel title="Новые темы" href="/feed?mode=new">
-          <div className="forrum-home-v16__new-topic-table">
-            <div className="forrum-home-v16__new-topic-head" aria-hidden="true">
-              <span>Тема</span><span>Раздел</span><span>Автор</span><span>Ответы</span><span>Просмотры</span><span>Последнее сообщение</span>
+          {discussedExpanded && discussedPageCount > 1 && (
+            <div className="forrum-home-v18__pagination" aria-label="Страницы обсуждаемых тем">
+              <button
+                type="button"
+                disabled={safeDiscussedPage === 0}
+                onClick={() => setDiscussedPage((page) => Math.max(0, page - 1))}
+              >
+                ← Назад
+              </button>
+              <span>Страница {safeDiscussedPage + 1} из {discussedPageCount}</span>
+              <button
+                type="button"
+                disabled={safeDiscussedPage === discussedPageCount - 1}
+                onClick={() => setDiscussedPage((page) => Math.min(discussedPageCount - 1, page + 1))}
+              >
+                Дальше →
+              </button>
             </div>
-            {newest.length ? newest.map((item) => <NewTopic key={item.id} item={item} />) : (
-              <p className="forrum-home-v16__empty">Новых тем пока нет.</p>
-            )}
-          </div>
+          )}
         </HomePanel>
 
         {/* FORRUM_HOME_HIDE_EMPTY_POLLS */}
@@ -902,8 +1045,12 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
           </div>
         </HomePanel>
         {/* 4RRUM_HOME_START_RAIL */}
-        <HomePanel title="Старт 4RRUM">
+        <HomePanel title="О FORRUM">
           <div className="forrum-home-v16__start-list">
+            <Link className="forrum-home-v16__start-link" href="/rules">
+              <strong>Правила 4RRUM</strong>
+              <small>Как устроена площадка и общение внутри неё</small>
+            </Link>
             <Link className="forrum-home-v16__start-link" href="/#propose-section">
               <strong>Предложить раздел</strong>
               <small>Запустить новое направление сообщества</small>
