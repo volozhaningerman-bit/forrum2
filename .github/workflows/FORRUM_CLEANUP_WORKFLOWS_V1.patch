@@ -1,0 +1,17 @@
+# FORRUM CLEANUP WORKFLOWS V1
+# Remove temporary Home patch workflows and keep deployment workflows.
+# Apply with git apply or use as a reference for cleanup commit.
+
+delete mode 100644 .github/workflows/home-04.yml
+delete mode 100644 .github/workflows/home-05.yml
+delete mode 100644 .github/workflows/home-06.yml
+delete mode 100644 .github/workflows/home-07.yml
+delete mode 100644 .github/workflows/home-14.yml
+delete mode 100644 .github/workflows/home-15.yml
+delete mode 100644 .github/workflows/home-16.yml
+delete mode 100644 .github/workflows/home-17.yml
+delete mode 100644 .github/workflows/home-18.yml
+delete mode 100644 .github/workflows/home-19.yml
+delete mode 100644 .github/workflows/FORRUM_HOME_V18_PATCH.yml
+delete mode 100644 .github/workflows/FORRUM_HOME_V18_PATCH_FIXED.yml
+delete mode 100644 .github/workflows/FORRUM_HOME_V18_PATCH_V3.yml
