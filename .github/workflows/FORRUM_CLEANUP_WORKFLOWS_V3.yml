@@ -1,0 +1,41 @@
+name: FORRUM Cleanup Workflows V3
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Remove remaining temporary workflows
+        run: |
+          files=(
+            "forum-actual-active-communities-fixed.yml"
+            "forum-home-contextual-actual-fixed.yml"
+            "forum-home-contextual-actual-single-declaration-fixed.yml"
+            "forum-v44-news.yml"
+            "forum-v44-news(2).yml"
+            "forum-v45-right-rail-news-fixed.yml"
+            "FORRUM_CLEANUP_WORKFLOWS_V1.yml"
+            "FORRUM_CLEANUP_WORKFLOWS_V2.yml"
+          )
+
+          for file in "${files[@]}"; do
+            rm -f ".github/workflows/$file"
+          done
+
+      - name: Commit cleanup
+        run: |
+          git config user.name "FORRUM Cleanup Bot"
+          git config user.email "actions@github.com"
+          git add .github/workflows
+          git commit -m "cleanup: remove remaining temporary workflows" || echo "No changes"
+          git push
