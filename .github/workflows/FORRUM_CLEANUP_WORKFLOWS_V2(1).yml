@@ -1,0 +1,63 @@
+name: FORRUM Cleanup Workflows V2
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Remove obsolete workflows
+        run: |
+          files=(
+            "01-home.yml"
+            "01-home(1).yml"
+            "4rrum-home-final-ux-polish.yml"
+            "4rrum-home-final-ux-polish-v2.yml"
+            "4rrum-home-final-ux-polish-v2-fixed.yml"
+            "4rrum-home-final-ux-polish-v2-tree-count-fixed.yml"
+            "FORRUM_HOME_V18_PATCH.yml"
+            "FORRUM_HOME_V18_PATCH_FIXED.yml"
+            "FORRUM_HOME_V18_PATCH_V3.yml"
+            "forum-actual-active-communities-fixed.yml"
+            "forum-home-contextual-actual-fixed.yml"
+            "forum-home-contextual-actual-single-declaration-fixed.yml"
+            "forum-v44-news.yml"
+            "forum-v44-news(2).yml"
+            "forum-v45-right-rail-news-fixed.yml"
+            "home-04.yml"
+            "home-05.yml"
+            "home-06.yml"
+            "home-07.yml"
+            "home-14.yml"
+            "home-15.yml"
+            "home-16.yml"
+            "home-17.yml"
+            "home-17-cleanup-fix.patch"
+            "home-17-prisma.yml"
+            "home-18.yml"
+            "home-19.yml"
+            "home-final-ux-polish-v2.yml"
+            "prisma-fix.yml"
+            "FORRUM_CLEANUP_WORKFLOWS_V1.patch"
+          )
+
+          for file in "${files[@]}"; do
+            rm -f ".github/workflows/$file"
+          done
+
+      - name: Commit cleanup
+        run: |
+          git config user.name "FORRUM Cleanup Bot"
+          git config user.email "actions@github.com"
+          git add .github/workflows
+          git commit -m "cleanup: remove obsolete workflows" || echo "No changes"
+          git push
