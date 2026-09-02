@@ -1,4 +1,5 @@
 import { isStreamStart } from './utils';
+import type { TopicPulse } from './types';
 
 type Identified = { id: string };
 
@@ -11,6 +12,38 @@ type MediaItemLike = Identified & {
 
 type MediaPartnerLike = Identified & {
   user: { username: string };
+};
+
+type ActivityPublicationLike = Identified & {
+  slug: string;
+  format: 'POST' | 'TOPIC';
+  title: string | null;
+  excerpt?: string;
+  createdAt: string;
+  lastComment?: {
+    createdAt: string;
+    author: { username: string };
+  } | null;
+  author: { username: string };
+  community: { name: string; slug?: string };
+};
+
+type TopicPulseSource = {
+  type: string;
+  createdAt: string;
+  lastActivityAt?: string;
+  commentCount: number;
+  viewCount?: number;
+};
+
+export type LiveActivityItem = {
+  id: string;
+  kind: 'reply' | 'topic' | 'post';
+  username: string;
+  title: string;
+  slug: string;
+  communityName: string;
+  occurredAt: string;
 };
 
 export function mergePopularTopics<
@@ -85,4 +118,91 @@ export function selectMediaItems<
       );
     })
     .slice(0, Math.max(0, limit));
+}
+
+export function buildLiveActivity(
+  publications: readonly ActivityPublicationLike[],
+  limit = 5,
+): LiveActivityItem[] {
+  return publications
+    .map((publication): LiveActivityItem => {
+      const createdAt = new Date(publication.createdAt).getTime();
+      const repliedAt = publication.lastComment
+        ? new Date(publication.lastComment.createdAt).getTime()
+        : Number.NaN;
+      const hasNewerReply =
+        Boolean(publication.lastComment) &&
+        Number.isFinite(repliedAt) &&
+        repliedAt > createdAt;
+      const kind = hasNewerReply
+        ? 'reply'
+        : publication.format === 'POST'
+          ? 'post'
+          : 'topic';
+      const occurredAt = hasNewerReply
+        ? publication.lastComment!.createdAt
+        : publication.createdAt;
+      const fallback = publication.excerpt?.trim();
+
+      return {
+        id: `${kind}:${publication.id}:${occurredAt}`,
+        kind,
+        username: hasNewerReply
+          ? publication.lastComment!.author.username
+          : publication.author.username,
+        title:
+          publication.title?.trim() ||
+          fallback ||
+          (publication.format === 'POST'
+            ? 'Запись без заголовка'
+            : 'Тема без заголовка'),
+        slug: publication.slug,
+        communityName: publication.community.name,
+        occurredAt,
+      };
+    })
+    .sort(
+      (left, right) =>
+        new Date(right.occurredAt).getTime() -
+        new Date(left.occurredAt).getTime(),
+    )
+    .slice(0, Math.max(0, limit));
+}
+
+export function topicPulse(
+  item: TopicPulseSource,
+  now = Date.now(),
+): TopicPulse | null {
+  const createdAt = Date.parse(item.createdAt);
+  const lastActivityAt = Date.parse(
+    item.lastActivityAt ?? item.createdAt,
+  );
+
+  if (
+    !Number.isFinite(createdAt) ||
+    !Number.isFinite(lastActivityAt) ||
+    now < createdAt
+  ) {
+    return null;
+  }
+
+  const activeAge = now - lastActivityAt;
+  const createdAge = now - createdAt;
+
+  if (
+    activeAge >= 0 &&
+    activeAge <= 6 * 60 * 60 * 1_000 &&
+    item.commentCount >= 5
+  ) {
+    return 'hot';
+  }
+
+  if (
+    createdAge <= 48 * 60 * 60 * 1_000 &&
+    (item.commentCount >= 3 || (item.viewCount ?? 0) >= 100)
+  ) {
+    return 'rising';
+  }
+
+  return null;
 }

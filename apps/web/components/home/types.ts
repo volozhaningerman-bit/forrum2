@@ -85,6 +85,8 @@ export type DiscussedTopicData =
   | PublicationCardData
   | HomeDiscussedTopic;
 
+export type TopicPulse = 'rising' | 'hot';
+
 export type HomeMediaPartner = {
   id: string;
   type: string;
@@ -145,6 +147,7 @@ export type HomeInitialData = {
   polls?: PollItem[];
   announcements?: PublicationCardData[];
   feed?: PublicationCardData[];
+  activityFeed?: PublicationCardData[];
   overview?: HomeOverview;
   mediaPartners?: HomeMediaPartner[];
   mediaMaterials?: PublicationCardData[];

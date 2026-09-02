@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { CommunityMark } from '@/components/community-mark';
 import { HomePanel } from './home-panel';
+import { topicPulse } from './model';
 import type { DiscussedTopicData } from './types';
 import {
   formatCount,
@@ -13,6 +14,8 @@ import {
 function DiscussedTopic({ item }: { item: DiscussedTopicData }) {
   const reply = lastReply(item);
   const type = item.type.toLowerCase();
+  const pulse = topicPulse(item);
+  const pulseLabel = pulse === 'hot' ? 'Горячо' : 'Набирает';
 
   return (
     <Link
@@ -33,6 +36,15 @@ function DiscussedTopic({ item }: { item: DiscussedTopicData }) {
           >
             #{publicationTypeName[item.type.toUpperCase()] ?? 'Тема'}
           </span>
+          {pulse && (
+            <span
+              className={`forrum-home-v20__topic-pulse is-${pulse}`}
+              aria-label={`Пульс темы: ${pulseLabel}`}
+            >
+              <i aria-hidden="true" />
+              {pulseLabel}
+            </span>
+          )}
           <strong>
             {item.title?.trim() || 'Тема без заголовка'}
           </strong>
@@ -41,21 +53,23 @@ function DiscussedTopic({ item }: { item: DiscussedTopicData }) {
           {item.excerpt}
         </span>
       </span>
-      <span
-        className="forrum-home-v16__discussion-stat forrum-home-v16__topic-stat"
-        title="Ответы"
-      >
-        {formatCount(item.commentCount)}
-      </span>
-      <span
-        className="forrum-home-v16__discussion-stat forrum-home-v16__topic-stat"
-        title="Просмотры"
-      >
-        {formatCount(item.viewCount)}
-      </span>
-      <span className="forrum-home-v16__last-message forrum-home-v18__last-message">
-        <strong>@{reply.username}</strong>
-        <small>{relativeTime(reply.createdAt)}</small>
+      <span className="forrum-home-v20__topic-metrics">
+        <span
+          className="forrum-home-v16__discussion-stat forrum-home-v16__topic-stat"
+          title="Ответы"
+        >
+          {formatCount(item.commentCount)}
+        </span>
+        <span
+          className="forrum-home-v16__discussion-stat forrum-home-v16__topic-stat"
+          title="Просмотры"
+        >
+          {formatCount(item.viewCount)}
+        </span>
+        <span className="forrum-home-v16__last-message forrum-home-v18__last-message">
+          <strong>@{reply.username}</strong>
+          <small>{relativeTime(reply.createdAt)}</small>
+        </span>
       </span>
     </Link>
   );
