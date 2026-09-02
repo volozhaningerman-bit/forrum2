@@ -63,7 +63,7 @@ export function SiteHeader() {
               />
             </svg>
             <span className="brand-wordmark" aria-hidden="true">
-              <strong>4</strong>RRUM
+              RRUM
             </span>
           </Link>
 

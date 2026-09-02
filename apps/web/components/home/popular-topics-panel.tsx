@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { CommunityMark } from '@/components/community-mark';
 import { HomePanel } from './home-panel';
-import { topicPulse } from './model';
+import { topicStatus } from './model';
 import type { DiscussedTopicData } from './types';
 import {
   formatCount,
@@ -14,8 +14,15 @@ import {
 function DiscussedTopic({ item }: { item: DiscussedTopicData }) {
   const reply = lastReply(item);
   const type = item.type.toLowerCase();
-  const pulse = topicPulse(item);
-  const pulseLabel = pulse === 'hot' ? 'Горячо' : 'Набирает';
+  const status = topicStatus(item);
+  const statusLabel = {
+    waiting: 'Ждёт ответа',
+    answered: 'Есть ответы',
+    open: 'Открыта',
+    active: 'Обсуждают',
+    rising: 'Набирает',
+    hot: 'Горячо',
+  }[status];
 
   return (
     <Link
@@ -36,15 +43,13 @@ function DiscussedTopic({ item }: { item: DiscussedTopicData }) {
           >
             #{publicationTypeName[item.type.toUpperCase()] ?? 'Тема'}
           </span>
-          {pulse && (
-            <span
-              className={`forrum-home-v20__topic-pulse is-${pulse}`}
-              aria-label={`Пульс темы: ${pulseLabel}`}
-            >
-              <i aria-hidden="true" />
-              {pulseLabel}
-            </span>
-          )}
+          <span
+            className={`forrum-home-v20__topic-pulse is-${status}`}
+            aria-label={`Статус темы: ${statusLabel}`}
+          >
+            <i aria-hidden="true" />
+            {statusLabel}
+          </span>
           <strong>
             {item.title?.trim() || 'Тема без заголовка'}
           </strong>

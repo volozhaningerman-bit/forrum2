@@ -1,5 +1,5 @@
 import { isStreamStart } from './utils';
-import type { TopicPulse } from './types';
+import type { TopicPulse, TopicStatus } from './types';
 
 type Identified = { id: string };
 
@@ -150,12 +150,11 @@ export function buildLiveActivity(
         username: hasNewerReply
           ? publication.lastComment!.author.username
           : publication.author.username,
-        title:
-          publication.title?.trim() ||
-          fallback ||
-          (publication.format === 'POST'
-            ? 'Запись без заголовка'
-            : 'Тема без заголовка'),
+        title: safeActivityTitle(
+          publication.title,
+          fallback,
+          publication.format,
+        ),
         slug: publication.slug,
         communityName: publication.community.name,
         occurredAt,
@@ -167,6 +166,27 @@ export function buildLiveActivity(
         new Date(left.occurredAt).getTime(),
     )
     .slice(0, Math.max(0, limit));
+}
+
+export function safeActivityTitle(
+  title: string | null | undefined,
+  excerpt: string | null | undefined,
+  format: 'POST' | 'TOPIC',
+) {
+  const normalize = (value?: string | null) =>
+    value?.replace(/\s+/gu, ' ').trim() ?? '';
+  const candidate = normalize(title) || normalize(excerpt);
+  const compact = candidate.replace(/\s/gu, '');
+  const repeatedCharacter = /^(.)\1{4,}$/u.test(compact);
+  const hasLetters = /[\p{L}]/u.test(candidate);
+
+  if (!candidate || repeatedCharacter || !hasLetters) {
+    return format === 'POST'
+      ? 'Новая запись без описания'
+      : 'Новая тема без описания';
+  }
+
+  return candidate;
 }
 
 export function topicPulse(
@@ -205,4 +225,18 @@ export function topicPulse(
   }
 
   return null;
+}
+
+export function topicStatus(
+  item: TopicPulseSource,
+  now = Date.now(),
+): TopicStatus {
+  const pulse = topicPulse(item, now);
+  if (pulse) return pulse;
+
+  if (item.type.toUpperCase() === 'QUESTION') {
+    return item.commentCount > 0 ? 'answered' : 'waiting';
+  }
+
+  return item.commentCount > 0 ? 'active' : 'open';
 }
