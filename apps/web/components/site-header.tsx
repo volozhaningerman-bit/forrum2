@@ -20,8 +20,24 @@ export function SiteHeader() {
             href="/"
             aria-label="4RRUM"
           >
-            <span className="brand-mark" aria-hidden="true">4</span>
-            <span aria-hidden="true">4RRUM</span>
+            <svg
+              className="brand-symbol"
+              viewBox="0 0 34 30"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                className="brand-symbol__back"
+                d="M2.5 3.5h19v14h-11l-5 4.5v-4.5h-3z"
+              />
+              <path
+                className="brand-symbol__front"
+                d="M12.5 9.5h19v14h-4v4l-5-4h-10z"
+              />
+            </svg>
+            <span className="brand-wordmark" aria-hidden="true">
+              <strong>4</strong>RRUM
+            </span>
           </Link>
 
           <MainNav />

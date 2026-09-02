@@ -22060,3 +22060,74 @@ html[data-forrum-theme='graphite'] .forrum-home-v18__media-kind.is-live {
     animation: none;
   }
 }
+
+/* 4RRUM HOME 18.2: brand and discussion footer */
+.brand-symbol {
+  display: block;
+  width: 34px;
+  height: 30px;
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
+.brand-symbol__back,
+.brand-symbol__front {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  vector-effect: non-scaling-stroke;
+}
+
+.brand-symbol__front {
+  stroke: var(--accent);
+}
+
+.brand-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  color: inherit;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: .035em;
+}
+
+.brand-wordmark strong {
+  color: var(--accent);
+  font: inherit;
+}
+
+.forrum-home-v182__discussed-footer {
+  display: flex;
+  min-height: 43px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 12px;
+  border-top: 1px solid var(--fvt-line);
+  background: var(--fvt-panel-soft);
+  color: var(--fvt-muted);
+  font-size: 9px;
+}
+
+.forrum-home-v182__discussed-footer .forrum-home-v18__expand-button {
+  min-width: 112px;
+  justify-content: center;
+}
+
+@media (max-width: 680px) {
+  .brand-symbol {
+    width: 30px;
+    height: 27px;
+  }
+
+  .brand-wordmark {
+    font-size: 20px;
+  }
+
+  .forrum-home-v182__discussed-footer {
+    padding-inline: 9px;
+  }
+}

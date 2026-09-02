@@ -383,22 +383,21 @@ function TreeBranch({
 function HomePanel({
   title,
   href,
-  action,
+  linkLabel = 'Смотреть все',
   children,
 }: {
   title: string;
   href?: string;
-  action?: ReactNode;
+  linkLabel?: string;
   children: ReactNode;
 }) {
   return (
     <section className="forrum-home-v16__panel">
       <header className="forrum-home-v16__panel-head">
         <h2>{title}</h2>
-        {(action || href) && (
+        {href && (
           <span className="forrum-home-v18__panel-actions">
-            {action}
-            {href && <Link href={href}>Смотреть все <span aria-hidden="true">→</span></Link>}
+            <Link href={href}>{linkLabel} <span aria-hidden="true">→</span></Link>
           </span>
         )}
       </header>
@@ -870,7 +869,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
                 <span>
                   {mediaItems.some(({ item }) => isStreamStart(item))
                     ? 'Сейчас в эфире'
-                    : 'Новости медиапартнёров'}
+                    : 'Эфиры и новости'}
                 </span>
                 <small>Автообновление · 1 мин.</small>
               </div>
@@ -909,20 +908,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
         <HomePanel
           title="Обсуждаемые темы"
           href="/feed?mode=popular"
-          action={discussedPool.length > 5 ? (
-            <button
-              className="forrum-home-v18__expand-button"
-              type="button"
-              aria-expanded={discussedExpanded}
-              onClick={() => {
-                setDiscussedExpanded((current) => !current);
-                setDiscussedPage(0);
-              }}
-            >
-              {discussedExpanded ? 'Свернуть' : 'Развернуть'}
-              <span aria-hidden="true">{discussedExpanded ? '↑' : '↓'}</span>
-            </button>
-          ) : undefined}
+          linkLabel="Все темы"
         >
           <div className="forrum-home-v16__discussed-head" aria-hidden="true">
             <span>Ответы</span>
@@ -950,6 +936,27 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
                 onClick={() => setDiscussedPage((page) => Math.min(discussedPageCount - 1, page + 1))}
               >
                 Дальше →
+              </button>
+            </div>
+          )}
+          {discussedPool.length > 5 && (
+            <div className="forrum-home-v182__discussed-footer">
+              <span>
+                {discussedExpanded
+                  ? <>Темы {safeDiscussedPage * discussedPageSize + 1}–{Math.min((safeDiscussedPage + 1) * discussedPageSize, discussedPool.length)} из {discussedPool.length}</>
+                  : <>Показано {discussedVisible.length} из {discussedPool.length}</>}
+              </span>
+              <button
+                className="forrum-home-v18__expand-button"
+                type="button"
+                aria-expanded={discussedExpanded}
+                onClick={() => {
+                  setDiscussedExpanded((current) => !current);
+                  setDiscussedPage(0);
+                }}
+              >
+                {discussedExpanded ? 'Свернуть' : 'Показать ещё'}
+                <span aria-hidden="true">{discussedExpanded ? '↑' : '↓'}</span>
               </button>
             </div>
           )}
