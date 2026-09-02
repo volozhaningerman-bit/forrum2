@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import type { CSSProperties, MouseEvent, ReactNode } from 'react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Avatar } from '@/components/avatar';
 import { CommunityMark } from '@/components/community-mark';
+import { api } from '@/lib/api';
 import type { PublicationCardData } from '@/lib/types';
 
 type Community = {
@@ -84,6 +85,19 @@ type HomeDiscussedTopic = {
     createdAt: string;
     author: { username: string; displayName: string };
   } | null;
+};
+
+type HomeMediaPartner = {
+  id: string;
+  type: string;
+  displayName: string;
+  platform: string;
+  channelUrl: string;
+  user: {
+    username: string;
+    displayName: string;
+    avatarUrl: string | null;
+  };
 };
 
 type HomeProposal = {
@@ -322,7 +336,7 @@ function TreeBranch({
             onClick={() => onToggle(node.slug)}
           >
             <span aria-hidden="true">
-              {isOpen ? '⌄' : '›'}
+              {isOpen ? '−' : '+'}
             </span>
           </button>
         ) : (
@@ -422,22 +436,54 @@ function DiscussedTopic({ item }: { item: PublicationCardData | HomeDiscussedTop
   );
 }
 
-function MediaNotice({ item }: { item: PublicationCardData }) {
-  return (
-    <Link className="forrum-home-v18__media-item" href={`/p/${item.slug}`}>
+function isStreamStart(item: PublicationCardData) {
+  return /(?:начал(?:ся|а)?|запустил(?:ся|а)?)\s+(?:стрим|эфир|трансляц\w*)|(?:стрим|эфир|трансляц\w*)\s+(?:начал(?:ся|ась)?|стартовал(?:а)?)|(?:вышел(?:а)?|уже|сейчас)\s+в\s+эфир|live\s+now|stream\s+is\s+live/i.test(
+    `${item.title ?? ''} ${item.excerpt}`,
+  );
+}
+
+function MediaNotice({
+  item,
+  partner,
+}: {
+  item: PublicationCardData;
+  partner: HomeMediaPartner;
+}) {
+  const live = isStreamStart(item);
+  const content = (
+    <>
       <CommunityMark
         className="forrum-home-v18__media-mark"
-        name={item.community.name}
-        url={topicContentVisual(item)}
+        name={partner.displayName}
+        url={partner.user.avatarUrl || topicContentVisual(item)}
         size={38}
       />
       <span className="forrum-home-v18__media-copy">
-        <span className={`forrum-home-v18__topic-type type-${item.type.toLowerCase()}`}>
-          #{publicationTypeName[item.type] ?? 'Медиа'}
+        <span className={`forrum-home-v18__media-kind ${live ? 'is-live' : ''}`}>
+          {live && <i aria-hidden="true" />}
+          {live ? 'Стрим начался' : '#Новости медиа'}
         </span>
-        <strong>{item.title?.trim() || 'Медиа-событие 4RRUM'}</strong>
-        <small>@{item.author.username} · {relativeTime(item.createdAt)}</small>
+        <strong>{item.title?.trim() || `${partner.displayName}: новая публикация`}</strong>
+        <small>
+          {partner.displayName} · {partner.platform} ·{' '}
+          {live ? 'смотреть эфир ↗' : relativeTime(item.createdAt)}
+        </small>
       </span>
+    </>
+  );
+
+  return live ? (
+    <a
+      className="forrum-home-v18__media-item is-live"
+      href={partner.channelUrl}
+      target="_blank"
+      rel="noreferrer"
+    >
+      {content}
+    </a>
+  ) : (
+    <Link className="forrum-home-v18__media-item" href={`/p/${item.slug}`}>
+      {content}
     </Link>
   );
 }
@@ -536,6 +582,48 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
   >('activity');
   const [discussedExpanded, setDiscussedExpanded] = useState(false);
   const [discussedPage, setDiscussedPage] = useState(0);
+  const [mediaMaterials, setMediaMaterials] = useState<PublicationCardData[]>([]);
+  const [mediaPartners, setMediaPartners] = useState<HomeMediaPartner[]>([]);
+  const [mediaLoaded, setMediaLoaded] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadMedia = async () => {
+      const [partnersResult, newsResult, announcementsResult] =
+        await Promise.allSettled([
+          api<HomeMediaPartner[]>('/media/partners'),
+          api<PublicationCardData[]>('/news'),
+          api<PublicationCardData[]>('/announcements'),
+        ]);
+
+      if (!active) return;
+
+      if (partnersResult.status === 'fulfilled') {
+        setMediaPartners(partnersResult.value);
+      }
+
+      const materials = new Map<string, PublicationCardData>();
+      if (newsResult.status === 'fulfilled') {
+        for (const item of newsResult.value) materials.set(item.id, item);
+      }
+      if (announcementsResult.status === 'fulfilled') {
+        for (const item of announcementsResult.value) materials.set(item.id, item);
+      }
+      setMediaMaterials([...materials.values()]);
+      setMediaLoaded(true);
+    };
+
+    void loadMedia();
+    const refresh = window.setInterval(() => {
+      if (document.visibilityState === 'visible') void loadMedia();
+    }, 60_000);
+
+    return () => {
+      active = false;
+      window.clearInterval(refresh);
+    };
+  }, []);
 
   // 4RRUM_HOME_13_WEEKLY_REAL_USERS
   const weeklyParticipants = useMemo(() => {
@@ -645,20 +733,28 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
     return [...unique.values()];
   }, [initialData.overview?.discussed, contentItems]);
   const mediaItems = useMemo(() => {
-    const unique = new Map<string, PublicationCardData>();
-    for (const item of [
-      ...(initialData.announcements ?? []),
-      ...contentItems,
-    ]) {
-      if (
-        ['NEWS', 'ANNOUNCEMENT', 'PROJECT'].includes(item.type) &&
-        !unique.has(item.id)
-      ) {
-        unique.set(item.id, item);
-      }
-    }
-    return [...unique.values()].slice(0, 4);
-  }, [initialData.announcements, contentItems]);
+    const partnersByUsername = new Map(
+      mediaPartners.map((partner) => [partner.user.username, partner]),
+    );
+
+    return mediaMaterials
+      .map((item) => ({
+        item,
+        partner: partnersByUsername.get(item.author.username),
+      }))
+      .filter(
+        (entry): entry is {
+          item: PublicationCardData;
+          partner: HomeMediaPartner;
+        } => Boolean(entry.partner),
+      )
+      .sort((a, b) => {
+        const liveOrder = Number(isStreamStart(b.item)) - Number(isStreamStart(a.item));
+        if (liveOrder) return liveOrder;
+        return new Date(b.item.createdAt).getTime() - new Date(a.item.createdAt).getTime();
+      })
+      .slice(0, 4);
+  }, [mediaMaterials, mediaPartners]);
   const serviceItems = useMemo(
     () => contentItems
       .filter((item) => item.type === 'SERVICE')
@@ -769,13 +865,23 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
       <main className="forrum-home-v16__center">
         <div className="forrum-home-v18__discovery-grid">
           <HomePanel title="Медиа" href="/media">
-            <div className="forrum-home-v18__media-list">
-              {mediaItems.length ? mediaItems.map((item) => (
-                <MediaNotice key={item.id} item={item} />
+            <div className="forrum-home-v18__media-list" aria-live="polite">
+              <div className="forrum-home-v181__media-status">
+                <span>
+                  {mediaItems.some(({ item }) => isStreamStart(item))
+                    ? 'Сейчас в эфире'
+                    : 'Новости медиапартнёров'}
+                </span>
+                <small>Автообновление · 1 мин.</small>
+              </div>
+              {mediaItems.length ? mediaItems.map(({ item, partner }) => (
+                <MediaNotice key={item.id} item={item} partner={partner} />
               )) : (
-                <p className="forrum-home-v16__empty">
-                  Эфиры и новости подключённых медиа появятся здесь.
-                </p>
+                <div className="forrum-home-v181__empty-state">
+                  <strong>{mediaLoaded ? 'Медиапартнёры скоро появятся' : 'Загружаем медиа…'}</strong>
+                  <span>Здесь будут старты стримов и новости подключённых участников.</span>
+                  <Link href="/media">Подключить своё медиа →</Link>
+                </div>
               )}
             </div>
           </HomePanel>
@@ -789,9 +895,11 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
                 {serviceLoop.length ? serviceLoop.map((item, index) => (
                   <ServiceNotice key={`${item.id}-${index}`} item={item} />
                 )) : (
-                  <p className="forrum-home-v16__empty">
-                    Новые услуги участников появятся здесь.
-                  </p>
+                  <div className="forrum-home-v181__empty-state">
+                    <strong>Услуг пока нет</strong>
+                    <span>Первая опубликованная услуга запустит живую ленту.</span>
+                    <Link href="/services">Разместить услугу →</Link>
+                  </div>
                 )}
               </div>
             </div>
