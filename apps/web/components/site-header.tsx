@@ -21,7 +21,7 @@ export function SiteHeader() {
             aria-label="4RRUM"
           >
             <svg
-              className="brand-symbol"
+              className="brand-symbol brand-symbol--legacy"
               viewBox="0 0 32 28"
               aria-hidden="true"
               focusable="false"
@@ -37,6 +37,29 @@ export function SiteHeader() {
               <path
                 className="brand-symbol__joint"
                 d="M20.5 8v13.5M10.5 15.5h15"
+              />
+            </svg>
+            <svg
+              className="brand-symbol brand-symbol--neo"
+              viewBox="0 0 34 30"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path
+                className="brand-symbol__neo-back"
+                d="M2.5 3.5h19v5h-10v10H8l-5.5 4.5z"
+              />
+              <path
+                className="brand-symbol__neo-front"
+                d="M12 8.5h19.5v14H27v4l-5.5-4H12z"
+              />
+              <path
+                className="brand-symbol__neo-four"
+                d="M22 8.5 13.5 20H27M22 8.5V27"
+              />
+              <path
+                className="brand-symbol__neo-pixel"
+                d="M4.5 5.5h3v3h-3z"
               />
             </svg>
             <span className="brand-wordmark" aria-hidden="true">

@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import * as homeModel from '../components/home/model.js';
 import {
   buildServiceLoop,
   mergePopularTopics,
@@ -73,4 +74,173 @@ test('media does not repeat the same material from two source endpoints', () => 
   );
 
   assert.deepEqual(selected.map(({ item }) => item.id), ['same']);
+});
+
+test('live activity uses the latest real reply and keeps newest events first', () => {
+  assert.equal(
+    typeof (homeModel as Record<string, unknown>).buildLiveActivity,
+    'function',
+  );
+
+  const buildLiveActivity = homeModel.buildLiveActivity;
+  const activity = buildLiveActivity([
+    {
+      id: 'older-topic',
+      slug: 'older-topic',
+      format: 'TOPIC',
+      title: 'Старая тема',
+      createdAt: '2026-09-02T08:00:00.000Z',
+      author: { username: 'author' },
+      community: { slug: 'forum', name: 'FORRUM' },
+    },
+    {
+      id: 'answered-topic',
+      slug: 'answered-topic',
+      format: 'TOPIC',
+      title: 'Как запустить проект?',
+      createdAt: '2026-09-02T09:00:00.000Z',
+      lastComment: {
+        createdAt: '2026-09-02T10:30:00.000Z',
+        author: { username: 'helper' },
+      },
+      author: { username: 'starter' },
+      community: { slug: 'projects', name: 'Проекты' },
+    },
+  ]);
+
+  assert.deepEqual(
+    activity.map((item) => ({
+      kind: item.kind,
+      username: item.username,
+      title: item.title,
+      occurredAt: item.occurredAt,
+    })),
+    [
+      {
+        kind: 'reply',
+        username: 'helper',
+        title: 'Как запустить проект?',
+        occurredAt: '2026-09-02T10:30:00.000Z',
+      },
+      {
+        kind: 'topic',
+        username: 'author',
+        title: 'Старая тема',
+        occurredAt: '2026-09-02T08:00:00.000Z',
+      },
+    ],
+  );
+});
+
+test('live activity distinguishes posts and respects the visible limit', () => {
+  assert.equal(
+    typeof (homeModel as Record<string, unknown>).buildLiveActivity,
+    'function',
+  );
+
+  const activity = homeModel.buildLiveActivity(
+    [
+      {
+        id: 'post',
+        slug: 'post',
+        format: 'POST',
+        title: null,
+        excerpt: 'Короткая запись автора',
+        createdAt: '2026-09-02T12:00:00.000Z',
+        author: { username: 'writer' },
+        community: { slug: 'notes', name: 'Заметки' },
+      },
+      {
+        id: 'topic',
+        slug: 'topic',
+        format: 'TOPIC',
+        title: 'Тема',
+        excerpt: '',
+        createdAt: '2026-09-02T11:00:00.000Z',
+        author: { username: 'starter' },
+        community: { slug: 'forum', name: 'FORRUM' },
+      },
+    ],
+    1,
+  );
+
+  assert.deepEqual(activity, [
+    {
+      id: 'post:post:2026-09-02T12:00:00.000Z',
+      kind: 'post',
+      username: 'writer',
+      title: 'Короткая запись автора',
+      slug: 'post',
+      communityName: 'Заметки',
+      occurredAt: '2026-09-02T12:00:00.000Z',
+    },
+  ]);
+});
+
+test('topic pulse marks a recently active discussion as hot', () => {
+  const now = Date.parse('2026-09-02T12:00:00.000Z');
+
+  assert.equal(
+    homeModel.topicPulse(
+      {
+        type: 'DISCUSSION',
+        createdAt: '2026-08-30T12:00:00.000Z',
+        lastActivityAt: '2026-09-02T10:00:00.000Z',
+        commentCount: 8,
+        viewCount: 700,
+      },
+      now,
+    ),
+    'hot',
+  );
+});
+
+test('topic pulse marks a new topic with meaningful attention as rising', () => {
+  const now = Date.parse('2026-09-02T12:00:00.000Z');
+
+  assert.equal(
+    homeModel.topicPulse(
+      {
+        type: 'QUESTION',
+        createdAt: '2026-09-01T12:00:00.000Z',
+        lastActivityAt: '2026-09-01T20:00:00.000Z',
+        commentCount: 3,
+        viewCount: 180,
+      },
+      now,
+    ),
+    'rising',
+  );
+});
+
+test('topic pulse stays absent for stale or insufficient activity', () => {
+  const now = Date.parse('2026-09-02T12:00:00.000Z');
+  const pulse = homeModel.topicPulse;
+
+  assert.equal(
+    pulse(
+      {
+        type: 'QUESTION',
+        createdAt: '2026-08-01T12:00:00.000Z',
+        lastActivityAt: '2026-08-02T12:00:00.000Z',
+        commentCount: 30,
+        viewCount: 5_000,
+      },
+      now,
+    ),
+    null,
+  );
+  assert.equal(
+    pulse(
+      {
+        type: 'DISCUSSION',
+        createdAt: '2026-09-02T08:00:00.000Z',
+        lastActivityAt: '2026-09-02T10:00:00.000Z',
+        commentCount: 0,
+        viewCount: 12,
+      },
+      now,
+    ),
+    null,
+  );
 });

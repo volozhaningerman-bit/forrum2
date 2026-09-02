@@ -125,7 +125,7 @@ export function MediaPanel({
             />
           ))
         ) : (
-          <div className="forrum-home-v181__empty-state">
+          <div className="forrum-home-v181__empty-state forrum-home-v20__discovery-empty">
             <strong>
               {loaded
                 ? 'Медиапартнёры скоро появятся'
@@ -134,6 +134,22 @@ export function MediaPanel({
             <span>
               Здесь будут старты стримов и новости подключённых участников.
             </span>
+            <div
+              className="forrum-home-v20__format-list"
+              role="list"
+              aria-label="Формат блока Медиа"
+            >
+              <span role="listitem">
+                <i className="is-live" aria-hidden="true">●</i>
+                <b>Старт стрима</b>
+                <small>ссылка появится в момент эфира</small>
+              </span>
+              <span role="listitem">
+                <i aria-hidden="true">#</i>
+                <b>Новости участника</b>
+                <small>обновления подключённых авторов</small>
+              </span>
+            </div>
             <Link href="/media">Подключить своё медиа →</Link>
           </div>
         )}
@@ -166,13 +182,33 @@ export function ServicesPanel({
               />
             ))
           ) : (
-            <div className="forrum-home-v181__empty-state">
+            <div className="forrum-home-v181__empty-state forrum-home-v20__discovery-empty">
               <strong>
                 {loaded ? 'Услуг пока нет' : 'Загружаем услуги…'}
               </strong>
               <span>
                 Первая опубликованная услуга запустит живую ленту.
               </span>
+              <div
+                className="forrum-home-v20__format-list is-services"
+                aria-label="Возможности раздела Услуги"
+              >
+                <Link href="/services">
+                  <i aria-hidden="true">01</i>
+                  <b>Найти специалиста</b>
+                  <span aria-hidden="true">→</span>
+                </Link>
+                <Link href="/create">
+                  <i aria-hidden="true">02</i>
+                  <b>Предложить работу</b>
+                  <span aria-hidden="true">→</span>
+                </Link>
+                <Link href="/create">
+                  <i aria-hidden="true">03</i>
+                  <b>Показать кейс</b>
+                  <span aria-hidden="true">→</span>
+                </Link>
+              </div>
               <Link href="/services">Разместить услугу →</Link>
             </div>
           )}

@@ -13,9 +13,11 @@ export function ForrumNewsPanel({
     <HomePanel title="Новости 4RRUM" href="/news">
       <div className="forrum-home-v16__actual-list">
         {announcements.length ? (
-          announcements.slice(0, 3).map((item) => (
+          announcements.slice(0, 3).map((item, index) => (
             <Link
-              className="forrum-home-v16__actual"
+              className={`forrum-home-v16__actual ${
+                index === 0 ? 'is-lead' : ''
+              }`.trim()}
               href={`/p/${item.slug}`}
               key={item.id}
             >

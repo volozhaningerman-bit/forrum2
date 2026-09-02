@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { PublicationCardData } from '@/lib/types';
 import { api } from '@/lib/api';
 import { CommunityTree } from './home/community-tree';
+import { ActivityPanel } from './home/activity-panel';
 import {
   MediaPanel,
   ServicesPanel,
@@ -50,6 +51,7 @@ export function HomeDashboard({
   const [expanded, setExpanded] = useState<Set<string>>(
     () => new Set(parentSlugs),
   );
+  const [treeFullyVisible, setTreeFullyVisible] = useState(false);
   const [mediaPartners, setMediaPartners] = useState(
     initialData.mediaPartners ?? [],
   );
@@ -58,6 +60,9 @@ export function HomeDashboard({
   );
   const [services, setServices] = useState(
     initialData.services ?? [],
+  );
+  const [activityFeed, setActivityFeed] = useState(
+    initialData.activityFeed ?? [],
   );
   const [discoveryLoaded, setDiscoveryLoaded] = useState(
     initialData.mediaPartners !== undefined &&
@@ -74,11 +79,13 @@ export function HomeDashboard({
         newsResult,
         announcementsResult,
         servicesResult,
+        activityResult,
       ] = await Promise.allSettled([
         api<HomeMediaPartner[]>('/media/partners'),
         api<PublicationCardData[]>('/news'),
         api<PublicationCardData[]>('/announcements'),
         api<HomeService[]>('/portfolio?kind=SERVICE'),
+        api<PublicationCardData[]>('/feed?mode=all'),
       ]);
 
       if (!active) return;
@@ -108,6 +115,10 @@ export function HomeDashboard({
 
       if (servicesResult.status === 'fulfilled') {
         setServices(servicesResult.value);
+      }
+
+      if (activityResult.status === 'fulfilled') {
+        setActivityFeed(activityResult.value);
       }
 
       setDiscoveryLoaded(true);
@@ -186,13 +197,17 @@ export function HomeDashboard({
 
   return (
     <div
-      className="forrum-home-v16 forrum-home-v19"
-      data-home-reference="v19"
+      className="forrum-home-v16 forrum-home-v19 forrum-home-v191 forrum-home-v20"
+      data-home-reference="v20"
     >
       <CommunityTree
         tree={tree}
         expanded={expanded}
         onToggle={toggleTree}
+        fullyVisible={treeFullyVisible}
+        onToggleVisibility={() =>
+          setTreeFullyVisible((current) => !current)
+        }
       />
 
       <main className="forrum-home-v16__center">
@@ -211,7 +226,7 @@ export function HomeDashboard({
       </main>
 
       <aside className="forrum-home-v16__rail">
-        {/* 4RRUM_HOME_ACTIVITY_SLOT_V19_1 */}
+        <ActivityPanel publications={activityFeed} />
         <WeeklyMembersPanel weekly={weekly} />
         <ForrumNewsPanel announcements={announcements} />
       </aside>

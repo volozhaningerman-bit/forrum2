@@ -87,18 +87,32 @@ export function CommunityTree({
   tree,
   expanded,
   onToggle,
+  fullyVisible,
+  onToggleVisibility,
 }: {
   tree: TreeNode[];
   expanded: Set<string>;
   onToggle: (slug: string) => void;
+  fullyVisible: boolean;
+  onToggleVisibility: () => void;
 }) {
   return (
-    <aside className="forrum-home-v16__tree">
+    <aside
+      className={`forrum-home-v16__tree ${
+        fullyVisible ? 'is-fully-visible' : ''
+      }`.trim()}
+    >
       <div className="forrum-home-v16__side-head">
         <h2>Сообщества</h2>
+        <span className="forrum-home-v20__tree-meta">
+          структура форума
+        </span>
       </div>
       {tree.length ? (
-        <ul className="forrum-home-v16__tree-root">
+        <ul
+          className="forrum-home-v16__tree-root"
+          id="home-community-tree"
+        >
           {tree.map((node) => (
             <TreeBranch
               key={node.id}
@@ -113,6 +127,20 @@ export function CommunityTree({
         <p className="forrum-home-v16__empty">
           Сообщества появятся после загрузки данных.
         </p>
+      )}
+      {tree.length > 0 && (
+        <button
+          className="forrum-home-v20__tree-visibility"
+          type="button"
+          aria-controls="home-community-tree"
+          aria-expanded={fullyVisible}
+          onClick={onToggleVisibility}
+        >
+          {fullyVisible
+            ? 'Свернуть структуру'
+            : 'Показать всю структуру'}
+          <span aria-hidden="true">{fullyVisible ? '↑' : '↓'}</span>
+        </button>
       )}
       <Link
         className="forrum-home-v16__proposal"
