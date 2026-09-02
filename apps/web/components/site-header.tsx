@@ -22,17 +22,21 @@ export function SiteHeader() {
           >
             <svg
               className="brand-symbol"
-              viewBox="0 0 34 30"
+              viewBox="0 0 32 28"
               aria-hidden="true"
               focusable="false"
             >
               <path
                 className="brand-symbol__back"
-                d="M2.5 3.5h19v14h-11l-5 4.5v-4.5h-3z"
+                d="M2 2.5h18.5v13H11L5.5 20v-4.5H2z"
               />
               <path
                 className="brand-symbol__front"
-                d="M12.5 9.5h19v14h-4v4l-5-4h-10z"
+                d="M10.5 8H30v13.5h-4.5V26L20 21.5h-9.5z"
+              />
+              <path
+                className="brand-symbol__joint"
+                d="M20.5 8v13.5M10.5 15.5h15"
               />
             </svg>
             <span className="brand-wordmark" aria-hidden="true">

@@ -41,26 +41,20 @@ export default async function Home() {
     polls,
     announcements,
     feed,
-    newFeed,
     overview,
+    mediaPartners,
+    mediaNews,
+    services,
   ] = await Promise.all([
-    publicApi<HomeInitialData['communities']>(
-      '/communities',
-    ),
-    publicApi<HomeInitialData['polls']>(
-      '/governance/polls',
-    ),
-    publicApi<HomeInitialData['announcements']>(
-      '/announcements',
-    ),
-    publicApi<HomeInitialData['feed']>(
-      '/feed?mode=popular',
-    ),
-    publicApi<HomeInitialData['newFeed']>(
-      '/feed?mode=new',
-    ),
-    publicApi<HomeInitialData['overview']>(
-      '/home/overview',
+    publicApi<HomeInitialData['communities']>('/communities'),
+    publicApi<HomeInitialData['polls']>('/governance/polls'),
+    publicApi<HomeInitialData['announcements']>('/announcements'),
+    publicApi<HomeInitialData['feed']>('/feed?mode=popular'),
+    publicApi<HomeInitialData['overview']>('/home/overview'),
+    publicApi<HomeInitialData['mediaPartners']>('/media/partners'),
+    publicApi<HomeInitialData['mediaMaterials']>('/news'),
+    publicApi<HomeInitialData['services']>(
+      '/portfolio?kind=SERVICE',
     ),
   ]);
 
@@ -71,8 +65,13 @@ export default async function Home() {
         polls,
         announcements,
         feed,
-        newFeed,
         overview,
+        mediaPartners,
+        mediaMaterials: [
+          ...(mediaNews ?? []),
+          ...(announcements ?? []),
+        ],
+        services,
       }}
     />
   );

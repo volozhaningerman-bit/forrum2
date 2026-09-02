@@ -22131,3 +22131,559 @@ html[data-forrum-theme='graphite'] .forrum-home-v18__media-kind.is-live {
     padding-inline: 9px;
   }
 }
+
+/* 4RRUM HOME 19.0: live internet newsroom */
+:root {
+  --f19-red: #d94a32;
+  --f19-amber: #b66b0a;
+  --f19-green: #187a4a;
+  --f19-violet: #6945c8;
+  --f19-cyan: #08788f;
+  --f19-neutral: #656b70;
+}
+
+html.dark,
+html[data-theme='dark'],
+html[data-theme='graphite'],
+html[data-forrum-theme='graphite'] {
+  --f19-red: #ff806d;
+  --f19-amber: #e5a33e;
+  --f19-green: #63c891;
+  --f19-violet: #ad91ff;
+  --f19-cyan: #56bfd1;
+  --f19-neutral: #a5adb4;
+}
+
+.brand {
+  gap: 6px !important;
+}
+
+.brand-symbol {
+  width: 32px;
+  height: 28px;
+}
+
+.brand-symbol__back,
+.brand-symbol__front,
+.brand-symbol__joint {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  vector-effect: non-scaling-stroke;
+}
+
+.brand-symbol__back {
+  stroke: currentColor;
+  opacity: .72;
+}
+
+.brand-symbol__front,
+.brand-symbol__joint {
+  stroke: var(--accent);
+}
+
+.brand-symbol__joint {
+  stroke-width: 2.25;
+}
+
+.brand-wordmark {
+  font-size: 21px;
+  font-weight: 900;
+  letter-spacing: .022em;
+}
+
+.forrum-home-v19.forrum-home-v16 {
+  width: min(calc(100vw - 24px), 1720px);
+  max-width: 1720px;
+  grid-template-columns: 300px minmax(0, 1fr) 316px;
+  gap: 14px;
+  padding: 12px 0 34px;
+  font-size: 13px;
+}
+
+.forrum-home-v19 .forrum-home-v16__center,
+.forrum-home-v19 .forrum-home-v16__rail {
+  gap: 12px;
+}
+
+.forrum-home-v19 .forrum-home-v16__tree,
+.forrum-home-v19 .forrum-home-v16__panel {
+  border-color: var(--fvt-line);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.forrum-home-v19 .forrum-home-v16__tree {
+  top: 74px;
+  padding-inline: 14px;
+}
+
+.forrum-home-v19 .forrum-home-v16__side-head,
+.forrum-home-v19 .forrum-home-v16__panel-head {
+  min-height: 43px;
+  border-top: 2px solid var(--fvt-line-strong);
+  border-bottom: 1px solid var(--fvt-line-strong);
+  background: color-mix(
+    in srgb,
+    var(--fvt-panel-soft) 76%,
+    var(--fvt-panel)
+  );
+}
+
+.forrum-home-v19 .forrum-home-v16__side-head h2,
+.forrum-home-v19 .forrum-home-v16__panel-head h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 820;
+  letter-spacing: .055em;
+}
+
+.forrum-home-v19 .forrum-home-v16__side-head h2::before,
+.forrum-home-v19 .forrum-home-v16__panel-head h2::before {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 7px;
+  border: 1px solid var(--fvt-line-strong);
+  background: var(--fvt-panel);
+  content: '';
+}
+
+.forrum-home-v19 .forrum-home-v19__popular-panel >
+  .forrum-home-v16__panel-head {
+  border-top-color: var(--fvt-accent);
+}
+
+.forrum-home-v19 .forrum-home-v19__popular-panel >
+  .forrum-home-v16__panel-head h2::before {
+  border-color: var(--fvt-accent);
+  background: var(--fvt-accent);
+}
+
+.forrum-home-v19 .forrum-home-v18__panel-actions a {
+  color: var(--fvt-text);
+  font-size: 12px;
+  font-weight: 680;
+}
+
+.forrum-home-v19 .forrum-home-v18__panel-actions a:hover,
+.forrum-home-v19 .forrum-home-v18__panel-actions a:focus-visible {
+  color: var(--fvt-accent);
+}
+
+.forrum-home-v19 .forrum-home-v16__tree-root {
+  padding-block: 10px 12px;
+}
+
+.forrum-home-v19 .forrum-home-v16__tree-row {
+  min-height: 35px;
+}
+
+.forrum-home-v19 .forrum-home-v16__tree-toggle {
+  width: 20px !important;
+  height: 20px !important;
+  flex-basis: 20px !important;
+  font-size: 13px !important;
+}
+
+.forrum-home-v19 .forrum-home-v16__tree-link {
+  min-height: 34px;
+  gap: 8px;
+}
+
+.forrum-home-v19 .forrum-home-v16__tree-name {
+  font-size: 13px;
+  font-weight: 580;
+}
+
+.forrum-home-v19 .forrum-home-v16__tree-root >
+  .forrum-home-v16__tree-node >
+  .forrum-home-v16__tree-row .forrum-home-v16__tree-name {
+  font-size: 13.5px;
+  font-weight: 720;
+}
+
+.forrum-home-v19 .forrum-home-v16__tree-children {
+  margin-left: 13px !important;
+  padding-left: 14px !important;
+}
+
+.forrum-home-v19 .forrum-home-v16__tree-children::before,
+.forrum-home-v19 .forrum-home-v16__tree-children >
+  .forrum-home-v16__tree-node >
+  .forrum-home-v16__tree-row::before {
+  opacity: .88;
+}
+
+.forrum-home-v19 .forrum-home-v16__proposal {
+  min-height: 44px;
+  border-radius: 0;
+  font-size: 13px;
+}
+
+.forrum-home-v19 .forrum-home-v18__discovery-grid {
+  gap: 14px;
+}
+
+.forrum-home-v19 .forrum-home-v18__discovery-grid >
+  .forrum-home-v16__panel {
+  height: 286px;
+}
+
+.forrum-home-v19 .forrum-home-v181__media-status {
+  min-height: 30px;
+  padding-inline: 11px;
+  font-size: 11px;
+  letter-spacing: .025em;
+}
+
+.forrum-home-v19 .forrum-home-v181__media-status small {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px;
+}
+
+.forrum-home-v19 .forrum-home-v18__media-item {
+  min-height: 53px;
+  padding: 6px 11px;
+}
+
+.forrum-home-v19 .forrum-home-v18__media-kind {
+  font-size: 9.5px;
+  letter-spacing: .055em;
+}
+
+.forrum-home-v19 .forrum-home-v18__media-copy strong {
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.forrum-home-v19 .forrum-home-v18__media-copy small {
+  font-size: 10px;
+  line-height: 1.25;
+}
+
+.forrum-home-v19 .forrum-home-v18__service-window {
+  height: 244px;
+}
+
+.forrum-home-v19 .forrum-home-v18__service-item {
+  min-height: 49px;
+  grid-template-columns: 9px minmax(0, 1fr) auto;
+  padding: 7px 11px;
+}
+
+.forrum-home-v19 .forrum-home-v18__service-signal {
+  width: 7px;
+  height: 7px;
+  border-color: var(--f19-cyan);
+  background: color-mix(in srgb, var(--f19-cyan) 34%, transparent);
+}
+
+.forrum-home-v19 .forrum-home-v18__service-item strong {
+  font-size: 11.5px;
+  line-height: 1.25;
+}
+
+.forrum-home-v19 .forrum-home-v18__service-item small {
+  font-size: 10px;
+}
+
+.forrum-home-v19 .forrum-home-v18__service-item em {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 9.5px;
+}
+
+.forrum-home-v19 .forrum-home-v181__empty-state {
+  min-height: 211px;
+  gap: 7px;
+  padding: 22px;
+}
+
+.forrum-home-v19 .forrum-home-v18__service-window
+  .forrum-home-v181__empty-state {
+  min-height: 244px;
+}
+
+.forrum-home-v19 .forrum-home-v181__empty-state strong {
+  font-size: 13px;
+}
+
+.forrum-home-v19 .forrum-home-v181__empty-state span,
+.forrum-home-v19 .forrum-home-v181__empty-state a {
+  font-size: 11px;
+}
+
+.forrum-home-v19 .forrum-home-v16__discussed-head {
+  width: 276px !important;
+  min-width: 276px !important;
+  grid-template-columns: 58px 72px 128px !important;
+  column-gap: 9px !important;
+  padding: 8px 11px 8px 0 !important;
+  border-bottom-color: var(--fvt-line-strong);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10.5px !important;
+  letter-spacing: .02em;
+}
+
+.forrum-home-v19 .forrum-home-v16__discussed-list {
+  padding-inline: 14px;
+}
+
+.forrum-home-v19 .forrum-home-v18__discussed {
+  position: relative;
+  min-height: 78px;
+  grid-template-columns: 50px minmax(0, 1fr) 58px 72px 128px !important;
+  column-gap: 9px !important;
+  padding: 10px 0;
+  --f19-topic-signal: var(--f19-neutral);
+}
+
+.forrum-home-v19 .forrum-home-v19__topic::before {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: -14px;
+  width: 3px;
+  background: var(--f19-topic-signal);
+  content: '';
+  opacity: .78;
+}
+
+.forrum-home-v19 .forrum-home-v19__topic.type-news,
+.forrum-home-v19 .forrum-home-v19__topic.type-announcement {
+  --f19-topic-signal: var(--f19-red);
+}
+
+.forrum-home-v19 .forrum-home-v19__topic.type-question {
+  --f19-topic-signal: var(--f19-violet);
+}
+
+.forrum-home-v19 .forrum-home-v19__topic.type-case,
+.forrum-home-v19 .forrum-home-v19__topic.type-project {
+  --f19-topic-signal: var(--f19-amber);
+}
+
+.forrum-home-v19 .forrum-home-v19__topic.type-guide {
+  --f19-topic-signal: var(--f19-green);
+}
+
+.forrum-home-v19 .forrum-home-v19__topic.type-service {
+  --f19-topic-signal: var(--f19-cyan);
+}
+
+.forrum-home-v19 .forrum-home-v19__topic:hover,
+.forrum-home-v19 .forrum-home-v19__topic:focus-visible {
+  background: var(--fvt-hover);
+}
+
+.forrum-home-v19 .forrum-home-v18__topic-mark {
+  box-shadow: 3px 3px 0 var(--fvt-line) !important;
+}
+
+.forrum-home-v19 .forrum-home-v18__discussed
+  .forrum-home-v16__topic-title {
+  gap: 8px;
+}
+
+.forrum-home-v19 .forrum-home-v18__discussed
+  .forrum-home-v16__topic-title strong {
+  font-size: 14px !important;
+  font-weight: 760 !important;
+  letter-spacing: -.012em;
+}
+
+.forrum-home-v19 .forrum-home-v18__topic-type {
+  border-color: color-mix(
+    in srgb,
+    var(--f19-topic-signal) 66%,
+    var(--fvt-line)
+  ) !important;
+  background: color-mix(
+    in srgb,
+    var(--f19-topic-signal) 10%,
+    var(--fvt-panel)
+  ) !important;
+  color: var(--f19-topic-signal) !important;
+  font-size: 10.5px !important;
+  letter-spacing: .045em;
+}
+
+.forrum-home-v19 .forrum-home-v18__discussed
+  .forrum-home-v16__topic-excerpt {
+  margin-top: 5px;
+  color: var(--fvt-muted) !important;
+  font-size: 12px;
+  line-height: 1.32;
+}
+
+.forrum-home-v19 .forrum-home-v18__discussed
+  .forrum-home-v16__discussion-stat {
+  color: var(--fvt-text) !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+.forrum-home-v19 .forrum-home-v18__last-message strong {
+  font-size: 11.5px !important;
+}
+
+.forrum-home-v19 .forrum-home-v18__last-message small {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 10px !important;
+}
+
+.forrum-home-v19 .forrum-home-v16__tabs button {
+  min-height: 42px;
+  font-size: 12px;
+}
+
+.forrum-home-v19 .forrum-home-v16__weekly-row {
+  min-height: 47px !important;
+  grid-template-columns: 20px 30px minmax(0, 1fr) auto !important;
+  padding: 7px 11px !important;
+}
+
+.forrum-home-v19 .forrum-home-v16__weekly-row .avatar {
+  width: 28px !important;
+  height: 28px !important;
+  border: 1px solid var(--fvt-line-strong);
+  background: var(--fvt-panel-soft);
+  font-size: 9px !important;
+}
+
+.forrum-home-v19 .forrum-home-v16__weekly-rank,
+.forrum-home-v19 .forrum-home-v16__weekly-score {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11.5px !important;
+}
+
+.forrum-home-v19 .forrum-home-v16__weekly-user {
+  color: var(--fvt-text) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+.forrum-home-v19 .forrum-home-v16__weekly-more {
+  min-height: 38px;
+  padding-inline: 11px !important;
+  font-size: 11.5px !important;
+}
+
+.forrum-home-v19 .forrum-home-v16__actual {
+  min-height: 68px;
+}
+
+.forrum-home-v19 .forrum-home-v16__actual strong {
+  font-size: 12.5px;
+  line-height: 1.28;
+}
+
+.forrum-home-v19 .forrum-home-v16__actual small,
+.forrum-home-v19 .forrum-home-v16__poll-copy small,
+.forrum-home-v19 .forrum-home-v16__poll-time {
+  font-size: 11px;
+}
+
+@media (max-width: 1480px) {
+  .forrum-home-v19.forrum-home-v16 {
+    grid-template-columns: 280px minmax(0, 1fr) 296px;
+    gap: 12px;
+  }
+
+  .forrum-home-v19 .forrum-home-v18__discussed {
+    grid-template-columns: 46px minmax(0, 1fr) 52px 64px 112px !important;
+    column-gap: 8px !important;
+  }
+
+  .forrum-home-v19 .forrum-home-v16__discussed-head {
+    width: 244px !important;
+    min-width: 244px !important;
+    grid-template-columns: 52px 64px 112px !important;
+    column-gap: 8px !important;
+  }
+}
+
+@media (max-width: 1240px) {
+  .forrum-home-v19.forrum-home-v16 {
+    width: calc(100vw - 24px);
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+
+  .forrum-home-v19 .forrum-home-v16__rail {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
+  .forrum-home-v19 .forrum-home-v18__discussed {
+    grid-template-columns: 44px minmax(0, 1fr) 116px !important;
+  }
+
+  .forrum-home-v19 .forrum-home-v18__discussed
+    .forrum-home-v16__topic-stat,
+  .forrum-home-v19 .forrum-home-v16__discussed-head {
+    display: none !important;
+  }
+}
+
+@media (max-width: 860px) {
+  .forrum-home-v19.forrum-home-v16 {
+    width: calc(100vw - 16px);
+    grid-template-columns: 1fr;
+    padding-top: 8px;
+  }
+
+  .forrum-home-v19 .forrum-home-v16__rail {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .brand-symbol {
+    width: 29px;
+    height: 26px;
+  }
+
+  .brand-wordmark {
+    font-size: 20px;
+  }
+
+  .forrum-home-v19 .forrum-home-v18__discovery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .forrum-home-v19 .forrum-home-v18__discussed {
+    min-height: 88px;
+    grid-template-columns: 40px minmax(0, 1fr) !important;
+  }
+
+  .forrum-home-v19 .forrum-home-v18__last-message {
+    grid-column: 2;
+    justify-items: start;
+    margin-top: 4px;
+  }
+
+  .forrum-home-v19 .forrum-home-v18__discussed
+    .forrum-home-v16__topic-title {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .forrum-home-v19 .forrum-home-v18__discussed
+    .forrum-home-v16__topic-excerpt {
+    white-space: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forrum-home-v19 .forrum-home-v18__service-window[data-animated='true']
+    .forrum-home-v18__service-track,
+  .forrum-home-v19 .forrum-home-v18__media-kind.is-live i {
+    animation: none !important;
+  }
+}

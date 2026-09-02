@@ -21,7 +21,7 @@ export function SiteFooter() {
           <Link href="/rules">Правила</Link>
           <Link href="/#propose-section">Предложить раздел</Link>
           <Link href="/#become-curator">Стать куратором</Link>
-          <Link href="/support">Поддержка</Link>
+          <Link href="/support">Обратная связь</Link>
         </nav>
       </div>
     </footer>

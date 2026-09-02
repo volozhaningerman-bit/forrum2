@@ -7,20 +7,17 @@ import {
   VoteClass,
 } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { rankWeekly } from './ranking.js';
 
-type WeeklyUser = {
+type WeeklyAccumulator = {
+  id: string;
   username: string;
   displayName: string;
   avatarUrl: string | null;
-  score: number;
   reactionCount: number;
   topicCount: number;
   commentCount: number;
   presenceCount: number;
-};
-
-type WeeklyAccumulator = WeeklyUser & {
-  id: string;
 };
 
 type UserIdentity = {
@@ -53,7 +50,6 @@ function getWeeklyUser(
     username: user.username,
     displayName: user.displayName,
     avatarUrl: user.avatarUrl,
-    score: 0,
     reactionCount: 0,
     topicCount: 0,
     commentCount: 0,
@@ -62,30 +58,6 @@ function getWeeklyUser(
 
   map.set(user.id, created);
   return created;
-}
-
-function topWeekly(
-  map: Map<string, WeeklyAccumulator>,
-  score: (item: WeeklyAccumulator) => number,
-) {
-  return [...map.values()]
-    .map((item) => ({
-      username: item.username,
-      displayName: item.displayName,
-      avatarUrl: item.avatarUrl,
-      score: score(item),
-      reactionCount: item.reactionCount,
-      topicCount: item.topicCount,
-      commentCount: item.commentCount,
-      presenceCount: item.presenceCount,
-    }))
-    .filter((item) => item.score > 0)
-    .sort(
-      (left, right) =>
-        right.score - left.score ||
-        left.username.localeCompare(right.username),
-    )
-    .slice(0, 5);
 }
 
 function readOnlineRecord(value: unknown) {
@@ -137,7 +109,6 @@ export class HomeService {
       messages,
       onlineSessions,
       recordSetting,
-      weeklyActiveUsers,
       weeklyTopics,
       weeklyComments,
       publicationReactions,
@@ -183,19 +154,6 @@ export class HomeService {
       }),
       this.prisma.platformSetting.findUnique({
         where: { key: onlineRecordKey },
-      }),
-      this.prisma.user.findMany({
-        where: {
-          lastSeenAt: { gte: weekAgo },
-        },
-        orderBy: { lastSeenAt: 'desc' },
-        take: 100,
-        select: {
-          id: true,
-          username: true,
-          displayName: true,
-          avatarUrl: true,
-        },
       }),
       this.prisma.publication.findMany({
         where: {
@@ -424,13 +382,6 @@ export class HomeService {
     const activity = new Map<string, WeeklyAccumulator>();
     const likes = new Map<string, WeeklyAccumulator>();
 
-    // A real weekly activity ranking should not disappear just because a user
-    // read/browsed without creating a topic. Presence is a low-weight real
-    // activity signal; topics/comments keep the meaningful weight.
-    for (const user of weeklyActiveUsers) {
-      getWeeklyUser(activity, user).presenceCount += 1;
-    }
-
     for (const item of weeklyTopics) {
       getWeeklyUser(activity, item.author).topicCount += 1;
     }
@@ -501,17 +452,8 @@ export class HomeService {
         recordOnlineAt,
       },
       weekly: {
-        likes: topWeekly(
-          likes,
-          (item) => item.reactionCount,
-        ),
-        activity: topWeekly(
-          activity,
-          (item) =>
-            item.topicCount * 3 +
-            item.commentCount * 2 +
-            item.presenceCount,
-        ),
+        likes: rankWeekly([...likes.values()], 'likes'),
+        activity: rankWeekly([...activity.values()], 'activity'),
       },
       discussed,
       activePolls: polls.map((poll) => ({
