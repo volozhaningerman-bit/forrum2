@@ -8,7 +8,7 @@ const read = (path) => {
 
 const layout = read('apps/web/app/layout.tsx');
 const dashboard = read('apps/web/components/home-dashboard.tsx');
-const css = read('apps/web/app/home-v20.css');
+const css = `${read('apps/web/app/home-v20.css')}\n${read('apps/web/app/home-v21.css')}`;
 const discovery = read('apps/web/components/home/discovery-panels.tsx');
 const communityTree = read('apps/web/components/home/community-tree.tsx');
 const activity = read('apps/web/components/home/activity-panel.tsx');
@@ -25,13 +25,18 @@ assert.equal(
   1,
   'The dashboard must expose one v20 scope marker',
 );
-assert.match(dashboard, /data-home-reference="v20"/);
+assert.doesNotMatch(dashboard, /data-home-reference="v20"/);
+assert.match(dashboard, /forrum-home-v21/);
+assert.match(dashboard, /data-home-reference="v21"/);
 
 assert.match(css, /\.forrum-home-v20\s*\{/);
 assert.match(css, /body:has\(\.forrum-home-v20\)/);
 assert.match(css, /html\.dark[\s\S]*\.forrum-home-v20/);
 assert.match(css, /--home-surface:/);
 assert.match(css, /--home-accent:/);
+assert.match(css, /--home-panel-glow:/);
+assert.match(css, /\.forrum-home-v21\s*\{/);
+assert.match(css, /backdrop-filter:/);
 
 for (const selector of ['header', 'brand', 'forrum-home-v16__panel']) {
   assert.doesNotMatch(
@@ -57,6 +62,10 @@ assert.match(news, /is-lead/);
 assert.match(siteHeader, /brand-symbol--legacy/);
 assert.match(siteHeader, /brand-symbol--neo/);
 assert.equal((siteHeader.match(/aria-label="4RRUM"/g) ?? []).length, 1);
+assert.match(siteHeader, /className="brand-wordmark"[^>]*>\s*RRUM\s*</);
+assert.doesNotMatch(siteHeader, /brand-wordmark[\s\S]{0,120}<strong>4<\/strong>/);
+assert.match(read('apps/web/components/home/popular-topics-panel.tsx'), /Статус темы:/);
+assert.match(read('apps/web/components/home/weekly-members-panel.tsx'), /Стать первым/);
 assert.match(
   css,
   /body:not\(:has\(\.forrum-home-v20\)\) \.brand-symbol--neo/,
@@ -66,4 +75,4 @@ assert.match(
   /body:has\(\.forrum-home-v20\) \.brand-symbol--legacy/,
 );
 
-console.log('Home v20 structural contract passed.');
+console.log('Home v21 structural contract passed.');

@@ -103,9 +103,14 @@ export function WeeklyMembersPanel({
             </Link>
           ))
         ) : (
-          <p className="forrum-home-v16__weekly-empty">
-            За эту неделю активности пока нет.
-          </p>
+          <div className="forrum-home-v16__weekly-empty forrum-home-v21__weekly-empty">
+            <span aria-hidden="true">01</span>
+            <strong>Первое место свободно</strong>
+            <small>
+              Темы, ответы и симпатии формируют рейтинг автоматически.
+            </small>
+            <Link href="/create">Стать первым →</Link>
+          </div>
         )}
       </div>
       <Link

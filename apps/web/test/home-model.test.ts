@@ -244,3 +244,58 @@ test('topic pulse stays absent for stale or insufficient activity', () => {
     null,
   );
 });
+
+test('topic status gives every topic a simple truthful lifecycle label', () => {
+  const now = Date.parse('2026-09-02T12:00:00.000Z');
+
+  assert.deepEqual(
+    [
+      homeModel.topicStatus(
+        {
+          type: 'QUESTION',
+          createdAt: '2026-08-30T12:00:00.000Z',
+          lastActivityAt: '2026-08-30T12:00:00.000Z',
+          commentCount: 0,
+          viewCount: 24,
+        },
+        now,
+      ),
+      homeModel.topicStatus(
+        {
+          type: 'QUESTION',
+          createdAt: '2026-08-20T12:00:00.000Z',
+          lastActivityAt: '2026-08-24T12:00:00.000Z',
+          commentCount: 2,
+          viewCount: 80,
+        },
+        now,
+      ),
+      homeModel.topicStatus(
+        {
+          type: 'DISCUSSION',
+          createdAt: '2026-08-20T12:00:00.000Z',
+          lastActivityAt: '2026-08-24T12:00:00.000Z',
+          commentCount: 0,
+          viewCount: 20,
+        },
+        now,
+      ),
+    ],
+    ['waiting', 'answered', 'open'],
+  );
+});
+
+test('activity title suppresses repeated-character test content without changing real titles', () => {
+  assert.equal(
+    homeModel.safeActivityTitle('11111111111111', '', 'TOPIC'),
+    'Новая тема без описания',
+  );
+  assert.equal(
+    homeModel.safeActivityTitle(
+      '  Чек-лист   органического продвижения  ',
+      '',
+      'TOPIC',
+    ),
+    'Чек-лист органического продвижения',
+  );
+});

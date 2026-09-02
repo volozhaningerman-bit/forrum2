@@ -87,6 +87,13 @@ export type DiscussedTopicData =
 
 export type TopicPulse = 'rising' | 'hot';
 
+export type TopicStatus =
+  | 'waiting'
+  | 'answered'
+  | 'open'
+  | 'active'
+  | TopicPulse;
+
 export type HomeMediaPartner = {
   id: string;
   type: string;

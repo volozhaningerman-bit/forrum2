@@ -197,8 +197,8 @@ export function HomeDashboard({
 
   return (
     <div
-      className="forrum-home-v16 forrum-home-v19 forrum-home-v191 forrum-home-v20"
-      data-home-reference="v20"
+      className="forrum-home-v16 forrum-home-v19 forrum-home-v191 forrum-home-v20 forrum-home-v21"
+      data-home-reference="v21"
     >
       <CommunityTree
         tree={tree}
