@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { CSSProperties, MouseEvent } from 'react';
 import { CommunityMark } from '@/components/community-mark';
+import { communityToneIndex } from './model';
 import type { TreeNode } from './types';
 import { communityDisplayName } from './utils';
 
@@ -26,6 +27,7 @@ function TreeBranch({
   return (
     <li
       className="forrum-home-v16__tree-node"
+      data-community-tone={communityToneIndex(node.slug)}
       style={{ '--tree-depth': depth } as CSSProperties}
     >
       <div

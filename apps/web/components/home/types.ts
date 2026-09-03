@@ -64,6 +64,7 @@ export type HomeDiscussedTopic = {
   lastActivityAt?: string;
   commentCount: number;
   reactionCount: number;
+  viewerReaction?: string | null;
   author: {
     username: string;
     displayName: string;

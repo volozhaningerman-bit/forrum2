@@ -34,7 +34,7 @@ export function WeeklyMembersPanel({
             right.score - left.score ||
             left.username.localeCompare(right.username, 'ru'),
         )
-        .slice(0, 5),
+        .slice(0, 3),
     [mode, weekly],
   );
 
@@ -85,7 +85,7 @@ export function WeeklyMembersPanel({
         {participants.length ? (
           participants.map((participant, index) => (
             <Link
-              className="forrum-home-v16__weekly-row"
+              className="forrum-home-v16__weekly-row forrum-home-v23__weekly-card"
               href={`/u/${participant.username}`}
               key={participant.username}
             >
@@ -95,7 +95,7 @@ export function WeeklyMembersPanel({
               <Avatar
                 name={participant.displayName || participant.username}
                 url={participant.avatarUrl}
-                size={28}
+                size={42}
               />
               <strong className="forrum-home-v16__weekly-user">
                 @{participant.username}

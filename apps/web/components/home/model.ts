@@ -46,6 +46,18 @@ export type LiveActivityItem = {
   occurredAt: string;
 };
 
+export type TopicReactionType = 'LIKE' | 'FIRE' | 'USEFUL';
+
+export type TopicReactionState = {
+  count: number;
+  viewerReaction: string | null;
+};
+
+export type TopicReactionResult = {
+  active: boolean;
+  type: string | null;
+};
+
 export function mergePopularTopics<
   TFeed extends Identified,
   TRich extends Identified,
@@ -271,4 +283,31 @@ export function topicSignal(
   }
 
   return null;
+}
+
+export function applyTopicReaction(
+  current: TopicReactionState,
+  requested: TopicReactionType,
+  result: TopicReactionResult,
+): TopicReactionState {
+  const wasActive = Boolean(current.viewerReaction);
+  const countDelta = Number(result.active) - Number(wasActive);
+
+  return {
+    count: Math.max(0, current.count + countDelta),
+    viewerReaction: result.active
+      ? result.type ?? requested
+      : null,
+  };
+}
+
+export function communityToneIndex(slug: string) {
+  const normalized = slug.trim().toLowerCase();
+  let hash = 0;
+
+  for (const character of normalized) {
+    hash = (hash * 31 + character.codePointAt(0)!) >>> 0;
+  }
+
+  return hash % 6;
 }

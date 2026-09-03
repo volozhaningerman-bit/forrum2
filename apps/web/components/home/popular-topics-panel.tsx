@@ -3,6 +3,7 @@ import { CommunityMark } from '@/components/community-mark';
 import { TelegramShareButton } from '@/components/telegram-share-button';
 import { HomePanel } from './home-panel';
 import { topicSignal } from './model';
+import { TopicReactions } from './topic-reactions';
 import type { DiscussedTopicData } from './types';
 import {
   formatCount,
@@ -74,18 +75,17 @@ function DiscussedTopic({ item }: { item: DiscussedTopicData }) {
           <strong>@{reply.username}</strong>
           <small>{relativeTime(reply.createdAt)}</small>
         </span>
-        <span className="forrum-home-v22__topic-actions">
-          {item.reactionCount > 0 && (
-            <span aria-label={`Реакции: ${item.reactionCount}`}>
-              ♡ {formatCount(item.reactionCount)}
-            </span>
-          )}
-          <TelegramShareButton
-            compact
-            label="Поделиться"
-            slug={item.slug}
-          />
-        </span>
+        <TopicReactions
+          slug={item.slug}
+          initialCount={item.reactionCount}
+          initialViewerReaction={item.viewerReaction}
+        />
+        <TelegramShareButton
+          compact
+          variant="endcap"
+          label="Поделиться в Telegram"
+          slug={item.slug}
+        />
       </span>
     </article>
   );
@@ -108,7 +108,7 @@ export function PopularTopicsPanel({
         aria-label="Режим ленты"
       >
         <Link aria-current="page" href="/feed?mode=popular">
-          🔥 Горячее
+          🔥 Тренд
         </Link>
         <Link href="/feed?mode=new">✨ Новое</Link>
         <Link href="/feed?mode=subscriptions">Моя лента</Link>
