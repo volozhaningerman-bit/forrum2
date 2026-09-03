@@ -62,8 +62,11 @@ export function SiteHeader() {
                 d="M4.5 5.5h3v3h-3z"
               />
             </svg>
-            <span className="brand-wordmark" aria-hidden="true">
+            <span className="brand-wordmark brand-wordmark--default" aria-hidden="true">
               RRUM
+            </span>
+            <span className="brand-wordmark brand-wordmark--v23" aria-hidden="true">
+              <strong>4</strong><span>RRUM</span>
             </span>
           </Link>
 

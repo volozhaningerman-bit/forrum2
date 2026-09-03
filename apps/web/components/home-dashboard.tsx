@@ -5,12 +5,12 @@ import { useEffect, useMemo, useState } from 'react';
 import type { PublicationCardData } from '@/lib/types';
 import { api } from '@/lib/api';
 import { CommunityTree } from './home/community-tree';
-import { ActivityPanel } from './home/activity-panel';
 import {
   MediaPanel,
   ServicesPanel,
 } from './home/discovery-panels';
 import { ForrumNewsPanel } from './home/forrum-news-panel';
+import { ForumStatsPanel } from './home/forum-stats-panel';
 import { homeDemoWeekly } from './home/home-demo-content';
 import {
   mergePopularTopics,
@@ -63,9 +63,6 @@ export function HomeDashboard({
   const [services, setServices] = useState(
     initialData.services ?? [],
   );
-  const [activityFeed, setActivityFeed] = useState(
-    initialData.activityFeed ?? [],
-  );
   const [discoveryLoaded, setDiscoveryLoaded] = useState(
     initialData.mediaPartners !== undefined &&
       initialData.mediaMaterials !== undefined &&
@@ -81,13 +78,11 @@ export function HomeDashboard({
         newsResult,
         announcementsResult,
         servicesResult,
-        activityResult,
       ] = await Promise.allSettled([
         api<HomeMediaPartner[]>('/media/partners'),
         api<PublicationCardData[]>('/news'),
         api<PublicationCardData[]>('/announcements'),
         api<HomeService[]>('/portfolio?kind=SERVICE'),
-        api<PublicationCardData[]>('/feed?mode=all'),
       ]);
 
       if (!active) return;
@@ -117,10 +112,6 @@ export function HomeDashboard({
 
       if (servicesResult.status === 'fulfilled') {
         setServices(servicesResult.value);
-      }
-
-      if (activityResult.status === 'fulfilled') {
-        setActivityFeed(activityResult.value);
       }
 
       setDiscoveryLoaded(true);
@@ -202,8 +193,8 @@ export function HomeDashboard({
 
   return (
     <div
-      className="forrum-home-v16 forrum-home-v19 forrum-home-v191 forrum-home-v20 forrum-home-v21 forrum-home-v22"
-      data-home-reference="v22"
+      className="forrum-home-v16 forrum-home-v19 forrum-home-v191 forrum-home-v20 forrum-home-v21 forrum-home-v22 forrum-home-v23"
+      data-home-reference="v23"
     >
       <CommunityTree
         tree={tree}
@@ -250,9 +241,9 @@ export function HomeDashboard({
       </main>
 
       <aside className="forrum-home-v16__rail">
-        <ActivityPanel publications={activityFeed} />
         <WeeklyMembersPanel weekly={weekly} demo={useDemoWeekly} />
         <ForrumNewsPanel announcements={announcements} />
+        <ForumStatsPanel stats={initialData.overview?.stats} />
       </aside>
     </div>
   );

@@ -24,10 +24,12 @@ export function TelegramShareButton({
   slug,
   compact = false,
   label = 'В Telegram',
+  variant = 'default',
 }: {
   slug: string;
   compact?: boolean;
   label?: string;
+  variant?: 'default' | 'endcap';
 }) {
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
@@ -125,10 +127,16 @@ export function TelegramShareButton({
   return <>
     <button
       type="button"
-      className={compact ? 'telegram-share-trigger compact' : 'plain-action telegram-share-trigger'}
+      className={`${compact ? 'telegram-share-trigger compact' : 'plain-action telegram-share-trigger'} ${variant === 'endcap' ? 'endcap' : ''}`.trim()}
+      aria-label={variant === 'endcap' ? label : undefined}
+      title={variant === 'endcap' ? label : undefined}
       onClick={(event) => { event.preventDefault(); event.stopPropagation(); void showDialog(); }}
     >
-      {label}
+      {variant === 'endcap' ? (
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M4 12 19 5l-4 14-3.6-5.1L4 12Zm7.4 1.9L19 5" />
+        </svg>
+      ) : label}
     </button>
 
     {mounted && open ? createPortal(<div

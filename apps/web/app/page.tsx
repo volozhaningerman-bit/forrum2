@@ -41,7 +41,6 @@ export default async function Home() {
     polls,
     announcements,
     feed,
-    activityFeed,
     overview,
     mediaPartners,
     mediaNews,
@@ -51,7 +50,6 @@ export default async function Home() {
     publicApi<HomeInitialData['polls']>('/governance/polls'),
     publicApi<HomeInitialData['announcements']>('/announcements'),
     publicApi<HomeInitialData['feed']>('/feed?mode=popular'),
-    publicApi<HomeInitialData['activityFeed']>('/feed?mode=all'),
     publicApi<HomeInitialData['overview']>('/home/overview'),
     publicApi<HomeInitialData['mediaPartners']>('/media/partners'),
     publicApi<HomeInitialData['mediaMaterials']>('/news'),
@@ -67,7 +65,6 @@ export default async function Home() {
         polls,
         announcements,
         feed,
-        activityFeed,
         overview,
         mediaPartners,
         mediaMaterials: [

@@ -351,3 +351,60 @@ test('live activity removes test garbage before applying the visible limit', () 
 
   assert.deepEqual(activity.map((item) => item.slug), ['real']);
 });
+
+test('topic reaction count changes only when the active-reaction state changes', () => {
+  assert.equal(
+    typeof (homeModel as Record<string, unknown>).applyTopicReaction,
+    'function',
+  );
+
+  const applyTopicReaction = homeModel.applyTopicReaction;
+
+  assert.deepEqual(
+    applyTopicReaction(
+      { count: 0, viewerReaction: null },
+      'LIKE',
+      { active: true, type: 'LIKE' },
+    ),
+    { count: 1, viewerReaction: 'LIKE' },
+  );
+  assert.deepEqual(
+    applyTopicReaction(
+      { count: 7, viewerReaction: 'LIKE' },
+      'FIRE',
+      { active: true, type: 'FIRE' },
+    ),
+    { count: 7, viewerReaction: 'FIRE' },
+  );
+  assert.deepEqual(
+    applyTopicReaction(
+      { count: 1, viewerReaction: 'USEFUL' },
+      'USEFUL',
+      { active: false, type: null },
+    ),
+    { count: 0, viewerReaction: null },
+  );
+  assert.deepEqual(
+    applyTopicReaction(
+      { count: 0, viewerReaction: 'LIKE' },
+      'LIKE',
+      { active: false, type: null },
+    ),
+    { count: 0, viewerReaction: null },
+  );
+});
+
+test('community tone is stable and stays inside the six-color palette', () => {
+  assert.equal(
+    typeof (homeModel as Record<string, unknown>).communityToneIndex,
+    'function',
+  );
+
+  const communityToneIndex = homeModel.communityToneIndex;
+  const first = communityToneIndex('internet-projects');
+
+  assert.equal(communityToneIndex('internet-projects'), first);
+  assert.equal(communityToneIndex(' INTERNET-PROJECTS '), first);
+  assert.equal(Number.isInteger(first), true);
+  assert.equal(first >= 0 && first <= 5, true);
+});
