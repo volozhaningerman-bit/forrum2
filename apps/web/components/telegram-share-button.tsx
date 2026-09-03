@@ -23,9 +23,11 @@ type TelegramPreview = {
 export function TelegramShareButton({
   slug,
   compact = false,
+  label = 'В Telegram',
 }: {
   slug: string;
   compact?: boolean;
+  label?: string;
 }) {
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
@@ -126,7 +128,7 @@ export function TelegramShareButton({
       className={compact ? 'telegram-share-trigger compact' : 'plain-action telegram-share-trigger'}
       onClick={(event) => { event.preventDefault(); event.stopPropagation(); void showDialog(); }}
     >
-      В Telegram
+      {label}
     </button>
 
     {mounted && open ? createPortal(<div
@@ -161,7 +163,7 @@ export function TelegramShareButton({
         {!loading && preview && <div className="telegram-share-preview">
           <strong>{preview.title}</strong>
           {preview.excerpt && <p>{preview.excerpt}</p>}
-          <span>FORRUM →</span>
+          <span>Создано на 4RRUM · Обсудить →</span>
         </div>}
 
         {!loading && channels.length > 0 && <div className="telegram-share-controls">

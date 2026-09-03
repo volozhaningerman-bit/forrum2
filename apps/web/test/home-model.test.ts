@@ -245,12 +245,12 @@ test('topic pulse stays absent for stale or insufficient activity', () => {
   );
 });
 
-test('topic status gives every topic a simple truthful lifecycle label', () => {
+test('topic signal appears only when it adds useful context', () => {
   const now = Date.parse('2026-09-02T12:00:00.000Z');
 
   assert.deepEqual(
     [
-      homeModel.topicStatus(
+      homeModel.topicSignal(
         {
           type: 'QUESTION',
           createdAt: '2026-08-30T12:00:00.000Z',
@@ -260,7 +260,7 @@ test('topic status gives every topic a simple truthful lifecycle label', () => {
         },
         now,
       ),
-      homeModel.topicStatus(
+      homeModel.topicSignal(
         {
           type: 'QUESTION',
           createdAt: '2026-08-20T12:00:00.000Z',
@@ -270,7 +270,7 @@ test('topic status gives every topic a simple truthful lifecycle label', () => {
         },
         now,
       ),
-      homeModel.topicStatus(
+      homeModel.topicSignal(
         {
           type: 'DISCUSSION',
           createdAt: '2026-08-20T12:00:00.000Z',
@@ -281,7 +281,11 @@ test('topic status gives every topic a simple truthful lifecycle label', () => {
         now,
       ),
     ],
-    ['waiting', 'answered', 'open'],
+    [
+      { status: 'waiting', label: 'Ждёт ответа' },
+      { status: 'answered', label: 'Есть ответы' },
+      null,
+    ],
   );
 });
 
@@ -298,4 +302,52 @@ test('activity title suppresses repeated-character test content without changing
     ),
     'Чек-лист органического продвижения',
   );
+  assert.equal(
+    homeModel.safeActivityTitle(
+      '11111111111111',
+      'Полезное описание темы',
+      'TOPIC',
+    ),
+    'Полезное описание темы',
+  );
+});
+
+test('live activity removes test garbage before applying the visible limit', () => {
+  const activity = homeModel.buildLiveActivity(
+    [
+      {
+        id: 'digits',
+        slug: 'digits',
+        format: 'TOPIC',
+        title: '11111111111111',
+        excerpt: '',
+        createdAt: '2026-09-02T14:00:00.000Z',
+        author: { username: 'tester' },
+        community: { slug: 'rp', name: 'GTA RP' },
+      },
+      {
+        id: 'test',
+        slug: 'test',
+        format: 'TOPIC',
+        title: 'тест тест',
+        excerpt: '',
+        createdAt: '2026-09-02T13:00:00.000Z',
+        author: { username: 'tester' },
+        community: { slug: 'rp', name: 'GTA RP' },
+      },
+      {
+        id: 'real',
+        slug: 'real',
+        format: 'TOPIC',
+        title: 'Разбор каналов привлечения',
+        excerpt: '',
+        createdAt: '2026-09-02T12:00:00.000Z',
+        author: { username: 'creator' },
+        community: { slug: 'growth', name: 'Продвижение' },
+      },
+    ],
+    1,
+  );
+
+  assert.deepEqual(activity.map((item) => item.slug), ['real']);
 });

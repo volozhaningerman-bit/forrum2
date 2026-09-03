@@ -12,6 +12,10 @@ import { createHash, randomBytes } from 'node:crypto';
 import { PublicationStatus } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import type { SharePublicationToTelegramDto } from './dto.js';
+import {
+  buildTelegramPublicationHtml,
+  escapeTelegramHtml,
+} from './telegram-message.js';
 
 function codeHash(value: string) {
   return createHash('sha256').update(value.trim().toUpperCase()).digest('hex');
@@ -21,14 +25,6 @@ function createCode() {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   const bytes = randomBytes(8);
   return [...bytes].map((byte) => alphabet[byte % alphabet.length]).join('');
-}
-
-function escapeHtml(value: string) {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;');
 }
 
 function plainText(source: string) {
@@ -583,11 +579,11 @@ export class TelegramService implements OnModuleInit, OnModuleDestroy {
     const title =
       publication.title?.trim() || `Публикация в ${publication.community.name}`;
     const excerpt = plainText(publication.body).slice(0, 650);
-    const html = [
-      `<b>${escapeHtml(title)}</b>`,
-      excerpt ? escapeHtml(excerpt) : '',
-      `<a href="${escapeHtml(publicationUrl)}">FORRUM →</a>`,
-    ].filter(Boolean).join('\n\n');
+    const html = buildTelegramPublicationHtml({
+      title,
+      excerpt,
+      publicationUrl,
+    });
 
     const imageUrl = dto.includeImage
       ? firstImageUrl(publication.body)
@@ -685,7 +681,7 @@ export class TelegramService implements OnModuleInit, OnModuleDestroy {
     try {
       await this.send(
         link.chatId,
-        `${escapeHtml(notification.title)}\n${escapeHtml(notification.body)}\n${escapeHtml(site + notification.href)}`,
+        `${escapeTelegramHtml(notification.title)}\n${escapeTelegramHtml(notification.body)}\n${escapeTelegramHtml(site + notification.href)}`,
       );
 
       await this.prisma.telegramLink.update({

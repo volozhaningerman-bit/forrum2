@@ -9,11 +9,13 @@ type WeeklyMode = 'likes' | 'activity';
 
 export function WeeklyMembersPanel({
   weekly,
+  demo = false,
 }: {
   weekly: {
     likes: WeeklyUser[];
     activity: WeeklyUser[];
   };
+  demo?: boolean;
 }) {
   const [mode, setMode] = useState<WeeklyMode>('activity');
   const participants = useMemo(
@@ -37,9 +39,17 @@ export function WeeklyMembersPanel({
   );
 
   return (
-    <section className="forrum-home-v16__panel forrum-home-v19__weekly-panel">
+    <section
+      className="forrum-home-v16__panel forrum-home-v19__weekly-panel"
+      data-demo={demo ? 'true' : undefined}
+    >
       <header className="forrum-home-v16__panel-head">
         <h2>Участники недели</h2>
+        {demo && (
+          <small className="forrum-home-v22__demo-label">
+            Бета-пример
+          </small>
+        )}
       </header>
       <div
         className="forrum-home-v16__tabs"

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import type { PublicationCardData } from '@/lib/types';
 import { api } from '@/lib/api';
@@ -10,6 +11,7 @@ import {
   ServicesPanel,
 } from './home/discovery-panels';
 import { ForrumNewsPanel } from './home/forrum-news-panel';
+import { homeDemoWeekly } from './home/home-demo-content';
 import {
   mergePopularTopics,
   selectMediaItems,
@@ -181,10 +183,13 @@ export function HomeDashboard({
       .slice(0, 3);
   }, [initialData.overview?.activePolls, initialData.polls]);
   const announcements = initialData.announcements ?? [];
-  const weekly = initialData.overview?.weekly ?? {
+  const realWeekly = initialData.overview?.weekly ?? {
     likes: [],
     activity: [],
   };
+  const useDemoWeekly =
+    realWeekly.likes.length === 0 && realWeekly.activity.length === 0;
+  const weekly = useDemoWeekly ? homeDemoWeekly : realWeekly;
 
   const toggleTree = (slug: string) => {
     setExpanded((current) => {
@@ -197,8 +202,8 @@ export function HomeDashboard({
 
   return (
     <div
-      className="forrum-home-v16 forrum-home-v19 forrum-home-v191 forrum-home-v20 forrum-home-v21"
-      data-home-reference="v21"
+      className="forrum-home-v16 forrum-home-v19 forrum-home-v191 forrum-home-v20 forrum-home-v21 forrum-home-v22"
+      data-home-reference="v22"
     >
       <CommunityTree
         tree={tree}
@@ -221,13 +226,32 @@ export function HomeDashboard({
             loaded={discoveryLoaded}
           />
         </div>
+        <section
+          className="forrum-home-v22__composer"
+          aria-label="Создать публикацию"
+        >
+          <Link
+            className="forrum-home-v22__composer-prompt"
+            href="/create?format=POST"
+          >
+            <span aria-hidden="true">＋</span>
+            <strong>Поделитесь мыслью или задайте вопрос…</strong>
+          </Link>
+          <div className="forrum-home-v22__composer-actions">
+            <Link href="/create?format=POST">Запись</Link>
+            <Link href="/create?format=TOPIC">Тема</Link>
+            <small>
+              После публикации — отправьте в подключённый Telegram-канал
+            </small>
+          </div>
+        </section>
         <PopularTopicsPanel items={discussedPool} />
         <PollsPanel polls={activePolls} />
       </main>
 
       <aside className="forrum-home-v16__rail">
         <ActivityPanel publications={activityFeed} />
-        <WeeklyMembersPanel weekly={weekly} />
+        <WeeklyMembersPanel weekly={weekly} demo={useDemoWeekly} />
         <ForrumNewsPanel announcements={announcements} />
       </aside>
     </div>

@@ -27,7 +27,7 @@ assert.equal(
 );
 assert.doesNotMatch(dashboard, /data-home-reference="v20"/);
 assert.match(dashboard, /forrum-home-v21/);
-assert.match(dashboard, /data-home-reference="v21"/);
+assert.match(dashboard, /data-home-reference="v2(?:1|2)"/);
 
 assert.match(css, /\.forrum-home-v20\s*\{/);
 assert.match(css, /body:has\(\.forrum-home-v20\)/);
@@ -55,7 +55,7 @@ for (const copy of [
 ]) {
   assert.match(discovery, new RegExp(copy));
 }
-assert.match(communityTree, /структура форума/);
+assert.match(communityTree, /(?:структура форума|ваши сообщества)/);
 assert.match(communityTree, /Показать всю структуру/);
 assert.match(activity, /Обновляется раз в минуту/);
 assert.match(news, /is-lead/);
@@ -75,4 +75,4 @@ assert.match(
   /body:has\(\.forrum-home-v20\) \.brand-symbol--legacy/,
 );
 
-console.log('Home v21 structural contract passed.');
+console.log('Home v21/v22 structural contract passed.');

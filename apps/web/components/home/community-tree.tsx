@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { CSSProperties, MouseEvent } from 'react';
+import { CommunityMark } from '@/components/community-mark';
 import type { TreeNode } from './types';
 import { communityDisplayName } from './utils';
 
@@ -57,9 +58,11 @@ function TreeBranch({
           href={`/communities/${node.slug}`}
           aria-label={`Открыть сообщество ${communityDisplayName(node.name)}`}
         >
-          <span
-            className="forrum-home-v16__tree-folder"
-            aria-hidden="true"
+          <CommunityMark
+            className="forrum-home-v22__community-mark"
+            name={communityDisplayName(node.name)}
+            url={node.avatarUrl}
+            size={depth === 0 ? 24 : 20}
           />
           <span className="forrum-home-v16__tree-name">
             {communityDisplayName(node.name)}
@@ -105,7 +108,7 @@ export function CommunityTree({
       <div className="forrum-home-v16__side-head">
         <h2>Сообщества</h2>
         <span className="forrum-home-v20__tree-meta">
-          структура форума
+          ваши сообщества
         </span>
       </div>
       {tree.length ? (
