@@ -90,9 +90,12 @@ export type TopicPulse = 'rising' | 'hot';
 export type TopicStatus =
   | 'waiting'
   | 'answered'
-  | 'open'
-  | 'active'
   | TopicPulse;
+
+export type TopicSignal = {
+  status: TopicStatus;
+  label: string;
+};
 
 export type HomeMediaPartner = {
   id: string;

@@ -1,5 +1,5 @@
 import { isStreamStart } from './utils';
-import type { TopicPulse, TopicStatus } from './types';
+import type { TopicPulse, TopicSignal } from './types';
 
 type Identified = { id: string };
 
@@ -125,7 +125,7 @@ export function buildLiveActivity(
   limit = 5,
 ): LiveActivityItem[] {
   return publications
-    .map((publication): LiveActivityItem => {
+    .flatMap((publication): LiveActivityItem[] => {
       const createdAt = new Date(publication.createdAt).getTime();
       const repliedAt = publication.lastComment
         ? new Date(publication.lastComment.createdAt).getTime()
@@ -144,21 +144,24 @@ export function buildLiveActivity(
         : publication.createdAt;
       const fallback = publication.excerpt?.trim();
 
-      return {
+      const title = activityTitle(
+        publication.title,
+        fallback,
+      );
+
+      if (!title) return [];
+
+      return [{
         id: `${kind}:${publication.id}:${occurredAt}`,
         kind,
         username: hasNewerReply
           ? publication.lastComment!.author.username
           : publication.author.username,
-        title: safeActivityTitle(
-          publication.title,
-          fallback,
-          publication.format,
-        ),
+        title,
         slug: publication.slug,
         communityName: publication.community.name,
         occurredAt,
-      };
+      }];
     })
     .sort(
       (left, right) =>
@@ -168,19 +171,41 @@ export function buildLiveActivity(
     .slice(0, Math.max(0, limit));
 }
 
+function normalizeActivityCopy(value?: string | null) {
+  return value?.replace(/\s+/gu, ' ').trim() ?? '';
+}
+
+function activityTitle(
+  title: string | null | undefined,
+  excerpt: string | null | undefined,
+) {
+  for (const source of [title, excerpt]) {
+    const candidate = normalizeActivityCopy(source);
+    const compact = candidate.replace(/[\s\p{P}\p{S}]/gu, '');
+    const wordsOnly = candidate
+      .replace(/[\p{P}\p{S}]+/gu, ' ')
+      .replace(/\s+/gu, ' ')
+      .trim();
+    const repeatedCharacter = /^(.)\1{4,}$/u.test(compact);
+    const genericTestCopy = /^(?:(?:тест|test)\s*)+$/iu.test(wordsOnly);
+    const hasLetters = /[\p{L}]/u.test(candidate);
+
+    if (candidate && !repeatedCharacter && !genericTestCopy && hasLetters) {
+      return candidate;
+    }
+  }
+
+  return null;
+}
+
 export function safeActivityTitle(
   title: string | null | undefined,
   excerpt: string | null | undefined,
   format: 'POST' | 'TOPIC',
 ) {
-  const normalize = (value?: string | null) =>
-    value?.replace(/\s+/gu, ' ').trim() ?? '';
-  const candidate = normalize(title) || normalize(excerpt);
-  const compact = candidate.replace(/\s/gu, '');
-  const repeatedCharacter = /^(.)\1{4,}$/u.test(compact);
-  const hasLetters = /[\p{L}]/u.test(candidate);
+  const candidate = activityTitle(title, excerpt);
 
-  if (!candidate || repeatedCharacter || !hasLetters) {
+  if (!candidate) {
     return format === 'POST'
       ? 'Новая запись без описания'
       : 'Новая тема без описания';
@@ -227,16 +252,23 @@ export function topicPulse(
   return null;
 }
 
-export function topicStatus(
+export function topicSignal(
   item: TopicPulseSource,
   now = Date.now(),
-): TopicStatus {
+): TopicSignal | null {
   const pulse = topicPulse(item, now);
-  if (pulse) return pulse;
-
-  if (item.type.toUpperCase() === 'QUESTION') {
-    return item.commentCount > 0 ? 'answered' : 'waiting';
+  if (pulse) {
+    return {
+      status: pulse,
+      label: pulse === 'hot' ? 'Горячо' : 'Набирает',
+    };
   }
 
-  return item.commentCount > 0 ? 'active' : 'open';
+  if (item.type.toUpperCase() === 'QUESTION') {
+    return item.commentCount > 0
+      ? { status: 'answered', label: 'Есть ответы' }
+      : { status: 'waiting', label: 'Ждёт ответа' };
+  }
+
+  return null;
 }

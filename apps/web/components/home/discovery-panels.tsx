@@ -12,6 +12,10 @@ import {
   topicContentVisual,
 } from './utils';
 import { HomePanel } from './home-panel';
+import {
+  homeDemoMedia,
+  homeDemoServices,
+} from './home-demo-content';
 
 export type MediaSelection = {
   item: PublicationCardData;
@@ -124,12 +128,35 @@ export function MediaPanel({
               partner={partner}
             />
           ))
+        ) : loaded ? (
+          <div className="forrum-home-v22__demo-list" data-demo="true">
+            {homeDemoMedia.map((item) => (
+              <Link
+                className={`forrum-home-v22__demo-row is-${item.kind}`}
+                href="/media"
+                key={item.id}
+              >
+                <span
+                  className="forrum-home-v22__demo-mark"
+                  aria-hidden="true"
+                >
+                  {item.kind === 'live' ? '▶' : '✦'}
+                </span>
+                <span>
+                  <small>{item.eyebrow} · бета-пример</small>
+                  <strong>{item.title}</strong>
+                  <em>{item.meta}</em>
+                </span>
+              </Link>
+            ))}
+            <Link className="forrum-home-v22__demo-cta" href="/media">
+              Подключить своё медиа →
+            </Link>
+          </div>
         ) : (
           <div className="forrum-home-v181__empty-state forrum-home-v20__discovery-empty">
             <strong>
-              {loaded
-                ? 'Медиапартнёры скоро появятся'
-                : 'Загружаем медиа…'}
+              Загружаем медиа…
             </strong>
             <span>
               Здесь будут старты стримов и новости подключённых участников.
@@ -181,10 +208,38 @@ export function ServicesPanel({
                 item={item}
               />
             ))
+          ) : loaded ? (
+            <div
+              className="forrum-home-v22__demo-list is-services"
+              data-demo="true"
+            >
+              {homeDemoServices.map((item, index) => (
+                <Link
+                  className="forrum-home-v22__demo-row"
+                  href="/services"
+                  key={item.id}
+                >
+                  <span
+                    className="forrum-home-v22__demo-mark"
+                    aria-hidden="true"
+                  >
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  <span>
+                    <small>{item.signal} · бета-пример</small>
+                    <strong>{item.title}</strong>
+                    <em>{item.meta}</em>
+                  </span>
+                </Link>
+              ))}
+              <Link className="forrum-home-v22__demo-cta" href="/services">
+                Разместить услугу →
+              </Link>
+            </div>
           ) : (
             <div className="forrum-home-v181__empty-state forrum-home-v20__discovery-empty">
               <strong>
-                {loaded ? 'Услуг пока нет' : 'Загружаем услуги…'}
+                Загружаем услуги…
               </strong>
               <span>
                 Первая опубликованная услуга запустит живую ленту.
