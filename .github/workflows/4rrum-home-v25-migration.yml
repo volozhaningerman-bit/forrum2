@@ -1,0 +1,144 @@
+name: 4rrum Home V25 Migration
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  migrate-home-v25:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Verify required files
+        run: |
+          test -f apps/web/package.json
+          test -f apps/web/components/home-dashboard.tsx
+          test -f apps/web/components/home/popular-topics-panel.tsx
+          test -f apps/web/app/globals.css
+
+      - name: Backup
+        run: |
+          mkdir -p .backup/4rrum-home-v25
+
+          cp apps/web/components/home-dashboard.tsx .backup/4rrum-home-v25/
+          cp apps/web/components/home/popular-topics-panel.tsx .backup/4rrum-home-v25/
+          cp apps/web/components/home/forrum-news-panel.tsx .backup/4rrum-home-v25/
+          cp apps/web/app/globals.css .backup/4rrum-home-v25/
+
+      - name: Create V25 topic component
+        run: |
+          cat > apps/web/components/home/home-topic-card-v25.tsx <<'EOF'
+import Link from 'next/link';
+import { TelegramShareButton } from '@/components/telegram-share-button';
+import type { DiscussedTopicData } from './types';
+import { formatCount, lastReply, relativeTime } from './utils';
+
+export function HomeTopicCardV25({
+  item,
+}: {
+  item: DiscussedTopicData;
+}) {
+  const reply = lastReply(item);
+
+  return (
+    <article className="rr-v25-topic">
+      <div className="rr-v25-topic__meta">
+        {item.community.name}
+      </div>
+
+      <Link href={`/p/${item.slug}`}>
+        <h3>{item.title || 'Тема без названия'}</h3>
+        <p>{item.excerpt}</p>
+      </Link>
+
+      <footer>
+        <span>
+          @{reply.username} · {relativeTime(reply.createdAt)}
+        </span>
+
+        <div>
+          <span>💬 {formatCount(item.commentCount)}</span>
+          <span>👁 {formatCount(item.viewCount)}</span>
+          <TelegramShareButton
+            compact
+            variant="endcap"
+            label="Поделиться в ТГК"
+            slug={item.slug}
+          />
+        </div>
+      </footer>
+    </article>
+  );
+}
+EOF
+
+      - name: Add V25 styles
+        run: |
+          cat >> apps/web/app/globals.css <<'EOF'
+
+/* 4RRUM HOME V25 MIGRATION */
+
+.rr-v25-topic {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 16px;
+  margin-bottom: 10px;
+  transition: .2s ease;
+}
+
+.rr-v25-topic:hover {
+  background: var(--surface-hover);
+}
+
+.rr-v25-topic__meta {
+  font-size: 13px;
+  opacity: .7;
+}
+
+.rr-v25-topic footer {
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  margin-top:14px;
+  font-size:13px;
+}
+EOF
+
+      - name: Validate
+        run: |
+          git diff --stat
+          git status
+
+      - name: Typecheck
+        working-directory: apps/web
+        run: npm run typecheck
+
+      - name: Build
+        working-directory: apps/web
+        run: npm run build
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          git add .
+
+          git commit -m "4rrum home v25 migration step 1" || echo "No changes"
+
+          git push
