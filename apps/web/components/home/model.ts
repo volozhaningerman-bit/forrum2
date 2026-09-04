@@ -1,5 +1,5 @@
 import { isStreamStart } from './utils';
-import type { TopicPulse, TopicSignal } from './types';
+import type { TopicPulse, TopicSignal, WeeklyUser } from './types';
 
 type Identified = { id: string };
 
@@ -310,4 +310,35 @@ export function communityToneIndex(slug: string) {
   }
 
   return hash % 6;
+}
+
+export function buildWeeklyPulse(
+  weekly: {
+    likes: readonly WeeklyUser[];
+    activity: readonly WeeklyUser[];
+  },
+) {
+  const activity = weekly.activity.reduce(
+    (current, participant) => ({
+      topics: current.topics + participant.topicCount,
+      comments: current.comments + participant.commentCount,
+    }),
+    { topics: 0, comments: 0 },
+  );
+  const reactions = weekly.likes.reduce(
+    (total, participant) => total + participant.reactionCount,
+    0,
+  );
+  const rankedUsers = new Set(
+    [...weekly.activity, ...weekly.likes].map(
+      (participant) => participant.username,
+    ),
+  );
+
+  return [
+    { label: 'Тем у лидеров', value: activity.topics },
+    { label: 'Ответов у лидеров', value: activity.comments },
+    { label: 'Реакций у лидеров', value: reactions },
+    { label: 'В рейтинге', value: rankedUsers.size },
+  ];
 }

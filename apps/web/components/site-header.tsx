@@ -68,6 +68,9 @@ export function SiteHeader() {
             <span className="brand-wordmark brand-wordmark--v23" aria-hidden="true">
               <strong>4</strong><span>RRUM</span>
             </span>
+            <span className="brand-wordmark brand-wordmark--v24" aria-hidden="true">
+              <strong>4</strong><span>RRUM</span>
+            </span>
           </Link>
 
           <MainNav />

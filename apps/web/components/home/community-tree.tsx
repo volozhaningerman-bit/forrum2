@@ -28,6 +28,7 @@ function TreeBranch({
     <li
       className="forrum-home-v16__tree-node"
       data-community-tone={communityToneIndex(node.slug)}
+      data-community-depth={depth}
       style={{ '--tree-depth': depth } as CSSProperties}
     >
       <div
@@ -47,7 +48,7 @@ function TreeBranch({
             }
             onClick={() => onToggle(node.slug)}
           >
-            <span aria-hidden="true">{isOpen ? '−' : '+'}</span>
+            <span aria-hidden="true">{isOpen ? '⌄' : '›'}</span>
           </button>
         ) : (
           <span

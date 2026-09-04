@@ -4,6 +4,7 @@ import './home-v20.css';
 import './home-v21.css';
 import './home-v22.css';
 import './home-v23.css';
+import './home-v24.css';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 export const metadata: Metadata = { title: '4RRUM — тестовая версия', description: 'Платформа сообществ, публикаций, проектов и живого общения.' };
