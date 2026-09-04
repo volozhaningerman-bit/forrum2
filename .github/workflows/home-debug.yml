@@ -1,0 +1,91 @@
+name: FORRUM HOME DEBUG
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  debug-home:
+    runs-on: ubuntu-latest
+
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Inspect repository state
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "===== GIT ====="
+          git branch --show-current
+          git rev-parse HEAD
+          git status --short
+
+          echo ""
+          echo "===== HOME FILES ====="
+          find apps/web/app apps/web/components -maxdepth 4 \
+            \( -iname "*home*" -o -iname "*topic*" -o -iname "*feed*" -o -iname "*panel*" \) \
+            -type f | sort || true
+
+      - name: Inspect home dashboard
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "===== HOME DASHBOARD ====="
+
+          if [ -f apps/web/components/home-dashboard.tsx ]; then
+            sed -n '1,360p' apps/web/components/home-dashboard.tsx
+          else
+            echo "home-dashboard.tsx NOT FOUND"
+          fi
+
+      - name: Inspect home components
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for file in \
+            apps/web/components/home/popular-topics-panel.tsx \
+            apps/web/components/home/forrum-news-panel.tsx \
+            apps/web/components/home/home-panel.tsx \
+            apps/web/components/home/community-tree.tsx
+          do
+            echo ""
+            echo "===== $file ====="
+
+            if [ -f "$file" ]; then
+              sed -n '1,260p' "$file"
+            else
+              echo "NOT FOUND"
+            fi
+          done
+
+      - name: Inspect styles
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          echo "===== GLOBAL CSS ====="
+
+          if [ -f apps/web/app/globals.css ]; then
+            wc -l apps/web/app/globals.css
+            grep -n "forrum-home\|home-v\|topic\|panel" apps/web/app/globals.css | head -120 || true
+          fi
+
+          echo ""
+          echo "===== HOME CSS FILES ====="
+
+          find apps/web/app -maxdepth 1 -type f -name "*home*.css" -print -exec wc -l {} \; || true
+
+      - name: Inspect package
+        shell: bash
+        run: |
+          cat apps/web/package.json
