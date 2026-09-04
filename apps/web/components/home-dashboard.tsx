@@ -10,7 +10,6 @@ import {
   ServicesPanel,
 } from './home/discovery-panels';
 import { ForrumNewsPanel } from './home/forrum-news-panel';
-import { ForumStatsPanel } from './home/forum-stats-panel';
 import { homeDemoWeekly } from './home/home-demo-content';
 import {
   mergePopularTopics,
@@ -25,6 +24,7 @@ import type {
 } from './home/types';
 import { buildTree } from './home/utils';
 import { WeeklyMembersPanel } from './home/weekly-members-panel';
+import { WeeklyPulsePanel } from './home/weekly-pulse-panel';
 
 export type { HomeInitialData } from './home/types';
 
@@ -193,8 +193,8 @@ export function HomeDashboard({
 
   return (
     <div
-      className="forrum-home-v16 forrum-home-v19 forrum-home-v191 forrum-home-v20 forrum-home-v21 forrum-home-v22 forrum-home-v23"
-      data-home-reference="v23"
+      className="forrum-home-v16 forrum-home-v19 forrum-home-v191 forrum-home-v20 forrum-home-v21 forrum-home-v22 forrum-home-v23 forrum-home-v24"
+      data-home-reference="v24"
     >
       <CommunityTree
         tree={tree}
@@ -243,7 +243,10 @@ export function HomeDashboard({
       <aside className="forrum-home-v16__rail">
         <WeeklyMembersPanel weekly={weekly} demo={useDemoWeekly} />
         <ForrumNewsPanel announcements={announcements} />
-        <ForumStatsPanel stats={initialData.overview?.stats} />
+        <WeeklyPulsePanel
+          weekly={weekly}
+          demo={useDemoWeekly}
+        />
       </aside>
     </div>
   );

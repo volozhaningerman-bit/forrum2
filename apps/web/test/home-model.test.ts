@@ -408,3 +408,51 @@ test('community tone is stable and stays inside the six-color palette', () => {
   assert.equal(Number.isInteger(first), true);
   assert.equal(first >= 0 && first <= 5, true);
 });
+
+test('weekly pulse summarizes useful activity without an online vanity metric', () => {
+  assert.equal(
+    typeof (homeModel as Record<string, unknown>).buildWeeklyPulse,
+    'function',
+  );
+
+  const nora = {
+    username: 'nora',
+    displayName: 'Nora',
+    score: 0,
+    reactionCount: 24,
+    topicCount: 3,
+    commentCount: 12,
+  };
+  const pulse = homeModel.buildWeeklyPulse({
+    activity: [
+      nora,
+      {
+        username: 'pixel',
+        displayName: 'Pixel',
+        score: 0,
+        reactionCount: 0,
+        topicCount: 1,
+        commentCount: 8,
+      },
+    ],
+    likes: [
+      nora,
+      {
+        username: 'friend',
+        displayName: 'Friend',
+        score: 0,
+        reactionCount: 14,
+        topicCount: 0,
+        commentCount: 0,
+      },
+    ],
+  });
+
+  assert.deepEqual(pulse, [
+    { label: 'Тем у лидеров', value: 4 },
+    { label: 'Ответов у лидеров', value: 20 },
+    { label: 'Реакций у лидеров', value: 38 },
+    { label: 'В рейтинге', value: 3 },
+  ]);
+  assert.equal(pulse.some((item) => /онлайн/iu.test(item.label)), false);
+});

@@ -75,17 +75,19 @@ function DiscussedTopic({ item }: { item: DiscussedTopicData }) {
           <strong>@{reply.username}</strong>
           <small>{relativeTime(reply.createdAt)}</small>
         </span>
-        <TopicReactions
-          slug={item.slug}
-          initialCount={item.reactionCount}
-          initialViewerReaction={item.viewerReaction}
-        />
-        <TelegramShareButton
-          compact
-          variant="endcap"
-          label="Поделиться в Telegram"
-          slug={item.slug}
-        />
+        <span className="forrum-home-v24__topic-actions">
+          <TopicReactions
+            slug={item.slug}
+            initialCount={item.reactionCount}
+            initialViewerReaction={item.viewerReaction}
+          />
+          <TelegramShareButton
+            compact
+            variant="endcap"
+            label="Поделиться в Telegram"
+            slug={item.slug}
+          />
+        </span>
       </span>
     </article>
   );

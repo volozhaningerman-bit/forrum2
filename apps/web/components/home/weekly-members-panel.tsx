@@ -95,11 +95,18 @@ export function WeeklyMembersPanel({
               <Avatar
                 name={participant.displayName || participant.username}
                 url={participant.avatarUrl}
-                size={42}
+                size={36}
               />
-              <strong className="forrum-home-v16__weekly-user">
-                @{participant.username}
-              </strong>
+              <span className="forrum-home-v24__weekly-copy">
+                <strong className="forrum-home-v16__weekly-user">
+                  @{participant.username}
+                </strong>
+                <small>
+                  {mode === 'likes'
+                    ? `${participant.reactionCount} реакций`
+                    : `${participant.topicCount} тем · ${participant.commentCount} ответов`}
+                </small>
+              </span>
               <span
                 className="forrum-home-v16__weekly-score"
                 aria-label={
