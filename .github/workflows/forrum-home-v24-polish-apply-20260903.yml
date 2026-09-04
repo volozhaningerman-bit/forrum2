@@ -1,0 +1,138 @@
+name: Apply FORRUM Home V24 Polish
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: forrum-home-v24-polish-20260903
+  cancel-in-progress: false
+
+env:
+  BASE_SHA: 02b9dcabbb0f77b23b0b44929de9fcc24684c91c
+  TARGET_BRANCH: codex/home-v24-polish-20260903
+  DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/forrum_ci
+  NEXT_TELEMETRY_DISABLED: 1
+
+jobs:
+  apply:
+    name: Apply, verify and push V24
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Verify baseline and target branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor "$BASE_SHA" HEAD
+
+          unexpected="$(git diff --name-only "$BASE_SHA"..HEAD -- . \
+            ':(exclude).github/workflows/forrum-home-v24-polish-apply-20260903.yml')"
+          if [ -n "$unexpected" ]; then
+            echo "::error::Main changed after the prepared V24 baseline:"
+            echo "$unexpected"
+            exit 1
+          fi
+
+          if git ls-remote --exit-code --heads origin \
+            "refs/heads/$TARGET_BRANCH" >/dev/null 2>&1; then
+            echo "::error::Branch $TARGET_BRANCH already exists."
+            exit 1
+          fi
+
+          git switch --detach "$BASE_SHA"
+          git switch -c "$TARGET_BRANCH"
+
+      - name: Apply exact verified V24 patch
+        shell: bash
+        env:
+          PATCH_B64: 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
+        run: |
+          set -euo pipefail
+          patch_file="$RUNNER_TEMP/forrum-home-v24-polish.patch"
+          printf '%s' "$PATCH_B64" | base64 --decode | gzip --decompress > "$patch_file"
+          git apply --check "$patch_file"
+          git apply "$patch_file"
+          node scripts/home-v23-floating-islands-check.mjs
+          node scripts/home-v24-polish-check.mjs
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        shell: bash
+        run: npm install --include=dev --no-audit --no-fund --package-lock=false
+
+      - name: Generate Prisma client
+        shell: bash
+        run: npm run db:generate
+
+      - name: Verify tests, structure, UX and build
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/home-v23-floating-islands-check.mjs
+          node scripts/home-v24-polish-check.mjs
+          node --experimental-strip-types --experimental-loader ./scripts/local-ts-loader.mjs --test apps/web/test/home-model.test.ts
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+          npm test
+          npm run typecheck
+          npm run build
+
+      - name: Commit and push only the verified V24 branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git restore -- apps/api/src/generated/prisma
+          git restore -- apps/api/dist apps/web/.next packages/contracts/dist apps/web/tsconfig.tsbuildinfo
+          git clean -fd -- apps/api/dist apps/api/src/generated/prisma apps/web/.next packages/contracts/dist
+
+          git config user.name "4RRUM updater"
+          git config user.email "actions@users.noreply.github.com"
+
+          git add -- \
+            'apps/web/app/home-v24.css' \
+            'apps/web/app/layout.tsx' \
+            'apps/web/components/home-dashboard.tsx' \
+            'apps/web/components/home/community-tree.tsx' \
+            'apps/web/components/home/forum-stats-panel.tsx' \
+            'apps/web/components/home/model.ts' \
+            'apps/web/components/home/popular-topics-panel.tsx' \
+            'apps/web/components/home/weekly-members-panel.tsx' \
+            'apps/web/components/home/weekly-pulse-panel.tsx' \
+            'apps/web/components/site-header.tsx' \
+            'apps/web/test/home-model.test.ts' \
+            'scripts/home-v23-floating-islands-check.mjs' \
+            'scripts/home-v24-polish-check.mjs'
+
+          git diff --cached --check
+          test -n "$(git diff --cached --name-only)"
+          git commit -m "feat(home): refine floating forum islands v24"
+          git push origin "$TARGET_BRANCH"
+
+      - name: Publish compare link
+        if: success()
+        shell: bash
+        run: |
+          {
+            echo '## FORRUM Home V24'
+            echo ''
+            echo "Branch: \`$TARGET_BRANCH\`"
+            echo ''
+            echo "[Open comparison and create PR](https://github.com/${{ github.repository }}/compare/main...$TARGET_BRANCH?expand=1)"
+          } >> "$GITHUB_STEP_SUMMARY"
+
