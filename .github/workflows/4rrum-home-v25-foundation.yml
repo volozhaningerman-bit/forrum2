@@ -1,0 +1,103 @@
+name: 4rrum Home V25 Foundation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  home-v25-foundation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Verify files
+        run: |
+          test -f apps/web/package.json
+          test -f apps/web/components/home-dashboard.tsx
+          test -f apps/web/components/home/popular-topics-panel.tsx
+          test -f apps/web/app/globals.css
+
+      - name: Backup
+        run: |
+          mkdir -p .backup/4rrum-home-v25
+          cp apps/web/components/home-dashboard.tsx .backup/4rrum-home-v25/
+          cp apps/web/components/home/popular-topics-panel.tsx .backup/4rrum-home-v25/
+          cp apps/web/app/globals.css .backup/4rrum-home-v25/
+
+      - name: Add V25 foundation
+        run: |
+          mkdir -p apps/web/components/home
+          cat > apps/web/components/home/home-panel-v25.tsx <<'EOF'
+import Link from 'next/link';
+import type { ReactNode } from 'react';
+
+export function HomePanelV25({
+  title,
+  href,
+  linkLabel = 'Смотреть все',
+  children,
+}: {
+  title: string;
+  href?: string;
+  linkLabel?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="rr-panel">
+      <header className="rr-panel__header">
+        <h2>{title}</h2>
+        {href && <Link href={href}>{linkLabel} →</Link>}
+      </header>
+      {children}
+    </section>
+  );
+}
+EOF
+
+          cat >> apps/web/app/globals.css <<'EOF'
+
+/* 4RRUM HOME V25 FOUNDATION */
+
+.rr-panel {
+  background: var(--surface);
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.rr-panel__header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+EOF
+
+      - name: Diff
+        run: |
+          git diff --stat
+          git status
+
+      - name: Typecheck
+        working-directory: apps/web
+        run: npm run typecheck
+
+      - name: Build
+        working-directory: apps/web
+        run: npm run build
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "4rrum home v25 foundation" || echo "No changes"
+          git push
