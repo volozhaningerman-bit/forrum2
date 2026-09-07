@@ -1,3 +1,4 @@
+import { excerpt } from '../common/text.js';
 import { Injectable } from '@nestjs/common';
 import {
   PollStatus,
@@ -30,11 +31,7 @@ type UserIdentity = {
 const onlineRecordKey = 'home.recordOnline';
 
 function homeExcerpt(value: string) {
-  const normalized = value.replace(/\s+/g, ' ').trim();
-  if (!normalized) return 'Без описания.';
-  return normalized.length > 180
-    ? `${normalized.slice(0, 177).trimEnd()}...`
-    : normalized;
+  return excerpt(value, 180) || 'Без описания.';
 }
 
 function getWeeklyUser(

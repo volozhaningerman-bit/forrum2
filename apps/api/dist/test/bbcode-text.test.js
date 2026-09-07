@@ -10,4 +10,8 @@ test('images, colors and sizes do not leak markup into excerpts', () => {
     const source = '[color=red]Красный[/color] [size=large]текст[/size] [img=Фото]http://localhost:4000/v1/media/123/content[/img]';
     assert.equal(stripBbcode(source), 'Красный текст [Изображение]');
 });
+test('block BBCode preserves word boundaries without splitting inline formatting', () => {
+    assert.equal(excerpt('[h2]Добро пожаловать[/h2]Это [b]новая[/b] тема'), 'Добро пожаловать Это новая тема');
+    assert.equal(excerpt('до[b]бро[/b]'), 'добро');
+});
 //# sourceMappingURL=bbcode-text.test.js.map

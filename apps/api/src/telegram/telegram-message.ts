@@ -18,6 +18,6 @@ export function buildTelegramPublicationHtml({
   return [
     `<b>${escapeTelegramHtml(title)}</b>`,
     excerpt ? escapeTelegramHtml(excerpt) : '',
-    `<a href="${escapeTelegramHtml(publicationUrl)}">Создано на 4RRUM · Обсудить →</a>`,
+    `<a href="${escapeTelegramHtml(publicationUrl)}">Создано на FORRUM · Обсудить →</a>`,
   ].filter(Boolean).join('\n\n');
 }

@@ -1,5 +1,6 @@
 export function stripBbcode(text: string): string {
   return text
+    .replace(/\[\/?(?:quote|code|spoiler|list|h2|h3|\*)(?:=[^\]]*)?\]/gi, ' ')
     .replace(/\[url(?:=[^\]]+)?\]/gi, '')
     .replace(/\[img(?:=[^\]]+)?\][\s\S]*?\[\/img\]/gi, ' [Изображение] ')
     .replace(/\[\/?(?:b|i|u|s|quote|code|spoiler|list|h2|h3|color|size|img|\*)[^\]]*\]/gi, '')

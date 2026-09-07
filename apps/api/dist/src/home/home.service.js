@@ -7,18 +7,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+import { excerpt } from '../common/text.js';
 import { Injectable } from '@nestjs/common';
 import { PollStatus, PublicationFormat, PublicationStatus, ReactionType, VoteClass, } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { rankWeekly } from './ranking.js';
 const onlineRecordKey = 'home.recordOnline';
 function homeExcerpt(value) {
-    const normalized = value.replace(/\s+/g, ' ').trim();
-    if (!normalized)
-        return 'Без описания.';
-    return normalized.length > 180
-        ? `${normalized.slice(0, 177).trimEnd()}...`
-        : normalized;
+    return excerpt(value, 180) || 'Без описания.';
 }
 function getWeeklyUser(map, user) {
     const existing = map.get(user.id);

@@ -14,6 +14,7 @@ const excerpts = ['Команда обсуждает реальный опыт �
 const topics = titles.map((title, i) => ({ id: String(i), slug: 'topic-' + i, title, format: 'TOPIC', type: 'DISCUSSION', excerpt: excerpts[i], createdAt: new Date(Date.now() - (i + 1) * 7200000).toISOString(), author: { username: 'person-' + i, displayName: names[i], avatarUrl: null }, community: communities[[1,4,2,3,5][i]], commentCount: [47,29,18,35,0][i], viewCount: [2100,1600,980,1200,3400][i], reactionCount: [128,93,76,64,51][i], viewerReaction: null, isBookmarked: false, tags: [{ id: 'tag-' + i, slug: 'tag-' + i, label: ['rust','советы','интерфейсы','стартап','opensource'][i] }] }));
 const people = names.map((displayName, i) => ({ username: 'person-' + i, displayName, score: [2400,1800,1600,1400,1200][i], topicCount: 5-i, commentCount: 15-i, reactionCount: 20-i }));
 const announcements = ['Обновления правил сообщества','Новый раздел: AI и данные','Запуск программы менторства','Интервью с командой FORRUM'].map((title,i) => ({ ...topics[i], id:'news-'+i, slug:'news-'+i, title }));
+let emptyPeople = false;
 let saved = false, reaction = null, failFeed = false, failBookmark = false;
 const requests = [];
 const upstream = createServer(async (req,res) => {
@@ -21,7 +22,7 @@ const upstream = createServer(async (req,res) => {
  requests.push({ path: url.pathname, query: url.search, method: req.method, cookie: req.headers.cookie });
  if (url.pathname === '/v1/communities') data = communities;
  else if (url.pathname === '/v1/feed') { data = url.searchParams.get('mode') === 'new' ? topics.map((item,i)=>({...item,createdAt:new Date(Date.now()+i*1000).toISOString()})).reverse() : topics; if(failFeed){status=503;data={message:'Сервис временно недоступен'};} }
- else if (url.pathname === '/v1/home/overview') data = { discussed: topics, weekly: { likes:people, activity:people }, stats: {communities:9,topics:5,messages:134,usersOnline:3,recordOnline:10} };
+ else if (url.pathname === '/v1/home/overview') data = { discussed: topics, weekly: { likes:people, activity:emptyPeople ? [] : people }, stats: {communities:9,topics:5,messages:134,usersOnline:3,recordOnline:10} };
  else if (url.pathname === '/v1/announcements') data = announcements;
  else if (url.pathname === '/v1/auth/me') data = { user: { id:'viewer',username:'viewer',displayName:'Алексей Петров',emailVerified:true,onboardingCompleted:true,role:'USER' } };
  else if (url.pathname.endsWith('/bookmark')) { if(failBookmark){ status=403;data={message:'Войдите, чтобы сохранить тему'}; } else {saved=!saved;data={bookmarked:saved};} }
@@ -48,10 +49,13 @@ try {
  await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
  await page.locator('.forum-topic').first().waitFor();
  assert.equal(await page.locator('.forum-topic').count(),5);
+ assert.equal(await page.locator('kbd').innerText(),'Ctrl K');
+ await page.keyboard.press('Control+k');
+ assert(await page.getByLabel('Поиск тем, людей, проектов').evaluate(el => document.activeElement === el));
  assert(requests.some(r=>r.path==='/v1/feed' && r.cookie?.includes('forrum_test=viewer')),'SSR must forward session cookies');
- await page.screenshot({path:output+'/forrum-v26-light.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v27-light.png',fullPage:true});
  await page.getByRole('button',{name:'Включить тёмную тему'}).click();
- await page.screenshot({path:output+'/forrum-v26-dark.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v27-dark.png',fullPage:true});
  assert.equal(await page.locator('html').getAttribute('data-forrum-theme'),'graphite');
  assert.equal(await page.locator('.forum-welcome h1').evaluate(el=>getComputedStyle(el).color),'rgb(231, 237, 238)');
  await page.reload({waitUntil:'networkidle'});
@@ -66,7 +70,7 @@ try {
  await first.getByRole('alert').waitFor();
  assert.equal(await first.getByRole('button',{name:'Сохранить тему',exact:true}).getAttribute('aria-pressed'),'false');
  failBookmark=false;
- await first.getByRole('button',{name:'Поделиться в ТГК'}).click();
+ await first.getByRole('button',{name:'В Telegram'}).click();
  const dialog=page.getByRole('dialog');
  await dialog.getByRole('combobox').waitFor();
  assert.equal(await dialog.getByRole('option').count(),1);
@@ -102,17 +106,24 @@ try {
  await page.mouse.wheel(0,600);
  await page.waitForFunction(()=>window.scrollY>100);
  await page.evaluate(()=>window.scrollTo(0,0));
- await page.screenshot({path:output+'/forrum-v26-mobile-dark.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v27-mobile-dark.png',fullPage:true});
  await page.getByRole('button',{name:'Открыть меню',exact:true}).click();
  await page.getByRole('navigation',{name:'Категории',exact:true}).waitFor();
  await page.getByRole('button',{name:'Свернуть: Разработка'}).click();
  await page.getByRole('button',{name:'Развернуть: Разработка'}).waitFor();
  await page.keyboard.press('Escape');
  await page.getByRole('button',{name:'Включить светлую тему'}).click();
- await page.screenshot({path:output+'/forrum-v26-mobile-light.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v27-mobile-light.png',fullPage:true});
+ emptyPeople=true;
+ await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
+ assert.equal(await page.getByRole('heading',{name:'Люди недели'}).count(),0);
+ await page.getByRole('button',{name:'Скрыть приветствие'}).click();
+ await page.reload({waitUntil:'networkidle'});
+ assert.equal(await page.locator('.forum-welcome').count(),0);
+ assert(await page.locator('.forum-top-create').isVisible(),'Create remains available after hiding welcome on mobile');
  await page.goto('http://127.0.0.1:'+port+'/login',{waitUntil:'networkidle'});
  assert.equal(await page.locator('[data-forrum-shell="header"]').count(),1,'Non-home shell retained');
- await page.screenshot({path:output+'/forrum-v26-login.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v27-login.png',fullPage:true});
  assert.deepEqual(errors,[],'Browser errors');
  await writeFile(output+'/results.json',JSON.stringify({passed:true,checks:['SSR session cookies','light/dark persisted','bookmark toggle and failure','Telegram channel permissions and mocked send','feed order','unanswered','community filter','API failure and retry','6 viewport widths without overflow','news reachable','mobile menu','non-home shell','no browser errors'],requests:requests.length},null,2));
  console.log('Home reference browser checks passed. Screenshots: '+output);
