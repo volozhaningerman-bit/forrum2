@@ -3276,15 +3276,19 @@ jobs:
           npm run db:generate
           npm run build -w @forrum/contracts
       - name: Verify code and build
-        shell: bash
-        run: |
-          set -euo pipefail
-          npm run typecheck
-          npm test
-          npm run validate:static
-          npm run validate:ux
-          npm run validate:a11y
-          npm run build
+  run: |
+    set -euo pipefail
+
+    npm run typecheck
+    npm test
+
+    # Next.js generates .next/types during build.
+    # Static validation before build incorrectly flags next-env.d.ts.
+    npm run build
+
+    npm run validate:static
+    npm run validate:ux
+    npm run validate:a11y
       - name: Browser verification
         shell: bash
         run: |
