@@ -376,6 +376,19 @@ export class HomeService {
       .slice(0, 5)
       .map(({ score: _score, ...item }) => item);
 
+    const [recentReplies, activeTopics] = await Promise.all([
+      this.prisma.comment.findMany({
+        where: { hiddenAt: null, createdAt: { gte: dayAgo }, publication: { status: PublicationStatus.PUBLISHED, format: PublicationFormat.TOPIC, community: { status: 'ACTIVE' } } },
+        orderBy: { createdAt: 'desc' }, take: 5,
+        select: { id: true, createdAt: true, author: { select: { username: true, displayName: true, avatarUrl: true } }, publication: { select: { slug: true, title: true, community: { select: { slug: true, name: true } } } } },
+      }),
+      this.prisma.publication.findMany({
+        where: { status: PublicationStatus.PUBLISHED, format: PublicationFormat.TOPIC, community: { status: 'ACTIVE' }, comments: { some: { hiddenAt: null, createdAt: { gte: dayAgo } } } },
+        orderBy: { lastActivityAt: 'desc' }, take: 2,
+        select: { slug: true, title: true, _count: { select: { comments: { where: { hiddenAt: null, createdAt: { gte: dayAgo } } } } } },
+      }),
+    ]);
+
     const activity = new Map<string, WeeklyAccumulator>();
     const likes = new Map<string, WeeklyAccumulator>();
 
@@ -434,6 +447,7 @@ export class HomeService {
     }
 
     return {
+      pulse: { recentReplies, activeTopics: activeTopics.map(item => ({ slug: item.slug, title: item.title, replyCount: item._count.comments })) },
       stats: {
         // Existing fields stay for backward compatibility.
         verifiedUsers,
