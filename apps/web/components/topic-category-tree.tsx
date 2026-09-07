@@ -53,7 +53,7 @@ function SectionGlyph({ slug }: { slug: string }) {
   if (normalized === 'promotion') {
     return (
       <span className="section-symbol" aria-hidden="true">
-        <svg viewBox="0 0 24 24">
+        <svg data-ui-icon="true" viewBox="0 0 24 24">
           <path d="M4 11v2l10 4V7L4 11Z" />
           <path d="M14 9.5c2 .8 3 1.6 4.5 3.5" />
           <path d="M14 14.5c2-.8 3-1.6 4.5-3.5" />
@@ -66,7 +66,7 @@ function SectionGlyph({ slug }: { slug: string }) {
   if (normalized === 'seo-and-traffic') {
     return (
       <span className="section-symbol" aria-hidden="true">
-        <svg viewBox="0 0 24 24">
+        <svg data-ui-icon="true" viewBox="0 0 24 24">
           <circle cx="10" cy="10" r="5" />
           <path d="m14 14 5 5" />
           <path d="M5 19h6" />
@@ -82,7 +82,7 @@ function SectionGlyph({ slug }: { slug: string }) {
   ) {
     return (
       <span className="section-symbol" aria-hidden="true">
-        <svg viewBox="0 0 24 24">
+        <svg data-ui-icon="true" viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="8" />
           <path d="M4 12h16" />
           <path d="M12 4c2.4 2.2 3.6 4.9 3.6 8S14.4 17.8 12 20" />
@@ -98,7 +98,7 @@ function SectionGlyph({ slug }: { slug: string }) {
   ) {
     return (
       <span className="section-symbol" aria-hidden="true">
-        <svg viewBox="0 0 24 24">
+        <svg data-ui-icon="true" viewBox="0 0 24 24">
           <path d="M14.5 4.5c2.5.2 4.8 2.4 5 5-2.4 5-6.2 8.7-11.3 11l-4.7-4.7c2.4-5.1 6.1-8.9 11-11.3Z" />
           <path d="M8 16 4 20" />
           <circle cx="14.5" cy="9.5" r="1.8" />
@@ -110,7 +110,7 @@ function SectionGlyph({ slug }: { slug: string }) {
   if (normalized === 'gta-rp' || normalized === 'majestic-rp') {
     return (
       <span className="section-symbol" aria-hidden="true">
-        <svg viewBox="0 0 24 24">
+        <svg data-ui-icon="true" viewBox="0 0 24 24">
           <path d="M7.5 8h9c2 0 3.2 1.1 3.7 3.4l.7 3.3c.4 2-.3 3.3-1.7 3.3-1 0-1.8-.6-2.8-2H7.6c-1 1.4-1.8 2-2.8 2-1.4 0-2.1-1.3-1.7-3.3l.7-3.3C4.3 9.1 5.5 8 7.5 8Z" />
           <path d="M7 11v4M5 13h4" />
           <circle cx="16.5" cy="12" r=".7" />
@@ -123,7 +123,7 @@ function SectionGlyph({ slug }: { slug: string }) {
   if (normalized === 'telegram' || normalized === 'telegram-bots') {
     return (
       <span className="section-symbol" aria-hidden="true">
-        <svg viewBox="0 0 24 24">
+        <svg data-ui-icon="true" viewBox="0 0 24 24">
           <path d="m3.5 11 16-6-4.2 15-5.1-5-3.2 2.5.5-4.5 8-5.4" />
         </svg>
       </span>
@@ -132,7 +132,7 @@ function SectionGlyph({ slug }: { slug: string }) {
 
   return (
     <span className="section-symbol" aria-hidden="true">
-      <svg viewBox="0 0 24 24">
+      <svg data-ui-icon="true" viewBox="0 0 24 24">
         <rect x="5" y="5" width="14" height="14" rx="3" />
         <path d="M9 9h6M9 12h6M9 15h4" />
       </svg>
@@ -324,7 +324,7 @@ export function TopicCategoryTree({
               aria-expanded={open}
               onClick={() => toggleTree(community.slug)}
             >
-              <svg viewBox="0 0 16 16" aria-hidden="true">
+              <svg data-ui-icon="true" viewBox="0 0 16 16" aria-hidden="true">
                 <path d="m4 6 4 4 4-4" />
               </svg>
             </button>
@@ -401,7 +401,7 @@ export function TopicCategoryTree({
               setWorkshopOpen((current) => !current)
             }
           >
-            <svg viewBox="0 0 16 16" aria-hidden="true">
+            <svg data-ui-icon="true" viewBox="0 0 16 16" aria-hidden="true">
               <path d="m4 6 4 4 4-4" />
             </svg>
           </button>

@@ -204,11 +204,11 @@ function ToolbarIcon({ name }: { name: ToolbarIconName }) {
     stroke: 'currentColor',
     strokeLinecap: 'round' as const,
     strokeLinejoin: 'round' as const,
-    strokeWidth: 1.8,
+    strokeWidth: 1.9,
   };
 
   return (
-    <svg
+    <svg data-ui-icon="true"
       className="bb-tool-icon"
       viewBox="0 0 24 24"
       aria-hidden="true"

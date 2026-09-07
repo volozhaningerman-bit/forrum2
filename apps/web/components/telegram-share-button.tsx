@@ -143,7 +143,7 @@ export function TelegramShareButton({
       onClick={(event) => { event.preventDefault(); event.stopPropagation(); void showDialog(); }}
     >
       {variant !== 'default' ? (<>
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <svg data-ui-icon="true" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M4 12 19 5l-4 14-3.6-5.1L4 12Zm7.4 1.9L19 5" />
         </svg>{variant === 'inline' && label}</>
       ) : label}
