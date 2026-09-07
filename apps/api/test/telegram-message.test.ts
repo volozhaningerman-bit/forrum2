@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { buildTelegramPublicationHtml } from '../src/telegram/telegram-message.js';
 
-test('Telegram publication carries the 4RRUM origin and discussion link', () => {
+test('Telegram publication carries the FORRUM origin and discussion link', () => {
   assert.equal(
     buildTelegramPublicationHtml({
       title: '<Запуск>',
@@ -12,7 +12,7 @@ test('Telegram publication carries the 4RRUM origin and discussion link', () => 
     [
       '<b>&lt;Запуск&gt;</b>',
       'Первый &amp; полезный пост',
-      '<a href="https://4rrum.ru/p/start?a=1&amp;b=2">Создано на 4RRUM · Обсудить →</a>',
+      '<a href="https://4rrum.ru/p/start?a=1&amp;b=2">Создано на FORRUM · Обсудить →</a>',
     ].join('\n\n'),
   );
 });
