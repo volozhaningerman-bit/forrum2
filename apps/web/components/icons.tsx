@@ -1,7 +1,7 @@
 import type { SVGProps } from 'react';
 
 function IconBase(props: SVGProps<SVGSVGElement>) {
-  return <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}/>;
+  return <svg data-ui-icon="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}/>;
 }
 export function SearchIcon() { return <IconBase><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></IconBase>; }
 export function BellIcon() { return <IconBase><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></IconBase>; }

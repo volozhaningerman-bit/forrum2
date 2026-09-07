@@ -5,13 +5,14 @@ import { api } from '@/lib/api';
 import type { PublicationCardData } from '@/lib/types';
 import { Avatar } from './avatar';
 import { AuthActions } from './auth-actions';
+import { HeaderSearch } from './header-search';
 import { ThemeToggle } from './theme-toggle';
 import { TelegramShareButton } from './telegram-share-button';
 import { formatCount, relativeTime } from './home/utils';
 import type { Community, HomeInitialData, HomeOverview } from './home/types';
 export type { HomeInitialData } from './home/types';
 
-type Glyph = 'home' | 'work' | 'media' | 'service' | 'search' | 'plus' | 'bell' | 'comment' | 'eye' | 'bookmark' | 'chevron' | 'menu' | 'filter' | 'code' | 'flame' | 'game' | 'growth' | 'community';
+type Glyph = 'home' | 'work' | 'media' | 'service' | 'search' | 'plus' | 'bell' | 'comment' | 'eye' | 'bookmark' | 'close' | 'chevron' | 'menu' | 'filter' | 'code' | 'flame' | 'game' | 'growth' | 'community';
 const paths: Record<Glyph, string> = {
  game: 'M7 7h10l4 10-3 2-4-4h-4l-4 4-3-2ZM7 10v4M5 12h4M16 11h.01M18 13h.01',
  growth: 'M4 20V4M4 20h16M7 15l5-5 4 2 5-8M16 4h5v5',
@@ -24,15 +25,16 @@ const paths: Record<Glyph, string> = {
  search: 'M10.5 3a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15ZM16 16l5 5',
  plus: 'M12 5v14M5 12h14',
  bell: 'M5 16V9a7 7 0 0 1 14 0v7l2 3H3ZM10 22h4',
- comment: 'M21 11a9 8 0 0 1-9 8H7l-4 3v-7a8 8 0 0 1 0-8 9 8 0 0 1 18 4Z',
+ comment: 'M21 11a9 8 0 0 1-9 8H8l-5 3 1-6a8 8 0 0 1-1-5 9 8 0 0 1 18 0Z',
  eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12ZM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z',
+ close: 'M6 6l12 12M18 6 6 18',
  bookmark: 'M6 3h12v18l-6-4-6 4Z', chevron: 'm7 9 5 5 5-5',
  menu: 'M4 6h16M4 12h16M4 18h16',
  filter: 'M3 6h18M3 12h18M3 18h18M8 3v6M16 9v6M10 15v6',
  code: 'm8 6-6 6 6 6m8-12 6 6-6 6M14 3l-4 18',
 };
 function Icon({ name }: { name: Glyph }) {
- return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]}/></svg>;
+ return <svg data-ui-icon="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]}/></svg>;
 }
 function replyLabel(count: number) {
  const form = new Intl.PluralRules('ru').select(count);
@@ -127,9 +129,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
  const [sidebar, setSidebar] = useState(false);
  const [retry, setRetry] = useState(0);
  const [welcomeHidden, setWelcomeHidden] = useState(false);
- const [shortcutLabel, setShortcutLabel] = useState('Ctrl K');
  useEffect(() => {
-  setShortcutLabel(/Mac|iPhone|iPad/.test(navigator.platform) ? '⌘ K' : 'Ctrl K');
   try { setWelcomeHidden(localStorage.getItem('forrum-welcome-hidden') === '1'); } catch {}
  }, []);
  function hideWelcome() { setWelcomeHidden(true); try { localStorage.setItem('forrum-welcome-hidden', '1'); } catch {} }
@@ -157,7 +157,7 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
  const popular = (overview?.discussed ?? initialData.feed?.filter(item => item.format === 'TOPIC') ?? []).filter(item => item.commentCount >= 2 && Date.parse(item.lastActivityAt ?? item.createdAt) >= Date.now() - 7 * 86400000).slice(0, 5);
  const people = overview?.weekly.activity.slice(0, 5) ?? [];
  const news = initialData.announcements?.slice(0, 4) ?? [];
- return <div className={`forum-home ${welcomeHidden ? 'is-welcome-hidden' : ''}`} data-home-reference="v28">
+ return <div className={`forum-home ${welcomeHidden ? 'is-welcome-hidden' : ''}`} data-home-reference="v29">
   <aside className={`forum-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="Навигация форума">
    <Link className="forum-brand" href="/"><span className="forum-brand-mark"><Icon name="comment"/></span><span><strong>FORRUM</strong><small>Люди. Знания. Проекты.</small></span></Link>
    <nav className="forum-primary" aria-label="Основная навигация">{([{ href: '/', label: 'Главная', icon: 'home' }, { href: '/workshop', label: 'Мастерская', icon: 'work' }, { href: '/media', label: 'Медиа', icon: 'media' }, { href: '/services', label: 'Услуги', icon: 'service' }] as const).map(item => <Link key={item.href} href={item.href} aria-current={item.href === '/' ? 'page' : undefined}><Icon name={item.icon}/>{item.label}</Link>)}</nav>
@@ -167,10 +167,10 @@ export function HomeDashboard({ initialData }: { initialData: HomeInitialData })
   </aside>
   {sidebar && <button type="button" className="forum-sidebar-backdrop" aria-label="Закрыть навигацию" onClick={() => setSidebar(false)}/>}
   <header className="forum-topbar"><button type="button" className="forum-menu" aria-label={sidebar ? 'Закрыть меню' : 'Открыть меню'} aria-expanded={sidebar} onClick={() => setSidebar(value => !value)}><Icon name="menu"/></button>
-   <form role="search" action="/search"><Icon name="search"/><input ref={searchInput} name="q" aria-label="Поиск тем, людей, проектов" placeholder="Поиск тем, людей, проектов…" required/><kbd>{shortcutLabel}</kbd></form>
+   <HeaderSearch inputRef={searchInput}/>
    <Link className="forum-button forum-top-create" href="/create"><Icon name="plus"/>Создать тему</Link><ThemeToggle/><Link className="forum-notifications" href="/notifications" aria-label="Уведомления"><Icon name="bell"/></Link><AuthActions/>
   </header>
-  <div className="forum-center">{!welcomeHidden && <section className="forum-welcome"><button type="button" className="forum-welcome-close" aria-label="Скрыть приветствие" onClick={hideWelcome}>×</button><div className="forum-welcome-copy"><h1>Здесь создают проекты<br/>и находят людей</h1><p>Обсуждайте запуск проектов, ищите специалистов и делитесь опытом.</p><div><Link className="forum-button" href="/create"><Icon name="plus"/>Создать тему</Link><Link className="forum-button forum-button-secondary" href="/communities">Смотреть сообщества</Link></div></div>{!activityError && overview?.pulse?.activeTopics.length ? <div className="forum-welcome-live"><strong>Сейчас обсуждают</strong>{overview.pulse.activeTopics.map(item => <Link key={item.slug} href={`/p/${item.slug}`}><span>{item.title || 'Обсуждение'}</span><small>{replyLabel(item.replyCount)} за 24 часа</small></Link>)}</div> : <DialogueArt/>}</section>}
+  <div className="forum-center">{!welcomeHidden && <section className="forum-welcome"><button type="button" className="forum-welcome-close" aria-label="Скрыть приветствие" onClick={hideWelcome}><Icon name="close"/></button><div className="forum-welcome-copy"><h1>Здесь создают проекты<br/>и находят людей</h1><p>Обсуждайте запуск проектов, ищите специалистов и делитесь опытом.</p><div><Link className="forum-button" href="/create"><Icon name="plus"/>Создать тему</Link><Link className="forum-button forum-button-secondary" href="/communities">Смотреть сообщества</Link></div></div>{!activityError && overview?.pulse?.activeTopics.length ? <div className="forum-welcome-live"><strong>Сейчас обсуждают</strong>{overview.pulse.activeTopics.map(item => <Link key={item.slug} href={`/p/${item.slug}`}><span>{item.title || 'Обсуждение'}</span><small>{replyLabel(item.replyCount)} за 24 часа</small></Link>)}</div> : <DialogueArt/>}</section>}
    <div className="forum-feed-toolbar"><div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-pressed={item.id === tab} key={item.id} onClick={() => setTab(item.id)}>{item.id === 'trend' && <Icon name="flame"/>}{item.label}</button>)}</div><button type="button" className="forum-filter-toggle" aria-expanded={filters} onClick={() => setFilters(value => !value)}>Фильтры<Icon name="filter"/></button></div>
    {filters && <div className="forum-filters"><label>Сообщество<select aria-label="Сообщество" value={community} onChange={event => setCommunity(event.target.value)}><option value="">Все сообщества</option>{initialData.communities?.map(item => <option key={item.slug} value={item.slug}>{item.name}</option>)}</select></label><button type="button" onClick={() => setCommunity('')}>Сбросить</button></div>}
    <section className="forum-feed" aria-label="Темы форума" aria-busy={loading}>{loading ? <div className="forum-empty" role="status">Загружаем темы…</div> : error ? <div className="forum-empty" role="alert"><p>{error}</p><button type="button" className="forum-button" onClick={() => setRetry(value => value + 1)}>Попробовать снова</button></div> : visible.length ? visible.map(item => <Topic key={`${tab}-${item.id}`} item={item}/>) : <div className="forum-empty"><strong>Тем пока нет</strong><p>Измените фильтр или начните новое обсуждение.</p><Link className="forum-button" href="/create">Создать тему</Link></div>}</section>

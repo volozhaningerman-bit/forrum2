@@ -270,3 +270,27 @@ body:has(.forum-home) .site-footer {display:none;}
  .forum-welcome-live {grid-template-columns:1fr;}
  .forum-topic {row-gap:8px;}
 }
+
+/* V29: consistent icon controls and clear category hit areas. */
+.forum-category-heading {gap:0; padding-right:0; border-radius:6px;}
+.forum-category-heading a {flex:0 1 auto; padding-block:6px;}
+.forum-category-heading button {flex:1 0 30px; align-self:stretch; justify-content:flex-end; align-items:center; padding:6px 10px;}
+.forum-category-heading:has(button:hover), .forum-category-heading:has(button:focus-visible) {background:var(--f-hover);}
+.forum-home :is(.theme-toggle-v2,.forum-notifications,.forum-welcome-close,.forum-menu,.forum-topbar .forum-header-search button) {align-items:center; justify-content:center; width:36px; height:36px; padding:8px; border:1px solid transparent; border-radius:6px; background:transparent; color:var(--f-muted); box-shadow:none;}
+.forum-topbar .forum-header-search {padding:0 5px 0 14px; gap:6px;}
+.forum-topbar .forum-header-search button {display:flex; flex:0 0 36px;}
+.forum-topbar .forum-header-search input {outline:none;}
+.forum-topbar .forum-header-search:focus-within {outline:2px solid var(--f-accent); outline-offset:2px;}
+.forum-home :is(a,button):has([data-ui-icon]):not(.forum-button) {transition:color 160ms ease,background-color 160ms ease,border-color 160ms ease;}
+.forum-home :is(a,button):has([data-ui-icon]):not(.forum-button):hover {color:var(--f-accent); background:var(--f-hover); box-shadow:none;}
+.forum-home .forum-brand:hover {color:var(--f-text); background:transparent;}
+.forum-home .forum-brand:hover .forum-brand-mark {color:var(--f-accent);}
+.forum-home .auth-actions>a {border:1px solid transparent; border-radius:6px; padding:8px 10px; box-shadow:none; background:transparent;}
+.forum-home .auth-actions>a:hover {background:var(--f-hover); color:var(--f-accent);}
+.forum-home .forum-category-heading svg {width:20px; height:20px;}
+.forum-home .forum-brand-mark svg {width:31px; height:31px;}
+/* Override legacy theme-toggle hover rules, including their !important declarations. */
+.forum-home :is(a,button):has([data-ui-icon]):not(.forum-button):hover {
+ color:var(--f-accent)!important; background-color:var(--f-hover)!important; border-color:transparent!important;
+}
+.forum-home .forum-brand:hover {color:var(--f-text)!important; background-color:transparent!important;}
