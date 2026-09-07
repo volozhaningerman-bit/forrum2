@@ -48,6 +48,7 @@ export const ModelName = {
     ModerationAppeal: 'ModerationAppeal',
     CommunityProposal: 'CommunityProposal',
     ProposalSupport: 'ProposalSupport',
+    CuratorApplication: 'CuratorApplication',
     CommunityPoll: 'CommunityPoll',
     PollOption: 'PollOption',
     PollVote: 'PollVote',
@@ -67,7 +68,10 @@ export const ModelName = {
     CommunityEvent: 'CommunityEvent',
     CommunityEventAttendance: 'CommunityEventAttendance',
     PortfolioItem: 'PortfolioItem',
-    PlatformSetting: 'PlatformSetting'
+    PlatformSetting: 'PlatformSetting',
+    InventoryItemDefinition: 'InventoryItemDefinition',
+    UserInventoryItem: 'UserInventoryItem',
+    InventoryTransaction: 'InventoryTransaction'
 };
 export const TransactionIsolationLevel = {
     ReadUncommitted: 'ReadUncommitted',
@@ -434,6 +438,7 @@ export const CommunityProposalScalarFieldEnum = {
     name: 'name',
     description: 'description',
     initialTopics: 'initialTopics',
+    curatorInterest: 'curatorInterest',
     status: 'status',
     resolutionNote: 'resolutionNote',
     createdAt: 'createdAt',
@@ -443,6 +448,18 @@ export const ProposalSupportScalarFieldEnum = {
     proposalId: 'proposalId',
     userId: 'userId',
     createdAt: 'createdAt'
+};
+export const CuratorApplicationScalarFieldEnum = {
+    id: 'id',
+    userId: 'userId',
+    communityId: 'communityId',
+    motivation: 'motivation',
+    plan: 'plan',
+    activitySnapshot: 'activitySnapshot',
+    status: 'status',
+    resolutionNote: 'resolutionNote',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
 };
 export const CommunityPollScalarFieldEnum = {
     id: 'id',
@@ -678,6 +695,41 @@ export const PlatformSettingScalarFieldEnum = {
     key: 'key',
     value: 'value',
     updatedAt: 'updatedAt'
+};
+export const InventoryItemDefinitionScalarFieldEnum = {
+    id: 'id',
+    slug: 'slug',
+    name: 'name',
+    description: 'description',
+    type: 'type',
+    rarity: 'rarity',
+    previewKey: 'previewKey',
+    style: 'style',
+    transferable: 'transferable',
+    deletable: 'deletable',
+    equipable: 'equipable',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+};
+export const UserInventoryItemScalarFieldEnum = {
+    id: 'id',
+    definitionId: 'definitionId',
+    ownerId: 'ownerId',
+    serialNumber: 'serialNumber',
+    sourceKey: 'sourceKey',
+    equipped: 'equipped',
+    acquiredAt: 'acquiredAt',
+    equippedAt: 'equippedAt',
+    deletedAt: 'deletedAt'
+};
+export const InventoryTransactionScalarFieldEnum = {
+    id: 'id',
+    itemId: 'itemId',
+    type: 'type',
+    fromUserId: 'fromUserId',
+    toUserId: 'toUserId',
+    metadata: 'metadata',
+    createdAt: 'createdAt'
 };
 export const SortOrder = {
     asc: 'asc',

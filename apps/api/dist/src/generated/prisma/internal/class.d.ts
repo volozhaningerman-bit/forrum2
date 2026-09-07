@@ -145,6 +145,9 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
     get proposalSupport(): Prisma.ProposalSupportDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
+    get curatorApplication(): Prisma.CuratorApplicationDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
     get communityPoll(): Prisma.CommunityPollDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
@@ -203,6 +206,15 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
         omit: OmitOpts;
     }>;
     get platformSetting(): Prisma.PlatformSettingDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    get inventoryItemDefinition(): Prisma.InventoryItemDefinitionDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    get userInventoryItem(): Prisma.UserInventoryItemDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
+    get inventoryTransaction(): Prisma.InventoryTransactionDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
 }

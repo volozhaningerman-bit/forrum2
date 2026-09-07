@@ -31,6 +31,7 @@ export type CommunityProposalMinAggregateOutputType = {
   name: string | null
   description: string | null
   initialTopics: string | null
+  curatorInterest: string | null
   status: $Enums.ProposalStatus | null
   resolutionNote: string | null
   createdAt: Date | null
@@ -44,6 +45,7 @@ export type CommunityProposalMaxAggregateOutputType = {
   name: string | null
   description: string | null
   initialTopics: string | null
+  curatorInterest: string | null
   status: $Enums.ProposalStatus | null
   resolutionNote: string | null
   createdAt: Date | null
@@ -57,6 +59,7 @@ export type CommunityProposalCountAggregateOutputType = {
   name: number
   description: number
   initialTopics: number
+  curatorInterest: number
   status: number
   resolutionNote: number
   createdAt: number
@@ -72,6 +75,7 @@ export type CommunityProposalMinAggregateInputType = {
   name?: true
   description?: true
   initialTopics?: true
+  curatorInterest?: true
   status?: true
   resolutionNote?: true
   createdAt?: true
@@ -85,6 +89,7 @@ export type CommunityProposalMaxAggregateInputType = {
   name?: true
   description?: true
   initialTopics?: true
+  curatorInterest?: true
   status?: true
   resolutionNote?: true
   createdAt?: true
@@ -98,6 +103,7 @@ export type CommunityProposalCountAggregateInputType = {
   name?: true
   description?: true
   initialTopics?: true
+  curatorInterest?: true
   status?: true
   resolutionNote?: true
   createdAt?: true
@@ -184,6 +190,7 @@ export type CommunityProposalGroupByOutputType = {
   name: string
   description: string
   initialTopics: string
+  curatorInterest: string
   status: $Enums.ProposalStatus
   resolutionNote: string | null
   createdAt: Date
@@ -218,6 +225,7 @@ export type CommunityProposalWhereInput = {
   name?: Prisma.StringFilter<"CommunityProposal"> | string
   description?: Prisma.StringFilter<"CommunityProposal"> | string
   initialTopics?: Prisma.StringFilter<"CommunityProposal"> | string
+  curatorInterest?: Prisma.StringFilter<"CommunityProposal"> | string
   status?: Prisma.EnumProposalStatusFilter<"CommunityProposal"> | $Enums.ProposalStatus
   resolutionNote?: Prisma.StringNullableFilter<"CommunityProposal"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CommunityProposal"> | Date | string
@@ -234,6 +242,7 @@ export type CommunityProposalOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   initialTopics?: Prisma.SortOrder
+  curatorInterest?: Prisma.SortOrder
   status?: Prisma.SortOrder
   resolutionNote?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -253,6 +262,7 @@ export type CommunityProposalWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"CommunityProposal"> | string
   description?: Prisma.StringFilter<"CommunityProposal"> | string
   initialTopics?: Prisma.StringFilter<"CommunityProposal"> | string
+  curatorInterest?: Prisma.StringFilter<"CommunityProposal"> | string
   status?: Prisma.EnumProposalStatusFilter<"CommunityProposal"> | $Enums.ProposalStatus
   resolutionNote?: Prisma.StringNullableFilter<"CommunityProposal"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CommunityProposal"> | Date | string
@@ -269,6 +279,7 @@ export type CommunityProposalOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   initialTopics?: Prisma.SortOrder
+  curatorInterest?: Prisma.SortOrder
   status?: Prisma.SortOrder
   resolutionNote?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -288,6 +299,7 @@ export type CommunityProposalScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"CommunityProposal"> | string
   description?: Prisma.StringWithAggregatesFilter<"CommunityProposal"> | string
   initialTopics?: Prisma.StringWithAggregatesFilter<"CommunityProposal"> | string
+  curatorInterest?: Prisma.StringWithAggregatesFilter<"CommunityProposal"> | string
   status?: Prisma.EnumProposalStatusWithAggregatesFilter<"CommunityProposal"> | $Enums.ProposalStatus
   resolutionNote?: Prisma.StringNullableWithAggregatesFilter<"CommunityProposal"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CommunityProposal"> | Date | string
@@ -299,6 +311,7 @@ export type CommunityProposalCreateInput = {
   name: string
   description: string
   initialTopics: string
+  curatorInterest?: string
   status?: $Enums.ProposalStatus
   resolutionNote?: string | null
   createdAt?: Date | string
@@ -315,6 +328,7 @@ export type CommunityProposalUncheckedCreateInput = {
   name: string
   description: string
   initialTopics: string
+  curatorInterest?: string
   status?: $Enums.ProposalStatus
   resolutionNote?: string | null
   createdAt?: Date | string
@@ -327,6 +341,7 @@ export type CommunityProposalUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   initialTopics?: Prisma.StringFieldUpdateOperationsInput | string
+  curatorInterest?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -343,6 +358,7 @@ export type CommunityProposalUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   initialTopics?: Prisma.StringFieldUpdateOperationsInput | string
+  curatorInterest?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -357,6 +373,7 @@ export type CommunityProposalCreateManyInput = {
   name: string
   description: string
   initialTopics: string
+  curatorInterest?: string
   status?: $Enums.ProposalStatus
   resolutionNote?: string | null
   createdAt?: Date | string
@@ -368,6 +385,7 @@ export type CommunityProposalUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   initialTopics?: Prisma.StringFieldUpdateOperationsInput | string
+  curatorInterest?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -381,6 +399,7 @@ export type CommunityProposalUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   initialTopics?: Prisma.StringFieldUpdateOperationsInput | string
+  curatorInterest?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -404,6 +423,7 @@ export type CommunityProposalCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   initialTopics?: Prisma.SortOrder
+  curatorInterest?: Prisma.SortOrder
   status?: Prisma.SortOrder
   resolutionNote?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -417,6 +437,7 @@ export type CommunityProposalMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   initialTopics?: Prisma.SortOrder
+  curatorInterest?: Prisma.SortOrder
   status?: Prisma.SortOrder
   resolutionNote?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -430,6 +451,7 @@ export type CommunityProposalMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   initialTopics?: Prisma.SortOrder
+  curatorInterest?: Prisma.SortOrder
   status?: Prisma.SortOrder
   resolutionNote?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -548,6 +570,7 @@ export type CommunityProposalCreateWithoutAuthorInput = {
   name: string
   description: string
   initialTopics: string
+  curatorInterest?: string
   status?: $Enums.ProposalStatus
   resolutionNote?: string | null
   createdAt?: Date | string
@@ -562,6 +585,7 @@ export type CommunityProposalUncheckedCreateWithoutAuthorInput = {
   name: string
   description: string
   initialTopics: string
+  curatorInterest?: string
   status?: $Enums.ProposalStatus
   resolutionNote?: string | null
   createdAt?: Date | string
@@ -605,6 +629,7 @@ export type CommunityProposalScalarWhereInput = {
   name?: Prisma.StringFilter<"CommunityProposal"> | string
   description?: Prisma.StringFilter<"CommunityProposal"> | string
   initialTopics?: Prisma.StringFilter<"CommunityProposal"> | string
+  curatorInterest?: Prisma.StringFilter<"CommunityProposal"> | string
   status?: Prisma.EnumProposalStatusFilter<"CommunityProposal"> | $Enums.ProposalStatus
   resolutionNote?: Prisma.StringNullableFilter<"CommunityProposal"> | string | null
   createdAt?: Prisma.DateTimeFilter<"CommunityProposal"> | Date | string
@@ -616,6 +641,7 @@ export type CommunityProposalCreateWithoutSuggestedParentInput = {
   name: string
   description: string
   initialTopics: string
+  curatorInterest?: string
   status?: $Enums.ProposalStatus
   resolutionNote?: string | null
   createdAt?: Date | string
@@ -630,6 +656,7 @@ export type CommunityProposalUncheckedCreateWithoutSuggestedParentInput = {
   name: string
   description: string
   initialTopics: string
+  curatorInterest?: string
   status?: $Enums.ProposalStatus
   resolutionNote?: string | null
   createdAt?: Date | string
@@ -668,6 +695,7 @@ export type CommunityProposalCreateWithoutSupportsInput = {
   name: string
   description: string
   initialTopics: string
+  curatorInterest?: string
   status?: $Enums.ProposalStatus
   resolutionNote?: string | null
   createdAt?: Date | string
@@ -683,6 +711,7 @@ export type CommunityProposalUncheckedCreateWithoutSupportsInput = {
   name: string
   description: string
   initialTopics: string
+  curatorInterest?: string
   status?: $Enums.ProposalStatus
   resolutionNote?: string | null
   createdAt?: Date | string
@@ -710,6 +739,7 @@ export type CommunityProposalUpdateWithoutSupportsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   initialTopics?: Prisma.StringFieldUpdateOperationsInput | string
+  curatorInterest?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -725,6 +755,7 @@ export type CommunityProposalUncheckedUpdateWithoutSupportsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   initialTopics?: Prisma.StringFieldUpdateOperationsInput | string
+  curatorInterest?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -737,6 +768,7 @@ export type CommunityProposalCreateManyAuthorInput = {
   name: string
   description: string
   initialTopics: string
+  curatorInterest?: string
   status?: $Enums.ProposalStatus
   resolutionNote?: string | null
   createdAt?: Date | string
@@ -748,6 +780,7 @@ export type CommunityProposalUpdateWithoutAuthorInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   initialTopics?: Prisma.StringFieldUpdateOperationsInput | string
+  curatorInterest?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -762,6 +795,7 @@ export type CommunityProposalUncheckedUpdateWithoutAuthorInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   initialTopics?: Prisma.StringFieldUpdateOperationsInput | string
+  curatorInterest?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -775,6 +809,7 @@ export type CommunityProposalUncheckedUpdateManyWithoutAuthorInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   initialTopics?: Prisma.StringFieldUpdateOperationsInput | string
+  curatorInterest?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -787,6 +822,7 @@ export type CommunityProposalCreateManySuggestedParentInput = {
   name: string
   description: string
   initialTopics: string
+  curatorInterest?: string
   status?: $Enums.ProposalStatus
   resolutionNote?: string | null
   createdAt?: Date | string
@@ -798,6 +834,7 @@ export type CommunityProposalUpdateWithoutSuggestedParentInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   initialTopics?: Prisma.StringFieldUpdateOperationsInput | string
+  curatorInterest?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -812,6 +849,7 @@ export type CommunityProposalUncheckedUpdateWithoutSuggestedParentInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   initialTopics?: Prisma.StringFieldUpdateOperationsInput | string
+  curatorInterest?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -825,6 +863,7 @@ export type CommunityProposalUncheckedUpdateManyWithoutSuggestedParentInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   initialTopics?: Prisma.StringFieldUpdateOperationsInput | string
+  curatorInterest?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumProposalStatusFieldUpdateOperationsInput | $Enums.ProposalStatus
   resolutionNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -869,6 +908,7 @@ export type CommunityProposalSelect<ExtArgs extends runtime.Types.Extensions.Int
   name?: boolean
   description?: boolean
   initialTopics?: boolean
+  curatorInterest?: boolean
   status?: boolean
   resolutionNote?: boolean
   createdAt?: boolean
@@ -886,6 +926,7 @@ export type CommunityProposalSelectCreateManyAndReturn<ExtArgs extends runtime.T
   name?: boolean
   description?: boolean
   initialTopics?: boolean
+  curatorInterest?: boolean
   status?: boolean
   resolutionNote?: boolean
   createdAt?: boolean
@@ -901,6 +942,7 @@ export type CommunityProposalSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   name?: boolean
   description?: boolean
   initialTopics?: boolean
+  curatorInterest?: boolean
   status?: boolean
   resolutionNote?: boolean
   createdAt?: boolean
@@ -916,13 +958,14 @@ export type CommunityProposalSelectScalar = {
   name?: boolean
   description?: boolean
   initialTopics?: boolean
+  curatorInterest?: boolean
   status?: boolean
   resolutionNote?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CommunityProposalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "authorId" | "suggestedParentId" | "name" | "description" | "initialTopics" | "status" | "resolutionNote" | "createdAt" | "updatedAt", ExtArgs["result"]["communityProposal"]>
+export type CommunityProposalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "authorId" | "suggestedParentId" | "name" | "description" | "initialTopics" | "curatorInterest" | "status" | "resolutionNote" | "createdAt" | "updatedAt", ExtArgs["result"]["communityProposal"]>
 export type CommunityProposalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   author?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   suggestedParent?: boolean | Prisma.CommunityProposal$suggestedParentArgs<ExtArgs>
@@ -952,6 +995,7 @@ export type $CommunityProposalPayload<ExtArgs extends runtime.Types.Extensions.I
     name: string
     description: string
     initialTopics: string
+    curatorInterest: string
     status: $Enums.ProposalStatus
     resolutionNote: string | null
     createdAt: Date
@@ -1388,6 +1432,7 @@ export interface CommunityProposalFieldRefs {
   readonly name: Prisma.FieldRef<"CommunityProposal", 'String'>
   readonly description: Prisma.FieldRef<"CommunityProposal", 'String'>
   readonly initialTopics: Prisma.FieldRef<"CommunityProposal", 'String'>
+  readonly curatorInterest: Prisma.FieldRef<"CommunityProposal", 'String'>
   readonly status: Prisma.FieldRef<"CommunityProposal", 'ProposalStatus'>
   readonly resolutionNote: Prisma.FieldRef<"CommunityProposal", 'String'>
   readonly createdAt: Prisma.FieldRef<"CommunityProposal", 'DateTime'>

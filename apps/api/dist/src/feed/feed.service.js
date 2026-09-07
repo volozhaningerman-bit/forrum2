@@ -118,6 +118,18 @@ let FeedService = class FeedService {
             communityId: hiddenCommunityIds.size && !['subscriptions', 'saved'].includes(mode) ? { notIn: [...hiddenCommunityIds] } : undefined,
         };
         let where = { status: 'PUBLISHED', ...exclusions };
+        if (mode === 'popular') {
+            where = {
+                ...where,
+                format: 'TOPIC',
+                comments: {
+                    some: {
+                        hiddenAt: null,
+                        createdAt: { gte: recentCommentSince },
+                    },
+                },
+            };
+        }
         if (mode === 'subscriptions' && userId) {
             const sources = [];
             if (communityIds.size)
@@ -170,7 +182,14 @@ let FeedService = class FeedService {
                 isPinned: Boolean(publication.pinnedUntil && publication.pinnedUntil.getTime() > now),
             });
             return { publication, ...ranking };
-        }).sort((a, b) => b.score - a.score);
+        }).sort((a, b) => {
+            if (mode === 'popular') {
+                return (b.publication.comments.length - a.publication.comments.length ||
+                    b.publication.lastActivityAt.getTime() - a.publication.lastActivityAt.getTime() ||
+                    b.publication._count.comments - a.publication._count.comments);
+            }
+            return b.score - a.score;
+        });
         const selected = [];
         const communityCount = new Map();
         const authorCount = new Map();
@@ -181,12 +200,44 @@ let FeedService = class FeedService {
                 continue;
             const c = communityCount.get(item.publication.communityId) ?? 0;
             const a = authorCount.get(item.publication.authorId) ?? 0;
-            if (!['subscriptions', 'saved', 'new'].includes(mode) && (c >= 4 || a >= 3))
+            if (!['subscriptions', 'saved', 'new', 'popular'].includes(mode) && (c >= 4 || a >= 3))
                 continue;
             selected.push(item);
             communityCount.set(item.publication.communityId, c + 1);
             authorCount.set(item.publication.authorId, a + 1);
         }
+        const selectedPublicationIds = selected.map(({ publication }) => publication.id);
+        const latestComments = selectedPublicationIds.length
+            ? await this.prisma.comment.findMany({
+                where: {
+                    publicationId: { in: selectedPublicationIds },
+                    hiddenAt: null,
+                },
+                orderBy: [
+                    { publicationId: 'asc' },
+                    { createdAt: 'desc' },
+                ],
+                distinct: ['publicationId'],
+                select: {
+                    publicationId: true,
+                    createdAt: true,
+                    author: {
+                        select: {
+                            username: true,
+                            displayName: true,
+                            avatarUrl: true,
+                        },
+                    },
+                },
+            })
+            : [];
+        const latestCommentByPublication = new Map(latestComments.map((comment) => [
+            comment.publicationId,
+            {
+                createdAt: comment.createdAt,
+                author: comment.author,
+            },
+        ]));
         return selected.map(({ publication, reason }) => ({
             id: publication.id,
             slug: publication.slug,
@@ -197,6 +248,7 @@ let FeedService = class FeedService {
             viewCount: publication.viewCount,
             createdAt: publication.createdAt,
             lastActivityAt: publication.lastActivityAt,
+            lastComment: latestCommentByPublication.get(publication.id) ?? null,
             pinnedUntil: publication.pinnedUntil,
             reason: showReasons ? reason : null,
             feedbackEnabled: Boolean(userId && ['for-you', 'all', 'popular', 'new'].includes(mode)),

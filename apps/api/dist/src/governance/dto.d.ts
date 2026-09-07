@@ -4,6 +4,7 @@ export declare class CreateProposalDto {
     description: string;
     initialTopics: string;
     parentSlug?: string;
+    curatorInterest?: string;
 }
 export declare class ResolveProposalDto {
     status: ProposalStatus;
@@ -25,4 +26,9 @@ export declare class ClosePollDto {
 }
 export declare class CastVoteDto {
     optionId: string;
+}
+export declare class CreateCuratorApplicationDto {
+    communitySlug: string;
+    motivation: string;
+    plan: string;
 }

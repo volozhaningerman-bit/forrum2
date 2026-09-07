@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+import { NotFoundException as TagStyleNotFoundException } from '@nestjs/common';
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { GlobalRole, NotificationType, PublicationFormat, PublicationStatus, PublicationType } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
@@ -348,6 +349,72 @@ let PublicationsService = class PublicationsService {
             data: { authorId: userId, publicationId: publication.id, reason: dto.reason.trim(), details: dto.details?.trim() || null },
         });
         return { id: report.id };
+    }
+    async styleTags(authorId, communitySlug, publicationSlug, rawStyles) {
+        const presets = {
+            emerald: {
+                textColor: '#8ED8C0',
+                backgroundColor: '#102923',
+                borderColor: '#315D50',
+            },
+            sky: {
+                textColor: '#9DC9DD',
+                backgroundColor: '#112630',
+                borderColor: '#355768',
+            },
+            violet: {
+                textColor: '#C3B4DE',
+                backgroundColor: '#211D2C',
+                borderColor: '#554B69',
+            },
+            amber: {
+                textColor: '#D9BD7A',
+                backgroundColor: '#292313',
+                borderColor: '#66552C',
+            },
+            rose: {
+                textColor: '#DAA0A2',
+                backgroundColor: '#2B1C1E',
+                borderColor: '#694044',
+            },
+            slate: {
+                textColor: '#C7D2CF',
+                backgroundColor: '#132124',
+                borderColor: '#34484A',
+            },
+        };
+        const publication = await this.prisma.publication.findFirst({
+            where: {
+                slug: publicationSlug,
+                authorId,
+                community: { slug: communitySlug },
+            },
+            select: { id: true },
+        });
+        if (!publication) {
+            throw new TagStyleNotFoundException('Публикация не найдена');
+        }
+        const entries = Object.entries(rawStyles ?? {})
+            .filter((entry) => Boolean(entry[0].trim()) && entry[1] in presets)
+            .slice(0, 5);
+        const results = await this.prisma.$transaction(entries.map(([rawTag, presetId]) => {
+            const tag = rawTag.replace(/^#/, '').trim().toLowerCase();
+            return this.prisma.tag.updateMany({
+                where: {
+                    publications: {
+                        some: { publicationId: publication.id },
+                    },
+                    OR: [{ slug: tag }, { label: tag }],
+                },
+                data: {
+                    ...presets[presetId],
+                    styleEnabled: true,
+                },
+            });
+        }));
+        return {
+            updated: results.reduce((total, result) => total + result.count, 0),
+        };
     }
 };
 PublicationsService = __decorate([

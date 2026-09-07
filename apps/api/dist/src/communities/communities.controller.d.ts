@@ -40,6 +40,10 @@ export declare class CommunitiesController {
         avatarUrl: string | null;
         coverUrl: string | null;
         accentColor: string;
+        ancestors: {
+            slug: string;
+            name: string;
+        }[];
         parent: {
             slug: string;
             name: string;

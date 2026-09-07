@@ -290,6 +290,12 @@
       "namedRegex": "^/reset\\-password(?:/)?$"
     },
     {
+      "page": "/rules",
+      "regex": "^/rules(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/rules(?:/)?$"
+    },
+    {
       "page": "/saved",
       "regex": "^/saved(?:/)?$",
       "routeKeys": {},
@@ -342,6 +348,12 @@
       "regex": "^/subscriptions(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/subscriptions(?:/)?$"
+    },
+    {
+      "page": "/support",
+      "regex": "^/support(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/support(?:/)?$"
     },
     {
       "page": "/verify-email",

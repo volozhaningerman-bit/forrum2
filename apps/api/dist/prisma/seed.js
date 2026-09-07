@@ -42,6 +42,148 @@ async function ensureRole(input) {
         await prisma.communityRoleEvent.create({ data: { roleId: role.id, userId: input.userId, actorId: input.grantedById, type: RoleEventType.GRANTED, note: input.note ?? 'Начальная роль тестовой среды' } });
     return role;
 }
+async function seedInventoryV10() {
+    const definitions = [
+        {
+            id: 'inventory-def-nick-azure',
+            slug: 'nick-azure',
+            name: 'Синий контур',
+            description: 'Спокойный синий цвет ника для светлой темы FORRUM.',
+            type: 'NICK_COLOR',
+            rarity: 'RARE',
+            previewKey: 'F',
+            style: { color: '#2d6ea6' },
+            transferable: true,
+            deletable: true,
+            equipable: true,
+        },
+        {
+            id: 'inventory-def-nick-amber',
+            slug: 'nick-amber',
+            name: 'Тёплый янтарь',
+            description: 'Тёплый контрастный оттенок ника без сходства с системными ошибками.',
+            type: 'NICK_COLOR',
+            rarity: 'UNCOMMON',
+            previewKey: 'F',
+            style: { color: '#8a5a18' },
+            transferable: true,
+            deletable: true,
+            equipable: true,
+        },
+        {
+            id: 'inventory-def-hashtag-sage',
+            slug: 'hashtag-sage',
+            name: 'Хэштег «Шалфей»',
+            description: 'Мягкое оформление авторских хэштегов в сообщениях и профиле.',
+            type: 'HASHTAG_COLOR',
+            rarity: 'UNCOMMON',
+            previewKey: '#',
+            style: {
+                color: '#3f7557',
+                background: '#edf5ef',
+                border: '#c5dbcb',
+            },
+            transferable: true,
+            deletable: true,
+            equipable: true,
+        },
+        {
+            id: 'inventory-def-profile-northern',
+            slug: 'profile-northern-light',
+            name: 'Северный свет',
+            description: 'Светлый редакционный фон профиля с холодным и тёплым переходом.',
+            type: 'PROFILE_BACKGROUND',
+            rarity: 'EPIC',
+            previewKey: 'BG',
+            style: {
+                background: 'linear-gradient(135deg, #eef4f6 0%, #f6f1e9 56%, #eef0f5 100%)',
+            },
+            transferable: true,
+            deletable: true,
+            equipable: true,
+        },
+        {
+            id: 'inventory-def-avatar-steel',
+            slug: 'avatar-steel-frame',
+            name: 'Стальная рамка',
+            description: 'Тонкая двойная рамка аватара для активных участников.',
+            type: 'AVATAR_FRAME',
+            rarity: 'RARE',
+            previewKey: 'O',
+            style: {
+                boxShadow: '0 0 0 3px #708397, 0 0 0 5px #e2e7eb',
+            },
+            transferable: true,
+            deletable: true,
+            equipable: true,
+        },
+        {
+            id: 'inventory-def-badge-first',
+            slug: 'badge-first-wave',
+            name: 'Первая волна',
+            description: 'Коллекционный знак ранних участников FORRUM.',
+            type: 'PROFILE_BADGE',
+            rarity: 'UNIQUE',
+            previewKey: 'I',
+            style: { symbol: 'I', color: '#6a4c91' },
+            transferable: false,
+            deletable: false,
+            equipable: true,
+        },
+        {
+            id: 'inventory-def-reactions-constructive',
+            slug: 'reactions-constructive',
+            name: 'Конструктивные реакции',
+            description: 'Набор спокойных реакций для полезных ответов и найденных решений.',
+            type: 'REACTION_PACK',
+            rarity: 'RARE',
+            previewKey: '✓',
+            style: { symbol: '✓', color: '#2c6f55' },
+            transferable: true,
+            deletable: true,
+            equipable: true,
+        },
+    ];
+    for (const definition of definitions) {
+        await prisma.$executeRawUnsafe(`INSERT INTO "InventoryItemDefinition"
+         ("id", "slug", "name", "description", "type", "rarity", "previewKey", "style", "transferable", "deletable", "equipable", "createdAt", "updatedAt")
+       VALUES ($1, $2, $3, $4, $5::"InventoryItemType", $6::"InventoryItemRarity", $7, $8::jsonb, $9, $10, $11, NOW(), NOW())
+       ON CONFLICT ("slug") DO UPDATE SET
+         "name" = EXCLUDED."name",
+         "description" = EXCLUDED."description",
+         "type" = EXCLUDED."type",
+         "rarity" = EXCLUDED."rarity",
+         "previewKey" = EXCLUDED."previewKey",
+         "style" = EXCLUDED."style",
+         "transferable" = EXCLUDED."transferable",
+         "deletable" = EXCLUDED."deletable",
+         "equipable" = EXCLUDED."equipable",
+         "updatedAt" = NOW()`, definition.id, definition.slug, definition.name, definition.description, definition.type, definition.rarity, definition.previewKey, JSON.stringify(definition.style), definition.transferable, definition.deletable, definition.equipable);
+    }
+    const grants = [
+        ['owner', 'nick-azure', 1, true],
+        ['owner', 'hashtag-sage', 1, true],
+        ['owner', 'profile-northern-light', 1, true],
+        ['owner', 'avatar-steel-frame', 1, true],
+        ['owner', 'badge-first-wave', 1, true],
+        ['owner', 'reactions-constructive', 1, true],
+        ['friend', 'nick-amber', 7, true],
+        ['friend', 'hashtag-sage', 9, false],
+        ['nora', 'profile-northern-light', 14, true],
+        ['nora', 'avatar-steel-frame', 16, true],
+        ['pixel', 'reactions-constructive', 21, true],
+    ];
+    for (const [username, slug, serialNumber, equipped] of grants) {
+        const sourceKey = `seed:${username}:${slug}`;
+        await prisma.$executeRawUnsafe(`INSERT INTO "UserInventoryItem"
+         ("id", "definitionId", "ownerId", "serialNumber", "sourceKey", "equipped", "acquiredAt", "equippedAt", "deletedAt")
+       SELECT $1, d."id", u."id", $2, $3, $4, NOW(), CASE WHEN $4 THEN NOW() ELSE NULL END, NULL
+       FROM "InventoryItemDefinition" d
+       CROSS JOIN "User" u
+       WHERE d."slug" = $5 AND u."username" = $6
+       ON CONFLICT ("sourceKey") DO NOTHING`, `inventory-item-${username}-${slug}`, serialNumber, sourceKey, equipped, slug, username);
+    }
+}
 async function main() {
     const owner = await upsertUser({
         email: process.env.OWNER_EMAIL ?? 'owner@forrum.local',
@@ -105,6 +247,15 @@ async function main() {
         });
     }
     const communities = [
+        {
+            slug: 'workshop',
+            name: 'Мастерская',
+            shortDescription: 'Наши решения, инструменты и разработки для сообщества.',
+            description: 'Мастерская FORRUM: проекты и заказы, готовые решения, команды и специалисты.',
+            avatarUrl: '/forrum-assets/icon-forrum-start.svg',
+            coverUrl: '/forrum-assets/cover-forrum-start.svg',
+            accentColor: '#8C5CF6',
+        },
         {
             slug: 'forrum-start',
             name: 'FORRUM Start',
@@ -244,6 +395,36 @@ async function main() {
         }
         return child;
     };
+    await upsertDemoChild({
+        slug: 'workshop-projects',
+        name: 'Проекты и заказы',
+        shortDescription: 'Запросы, проекты и практические задачи сообщества.',
+        description: 'Раздел Мастерской для проектов, заказов, задач и совместной работы.',
+        avatarUrl: '/forrum-assets/icon-internet-projects.svg',
+        coverUrl: '/forrum-assets/cover-internet-projects.svg',
+        accentColor: '#8C5CF6',
+        parentSlug: 'workshop',
+    });
+    await upsertDemoChild({
+        slug: 'workshop-solutions',
+        name: 'Готовые решения',
+        shortDescription: 'Готовые инструменты, наработки и полезные решения.',
+        description: 'Раздел Мастерской с готовыми решениями, инструментами и наработками участников.',
+        avatarUrl: '/forrum-assets/icon-forrum-start.svg',
+        coverUrl: '/forrum-assets/cover-forrum-start.svg',
+        accentColor: '#8C5CF6',
+        parentSlug: 'workshop',
+    });
+    await upsertDemoChild({
+        slug: 'workshop-teams',
+        name: 'Команды и специалисты',
+        shortDescription: 'Поиск команд, специалистов и людей для совместной работы.',
+        description: 'Раздел Мастерской для поиска команд, специалистов и совместной работы.',
+        avatarUrl: '/forrum-assets/icon-launches.svg',
+        coverUrl: '/forrum-assets/cover-internet-projects.svg',
+        accentColor: '#8C5CF6',
+        parentSlug: 'workshop',
+    });
     const feedbackChild = await upsertDemoChild({
         slug: 'forrum-feedback',
         name: 'Обратная связь',
@@ -377,6 +558,147 @@ async function main() {
             authorId: friend.id, communityId: promotion.id,
         },
     });
+    const promotionDemoTopics = [
+        {
+            slug: 'promotion-first-users-without-ads',
+            title: 'Как найти первых пользователей без рекламного бюджета?',
+            body: 'Собираем только практические способы получить первых живых пользователей: личный аутрич, тематические сообщества, партнёрства, каталоги и полезный контент. Интересуют конкретные цифры и что реально сработало.',
+            authorId: nora.id,
+            communityId: promotion.id,
+            type: PublicationType.QUESTION,
+            viewCount: 840,
+            ageDays: 4,
+            activityHours: 1,
+            pinned: true,
+        },
+        {
+            slug: 'promotion-channel-audit',
+            title: 'Разбор каналов привлечения: где проект теряет аудиторию',
+            body: 'Практический разбор цепочки от первого касания до регистрации. Смотрим источник трафика, посадочную страницу, первый экран, регистрацию и возврат пользователя.',
+            authorId: pixel.id,
+            communityId: promotion.id,
+            type: PublicationType.CASE,
+            viewCount: 521,
+            ageDays: 7,
+            activityHours: 4,
+            pinned: false,
+        },
+        {
+            slug: 'promotion-organic-growth-checklist',
+            title: 'Чек-лист органического продвижения нового проекта',
+            body: 'Короткий рабочий список перед запуском: поисковые страницы, сообщества, каталоги, партнёры, экспертные ответы, собственные публикации и аналитика источников.',
+            authorId: maxstream.id,
+            communityId: promotion.id,
+            type: PublicationType.GUIDE,
+            viewCount: 312,
+            ageDays: 1,
+            activityHours: 3,
+            pinned: false,
+        },
+        {
+            slug: 'promotion-retention-after-launch',
+            title: 'Как вернуть аудиторию после первого запуска',
+            body: 'Обсуждаем, что реально возвращает людей после первого визита: полезные уведомления, контентные циклы, ответы авторов, подписки на темы и персональные поводы вернуться.',
+            authorId: friend.id,
+            communityId: promotion.id,
+            type: PublicationType.DISCUSSION,
+            viewCount: 1128,
+            ageDays: 22,
+            activityHours: 30,
+            pinned: false,
+        },
+    ];
+    const promotionDemoTopicIds = new Map();
+    for (const topic of promotionDemoTopics) {
+        const createdAt = new Date(Date.now() - topic.ageDays * 86400000);
+        const lastActivityAt = new Date(Date.now() - topic.activityHours * 3600000);
+        const pinnedUntil = topic.pinned
+            ? new Date(Date.now() + 30 * 86400000)
+            : null;
+        const publication = await prisma.publication.upsert({
+            where: { slug: topic.slug },
+            update: {
+                format: PublicationFormat.TOPIC,
+                type: topic.type,
+                title: topic.title,
+                body: topic.body,
+                authorId: topic.authorId,
+                communityId: topic.communityId,
+                viewCount: topic.viewCount,
+                createdAt,
+                lastActivityAt,
+                pinnedUntil,
+            },
+            create: {
+                slug: topic.slug,
+                format: PublicationFormat.TOPIC,
+                type: topic.type,
+                title: topic.title,
+                body: topic.body,
+                authorId: topic.authorId,
+                communityId: topic.communityId,
+                viewCount: topic.viewCount,
+                createdAt,
+                lastActivityAt,
+                pinnedUntil,
+            },
+        });
+        promotionDemoTopicIds.set(topic.slug, publication.id);
+    }
+    const promotionDemoComments = [
+        {
+            slug: 'promotion-first-users-without-ads',
+            authorId: friend.id,
+            body: 'Для первого десятка пользователей лучше всего сработали точечные личные приглашения с конкретной причиной, почему человеку будет полезен проект.',
+            hoursAgo: 1,
+        },
+        {
+            slug: 'promotion-first-users-without-ads',
+            authorId: maxstream.id,
+            body: 'У меня сильнее всего сработал полезный разбор в уже существующем сообществе без прямой продажи. Люди сами перешли посмотреть инструмент.',
+            hoursAgo: 2,
+        },
+        {
+            slug: 'promotion-channel-audit',
+            authorId: nora.id,
+            body: 'Я бы отдельно проверяла обещание в источнике трафика и первый экран. Часто аудитория приходит за одним, а на лендинге видит другое.',
+            hoursAgo: 4,
+        },
+        {
+            slug: 'promotion-channel-audit',
+            authorId: owner.id,
+            body: 'Добавим в разбор ещё скорость первого полезного действия: сколько времени проходит от входа до момента, когда человек понял ценность.',
+            hoursAgo: 5,
+        },
+        {
+            slug: 'promotion-retention-after-launch',
+            authorId: pixel.id,
+            body: 'Возвращает не частота уведомлений, а понятный незавершённый сценарий: ответ, продолжение темы, обновление проекта или реакция на вклад пользователя.',
+            hoursAgo: 30,
+        },
+    ];
+    for (const comment of promotionDemoComments) {
+        const publicationId = promotionDemoTopicIds.get(comment.slug);
+        if (!publicationId)
+            continue;
+        const existing = await prisma.comment.findFirst({
+            where: {
+                publicationId,
+                authorId: comment.authorId,
+                body: comment.body,
+            },
+        });
+        if (!existing) {
+            await prisma.comment.create({
+                data: {
+                    publicationId,
+                    authorId: comment.authorId,
+                    body: comment.body,
+                    createdAt: new Date(Date.now() - comment.hoursAgo * 3600000),
+                },
+            });
+        }
+    }
     const gta = await prisma.community.findUniqueOrThrow({ where: { slug: 'gta-rp' } });
     const telegram = await prisma.community.findUniqueOrThrow({ where: { slug: 'telegram' } });
     await prisma.publication.upsert({
@@ -403,6 +725,32 @@ async function main() {
             title: 'Обсуждение обновлений Telegram и полезных находок',
             body: 'Собираем в одной постоянной теме важные обновления Telegram, новые возможности каналов, ботов и Mini Apps, а также реальные впечатления пользователей.',
             authorId: owner.id, communityId: telegram.id },
+    });
+    await prisma.publication.upsert({
+        where: { slug: 'forrum-home-dark-redesign' },
+        update: {},
+        create: {
+            slug: 'forrum-home-dark-redesign',
+            format: PublicationFormat.TOPIC,
+            type: PublicationType.NEWS,
+            title: 'Главная FORRUM получила новый тёмный интерфейс',
+            body: 'Главная страница переводится на новый визуальный язык: графитовые поверхности, зелёно-бирюзовые системные акценты, компактное дерево категорий и две плотные ленты тем.',
+            authorId: owner.id,
+            communityId: start.id,
+        },
+    });
+    await prisma.publication.upsert({
+        where: { slug: 'forrum-curator-applications-open' },
+        update: {},
+        create: {
+            slug: 'forrum-curator-applications-open',
+            format: PublicationFormat.TOPIC,
+            type: PublicationType.NEWS,
+            title: 'Открыты заявки на кураторов и предложения новых разделов',
+            body: 'На главной FORRUM появился компактный блок участия в развитии платформы. Можно подать заявку на кураторство существующей категории или предложить новый раздел.',
+            authorId: owner.id,
+            communityId: start.id,
+        },
     });
     const forrumTag = await prisma.tag.findUniqueOrThrow({ where: { slug: 'forrum' } });
     const projectsTag = await prisma.tag.findUniqueOrThrow({ where: { slug: 'proekty' } });
@@ -750,6 +1098,7 @@ async function main() {
         where: { interactionId_authorId: { interactionId: interaction.id, authorId: owner.id } }, update: {},
         create: { interactionId: interaction.id, authorId: owner.id, targetId: friend.id, verdict: ReviewVerdict.POSITIVE, body: 'Внимательно прошёл тестовый сценарий и дал конкретную обратную связь по интерфейсу.' },
     });
+    await seedInventoryV10();
 }
 main().finally(() => prisma.$disconnect());
 //# sourceMappingURL=seed.js.map

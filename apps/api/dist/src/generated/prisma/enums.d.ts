@@ -129,6 +129,13 @@ export declare const ProposalStatus: {
     readonly WITHDRAWN: "WITHDRAWN";
 };
 export type ProposalStatus = (typeof ProposalStatus)[keyof typeof ProposalStatus];
+export declare const CuratorApplicationStatus: {
+    readonly REVIEW: "REVIEW";
+    readonly APPROVED: "APPROVED";
+    readonly REJECTED: "REJECTED";
+    readonly WITHDRAWN: "WITHDRAWN";
+};
+export type CuratorApplicationStatus = (typeof CuratorApplicationStatus)[keyof typeof CuratorApplicationStatus];
 export declare const PollStatus: {
     readonly OPEN: "OPEN";
     readonly CLOSED: "CLOSED";
@@ -286,3 +293,29 @@ export declare const PromotionOrderStatus: {
     readonly REFUNDED: "REFUNDED";
 };
 export type PromotionOrderStatus = (typeof PromotionOrderStatus)[keyof typeof PromotionOrderStatus];
+export declare const InventoryItemType: {
+    readonly NICK_COLOR: "NICK_COLOR";
+    readonly HASHTAG_COLOR: "HASHTAG_COLOR";
+    readonly PROFILE_BACKGROUND: "PROFILE_BACKGROUND";
+    readonly AVATAR_FRAME: "AVATAR_FRAME";
+    readonly PROFILE_BADGE: "PROFILE_BADGE";
+    readonly REACTION_PACK: "REACTION_PACK";
+};
+export type InventoryItemType = (typeof InventoryItemType)[keyof typeof InventoryItemType];
+export declare const InventoryItemRarity: {
+    readonly COMMON: "COMMON";
+    readonly UNCOMMON: "UNCOMMON";
+    readonly RARE: "RARE";
+    readonly EPIC: "EPIC";
+    readonly LEGENDARY: "LEGENDARY";
+    readonly UNIQUE: "UNIQUE";
+};
+export type InventoryItemRarity = (typeof InventoryItemRarity)[keyof typeof InventoryItemRarity];
+export declare const InventoryTransactionType: {
+    readonly GRANT: "GRANT";
+    readonly TRANSFER: "TRANSFER";
+    readonly EQUIP: "EQUIP";
+    readonly UNEQUIP: "UNEQUIP";
+    readonly DELETE: "DELETE";
+};
+export type InventoryTransactionType = (typeof InventoryTransactionType)[keyof typeof InventoryTransactionType];

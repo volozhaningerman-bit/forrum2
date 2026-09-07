@@ -200,6 +200,16 @@ export const ProposalStatus = {
 export type ProposalStatus = (typeof ProposalStatus)[keyof typeof ProposalStatus]
 
 
+export const CuratorApplicationStatus = {
+  REVIEW: 'REVIEW',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  WITHDRAWN: 'WITHDRAWN'
+} as const
+
+export type CuratorApplicationStatus = (typeof CuratorApplicationStatus)[keyof typeof CuratorApplicationStatus]
+
+
 export const PollStatus = {
   OPEN: 'OPEN',
   CLOSED: 'CLOSED',
@@ -235,6 +245,25 @@ export const WorkshopItemStatus = {
 } as const
 
 export type WorkshopItemStatus = (typeof WorkshopItemStatus)[keyof typeof WorkshopItemStatus]
+
+
+export const MediaPartnerStatus = {
+  REVIEW: 'REVIEW',
+  ACTIVE: 'ACTIVE',
+  REJECTED: 'REJECTED'
+} as const
+
+export type MediaPartnerStatus = (typeof MediaPartnerStatus)[keyof typeof MediaPartnerStatus]
+
+
+export const MediaPartnerType = {
+  STREAMER: 'STREAMER',
+  VIDEO_CREATOR: 'VIDEO_CREATOR',
+  BLOGGER: 'BLOGGER',
+  CHANNEL: 'CHANNEL'
+} as const
+
+export type MediaPartnerType = (typeof MediaPartnerType)[keyof typeof MediaPartnerType]
 
 
 export const AchievementCategory = {
@@ -282,6 +311,15 @@ export const ReviewVerdict = {
 } as const
 
 export type ReviewVerdict = (typeof ReviewVerdict)[keyof typeof ReviewVerdict]
+
+
+export const ReviewModerationStatus = {
+  REVIEW: 'REVIEW',
+  PUBLISHED: 'PUBLISHED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type ReviewModerationStatus = (typeof ReviewModerationStatus)[keyof typeof ReviewModerationStatus]
 
 
 export const CommunityContentActionType = {
@@ -396,3 +434,38 @@ export const PromotionOrderStatus = {
 } as const
 
 export type PromotionOrderStatus = (typeof PromotionOrderStatus)[keyof typeof PromotionOrderStatus]
+
+
+export const InventoryItemType = {
+  NICK_COLOR: 'NICK_COLOR',
+  HASHTAG_COLOR: 'HASHTAG_COLOR',
+  PROFILE_BACKGROUND: 'PROFILE_BACKGROUND',
+  AVATAR_FRAME: 'AVATAR_FRAME',
+  PROFILE_BADGE: 'PROFILE_BADGE',
+  REACTION_PACK: 'REACTION_PACK'
+} as const
+
+export type InventoryItemType = (typeof InventoryItemType)[keyof typeof InventoryItemType]
+
+
+export const InventoryItemRarity = {
+  COMMON: 'COMMON',
+  UNCOMMON: 'UNCOMMON',
+  RARE: 'RARE',
+  EPIC: 'EPIC',
+  LEGENDARY: 'LEGENDARY',
+  UNIQUE: 'UNIQUE'
+} as const
+
+export type InventoryItemRarity = (typeof InventoryItemRarity)[keyof typeof InventoryItemRarity]
+
+
+export const InventoryTransactionType = {
+  GRANT: 'GRANT',
+  TRANSFER: 'TRANSFER',
+  EQUIP: 'EQUIP',
+  UNEQUIP: 'UNEQUIP',
+  DELETE: 'DELETE'
+} as const
+
+export type InventoryTransactionType = (typeof InventoryTransactionType)[keyof typeof InventoryTransactionType]

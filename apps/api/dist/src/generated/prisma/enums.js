@@ -109,6 +109,12 @@ export const ProposalStatus = {
     REJECTED: 'REJECTED',
     WITHDRAWN: 'WITHDRAWN'
 };
+export const CuratorApplicationStatus = {
+    REVIEW: 'REVIEW',
+    APPROVED: 'APPROVED',
+    REJECTED: 'REJECTED',
+    WITHDRAWN: 'WITHDRAWN'
+};
 export const PollStatus = {
     OPEN: 'OPEN',
     CLOSED: 'CLOSED',
@@ -242,5 +248,28 @@ export const PromotionOrderStatus = {
     EXPIRED: 'EXPIRED',
     CANCELLED: 'CANCELLED',
     REFUNDED: 'REFUNDED'
+};
+export const InventoryItemType = {
+    NICK_COLOR: 'NICK_COLOR',
+    HASHTAG_COLOR: 'HASHTAG_COLOR',
+    PROFILE_BACKGROUND: 'PROFILE_BACKGROUND',
+    AVATAR_FRAME: 'AVATAR_FRAME',
+    PROFILE_BADGE: 'PROFILE_BADGE',
+    REACTION_PACK: 'REACTION_PACK'
+};
+export const InventoryItemRarity = {
+    COMMON: 'COMMON',
+    UNCOMMON: 'UNCOMMON',
+    RARE: 'RARE',
+    EPIC: 'EPIC',
+    LEGENDARY: 'LEGENDARY',
+    UNIQUE: 'UNIQUE'
+};
+export const InventoryTransactionType = {
+    GRANT: 'GRANT',
+    TRANSFER: 'TRANSFER',
+    EQUIP: 'EQUIP',
+    UNEQUIP: 'UNEQUIP',
+    DELETE: 'DELETE'
 };
 //# sourceMappingURL=enums.js.map
