@@ -196,6 +196,7 @@ export declare const ModelName: {
     readonly ModerationAppeal: "ModerationAppeal";
     readonly CommunityProposal: "CommunityProposal";
     readonly ProposalSupport: "ProposalSupport";
+    readonly CuratorApplication: "CuratorApplication";
     readonly CommunityPoll: "CommunityPoll";
     readonly PollOption: "PollOption";
     readonly PollVote: "PollVote";
@@ -216,6 +217,9 @@ export declare const ModelName: {
     readonly CommunityEventAttendance: "CommunityEventAttendance";
     readonly PortfolioItem: "PortfolioItem";
     readonly PlatformSetting: "PlatformSetting";
+    readonly InventoryItemDefinition: "InventoryItemDefinition";
+    readonly UserInventoryItem: "UserInventoryItem";
+    readonly InventoryTransaction: "InventoryTransaction";
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 export interface TypeMapCb<GlobalOmitOptions = {}> extends runtime.Types.Utils.Fn<{
@@ -228,7 +232,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         omit: GlobalOmitOptions;
     };
     meta: {
-        modelProps: "user" | "emailVerificationToken" | "passwordResetToken" | "session" | "notificationPreference" | "feedPreference" | "hiddenCommunity" | "hiddenPublication" | "community" | "communityRole" | "communitySubscription" | "publication" | "comment" | "tag" | "publicationTag" | "tagSubscription" | "publicationReaction" | "commentReaction" | "bookmark" | "userFollow" | "wallPost" | "notification" | "conversation" | "conversationMember" | "message" | "report" | "auditLog" | "wallet" | "walletTransaction" | "promotionOrder" | "mediaAsset" | "telegramLink" | "telegramLinkCode" | "telegramChannel" | "telegramShare" | "moderationAction" | "moderationAppeal" | "communityProposal" | "proposalSupport" | "communityPoll" | "pollOption" | "pollVote" | "mediaPartner" | "workshopItem" | "workshopLike" | "userGift" | "achievementDefinition" | "userAchievement" | "communityRoleEvent" | "confirmedInteraction" | "profileReview" | "communityReport" | "communityContentAction" | "communityStructureProposal" | "communityRoleInvite" | "communityEvent" | "communityEventAttendance" | "portfolioItem" | "platformSetting";
+        modelProps: "user" | "emailVerificationToken" | "passwordResetToken" | "session" | "notificationPreference" | "feedPreference" | "hiddenCommunity" | "hiddenPublication" | "community" | "communityRole" | "communitySubscription" | "publication" | "comment" | "tag" | "publicationTag" | "tagSubscription" | "publicationReaction" | "commentReaction" | "bookmark" | "userFollow" | "wallPost" | "notification" | "conversation" | "conversationMember" | "message" | "report" | "auditLog" | "wallet" | "walletTransaction" | "promotionOrder" | "mediaAsset" | "telegramLink" | "telegramLinkCode" | "telegramChannel" | "telegramShare" | "moderationAction" | "moderationAppeal" | "communityProposal" | "proposalSupport" | "curatorApplication" | "communityPoll" | "pollOption" | "pollVote" | "mediaPartner" | "workshopItem" | "workshopLike" | "userGift" | "achievementDefinition" | "userAchievement" | "communityRoleEvent" | "confirmedInteraction" | "profileReview" | "communityReport" | "communityContentAction" | "communityStructureProposal" | "communityRoleInvite" | "communityEvent" | "communityEventAttendance" | "portfolioItem" | "platformSetting" | "inventoryItemDefinition" | "userInventoryItem" | "inventoryTransaction";
         txIsolationLevel: TransactionIsolationLevel;
     };
     model: {
@@ -3118,6 +3122,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 };
             };
         };
+        CuratorApplication: {
+            payload: Prisma.$CuratorApplicationPayload<ExtArgs>;
+            fields: Prisma.CuratorApplicationFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.CuratorApplicationFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratorApplicationPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.CuratorApplicationFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratorApplicationPayload>;
+                };
+                findFirst: {
+                    args: Prisma.CuratorApplicationFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratorApplicationPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.CuratorApplicationFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratorApplicationPayload>;
+                };
+                findMany: {
+                    args: Prisma.CuratorApplicationFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratorApplicationPayload>[];
+                };
+                create: {
+                    args: Prisma.CuratorApplicationCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratorApplicationPayload>;
+                };
+                createMany: {
+                    args: Prisma.CuratorApplicationCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.CuratorApplicationCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratorApplicationPayload>[];
+                };
+                delete: {
+                    args: Prisma.CuratorApplicationDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratorApplicationPayload>;
+                };
+                update: {
+                    args: Prisma.CuratorApplicationUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratorApplicationPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.CuratorApplicationDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.CuratorApplicationUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.CuratorApplicationUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratorApplicationPayload>[];
+                };
+                upsert: {
+                    args: Prisma.CuratorApplicationUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$CuratorApplicationPayload>;
+                };
+                aggregate: {
+                    args: Prisma.CuratorApplicationAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateCuratorApplication>;
+                };
+                groupBy: {
+                    args: Prisma.CuratorApplicationGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.CuratorApplicationGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.CuratorApplicationCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.CuratorApplicationCountAggregateOutputType> | number;
+                };
+            };
+        };
         CommunityPoll: {
             payload: Prisma.$CommunityPollPayload<ExtArgs>;
             fields: Prisma.CommunityPollFieldRefs;
@@ -4598,6 +4676,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 };
             };
         };
+        InventoryItemDefinition: {
+            payload: Prisma.$InventoryItemDefinitionPayload<ExtArgs>;
+            fields: Prisma.InventoryItemDefinitionFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.InventoryItemDefinitionFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryItemDefinitionPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.InventoryItemDefinitionFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryItemDefinitionPayload>;
+                };
+                findFirst: {
+                    args: Prisma.InventoryItemDefinitionFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryItemDefinitionPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.InventoryItemDefinitionFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryItemDefinitionPayload>;
+                };
+                findMany: {
+                    args: Prisma.InventoryItemDefinitionFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryItemDefinitionPayload>[];
+                };
+                create: {
+                    args: Prisma.InventoryItemDefinitionCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryItemDefinitionPayload>;
+                };
+                createMany: {
+                    args: Prisma.InventoryItemDefinitionCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.InventoryItemDefinitionCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryItemDefinitionPayload>[];
+                };
+                delete: {
+                    args: Prisma.InventoryItemDefinitionDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryItemDefinitionPayload>;
+                };
+                update: {
+                    args: Prisma.InventoryItemDefinitionUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryItemDefinitionPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.InventoryItemDefinitionDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.InventoryItemDefinitionUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.InventoryItemDefinitionUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryItemDefinitionPayload>[];
+                };
+                upsert: {
+                    args: Prisma.InventoryItemDefinitionUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryItemDefinitionPayload>;
+                };
+                aggregate: {
+                    args: Prisma.InventoryItemDefinitionAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateInventoryItemDefinition>;
+                };
+                groupBy: {
+                    args: Prisma.InventoryItemDefinitionGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.InventoryItemDefinitionGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.InventoryItemDefinitionCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.InventoryItemDefinitionCountAggregateOutputType> | number;
+                };
+            };
+        };
+        UserInventoryItem: {
+            payload: Prisma.$UserInventoryItemPayload<ExtArgs>;
+            fields: Prisma.UserInventoryItemFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.UserInventoryItemFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserInventoryItemPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.UserInventoryItemFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserInventoryItemPayload>;
+                };
+                findFirst: {
+                    args: Prisma.UserInventoryItemFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserInventoryItemPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.UserInventoryItemFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserInventoryItemPayload>;
+                };
+                findMany: {
+                    args: Prisma.UserInventoryItemFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserInventoryItemPayload>[];
+                };
+                create: {
+                    args: Prisma.UserInventoryItemCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserInventoryItemPayload>;
+                };
+                createMany: {
+                    args: Prisma.UserInventoryItemCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.UserInventoryItemCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserInventoryItemPayload>[];
+                };
+                delete: {
+                    args: Prisma.UserInventoryItemDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserInventoryItemPayload>;
+                };
+                update: {
+                    args: Prisma.UserInventoryItemUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserInventoryItemPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.UserInventoryItemDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.UserInventoryItemUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.UserInventoryItemUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserInventoryItemPayload>[];
+                };
+                upsert: {
+                    args: Prisma.UserInventoryItemUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$UserInventoryItemPayload>;
+                };
+                aggregate: {
+                    args: Prisma.UserInventoryItemAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateUserInventoryItem>;
+                };
+                groupBy: {
+                    args: Prisma.UserInventoryItemGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.UserInventoryItemGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.UserInventoryItemCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.UserInventoryItemCountAggregateOutputType> | number;
+                };
+            };
+        };
+        InventoryTransaction: {
+            payload: Prisma.$InventoryTransactionPayload<ExtArgs>;
+            fields: Prisma.InventoryTransactionFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.InventoryTransactionFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransactionPayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.InventoryTransactionFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransactionPayload>;
+                };
+                findFirst: {
+                    args: Prisma.InventoryTransactionFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransactionPayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.InventoryTransactionFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransactionPayload>;
+                };
+                findMany: {
+                    args: Prisma.InventoryTransactionFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransactionPayload>[];
+                };
+                create: {
+                    args: Prisma.InventoryTransactionCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransactionPayload>;
+                };
+                createMany: {
+                    args: Prisma.InventoryTransactionCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.InventoryTransactionCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransactionPayload>[];
+                };
+                delete: {
+                    args: Prisma.InventoryTransactionDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransactionPayload>;
+                };
+                update: {
+                    args: Prisma.InventoryTransactionUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransactionPayload>;
+                };
+                deleteMany: {
+                    args: Prisma.InventoryTransactionDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.InventoryTransactionUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.InventoryTransactionUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransactionPayload>[];
+                };
+                upsert: {
+                    args: Prisma.InventoryTransactionUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryTransactionPayload>;
+                };
+                aggregate: {
+                    args: Prisma.InventoryTransactionAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateInventoryTransaction>;
+                };
+                groupBy: {
+                    args: Prisma.InventoryTransactionGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.InventoryTransactionGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.InventoryTransactionCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.InventoryTransactionCountAggregateOutputType> | number;
+                };
+            };
+        };
     };
 } & {
     other: {
@@ -5025,6 +5325,7 @@ export declare const CommunityProposalScalarFieldEnum: {
     readonly name: "name";
     readonly description: "description";
     readonly initialTopics: "initialTopics";
+    readonly curatorInterest: "curatorInterest";
     readonly status: "status";
     readonly resolutionNote: "resolutionNote";
     readonly createdAt: "createdAt";
@@ -5037,6 +5338,19 @@ export declare const ProposalSupportScalarFieldEnum: {
     readonly createdAt: "createdAt";
 };
 export type ProposalSupportScalarFieldEnum = (typeof ProposalSupportScalarFieldEnum)[keyof typeof ProposalSupportScalarFieldEnum];
+export declare const CuratorApplicationScalarFieldEnum: {
+    readonly id: "id";
+    readonly userId: "userId";
+    readonly communityId: "communityId";
+    readonly motivation: "motivation";
+    readonly plan: "plan";
+    readonly activitySnapshot: "activitySnapshot";
+    readonly status: "status";
+    readonly resolutionNote: "resolutionNote";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type CuratorApplicationScalarFieldEnum = (typeof CuratorApplicationScalarFieldEnum)[keyof typeof CuratorApplicationScalarFieldEnum];
 export declare const CommunityPollScalarFieldEnum: {
     readonly id: "id";
     readonly communityId: "communityId";
@@ -5292,6 +5606,44 @@ export declare const PlatformSettingScalarFieldEnum: {
     readonly updatedAt: "updatedAt";
 };
 export type PlatformSettingScalarFieldEnum = (typeof PlatformSettingScalarFieldEnum)[keyof typeof PlatformSettingScalarFieldEnum];
+export declare const InventoryItemDefinitionScalarFieldEnum: {
+    readonly id: "id";
+    readonly slug: "slug";
+    readonly name: "name";
+    readonly description: "description";
+    readonly type: "type";
+    readonly rarity: "rarity";
+    readonly previewKey: "previewKey";
+    readonly style: "style";
+    readonly transferable: "transferable";
+    readonly deletable: "deletable";
+    readonly equipable: "equipable";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type InventoryItemDefinitionScalarFieldEnum = (typeof InventoryItemDefinitionScalarFieldEnum)[keyof typeof InventoryItemDefinitionScalarFieldEnum];
+export declare const UserInventoryItemScalarFieldEnum: {
+    readonly id: "id";
+    readonly definitionId: "definitionId";
+    readonly ownerId: "ownerId";
+    readonly serialNumber: "serialNumber";
+    readonly sourceKey: "sourceKey";
+    readonly equipped: "equipped";
+    readonly acquiredAt: "acquiredAt";
+    readonly equippedAt: "equippedAt";
+    readonly deletedAt: "deletedAt";
+};
+export type UserInventoryItemScalarFieldEnum = (typeof UserInventoryItemScalarFieldEnum)[keyof typeof UserInventoryItemScalarFieldEnum];
+export declare const InventoryTransactionScalarFieldEnum: {
+    readonly id: "id";
+    readonly itemId: "itemId";
+    readonly type: "type";
+    readonly fromUserId: "fromUserId";
+    readonly toUserId: "toUserId";
+    readonly metadata: "metadata";
+    readonly createdAt: "createdAt";
+};
+export type InventoryTransactionScalarFieldEnum = (typeof InventoryTransactionScalarFieldEnum)[keyof typeof InventoryTransactionScalarFieldEnum];
 export declare const SortOrder: {
     readonly asc: "asc";
     readonly desc: "desc";
@@ -5373,6 +5725,8 @@ export type EnumAppealStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
 export type ListEnumAppealStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AppealStatus[]'>;
 export type EnumProposalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProposalStatus'>;
 export type ListEnumProposalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProposalStatus[]'>;
+export type EnumCuratorApplicationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CuratorApplicationStatus'>;
+export type ListEnumCuratorApplicationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CuratorApplicationStatus[]'>;
 export type EnumPollKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PollKind'>;
 export type ListEnumPollKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PollKind[]'>;
 export type EnumPollStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PollStatus'>;
@@ -5417,6 +5771,12 @@ export type EnumPortfolioItemKindFieldRefInput<$PrismaModel> = FieldRefInputType
 export type ListEnumPortfolioItemKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PortfolioItemKind[]'>;
 export type EnumPortfolioItemStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PortfolioItemStatus'>;
 export type ListEnumPortfolioItemStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PortfolioItemStatus[]'>;
+export type EnumInventoryItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryItemType'>;
+export type ListEnumInventoryItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryItemType[]'>;
+export type EnumInventoryItemRarityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryItemRarity'>;
+export type ListEnumInventoryItemRarityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryItemRarity[]'>;
+export type EnumInventoryTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryTransactionType'>;
+export type ListEnumInventoryTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryTransactionType[]'>;
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>;
 export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>;
 export type BatchPayload = {
@@ -5482,6 +5842,7 @@ export type GlobalOmitConfig = {
     moderationAppeal?: Prisma.ModerationAppealOmit;
     communityProposal?: Prisma.CommunityProposalOmit;
     proposalSupport?: Prisma.ProposalSupportOmit;
+    curatorApplication?: Prisma.CuratorApplicationOmit;
     communityPoll?: Prisma.CommunityPollOmit;
     pollOption?: Prisma.PollOptionOmit;
     pollVote?: Prisma.PollVoteOmit;
@@ -5502,6 +5863,9 @@ export type GlobalOmitConfig = {
     communityEventAttendance?: Prisma.CommunityEventAttendanceOmit;
     portfolioItem?: Prisma.PortfolioItemOmit;
     platformSetting?: Prisma.PlatformSettingOmit;
+    inventoryItemDefinition?: Prisma.InventoryItemDefinitionOmit;
+    userInventoryItem?: Prisma.UserInventoryItemOmit;
+    inventoryTransaction?: Prisma.InventoryTransactionOmit;
 };
 export type LogLevel = 'info' | 'query' | 'warn' | 'error';
 export type LogDefinition = {

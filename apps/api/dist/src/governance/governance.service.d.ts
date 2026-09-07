@@ -1,7 +1,7 @@
 import { PollKind, PollStatus, ProposalStatus, VoteClass, type User } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CommunitiesService } from '../communities/communities.service.js';
-import type { CreatePollDto, CreateProposalDto } from './dto.js';
+import type { CreateCuratorApplicationDto, CreatePollDto, CreateProposalDto } from './dto.js';
 import { NotificationsService } from '../notifications/notifications.service.js';
 export declare class GovernanceService {
     private readonly prisma;
@@ -32,6 +32,7 @@ export declare class GovernanceService {
         resolutionNote: string | null;
         suggestedParentId: string | null;
         initialTopics: string;
+        curatorInterest: string;
     }[]>;
     createProposal(userId: string, dto: CreateProposalDto): Promise<{
         id: string;
@@ -44,6 +45,16 @@ export declare class GovernanceService {
         resolutionNote: string | null;
         suggestedParentId: string | null;
         initialTopics: string;
+        curatorInterest: string;
+    }>;
+    createCuratorApplication(userId: string, dto: CreateCuratorApplicationDto): Promise<{
+        id: string;
+        createdAt: Date;
+        status: import("../generated/prisma/enums.js").CuratorApplicationStatus;
+        community: {
+            slug: string;
+            name: string;
+        };
     }>;
     toggleSupport(userId: string, proposalId: string): Promise<{
         supported: boolean;

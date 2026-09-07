@@ -8,13 +8,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsDateString, IsEnum, IsInt, IsOptional, IsString, Length, Max, Min } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsBoolean, IsDateString, IsEnum, IsIn, IsInt, IsOptional, IsString, Length, Max, Min } from 'class-validator';
 import { PollKind, ProposalStatus } from '../generated/prisma/client.js';
 export class CreateProposalDto {
     name;
     description;
     initialTopics;
     parentSlug;
+    curatorInterest;
 }
 __decorate([
     ApiProperty(),
@@ -41,6 +42,12 @@ __decorate([
     Length(1, 100),
     __metadata("design:type", String)
 ], CreateProposalDto.prototype, "parentSlug", void 0);
+__decorate([
+    ApiPropertyOptional({ enum: ['YES', 'MAYBE', 'NO'] }),
+    IsOptional(),
+    IsIn(['YES', 'MAYBE', 'NO']),
+    __metadata("design:type", String)
+], CreateProposalDto.prototype, "curatorInterest", void 0);
 export class ResolveProposalDto {
     status;
     note;
@@ -142,4 +149,27 @@ __decorate([
     IsString(),
     __metadata("design:type", String)
 ], CastVoteDto.prototype, "optionId", void 0);
+export class CreateCuratorApplicationDto {
+    communitySlug;
+    motivation;
+    plan;
+}
+__decorate([
+    ApiProperty(),
+    IsString(),
+    Length(1, 100),
+    __metadata("design:type", String)
+], CreateCuratorApplicationDto.prototype, "communitySlug", void 0);
+__decorate([
+    ApiProperty(),
+    IsString(),
+    Length(20, 2000),
+    __metadata("design:type", String)
+], CreateCuratorApplicationDto.prototype, "motivation", void 0);
+__decorate([
+    ApiProperty(),
+    IsString(),
+    Length(20, 2000),
+    __metadata("design:type", String)
+], CreateCuratorApplicationDto.prototype, "plan", void 0);
 //# sourceMappingURL=dto.js.map

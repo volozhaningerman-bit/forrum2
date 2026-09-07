@@ -1,7 +1,8 @@
 import {
   HomeDashboard,
   type HomeInitialData,
-} from '@/components/home-dashboard';
+} from '@/components/reference-home';
+import { cookies } from 'next/headers';
 import { resolveApiBase } from '@/lib/api-base';
 
 export const dynamic = 'force-dynamic';
@@ -20,6 +21,7 @@ async function publicApi<T>(path: string) {
         cache: 'no-store',
         headers: {
           Accept: 'application/json',
+          Cookie: (await cookies()).toString(),
         },
         signal: controller.signal,
       },
@@ -36,43 +38,11 @@ async function publicApi<T>(path: string) {
 }
 
 export default async function Home() {
-  const [
-    communities,
-    polls,
-    announcements,
-    feed,
-    overview,
-    mediaPartners,
-    mediaNews,
-    services,
-  ] = await Promise.all([
+  const [communities, announcements, feed, overview] = await Promise.all([
     publicApi<HomeInitialData['communities']>('/communities'),
-    publicApi<HomeInitialData['polls']>('/governance/polls'),
     publicApi<HomeInitialData['announcements']>('/announcements'),
-    publicApi<HomeInitialData['feed']>('/feed?mode=popular'),
+    publicApi<HomeInitialData['feed']>('/feed?mode=all'),
     publicApi<HomeInitialData['overview']>('/home/overview'),
-    publicApi<HomeInitialData['mediaPartners']>('/media/partners'),
-    publicApi<HomeInitialData['mediaMaterials']>('/news'),
-    publicApi<HomeInitialData['services']>(
-      '/portfolio?kind=SERVICE',
-    ),
   ]);
-
-  return (
-    <HomeDashboard
-      initialData={{
-        communities,
-        polls,
-        announcements,
-        feed,
-        overview,
-        mediaPartners,
-        mediaMaterials: [
-          ...(mediaNews ?? []),
-          ...(announcements ?? []),
-        ],
-        services,
-      }}
-    />
-  );
+  return <HomeDashboard initialData={{ communities, announcements, feed, overview }}/>;
 }

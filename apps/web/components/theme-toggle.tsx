@@ -11,7 +11,7 @@ function applyTheme(theme: ForumTheme) {
   root.dataset.forrumTheme = theme;
   root.classList.toggle('dark', dark);
   root.style.colorScheme = dark ? 'dark' : 'light';
-  window.localStorage.setItem('forrum-theme', theme);
+  try { window.localStorage.setItem('forrum-theme', theme); } catch { /* Theme still works without persistence. */ }
 }
 
 function MoonIcon() {
@@ -36,7 +36,8 @@ export function ThemeToggle() {
 
   useLayoutEffect(() => {
     const root = document.documentElement;
-    const saved = window.localStorage.getItem('forrum-theme');
+    let saved: string | null = null;
+    try { saved = window.localStorage.getItem('forrum-theme'); } catch { /* Use default theme. */ }
     const initial: ForumTheme =
       saved === 'graphite' ||
       root.dataset.forrumTheme === 'graphite' ||

@@ -170,6 +170,7 @@ export type CommunityWhereInput = {
     publications?: Prisma.PublicationListRelationFilter;
     promotions?: Prisma.PromotionOrderListRelationFilter;
     proposals?: Prisma.CommunityProposalListRelationFilter;
+    curatorApplications?: Prisma.CuratorApplicationListRelationFilter;
     polls?: Prisma.CommunityPollListRelationFilter;
     achievements?: Prisma.UserAchievementListRelationFilter;
     interactions?: Prisma.ConfirmedInteractionListRelationFilter;
@@ -204,6 +205,7 @@ export type CommunityOrderByWithRelationInput = {
     publications?: Prisma.PublicationOrderByRelationAggregateInput;
     promotions?: Prisma.PromotionOrderOrderByRelationAggregateInput;
     proposals?: Prisma.CommunityProposalOrderByRelationAggregateInput;
+    curatorApplications?: Prisma.CuratorApplicationOrderByRelationAggregateInput;
     polls?: Prisma.CommunityPollOrderByRelationAggregateInput;
     achievements?: Prisma.UserAchievementOrderByRelationAggregateInput;
     interactions?: Prisma.ConfirmedInteractionOrderByRelationAggregateInput;
@@ -241,6 +243,7 @@ export type CommunityWhereUniqueInput = Prisma.AtLeast<{
     publications?: Prisma.PublicationListRelationFilter;
     promotions?: Prisma.PromotionOrderListRelationFilter;
     proposals?: Prisma.CommunityProposalListRelationFilter;
+    curatorApplications?: Prisma.CuratorApplicationListRelationFilter;
     polls?: Prisma.CommunityPollListRelationFilter;
     achievements?: Prisma.UserAchievementListRelationFilter;
     interactions?: Prisma.ConfirmedInteractionListRelationFilter;
@@ -309,6 +312,7 @@ export type CommunityCreateInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -341,6 +345,7 @@ export type CommunityUncheckedCreateInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -373,6 +378,7 @@ export type CommunityUpdateInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -405,6 +411,7 @@ export type CommunityUncheckedUpdateInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -687,6 +694,18 @@ export type CommunityUpdateOneWithoutProposalsNestedInput = {
     connect?: Prisma.CommunityWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.CommunityUpdateToOneWithWhereWithoutProposalsInput, Prisma.CommunityUpdateWithoutProposalsInput>, Prisma.CommunityUncheckedUpdateWithoutProposalsInput>;
 };
+export type CommunityCreateNestedOneWithoutCuratorApplicationsInput = {
+    create?: Prisma.XOR<Prisma.CommunityCreateWithoutCuratorApplicationsInput, Prisma.CommunityUncheckedCreateWithoutCuratorApplicationsInput>;
+    connectOrCreate?: Prisma.CommunityCreateOrConnectWithoutCuratorApplicationsInput;
+    connect?: Prisma.CommunityWhereUniqueInput;
+};
+export type CommunityUpdateOneRequiredWithoutCuratorApplicationsNestedInput = {
+    create?: Prisma.XOR<Prisma.CommunityCreateWithoutCuratorApplicationsInput, Prisma.CommunityUncheckedCreateWithoutCuratorApplicationsInput>;
+    connectOrCreate?: Prisma.CommunityCreateOrConnectWithoutCuratorApplicationsInput;
+    upsert?: Prisma.CommunityUpsertWithoutCuratorApplicationsInput;
+    connect?: Prisma.CommunityWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.CommunityUpdateToOneWithWhereWithoutCuratorApplicationsInput, Prisma.CommunityUpdateWithoutCuratorApplicationsInput>, Prisma.CommunityUncheckedUpdateWithoutCuratorApplicationsInput>;
+};
 export type CommunityCreateNestedOneWithoutPollsInput = {
     create?: Prisma.XOR<Prisma.CommunityCreateWithoutPollsInput, Prisma.CommunityUncheckedCreateWithoutPollsInput>;
     connectOrCreate?: Prisma.CommunityCreateOrConnectWithoutPollsInput;
@@ -835,6 +854,7 @@ export type CommunityCreateWithoutCreatedByInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -866,6 +886,7 @@ export type CommunityUncheckedCreateWithoutCreatedByInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -936,6 +957,7 @@ export type CommunityCreateWithoutHiddenByInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -967,6 +989,7 @@ export type CommunityUncheckedCreateWithoutHiddenByInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -1011,6 +1034,7 @@ export type CommunityUpdateWithoutHiddenByInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -1042,6 +1066,7 @@ export type CommunityUncheckedUpdateWithoutHiddenByInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -1073,6 +1098,7 @@ export type CommunityCreateWithoutChildrenInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -1104,6 +1130,7 @@ export type CommunityUncheckedCreateWithoutChildrenInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -1139,6 +1166,7 @@ export type CommunityCreateWithoutParentInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -1170,6 +1198,7 @@ export type CommunityUncheckedCreateWithoutParentInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -1218,6 +1247,7 @@ export type CommunityUpdateWithoutChildrenInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -1249,6 +1279,7 @@ export type CommunityUncheckedUpdateWithoutChildrenInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -1293,6 +1324,7 @@ export type CommunityCreateWithoutRolesInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -1324,6 +1356,7 @@ export type CommunityUncheckedCreateWithoutRolesInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -1368,6 +1401,7 @@ export type CommunityUpdateWithoutRolesInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -1399,6 +1433,7 @@ export type CommunityUncheckedUpdateWithoutRolesInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -1430,6 +1465,7 @@ export type CommunityCreateWithoutSubscriptionsInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -1461,6 +1497,7 @@ export type CommunityUncheckedCreateWithoutSubscriptionsInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -1505,6 +1542,7 @@ export type CommunityUpdateWithoutSubscriptionsInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -1536,6 +1574,7 @@ export type CommunityUncheckedUpdateWithoutSubscriptionsInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -1567,6 +1606,7 @@ export type CommunityCreateWithoutPublicationsInput = {
     hiddenBy?: Prisma.HiddenCommunityCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -1598,6 +1638,7 @@ export type CommunityUncheckedCreateWithoutPublicationsInput = {
     hiddenBy?: Prisma.HiddenCommunityUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -1642,6 +1683,7 @@ export type CommunityUpdateWithoutPublicationsInput = {
     hiddenBy?: Prisma.HiddenCommunityUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -1673,6 +1715,7 @@ export type CommunityUncheckedUpdateWithoutPublicationsInput = {
     hiddenBy?: Prisma.HiddenCommunityUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -1704,6 +1747,7 @@ export type CommunityCreateWithoutPromotionsInput = {
     hiddenBy?: Prisma.HiddenCommunityCreateNestedManyWithoutCommunityInput;
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -1735,6 +1779,7 @@ export type CommunityUncheckedCreateWithoutPromotionsInput = {
     hiddenBy?: Prisma.HiddenCommunityUncheckedCreateNestedManyWithoutCommunityInput;
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -1779,6 +1824,7 @@ export type CommunityUpdateWithoutPromotionsInput = {
     hiddenBy?: Prisma.HiddenCommunityUpdateManyWithoutCommunityNestedInput;
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -1810,6 +1856,7 @@ export type CommunityUncheckedUpdateWithoutPromotionsInput = {
     hiddenBy?: Prisma.HiddenCommunityUncheckedUpdateManyWithoutCommunityNestedInput;
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -1841,6 +1888,7 @@ export type CommunityCreateWithoutProposalsInput = {
     hiddenBy?: Prisma.HiddenCommunityCreateNestedManyWithoutCommunityInput;
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -1872,6 +1920,7 @@ export type CommunityUncheckedCreateWithoutProposalsInput = {
     hiddenBy?: Prisma.HiddenCommunityUncheckedCreateNestedManyWithoutCommunityInput;
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -1916,6 +1965,7 @@ export type CommunityUpdateWithoutProposalsInput = {
     hiddenBy?: Prisma.HiddenCommunityUpdateManyWithoutCommunityNestedInput;
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -1947,6 +1997,148 @@ export type CommunityUncheckedUpdateWithoutProposalsInput = {
     hiddenBy?: Prisma.HiddenCommunityUncheckedUpdateManyWithoutCommunityNestedInput;
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
+    polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
+    achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
+    interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
+    reports?: Prisma.CommunityReportUncheckedUpdateManyWithoutCommunityNestedInput;
+    contentActions?: Prisma.CommunityContentActionUncheckedUpdateManyWithoutCommunityNestedInput;
+    structureProposals?: Prisma.CommunityStructureProposalUncheckedUpdateManyWithoutCommunityNestedInput;
+    structureTargets?: Prisma.CommunityStructureProposalUncheckedUpdateManyWithoutTargetCommunityNestedInput;
+    roleInvites?: Prisma.CommunityRoleInviteUncheckedUpdateManyWithoutCommunityNestedInput;
+    events?: Prisma.CommunityEventUncheckedUpdateManyWithoutCommunityNestedInput;
+    portfolioItems?: Prisma.PortfolioItemUncheckedUpdateManyWithoutCommunityNestedInput;
+};
+export type CommunityCreateWithoutCuratorApplicationsInput = {
+    id?: string;
+    slug: string;
+    name: string;
+    description: string;
+    shortDescription?: string | null;
+    avatarUrl?: string | null;
+    coverUrl?: string | null;
+    accentColor?: string;
+    status?: $Enums.CommunityStatus;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    parent?: Prisma.CommunityCreateNestedOneWithoutChildrenInput;
+    children?: Prisma.CommunityCreateNestedManyWithoutParentInput;
+    createdBy: Prisma.UserCreateNestedOneWithoutCreatedCommunitiesInput;
+    roles?: Prisma.CommunityRoleCreateNestedManyWithoutCommunityInput;
+    subscriptions?: Prisma.CommunitySubscriptionCreateNestedManyWithoutCommunityInput;
+    hiddenBy?: Prisma.HiddenCommunityCreateNestedManyWithoutCommunityInput;
+    publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
+    promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
+    proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
+    achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
+    interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
+    reports?: Prisma.CommunityReportCreateNestedManyWithoutCommunityInput;
+    contentActions?: Prisma.CommunityContentActionCreateNestedManyWithoutCommunityInput;
+    structureProposals?: Prisma.CommunityStructureProposalCreateNestedManyWithoutCommunityInput;
+    structureTargets?: Prisma.CommunityStructureProposalCreateNestedManyWithoutTargetCommunityInput;
+    roleInvites?: Prisma.CommunityRoleInviteCreateNestedManyWithoutCommunityInput;
+    events?: Prisma.CommunityEventCreateNestedManyWithoutCommunityInput;
+    portfolioItems?: Prisma.PortfolioItemCreateNestedManyWithoutCommunityInput;
+};
+export type CommunityUncheckedCreateWithoutCuratorApplicationsInput = {
+    id?: string;
+    parentId?: string | null;
+    slug: string;
+    name: string;
+    description: string;
+    shortDescription?: string | null;
+    avatarUrl?: string | null;
+    coverUrl?: string | null;
+    accentColor?: string;
+    status?: $Enums.CommunityStatus;
+    createdById: string;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    children?: Prisma.CommunityUncheckedCreateNestedManyWithoutParentInput;
+    roles?: Prisma.CommunityRoleUncheckedCreateNestedManyWithoutCommunityInput;
+    subscriptions?: Prisma.CommunitySubscriptionUncheckedCreateNestedManyWithoutCommunityInput;
+    hiddenBy?: Prisma.HiddenCommunityUncheckedCreateNestedManyWithoutCommunityInput;
+    publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
+    promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
+    proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
+    achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
+    interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
+    reports?: Prisma.CommunityReportUncheckedCreateNestedManyWithoutCommunityInput;
+    contentActions?: Prisma.CommunityContentActionUncheckedCreateNestedManyWithoutCommunityInput;
+    structureProposals?: Prisma.CommunityStructureProposalUncheckedCreateNestedManyWithoutCommunityInput;
+    structureTargets?: Prisma.CommunityStructureProposalUncheckedCreateNestedManyWithoutTargetCommunityInput;
+    roleInvites?: Prisma.CommunityRoleInviteUncheckedCreateNestedManyWithoutCommunityInput;
+    events?: Prisma.CommunityEventUncheckedCreateNestedManyWithoutCommunityInput;
+    portfolioItems?: Prisma.PortfolioItemUncheckedCreateNestedManyWithoutCommunityInput;
+};
+export type CommunityCreateOrConnectWithoutCuratorApplicationsInput = {
+    where: Prisma.CommunityWhereUniqueInput;
+    create: Prisma.XOR<Prisma.CommunityCreateWithoutCuratorApplicationsInput, Prisma.CommunityUncheckedCreateWithoutCuratorApplicationsInput>;
+};
+export type CommunityUpsertWithoutCuratorApplicationsInput = {
+    update: Prisma.XOR<Prisma.CommunityUpdateWithoutCuratorApplicationsInput, Prisma.CommunityUncheckedUpdateWithoutCuratorApplicationsInput>;
+    create: Prisma.XOR<Prisma.CommunityCreateWithoutCuratorApplicationsInput, Prisma.CommunityUncheckedCreateWithoutCuratorApplicationsInput>;
+    where?: Prisma.CommunityWhereInput;
+};
+export type CommunityUpdateToOneWithWhereWithoutCuratorApplicationsInput = {
+    where?: Prisma.CommunityWhereInput;
+    data: Prisma.XOR<Prisma.CommunityUpdateWithoutCuratorApplicationsInput, Prisma.CommunityUncheckedUpdateWithoutCuratorApplicationsInput>;
+};
+export type CommunityUpdateWithoutCuratorApplicationsInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    slug?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.StringFieldUpdateOperationsInput | string;
+    description?: Prisma.StringFieldUpdateOperationsInput | string;
+    shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    accentColor?: Prisma.StringFieldUpdateOperationsInput | string;
+    status?: Prisma.EnumCommunityStatusFieldUpdateOperationsInput | $Enums.CommunityStatus;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    parent?: Prisma.CommunityUpdateOneWithoutChildrenNestedInput;
+    children?: Prisma.CommunityUpdateManyWithoutParentNestedInput;
+    createdBy?: Prisma.UserUpdateOneRequiredWithoutCreatedCommunitiesNestedInput;
+    roles?: Prisma.CommunityRoleUpdateManyWithoutCommunityNestedInput;
+    subscriptions?: Prisma.CommunitySubscriptionUpdateManyWithoutCommunityNestedInput;
+    hiddenBy?: Prisma.HiddenCommunityUpdateManyWithoutCommunityNestedInput;
+    publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
+    promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
+    proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
+    achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
+    interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
+    reports?: Prisma.CommunityReportUpdateManyWithoutCommunityNestedInput;
+    contentActions?: Prisma.CommunityContentActionUpdateManyWithoutCommunityNestedInput;
+    structureProposals?: Prisma.CommunityStructureProposalUpdateManyWithoutCommunityNestedInput;
+    structureTargets?: Prisma.CommunityStructureProposalUpdateManyWithoutTargetCommunityNestedInput;
+    roleInvites?: Prisma.CommunityRoleInviteUpdateManyWithoutCommunityNestedInput;
+    events?: Prisma.CommunityEventUpdateManyWithoutCommunityNestedInput;
+    portfolioItems?: Prisma.PortfolioItemUpdateManyWithoutCommunityNestedInput;
+};
+export type CommunityUncheckedUpdateWithoutCuratorApplicationsInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    slug?: Prisma.StringFieldUpdateOperationsInput | string;
+    name?: Prisma.StringFieldUpdateOperationsInput | string;
+    description?: Prisma.StringFieldUpdateOperationsInput | string;
+    shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    accentColor?: Prisma.StringFieldUpdateOperationsInput | string;
+    status?: Prisma.EnumCommunityStatusFieldUpdateOperationsInput | $Enums.CommunityStatus;
+    createdById?: Prisma.StringFieldUpdateOperationsInput | string;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    children?: Prisma.CommunityUncheckedUpdateManyWithoutParentNestedInput;
+    roles?: Prisma.CommunityRoleUncheckedUpdateManyWithoutCommunityNestedInput;
+    subscriptions?: Prisma.CommunitySubscriptionUncheckedUpdateManyWithoutCommunityNestedInput;
+    hiddenBy?: Prisma.HiddenCommunityUncheckedUpdateManyWithoutCommunityNestedInput;
+    publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
+    promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
+    proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -1979,6 +2171,7 @@ export type CommunityCreateWithoutPollsInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
     reports?: Prisma.CommunityReportCreateNestedManyWithoutCommunityInput;
@@ -2010,6 +2203,7 @@ export type CommunityUncheckedCreateWithoutPollsInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
     reports?: Prisma.CommunityReportUncheckedCreateNestedManyWithoutCommunityInput;
@@ -2054,6 +2248,7 @@ export type CommunityUpdateWithoutPollsInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
     reports?: Prisma.CommunityReportUpdateManyWithoutCommunityNestedInput;
@@ -2085,6 +2280,7 @@ export type CommunityUncheckedUpdateWithoutPollsInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
     reports?: Prisma.CommunityReportUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -2116,6 +2312,7 @@ export type CommunityCreateWithoutAchievementsInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
     reports?: Prisma.CommunityReportCreateNestedManyWithoutCommunityInput;
@@ -2147,6 +2344,7 @@ export type CommunityUncheckedCreateWithoutAchievementsInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
     reports?: Prisma.CommunityReportUncheckedCreateNestedManyWithoutCommunityInput;
@@ -2191,6 +2389,7 @@ export type CommunityUpdateWithoutAchievementsInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
     reports?: Prisma.CommunityReportUpdateManyWithoutCommunityNestedInput;
@@ -2222,6 +2421,7 @@ export type CommunityUncheckedUpdateWithoutAchievementsInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
     reports?: Prisma.CommunityReportUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -2253,6 +2453,7 @@ export type CommunityCreateWithoutInteractionsInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     reports?: Prisma.CommunityReportCreateNestedManyWithoutCommunityInput;
@@ -2284,6 +2485,7 @@ export type CommunityUncheckedCreateWithoutInteractionsInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     reports?: Prisma.CommunityReportUncheckedCreateNestedManyWithoutCommunityInput;
@@ -2328,6 +2530,7 @@ export type CommunityUpdateWithoutInteractionsInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     reports?: Prisma.CommunityReportUpdateManyWithoutCommunityNestedInput;
@@ -2359,6 +2562,7 @@ export type CommunityUncheckedUpdateWithoutInteractionsInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     reports?: Prisma.CommunityReportUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -2390,6 +2594,7 @@ export type CommunityCreateWithoutReportsInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -2421,6 +2626,7 @@ export type CommunityUncheckedCreateWithoutReportsInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -2465,6 +2671,7 @@ export type CommunityUpdateWithoutReportsInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -2496,6 +2703,7 @@ export type CommunityUncheckedUpdateWithoutReportsInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -2527,6 +2735,7 @@ export type CommunityCreateWithoutContentActionsInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -2558,6 +2767,7 @@ export type CommunityUncheckedCreateWithoutContentActionsInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -2602,6 +2812,7 @@ export type CommunityUpdateWithoutContentActionsInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -2633,6 +2844,7 @@ export type CommunityUncheckedUpdateWithoutContentActionsInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -2664,6 +2876,7 @@ export type CommunityCreateWithoutStructureProposalsInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -2695,6 +2908,7 @@ export type CommunityUncheckedCreateWithoutStructureProposalsInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -2730,6 +2944,7 @@ export type CommunityCreateWithoutStructureTargetsInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -2761,6 +2976,7 @@ export type CommunityUncheckedCreateWithoutStructureTargetsInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -2805,6 +3021,7 @@ export type CommunityUpdateWithoutStructureProposalsInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -2836,6 +3053,7 @@ export type CommunityUncheckedUpdateWithoutStructureProposalsInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -2876,6 +3094,7 @@ export type CommunityUpdateWithoutStructureTargetsInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -2907,6 +3126,7 @@ export type CommunityUncheckedUpdateWithoutStructureTargetsInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -2938,6 +3158,7 @@ export type CommunityCreateWithoutRoleInvitesInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -2969,6 +3190,7 @@ export type CommunityUncheckedCreateWithoutRoleInvitesInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -3013,6 +3235,7 @@ export type CommunityUpdateWithoutRoleInvitesInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -3044,6 +3267,7 @@ export type CommunityUncheckedUpdateWithoutRoleInvitesInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -3075,6 +3299,7 @@ export type CommunityCreateWithoutEventsInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -3106,6 +3331,7 @@ export type CommunityUncheckedCreateWithoutEventsInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -3150,6 +3376,7 @@ export type CommunityUpdateWithoutEventsInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -3181,6 +3408,7 @@ export type CommunityUncheckedUpdateWithoutEventsInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -3212,6 +3440,7 @@ export type CommunityCreateWithoutPortfolioItemsInput = {
     publications?: Prisma.PublicationCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCommunityInput;
@@ -3243,6 +3472,7 @@ export type CommunityUncheckedCreateWithoutPortfolioItemsInput = {
     publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutCommunityInput;
     promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutCommunityInput;
     proposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutSuggestedParentInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutCommunityInput;
     polls?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCommunityInput;
     achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutCommunityInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCommunityInput;
@@ -3287,6 +3517,7 @@ export type CommunityUpdateWithoutPortfolioItemsInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -3318,6 +3549,7 @@ export type CommunityUncheckedUpdateWithoutPortfolioItemsInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -3362,6 +3594,7 @@ export type CommunityUpdateWithoutCreatedByInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -3393,6 +3626,7 @@ export type CommunityUncheckedUpdateWithoutCreatedByInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -3452,6 +3686,7 @@ export type CommunityUpdateWithoutParentInput = {
     publications?: Prisma.PublicationUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUpdateManyWithoutCommunityNestedInput;
@@ -3483,6 +3718,7 @@ export type CommunityUncheckedUpdateWithoutParentInput = {
     publications?: Prisma.PublicationUncheckedUpdateManyWithoutCommunityNestedInput;
     promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutCommunityNestedInput;
     proposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutSuggestedParentNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutCommunityNestedInput;
     polls?: Prisma.CommunityPollUncheckedUpdateManyWithoutCommunityNestedInput;
     achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutCommunityNestedInput;
     interactions?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCommunityNestedInput;
@@ -3516,6 +3752,7 @@ export type CommunityCountOutputType = {
     publications: number;
     promotions: number;
     proposals: number;
+    curatorApplications: number;
     polls: number;
     achievements: number;
     interactions: number;
@@ -3535,6 +3772,7 @@ export type CommunityCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensi
     publications?: boolean | CommunityCountOutputTypeCountPublicationsArgs;
     promotions?: boolean | CommunityCountOutputTypeCountPromotionsArgs;
     proposals?: boolean | CommunityCountOutputTypeCountProposalsArgs;
+    curatorApplications?: boolean | CommunityCountOutputTypeCountCuratorApplicationsArgs;
     polls?: boolean | CommunityCountOutputTypeCountPollsArgs;
     achievements?: boolean | CommunityCountOutputTypeCountAchievementsArgs;
     interactions?: boolean | CommunityCountOutputTypeCountInteractionsArgs;
@@ -3569,6 +3807,9 @@ export type CommunityCountOutputTypeCountPromotionsArgs<ExtArgs extends runtime.
 };
 export type CommunityCountOutputTypeCountProposalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.CommunityProposalWhereInput;
+};
+export type CommunityCountOutputTypeCountCuratorApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.CuratorApplicationWhereInput;
 };
 export type CommunityCountOutputTypeCountPollsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.CommunityPollWhereInput;
@@ -3623,6 +3864,7 @@ export type CommunitySelect<ExtArgs extends runtime.Types.Extensions.InternalArg
     publications?: boolean | Prisma.Community$publicationsArgs<ExtArgs>;
     promotions?: boolean | Prisma.Community$promotionsArgs<ExtArgs>;
     proposals?: boolean | Prisma.Community$proposalsArgs<ExtArgs>;
+    curatorApplications?: boolean | Prisma.Community$curatorApplicationsArgs<ExtArgs>;
     polls?: boolean | Prisma.Community$pollsArgs<ExtArgs>;
     achievements?: boolean | Prisma.Community$achievementsArgs<ExtArgs>;
     interactions?: boolean | Prisma.Community$interactionsArgs<ExtArgs>;
@@ -3695,6 +3937,7 @@ export type CommunityInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
     publications?: boolean | Prisma.Community$publicationsArgs<ExtArgs>;
     promotions?: boolean | Prisma.Community$promotionsArgs<ExtArgs>;
     proposals?: boolean | Prisma.Community$proposalsArgs<ExtArgs>;
+    curatorApplications?: boolean | Prisma.Community$curatorApplicationsArgs<ExtArgs>;
     polls?: boolean | Prisma.Community$pollsArgs<ExtArgs>;
     achievements?: boolean | Prisma.Community$achievementsArgs<ExtArgs>;
     interactions?: boolean | Prisma.Community$interactionsArgs<ExtArgs>;
@@ -3727,6 +3970,7 @@ export type $CommunityPayload<ExtArgs extends runtime.Types.Extensions.InternalA
         publications: Prisma.$PublicationPayload<ExtArgs>[];
         promotions: Prisma.$PromotionOrderPayload<ExtArgs>[];
         proposals: Prisma.$CommunityProposalPayload<ExtArgs>[];
+        curatorApplications: Prisma.$CuratorApplicationPayload<ExtArgs>[];
         polls: Prisma.$CommunityPollPayload<ExtArgs>[];
         achievements: Prisma.$UserAchievementPayload<ExtArgs>[];
         interactions: Prisma.$ConfirmedInteractionPayload<ExtArgs>[];
@@ -3813,6 +4057,7 @@ export interface Prisma__CommunityClient<T, Null = never, ExtArgs extends runtim
     publications<T extends Prisma.Community$publicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$publicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PublicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     promotions<T extends Prisma.Community$promotionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$promotionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PromotionOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     proposals<T extends Prisma.Community$proposalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$proposalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityProposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    curatorApplications<T extends Prisma.Community$curatorApplicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$curatorApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CuratorApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     polls<T extends Prisma.Community$pollsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$pollsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityPollPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     achievements<T extends Prisma.Community$achievementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$achievementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserAchievementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     interactions<T extends Prisma.Community$interactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Community$interactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConfirmedInteractionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
@@ -4024,6 +4269,17 @@ export type Community$proposalsArgs<ExtArgs extends runtime.Types.Extensions.Int
     take?: number;
     skip?: number;
     distinct?: Prisma.CommunityProposalScalarFieldEnum | Prisma.CommunityProposalScalarFieldEnum[];
+};
+export type Community$curatorApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.CuratorApplicationSelect<ExtArgs> | null;
+    omit?: Prisma.CuratorApplicationOmit<ExtArgs> | null;
+    include?: Prisma.CuratorApplicationInclude<ExtArgs> | null;
+    where?: Prisma.CuratorApplicationWhereInput;
+    orderBy?: Prisma.CuratorApplicationOrderByWithRelationInput | Prisma.CuratorApplicationOrderByWithRelationInput[];
+    cursor?: Prisma.CuratorApplicationWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.CuratorApplicationScalarFieldEnum | Prisma.CuratorApplicationScalarFieldEnum[];
 };
 export type Community$pollsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.CommunityPollSelect<ExtArgs> | null;

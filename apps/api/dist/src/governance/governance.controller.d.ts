@@ -1,5 +1,5 @@
 import type { User } from '../generated/prisma/client.js';
-import { CastVoteDto, ClosePollDto, CreatePollDto, CreateProposalDto, ResolveProposalDto } from './dto.js';
+import { CastVoteDto, ClosePollDto, CreateCuratorApplicationDto, CreatePollDto, CreateProposalDto, ResolveProposalDto } from './dto.js';
 import { GovernanceService } from './governance.service.js';
 export declare class GovernanceController {
     private readonly service;
@@ -28,6 +28,7 @@ export declare class GovernanceController {
         resolutionNote: string | null;
         suggestedParentId: string | null;
         initialTopics: string;
+        curatorInterest: string;
     }[]>;
     createProposal(user: User, dto: CreateProposalDto): Promise<{
         id: string;
@@ -40,6 +41,16 @@ export declare class GovernanceController {
         resolutionNote: string | null;
         suggestedParentId: string | null;
         initialTopics: string;
+        curatorInterest: string;
+    }>;
+    createCuratorApplication(user: User, dto: CreateCuratorApplicationDto): Promise<{
+        id: string;
+        createdAt: Date;
+        status: import("../generated/prisma/enums.js").CuratorApplicationStatus;
+        community: {
+            slug: string;
+            name: string;
+        };
     }>;
     support(user: User, id: string): Promise<{
         supported: boolean;

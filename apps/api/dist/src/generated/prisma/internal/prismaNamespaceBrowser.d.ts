@@ -50,6 +50,7 @@ export declare const ModelName: {
     readonly ModerationAppeal: "ModerationAppeal";
     readonly CommunityProposal: "CommunityProposal";
     readonly ProposalSupport: "ProposalSupport";
+    readonly CuratorApplication: "CuratorApplication";
     readonly CommunityPoll: "CommunityPoll";
     readonly PollOption: "PollOption";
     readonly PollVote: "PollVote";
@@ -70,6 +71,9 @@ export declare const ModelName: {
     readonly CommunityEventAttendance: "CommunityEventAttendance";
     readonly PortfolioItem: "PortfolioItem";
     readonly PlatformSetting: "PlatformSetting";
+    readonly InventoryItemDefinition: "InventoryItemDefinition";
+    readonly UserInventoryItem: "UserInventoryItem";
+    readonly InventoryTransaction: "InventoryTransaction";
 };
 export type ModelName = (typeof ModelName)[keyof typeof ModelName];
 export declare const TransactionIsolationLevel: {
@@ -475,6 +479,7 @@ export declare const CommunityProposalScalarFieldEnum: {
     readonly name: "name";
     readonly description: "description";
     readonly initialTopics: "initialTopics";
+    readonly curatorInterest: "curatorInterest";
     readonly status: "status";
     readonly resolutionNote: "resolutionNote";
     readonly createdAt: "createdAt";
@@ -487,6 +492,19 @@ export declare const ProposalSupportScalarFieldEnum: {
     readonly createdAt: "createdAt";
 };
 export type ProposalSupportScalarFieldEnum = (typeof ProposalSupportScalarFieldEnum)[keyof typeof ProposalSupportScalarFieldEnum];
+export declare const CuratorApplicationScalarFieldEnum: {
+    readonly id: "id";
+    readonly userId: "userId";
+    readonly communityId: "communityId";
+    readonly motivation: "motivation";
+    readonly plan: "plan";
+    readonly activitySnapshot: "activitySnapshot";
+    readonly status: "status";
+    readonly resolutionNote: "resolutionNote";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type CuratorApplicationScalarFieldEnum = (typeof CuratorApplicationScalarFieldEnum)[keyof typeof CuratorApplicationScalarFieldEnum];
 export declare const CommunityPollScalarFieldEnum: {
     readonly id: "id";
     readonly communityId: "communityId";
@@ -742,6 +760,44 @@ export declare const PlatformSettingScalarFieldEnum: {
     readonly updatedAt: "updatedAt";
 };
 export type PlatformSettingScalarFieldEnum = (typeof PlatformSettingScalarFieldEnum)[keyof typeof PlatformSettingScalarFieldEnum];
+export declare const InventoryItemDefinitionScalarFieldEnum: {
+    readonly id: "id";
+    readonly slug: "slug";
+    readonly name: "name";
+    readonly description: "description";
+    readonly type: "type";
+    readonly rarity: "rarity";
+    readonly previewKey: "previewKey";
+    readonly style: "style";
+    readonly transferable: "transferable";
+    readonly deletable: "deletable";
+    readonly equipable: "equipable";
+    readonly createdAt: "createdAt";
+    readonly updatedAt: "updatedAt";
+};
+export type InventoryItemDefinitionScalarFieldEnum = (typeof InventoryItemDefinitionScalarFieldEnum)[keyof typeof InventoryItemDefinitionScalarFieldEnum];
+export declare const UserInventoryItemScalarFieldEnum: {
+    readonly id: "id";
+    readonly definitionId: "definitionId";
+    readonly ownerId: "ownerId";
+    readonly serialNumber: "serialNumber";
+    readonly sourceKey: "sourceKey";
+    readonly equipped: "equipped";
+    readonly acquiredAt: "acquiredAt";
+    readonly equippedAt: "equippedAt";
+    readonly deletedAt: "deletedAt";
+};
+export type UserInventoryItemScalarFieldEnum = (typeof UserInventoryItemScalarFieldEnum)[keyof typeof UserInventoryItemScalarFieldEnum];
+export declare const InventoryTransactionScalarFieldEnum: {
+    readonly id: "id";
+    readonly itemId: "itemId";
+    readonly type: "type";
+    readonly fromUserId: "fromUserId";
+    readonly toUserId: "toUserId";
+    readonly metadata: "metadata";
+    readonly createdAt: "createdAt";
+};
+export type InventoryTransactionScalarFieldEnum = (typeof InventoryTransactionScalarFieldEnum)[keyof typeof InventoryTransactionScalarFieldEnum];
 export declare const SortOrder: {
     readonly asc: "asc";
     readonly desc: "desc";

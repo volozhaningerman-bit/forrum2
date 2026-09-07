@@ -1,0 +1,14 @@
+node_modules/
+.next/
+dist/
+*.tsbuildinfo
+apps/api/src/generated/prisma/
+.env
+.env.*
+!.env.example
+!.env.*.example
+.worktrees/
+*.log
+coverage/
+test-results/
+playwright-report/

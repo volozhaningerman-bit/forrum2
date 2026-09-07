@@ -50,6 +50,14 @@ export declare class FeedController {
         viewCount: number;
         createdAt: Date;
         lastActivityAt: Date;
+        lastComment: {
+            createdAt: Date;
+            author: {
+                username: string;
+                displayName: string;
+                avatarUrl: string | null;
+            };
+        } | null;
         pinnedUntil: Date | null;
         reason: string | null;
         feedbackEnabled: boolean;

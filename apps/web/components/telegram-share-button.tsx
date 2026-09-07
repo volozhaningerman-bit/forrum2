@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { api } from '@/lib/api';
 
@@ -29,8 +29,9 @@ export function TelegramShareButton({
   slug: string;
   compact?: boolean;
   label?: string;
-  variant?: 'default' | 'endcap';
+  variant?: 'default' | 'endcap' | 'inline';
 }) {
+  const dialogRef = useRef<HTMLElement>(null);
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [channels, setChannels] = useState<TelegramChannel[]>([]);
@@ -47,17 +48,26 @@ export function TelegramShareButton({
   useEffect(() => {
     if (!open) return;
 
+    const previousFocus = document.activeElement as HTMLElement | null;
+    dialogRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') setOpen(false);
+      if (event.key === 'Tab') {
+        const controls = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>('button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled)') ?? []);
+        const first = controls[0], last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
     }
 
     window.addEventListener('keydown', onKeyDown);
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', onKeyDown);
+      previousFocus?.focus();
     };
   }, [open]);
 
@@ -97,7 +107,7 @@ export function TelegramShareButton({
   }
 
   async function publish() {
-    if (!channelId || sending) return;
+    if (!channelId || sending || success) return;
 
     setSending(true);
     setError('');
@@ -127,15 +137,15 @@ export function TelegramShareButton({
   return <>
     <button
       type="button"
-      className={`${compact ? 'telegram-share-trigger compact' : 'plain-action telegram-share-trigger'} ${variant === 'endcap' ? 'endcap' : ''}`.trim()}
+      className={`${compact ? 'telegram-share-trigger compact' : 'plain-action telegram-share-trigger'} ${variant === 'endcap' ? 'endcap' : variant === 'inline' ? 'inline' : ''}`.trim()}
       aria-label={variant === 'endcap' ? label : undefined}
       title={variant === 'endcap' ? label : undefined}
       onClick={(event) => { event.preventDefault(); event.stopPropagation(); void showDialog(); }}
     >
-      {variant === 'endcap' ? (
+      {variant !== 'default' ? (<>
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M4 12 19 5l-4 14-3.6-5.1L4 12Zm7.4 1.9L19 5" />
-        </svg>
+        </svg>{variant === 'inline' && label}</>
       ) : label}
     </button>
 
@@ -147,6 +157,7 @@ export function TelegramShareButton({
       }}
     >
       <section
+        ref={dialogRef}
         className="telegram-share-dialog"
         role="dialog"
         aria-modal="true"
@@ -179,7 +190,7 @@ export function TelegramShareButton({
             Канал
             <select
               value={channelId}
-              onChange={(event) => setChannelId(event.target.value)}
+              onChange={(event) => { setChannelId(event.target.value); setSuccess(''); }}
             >
               {channels.map((channel) => <option key={channel.id} value={channel.id}>
                 {channel.title}{channel.username ? ` · @${channel.username}` : ''}
@@ -200,7 +211,7 @@ export function TelegramShareButton({
           <button
             type="button"
             className="button"
-            disabled={!channelId || sending}
+            disabled={!channelId || sending || !!success}
             onClick={publish}
           >
             {sending ? 'Публикуем…' : 'Опубликовать'}

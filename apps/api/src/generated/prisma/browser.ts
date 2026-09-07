@@ -213,6 +213,11 @@ export type CommunityProposal = Prisma.CommunityProposalModel
  */
 export type ProposalSupport = Prisma.ProposalSupportModel
 /**
+ * Model CuratorApplication
+ * 
+ */
+export type CuratorApplication = Prisma.CuratorApplicationModel
+/**
  * Model CommunityPoll
  * 
  */
@@ -228,6 +233,11 @@ export type PollOption = Prisma.PollOptionModel
  */
 export type PollVote = Prisma.PollVoteModel
 /**
+ * Model MediaPartner
+ * 
+ */
+export type MediaPartner = Prisma.MediaPartnerModel
+/**
  * Model WorkshopItem
  * 
  */
@@ -237,6 +247,11 @@ export type WorkshopItem = Prisma.WorkshopItemModel
  * 
  */
 export type WorkshopLike = Prisma.WorkshopLikeModel
+/**
+ * Model UserGift
+ * 
+ */
+export type UserGift = Prisma.UserGiftModel
 /**
  * Model AchievementDefinition
  * 
@@ -302,3 +317,18 @@ export type PortfolioItem = Prisma.PortfolioItemModel
  * 
  */
 export type PlatformSetting = Prisma.PlatformSettingModel
+/**
+ * Model InventoryItemDefinition
+ * 
+ */
+export type InventoryItemDefinition = Prisma.InventoryItemDefinitionModel
+/**
+ * Model UserInventoryItem
+ * 
+ */
+export type UserInventoryItem = Prisma.UserInventoryItemModel
+/**
+ * Model InventoryTransaction
+ * 
+ */
+export type InventoryTransaction = Prisma.InventoryTransactionModel

@@ -90,11 +90,14 @@ export const ModelName = {
   ModerationAppeal: 'ModerationAppeal',
   CommunityProposal: 'CommunityProposal',
   ProposalSupport: 'ProposalSupport',
+  CuratorApplication: 'CuratorApplication',
   CommunityPoll: 'CommunityPoll',
   PollOption: 'PollOption',
   PollVote: 'PollVote',
+  MediaPartner: 'MediaPartner',
   WorkshopItem: 'WorkshopItem',
   WorkshopLike: 'WorkshopLike',
+  UserGift: 'UserGift',
   AchievementDefinition: 'AchievementDefinition',
   UserAchievement: 'UserAchievement',
   CommunityRoleEvent: 'CommunityRoleEvent',
@@ -107,7 +110,10 @@ export const ModelName = {
   CommunityEvent: 'CommunityEvent',
   CommunityEventAttendance: 'CommunityEventAttendance',
   PortfolioItem: 'PortfolioItem',
-  PlatformSetting: 'PlatformSetting'
+  PlatformSetting: 'PlatformSetting',
+  InventoryItemDefinition: 'InventoryItemDefinition',
+  UserInventoryItem: 'UserInventoryItem',
+  InventoryTransaction: 'InventoryTransaction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -136,6 +142,8 @@ export const UserScalarFieldEnum = {
   avatarUrl: 'avatarUrl',
   coverUrl: 'coverUrl',
   wallPrivacy: 'wallPrivacy',
+  showFavorites: 'showFavorites',
+  showSubscriptions: 'showSubscriptions',
   website: 'website',
   location: 'location',
   passwordHash: 'passwordHash',
@@ -631,6 +639,7 @@ export const CommunityProposalScalarFieldEnum = {
   name: 'name',
   description: 'description',
   initialTopics: 'initialTopics',
+  curatorInterest: 'curatorInterest',
   status: 'status',
   resolutionNote: 'resolutionNote',
   createdAt: 'createdAt',
@@ -647,6 +656,22 @@ export const ProposalSupportScalarFieldEnum = {
 } as const
 
 export type ProposalSupportScalarFieldEnum = (typeof ProposalSupportScalarFieldEnum)[keyof typeof ProposalSupportScalarFieldEnum]
+
+
+export const CuratorApplicationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  communityId: 'communityId',
+  motivation: 'motivation',
+  plan: 'plan',
+  activitySnapshot: 'activitySnapshot',
+  status: 'status',
+  resolutionNote: 'resolutionNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CuratorApplicationScalarFieldEnum = (typeof CuratorApplicationScalarFieldEnum)[keyof typeof CuratorApplicationScalarFieldEnum]
 
 
 export const CommunityPollScalarFieldEnum = {
@@ -692,6 +717,24 @@ export const PollVoteScalarFieldEnum = {
 export type PollVoteScalarFieldEnum = (typeof PollVoteScalarFieldEnum)[keyof typeof PollVoteScalarFieldEnum]
 
 
+export const MediaPartnerScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  status: 'status',
+  displayName: 'displayName',
+  platform: 'platform',
+  channelUrl: 'channelUrl',
+  audienceText: 'audienceText',
+  description: 'description',
+  resolutionNote: 'resolutionNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MediaPartnerScalarFieldEnum = (typeof MediaPartnerScalarFieldEnum)[keyof typeof MediaPartnerScalarFieldEnum]
+
+
 export const WorkshopItemScalarFieldEnum = {
   id: 'id',
   authorId: 'authorId',
@@ -716,6 +759,18 @@ export const WorkshopLikeScalarFieldEnum = {
 } as const
 
 export type WorkshopLikeScalarFieldEnum = (typeof WorkshopLikeScalarFieldEnum)[keyof typeof WorkshopLikeScalarFieldEnum]
+
+
+export const UserGiftScalarFieldEnum = {
+  id: 'id',
+  recipientId: 'recipientId',
+  senderId: 'senderId',
+  giftId: 'giftId',
+  message: 'message',
+  createdAt: 'createdAt'
+} as const
+
+export type UserGiftScalarFieldEnum = (typeof UserGiftScalarFieldEnum)[keyof typeof UserGiftScalarFieldEnum]
 
 
 export const AchievementDefinitionScalarFieldEnum = {
@@ -794,6 +849,9 @@ export const ProfileReviewScalarFieldEnum = {
   targetId: 'targetId',
   evidenceMediaId: 'evidenceMediaId',
   verdict: 'verdict',
+  moderationStatus: 'moderationStatus',
+  moderationNote: 'moderationNote',
+  moderatedAt: 'moderatedAt',
   body: 'body',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -929,6 +987,53 @@ export const PlatformSettingScalarFieldEnum = {
 } as const
 
 export type PlatformSettingScalarFieldEnum = (typeof PlatformSettingScalarFieldEnum)[keyof typeof PlatformSettingScalarFieldEnum]
+
+
+export const InventoryItemDefinitionScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name',
+  description: 'description',
+  type: 'type',
+  rarity: 'rarity',
+  previewKey: 'previewKey',
+  style: 'style',
+  transferable: 'transferable',
+  deletable: 'deletable',
+  equipable: 'equipable',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InventoryItemDefinitionScalarFieldEnum = (typeof InventoryItemDefinitionScalarFieldEnum)[keyof typeof InventoryItemDefinitionScalarFieldEnum]
+
+
+export const UserInventoryItemScalarFieldEnum = {
+  id: 'id',
+  definitionId: 'definitionId',
+  ownerId: 'ownerId',
+  serialNumber: 'serialNumber',
+  sourceKey: 'sourceKey',
+  equipped: 'equipped',
+  acquiredAt: 'acquiredAt',
+  equippedAt: 'equippedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type UserInventoryItemScalarFieldEnum = (typeof UserInventoryItemScalarFieldEnum)[keyof typeof UserInventoryItemScalarFieldEnum]
+
+
+export const InventoryTransactionScalarFieldEnum = {
+  id: 'id',
+  itemId: 'itemId',
+  type: 'type',
+  fromUserId: 'fromUserId',
+  toUserId: 'toUserId',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type InventoryTransactionScalarFieldEnum = (typeof InventoryTransactionScalarFieldEnum)[keyof typeof InventoryTransactionScalarFieldEnum]
 
 
 export const SortOrder = {

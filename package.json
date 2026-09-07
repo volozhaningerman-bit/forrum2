@@ -23,9 +23,11 @@
     "test:pure": "node --experimental-strip-types --experimental-loader ./scripts/local-ts-loader.mjs --test apps/api/test/*.test.ts",
     "db:validate": "npm run db:validate -w @forrum/api",
     "validate:ux": "node scripts/ux-check.mjs",
-    "validate:a11y": "node scripts/accessibility-check.mjs"
+    "validate:a11y": "node scripts/accessibility-check.mjs",
+    "test:home": "node scripts/test-home-reference.mjs"
   },
   "devDependencies": {
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "playwright": "1.62.1"
   }
 }

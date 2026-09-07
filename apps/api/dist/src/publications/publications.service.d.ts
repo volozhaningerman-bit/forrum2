@@ -239,4 +239,7 @@ export declare class PublicationsService {
     report(slug: string, userId: string, dto: ReportDto): Promise<{
         id: string;
     }>;
+    styleTags(authorId: string, communitySlug: string, publicationSlug: string, rawStyles: Record<string, string> | undefined): Promise<{
+        updated: number;
+    }>;
 }

@@ -285,6 +285,7 @@ export type UserWhereInput = {
     moderationAppeals?: Prisma.ModerationAppealListRelationFilter;
     moderationAppealsResolved?: Prisma.ModerationAppealListRelationFilter;
     communityProposals?: Prisma.CommunityProposalListRelationFilter;
+    curatorApplications?: Prisma.CuratorApplicationListRelationFilter;
     proposalSupports?: Prisma.ProposalSupportListRelationFilter;
     pollsCreated?: Prisma.CommunityPollListRelationFilter;
     pollVotes?: Prisma.PollVoteListRelationFilter;
@@ -372,6 +373,7 @@ export type UserOrderByWithRelationInput = {
     moderationAppeals?: Prisma.ModerationAppealOrderByRelationAggregateInput;
     moderationAppealsResolved?: Prisma.ModerationAppealOrderByRelationAggregateInput;
     communityProposals?: Prisma.CommunityProposalOrderByRelationAggregateInput;
+    curatorApplications?: Prisma.CuratorApplicationOrderByRelationAggregateInput;
     proposalSupports?: Prisma.ProposalSupportOrderByRelationAggregateInput;
     pollsCreated?: Prisma.CommunityPollOrderByRelationAggregateInput;
     pollVotes?: Prisma.PollVoteOrderByRelationAggregateInput;
@@ -462,6 +464,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
     moderationAppeals?: Prisma.ModerationAppealListRelationFilter;
     moderationAppealsResolved?: Prisma.ModerationAppealListRelationFilter;
     communityProposals?: Prisma.CommunityProposalListRelationFilter;
+    curatorApplications?: Prisma.CuratorApplicationListRelationFilter;
     proposalSupports?: Prisma.ProposalSupportListRelationFilter;
     pollsCreated?: Prisma.CommunityPollListRelationFilter;
     pollVotes?: Prisma.PollVoteListRelationFilter;
@@ -603,6 +606,7 @@ export type UserCreateInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -690,6 +694,7 @@ export type UserUncheckedCreateInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -776,6 +781,7 @@ export type UserUpdateInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -863,6 +869,7 @@ export type UserUncheckedUpdateInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -1560,6 +1567,18 @@ export type UserUpdateOneRequiredWithoutProposalSupportsNestedInput = {
     connect?: Prisma.UserWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProposalSupportsInput, Prisma.UserUpdateWithoutProposalSupportsInput>, Prisma.UserUncheckedUpdateWithoutProposalSupportsInput>;
 };
+export type UserCreateNestedOneWithoutCuratorApplicationsInput = {
+    create?: Prisma.XOR<Prisma.UserCreateWithoutCuratorApplicationsInput, Prisma.UserUncheckedCreateWithoutCuratorApplicationsInput>;
+    connectOrCreate?: Prisma.UserCreateOrConnectWithoutCuratorApplicationsInput;
+    connect?: Prisma.UserWhereUniqueInput;
+};
+export type UserUpdateOneRequiredWithoutCuratorApplicationsNestedInput = {
+    create?: Prisma.XOR<Prisma.UserCreateWithoutCuratorApplicationsInput, Prisma.UserUncheckedCreateWithoutCuratorApplicationsInput>;
+    connectOrCreate?: Prisma.UserCreateOrConnectWithoutCuratorApplicationsInput;
+    upsert?: Prisma.UserUpsertWithoutCuratorApplicationsInput;
+    connect?: Prisma.UserWhereUniqueInput;
+    update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCuratorApplicationsInput, Prisma.UserUpdateWithoutCuratorApplicationsInput>, Prisma.UserUncheckedUpdateWithoutCuratorApplicationsInput>;
+};
 export type UserCreateNestedOneWithoutPollsCreatedInput = {
     create?: Prisma.XOR<Prisma.UserCreateWithoutPollsCreatedInput, Prisma.UserUncheckedCreateWithoutPollsCreatedInput>;
     connectOrCreate?: Prisma.UserCreateOrConnectWithoutPollsCreatedInput;
@@ -1915,6 +1934,7 @@ export type UserCreateWithoutVerificationTokensInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -2001,6 +2021,7 @@ export type UserUncheckedCreateWithoutVerificationTokensInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -2099,6 +2120,7 @@ export type UserUpdateWithoutVerificationTokensInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -2185,6 +2207,7 @@ export type UserUncheckedUpdateWithoutVerificationTokensInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -2271,6 +2294,7 @@ export type UserCreateWithoutResetTokensInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -2357,6 +2381,7 @@ export type UserUncheckedCreateWithoutResetTokensInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -2455,6 +2480,7 @@ export type UserUpdateWithoutResetTokensInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -2541,6 +2567,7 @@ export type UserUncheckedUpdateWithoutResetTokensInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -2627,6 +2654,7 @@ export type UserCreateWithoutSessionsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -2713,6 +2741,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -2811,6 +2840,7 @@ export type UserUpdateWithoutSessionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -2897,6 +2927,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -2983,6 +3014,7 @@ export type UserCreateWithoutNotificationPreferenceInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -3069,6 +3101,7 @@ export type UserUncheckedCreateWithoutNotificationPreferenceInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -3167,6 +3200,7 @@ export type UserUpdateWithoutNotificationPreferenceInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -3253,6 +3287,7 @@ export type UserUncheckedUpdateWithoutNotificationPreferenceInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -3339,6 +3374,7 @@ export type UserCreateWithoutFeedPreferenceInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -3425,6 +3461,7 @@ export type UserUncheckedCreateWithoutFeedPreferenceInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -3523,6 +3560,7 @@ export type UserUpdateWithoutFeedPreferenceInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -3609,6 +3647,7 @@ export type UserUncheckedUpdateWithoutFeedPreferenceInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -3695,6 +3734,7 @@ export type UserCreateWithoutHiddenCommunitiesInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -3781,6 +3821,7 @@ export type UserUncheckedCreateWithoutHiddenCommunitiesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -3879,6 +3920,7 @@ export type UserUpdateWithoutHiddenCommunitiesInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -3965,6 +4007,7 @@ export type UserUncheckedUpdateWithoutHiddenCommunitiesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -4051,6 +4094,7 @@ export type UserCreateWithoutHiddenPublicationsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -4137,6 +4181,7 @@ export type UserUncheckedCreateWithoutHiddenPublicationsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -4235,6 +4280,7 @@ export type UserUpdateWithoutHiddenPublicationsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -4321,6 +4367,7 @@ export type UserUncheckedUpdateWithoutHiddenPublicationsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -4407,6 +4454,7 @@ export type UserCreateWithoutCreatedCommunitiesInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -4493,6 +4541,7 @@ export type UserUncheckedCreateWithoutCreatedCommunitiesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -4591,6 +4640,7 @@ export type UserUpdateWithoutCreatedCommunitiesInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -4677,6 +4727,7 @@ export type UserUncheckedUpdateWithoutCreatedCommunitiesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -4763,6 +4814,7 @@ export type UserCreateWithoutCommunityRolesInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -4849,6 +4901,7 @@ export type UserUncheckedCreateWithoutCommunityRolesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -4939,6 +4992,7 @@ export type UserCreateWithoutCommunityRolesGrantedInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -5025,6 +5079,7 @@ export type UserUncheckedCreateWithoutCommunityRolesGrantedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -5123,6 +5178,7 @@ export type UserUpdateWithoutCommunityRolesInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -5209,6 +5265,7 @@ export type UserUncheckedUpdateWithoutCommunityRolesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -5303,6 +5360,7 @@ export type UserUpdateWithoutCommunityRolesGrantedInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -5389,6 +5447,7 @@ export type UserUncheckedUpdateWithoutCommunityRolesGrantedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -5475,6 +5534,7 @@ export type UserCreateWithoutSubscriptionsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -5561,6 +5621,7 @@ export type UserUncheckedCreateWithoutSubscriptionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -5659,6 +5720,7 @@ export type UserUpdateWithoutSubscriptionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -5745,6 +5807,7 @@ export type UserUncheckedUpdateWithoutSubscriptionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -5831,6 +5894,7 @@ export type UserCreateWithoutPublicationsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -5917,6 +5981,7 @@ export type UserUncheckedCreateWithoutPublicationsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -6015,6 +6080,7 @@ export type UserUpdateWithoutPublicationsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -6101,6 +6167,7 @@ export type UserUncheckedUpdateWithoutPublicationsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -6187,6 +6254,7 @@ export type UserCreateWithoutCommentsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -6273,6 +6341,7 @@ export type UserUncheckedCreateWithoutCommentsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -6371,6 +6440,7 @@ export type UserUpdateWithoutCommentsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -6457,6 +6527,7 @@ export type UserUncheckedUpdateWithoutCommentsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -6543,6 +6614,7 @@ export type UserCreateWithoutTagSubscriptionsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -6629,6 +6701,7 @@ export type UserUncheckedCreateWithoutTagSubscriptionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -6727,6 +6800,7 @@ export type UserUpdateWithoutTagSubscriptionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -6813,6 +6887,7 @@ export type UserUncheckedUpdateWithoutTagSubscriptionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -6899,6 +6974,7 @@ export type UserCreateWithoutPublicationReactionsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -6985,6 +7061,7 @@ export type UserUncheckedCreateWithoutPublicationReactionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -7083,6 +7160,7 @@ export type UserUpdateWithoutPublicationReactionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -7169,6 +7247,7 @@ export type UserUncheckedUpdateWithoutPublicationReactionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -7255,6 +7334,7 @@ export type UserCreateWithoutCommentReactionsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -7341,6 +7421,7 @@ export type UserUncheckedCreateWithoutCommentReactionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -7439,6 +7520,7 @@ export type UserUpdateWithoutCommentReactionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -7525,6 +7607,7 @@ export type UserUncheckedUpdateWithoutCommentReactionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -7611,6 +7694,7 @@ export type UserCreateWithoutBookmarksInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -7697,6 +7781,7 @@ export type UserUncheckedCreateWithoutBookmarksInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -7795,6 +7880,7 @@ export type UserUpdateWithoutBookmarksInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -7881,6 +7967,7 @@ export type UserUncheckedUpdateWithoutBookmarksInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -7967,6 +8054,7 @@ export type UserCreateWithoutFollowingInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -8053,6 +8141,7 @@ export type UserUncheckedCreateWithoutFollowingInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -8143,6 +8232,7 @@ export type UserCreateWithoutFollowersInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -8229,6 +8319,7 @@ export type UserUncheckedCreateWithoutFollowersInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -8327,6 +8418,7 @@ export type UserUpdateWithoutFollowingInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -8413,6 +8505,7 @@ export type UserUncheckedUpdateWithoutFollowingInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -8507,6 +8600,7 @@ export type UserUpdateWithoutFollowersInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -8593,6 +8687,7 @@ export type UserUncheckedUpdateWithoutFollowersInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -8679,6 +8774,7 @@ export type UserCreateWithoutWallReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -8765,6 +8861,7 @@ export type UserUncheckedCreateWithoutWallReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -8855,6 +8952,7 @@ export type UserCreateWithoutWallAuthoredInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -8941,6 +9039,7 @@ export type UserUncheckedCreateWithoutWallAuthoredInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -9039,6 +9138,7 @@ export type UserUpdateWithoutWallReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -9125,6 +9225,7 @@ export type UserUncheckedUpdateWithoutWallReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -9219,6 +9320,7 @@ export type UserUpdateWithoutWallAuthoredInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -9305,6 +9407,7 @@ export type UserUncheckedUpdateWithoutWallAuthoredInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -9391,6 +9494,7 @@ export type UserCreateWithoutNotificationsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -9477,6 +9581,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -9567,6 +9672,7 @@ export type UserCreateWithoutNotificationActionsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -9653,6 +9759,7 @@ export type UserUncheckedCreateWithoutNotificationActionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -9751,6 +9858,7 @@ export type UserUpdateWithoutNotificationsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -9837,6 +9945,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -9931,6 +10040,7 @@ export type UserUpdateWithoutNotificationActionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -10017,6 +10127,7 @@ export type UserUncheckedUpdateWithoutNotificationActionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -10103,6 +10214,7 @@ export type UserCreateWithoutConversationMembershipsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -10189,6 +10301,7 @@ export type UserUncheckedCreateWithoutConversationMembershipsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -10287,6 +10400,7 @@ export type UserUpdateWithoutConversationMembershipsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -10373,6 +10487,7 @@ export type UserUncheckedUpdateWithoutConversationMembershipsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -10459,6 +10574,7 @@ export type UserCreateWithoutMessagesInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -10545,6 +10661,7 @@ export type UserUncheckedCreateWithoutMessagesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -10643,6 +10760,7 @@ export type UserUpdateWithoutMessagesInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -10729,6 +10847,7 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -10815,6 +10934,7 @@ export type UserCreateWithoutReportsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -10901,6 +11021,7 @@ export type UserUncheckedCreateWithoutReportsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -10999,6 +11120,7 @@ export type UserUpdateWithoutReportsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -11085,6 +11207,7 @@ export type UserUncheckedUpdateWithoutReportsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -11171,6 +11294,7 @@ export type UserCreateWithoutAuditLogsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -11257,6 +11381,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -11355,6 +11480,7 @@ export type UserUpdateWithoutAuditLogsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -11441,6 +11567,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -11527,6 +11654,7 @@ export type UserCreateWithoutWalletInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -11613,6 +11741,7 @@ export type UserUncheckedCreateWithoutWalletInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -11711,6 +11840,7 @@ export type UserUpdateWithoutWalletInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -11797,6 +11927,7 @@ export type UserUncheckedUpdateWithoutWalletInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -11883,6 +12014,7 @@ export type UserCreateWithoutPromotionsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -11969,6 +12101,7 @@ export type UserUncheckedCreateWithoutPromotionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -12067,6 +12200,7 @@ export type UserUpdateWithoutPromotionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -12153,6 +12287,7 @@ export type UserUncheckedUpdateWithoutPromotionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -12239,6 +12374,7 @@ export type UserCreateWithoutMediaAssetsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -12325,6 +12461,7 @@ export type UserUncheckedCreateWithoutMediaAssetsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -12423,6 +12560,7 @@ export type UserUpdateWithoutMediaAssetsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -12509,6 +12647,7 @@ export type UserUncheckedUpdateWithoutMediaAssetsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -12595,6 +12734,7 @@ export type UserCreateWithoutTelegramLinkInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -12681,6 +12821,7 @@ export type UserUncheckedCreateWithoutTelegramLinkInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -12779,6 +12920,7 @@ export type UserUpdateWithoutTelegramLinkInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -12865,6 +13007,7 @@ export type UserUncheckedUpdateWithoutTelegramLinkInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -12951,6 +13094,7 @@ export type UserCreateWithoutTelegramLinkCodesInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -13037,6 +13181,7 @@ export type UserUncheckedCreateWithoutTelegramLinkCodesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -13135,6 +13280,7 @@ export type UserUpdateWithoutTelegramLinkCodesInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -13221,6 +13367,7 @@ export type UserUncheckedUpdateWithoutTelegramLinkCodesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -13307,6 +13454,7 @@ export type UserCreateWithoutTelegramChannelsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -13393,6 +13541,7 @@ export type UserUncheckedCreateWithoutTelegramChannelsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -13491,6 +13640,7 @@ export type UserUpdateWithoutTelegramChannelsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -13577,6 +13727,7 @@ export type UserUncheckedUpdateWithoutTelegramChannelsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -13663,6 +13814,7 @@ export type UserCreateWithoutTelegramSharesInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -13749,6 +13901,7 @@ export type UserUncheckedCreateWithoutTelegramSharesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -13847,6 +14000,7 @@ export type UserUpdateWithoutTelegramSharesInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -13933,6 +14087,7 @@ export type UserUncheckedUpdateWithoutTelegramSharesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -14019,6 +14174,7 @@ export type UserCreateWithoutModerationActionsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -14105,6 +14261,7 @@ export type UserUncheckedCreateWithoutModerationActionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -14195,6 +14352,7 @@ export type UserCreateWithoutModerationActionsMadeInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -14281,6 +14439,7 @@ export type UserUncheckedCreateWithoutModerationActionsMadeInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -14379,6 +14538,7 @@ export type UserUpdateWithoutModerationActionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -14465,6 +14625,7 @@ export type UserUncheckedUpdateWithoutModerationActionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -14559,6 +14720,7 @@ export type UserUpdateWithoutModerationActionsMadeInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -14645,6 +14807,7 @@ export type UserUncheckedUpdateWithoutModerationActionsMadeInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -14731,6 +14894,7 @@ export type UserCreateWithoutModerationAppealsInput = {
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -14817,6 +14981,7 @@ export type UserUncheckedCreateWithoutModerationAppealsInput = {
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -14907,6 +15072,7 @@ export type UserCreateWithoutModerationAppealsResolvedInput = {
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -14993,6 +15159,7 @@ export type UserUncheckedCreateWithoutModerationAppealsResolvedInput = {
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -15091,6 +15258,7 @@ export type UserUpdateWithoutModerationAppealsInput = {
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -15177,6 +15345,7 @@ export type UserUncheckedUpdateWithoutModerationAppealsInput = {
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -15271,6 +15440,7 @@ export type UserUpdateWithoutModerationAppealsResolvedInput = {
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -15357,6 +15527,7 @@ export type UserUncheckedUpdateWithoutModerationAppealsResolvedInput = {
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -15443,6 +15614,7 @@ export type UserCreateWithoutCommunityProposalsInput = {
     moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -15529,6 +15701,7 @@ export type UserUncheckedCreateWithoutCommunityProposalsInput = {
     moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -15627,6 +15800,7 @@ export type UserUpdateWithoutCommunityProposalsInput = {
     moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -15713,6 +15887,7 @@ export type UserUncheckedUpdateWithoutCommunityProposalsInput = {
     moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -15800,6 +15975,7 @@ export type UserCreateWithoutProposalSupportsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
@@ -15886,6 +16062,7 @@ export type UserUncheckedCreateWithoutProposalSupportsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
@@ -15984,6 +16161,7 @@ export type UserUpdateWithoutProposalSupportsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
@@ -16070,6 +16248,367 @@ export type UserUncheckedUpdateWithoutProposalSupportsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
+    pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
+    pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
+    workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUncheckedUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUncheckedUpdateManyWithoutSenderNestedInput;
+    workshopReviews?: Prisma.WorkshopItemUncheckedUpdateManyWithoutReviewedByNestedInput;
+    workshopLikes?: Prisma.WorkshopLikeUncheckedUpdateManyWithoutUserNestedInput;
+    achievements?: Prisma.UserAchievementUncheckedUpdateManyWithoutUserNestedInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventUncheckedUpdateManyWithoutUserNestedInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventUncheckedUpdateManyWithoutActorNestedInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCreatedByNestedInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionUncheckedUpdateManyWithoutCounterpartNestedInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewUncheckedUpdateManyWithoutAuthorNestedInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewUncheckedUpdateManyWithoutTargetNestedInput;
+    communityReports?: Prisma.CommunityReportUncheckedUpdateManyWithoutAuthorNestedInput;
+    contentActions?: Prisma.CommunityContentActionUncheckedUpdateManyWithoutActorNestedInput;
+    structureProposals?: Prisma.CommunityStructureProposalUncheckedUpdateManyWithoutCreatedByNestedInput;
+    structureResolutions?: Prisma.CommunityStructureProposalUncheckedUpdateManyWithoutResolvedByNestedInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteUncheckedUpdateManyWithoutInvitedUserNestedInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteUncheckedUpdateManyWithoutInvitedByNestedInput;
+    communityEvents?: Prisma.CommunityEventUncheckedUpdateManyWithoutCreatedByNestedInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceUncheckedUpdateManyWithoutUserNestedInput;
+    portfolioItems?: Prisma.PortfolioItemUncheckedUpdateManyWithoutOwnerNestedInput;
+};
+export type UserCreateWithoutCuratorApplicationsInput = {
+    id?: string;
+    forrumId?: number;
+    email: string;
+    username: string;
+    displayName: string;
+    bio?: string | null;
+    avatarUrl?: string | null;
+    coverUrl?: string | null;
+    wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
+    website?: string | null;
+    location?: string | null;
+    passwordHash: string;
+    state?: $Enums.AccountState;
+    role?: $Enums.GlobalRole;
+    emailVerifiedAt?: Date | string | null;
+    onboardingCompletedAt?: Date | string | null;
+    lastSeenAt?: Date | string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    sessions?: Prisma.SessionCreateNestedManyWithoutUserInput;
+    notificationPreference?: Prisma.NotificationPreferenceCreateNestedOneWithoutUserInput;
+    verificationTokens?: Prisma.EmailVerificationTokenCreateNestedManyWithoutUserInput;
+    resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput;
+    createdCommunities?: Prisma.CommunityCreateNestedManyWithoutCreatedByInput;
+    communityRoles?: Prisma.CommunityRoleCreateNestedManyWithoutUserInput;
+    communityRolesGranted?: Prisma.CommunityRoleCreateNestedManyWithoutGrantedByInput;
+    subscriptions?: Prisma.CommunitySubscriptionCreateNestedManyWithoutUserInput;
+    tagSubscriptions?: Prisma.TagSubscriptionCreateNestedManyWithoutUserInput;
+    feedPreference?: Prisma.FeedPreferenceCreateNestedOneWithoutUserInput;
+    hiddenCommunities?: Prisma.HiddenCommunityCreateNestedManyWithoutUserInput;
+    hiddenPublications?: Prisma.HiddenPublicationCreateNestedManyWithoutUserInput;
+    publications?: Prisma.PublicationCreateNestedManyWithoutAuthorInput;
+    comments?: Prisma.CommentCreateNestedManyWithoutAuthorInput;
+    publicationReactions?: Prisma.PublicationReactionCreateNestedManyWithoutUserInput;
+    commentReactions?: Prisma.CommentReactionCreateNestedManyWithoutUserInput;
+    bookmarks?: Prisma.BookmarkCreateNestedManyWithoutUserInput;
+    following?: Prisma.UserFollowCreateNestedManyWithoutFollowerInput;
+    followers?: Prisma.UserFollowCreateNestedManyWithoutFollowingInput;
+    wallAuthored?: Prisma.WallPostCreateNestedManyWithoutAuthorInput;
+    wallReceived?: Prisma.WallPostCreateNestedManyWithoutProfileUserInput;
+    notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput;
+    notificationActions?: Prisma.NotificationCreateNestedManyWithoutActorInput;
+    conversationMemberships?: Prisma.ConversationMemberCreateNestedManyWithoutUserInput;
+    messages?: Prisma.MessageCreateNestedManyWithoutAuthorInput;
+    reports?: Prisma.ReportCreateNestedManyWithoutAuthorInput;
+    auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorInput;
+    wallet?: Prisma.WalletCreateNestedOneWithoutUserInput;
+    promotions?: Prisma.PromotionOrderCreateNestedManyWithoutUserInput;
+    mediaAssets?: Prisma.MediaAssetCreateNestedManyWithoutOwnerInput;
+    telegramLink?: Prisma.TelegramLinkCreateNestedOneWithoutUserInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeCreateNestedManyWithoutUserInput;
+    telegramChannels?: Prisma.TelegramChannelCreateNestedManyWithoutOwnerInput;
+    telegramShares?: Prisma.TelegramShareCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerCreateNestedManyWithoutUserInput;
+    moderationActions?: Prisma.ModerationActionCreateNestedManyWithoutSubjectInput;
+    moderationActionsMade?: Prisma.ModerationActionCreateNestedManyWithoutActorInput;
+    moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
+    communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
+    pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
+    pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
+    workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftCreateNestedManyWithoutSenderInput;
+    workshopReviews?: Prisma.WorkshopItemCreateNestedManyWithoutReviewedByInput;
+    workshopLikes?: Prisma.WorkshopLikeCreateNestedManyWithoutUserInput;
+    achievements?: Prisma.UserAchievementCreateNestedManyWithoutUserInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventCreateNestedManyWithoutUserInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventCreateNestedManyWithoutActorInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCreatedByInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionCreateNestedManyWithoutCounterpartInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewCreateNestedManyWithoutAuthorInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewCreateNestedManyWithoutTargetInput;
+    communityReports?: Prisma.CommunityReportCreateNestedManyWithoutAuthorInput;
+    contentActions?: Prisma.CommunityContentActionCreateNestedManyWithoutActorInput;
+    structureProposals?: Prisma.CommunityStructureProposalCreateNestedManyWithoutCreatedByInput;
+    structureResolutions?: Prisma.CommunityStructureProposalCreateNestedManyWithoutResolvedByInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteCreateNestedManyWithoutInvitedUserInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteCreateNestedManyWithoutInvitedByInput;
+    communityEvents?: Prisma.CommunityEventCreateNestedManyWithoutCreatedByInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceCreateNestedManyWithoutUserInput;
+    portfolioItems?: Prisma.PortfolioItemCreateNestedManyWithoutOwnerInput;
+};
+export type UserUncheckedCreateWithoutCuratorApplicationsInput = {
+    id?: string;
+    forrumId?: number;
+    email: string;
+    username: string;
+    displayName: string;
+    bio?: string | null;
+    avatarUrl?: string | null;
+    coverUrl?: string | null;
+    wallPrivacy?: $Enums.WallPrivacy;
+    showFavorites?: boolean;
+    showSubscriptions?: boolean;
+    website?: string | null;
+    location?: string | null;
+    passwordHash: string;
+    state?: $Enums.AccountState;
+    role?: $Enums.GlobalRole;
+    emailVerifiedAt?: Date | string | null;
+    onboardingCompletedAt?: Date | string | null;
+    lastSeenAt?: Date | string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
+    sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput;
+    notificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedOneWithoutUserInput;
+    verificationTokens?: Prisma.EmailVerificationTokenUncheckedCreateNestedManyWithoutUserInput;
+    resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput;
+    createdCommunities?: Prisma.CommunityUncheckedCreateNestedManyWithoutCreatedByInput;
+    communityRoles?: Prisma.CommunityRoleUncheckedCreateNestedManyWithoutUserInput;
+    communityRolesGranted?: Prisma.CommunityRoleUncheckedCreateNestedManyWithoutGrantedByInput;
+    subscriptions?: Prisma.CommunitySubscriptionUncheckedCreateNestedManyWithoutUserInput;
+    tagSubscriptions?: Prisma.TagSubscriptionUncheckedCreateNestedManyWithoutUserInput;
+    feedPreference?: Prisma.FeedPreferenceUncheckedCreateNestedOneWithoutUserInput;
+    hiddenCommunities?: Prisma.HiddenCommunityUncheckedCreateNestedManyWithoutUserInput;
+    hiddenPublications?: Prisma.HiddenPublicationUncheckedCreateNestedManyWithoutUserInput;
+    publications?: Prisma.PublicationUncheckedCreateNestedManyWithoutAuthorInput;
+    comments?: Prisma.CommentUncheckedCreateNestedManyWithoutAuthorInput;
+    publicationReactions?: Prisma.PublicationReactionUncheckedCreateNestedManyWithoutUserInput;
+    commentReactions?: Prisma.CommentReactionUncheckedCreateNestedManyWithoutUserInput;
+    bookmarks?: Prisma.BookmarkUncheckedCreateNestedManyWithoutUserInput;
+    following?: Prisma.UserFollowUncheckedCreateNestedManyWithoutFollowerInput;
+    followers?: Prisma.UserFollowUncheckedCreateNestedManyWithoutFollowingInput;
+    wallAuthored?: Prisma.WallPostUncheckedCreateNestedManyWithoutAuthorInput;
+    wallReceived?: Prisma.WallPostUncheckedCreateNestedManyWithoutProfileUserInput;
+    notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput;
+    notificationActions?: Prisma.NotificationUncheckedCreateNestedManyWithoutActorInput;
+    conversationMemberships?: Prisma.ConversationMemberUncheckedCreateNestedManyWithoutUserInput;
+    messages?: Prisma.MessageUncheckedCreateNestedManyWithoutAuthorInput;
+    reports?: Prisma.ReportUncheckedCreateNestedManyWithoutAuthorInput;
+    auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorInput;
+    wallet?: Prisma.WalletUncheckedCreateNestedOneWithoutUserInput;
+    promotions?: Prisma.PromotionOrderUncheckedCreateNestedManyWithoutUserInput;
+    mediaAssets?: Prisma.MediaAssetUncheckedCreateNestedManyWithoutOwnerInput;
+    telegramLink?: Prisma.TelegramLinkUncheckedCreateNestedOneWithoutUserInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedCreateNestedManyWithoutUserInput;
+    telegramChannels?: Prisma.TelegramChannelUncheckedCreateNestedManyWithoutOwnerInput;
+    telegramShares?: Prisma.TelegramShareUncheckedCreateNestedManyWithoutUserInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedCreateNestedManyWithoutUserInput;
+    moderationActions?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutSubjectInput;
+    moderationActionsMade?: Prisma.ModerationActionUncheckedCreateNestedManyWithoutActorInput;
+    moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
+    communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
+    pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
+    pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
+    workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
+    giftsReceived?: Prisma.UserGiftUncheckedCreateNestedManyWithoutRecipientInput;
+    giftsSent?: Prisma.UserGiftUncheckedCreateNestedManyWithoutSenderInput;
+    workshopReviews?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutReviewedByInput;
+    workshopLikes?: Prisma.WorkshopLikeUncheckedCreateNestedManyWithoutUserInput;
+    achievements?: Prisma.UserAchievementUncheckedCreateNestedManyWithoutUserInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutUserInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventUncheckedCreateNestedManyWithoutActorInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCreatedByInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionUncheckedCreateNestedManyWithoutCounterpartInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewUncheckedCreateNestedManyWithoutAuthorInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewUncheckedCreateNestedManyWithoutTargetInput;
+    communityReports?: Prisma.CommunityReportUncheckedCreateNestedManyWithoutAuthorInput;
+    contentActions?: Prisma.CommunityContentActionUncheckedCreateNestedManyWithoutActorInput;
+    structureProposals?: Prisma.CommunityStructureProposalUncheckedCreateNestedManyWithoutCreatedByInput;
+    structureResolutions?: Prisma.CommunityStructureProposalUncheckedCreateNestedManyWithoutResolvedByInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteUncheckedCreateNestedManyWithoutInvitedUserInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteUncheckedCreateNestedManyWithoutInvitedByInput;
+    communityEvents?: Prisma.CommunityEventUncheckedCreateNestedManyWithoutCreatedByInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceUncheckedCreateNestedManyWithoutUserInput;
+    portfolioItems?: Prisma.PortfolioItemUncheckedCreateNestedManyWithoutOwnerInput;
+};
+export type UserCreateOrConnectWithoutCuratorApplicationsInput = {
+    where: Prisma.UserWhereUniqueInput;
+    create: Prisma.XOR<Prisma.UserCreateWithoutCuratorApplicationsInput, Prisma.UserUncheckedCreateWithoutCuratorApplicationsInput>;
+};
+export type UserUpsertWithoutCuratorApplicationsInput = {
+    update: Prisma.XOR<Prisma.UserUpdateWithoutCuratorApplicationsInput, Prisma.UserUncheckedUpdateWithoutCuratorApplicationsInput>;
+    create: Prisma.XOR<Prisma.UserCreateWithoutCuratorApplicationsInput, Prisma.UserUncheckedCreateWithoutCuratorApplicationsInput>;
+    where?: Prisma.UserWhereInput;
+};
+export type UserUpdateToOneWithWhereWithoutCuratorApplicationsInput = {
+    where?: Prisma.UserWhereInput;
+    data: Prisma.XOR<Prisma.UserUpdateWithoutCuratorApplicationsInput, Prisma.UserUncheckedUpdateWithoutCuratorApplicationsInput>;
+};
+export type UserUpdateWithoutCuratorApplicationsInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    email?: Prisma.StringFieldUpdateOperationsInput | string;
+    username?: Prisma.StringFieldUpdateOperationsInput | string;
+    displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+    bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+    state?: Prisma.EnumAccountStateFieldUpdateOperationsInput | $Enums.AccountState;
+    role?: Prisma.EnumGlobalRoleFieldUpdateOperationsInput | $Enums.GlobalRole;
+    emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    onboardingCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput;
+    notificationPreference?: Prisma.NotificationPreferenceUpdateOneWithoutUserNestedInput;
+    verificationTokens?: Prisma.EmailVerificationTokenUpdateManyWithoutUserNestedInput;
+    resetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput;
+    createdCommunities?: Prisma.CommunityUpdateManyWithoutCreatedByNestedInput;
+    communityRoles?: Prisma.CommunityRoleUpdateManyWithoutUserNestedInput;
+    communityRolesGranted?: Prisma.CommunityRoleUpdateManyWithoutGrantedByNestedInput;
+    subscriptions?: Prisma.CommunitySubscriptionUpdateManyWithoutUserNestedInput;
+    tagSubscriptions?: Prisma.TagSubscriptionUpdateManyWithoutUserNestedInput;
+    feedPreference?: Prisma.FeedPreferenceUpdateOneWithoutUserNestedInput;
+    hiddenCommunities?: Prisma.HiddenCommunityUpdateManyWithoutUserNestedInput;
+    hiddenPublications?: Prisma.HiddenPublicationUpdateManyWithoutUserNestedInput;
+    publications?: Prisma.PublicationUpdateManyWithoutAuthorNestedInput;
+    comments?: Prisma.CommentUpdateManyWithoutAuthorNestedInput;
+    publicationReactions?: Prisma.PublicationReactionUpdateManyWithoutUserNestedInput;
+    commentReactions?: Prisma.CommentReactionUpdateManyWithoutUserNestedInput;
+    bookmarks?: Prisma.BookmarkUpdateManyWithoutUserNestedInput;
+    following?: Prisma.UserFollowUpdateManyWithoutFollowerNestedInput;
+    followers?: Prisma.UserFollowUpdateManyWithoutFollowingNestedInput;
+    wallAuthored?: Prisma.WallPostUpdateManyWithoutAuthorNestedInput;
+    wallReceived?: Prisma.WallPostUpdateManyWithoutProfileUserNestedInput;
+    notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput;
+    notificationActions?: Prisma.NotificationUpdateManyWithoutActorNestedInput;
+    conversationMemberships?: Prisma.ConversationMemberUpdateManyWithoutUserNestedInput;
+    messages?: Prisma.MessageUpdateManyWithoutAuthorNestedInput;
+    reports?: Prisma.ReportUpdateManyWithoutAuthorNestedInput;
+    auditLogs?: Prisma.AuditLogUpdateManyWithoutActorNestedInput;
+    wallet?: Prisma.WalletUpdateOneWithoutUserNestedInput;
+    promotions?: Prisma.PromotionOrderUpdateManyWithoutUserNestedInput;
+    mediaAssets?: Prisma.MediaAssetUpdateManyWithoutOwnerNestedInput;
+    telegramLink?: Prisma.TelegramLinkUpdateOneWithoutUserNestedInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeUpdateManyWithoutUserNestedInput;
+    telegramChannels?: Prisma.TelegramChannelUpdateManyWithoutOwnerNestedInput;
+    telegramShares?: Prisma.TelegramShareUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUpdateManyWithoutUserNestedInput;
+    moderationActions?: Prisma.ModerationActionUpdateManyWithoutSubjectNestedInput;
+    moderationActionsMade?: Prisma.ModerationActionUpdateManyWithoutActorNestedInput;
+    moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
+    communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
+    pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
+    pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
+    workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
+    giftsReceived?: Prisma.UserGiftUpdateManyWithoutRecipientNestedInput;
+    giftsSent?: Prisma.UserGiftUpdateManyWithoutSenderNestedInput;
+    workshopReviews?: Prisma.WorkshopItemUpdateManyWithoutReviewedByNestedInput;
+    workshopLikes?: Prisma.WorkshopLikeUpdateManyWithoutUserNestedInput;
+    achievements?: Prisma.UserAchievementUpdateManyWithoutUserNestedInput;
+    roleEventsReceived?: Prisma.CommunityRoleEventUpdateManyWithoutUserNestedInput;
+    roleEventsCreated?: Prisma.CommunityRoleEventUpdateManyWithoutActorNestedInput;
+    interactionsCreated?: Prisma.ConfirmedInteractionUpdateManyWithoutCreatedByNestedInput;
+    interactionsReceived?: Prisma.ConfirmedInteractionUpdateManyWithoutCounterpartNestedInput;
+    interactionReviewsWritten?: Prisma.ProfileReviewUpdateManyWithoutAuthorNestedInput;
+    interactionReviewsReceived?: Prisma.ProfileReviewUpdateManyWithoutTargetNestedInput;
+    communityReports?: Prisma.CommunityReportUpdateManyWithoutAuthorNestedInput;
+    contentActions?: Prisma.CommunityContentActionUpdateManyWithoutActorNestedInput;
+    structureProposals?: Prisma.CommunityStructureProposalUpdateManyWithoutCreatedByNestedInput;
+    structureResolutions?: Prisma.CommunityStructureProposalUpdateManyWithoutResolvedByNestedInput;
+    roleInvitesReceived?: Prisma.CommunityRoleInviteUpdateManyWithoutInvitedUserNestedInput;
+    roleInvitesCreated?: Prisma.CommunityRoleInviteUpdateManyWithoutInvitedByNestedInput;
+    communityEvents?: Prisma.CommunityEventUpdateManyWithoutCreatedByNestedInput;
+    eventAttendances?: Prisma.CommunityEventAttendanceUpdateManyWithoutUserNestedInput;
+    portfolioItems?: Prisma.PortfolioItemUpdateManyWithoutOwnerNestedInput;
+};
+export type UserUncheckedUpdateWithoutCuratorApplicationsInput = {
+    id?: Prisma.StringFieldUpdateOperationsInput | string;
+    forrumId?: Prisma.IntFieldUpdateOperationsInput | number;
+    email?: Prisma.StringFieldUpdateOperationsInput | string;
+    username?: Prisma.StringFieldUpdateOperationsInput | string;
+    displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+    bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    avatarUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    coverUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    wallPrivacy?: Prisma.EnumWallPrivacyFieldUpdateOperationsInput | $Enums.WallPrivacy;
+    showFavorites?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    showSubscriptions?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+    website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
+    state?: Prisma.EnumAccountStateFieldUpdateOperationsInput | $Enums.AccountState;
+    role?: Prisma.EnumGlobalRoleFieldUpdateOperationsInput | $Enums.GlobalRole;
+    emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    onboardingCompletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    lastSeenAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null;
+    createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput;
+    notificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateOneWithoutUserNestedInput;
+    verificationTokens?: Prisma.EmailVerificationTokenUncheckedUpdateManyWithoutUserNestedInput;
+    resetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput;
+    createdCommunities?: Prisma.CommunityUncheckedUpdateManyWithoutCreatedByNestedInput;
+    communityRoles?: Prisma.CommunityRoleUncheckedUpdateManyWithoutUserNestedInput;
+    communityRolesGranted?: Prisma.CommunityRoleUncheckedUpdateManyWithoutGrantedByNestedInput;
+    subscriptions?: Prisma.CommunitySubscriptionUncheckedUpdateManyWithoutUserNestedInput;
+    tagSubscriptions?: Prisma.TagSubscriptionUncheckedUpdateManyWithoutUserNestedInput;
+    feedPreference?: Prisma.FeedPreferenceUncheckedUpdateOneWithoutUserNestedInput;
+    hiddenCommunities?: Prisma.HiddenCommunityUncheckedUpdateManyWithoutUserNestedInput;
+    hiddenPublications?: Prisma.HiddenPublicationUncheckedUpdateManyWithoutUserNestedInput;
+    publications?: Prisma.PublicationUncheckedUpdateManyWithoutAuthorNestedInput;
+    comments?: Prisma.CommentUncheckedUpdateManyWithoutAuthorNestedInput;
+    publicationReactions?: Prisma.PublicationReactionUncheckedUpdateManyWithoutUserNestedInput;
+    commentReactions?: Prisma.CommentReactionUncheckedUpdateManyWithoutUserNestedInput;
+    bookmarks?: Prisma.BookmarkUncheckedUpdateManyWithoutUserNestedInput;
+    following?: Prisma.UserFollowUncheckedUpdateManyWithoutFollowerNestedInput;
+    followers?: Prisma.UserFollowUncheckedUpdateManyWithoutFollowingNestedInput;
+    wallAuthored?: Prisma.WallPostUncheckedUpdateManyWithoutAuthorNestedInput;
+    wallReceived?: Prisma.WallPostUncheckedUpdateManyWithoutProfileUserNestedInput;
+    notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput;
+    notificationActions?: Prisma.NotificationUncheckedUpdateManyWithoutActorNestedInput;
+    conversationMemberships?: Prisma.ConversationMemberUncheckedUpdateManyWithoutUserNestedInput;
+    messages?: Prisma.MessageUncheckedUpdateManyWithoutAuthorNestedInput;
+    reports?: Prisma.ReportUncheckedUpdateManyWithoutAuthorNestedInput;
+    auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorNestedInput;
+    wallet?: Prisma.WalletUncheckedUpdateOneWithoutUserNestedInput;
+    promotions?: Prisma.PromotionOrderUncheckedUpdateManyWithoutUserNestedInput;
+    mediaAssets?: Prisma.MediaAssetUncheckedUpdateManyWithoutOwnerNestedInput;
+    telegramLink?: Prisma.TelegramLinkUncheckedUpdateOneWithoutUserNestedInput;
+    telegramLinkCodes?: Prisma.TelegramLinkCodeUncheckedUpdateManyWithoutUserNestedInput;
+    telegramChannels?: Prisma.TelegramChannelUncheckedUpdateManyWithoutOwnerNestedInput;
+    telegramShares?: Prisma.TelegramShareUncheckedUpdateManyWithoutUserNestedInput;
+    mediaPartners?: Prisma.MediaPartnerUncheckedUpdateManyWithoutUserNestedInput;
+    moderationActions?: Prisma.ModerationActionUncheckedUpdateManyWithoutSubjectNestedInput;
+    moderationActionsMade?: Prisma.ModerationActionUncheckedUpdateManyWithoutActorNestedInput;
+    moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
+    moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
+    communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
@@ -16156,6 +16695,7 @@ export type UserCreateWithoutPollsCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
@@ -16242,6 +16782,7 @@ export type UserUncheckedCreateWithoutPollsCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
@@ -16340,6 +16881,7 @@ export type UserUpdateWithoutPollsCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
@@ -16426,6 +16968,7 @@ export type UserUncheckedUpdateWithoutPollsCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
@@ -16512,6 +17055,7 @@ export type UserCreateWithoutPollVotesInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     workshopItems?: Prisma.WorkshopItemCreateNestedManyWithoutAuthorInput;
@@ -16598,6 +17142,7 @@ export type UserUncheckedCreateWithoutPollVotesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     workshopItems?: Prisma.WorkshopItemUncheckedCreateNestedManyWithoutAuthorInput;
@@ -16696,6 +17241,7 @@ export type UserUpdateWithoutPollVotesInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     workshopItems?: Prisma.WorkshopItemUpdateManyWithoutAuthorNestedInput;
@@ -16782,6 +17328,7 @@ export type UserUncheckedUpdateWithoutPollVotesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     workshopItems?: Prisma.WorkshopItemUncheckedUpdateManyWithoutAuthorNestedInput;
@@ -16867,6 +17414,7 @@ export type UserCreateWithoutMediaPartnersInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -16953,6 +17501,7 @@ export type UserUncheckedCreateWithoutMediaPartnersInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -17051,6 +17600,7 @@ export type UserUpdateWithoutMediaPartnersInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -17137,6 +17687,7 @@ export type UserUncheckedUpdateWithoutMediaPartnersInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -17224,6 +17775,7 @@ export type UserCreateWithoutWorkshopItemsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -17310,6 +17862,7 @@ export type UserUncheckedCreateWithoutWorkshopItemsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -17400,6 +17953,7 @@ export type UserCreateWithoutWorkshopReviewsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -17486,6 +18040,7 @@ export type UserUncheckedCreateWithoutWorkshopReviewsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -17584,6 +18139,7 @@ export type UserUpdateWithoutWorkshopItemsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -17670,6 +18226,7 @@ export type UserUncheckedUpdateWithoutWorkshopItemsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -17764,6 +18321,7 @@ export type UserUpdateWithoutWorkshopReviewsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -17850,6 +18408,7 @@ export type UserUncheckedUpdateWithoutWorkshopReviewsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -17936,6 +18495,7 @@ export type UserCreateWithoutWorkshopLikesInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -18022,6 +18582,7 @@ export type UserUncheckedCreateWithoutWorkshopLikesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -18120,6 +18681,7 @@ export type UserUpdateWithoutWorkshopLikesInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -18206,6 +18768,7 @@ export type UserUncheckedUpdateWithoutWorkshopLikesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -18292,6 +18855,7 @@ export type UserCreateWithoutGiftsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -18378,6 +18942,7 @@ export type UserUncheckedCreateWithoutGiftsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -18468,6 +19033,7 @@ export type UserCreateWithoutGiftsSentInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -18554,6 +19120,7 @@ export type UserUncheckedCreateWithoutGiftsSentInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -18652,6 +19219,7 @@ export type UserUpdateWithoutGiftsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -18738,6 +19306,7 @@ export type UserUncheckedUpdateWithoutGiftsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -18832,6 +19401,7 @@ export type UserUpdateWithoutGiftsSentInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -18918,6 +19488,7 @@ export type UserUncheckedUpdateWithoutGiftsSentInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -19004,6 +19575,7 @@ export type UserCreateWithoutAchievementsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -19090,6 +19662,7 @@ export type UserUncheckedCreateWithoutAchievementsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -19188,6 +19761,7 @@ export type UserUpdateWithoutAchievementsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -19274,6 +19848,7 @@ export type UserUncheckedUpdateWithoutAchievementsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -19360,6 +19935,7 @@ export type UserCreateWithoutRoleEventsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -19446,6 +20022,7 @@ export type UserUncheckedCreateWithoutRoleEventsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -19536,6 +20113,7 @@ export type UserCreateWithoutRoleEventsCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -19622,6 +20200,7 @@ export type UserUncheckedCreateWithoutRoleEventsCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -19720,6 +20299,7 @@ export type UserUpdateWithoutRoleEventsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -19806,6 +20386,7 @@ export type UserUncheckedUpdateWithoutRoleEventsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -19900,6 +20481,7 @@ export type UserUpdateWithoutRoleEventsCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -19986,6 +20568,7 @@ export type UserUncheckedUpdateWithoutRoleEventsCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -20072,6 +20655,7 @@ export type UserCreateWithoutInteractionsCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -20158,6 +20742,7 @@ export type UserUncheckedCreateWithoutInteractionsCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -20248,6 +20833,7 @@ export type UserCreateWithoutInteractionsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -20334,6 +20920,7 @@ export type UserUncheckedCreateWithoutInteractionsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -20432,6 +21019,7 @@ export type UserUpdateWithoutInteractionsCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -20518,6 +21106,7 @@ export type UserUncheckedUpdateWithoutInteractionsCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -20612,6 +21201,7 @@ export type UserUpdateWithoutInteractionsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -20698,6 +21288,7 @@ export type UserUncheckedUpdateWithoutInteractionsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -20784,6 +21375,7 @@ export type UserCreateWithoutInteractionReviewsWrittenInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -20870,6 +21462,7 @@ export type UserUncheckedCreateWithoutInteractionReviewsWrittenInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -20960,6 +21553,7 @@ export type UserCreateWithoutInteractionReviewsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -21046,6 +21640,7 @@ export type UserUncheckedCreateWithoutInteractionReviewsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -21144,6 +21739,7 @@ export type UserUpdateWithoutInteractionReviewsWrittenInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -21230,6 +21826,7 @@ export type UserUncheckedUpdateWithoutInteractionReviewsWrittenInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -21324,6 +21921,7 @@ export type UserUpdateWithoutInteractionReviewsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -21410,6 +22008,7 @@ export type UserUncheckedUpdateWithoutInteractionReviewsReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -21496,6 +22095,7 @@ export type UserCreateWithoutCommunityReportsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -21582,6 +22182,7 @@ export type UserUncheckedCreateWithoutCommunityReportsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -21680,6 +22281,7 @@ export type UserUpdateWithoutCommunityReportsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -21766,6 +22368,7 @@ export type UserUncheckedUpdateWithoutCommunityReportsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -21852,6 +22455,7 @@ export type UserCreateWithoutContentActionsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -21938,6 +22542,7 @@ export type UserUncheckedCreateWithoutContentActionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -22036,6 +22641,7 @@ export type UserUpdateWithoutContentActionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -22122,6 +22728,7 @@ export type UserUncheckedUpdateWithoutContentActionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -22208,6 +22815,7 @@ export type UserCreateWithoutStructureProposalsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -22294,6 +22902,7 @@ export type UserUncheckedCreateWithoutStructureProposalsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -22384,6 +22993,7 @@ export type UserCreateWithoutStructureResolutionsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -22470,6 +23080,7 @@ export type UserUncheckedCreateWithoutStructureResolutionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -22568,6 +23179,7 @@ export type UserUpdateWithoutStructureProposalsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -22654,6 +23266,7 @@ export type UserUncheckedUpdateWithoutStructureProposalsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -22748,6 +23361,7 @@ export type UserUpdateWithoutStructureResolutionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -22834,6 +23448,7 @@ export type UserUncheckedUpdateWithoutStructureResolutionsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -22920,6 +23535,7 @@ export type UserCreateWithoutRoleInvitesReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -23006,6 +23622,7 @@ export type UserUncheckedCreateWithoutRoleInvitesReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -23096,6 +23713,7 @@ export type UserCreateWithoutRoleInvitesCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -23182,6 +23800,7 @@ export type UserUncheckedCreateWithoutRoleInvitesCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -23280,6 +23899,7 @@ export type UserUpdateWithoutRoleInvitesReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -23366,6 +23986,7 @@ export type UserUncheckedUpdateWithoutRoleInvitesReceivedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -23460,6 +24081,7 @@ export type UserUpdateWithoutRoleInvitesCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -23546,6 +24168,7 @@ export type UserUncheckedUpdateWithoutRoleInvitesCreatedInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -23632,6 +24255,7 @@ export type UserCreateWithoutCommunityEventsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -23718,6 +24342,7 @@ export type UserUncheckedCreateWithoutCommunityEventsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -23816,6 +24441,7 @@ export type UserUpdateWithoutCommunityEventsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -23902,6 +24528,7 @@ export type UserUncheckedUpdateWithoutCommunityEventsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -23988,6 +24615,7 @@ export type UserCreateWithoutEventAttendancesInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -24074,6 +24702,7 @@ export type UserUncheckedCreateWithoutEventAttendancesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -24172,6 +24801,7 @@ export type UserUpdateWithoutEventAttendancesInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -24258,6 +24888,7 @@ export type UserUncheckedUpdateWithoutEventAttendancesInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -24344,6 +24975,7 @@ export type UserCreateWithoutPortfolioItemsInput = {
     moderationAppeals?: Prisma.ModerationAppealCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteCreateNestedManyWithoutUserInput;
@@ -24430,6 +25062,7 @@ export type UserUncheckedCreateWithoutPortfolioItemsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutUserInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedCreateNestedManyWithoutResolvedByInput;
     communityProposals?: Prisma.CommunityProposalUncheckedCreateNestedManyWithoutAuthorInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedCreateNestedManyWithoutUserInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedCreateNestedManyWithoutUserInput;
     pollsCreated?: Prisma.CommunityPollUncheckedCreateNestedManyWithoutCreatedByInput;
     pollVotes?: Prisma.PollVoteUncheckedCreateNestedManyWithoutUserInput;
@@ -24528,6 +25161,7 @@ export type UserUpdateWithoutPortfolioItemsInput = {
     moderationAppeals?: Prisma.ModerationAppealUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUpdateManyWithoutUserNestedInput;
@@ -24614,6 +25248,7 @@ export type UserUncheckedUpdateWithoutPortfolioItemsInput = {
     moderationAppeals?: Prisma.ModerationAppealUncheckedUpdateManyWithoutUserNestedInput;
     moderationAppealsResolved?: Prisma.ModerationAppealUncheckedUpdateManyWithoutResolvedByNestedInput;
     communityProposals?: Prisma.CommunityProposalUncheckedUpdateManyWithoutAuthorNestedInput;
+    curatorApplications?: Prisma.CuratorApplicationUncheckedUpdateManyWithoutUserNestedInput;
     proposalSupports?: Prisma.ProposalSupportUncheckedUpdateManyWithoutUserNestedInput;
     pollsCreated?: Prisma.CommunityPollUncheckedUpdateManyWithoutCreatedByNestedInput;
     pollVotes?: Prisma.PollVoteUncheckedUpdateManyWithoutUserNestedInput;
@@ -24675,6 +25310,7 @@ export type UserCountOutputType = {
     moderationAppeals: number;
     moderationAppealsResolved: number;
     communityProposals: number;
+    curatorApplications: number;
     proposalSupports: number;
     pollsCreated: number;
     pollVotes: number;
@@ -24737,6 +25373,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
     moderationAppeals?: boolean | UserCountOutputTypeCountModerationAppealsArgs;
     moderationAppealsResolved?: boolean | UserCountOutputTypeCountModerationAppealsResolvedArgs;
     communityProposals?: boolean | UserCountOutputTypeCountCommunityProposalsArgs;
+    curatorApplications?: boolean | UserCountOutputTypeCountCuratorApplicationsArgs;
     proposalSupports?: boolean | UserCountOutputTypeCountProposalSupportsArgs;
     pollsCreated?: boolean | UserCountOutputTypeCountPollsCreatedArgs;
     pollVotes?: boolean | UserCountOutputTypeCountPollVotesArgs;
@@ -24873,6 +25510,9 @@ export type UserCountOutputTypeCountModerationAppealsResolvedArgs<ExtArgs extend
 export type UserCountOutputTypeCountCommunityProposalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.CommunityProposalWhereInput;
 };
+export type UserCountOutputTypeCountCuratorApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.CuratorApplicationWhereInput;
+};
 export type UserCountOutputTypeCountProposalSupportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.ProposalSupportWhereInput;
 };
@@ -25007,6 +25647,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
     moderationAppeals?: boolean | Prisma.User$moderationAppealsArgs<ExtArgs>;
     moderationAppealsResolved?: boolean | Prisma.User$moderationAppealsResolvedArgs<ExtArgs>;
     communityProposals?: boolean | Prisma.User$communityProposalsArgs<ExtArgs>;
+    curatorApplications?: boolean | Prisma.User$curatorApplicationsArgs<ExtArgs>;
     proposalSupports?: boolean | Prisma.User$proposalSupportsArgs<ExtArgs>;
     pollsCreated?: boolean | Prisma.User$pollsCreatedArgs<ExtArgs>;
     pollVotes?: boolean | Prisma.User$pollVotesArgs<ExtArgs>;
@@ -25144,6 +25785,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     moderationAppeals?: boolean | Prisma.User$moderationAppealsArgs<ExtArgs>;
     moderationAppealsResolved?: boolean | Prisma.User$moderationAppealsResolvedArgs<ExtArgs>;
     communityProposals?: boolean | Prisma.User$communityProposalsArgs<ExtArgs>;
+    curatorApplications?: boolean | Prisma.User$curatorApplicationsArgs<ExtArgs>;
     proposalSupports?: boolean | Prisma.User$proposalSupportsArgs<ExtArgs>;
     pollsCreated?: boolean | Prisma.User$pollsCreatedArgs<ExtArgs>;
     pollVotes?: boolean | Prisma.User$pollVotesArgs<ExtArgs>;
@@ -25215,6 +25857,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
         moderationAppeals: Prisma.$ModerationAppealPayload<ExtArgs>[];
         moderationAppealsResolved: Prisma.$ModerationAppealPayload<ExtArgs>[];
         communityProposals: Prisma.$CommunityProposalPayload<ExtArgs>[];
+        curatorApplications: Prisma.$CuratorApplicationPayload<ExtArgs>[];
         proposalSupports: Prisma.$ProposalSupportPayload<ExtArgs>[];
         pollsCreated: Prisma.$CommunityPollPayload<ExtArgs>[];
         pollVotes: Prisma.$PollVotePayload<ExtArgs>[];
@@ -25354,6 +25997,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
     moderationAppeals<T extends Prisma.User$moderationAppealsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$moderationAppealsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ModerationAppealPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     moderationAppealsResolved<T extends Prisma.User$moderationAppealsResolvedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$moderationAppealsResolvedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ModerationAppealPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     communityProposals<T extends Prisma.User$communityProposalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$communityProposalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityProposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    curatorApplications<T extends Prisma.User$curatorApplicationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$curatorApplicationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CuratorApplicationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     proposalSupports<T extends Prisma.User$proposalSupportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$proposalSupportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProposalSupportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     pollsCreated<T extends Prisma.User$pollsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pollsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CommunityPollPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     pollVotes<T extends Prisma.User$pollVotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pollVotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PollVotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
@@ -25922,6 +26566,17 @@ export type User$communityProposalsArgs<ExtArgs extends runtime.Types.Extensions
     take?: number;
     skip?: number;
     distinct?: Prisma.CommunityProposalScalarFieldEnum | Prisma.CommunityProposalScalarFieldEnum[];
+};
+export type User$curatorApplicationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.CuratorApplicationSelect<ExtArgs> | null;
+    omit?: Prisma.CuratorApplicationOmit<ExtArgs> | null;
+    include?: Prisma.CuratorApplicationInclude<ExtArgs> | null;
+    where?: Prisma.CuratorApplicationWhereInput;
+    orderBy?: Prisma.CuratorApplicationOrderByWithRelationInput | Prisma.CuratorApplicationOrderByWithRelationInput[];
+    cursor?: Prisma.CuratorApplicationWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.CuratorApplicationScalarFieldEnum | Prisma.CuratorApplicationScalarFieldEnum[];
 };
 export type User$proposalSupportsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.ProposalSupportSelect<ExtArgs> | null;

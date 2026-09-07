@@ -17,7 +17,7 @@ import { CurrentUser } from '../auth/current-user.js';
 import { OptionalSessionGuard } from '../auth/optional-session.guard.js';
 import { SessionGuard } from '../auth/session.guard.js';
 import { VerifiedGuard } from '../auth/verified.guard.js';
-import { CastVoteDto, ClosePollDto, CreatePollDto, CreateProposalDto, ResolveProposalDto } from './dto.js';
+import { CastVoteDto, ClosePollDto, CreateCuratorApplicationDto, CreatePollDto, CreateProposalDto, ResolveProposalDto } from './dto.js';
 import { GovernanceService } from './governance.service.js';
 let GovernanceController = class GovernanceController {
     service;
@@ -26,6 +26,7 @@ let GovernanceController = class GovernanceController {
     }
     proposals(user) { return this.service.proposals(user?.id); }
     createProposal(user, dto) { return this.service.createProposal(user.id, dto); }
+    createCuratorApplication(user, dto) { return this.service.createCuratorApplication(user.id, dto); }
     support(user, id) { return this.service.toggleSupport(user.id, id); }
     polls(user) { return this.service.polls(user?.id); }
     createPoll(user, slug, dto) { return this.service.createPoll(slug, user, dto); }
@@ -49,6 +50,15 @@ __decorate([
     __metadata("design:paramtypes", [Object, CreateProposalDto]),
     __metadata("design:returntype", void 0)
 ], GovernanceController.prototype, "createProposal", null);
+__decorate([
+    Post('curator-applications'),
+    UseGuards(SessionGuard, VerifiedGuard),
+    __param(0, CurrentUser()),
+    __param(1, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, CreateCuratorApplicationDto]),
+    __metadata("design:returntype", void 0)
+], GovernanceController.prototype, "createCuratorApplication", null);
 __decorate([
     Post('proposals/:id/support'),
     UseGuards(SessionGuard, VerifiedGuard),
