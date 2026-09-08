@@ -102,10 +102,10 @@ try {
   await page.locator('.forum-welcome h1').hover();
  }
  await checkInteractions();
- await page.screenshot({path:output+'/forrum-v30-light.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v31-light.png',fullPage:true});
  await page.getByRole('button',{name:'Включить тёмную тему'}).click();
  await checkInteractions();
- await page.screenshot({path:output+'/forrum-v30-dark.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v31-dark.png',fullPage:true});
  assert.equal(await page.locator('html').getAttribute('data-forrum-theme'),'graphite');
  const themeControl = page.getByRole('button',{name:'Включить светлую тему'});
  const notificationControl = page.getByRole('link',{name:'Уведомления',exact:true});
@@ -155,6 +155,12 @@ try {
   await page.setViewportSize({width,height:900});
   const dimensions=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth}));
   assert(dimensions.scroll<=dimensions.client+1,'Horizontal overflow at '+width+': '+JSON.stringify(dimensions));
+  if(width>=1440) {
+   const layout=await page.locator('.forum-topic').first().evaluate(el=>({height:el.getBoundingClientRect().height,service:el.querySelector('.forum-topic-service').getBoundingClientRect().bottom,bottom:el.getBoundingClientRect().bottom}));
+   assert(layout.height<=165,'Desktop topic must remain compact: '+JSON.stringify(layout));
+   assert(layout.service<=layout.bottom,'Topic metadata must stay within card');
+   assert((await page.locator('.forum-home').boundingBox()).width<=1600,'Reading layout must have bounded width');
+  }
   await page.locator('.forum-news').scrollIntoViewIfNeeded();
   assert(await page.locator('.forum-news').isVisible(),'News reachable at '+width);
  }
@@ -163,14 +169,14 @@ try {
  await page.mouse.wheel(0,600);
  await page.waitForFunction(()=>window.scrollY>100);
  await page.evaluate(()=>window.scrollTo(0,0));
- await page.screenshot({path:output+'/forrum-v30-mobile-dark.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v31-mobile-dark.png',fullPage:true});
  await page.getByRole('button',{name:'Открыть меню',exact:true}).click();
  await page.getByRole('navigation',{name:'Категории',exact:true}).waitFor();
  await page.getByRole('button',{name:'Свернуть: Разработка'}).click();
  await page.getByRole('button',{name:'Развернуть: Разработка'}).waitFor();
  await page.keyboard.press('Escape');
  await page.getByRole('button',{name:'Включить светлую тему'}).click();
- await page.screenshot({path:output+'/forrum-v30-mobile-light.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v31-mobile-light.png',fullPage:true});
  emptyPeople=true;
  await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
  assert.equal(await page.getByRole('heading',{name:'Люди недели'}).count(),0);
@@ -180,7 +186,7 @@ try {
  assert(await page.locator('.forum-top-create').isVisible(),'Create remains available after hiding welcome on mobile');
  await page.goto('http://127.0.0.1:'+port+'/login',{waitUntil:'networkidle'});
  assert.equal(await page.locator('[data-forrum-shell="header"]').count(),1,'Non-home shell retained');
- await page.screenshot({path:output+'/forrum-v30-login.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v31-login.png',fullPage:true});
  assert.deepEqual(errors,[],'Browser errors');
  await writeFile(output+'/results.json',JSON.stringify({passed:true,checks:['SSR session cookies','light/dark persisted','bookmark toggle and failure','Telegram channel permissions and mocked send','feed order','unanswered','community filter','API failure and retry','6 viewport widths without overflow','news reachable','mobile menu','non-home shell','no browser errors'],requests:requests.length},null,2));
  console.log('Home reference browser checks passed. Screenshots: '+output);
