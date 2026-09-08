@@ -70,9 +70,42 @@ try {
  await page.keyboard.press('Control+k');
  assert(await page.getByLabel('Поиск тем, людей, проектов').evaluate(el => document.activeElement === el));
  assert(requests.some(r=>r.path==='/v1/feed' && r.cookie?.includes('forrum_test=viewer')),'SSR must forward session cookies');
- await page.screenshot({path:output+'/forrum-v29-light.png',fullPage:true});
+
+ async function checkInteractions() {
+  const create=page.locator('.forum-top-create');
+  const base=await create.boundingBox();
+  await create.hover(); await page.waitForTimeout(180);
+  assert.equal(await create.evaluate(el=>getComputedStyle(el).color),'rgb(23, 34, 12)','Create label must remain dark on lime');
+  assert.deepEqual(await create.boundingBox(),base,'Hover must not change button size');
+  await create.focus();
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Shift+Tab');
+  assert.notEqual(await create.evaluate(el=>getComputedStyle(el).outlineStyle),'none');
+  let tabBackground;
+  for(const label of ['Все темы','Популярные','Новые','Тренд','Без ответов']) {
+   const tab=page.getByRole('button',{name:label,exact:true});
+   await tab.hover(); await page.waitForTimeout(180);
+   const background=await tab.evaluate(el=>getComputedStyle(el).backgroundColor);
+   if(tabBackground) assert.equal(background,tabBackground,'All tabs share hover treatment');
+   tabBackground=background;
+  }
+  const meta=page.locator('.forum-topic-meta').first();
+  const bookmark=meta.locator('button');
+  const box=await bookmark.boundingBox();
+  const glyph=await bookmark.locator('svg').boundingBox();
+  assert(Math.abs(box.x+box.width/2-glyph.x-glyph.width/2)<1,'Bookmark horizontally centered');
+  assert(Math.abs(box.y+box.height/2-glyph.y-glyph.height/2)<1,'Bookmark vertically centered');
+  await meta.locator('a').hover(); await page.waitForTimeout(180);
+  const replyBg=await meta.locator('a').evaluate(el=>getComputedStyle(el).backgroundColor);
+  await bookmark.hover(); await page.waitForTimeout(180);
+  assert.equal(await bookmark.evaluate(el=>getComputedStyle(el).backgroundColor),replyBg);
+  await page.locator('.forum-welcome h1').hover();
+ }
+ await checkInteractions();
+ await page.screenshot({path:output+'/forrum-v30-light.png',fullPage:true});
  await page.getByRole('button',{name:'Включить тёмную тему'}).click();
- await page.screenshot({path:output+'/forrum-v29-dark.png',fullPage:true});
+ await checkInteractions();
+ await page.screenshot({path:output+'/forrum-v30-dark.png',fullPage:true});
  assert.equal(await page.locator('html').getAttribute('data-forrum-theme'),'graphite');
  const themeControl = page.getByRole('button',{name:'Включить светлую тему'});
  const notificationControl = page.getByRole('link',{name:'Уведомления',exact:true});
@@ -130,14 +163,14 @@ try {
  await page.mouse.wheel(0,600);
  await page.waitForFunction(()=>window.scrollY>100);
  await page.evaluate(()=>window.scrollTo(0,0));
- await page.screenshot({path:output+'/forrum-v29-mobile-dark.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v30-mobile-dark.png',fullPage:true});
  await page.getByRole('button',{name:'Открыть меню',exact:true}).click();
  await page.getByRole('navigation',{name:'Категории',exact:true}).waitFor();
  await page.getByRole('button',{name:'Свернуть: Разработка'}).click();
  await page.getByRole('button',{name:'Развернуть: Разработка'}).waitFor();
  await page.keyboard.press('Escape');
  await page.getByRole('button',{name:'Включить светлую тему'}).click();
- await page.screenshot({path:output+'/forrum-v29-mobile-light.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v30-mobile-light.png',fullPage:true});
  emptyPeople=true;
  await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
  assert.equal(await page.getByRole('heading',{name:'Люди недели'}).count(),0);
@@ -147,7 +180,7 @@ try {
  assert(await page.locator('.forum-top-create').isVisible(),'Create remains available after hiding welcome on mobile');
  await page.goto('http://127.0.0.1:'+port+'/login',{waitUntil:'networkidle'});
  assert.equal(await page.locator('[data-forrum-shell="header"]').count(),1,'Non-home shell retained');
- await page.screenshot({path:output+'/forrum-v29-login.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v30-login.png',fullPage:true});
  assert.deepEqual(errors,[],'Browser errors');
  await writeFile(output+'/results.json',JSON.stringify({passed:true,checks:['SSR session cookies','light/dark persisted','bookmark toggle and failure','Telegram channel permissions and mocked send','feed order','unanswered','community filter','API failure and retry','6 viewport widths without overflow','news reachable','mobile menu','non-home shell','no browser errors'],requests:requests.length},null,2));
  console.log('Home reference browser checks passed. Screenshots: '+output);

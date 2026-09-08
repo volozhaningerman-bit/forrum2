@@ -20609,22 +20609,14 @@ html[data-forrum-theme='graphite'] {
   }
 }
 
-/* V29 shared icon system. Illustrations, avatars and user content are excluded. */
+/* Shared glyph geometry; interaction belongs to each control, not its SVG. */
 svg[data-ui-icon] {fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0;}
-:is(a,button):has(> svg[data-ui-icon]) {transition:color 160ms ease,background-color 160ms ease,border-color 160ms ease;}
-:is(a,button):has(> svg[data-ui-icon]):hover {color:var(--f-accent,#527711);}
-:is(a,button):has(> svg[data-ui-icon]):focus-visible {outline:2px solid var(--f-accent,#527711); outline-offset:3px;}
-:is(a,button):hover>svg[data-ui-icon] {scale:1; translate:none;}
 .theme-toggle-v2 svg[data-ui-icon], .section-symbol svg[data-ui-icon] {fill:none; stroke:currentColor; stroke-width:1.9;}
 .section-tree-row .section-tree-name-link {flex:0 1 auto;}
 .section-tree-row .section-tree-chevron {flex:1 0 28px; justify-content:flex-end; align-self:stretch;}
-html[data-forrum-theme="graphite"] :is(a,button):has(>svg[data-ui-icon]):hover {color:var(--f-accent,#b4d94c);}
-@media(prefers-reduced-motion:reduce) { :is(a,button):has(svg[data-ui-icon]) {transition:none!important;} }
-/* Shared shells use the same interaction palette as the homepage. */
 body {--ui-icon-hover:#e3e8de; --ui-icon-accent:#527711;}
 html[data-forrum-theme="graphite"] body {--ui-icon-hover:#15262d; --ui-icon-accent:#b4d94c;}
-:is(.theme-toggle-v2,.icon-links a,.bb-tool-button):hover,
-:is(a,button):has(>svg[data-ui-icon]):not(:disabled):not(.forum-button):not(.button):hover {
+:is(.theme-toggle-v2,.icon-links a,.bb-tool-button):hover {
  color:var(--f-accent,var(--ui-icon-accent))!important;
  background-color:var(--f-hover,var(--ui-icon-hover))!important;
 }
