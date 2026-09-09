@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { Prisma } from '../generated/prisma/client.js';
 import { PrismaService } from '../prisma/prisma.service.js';
-import { excerpt } from '../common/text.js';
+import { excerpt, replyExcerpt } from '../common/text.js';
 import { expandCommunityIds } from '../common/community-tree.js';
 import { calculateFeedScore } from './ranking.js';
 import { includeInForYou } from './policy.js';
@@ -223,6 +223,8 @@ export class FeedService {
           ],
           distinct: ['publicationId'],
           select: {
+            id: true,
+            body: true,
             publicationId: true,
             createdAt: true,
             author: {
@@ -239,6 +241,8 @@ export class FeedService {
       latestComments.map((comment) => [
         comment.publicationId,
         {
+          id: comment.id,
+          excerpt: replyExcerpt(comment.body),
           createdAt: comment.createdAt,
           author: comment.author,
         },

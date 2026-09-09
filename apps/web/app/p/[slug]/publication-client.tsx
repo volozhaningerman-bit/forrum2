@@ -20,6 +20,8 @@ import {
   ShieldIcon,
   UsersIcon,
 } from '@/components/icons';
+import { useTopicReading } from '@/components/use-topic-reading';
+import { firstNewReply, saveTopicVisit } from '@/lib/topic-reading';
 import type { Tag } from '@/lib/types';
 
 type Comment = {
@@ -118,6 +120,24 @@ export function PublicationClient({
   initialData: Publication;
 }) {
   const router = useRouter();
+  const { viewer, history } = useTopicReading();
+  const recordedVisit = useRef('');
+  useEffect(() => {
+    if (!viewer || !history || recordedVisit.current === `${viewer}:${slug}`) return;
+    recordedVisit.current = `${viewer}:${slug}`;
+    const target = window.location.hash === '#new-replies'
+      ? firstNewReply(initialData.comments, history[initialData.id])
+      : undefined;
+    if (target) {
+      document.getElementById(`comment-${target.id}`)?.scrollIntoView({block:'center'});
+      window.history.replaceState(null, '', `#comment-${target.id}`);
+    } else if (window.location.hash.startsWith('#comment-')) {
+      document.getElementById(decodeURIComponent(window.location.hash.slice(1)))?.scrollIntoView({block:'center'});
+    }
+    const latest = initialData.comments.reduce((at,c) => Date.parse(c.createdAt)>Date.parse(at) ? c.createdAt : at, initialData.createdAt);
+    saveTopicVisit(viewer, initialData.id, latest);
+  }, [viewer, history, slug, initialData]);
+
   const [item, setItem] =
     useState<Publication | null>(initialData);
   const [error, setError] = useState('');
@@ -487,7 +507,7 @@ export function PublicationClient({
         <section className="discussion-section">
           <div className="discussion-heading">
             <div><span className="eyebrow">Обсуждение</span><h2>Ответы пользователей</h2></div>
-            <div className="discussion-tools"><label>Порядок<select value={commentOrder} onChange={(event) => setCommentOrder(event.target.value as 'oldest' | 'newest')}><option value="oldest">Сначала ранние</option><option value="newest">Сначала новые</option></select></label><span className="discussion-count">{item.comments.length}</span></div>
+            <div id="discussion" className="discussion-tools"><label>Порядок<select value={commentOrder} onChange={(event) => setCommentOrder(event.target.value as 'oldest' | 'newest')}><option value="oldest">Сначала ранние</option><option value="newest">Сначала новые</option></select></label><span className="discussion-count">{item.comments.length}</span></div>
           </div>
 
           <form

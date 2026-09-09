@@ -16,7 +16,7 @@ export function AuthActions() {
     window.addEventListener('focus', load);
     return () => { window.removeEventListener('forrum-auth-changed', load); window.removeEventListener('focus', load); };
   }, []);
-  async function logout() { await api('/auth/logout', { method: 'POST' }); setMe(null); router.push('/'); router.refresh(); }
+  async function logout() { await api('/auth/logout', { method: 'POST' }); setMe(null); window.dispatchEvent(new Event('forrum-auth-changed')); router.push('/'); router.refresh(); }
   if (!me) return <div className="auth-actions"><Link href="/login">Войти</Link><Link className="button small" href="/register">Регистрация</Link></div>;
   const needsVerification = !me.user.emailVerified;
   const needsOnboarding = me.user.emailVerified && !me.user.onboardingCompleted;

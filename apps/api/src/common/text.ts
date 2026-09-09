@@ -22,3 +22,15 @@ export function clampPage(value: unknown, fallback = 1): number {
   const n = Number(value);
   return Number.isFinite(n) ? Math.max(1, Math.min(1000, Math.floor(n))) : fallback;
 }
+
+// A conversation preview must not expose spoiler contents or reproduce quoted posts.
+export function replyExcerpt(text: string): string {
+  let hidden = '', depth = 0, cursor = 0;
+  for (const match of text.matchAll(/\[(\/?)(?:quote|spoiler)(?:=[^\]]*)?\]/gi)) {
+    if (!depth) hidden += text.slice(cursor, match.index);
+    depth = match[1] ? Math.max(0, depth - 1) : depth + 1;
+    cursor = match.index! + match[0].length;
+  }
+  if (!depth) hidden += text.slice(cursor);
+  return excerpt(hidden.replace(/\[\/?url(?:=[^\]]*)?\]/gi, ''), 160) || 'Ответ с вложением или скрытым текстом';
+}

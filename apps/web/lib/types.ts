@@ -20,6 +20,8 @@ export type PublicationCardData = {
   savedAt?: string;
   lastActivityAt?: string;
   lastComment?: {
+    id?: string;
+    excerpt?: string;
     createdAt: string;
     author: {
       username: string;
