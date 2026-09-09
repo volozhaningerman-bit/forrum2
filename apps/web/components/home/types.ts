@@ -57,7 +57,7 @@ export type HomeDiscussedTopic = {
 
 export type HomeOverview = {
   pulse?: {
-    recentReplies: { id: string; createdAt: string; author: { username: string; displayName: string; avatarUrl?: string | null }; publication: { slug: string; title: string | null; community: { slug: string; name: string } } }[];
+    recentReplies: { id: string; excerpt?: string; createdAt: string; author: { username: string; displayName: string; avatarUrl?: string | null }; publication: { slug: string; title: string | null; community: { slug: string; name: string } } }[];
     activeTopics: { slug: string; title: string | null; replyCount: number }[];
   };
   discussed?: HomeDiscussedTopic[];

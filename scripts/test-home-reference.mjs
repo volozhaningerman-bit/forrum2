@@ -12,8 +12,8 @@ const communities = categories.map((name, i) => ({ id: String(i), slug: 'categor
 const titles = ['Стоит ли переходить на Rust в продакшене?', 'Как составить сильное IT-резюме?', 'Лучшие практики для тёмных интерфейсов', 'Идея: платформа для поиска технических сооснователей', 'Как меняется работа с нейросетями'];
 const excerpts = ['Команда обсуждает реальный опыт миграции критичных сервисов на Rust. Какие подводные камни, что с экосистемой, стоит ли игра свеч?', 'Делимся примерами, разбираем ошибки, обсуждаем, что действительно работает при поиске работы в текущих реалиях.', 'Собрали коллекцию подходов, примеров и рекомендаций по созданию комфортных тёмных тем.', 'Обсуждаем концепцию сервиса, который помогает находить партнёров по навыкам и интересам. Нужна ли такая платформа?', 'Пробуем новые инструменты, делимся первыми впечатлениями. Что нового и как это меняет правила игры?'];
 const topics = titles.map((title, i) => ({ id: String(i), slug: 'topic-' + i, title, format: 'TOPIC', type: 'DISCUSSION', excerpt: excerpts[i], createdAt: new Date(Date.now() - (i + 1) * 7200000).toISOString(), author: { username: 'person-' + i, displayName: names[i], avatarUrl: null }, community: communities[[1,4,2,3,5][i]], commentCount: [47,29,18,35,0][i], viewCount: [2100,1600,980,1200,3400][i], reactionCount: [128,93,76,64,51][i], viewerReaction: null, isBookmarked: false, tags: [{ id: 'tag-' + i, slug: 'tag-' + i, label: ['rust','советы','интерфейсы','стартап','opensource'][i] }] }));
-topics[0].lastComment = {createdAt:new Date().toISOString(),author:topics[1].author};
-const pulse = {activeTopics:[{slug:topics[0].slug,title:topics[0].title,replyCount:3}],recentReplies:[{id:'reply-1',createdAt:new Date().toISOString(),author:topics[1].author,publication:{slug:topics[0].slug,title:topics[0].title,community:topics[0].community}}]};
+topics[0].lastComment = {id:'reply-1',excerpt:'Мы начали с одного сервиса. Что вы хотите ускорить?',createdAt:new Date().toISOString(),author:topics[1].author};
+const pulse = {activeTopics:[{slug:topics[0].slug,title:topics[0].title,replyCount:3}],recentReplies:[{id:'reply-1',excerpt:'Мы начали с одного сервиса. Что вы хотите ускорить?',createdAt:new Date().toISOString(),author:topics[1].author,publication:{slug:topics[0].slug,title:topics[0].title,community:topics[0].community}}]};
 const people = names.map((displayName, i) => ({ username: 'person-' + i, displayName, score: [2400,1800,1600,1400,1200][i], topicCount: 5-i, commentCount: 15-i, reactionCount: 20-i }));
 const announcements = ['Обновления правил сообщества','Новый раздел: AI и данные','Запуск программы менторства','Интервью с командой FORRUM'].map((title,i) => ({ ...topics[i], id:'news-'+i, slug:'news-'+i, title }));
 let emptyPeople = false;
@@ -24,9 +24,10 @@ const upstream = createServer(async (req,res) => {
  requests.push({ path: url.pathname, query: url.search, method: req.method, cookie: req.headers.cookie });
  if (url.pathname === '/v1/communities') data = communities;
  else if (url.pathname === '/v1/feed') { data = url.searchParams.get('mode') === 'new' ? topics.map((item,i)=>({...item,createdAt:new Date(Date.now()+i*1000).toISOString()})).reverse() : topics; if(failFeed){status=503;data={message:'Сервис временно недоступен'};} }
- else if (url.pathname === '/v1/home/overview') data = { pulse, discussed: topics, weekly: { likes:people, activity:emptyPeople ? [] : people }, stats: {communities:9,topics:5,messages:134,usersOnline:3,recordOnline:10} };
+ else if (url.pathname === '/v1/home/overview') data = { pulse:emptyPeople ? {activeTopics:[],recentReplies:[]} : pulse, discussed: topics, weekly: { likes:people, activity:emptyPeople ? [] : people }, stats: {communities:9,topics:5,messages:134,usersOnline:emptyPeople ? 0 : 3,recordOnline:10} };
  else if (url.pathname === '/v1/announcements') data = announcements;
  else if (url.pathname === '/v1/auth/me') data = { user: { id:'viewer',username:'viewer',displayName:'Алексей Петров',emailVerified:true,onboardingCompleted:true,role:'USER' } };
+ else if (url.pathname === '/v1/publications/topic-0') data = {...topics[0],body:topics[0].excerpt,updatedAt:topics[0].createdAt,lastActivityAt:topics[0].lastComment.createdAt,pinnedUntil:null,canEdit:false,canDelete:false,bookmarkCount:0,comments:[{id:'reply-1',body:topics[0].lastComment.excerpt,createdAt:topics[0].lastComment.createdAt,parentId:null,author:{...topics[1].author,forrumId:2},reactionCount:0,replyCount:0,viewerReaction:null}]};
  else if (url.pathname.endsWith('/bookmark')) { if(failBookmark){ status=403;data={message:'Войдите, чтобы сохранить тему'}; } else {saved=!saved;data={bookmarked:saved};} }
  else if (url.pathname.endsWith('/reaction')) {let body='';for await(const chunk of req)body+=chunk;const type=JSON.parse(body).type;reaction=type===reaction?null:type;data={active:!!reaction,type:reaction};}
  else if (url.pathname === '/v1/telegram/channels') data = [{id:'channel',title:'Тестовый канал',enabled:true,canPost:true},{id:'blocked',title:'Недоступный канал',enabled:true,canPost:false}];
@@ -51,11 +52,22 @@ try {
  await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
  await page.locator('.forum-topic').first().waitFor();
  assert.equal(await page.locator('.forum-topic').count(),5);
- assert(await page.locator('.forum-topic').first().getByText('Последний ответ',{exact:true}).isVisible());
+ assert.equal(await page.locator('.forum-topic').first().locator('.forum-reply-preview').textContent(),topics[0].lastComment.excerpt);
+ assert.equal(await page.locator('.forum-reply-preview').first().getAttribute('href'),'/p/topic-0#comment-reply-1');
  assert(await page.getByText('Пока без ответов',{exact:true}).isVisible());
  assert(await page.getByText('3 ответа за 24 часа',{exact:true}).isVisible());
- assert(await page.getByRole('heading',{name:'Сейчас на FORRUM',exact:true}).isVisible());
+ assert(await page.getByRole('heading',{name:'В сообществе',exact:true}).isVisible());
  assert.equal(await page.locator('.forum-topbar kbd').count(),0);
+ await page.waitForFunction(()=>document.querySelector('.forum-topic')?.getAttribute('data-reading-state')==='unread');
+ await page.evaluate(at=>{localStorage.setItem('forrum-reading-v1:viewer',JSON.stringify({'0':at}));window.dispatchEvent(new Event('forrum-reading-changed'));},topics[0].createdAt);
+ await page.locator('.forum-new-replies').first().waitFor();
+ await page.locator('.forum-new-replies').first().click();
+ await page.locator('#comment-reply-1').waitFor();
+ await page.waitForFunction(()=>location.hash==='#comment-reply-1');
+ await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
+ await page.waitForFunction(()=>document.querySelector('.forum-topic')?.getAttribute('data-reading-state')==='read');
+ assert.equal(await page.locator('.forum-new-replies').count(),0);
+ await page.evaluate(()=>{localStorage.removeItem('forrum-reading-v1:viewer');window.dispatchEvent(new Event('forrum-reading-changed'));});
  const search = page.getByLabel('Поиск тем, людей, проектов');
  await search.fill('мой запрос');
  await page.waitForTimeout(180);
@@ -102,10 +114,10 @@ try {
   await page.locator('.forum-welcome h1').hover();
  }
  await checkInteractions();
- await page.screenshot({path:output+'/forrum-v31-light.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v32-light.png',fullPage:true});
  await page.getByRole('button',{name:'Включить тёмную тему'}).click();
  await checkInteractions();
- await page.screenshot({path:output+'/forrum-v31-dark.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v32-dark.png',fullPage:true});
  assert.equal(await page.locator('html').getAttribute('data-forrum-theme'),'graphite');
  const themeControl = page.getByRole('button',{name:'Включить светлую тему'});
  const notificationControl = page.getByRole('link',{name:'Уведомления',exact:true});
@@ -151,6 +163,14 @@ try {
  await page.locator('.forum-topic').first().waitFor();
  await page.getByRole('button',{name:'Все темы',exact:true}).click();
  await page.waitForFunction(()=>document.querySelector('.forum-topic h2')?.textContent==='Стоит ли переходить на Rust в продакшене?');
+ // Background updates remain opt-in and do not replace a conversation being read.
+ const oldPreview=await page.locator('.forum-reply-preview').first().textContent();
+ topics[0].lastComment={...topics[0].lastComment,id:'reply-2',excerpt:'Новое уточнение в разговоре',createdAt:new Date(Date.now()+1000).toISOString()};
+ await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));
+ await page.getByRole('button',{name:'Есть обновления в ленте · Показать'}).waitFor();
+ assert.equal(await page.locator('.forum-reply-preview').first().textContent(),oldPreview);
+ await page.getByRole('button',{name:'Есть обновления в ленте · Показать'}).click();
+ assert.equal(await page.locator('.forum-reply-preview').first().textContent(),'Новое уточнение в разговоре');
  for(const width of [1920,1440,1024,768,390,320]){
   await page.setViewportSize({width,height:900});
   const dimensions=await page.evaluate(()=>({scroll:document.documentElement.scrollWidth,client:document.documentElement.clientWidth}));
@@ -169,25 +189,27 @@ try {
  await page.mouse.wheel(0,600);
  await page.waitForFunction(()=>window.scrollY>100);
  await page.evaluate(()=>window.scrollTo(0,0));
- await page.screenshot({path:output+'/forrum-v31-mobile-dark.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v32-mobile-dark.png',fullPage:true});
  await page.getByRole('button',{name:'Открыть меню',exact:true}).click();
  await page.getByRole('navigation',{name:'Категории',exact:true}).waitFor();
  await page.getByRole('button',{name:'Свернуть: Разработка'}).click();
  await page.getByRole('button',{name:'Развернуть: Разработка'}).waitFor();
  await page.keyboard.press('Escape');
  await page.getByRole('button',{name:'Включить светлую тему'}).click();
- await page.screenshot({path:output+'/forrum-v31-mobile-light.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v32-mobile-light.png',fullPage:true});
  emptyPeople=true;
  await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
  assert.equal(await page.getByRole('heading',{name:'Люди недели'}).count(),0);
+ assert.equal(await page.locator('.forum-online').count(),0);
+ assert(await page.locator('.forum-community-empty').isVisible());
  await page.getByRole('button',{name:'Скрыть приветствие'}).click();
  await page.reload({waitUntil:'networkidle'});
  assert.equal(await page.locator('.forum-welcome').count(),0);
  assert(await page.locator('.forum-top-create').isVisible(),'Create remains available after hiding welcome on mobile');
  await page.goto('http://127.0.0.1:'+port+'/login',{waitUntil:'networkidle'});
  assert.equal(await page.locator('[data-forrum-shell="header"]').count(),1,'Non-home shell retained');
- await page.screenshot({path:output+'/forrum-v31-login.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v32-login.png',fullPage:true});
  assert.deepEqual(errors,[],'Browser errors');
  await writeFile(output+'/results.json',JSON.stringify({passed:true,checks:['SSR session cookies','light/dark persisted','bookmark toggle and failure','Telegram channel permissions and mocked send','feed order','unanswered','community filter','API failure and retry','6 viewport widths without overflow','news reachable','mobile menu','non-home shell','no browser errors'],requests:requests.length},null,2));
  console.log('Home reference browser checks passed. Screenshots: '+output);
-} finally { await browser?.close(); web.kill('SIGTERM'); upstream.close(); await writeFile(output+'/server.log',logs); }
+} catch(error) { const page=browser?.contexts()[0]?.pages()[0]; if(page) await page.screenshot({path:output+'/failure.png',fullPage:true}); throw error; } finally { await browser?.close(); web.kill('SIGTERM'); upstream.close(); await writeFile(output+'/server.log',logs); }

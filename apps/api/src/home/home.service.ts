@@ -1,4 +1,4 @@
-import { excerpt } from '../common/text.js';
+import { excerpt, replyExcerpt } from '../common/text.js';
 import { Injectable } from '@nestjs/common';
 import {
   PollStatus,
@@ -378,9 +378,9 @@ export class HomeService {
 
     const [recentReplies, activeTopics] = await Promise.all([
       this.prisma.comment.findMany({
-        where: { hiddenAt: null, createdAt: { gte: dayAgo }, publication: { status: PublicationStatus.PUBLISHED, format: PublicationFormat.TOPIC, community: { status: 'ACTIVE' } } },
-        orderBy: { createdAt: 'desc' }, take: 5,
-        select: { id: true, createdAt: true, author: { select: { username: true, displayName: true, avatarUrl: true } }, publication: { select: { slug: true, title: true, community: { select: { slug: true, name: true } } } } },
+        where: { hiddenAt: null, publication: { status: PublicationStatus.PUBLISHED, format: PublicationFormat.TOPIC, community: { status: 'ACTIVE' } } },
+        orderBy: { createdAt: 'desc' }, take: 3,
+        select: { id: true, body: true, createdAt: true, author: { select: { username: true, displayName: true, avatarUrl: true } }, publication: { select: { slug: true, title: true, community: { select: { slug: true, name: true } } } } },
       }),
       this.prisma.publication.findMany({
         where: { status: PublicationStatus.PUBLISHED, format: PublicationFormat.TOPIC, community: { status: 'ACTIVE' }, comments: { some: { hiddenAt: null, createdAt: { gte: dayAgo } } } },
@@ -447,7 +447,7 @@ export class HomeService {
     }
 
     return {
-      pulse: { recentReplies, activeTopics: activeTopics.map(item => ({ slug: item.slug, title: item.title, replyCount: item._count.comments })) },
+      pulse: { recentReplies: recentReplies.map(({ body, ...reply }) => ({ ...reply, excerpt: replyExcerpt(body) })), activeTopics: activeTopics.map(item => ({ slug: item.slug, title: item.title, replyCount: item._count.comments })) },
       stats: {
         // Existing fields stay for backward compatibility.
         verifiedUsers,
