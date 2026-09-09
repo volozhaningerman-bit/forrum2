@@ -1,0 +1,22 @@
+'use client';
+import Link from 'next/link';
+import { useEffect, useState, type FormEvent } from 'react';
+import { api } from '@/lib/api';
+import { BannerCard, type HomeBanner } from '@/components/home/banner-card';
+import './style.css';
+const empty=(slot:number):HomeBanner=>({slot,enabled:false,kind:'promotion',title:'',href:'',imageLight:'',imageDark:'',startsAt:'',endsAt:'',disclosure:''});
+function localDate(value:string){if(!value)return '';const d=new Date(value);return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);}
+export default function HomeBannersPage(){
+ const [items,setItems]=useState<HomeBanner[]>([empty(1),empty(2)]);
+ const [loaded,setLoaded]=useState(false),[saving,setSaving]=useState(false),[message,setMessage]=useState(''),[error,setError]=useState('');
+ async function load(){setError('');try{const data=await api<{banners:HomeBanner[]}>('/admin/home-banners');setItems([1,2].map(slot=>data.banners.find(item=>item.slot===slot) ?? empty(slot)));setLoaded(true);}catch(e){setError(e instanceof Error?e.message:'Не удалось загрузить баннеры');}}
+ useEffect(()=>{void load();},[]);
+ function update(index:number,patch:Partial<HomeBanner>){setItems(rows=>rows.map((item,i)=>i===index?{...item,...patch}:item));setMessage('');}
+ async function save(event:FormEvent){event.preventDefault();setSaving(true);setError('');setMessage('');try{const result=await api<{banners:HomeBanner[]}>('/admin/home-banners',{method:'PUT',body:JSON.stringify({banners:items})});setItems(result.banners);setMessage('Баннеры сохранены. Показ учитывает включение и сроки.');}catch(e){setError(e instanceof Error?e.message:'Не удалось сохранить');}finally{setSaving(false);}}
+ return <main className="banner-admin"><Link href="/admin">← Управление форумом</Link><h1>Баннеры главной страницы</h1><p>Два независимых места справа от поиска. Рекомендуемое изображение 800 × 400, без мелкого текста. Название и маркировка накладываются отдельно.</p><p>Даты указаны в вашем часовом поясе: {Intl.DateTimeFormat().resolvedOptions().timeZone}. Пустая дата означает отсутствие ограничения. На главной изменения появятся при обновлении страницы или в течение минуты.</p>
+ {error && <p role="alert">{error}</p>}{!loaded ? <button type="button" onClick={()=>void load()}>Загрузить настройки</button> : <form onSubmit={save}><div className="banner-admin-grid">{items.map((item,index)=><fieldset key={item.slot} disabled={saving}><legend>Место {item.slot}</legend><label className="banner-admin-check"><input type="checkbox" checked={item.enabled} onChange={e=>update(index,{enabled:e.target.checked})}/>Показывать баннер</label><label>Тип<select value={item.kind} onChange={e=>update(index,{kind:e.target.value as HomeBanner['kind']})}><option value="promotion">Сообщество / собственное продвижение</option><option value="ad">Платная реклама</option></select></label>
+ <label>Название<input required={item.enabled} maxLength={100} value={item.title} onChange={e=>update(index,{title:e.target.value})}/></label><label>Ссылка<input required={item.enabled} placeholder="/communities/slug или https://…" value={item.href} onChange={e=>update(index,{href:e.target.value})}/></label><label>Изображение для светлой темы<input required={item.enabled} placeholder="https://…/banner.webp" value={item.imageLight} onChange={e=>update(index,{imageLight:e.target.value})}/></label><label>Изображение для тёмной темы<input placeholder="Пусто — использовать светлое изображение" value={item.imageDark} onChange={e=>update(index,{imageDark:e.target.value})}/></label>
+ {item.kind==='ad' && <label>Рекламодатель и дополнительная маркировка<input required={item.enabled} maxLength={300} value={item.disclosure} onChange={e=>update(index,{disclosure:e.target.value})}/></label>}
+ <label>Начало показа<input type="datetime-local" value={localDate(item.startsAt)} onChange={e=>update(index,{startsAt:e.target.value?new Date(e.target.value).toISOString():''})}/></label><label>Окончание показа<input type="datetime-local" value={localDate(item.endsAt)} onChange={e=>update(index,{endsAt:e.target.value?new Date(e.target.value).toISOString():''})}/></label>
+ <p>Предпросмотр · текущая тема оформления</p><div className="banner-admin-preview"><BannerCard key={`${item.imageLight}-${item.imageDark}`} item={item}/></div></fieldset>)}</div><button className="button" disabled={saving} type="submit">{saving?'Сохраняем…':'Сохранить оба места'}</button><p role="status">{message}</p></form>}</main>;
+}

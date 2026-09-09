@@ -7,7 +7,7 @@ import { SessionGuard } from '../auth/session.guard.js';
 import { VerifiedGuard } from '../auth/verified.guard.js';
 import { GrantBalanceDto } from '../wallet/dto.js';
 import { AdminService } from './admin.service.js';
-import { EndCommunityRoleDto, GrantCommunityRoleDto, HidePublicationDto, PromotionSettingsDto, RefundPromotionDto, ResolveReportDto } from './dto.js';
+import { HomeBannersDto, EndCommunityRoleDto, GrantCommunityRoleDto, HidePublicationDto, PromotionSettingsDto, RefundPromotionDto, ResolveReportDto } from './dto.js';
 
 @ApiTags('admin')
 @Controller('admin')
@@ -34,6 +34,9 @@ export class AdminController {
   @Post('community-roles/:id/end') endCommunityRole(@Param('id') id: string, @Body() dto: EndCommunityRoleDto, @CurrentUser() user: User) {
     return this.service.endCommunityRole(user.id, id, dto.note);
   }
+
+  @Get('home-banners') homeBanners() { return this.service.homeBanners(); }
+  @Put('home-banners') updateHomeBanners(@Body() dto: HomeBannersDto, @CurrentUser() user: User) { return this.service.updateHomeBanners(user.id, dto.banners); }
 
   @Get('promotion-settings') promotionSettings() { return this.service.promotionSettings(); }
   @Put('promotion-settings') updatePromotionSettings(@Body() dto: PromotionSettingsDto, @CurrentUser() user: User) {

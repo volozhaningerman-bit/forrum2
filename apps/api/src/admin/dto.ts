@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsInt, IsOptional, IsString, Length, Max, Min } from 'class-validator';
+import { IsArray, ArrayMaxSize, IsEnum, IsInt, IsOptional, IsString, Length, Max, Min } from 'class-validator';
 import { CommunityRoleType, ReportStatus } from '../generated/prisma/client.js';
 
 export class ResolveReportDto {
@@ -32,4 +32,8 @@ export class EndCommunityRoleDto {
 
 export class RefundPromotionDto {
   @ApiProperty() @IsString() @Length(5, 500) reason!: string;
+}
+
+export class HomeBannersDto {
+ @IsArray() @ArrayMaxSize(2) banners!: unknown[];
 }
