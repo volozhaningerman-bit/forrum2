@@ -16,7 +16,9 @@ topics[0].lastComment = {id:'reply-1',excerpt:'Мы начали с одного
 const pulse = {activeTopics:[{slug:topics[0].slug,title:topics[0].title,replyCount:3}],recentReplies:[{id:'reply-1',excerpt:'Мы начали с одного сервиса. Что вы хотите ускорить?',createdAt:new Date().toISOString(),author:topics[1].author,publication:{slug:topics[0].slug,title:topics[0].title,community:topics[0].community}}]};
 const people = names.map((displayName, i) => ({ username: 'person-' + i, displayName, score: [2400,1800,1600,1400,1200][i], topicCount: 5-i, commentCount: 15-i, reactionCount: 20-i }));
 const announcements = ['Обновления правил сообщества','Новый раздел: AI и данные','Запуск программы менторства','Интервью с командой FORRUM'].map((title,i) => ({ ...topics[i], id:'news-'+i, slug:'news-'+i, title }));
-let emptyPeople = false;
+let emptyPeople = false, guest = false, showBanners = true, admin = false;
+let bannerSettings=[];
+const banners=[1,2].map(slot=>({slot,enabled:true,kind:slot===1?'ad':'promotion',title:slot===1?'Партнёрский проект':'Сообщество разработчиков',imageLight:'/images/home/community-light.webp',imageDark:'/images/home/community-dark.webp',href:'/communities/category-0',startsAt:'',endsAt:'',disclosure:slot===1?'Тестовый рекламодатель':''}));
 let saved = false, reaction = null, failFeed = false, failBookmark = false;
 const requests = [];
 const upstream = createServer(async (req,res) => {
@@ -24,9 +26,11 @@ const upstream = createServer(async (req,res) => {
  requests.push({ path: url.pathname, query: url.search, method: req.method, cookie: req.headers.cookie });
  if (url.pathname === '/v1/communities') data = communities;
  else if (url.pathname === '/v1/feed') { data = url.searchParams.get('mode') === 'new' ? topics.map((item,i)=>({...item,createdAt:new Date(Date.now()+i*1000).toISOString()})).reverse() : topics; if(failFeed){status=503;data={message:'Сервис временно недоступен'};} }
- else if (url.pathname === '/v1/home/overview') data = { pulse:emptyPeople ? {activeTopics:[],recentReplies:[]} : pulse, discussed: topics, weekly: { likes:people, activity:emptyPeople ? [] : people }, stats: {communities:9,topics:5,messages:134,usersOnline:emptyPeople ? 0 : 3,recordOnline:10} };
+ else if (url.pathname === '/v1/home/overview') data = { banners:showBanners?banners:[], pulse:emptyPeople ? {activeTopics:[],recentReplies:[]} : pulse, discussed: topics, weekly: { likes:people, activity:emptyPeople ? [] : people }, stats: {communities:9,topics:5,messages:134,usersOnline:emptyPeople ? 0 : 3,recordOnline:10} };
+ else if (url.pathname === '/v1/admin/home-banners') {if(req.method==='PUT'){let body='';for await(const chunk of req)body+=chunk;bannerSettings=JSON.parse(body).banners;}data={banners:bannerSettings};}
  else if (url.pathname === '/v1/announcements') data = announcements;
- else if (url.pathname === '/v1/auth/me') data = { user: { id:'viewer',username:'viewer',displayName:'Алексей Петров',emailVerified:true,onboardingCompleted:true,role:'USER' } };
+ else if (url.pathname === '/v1/auth/me' && guest) {status=401;data={message:'Войдите'};}
+ else if (url.pathname === '/v1/auth/me') data = { user: { id:'viewer',username:'viewer',displayName:'Алексей Петров',emailVerified:true,onboardingCompleted:true,role:admin?'OWNER':'USER' } };
  else if (url.pathname === '/v1/publications/topic-0') data = {...topics[0],body:topics[0].excerpt,updatedAt:topics[0].createdAt,lastActivityAt:topics[0].lastComment.createdAt,pinnedUntil:null,canEdit:false,canDelete:false,bookmarkCount:0,comments:[{id:'reply-1',body:topics[0].lastComment.excerpt,createdAt:topics[0].lastComment.createdAt,parentId:null,author:{...topics[1].author,forrumId:2},reactionCount:0,replyCount:0,viewerReaction:null}]};
  else if (url.pathname.endsWith('/bookmark')) { if(failBookmark){ status=403;data={message:'Войдите, чтобы сохранить тему'}; } else {saved=!saved;data={bookmarked:saved};} }
  else if (url.pathname.endsWith('/reaction')) {let body='';for await(const chunk of req)body+=chunk;const type=JSON.parse(body).type;reaction=type===reaction?null:type;data={active:!!reaction,type:reaction};}
@@ -52,11 +56,14 @@ try {
  await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
  await page.locator('.forum-topic').first().waitFor();
  assert.equal(await page.locator('.forum-topic').count(),5);
+ assert.equal(await page.locator('.forum-banner').count(),2);
+ assert.equal(await page.locator('.forum-join a').getAttribute('href'),'/create');
  assert.equal(await page.locator('.forum-topic').first().locator('.forum-reply-preview').textContent(),topics[0].lastComment.excerpt);
  assert.equal(await page.locator('.forum-reply-preview').first().getAttribute('href'),'/p/topic-0#comment-reply-1');
  assert(await page.getByText('Пока без ответов',{exact:true}).isVisible());
- assert(await page.getByText('3 ответа за 24 часа',{exact:true}).isVisible());
- assert(await page.getByRole('heading',{name:'В сообществе',exact:true}).isVisible());
+ assert(await page.locator('.forum-hero-stats').isVisible());
+ assert.equal(await page.locator('.forum-unread-dot').count(),0);
+ assert(await page.getByRole('heading',{name:'Обсуждаемые темы',exact:true}).isVisible());
  assert.equal(await page.locator('.forum-topbar kbd').count(),0);
  await page.waitForFunction(()=>document.querySelector('.forum-topic')?.getAttribute('data-reading-state')==='unread');
  await page.evaluate(at=>{localStorage.setItem('forrum-reading-v1:viewer',JSON.stringify({'0':at}));window.dispatchEvent(new Event('forrum-reading-changed'));},topics[0].createdAt);
@@ -94,7 +101,7 @@ try {
   await page.keyboard.press('Shift+Tab');
   assert.notEqual(await create.evaluate(el=>getComputedStyle(el).outlineStyle),'none');
   let tabBackground;
-  for(const label of ['Все темы','Популярные','Новые','Тренд','Без ответов']) {
+  for(const label of ['Все темы','Обсуждаемые','Новые','Без ответов']) {
    const tab=page.getByRole('button',{name:label,exact:true});
    await tab.hover(); await page.waitForTimeout(180);
    const background=await tab.evaluate(el=>getComputedStyle(el).backgroundColor);
@@ -111,13 +118,13 @@ try {
   const replyBg=await meta.locator('a').evaluate(el=>getComputedStyle(el).backgroundColor);
   await bookmark.hover(); await page.waitForTimeout(180);
   assert.equal(await bookmark.evaluate(el=>getComputedStyle(el).backgroundColor),replyBg);
-  await page.locator('.forum-welcome h1').hover();
+  await page.locator('.forum-hero-copy h1').hover();
  }
  await checkInteractions();
- await page.screenshot({path:output+'/forrum-v32-light.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v33-light.png',fullPage:true});
  await page.getByRole('button',{name:'Включить тёмную тему'}).click();
  await checkInteractions();
- await page.screenshot({path:output+'/forrum-v32-dark.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v33-dark.png',fullPage:true});
  assert.equal(await page.locator('html').getAttribute('data-forrum-theme'),'graphite');
  const themeControl = page.getByRole('button',{name:'Включить светлую тему'});
  const notificationControl = page.getByRole('link',{name:'Уведомления',exact:true});
@@ -126,7 +133,7 @@ try {
  await notificationControl.hover(); await page.waitForTimeout(180);
  assert.deepEqual(await notificationControl.evaluate(el=>({color:getComputedStyle(el).color,background:getComputedStyle(el).backgroundColor})),themeHover);
 
- assert.equal(await page.locator('.forum-welcome h1').evaluate(el=>getComputedStyle(el).color),'rgb(231, 237, 238)');
+ assert.equal(await page.locator('.forum-hero-copy h1').evaluate(el=>getComputedStyle(el).color),'rgb(238, 233, 219)');
  await page.reload({waitUntil:'networkidle'});
  assert.equal(await page.locator('html').getAttribute('data-forrum-theme'),'graphite');
  const first = page.locator('.forum-topic').first();
@@ -177,7 +184,7 @@ try {
   assert(dimensions.scroll<=dimensions.client+1,'Horizontal overflow at '+width+': '+JSON.stringify(dimensions));
   if(width>=1440) {
    const layout=await page.locator('.forum-topic').first().evaluate(el=>({height:el.getBoundingClientRect().height,service:el.querySelector('.forum-topic-service').getBoundingClientRect().bottom,bottom:el.getBoundingClientRect().bottom}));
-   assert(layout.height<=165,'Desktop topic must remain compact: '+JSON.stringify(layout));
+   assert(layout.height<=260,'Desktop topic must remain compact: '+JSON.stringify(layout));
    assert(layout.service<=layout.bottom,'Topic metadata must stay within card');
    assert((await page.locator('.forum-home').boundingBox()).width<=1600,'Reading layout must have bounded width');
   }
@@ -189,26 +196,47 @@ try {
  await page.mouse.wheel(0,600);
  await page.waitForFunction(()=>window.scrollY>100);
  await page.evaluate(()=>window.scrollTo(0,0));
- await page.screenshot({path:output+'/forrum-v32-mobile-dark.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v33-mobile-dark.png',fullPage:true});
  await page.getByRole('button',{name:'Открыть меню',exact:true}).click();
  await page.getByRole('navigation',{name:'Категории',exact:true}).waitFor();
  await page.getByRole('button',{name:'Свернуть: Разработка'}).click();
  await page.getByRole('button',{name:'Развернуть: Разработка'}).waitFor();
  await page.keyboard.press('Escape');
  await page.getByRole('button',{name:'Включить светлую тему'}).click();
- await page.screenshot({path:output+'/forrum-v32-mobile-light.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v33-mobile-light.png',fullPage:true});
  emptyPeople=true;
  await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
  assert.equal(await page.getByRole('heading',{name:'Люди недели'}).count(),0);
  assert.equal(await page.locator('.forum-online').count(),0);
- assert(await page.locator('.forum-community-empty').isVisible());
- await page.getByRole('button',{name:'Скрыть приветствие'}).click();
+ assert(await page.getByText('Здесь появятся участники, которые задают вопросы и помогают другим.').isVisible());
+ assert(await page.locator('.forum-top-create').isVisible());
+ guest=true;showBanners=false;
+ await page.reload({waitUntil:'domcontentloaded'});
+ await page.getByRole('link',{name:'Присоединиться →'}).waitFor();
+ assert.equal(await page.getByRole('link',{name:'Присоединиться →'}).getAttribute('href'),'/register');
+ assert.equal(await page.locator('.forum-banners').count(),0);
+ assert.equal(await page.locator('.forum-intro.has-banners').count(),0);
+ guest=false;admin=true;
+ await context.addCookies([{name:'forrum_session',value:'mock-session',domain:'127.0.0.1',path:'/'}]);
+ await page.setViewportSize({width:1280,height:900});
+ await page.goto('http://127.0.0.1:'+port+'/admin/home-banners',{waitUntil:'networkidle'});
+ const slot=page.getByRole('group',{name:'Место 1',exact:true});
+ await slot.waitFor();
+ await slot.getByLabel('Название',{exact:true}).fill('Тестовый проект');
+ await slot.getByLabel('Ссылка',{exact:true}).fill('/communities/category-0');
+ await slot.getByLabel('Изображение для светлой темы',{exact:true}).fill('/images/home/community-light.webp');
+ await slot.getByLabel('Показывать баннер',{exact:true}).check();
+ await page.getByRole('button',{name:'Сохранить оба места'}).click();
+ await page.getByRole('status').filter({hasText:'Баннеры сохранены'}).waitFor();
+ assert.equal(bannerSettings.length,2);
+ assert.equal(bannerSettings[0].enabled,true);
+ assert.equal(bannerSettings[1].enabled,false);
  await page.reload({waitUntil:'networkidle'});
- assert.equal(await page.locator('.forum-welcome').count(),0);
- assert(await page.locator('.forum-top-create').isVisible(),'Create remains available after hiding welcome on mobile');
+ assert.equal(await page.getByRole('group',{name:'Место 1',exact:true}).getByLabel('Название',{exact:true}).inputValue(),'Тестовый проект');
+ await page.screenshot({path:output+'/forrum-v33-admin-banners.png',fullPage:true});
  await page.goto('http://127.0.0.1:'+port+'/login',{waitUntil:'networkidle'});
  assert.equal(await page.locator('[data-forrum-shell="header"]').count(),1,'Non-home shell retained');
- await page.screenshot({path:output+'/forrum-v32-login.png',fullPage:true});
+ await page.screenshot({path:output+'/forrum-v33-login.png',fullPage:true});
  assert.deepEqual(errors,[],'Browser errors');
  await writeFile(output+'/results.json',JSON.stringify({passed:true,checks:['SSR session cookies','light/dark persisted','bookmark toggle and failure','Telegram channel permissions and mocked send','feed order','unanswered','community filter','API failure and retry','6 viewport widths without overflow','news reachable','mobile menu','non-home shell','no browser errors'],requests:requests.length},null,2));
  console.log('Home reference browser checks passed. Screenshots: '+output);

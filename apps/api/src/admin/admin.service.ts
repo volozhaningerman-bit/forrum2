@@ -1,3 +1,4 @@
+import { homeBannerKey, validateBanners } from '../home/banners.js';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { readFile } from 'node:fs/promises';
@@ -120,6 +121,20 @@ export class AdminService {
       this.prisma.auditLog.create({ data: { actorId, action: 'community.role.end', entityType: 'CommunityRole', entityId: id, metadata: { note: note.trim(), role: role.role } } }),
     ]);
     return { ok: true };
+  }
+
+  async homeBanners() {
+    const setting = await this.prisma.platformSetting.findUnique({where:{key:homeBannerKey}});
+    return {banners:setting?.value ?? []};
+  }
+  async updateHomeBanners(actorId:string, input:unknown) {
+    let banners;
+    try {banners=validateBanners(input);} catch(error) {throw new BadRequestException(error instanceof Error ? error.message : 'Некорректные баннеры');}
+    await this.prisma.$transaction([
+      this.prisma.platformSetting.upsert({where:{key:homeBannerKey},create:{key:homeBannerKey,value:banners},update:{value:banners}}),
+      this.prisma.auditLog.create({data:{actorId,action:'home.banners.update',entityType:'PlatformSetting',entityId:homeBannerKey,metadata:{banners}}}),
+    ]);
+    return {banners};
   }
 
   async promotionSettings() {

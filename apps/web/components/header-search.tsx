@@ -10,7 +10,7 @@ export function HeaderSearch({ inputRef }: { inputRef?: RefObject<HTMLInputEleme
  const [focused, setFocused] = useState(false);
  const [value, setValue] = useState('');
  useEffect(() => {
-  if (focused || value || animationDone.current) return;
+  if (inputRef || focused || value || animationDone.current) return;
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let index = 0, visible = PHRASES[0].length, deleting = true, hold = 32;
   const timer = window.setInterval(() => {
@@ -26,9 +26,9 @@ export function HeaderSearch({ inputRef }: { inputRef?: RefObject<HTMLInputEleme
    }
   }, 80);
   return () => window.clearInterval(timer);
- }, [focused, value]);
+ }, [focused, value, inputRef]);
  return <form className={inputRef ? "forum-header-search" : "header-search"} action="/search" role="search">
-  <input ref={inputRef} name="q" aria-label="Поиск тем, людей, проектов" placeholder={focused ? 'Поиск тем, людей, проектов' : placeholder} autoComplete="off" value={value} onChange={event => setValue(event.target.value)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}/>
+  <input ref={inputRef} name="q" aria-label="Поиск тем, людей, проектов" placeholder={inputRef ? 'Найти тему, человека или сообщество' : focused ? 'Поиск тем, людей, проектов' : placeholder} autoComplete="off" value={value} onChange={event => setValue(event.target.value)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}/>
   <button type="submit" aria-label="Найти" title="Найти"><SearchIcon/></button>
  </form>;
 }

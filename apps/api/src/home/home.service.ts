@@ -1,3 +1,4 @@
+import { activeBanners, homeBannerKey } from './banners.js';
 import { excerpt, replyExcerpt } from '../common/text.js';
 import { Injectable } from '@nestjs/common';
 import {
@@ -446,7 +447,9 @@ export class HomeService {
       });
     }
 
+    const bannerSetting = await this.prisma.platformSetting.findUnique({where:{key:homeBannerKey}});
     return {
+      banners: activeBanners(bannerSetting?.value, now),
       pulse: { recentReplies: recentReplies.map(({ body, ...reply }) => ({ ...reply, excerpt: replyExcerpt(body) })), activeTopics: activeTopics.map(item => ({ slug: item.slug, title: item.title, replyCount: item._count.comments })) },
       stats: {
         // Existing fields stay for backward compatibility.
