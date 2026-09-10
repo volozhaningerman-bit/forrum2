@@ -8,6 +8,8 @@ export type Community = {
   shortDescription?: string | null;
   avatarUrl?: string | null;
   subscriberCount: number;
+  accentColor?: string;
+  onlineCount?: number;
   publicationCount: number;
   recentPublicationCount?: number;
   lastActivityAt?: string | null;

@@ -28,7 +28,7 @@ export function HeaderSearch({ inputRef }: { inputRef?: RefObject<HTMLInputEleme
   return () => window.clearInterval(timer);
  }, [focused, value, inputRef]);
  return <form className={inputRef ? "forum-header-search" : "header-search"} action="/search" role="search">
-  <input ref={inputRef} name="q" aria-label="Поиск тем, людей, проектов" placeholder={inputRef ? 'Найти тему, человека или сообщество' : focused ? 'Поиск тем, людей, проектов' : placeholder} autoComplete="off" value={value} onChange={event => setValue(event.target.value)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}/>
+  <input ref={inputRef} name="q" aria-label="Поиск тем, людей, проектов" placeholder={inputRef ? 'Найти модель, промпт, тему или человека' : focused ? 'Поиск тем, людей, проектов' : placeholder} autoComplete="off" value={value} onChange={event => setValue(event.target.value)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}/>
   <button type="submit" aria-label="Найти" title="Найти"><SearchIcon/></button>
  </form>;
 }
