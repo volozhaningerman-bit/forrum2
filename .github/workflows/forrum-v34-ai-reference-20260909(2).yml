@@ -1,0 +1,125 @@
+name: FORRUM V34 — AI community reference
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: forrum-v34-ai-reference
+  cancel-in-progress: false
+jobs:
+  apply:
+    if: github.repository == 'volozhaningerman-bit/forrum2' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      BASE_SHA: c76076e8bae4c4839cee411282e53ec6be23f271
+      TARGET_BRANCH: codex/home-v34-ai-reference-20260909
+      DATABASE_URL: postgresql://test:test@127.0.0.1:5432/forrum_ci
+      NEXT_TELEMETRY_DISABLED: '1'
+      CHECKPOINT_DISABLE: '1'
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Verify base and create isolated branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor "$BASE_SHA" HEAD
+          test "$TARGET_BRANCH" != main
+          if git show-ref --verify --quiet "refs/remotes/origin/$TARGET_BRANCH"; then
+            echo "Branch already exists: $TARGET_BRANCH. Open its comparison with main; it will not be overwritten."
+            exit 1
+          fi
+          git switch -c "$TARGET_BRANCH"
+      - name: Verify original files and apply V34
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY_V34'
+          import base64,hashlib,io,json,zipfile
+          from pathlib import Path,PurePosixPath
+          payload = Path('forrum-v34-payload.zip')
+          if not payload.is_file():
+           raise SystemExit('Upload forrum-v34-payload.zip to the repository root before running V34. No source files written.')
+          raw = payload.read_bytes()
+          if hashlib.sha256(raw).hexdigest() != '9bcb540fe34b2757d31e112a02bddb78e76d81325b7f2bac47d22567cc2b0afc':
+           raise SystemExit('V34 archive checksum mismatch; no files written')
+          archive=zipfile.ZipFile(io.BytesIO(raw))
+          entries=json.loads(archive.read('manifest.json'))
+          conflicts=[]
+          for entry in entries:
+           name=entry['path'];path=Path(name);parts=PurePosixPath(name).parts
+           if name.startswith('/') or '..' in parts or '.git' in parts or path.is_symlink() or any(p.is_symlink() for p in path.parents):
+            raise SystemExit('Unsafe patch path: '+name)
+           if entry['old'] is None:
+            valid=not path.exists()
+           else:
+            data=path.read_bytes() if path.is_file() else None
+            actual=hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest() if data is not None else None
+            valid=actual==entry['old']
+           if not valid: conflicts.append(name)
+          if conflicts: raise SystemExit('Source files changed; no files written:\n'+'\n'.join(conflicts))
+          for entry in entries:
+           path=Path(entry['path']);path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(archive.read('files/'+entry['path']))
+          print('Applied V34:',len(entries),'files')
+          PY_V34
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install locked dependencies and generate Prisma
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+          npm run db:generate
+          npm run build -w @forrum/contracts
+      - name: Verify code and build
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run build
+          npm run typecheck
+          npm test
+          node --experimental-strip-types --test scripts/topic-reading.test.ts
+          npm run validate:static
+          npm run validate:ux
+          npm run validate:a11y
+      - name: Browser verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx playwright install --with-deps chromium
+          npm run test:home
+      - name: Save verification screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: forrum-v34-browser-check
+          path: test-results/home-reference/
+          if-no-files-found: ignore
+      - name: Commit and push only verified V34 branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "$TARGET_BRANCH"
+          git config user.name "4RRUM updater"
+          git config user.email "actions@users.noreply.github.com"
+          git add -- 'apps/web/app/layout.tsx' 'apps/web/app/home-ai-reference.css' 'apps/web/app/preview/home/page.tsx' 'apps/web/app/admin/home-banners/page.tsx' 'apps/web/components/header-search.tsx' 'apps/web/components/site-header.tsx' 'apps/web/components/home/types.ts' 'apps/web/components/home/community-panels.tsx' 'apps/web/components/reference-home.tsx' 'apps/web/public/images/home/ai-community-light.webp' 'apps/web/public/images/home/ai-community-dark.webp' 'scripts/test-home-reference.mjs' 'docs/home-v34.md' 'docs/home-v34-plan.md'
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 1
+          fi
+          git commit -m "feat(home): AI reference, compact discussions and matched themes"
+          git push origin "HEAD:refs/heads/$TARGET_BRANCH"
+          {
+            printf '%s\n' '## FORRUM V34 ready for review'
+            printf '%s\n' "Branch: $TARGET_BRANCH"
+            printf '%s\n' "Compare and create PR: https://github.com/$GITHUB_REPOSITORY/compare/main...$TARGET_BRANCH?expand=1"
+            printf '%s\n' 'The branch has not been merged or deployed by this patch.'
+          } >> "$GITHUB_STEP_SUMMARY"
