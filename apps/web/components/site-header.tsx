@@ -14,7 +14,7 @@ import { NavCounters } from './nav-counters';
 import { MainNav } from './main-nav';
 export function SiteHeader() {
   const pathname = usePathname();
-  if (pathname === '/') return null;
+  if (pathname === '/' || pathname === '/preview/home') return null;
   return (
     <>
       <header data-forrum-shell="header" className="header">
