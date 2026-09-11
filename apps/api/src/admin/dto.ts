@@ -1,3 +1,4 @@
+import { Matches as MatchesVersion } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsArray, ArrayMaxSize, IsEnum, IsInt, IsOptional, IsString, Length, Max, Min } from 'class-validator';
 import { CommunityRoleType, ReportStatus } from '../generated/prisma/client.js';
@@ -37,3 +38,5 @@ export class RefundPromotionDto {
 export class HomeBannersDto {
  @IsArray() @ArrayMaxSize(2) banners!: unknown[];
 }
+
+export class AiTaxonomyDto { @MatchesVersion(/^[a-f0-9]{64}$/) version!: string; }

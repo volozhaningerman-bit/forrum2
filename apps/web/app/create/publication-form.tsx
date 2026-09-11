@@ -257,6 +257,7 @@ function visibleBbcodeLength(source: string) {
 export function CreatePublicationForm() {
   const params = useSearchParams();
   const router = useRouter();
+  const intent = ({result: {type:'PROJECT',hint:'Покажите результат, укажите инструмент и расскажите, как вы его получили.'},review: {type:'QUESTION',hint:'Приложите работу и опишите, что именно хотите улучшить.'},prompt: {type:'GUIDE',hint:'Добавьте промпт, название модели и полученный результат.'},help: {type:'QUESTION',hint:'Опишите задачу, что уже пробовали и какая помощь нужна.'}} as Record<string,{type:string;hint:string}>)[params.get('intent') ?? ''];
   const tagStylePickerRef = useRef<HTMLDivElement>(null);
 
   const initialFormat: Format =
@@ -271,7 +272,7 @@ export function CreatePublicationForm() {
   const [community, setCommunity] =
     useState(initialCommunity);
   const [type, setType] =
-    useState('DISCUSSION');
+    useState(intent?.type ?? 'DISCUSSION');
   const [title, setTitle] =
     useState('');
   const [body, setBody] =
@@ -803,6 +804,7 @@ export function CreatePublicationForm() {
 
         <header className="topic-create-heading">
           <h1>Создать тему</h1>
+          {intent && <p className="muted">{intent.hint}</p>}
 
           <span
             className="topic-create-save-state"

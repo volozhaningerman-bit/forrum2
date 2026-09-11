@@ -1,4 +1,4 @@
-import { homeBannerKey, validateBanners } from '../home/banners.js';
+import { defaultHomeBanners, homeBannerKey, validateBanners } from '../home/banners.js';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { readFile } from 'node:fs/promises';
@@ -125,7 +125,7 @@ export class AdminService {
 
   async homeBanners() {
     const setting = await this.prisma.platformSetting.findUnique({where:{key:homeBannerKey}});
-    return {banners:setting?.value ?? []};
+    return {banners:setting ? setting.value : defaultHomeBanners()};
   }
   async updateHomeBanners(actorId:string, input:unknown) {
     let banners;

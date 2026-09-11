@@ -24,3 +24,10 @@ export function validateBanners(value:unknown):HomeBanner[] {
 export function activeBanners(value:unknown,now=new Date()):HomeBanner[] {
  try{return validateBanners(value).filter(item=>item.enabled && (!item.startsAt || Date.parse(item.startsAt)<=now.getTime()) && (!item.endsAt || Date.parse(item.endsAt)>now.getTime()));}catch{return [];}
 }
+
+export function defaultHomeBanners(): HomeBanner[] {
+ return [
+  {slot:1,enabled:true,kind:'promotion',title:'AI-инструменты для ваших проектов',imageLight:'/images/home/tools-v35.webp',imageDark:'',href:'/search?q=AI',startsAt:'',endsAt:'',disclosure:''},
+  {slot:2,enabled:true,kind:'promotion',title:'Покажи, что ты создал с AI',imageLight:'/images/home/creations-v35.webp',imageDark:'',href:'/create?intent=result',startsAt:'',endsAt:'',disclosure:''},
+ ];
+}

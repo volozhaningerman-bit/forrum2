@@ -1,3 +1,5 @@
+import { AiTaxonomyService } from './ai-taxonomy.service.js';
+import { AiTaxonomyDto } from './dto.js';
 import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import type { User } from '../generated/prisma/client.js';
@@ -13,7 +15,7 @@ import { HomeBannersDto, EndCommunityRoleDto, GrantCommunityRoleDto, HidePublica
 @Controller('admin')
 @UseGuards(SessionGuard, VerifiedGuard, AdminGuard)
 export class AdminController {
-  constructor(private readonly service: AdminService) {}
+  constructor(private readonly service: AdminService, private readonly taxonomy: AiTaxonomyService) {}
   @Get('dashboard') dashboard() { return this.service.dashboard(); }
   @Get('reports') reports() { return this.service.reports(); }
   @Post('reports/:id/resolve') resolve(@Param('id') id: string, @Body() dto: ResolveReportDto, @CurrentUser() user: User) {
@@ -35,6 +37,8 @@ export class AdminController {
     return this.service.endCommunityRole(user.id, id, dto.note);
   }
 
+  @Get('ai-taxonomy') aiTaxonomy() { return this.taxonomy.preview(); }
+  @Post('ai-taxonomy') applyAiTaxonomy(@Body() dto: AiTaxonomyDto, @CurrentUser() user: User) { return this.taxonomy.apply(user.id, dto.version); }
   @Get('home-banners') homeBanners() { return this.service.homeBanners(); }
   @Put('home-banners') updateHomeBanners(@Body() dto: HomeBannersDto, @CurrentUser() user: User) { return this.service.updateHomeBanners(user.id, dto.banners); }
 

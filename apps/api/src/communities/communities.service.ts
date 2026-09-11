@@ -12,7 +12,9 @@ export class CommunitiesService {
 
   async list(userId?: string) {
     const recentSince = new Date(Date.now() - 7 * 86_400_000);
-    const [communities, activityRows, recentRows] = await Promise.all([
+    const now = new Date();
+    const onlineSince = new Date(now.getTime() - 5 * 60_000);
+    const [communities, activityRows, recentRows, onlineRows] = await Promise.all([
       this.prisma.community.findMany({
         where: { status: 'ACTIVE' }, orderBy: [{ parentId: 'asc' }, { createdAt: 'asc' }],
         include: {
@@ -24,7 +26,9 @@ export class CommunitiesService {
       }),
       this.prisma.publication.groupBy({ by: ['communityId'], where: { status: 'PUBLISHED' }, _max: { lastActivityAt: true } }),
       this.prisma.publication.groupBy({ by: ['communityId'], where: { status: 'PUBLISHED', createdAt: { gte: recentSince } }, _count: { _all: true } }),
+      this.prisma.communitySubscription.groupBy({ by: ['communityId'], where: { user: { sessions: { some: { revokedAt: null, expiresAt: { gt: now }, lastSeenAt: { gte: onlineSince } } } } }, _count: { _all: true } }),
     ]);
+    const onlineByCommunity = new Map(onlineRows.map(row => [row.communityId, row._count._all]));
     const activityByCommunity = new Map(activityRows.map((row) => [row.communityId, row._max.lastActivityAt]));
     const recentByCommunity = new Map(recentRows.map((row) => [row.communityId, row._count._all]));
     const viewer = userId ? await this.prisma.user.findUnique({ where: { id: userId }, select: { role: true } }) : null;
@@ -43,6 +47,7 @@ export class CommunitiesService {
       accentColor: community.accentColor,
       parent: community.parent ? { slug: community.parent.slug, name: community.parent.name } : null,
       subscriberCount: community._count.subscriptions,
+      onlineCount: onlineByCommunity.get(community.id) ?? 0,
       publicationCount: community._count.publications,
       recentPublicationCount: recentByCommunity.get(community.id) ?? 0,
       lastActivityAt: activityByCommunity.get(community.id) ?? null,
