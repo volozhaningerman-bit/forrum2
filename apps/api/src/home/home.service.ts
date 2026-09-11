@@ -1,4 +1,4 @@
-import { activeBanners, homeBannerKey } from './banners.js';
+import { activeBanners, defaultHomeBanners, homeBannerKey } from './banners.js';
 import { excerpt, replyExcerpt } from '../common/text.js';
 import { Injectable } from '@nestjs/common';
 import {
@@ -385,7 +385,7 @@ export class HomeService {
       }),
       this.prisma.publication.findMany({
         where: { status: PublicationStatus.PUBLISHED, format: PublicationFormat.TOPIC, community: { status: 'ACTIVE' }, comments: { some: { hiddenAt: null, createdAt: { gte: dayAgo } } } },
-        orderBy: { lastActivityAt: 'desc' }, take: 2,
+        orderBy: { lastActivityAt: 'desc' }, take: 5,
         select: { slug: true, title: true, _count: { select: { comments: { where: { hiddenAt: null, createdAt: { gte: dayAgo } } } } } },
       }),
     ]);
@@ -449,7 +449,7 @@ export class HomeService {
 
     const bannerSetting = await this.prisma.platformSetting.findUnique({where:{key:homeBannerKey}});
     return {
-      banners: activeBanners(bannerSetting?.value, now),
+      banners: activeBanners(bannerSetting ? bannerSetting.value : defaultHomeBanners(), now),
       pulse: { recentReplies: recentReplies.map(({ body, ...reply }) => ({ ...reply, excerpt: replyExcerpt(body) })), activeTopics: activeTopics.map(item => ({ slug: item.slug, title: item.title, replyCount: item._count.comments })) },
       stats: {
         // Existing fields stay for backward compatibility.
