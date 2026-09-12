@@ -111,6 +111,7 @@ export default function RegisterPage() {
     try {
       const result = await api<{
         message: string;
+        verificationEmailSent?: boolean;
         email: string;
       }>('/auth/register', {
         method: 'POST',
@@ -127,7 +128,7 @@ export default function RegisterPage() {
         result.email,
       );
 
-      router.push('/verify-email?sent=1');
+      router.push(result.verificationEmailSent === false ? '/verify-email?delivery=failed' : '/verify-email?sent=1');
     } catch (cause) {
       setError(
         cause instanceof Error

@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import argon2 from 'argon2';
 import { AccountState, GlobalRole } from '../generated/prisma/client.js';
@@ -41,8 +41,16 @@ export class AuthService {
         data: { userId: user.id, tokenHash: hashToken(token), expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
       });
     });
-    await this.mail.sendVerification(email, token);
-    return { ok: true, message: 'Письмо подтверждения отправлено', email };
+    try {
+      await this.mail.sendVerification(email, token);
+      return { ok: true, verificationEmailSent: true, message: 'Письмо подтверждения отправлено', email };
+    } catch (error) {
+      if (!(error instanceof ServiceUnavailableException)) throw error;
+      return {
+        ok: true, verificationEmailSent: false, email,
+        message: 'Аккаунт создан, но письмо отправить не удалось. Повторите отправку на странице подтверждения.',
+      };
+    }
   }
 
 
