@@ -14,9 +14,18 @@ export function smtpOptions(config: ConfigReader) {
   const user = config.get('SMTP_USER');
   const pass = config.get('SMTP_PASS');
   if (Boolean(user) !== Boolean(pass)) throw new Error('Set both SMTP_USER and SMTP_PASS');
+  const requireTLSSetting = config.get('SMTP_REQUIRE_TLS');
+  if (requireTLSSetting !== undefined && !['true', 'false'].includes(String(requireTLSSetting))) {
+    throw new Error('SMTP_REQUIRE_TLS must be true or false');
+  }
+  // Unauthenticated relays (including Mailpit) retain opportunistic STARTTLS.
+  // Authenticated production SMTP requires encryption by default.
+  const requireTLS = requireTLSSetting === undefined
+    ? production && !secure && Boolean(user)
+    : String(requireTLSSetting) === 'true';
   return {
     host, port, secure,
-    requireTLS: production && !secure,
+    requireTLS,
     ...(user && pass ? { auth: { user, pass } } : {}),
     connectionTimeout: 5000, greetingTimeout: 5000, socketTimeout: 5000,
     dnsTimeout: 5000,
