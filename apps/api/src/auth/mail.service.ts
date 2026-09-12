@@ -1,22 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import nodemailer from 'nodemailer';
+import { smtpOptions } from './smtp-options.js';
 
 @Injectable()
 export class MailService {
-  private readonly transporter;
+  private readonly logger = new Logger(MailService.name);
 
-  constructor(private readonly config: ConfigService) {
-    this.transporter = nodemailer.createTransport({
-      host: config.get('SMTP_HOST', 'localhost'),
-      port: Number(config.get('SMTP_PORT', 1025)),
-      secure: false,
-    });
+  constructor(private readonly config: ConfigService) {}
+
+  private async send(message: nodemailer.SendMailOptions) {
+    try {
+      const transporter = nodemailer.createTransport(smtpOptions(this.config));
+      await transporter.sendMail(message);
+    } catch {
+      // Do not log SMTP credentials, recipient addresses or verification tokens.
+      this.logger.error('Mail delivery failed; check SMTP configuration and provider availability');
+      throw new ServiceUnavailableException('Не удалось отправить письмо. Попробуйте повторить отправку позже.');
+    }
   }
 
   async sendVerification(email: string, token: string) {
     const url = `${this.config.get('WEB_URL', 'http://localhost:3000')}/verify-email?token=${encodeURIComponent(token)}`;
-    await this.transporter.sendMail({
+    await this.send({
       from: this.config.get('SMTP_FROM', 'FORRUM <noreply@forrum.local>'),
       to: email,
       subject: 'Подтвердите почту FORRUM',
@@ -26,7 +32,7 @@ export class MailService {
   }
   async sendPasswordReset(email: string, token: string) {
     const url = `${this.config.get('WEB_URL', 'http://localhost:3000')}/reset-password?token=${encodeURIComponent(token)}`;
-    await this.transporter.sendMail({
+    await this.send({
       from: this.config.get('SMTP_FROM', 'FORRUM <noreply@forrum.local>'),
       to: email,
       subject: 'Восстановление пароля FORRUM',

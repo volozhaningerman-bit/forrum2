@@ -12,6 +12,7 @@ export default function VerifyEmailPage() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [cooldown, setCooldown] = useState(0);
+  const [deliveryFailed, setDeliveryFailed] = useState(false);
   const [sending, setSending] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
   const [emailEntryVisible, setEmailEntryVisible] = useState(false);
@@ -26,6 +27,7 @@ export default function VerifyEmailPage() {
       void api<Me>('/auth/me').then((current) => { setEmail(current.user.email); setEmailEntryVisible(false); }).catch(() => undefined);
     }
     if (params.get('sent') === '1') { setMessage('Письмо отправлено. Ссылка действует 24 часа.'); setCooldown(60); }
+    if (params.get('delivery') === 'failed') { setDeliveryFailed(true); setMessage('Аккаунт создан, но письмо отправить не удалось. Повторите отправку позже. Создавать аккаунт заново не нужно.'); }
     if (!token) return;
     setState('verifying');
     api(`/auth/verify-email?token=${encodeURIComponent(token)}`)
@@ -52,8 +54,9 @@ export default function VerifyEmailPage() {
     try {
       await api('/auth/resend-verification', { method: 'POST', body: JSON.stringify({ email }) });
       setMessage('Если адрес зарегистрирован и ещё не подтверждён, новое письмо уже отправлено.');
+      setDeliveryFailed(false);
       setCooldown(60);
-    } catch (cause) { setMessage(cause instanceof Error ? cause.message : 'Не удалось отправить письмо'); }
+    } catch (cause) { setDeliveryFailed(true); setMessage(cause instanceof Error ? cause.message : 'Не удалось отправить письмо'); }
     finally { setSending(false); }
   }
 
@@ -70,10 +73,10 @@ export default function VerifyEmailPage() {
     {state === 'error' && <div className="auth-complete-state"><span className="auth-complete-icon error">!</span><div className="error-box">{message}</div><p className="muted">Ссылка могла истечь или уже использоваться. Запросите новую по адресу регистрации.</p></div>}
     {state === 'waiting' && <div className="auth-complete-state">
       <span className="mail-symbol" aria-hidden="true">✉</span>
-      <p>{email ? <>Мы отправили ссылку на <strong>{email}</strong>.</> : 'Откройте письмо от FORRUM и нажмите кнопку подтверждения.'}</p>
-      <small>Письмо может прийти в течение нескольких минут. Проверьте папку «Спам». В локальной версии откройте Mailpit: localhost:8025.</small>
+      <p>{deliveryFailed ? 'Письмо подтверждения пока не отправлено.' : email ? <>Почта для подтверждения: <strong>{email}</strong>.</> : 'Откройте письмо от FORRUM и нажмите кнопку подтверждения.'}</p>
+      <small>Письмо может прийти в течение нескольких минут. Проверьте папку «Спам».</small>
       {emailEntryVisible && <label className="verification-email-field">Почта регистрации<input type="email" autoComplete="email" value={email} placeholder="name@example.com" onChange={(event) => setEmail(event.target.value)}/></label>}
-      {message && <div className="success-box">{message}</div>}
+      {message && <div className={deliveryFailed ? "error-box" : "success-box"} role="status">{message}</div>}
       <button className="button secondary" type="button" disabled={sending || cooldown > 0 || !email} onClick={resend}>{sending ? 'Отправляем…' : cooldown > 0 ? `Повторить через ${cooldown} с` : 'Отправить письмо ещё раз'}</button>
       <Link className="text-link" href="/register">Указали неправильную почту? Создать аккаунт заново</Link>
     </div>}
