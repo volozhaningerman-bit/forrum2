@@ -72,3 +72,16 @@ for (const failDelivery of [false, true]) {
     assert.equal('token' in result, false);
   });
 }
+
+
+test('production Mailpit accepts unencrypted SMTP without credentials', () => {
+  const options = smtpOptions(new ConfigService({ NODE_ENV: 'production', SMTP_HOST: 'mailpit.railway.internal', SMTP_PORT: '1025' }));
+  assert.equal(options.secure, false);
+  assert.equal(options.requireTLS, false);
+  assert.equal(options.auth, undefined);
+});
+
+test('relay TLS can be explicitly required and invalid flags fail', () => {
+  assert.equal(smtpOptions(new ConfigService({ SMTP_REQUIRE_TLS: 'true' })).requireTLS, true);
+  assert.throws(() => smtpOptions(new ConfigService({ SMTP_REQUIRE_TLS: 'yes' })));
+});
