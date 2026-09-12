@@ -1,3 +1,5 @@
+import { analyticsSummary, analyticsWindow, type DailyMetric } from './analytics.js';
+import type { EditCategoryDto } from './dto.js';
 import { defaultHomeBanners, homeBannerKey, validateBanners } from '../home/banners.js';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -11,6 +13,77 @@ import { ModerationService } from '../moderation/moderation.service.js';
 @Injectable()
 export class AdminService {
   constructor(private readonly prisma: PrismaService, private readonly wallet: WalletService, private readonly config: ConfigService, private readonly moderation: ModerationService) {}
+
+  async analytics(input = '30') {
+    const days = Number(input);
+    let window;
+    const now = new Date();
+    try { window = analyticsWindow(days, now); } catch { throw new BadRequestException('Выберите 7, 30 или 90 дней'); }
+    const { previousStart, end } = window;
+    const rows = await this.prisma.$queryRaw<DailyMetric[]>`
+      WITH events AS (
+        SELECT "createdAt"::date AS day, 1 AS users, 0 AS publications, 0 AS comments, NULL::text AS actor FROM "User"
+          WHERE "createdAt" >= ${previousStart} AND "createdAt" < ${end}
+        UNION ALL
+        SELECT "createdAt"::date, 0, 1, 0, "authorId"::text FROM "Publication"
+          WHERE "createdAt" >= ${previousStart} AND "createdAt" < ${end} AND status = 'PUBLISHED'
+        UNION ALL
+        SELECT c."createdAt"::date, 0, 0, 1, c."authorId"::text FROM "Comment" c JOIN "Publication" p ON p.id = c."publicationId"
+          WHERE c."createdAt" >= ${previousStart} AND c."createdAt" < ${end} AND c."hiddenAt" IS NULL AND p.status = 'PUBLISHED'
+      ) SELECT to_char(day, 'YYYY-MM-DD') AS date, SUM(users)::int AS users,
+        SUM(publications)::int AS publications, SUM(comments)::int AS comments,
+        COUNT(DISTINCT actor)::int AS contributors FROM events GROUP BY day ORDER BY day`;
+    return analyticsSummary(rows, days, now);
+  }
+
+  private listPage(q = '', input = '1') {
+    const page = Number(input);
+    if (!Number.isInteger(page) || page < 1 || page > 100000 || q.length > 100) throw new BadRequestException('Некорректные параметры поиска');
+    return { page, query: q.trim(), take: 25, skip: (page - 1) * 25 };
+  }
+
+  async users(q?: string, input?: string) {
+    const { page, query, take, skip } = this.listPage(q, input);
+    const where = query ? { OR: [{ username: { contains: query, mode: 'insensitive' as const } }, { displayName: { contains: query, mode: 'insensitive' as const } }, { email: { contains: query, mode: 'insensitive' as const } }] } : {};
+    const [items, total] = await Promise.all([
+      this.prisma.user.findMany({ where, take, skip, orderBy: [{ createdAt: 'desc' }, { id: 'asc' }], select: { id: true, username: true, displayName: true, email: true, role: true, state: true, emailVerifiedAt: true, createdAt: true } }),
+      this.prisma.user.count({ where }),
+    ]);
+    return { items, total, page, pageSize: take };
+  }
+
+  async publications(q?: string, input?: string) {
+    const { page, query, take, skip } = this.listPage(q, input);
+    const where = query ? { title: { contains: query, mode: 'insensitive' as const } } : {};
+    const [items, total] = await Promise.all([
+      this.prisma.publication.findMany({ where, take, skip, orderBy: [{ createdAt: 'desc' }, { id: 'asc' }], select: { id: true, slug: true, title: true, status: true, createdAt: true, author: { select: { username: true } }, community: { select: { name: true } } } }),
+      this.prisma.publication.count({ where }),
+    ]);
+    return { items, total, page, pageSize: take };
+  }
+
+  categories() {
+    return this.prisma.community.findMany({ orderBy: { createdAt: 'asc' }, select: { id: true, parentId: true, name: true, slug: true, description: true, shortDescription: true, status: true, _count: { select: { publications: true, subscriptions: true } } } });
+  }
+
+  async editCategory(id: string, dto: EditCategoryDto, actorId: string) {
+    const name = dto.name.trim(), description = dto.description.trim();
+    if (name.length < 2 || description.length < 20) throw new BadRequestException('Название — от 2 символов, описание — от 20');
+    const before = await this.prisma.community.findUnique({ where: { id } });
+    if (!before) throw new NotFoundException('Категория не найдена');
+    await this.prisma.$transaction([
+      this.prisma.community.update({ where: { id }, data: { name, description, shortDescription: dto.shortDescription.trim() } }),
+      this.prisma.auditLog.create({ data: { actorId, action: 'community.edit', entityType: 'Community', entityId: id, metadata: { before: { name: before.name, description: before.description, shortDescription: before.shortDescription }, after: { name, description, shortDescription: dto.shortDescription.trim() } } } }),
+    ]);
+    return { ok: true };
+  }
+
+  connections() {
+    return {
+      mail: { hostConfigured: Boolean(this.config.get('SMTP_HOST')), port: String(this.config.get('SMTP_PORT', '1025')), senderConfigured: Boolean(this.config.get('SMTP_FROM')), testInbox: /mailpit/i.test(String(this.config.get('SMTP_HOST', ''))), webUrlConfigured: /^https?:\/\//.test(String(this.config.get('WEB_URL', ''))) },
+      telegram: { tokenConfigured: Boolean(this.config.get('TELEGRAM_BOT_TOKEN')), pollingEnabled: String(this.config.get('TELEGRAM_POLLING_ENABLED')) === 'true' },
+    };
+  }
 
   async dashboard() {
     const [users, verifiedUsers, communities, publications, comments, openReports, messages] = await Promise.all([

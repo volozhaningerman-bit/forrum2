@@ -40,3 +40,9 @@ export class HomeBannersDto {
 }
 
 export class AiTaxonomyDto { @MatchesVersion(/^[a-f0-9]{64}$/) version!: string; }
+
+export class EditCategoryDto {
+  @IsString() @Length(2, 60) name!: string;
+  @IsString() @Length(20, 2000) description!: string;
+  @IsString() @Length(0, 180) shortDescription!: string;
+}
