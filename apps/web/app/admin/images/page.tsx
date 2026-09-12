@@ -1,0 +1,1 @@
+import Images from '@/components/admin/images';import {Heading} from '@/components/admin/ui';export default function Page(){return <><Heading title="Изображения" description="Загрузите файл и используйте его в баннерах или публикациях."/><section className="adm-panel"><Images/></section></>;}
