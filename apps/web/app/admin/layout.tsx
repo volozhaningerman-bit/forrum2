@@ -1,3 +1,5 @@
+import { AdminShell } from '@/components/admin/shell';
+import './admin.css';
 import { redirect } from 'next/navigation';
 import { requireUser } from '@/lib/server-api';
 
@@ -13,5 +15,5 @@ export default async function AdminLayout({
     redirect('/');
   }
 
-  return children;
+  return <AdminShell>{children}</AdminShell>;
 }

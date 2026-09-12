@@ -1,6 +1,6 @@
 import { AiTaxonomyService } from './ai-taxonomy.service.js';
-import { AiTaxonomyDto } from './dto.js';
-import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { EditCategoryDto, AiTaxonomyDto } from './dto.js';
+import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import type { User } from '../generated/prisma/client.js';
 import { AdminGuard } from '../auth/admin.guard.js';
@@ -16,6 +16,12 @@ import { HomeBannersDto, EndCommunityRoleDto, GrantCommunityRoleDto, HidePublica
 @UseGuards(SessionGuard, VerifiedGuard, AdminGuard)
 export class AdminController {
   constructor(private readonly service: AdminService, private readonly taxonomy: AiTaxonomyService) {}
+  @Get('analytics') analytics(@Query('days') days?: string) { return this.service.analytics(days); }
+  @Get('users') users(@Query('q') q?: string, @Query('page') page?: string) { return this.service.users(q, page); }
+  @Get('publications') publications(@Query('q') q?: string, @Query('page') page?: string) { return this.service.publications(q, page); }
+  @Get('categories') categories() { return this.service.categories(); }
+  @Put('categories/:id') editCategory(@Param('id') id: string, @Body() dto: EditCategoryDto, @CurrentUser() user: User) { return this.service.editCategory(id, dto, user.id); }
+  @Get('connections') connections() { return this.service.connections(); }
   @Get('dashboard') dashboard() { return this.service.dashboard(); }
   @Get('reports') reports() { return this.service.reports(); }
   @Post('reports/:id/resolve') resolve(@Param('id') id: string, @Body() dto: ResolveReportDto, @CurrentUser() user: User) {
