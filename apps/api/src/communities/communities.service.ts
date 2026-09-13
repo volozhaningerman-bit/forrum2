@@ -16,7 +16,7 @@ export class CommunitiesService {
     const onlineSince = new Date(now.getTime() - 5 * 60_000);
     const [communities, activityRows, recentRows, onlineRows] = await Promise.all([
       this.prisma.community.findMany({
-        where: { status: 'ACTIVE' }, orderBy: [{ parentId: 'asc' }, { createdAt: 'asc' }],
+        where: { status: 'ACTIVE' }, orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
         include: {
           parent: true,
           _count: { select: { subscriptions: true, publications: { where: { status: 'PUBLISHED' } }, children: true } },
@@ -64,7 +64,7 @@ export class CommunitiesService {
       where: { slug },
       include: {
         parent: true,
-        children: { where: { status: 'ACTIVE' }, orderBy: { name: 'asc' }, include: { _count: { select: { subscriptions: true } } } },
+        children: { where: { status: 'ACTIVE' }, orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }], include: { _count: { select: { subscriptions: true } } } },
         _count: { select: { subscriptions: true, publications: { where: { status: 'PUBLISHED' } } } },
         subscriptions: { where: { userId: userId ?? '00000000-0000-0000-0000-000000000000' }, take: 1 },
         roles: { where: { endedAt: null }, include: { user: true }, orderBy: { createdAt: 'asc' } },

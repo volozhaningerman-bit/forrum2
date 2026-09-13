@@ -1,4 +1,4 @@
-import { analyticsSummary, analyticsWindow, type DailyMetric } from './analytics.js';
+import { analyticsSummary, analyticsWindow, customWindow, type DailyMetric } from './analytics.js';
 import type { EditCategoryDto } from './dto.js';
 import { defaultHomeBanners, homeBannerKey, validateBanners } from '../home/banners.js';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
@@ -14,11 +14,11 @@ import { ModerationService } from '../moderation/moderation.service.js';
 export class AdminService {
   constructor(private readonly prisma: PrismaService, private readonly wallet: WalletService, private readonly config: ConfigService, private readonly moderation: ModerationService) {}
 
-  async analytics(input = '30') {
-    const days = Number(input);
+  async analytics(input = '30',from?:string,to?:string) {
+    let days = Number(input);
     let window;
     const now = new Date();
-    try { window = analyticsWindow(days, now); } catch { throw new BadRequestException('Выберите 7, 30 или 90 дней'); }
+    try { if(from||to){const custom=customWindow(from??'',to??'',now);window=custom;days=custom.days;}else window=analyticsWindow(days,now); } catch { throw new BadRequestException('Выберите 7/30/90 дней или корректный период до 366 завершённых дней'); }
     const { previousStart, end } = window;
     const rows = await this.prisma.$queryRaw<DailyMetric[]>`
       WITH events AS (
@@ -33,7 +33,10 @@ export class AdminService {
       ) SELECT to_char(day, 'YYYY-MM-DD') AS date, SUM(users)::int AS users,
         SUM(publications)::int AS publications, SUM(comments)::int AS comments,
         COUNT(DISTINCT actor)::int AS contributors FROM events GROUP BY day ORDER BY day`;
-    return analyticsSummary(rows, days, now);
+    const result=analyticsSummary(rows,days,from||to?window.end:now,!!(from||to));
+    const confirmed=await this.prisma.user.count({where:{emailVerifiedAt:{gte:window.start,lt:window.end}}});
+    const confirmedPrevious=await this.prisma.user.count({where:{emailVerifiedAt:{gte:window.previousStart,lt:window.start}}});
+    return {...result,generatedAt:now.toISOString(),confirmed:{value:confirmed,previous:confirmedPrevious}};
   }
 
   private listPage(q = '', input = '1') {
@@ -52,9 +55,13 @@ export class AdminService {
     return { items, total, page, pageSize: take };
   }
 
-  async publications(q?: string, input?: string) {
+  async publications(q?: string, input?: string,status?:string,author?:string,category?:string,from?:string,to?:string) {
     const { page, query, take, skip } = this.listPage(q, input);
-    const where = query ? { title: { contains: query, mode: 'insensitive' as const } } : {};
+    if(status&&!['PUBLISHED','HIDDEN','DELETED'].includes(status))throw new BadRequestException('Неизвестный статус');
+    if((author?.length??0)>100||(category?.length??0)>100)throw new BadRequestException('Слишком длинный фильтр');
+    const parseDate=(v:string)=>{if(!/^\d{4}-\d{2}-\d{2}$/.test(v)||!Number.isFinite(Date.parse(v))||new Date(v).toISOString().slice(0,10)!==v)throw new BadRequestException('Неверная дата');return new Date(v);};
+    const gte=from?parseDate(from):undefined,lt=to?new Date(+parseDate(to)+86400000):undefined;if(gte&&lt&&gte>=lt)throw new BadRequestException('Начало периода позже окончания');
+    const where = {...(query?{title:{contains:query,mode:'insensitive' as const}}:{}),...(status?{status:status as PublicationStatus}:{}),...(author?{author:{username:{equals:author,mode:'insensitive' as const}}}:{}),...(category?{community:{slug:category}}:{}),...((gte||lt)?{createdAt:{gte,lt}}:{})};
     const [items, total] = await Promise.all([
       this.prisma.publication.findMany({ where, take, skip, orderBy: [{ createdAt: 'desc' }, { id: 'asc' }], select: { id: true, slug: true, title: true, status: true, createdAt: true, author: { select: { username: true } }, community: { select: { name: true } } } }),
       this.prisma.publication.count({ where }),

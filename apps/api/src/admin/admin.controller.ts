@@ -16,9 +16,9 @@ import { HomeBannersDto, EndCommunityRoleDto, GrantCommunityRoleDto, HidePublica
 @UseGuards(SessionGuard, VerifiedGuard, AdminGuard)
 export class AdminController {
   constructor(private readonly service: AdminService, private readonly taxonomy: AiTaxonomyService) {}
-  @Get('analytics') analytics(@Query('days') days?: string) { return this.service.analytics(days); }
+  @Get('analytics') analytics(@Query('days') days?: string,@Query('from') from?:string,@Query('to') to?:string) { return this.service.analytics(days,from,to); }
   @Get('users') users(@Query('q') q?: string, @Query('page') page?: string) { return this.service.users(q, page); }
-  @Get('publications') publications(@Query('q') q?: string, @Query('page') page?: string) { return this.service.publications(q, page); }
+  @Get('publications') publications(@Query('q') q?: string, @Query('page') page?: string,@Query('status') status?:string,@Query('author') author?:string,@Query('category') category?:string,@Query('from') from?:string,@Query('to') to?:string) { return this.service.publications(q,page,status,author,category,from,to); }
   @Get('categories') categories() { return this.service.categories(); }
   @Put('categories/:id') editCategory(@Param('id') id: string, @Body() dto: EditCategoryDto, @CurrentUser() user: User) { return this.service.editCategory(id, dto, user.id); }
   @Get('connections') connections() { return this.service.connections(); }

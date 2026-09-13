@@ -1,0 +1,1 @@
+import History from '@/components/admin/history';import {Heading} from '@/components/admin/ui';export default function Page(){return <><Heading title="Журнал действий" description="Кто и когда изменял форум. Пароли, токены и содержимое личных сообщений здесь не показываются."/><History/></>;}

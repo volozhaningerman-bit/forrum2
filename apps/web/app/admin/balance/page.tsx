@@ -1,0 +1,1 @@
+import LegacyPanel from '@/components/admin/legacy-panel';import History from '@/components/admin/history';import {Heading} from '@/components/admin/ui';export default function Page(){return <><Heading title="Баллы и операции" description="Внутренние баллы форума: начисления и история операций."/><LegacyPanel section="balance"/><History kind="transactions"/></>;}
