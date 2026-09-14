@@ -39,7 +39,7 @@ export class FeedController {
   unhideCommunity(@Param('slug') slug: string, @CurrentUser() user: User) { return this.service.unhideCommunity(user.id, slug); }
 
   @Get() @UseGuards(OptionalSessionGuard)
-  get(@Query('mode') mode = 'for-you', @OptionalUser() user: User | null) {
-    return this.service.get(modes.includes(mode as typeof modes[number]) ? mode : 'for-you', user?.id);
+  get(@Query('mode') mode = 'for-you', @OptionalUser() user: User | null, @Query('browse') browse?: string, @Query('community') community?: string, @Query('unanswered') unanswered?: string, @Query('offset') offset?: string) {
+    return this.service.get(modes.includes(mode as typeof modes[number]) ? mode : 'for-you', user?.id, browse === '1' ? { community, unanswered: unanswered === '1', offset: Math.max(0, Math.min(1000000, Number.parseInt(offset || '0', 10) || 0)) } : undefined);
   }
 }

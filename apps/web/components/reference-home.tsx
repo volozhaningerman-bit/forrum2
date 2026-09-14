@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { BannerCard } from './home/banner-card';
 import { CommunityPanels } from './home/community-panels';
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useTopicReading } from './use-topic-reading';
 import { topicReadState, type ReadHistory } from '@/lib/topic-reading';
 import { api } from '@/lib/api';
@@ -49,6 +49,8 @@ function categoryIcon(name: string): Glyph {
 }
 function Categories({ items, selected }: { items: Community[]; selected: string }) {
  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+ useEffect(() => { try { const saved = JSON.parse(localStorage.getItem('forrum-category-folds') || 'null'); setCollapsed(new Set(Array.isArray(saved) ? saved.filter(item => typeof item === 'string') : items.filter(item => !item.parent).map(item => item.slug))); } catch {} }, []);
+ function toggle(slug: string) { setCollapsed(previous => { const next = new Set(previous); next.has(slug) ? next.delete(slug) : next.add(slug); try { localStorage.setItem('forrum-category-folds', JSON.stringify([...next])); } catch {} return next; }); }
  const known = new Set(items.map(item => item.slug));
  const roots = items.filter(item => !item.parent || !known.has(item.parent.slug));
  function renderCategory(root: Community, trail = new Set<string>()): React.ReactNode {
@@ -59,10 +61,10 @@ function Categories({ items, selected }: { items: Community[]; selected: string 
   return <div className="forum-category" key={root.slug}><div className={`forum-category-heading ${selected === root.slug ? 'is-active' : ''}`}>
    <Link href={`/communities/${root.slug}`}><Icon name={categoryIcon(root.name)}/><span>{root.name}</span></Link>
    {!root.parent && <span className="forum-category-counts"><span title="Подписчики" aria-label={`Подписчики: ${root.subscriberCount}`}>{formatCount(root.subscriberCount)}</span><span className="forum-category-online" title="Подписчики с активной сессией за последние 5 минут" aria-label={root.onlineCount === undefined ? "Онлайн недоступен" : `Из подписчиков онлайн: ${root.onlineCount}`}><i aria-hidden="true"/>{root.onlineCount === undefined ? "—" : formatCount(root.onlineCount)}</span></span>}
-   {!!children.length && <button type="button" aria-label={`${open ? 'Свернуть' : 'Развернуть'}: ${root.name}`} aria-expanded={open} onClick={() => setCollapsed(previous => { const next = new Set(previous); if (next.has(root.slug)) next.delete(root.slug); else next.add(root.slug); return next; })}><Icon name="chevron"/></button>}
+   {!!children.length && <button type="button" aria-label={`${open ? 'Свернуть' : 'Развернуть'}: ${root.name}`} aria-expanded={open} onClick={() => toggle(root.slug)}><Icon name="chevron"/></button>}
   </div>{open && !!children.length && <div className="forum-category-children">{children.map(child => renderCategory(child, nextTrail))}</div>}</div>;
  }
- return <nav className="forum-categories" aria-label="Категории"><p className="forum-eyebrow">Категории</p>
+ return <nav className="forum-categories" aria-label="Категории"><div className="forum-category-title"><p className="forum-eyebrow">Сообщества</p><details className="forum-help"><summary aria-label="Что означают числа у сообществ?">?</summary><p>Первое число — подписчики. Число с зелёной точкой — сколько из них были активны за последние 5 минут.</p></details></div>
   {(roots.length ? roots : items).map(root => renderCategory(root))}
   <Link className="forum-all-communities" href="/communities">Все сообщества →</Link>
  </nav>;
@@ -92,14 +94,14 @@ function Topic({ item, history, communities, demo }: { item: PublicationCardData
   <div className="forum-topic-content">
    <div className="forum-topic-context">{parent && <Link className="forum-category-chip" style={chipStyle(parent.slug,communities.find(row=>row.slug===parent.slug)?.accentColor)} href={`/communities/${parent.slug}`}>{parent.name}</Link>}<Link className="forum-category-chip" style={chipStyle(item.community.slug,item.community.accentColor)} href={`/communities/${item.community.slug}`}>{item.community.name}</Link>{item.tags?.slice(0,2).map(tag=><Link className="forum-tag" style={chipStyle(tag.slug,tag.styleEnabled?tag.backgroundColor:undefined)} href={`/tags/${tag.slug}`} key={tag.id}>#{tag.label}</Link>)}<Link className="forum-topic-author" href={`/u/${item.author.username}`}>{item.author.displayName}</Link></div>
    <h2><Link href={`/p/${item.slug}`}>{item.title?.trim() || 'Запись без заголовка'}</Link></h2>
-   <details className="forum-topic-summary"><summary><span>{item.excerpt}</span><small><span className="forum-summary-more">Подробнее</span><span className="forum-summary-less">Свернуть</span></small></summary></details>
+   {item.excerpt && <p className="forum-topic-summary">{item.excerpt}</p>}
    <div className="forum-topic-service">
     {readState === 'updated' && <Link className="forum-new-replies" href={`/p/${item.slug}#new-replies`} title="После прошлого открытия темы в этом браузере">Новые ответы →</Link>}
     {item.lastComment ? <div className="forum-last-reply"><Link className="forum-reply-person" href={`/u/${item.lastComment.author.username}`}><Avatar name={item.lastComment.author.displayName} url={item.lastComment.author.avatarUrl} size={20}/><strong>{item.lastComment.author.displayName}</strong></Link><span className="forum-reply-verb">ответил:</span><Link className="forum-reply-preview" href={replyHref}>{item.lastComment.excerpt || 'Открыть ответ'}</Link></div> : <div className="forum-last-reply forum-reply-empty"><Link href={`/u/${item.author.username}`}>{item.author.displayName}</Link> · <span>{item.commentCount===0?'Пока без ответов':'Ответы в теме'}</span></div>}
    </div>
   </div>
   <div className="forum-topic-meta">
-   <div className="forum-topic-share">{demo ? <button type="button" disabled title="Демонстрация: публикация недоступна">В Telegram</button> : <TelegramShareButton slug={item.slug} label="В Telegram" variant="inline"/>}</div>
+   <div className="forum-topic-share">{demo ? <button type="button" disabled title="Демонстрация: публикация недоступна">В Telegram</button> : <TelegramShareButton slug={item.slug} label="Опубликовать в Telegram" variant="endcap"/>}</div>
    <button type="button" className={`forum-bookmark ${saved ? 'is-saved' : ''}`} disabled={pending || demo} aria-pressed={saved} aria-label={saved ? 'Убрать из сохранённого' : 'Сохранить тему'} onClick={() => void bookmark()}><Icon name="bookmark"/></button>
    <Link className="forum-reply-count" href={`/p/${item.slug}#discussion`} title="Ответы" aria-label={`Ответы: ${item.commentCount}`}><Icon name="comment"/>{formatCount(item.commentCount)}</Link>
    <span className="forum-view-count" title="Просмотры" aria-label={`Просмотры: ${item.viewCount ?? 0}`}><Icon name="eye"/>{formatCount(item.viewCount)}</span>
@@ -127,7 +129,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
   };
   tick(); return ()=>clearTimeout(timer);
  }, [overview?.banners]);
- const banners = activityError ? [] : (overview?.banners ?? []).filter(item=>item.enabled && (bannerClock===null || ((!item.endsAt || Date.parse(item.endsAt)>bannerClock) && (!item.startsAt || Date.parse(item.startsAt)<=bannerClock))));
+ const banners = (overview?.banners ?? []).filter(item=>item.enabled && (bannerClock===null || ((!item.endsAt || Date.parse(item.endsAt)>bannerClock) && (!item.startsAt || Date.parse(item.startsAt)<=bannerClock))));
  useEffect(() => {
   if (demo) return;
   let controller: AbortController | undefined;
@@ -143,63 +145,77 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
   return () => { clearInterval(interval); controller?.abort(); document.removeEventListener('visibilitychange', refresh); };
  }, [demo]);
  const [tab, setTab] = useState<Tab>('all');
- useEffect(() => { const requested = new URLSearchParams(window.location.search).get('tab'); if (tabs.some(item => item.id === requested)) setTab(requested as Tab); }, []);
- const [topics, setTopics] = useState(initialData.feed ?? []);
- const [loading, setLoading] = useState(false);
- const [pendingTopics, setPendingTopics] = useState<PublicationCardData[] | null>(null);
- useEffect(() => {
-  if (demo) return;
-  let request: AbortController | undefined;
-  const signature = (rows: PublicationCardData[]) => rows.map(row => `${row.id}:${row.commentCount}:${row.lastComment?.id || row.lastComment?.createdAt || ''}`).join('|');
-  const check = async () => {
-   if (document.hidden || loading) return;
-   request?.abort(); request = new AbortController();
-   const signal = request.signal;
-   try {
-    const rows = await api<PublicationCardData[]>(`/feed?mode=${tabs.find(item => item.id === tab)?.mode ?? 'all'}`, {signal});
-    if (!signal.aborted) setPendingTopics(signature(rows) === signature(topics) ? null : rows);
-   } catch { /* Keep the current feed and do not advertise unavailable updates. */ }
-  };
-  const timer = window.setInterval(() => void check(), 60000);
-  document.addEventListener('visibilitychange', check);
-  return () => {window.clearInterval(timer);request?.abort();document.removeEventListener('visibilitychange',check);};
- }, [topics, tab, loading, demo]);
-
- const [error, setError] = useState(initialData.feed === undefined ? 'Не удалось загрузить темы. Попробуйте ещё раз.' : '');
- const [filters, setFilters] = useState(false);
  const [community, setCommunity] = useState('');
+ const [ready, setReady] = useState(false);
+ const [topics, setTopics] = useState((initialData.feed ?? []).slice(0,20));
+ const [hasMore, setHasMore] = useState((initialData.feed?.length ?? 0) > 20);
+ const [offset, setOffset] = useState(20);
+ const [loading, setLoading] = useState(false);
+ const [loadingMore, setLoadingMore] = useState(false);
+ const [error, setError] = useState('');
+ const [moreError, setMoreError] = useState('');
+ const [filters, setFilters] = useState(false);
  const [sidebar, setSidebar] = useState(false);
  const [retry, setRetry] = useState(0);
- const firstLoad = useRef(true);
  const searchInput = useRef<HTMLInputElement>(null);
+ const sidebarRef = useRef<HTMLElement>(null);
+ const moreRequest = useRef<AbortController | null>(null);
+ const [pendingTopics, setPendingTopics] = useState<PublicationCardData[] | null>(null);
+ function choose(nextTab: Tab, nextCommunity: string) {
+  const params = new URLSearchParams(window.location.search);
+  nextTab === 'all' ? params.delete('tab') : params.set('tab', nextTab);
+  nextCommunity ? params.set('community', nextCommunity) : params.delete('community');
+  window.history.pushState(null, '', `${window.location.pathname}${params.size ? '?' + params : ''}`);
+  setTab(nextTab); setCommunity(nextCommunity);
+ }
  useEffect(() => {
-  const shortcut = (event: KeyboardEvent) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); searchInput.current?.focus(); } if (event.key === 'Escape') setSidebar(false); };
+  const restore = () => { const params = new URLSearchParams(window.location.search); const value = params.get('tab'); setTab(tabs.some(item => item.id === value) ? value as Tab : 'all'); setCommunity(params.get('community') || ''); setReady(true); };
+  restore(); window.addEventListener('popstate', restore); return () => window.removeEventListener('popstate', restore);
+ }, []);
+ const feedUrl = `/feed?browse=1&mode=${tabs.find(item => item.id === tab)?.mode ?? 'all'}&community=${encodeURIComponent(community)}&unanswered=${tab === 'unanswered' ? '1' : '0'}`;
+ useEffect(() => {
+  const shortcut = (event: KeyboardEvent) => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); searchInput.current?.scrollIntoView({block:'center'}); searchInput.current?.focus({preventScroll:true}); } if (event.key === 'Escape') setSidebar(false); };
   document.addEventListener('keydown', shortcut); return () => document.removeEventListener('keydown', shortcut);
  }, []);
  useEffect(() => {
-  if (demo) return;
-  if (firstLoad.current) { firstLoad.current = false; return; }
-  const controller = new AbortController(); setPendingTopics(null); setLoading(true); setError('');
-  api<PublicationCardData[]>(`/feed?mode=${tabs.find(item => item.id === tab)?.mode ?? 'all'}`, { signal: controller.signal })
-   .then(rows => { if (!controller.signal.aborted) setTopics(rows); })
-   .catch(cause => { if (!controller.signal.aborted) setError(cause instanceof Error ? cause.message : 'Не удалось загрузить темы'); })
-   .finally(() => { if (!controller.signal.aborted) setLoading(false); });
-  return () => controller.abort();
- }, [tab, retry, demo]);
- const visible = useMemo(() => {
-  const rows = topics.filter(item => item.format === 'TOPIC' && (tab !== 'unanswered' || item.commentCount === 0) && (!community || item.community.slug === community));
-  if (tab === 'new') rows.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
-
-  return rows;
- }, [topics, tab, community]);
+  if (!sidebar) return;
+  const previous = document.activeElement as HTMLElement | null;
+  const oldOverflow = document.body.style.overflow;
+  document.body.style.overflow = 'hidden';
+  sidebarRef.current?.querySelector<HTMLElement>('button,a')?.focus();
+  const trap = (event: KeyboardEvent) => { if(event.key !== 'Tab') return; const controls = Array.from(sidebarRef.current?.querySelectorAll<HTMLElement>('a[href],button,summary') ?? []).filter(el => el.getClientRects().length); const first=controls[0],last=controls[controls.length-1]; if(event.shiftKey && document.activeElement === first){event.preventDefault();last?.focus();}else if(!event.shiftKey && document.activeElement === last){event.preventDefault();first?.focus();} };
+  document.addEventListener('keydown',trap);
+  return () => { document.body.style.overflow=oldOverflow;document.removeEventListener('keydown',trap);previous?.focus(); };
+ }, [sidebar]);
+ useEffect(() => {
+  if (demo || !ready) return;
+  moreRequest.current?.abort(); setLoadingMore(false);setMoreError('');
+  const controller = new AbortController(); setPendingTopics(null);setLoading(true);setError('');
+  api<PublicationCardData[]>(feedUrl,{signal:controller.signal}).then(rows => {if(!controller.signal.aborted){setTopics(rows.slice(0,20));setHasMore(rows.length>20);setOffset(20);}}).catch(() => {if(!controller.signal.aborted)setError('Не удалось загрузить обсуждения. Попробуйте ещё раз.');}).finally(()=>{if(!controller.signal.aborted)setLoading(false);});
+  return () => {controller.abort();moreRequest.current?.abort();};
+ }, [feedUrl,retry,demo,ready]);
+ useEffect(() => {
+  if(demo || !ready) return;
+  const controller=new AbortController();
+  const timer=window.setInterval(()=>{if(document.hidden || loading || loadingMore)return;void api<PublicationCardData[]>(feedUrl,{signal:controller.signal}).then(rows=>{const signature=(items:PublicationCardData[])=>items.slice(0,20).map(item=>`${item.id}:${item.commentCount}:${item.lastComment?.id}`).join('|');setPendingTopics(signature(rows)===signature(topics)?null:rows);}).catch(()=>{});},60000);
+  return ()=>{window.clearInterval(timer);controller.abort();};
+ },[feedUrl,topics,loading,loadingMore,demo,ready]);
+ async function loadMore(){
+  if(loadingMore)return;
+  const controller=new AbortController();moreRequest.current=controller;setLoadingMore(true);setMoreError('');
+  try {const rows=await api<PublicationCardData[]>(`${feedUrl}&offset=${offset}`,{signal:controller.signal});if(!controller.signal.aborted){setTopics(previous=>[...previous,...rows.slice(0,20).filter(row=>!previous.some(item=>item.id===row.id))]);setOffset(value=>value+20);setHasMore(rows.length>20);}}
+  catch{if(!controller.signal.aborted)setMoreError('Не удалось загрузить следующую страницу. Попробуйте ещё раз.');}
+  finally{if(!controller.signal.aborted)setLoadingMore(false);}
+ }
+ const visible = demo ? topics.filter(item=>item.format==='TOPIC' && (tab!=='unanswered'||!item.commentCount) && (!community||item.community.slug===community)) : topics;
  const news = initialData.announcements?.slice(0, 4) ?? [];
- return <div className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v35" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
-  <aside className={`forum-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="Навигация форума">
+ return <div className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v39" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
+  <aside ref={sidebarRef} className={`forum-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="Навигация форума">
    <Link className="forum-brand" href="/"><span className="forum-brand-mark"><Icon name="comment"/></span><span><strong>FORRUM</strong><small>Нейросети. Люди. Проекты.</small></span></Link>
 
+   <button type="button" className="forum-sidebar-close" onClick={()=>setSidebar(false)} aria-label="Закрыть меню"><Icon name="close"/></button>
    <Categories items={communities} selected={community}/>
 
-   <div className="forum-sidebar-art" aria-hidden="true"/><p className="forum-sidebar-note"><strong>Место для ваших идей</strong><span>Обсуждайте. Экспериментируйте. Создавайте вместе.</span></p>
    <div className="forum-sidebar-bottom"><Link href="/rules">Правила</Link><Link href="/support">Обратная связь</Link></div>
   </aside>
   {sidebar && <button type="button" className="forum-sidebar-backdrop" aria-label="Закрыть навигацию" onClick={() => setSidebar(false)}/>}
@@ -216,10 +232,14 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
    {!!banners.length && <div className="forum-banners" aria-label="Реклама и сообщества">{banners.map(item=><BannerCard key={item.slot} item={item}/>)}</div>}
   </section>
   <div className="forum-center">
-   <div className="forum-feed-toolbar"><div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-pressed={item.id === tab} key={item.id} onClick={() => setTab(item.id)}>{item.label}</button>)}</div><button type="button" className="forum-filter-toggle" aria-expanded={filters} onClick={() => setFilters(value => !value)}>Фильтры<Icon name="filter"/></button></div>
-   {filters && <div className="forum-filters"><label>Сообщество<select aria-label="Сообщество" value={community} onChange={event => setCommunity(event.target.value)}><option value="">Все сообщества</option>{communities.map(item => <option key={item.slug} value={item.slug}>{item.name}</option>)}</select></label><button type="button" onClick={() => setCommunity('')}>Сбросить</button></div>}
-   {pendingTopics && !loading && <button type="button" className="forum-feed-update" onClick={() => {setTopics(pendingTopics);setPendingTopics(null);}}>Есть обновления в ленте · Показать</button>}
-   <section className="forum-feed" aria-label="Темы форума" aria-busy={loading}>{loading ? <div className="forum-empty" role="status">Загружаем темы…</div> : error ? <div className="forum-empty" role="alert"><p>{error}</p><button type="button" className="forum-button" onClick={() => setRetry(value => value + 1)}>Попробовать снова</button></div> : visible.length ? visible.map(item => <Topic key={`${tab}-${item.id}`} item={item} history={history} communities={communities} demo={demo}/>) : <div className="forum-empty"><strong>Тем пока нет</strong><p>Измените фильтр или начните новое обсуждение.</p><Link className="forum-button" href="/create">Создать тему</Link></div>}</section>
+   <div className="forum-feed-heading"><div><span className="forum-eyebrow">Идеи становятся проектами</span><h2>Обсуждения</h2></div><span className="forum-feed-caption">Вопросы, находки и опыт сообщества</span></div>
+   <div className="forum-feed-toolbar"><div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-pressed={item.id === tab} key={item.id} title={item.id === 'popular' ? 'Темы с ответами за последние 24 часа' : undefined} onClick={() => choose(item.id, community)}>{item.label}</button>)}</div><button type="button" className="forum-filter-toggle" aria-expanded={filters} onClick={() => setFilters(value => !value)}>Фильтры<Icon name="filter"/></button></div>
+   {filters && <div className="forum-filters"><label>Сообщество<select aria-label="Сообщество" value={community} onChange={event => choose(tab,event.target.value)}><option value="">Все сообщества</option>{communities.map(item => <option key={item.slug} value={item.slug}>{item.name}</option>)}</select></label><button type="button" onClick={() => choose(tab,'')}>Сбросить</button></div>}
+   {community && <div className="forum-active-filter">{communities.find(item=>item.slug===community)?.name || community}<button type="button" onClick={()=>choose(tab,'')} aria-label="Сбросить выбранное сообщество">×</button></div>}
+   {pendingTopics && !loading && <button type="button" className="forum-feed-update" onClick={() => {setTopics(pendingTopics.slice(0,20));setHasMore(pendingTopics.length>20);setOffset(20);setPendingTopics(null);}}>Есть обновления в ленте · Показать</button>}
+   <section className="forum-feed" aria-label="Темы форума" aria-busy={loading}>{loading ? <div className="forum-empty" role="status">Загружаем темы…</div> : error ? <div className="forum-empty" role="alert"><p>{error}</p><button type="button" className="forum-button" onClick={() => setRetry(value => value + 1)}>Попробовать снова</button></div> : visible.length ? visible.map(item => <Topic key={`${tab}-${item.id}`} item={item} history={history} communities={communities} demo={demo}/>) : <div className="forum-empty"><strong>{tab==='popular'?'За сутки новых ответов пока нет':tab==='unanswered'?'Вопросов без ответа пока нет':'Здесь пока нет тем'}</strong><p>Выберите другую подборку или начните своё обсуждение.</p><Link className="forum-button" href="/create">Создать тему</Link></div>}</section>
+   {!loading && !error && hasMore && !demo && <div className="forum-load-more"><button className="forum-button" type="button" disabled={loadingMore} onClick={()=>void loadMore()}>{loadingMore?'Загружаем…':'Показать ещё обсуждения'}</button></div>}
+   {moreError && <p className="forum-action-error" role="alert">{moreError}</p>}
   </div>
   <CommunityPanels overview={overview} unavailable={activityError || !overview} news={news}/>
 

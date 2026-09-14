@@ -3,6 +3,7 @@ import './globals.css';
 import './home-reference.css';
 import './home-ai-reference.css';
 import './home-v35.css';
+import './home-v39.css';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 export const metadata: Metadata = { title: 'FORRUM — тестовая версия', description: 'Платформа сообществ, публикаций, проектов и живого общения.' };
