@@ -41,7 +41,7 @@ export default async function Home() {
   const [communities, announcements, feed, overview] = await Promise.all([
     publicApi<HomeInitialData['communities']>('/communities'),
     publicApi<HomeInitialData['announcements']>('/announcements'),
-    publicApi<HomeInitialData['feed']>('/feed?mode=all'),
+    publicApi<HomeInitialData['feed']>('/feed?mode=all&browse=1'),
     publicApi<HomeInitialData['overview']>('/home/overview'),
   ]);
   return <HomeDashboard initialData={{ communities, announcements, feed, overview }}/>;

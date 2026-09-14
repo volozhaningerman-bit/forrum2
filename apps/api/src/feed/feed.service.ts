@@ -83,7 +83,7 @@ export class FeedService {
     return { ok: true };
   }
 
-  async get(mode: string, userId?: string) {
+  async get(mode: string, userId?: string, browse?: { community?: string; unanswered?: boolean; offset: number }) {
     if ((mode === 'subscriptions' || mode === 'saved') && !userId) return [];
     const now = Date.now();
     // FORRUM_POPULAR_24H_V8
@@ -143,10 +143,22 @@ export class FeedService {
     }
     if (mode === 'saved' && userId) where = { ...where, bookmarks: { some: { userId } } };
 
+    if (browse) {
+      const scope: Prisma.PublicationWhereInput = { format: 'TOPIC', community: { status: 'ACTIVE' } };
+      if (browse.community) {
+        const tree = await this.prisma.community.findMany({ where: { status: 'ACTIVE' }, select: { id: true, parentId: true, slug: true } });
+        const root = tree.find(node => node.slug === browse.community);
+        if (!root) return [];
+        scope.communityId = { in: [...expandCommunityIds(tree, [root.id])] };
+      }
+      if (browse.unanswered) scope.comments = { none: { hiddenAt: null } };
+      where = { AND: [where, scope] };
+    }
     const candidates = await this.prisma.publication.findMany({
       where,
-      orderBy: mode === 'new' ? { createdAt: 'desc' } : [{ pinnedUntil: 'desc' }, { lastActivityAt: 'desc' }],
-      take: mode === 'new' ? 80 : 240,
+      orderBy: browse ? mode === 'new' ? [{ createdAt: 'desc' }, { id: 'desc' }] : [{ lastActivityAt: 'desc' }, { id: 'desc' }] : mode === 'new' ? { createdAt: 'desc' } : [{ pinnedUntil: 'desc' }, { lastActivityAt: 'desc' }],
+      skip: browse?.offset,
+      take: browse ? 21 : mode === 'new' ? 80 : 240,
       include: {
         author: true,
         community: true,
@@ -183,6 +195,7 @@ export class FeedService {
       });
       return { publication, ...ranking };
     }).sort((a, b) => {
+      if (browse) return 0;
       if (mode === 'popular') {
         return (
           b.publication.comments.length - a.publication.comments.length ||
@@ -201,7 +214,7 @@ export class FeedService {
       if (mode === 'for-you' && !includeInForYou({ authenticated: Boolean(userId), recommendationsEnabled, personallyRelevant: item.personallyRelevant, discussed: item.discussed })) continue;
       const c = communityCount.get(item.publication.communityId) ?? 0;
       const a = authorCount.get(item.publication.authorId) ?? 0;
-      if (!['subscriptions', 'saved', 'new', 'popular'].includes(mode) && (c >= 4 || a >= 3)) continue;
+      if (!browse && !['subscriptions', 'saved', 'new', 'popular'].includes(mode) && (c >= 4 || a >= 3)) continue;
       selected.push(item);
       communityCount.set(item.publication.communityId, c + 1);
       authorCount.set(item.publication.authorId, a + 1);
