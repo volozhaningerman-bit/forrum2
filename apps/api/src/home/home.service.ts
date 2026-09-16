@@ -110,7 +110,6 @@ export class HomeService {
       weeklyTopics,
       weeklyComments,
       publicationReactions,
-      commentReactions,
       polls,
       proposal,
     ] = await Promise.all([
@@ -195,38 +194,12 @@ export class HomeService {
           type: ReactionType.LIKE,
           publication: {
             status: PublicationStatus.PUBLISHED,
+            format: PublicationFormat.TOPIC,
           },
         },
         select: {
           userId: true,
           publication: {
-            select: {
-              author: {
-                select: {
-                  id: true,
-                  username: true,
-                  displayName: true,
-                  avatarUrl: true,
-                },
-              },
-            },
-          },
-        },
-      }),
-      this.prisma.commentReaction.findMany({
-        where: {
-          createdAt: { gte: weekAgo },
-          type: ReactionType.LIKE,
-          comment: {
-            hiddenAt: null,
-            publication: {
-              status: PublicationStatus.PUBLISHED,
-            },
-          },
-        },
-        select: {
-          userId: true,
-          comment: {
             select: {
               author: {
                 select: {
@@ -409,13 +382,7 @@ export class HomeService {
       getWeeklyUser(likes, author).reactionCount += 1;
     }
 
-    for (const item of commentReactions) {
-      const author = item.comment.author;
-
-      if (item.userId === author.id) continue;
-
-      getWeeklyUser(likes, author).reactionCount += 1;
-    }
+    // Homepage sympathies count publication reactions, not comment reactions.
 
     const usersOnline = onlineSessions.length;
     const savedRecord = readOnlineRecord(

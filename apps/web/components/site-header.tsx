@@ -19,7 +19,7 @@ export function SiteHeader() {
     <>
       <header data-forrum-shell="header" className="header">
         <div className="shell nav">
-          <Link className="reference-site-brand" href="/" aria-label="FORRUM">FORRUM</Link>
+          <Link className="reference-site-brand" href="/" aria-label="4rrum">4rrum</Link>
 
           <MainNav />
 

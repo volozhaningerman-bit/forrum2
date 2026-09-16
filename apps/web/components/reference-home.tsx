@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { BannerCard } from './home/banner-card';
 import { CommunityPanels } from './home/community-panels';
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTopicReading } from './use-topic-reading';
 import { topicReadState, type ReadHistory } from '@/lib/topic-reading';
 import { api } from '@/lib/api';
@@ -11,7 +11,8 @@ import { Avatar } from './avatar';
 import { AuthActions } from './auth-actions';
 import { HeaderSearch } from './header-search';
 import { ThemeToggle } from './theme-toggle';
-import { TelegramShareButton } from './telegram-share-button';
+import { TopicActions } from './home/topic-actions';
+import { categoryStyle } from './home/category-style';
 import { formatCount } from './home/utils';
 import type { Community, HomeInitialData, HomeOverview } from './home/types';
 export type { HomeInitialData } from './home/types';
@@ -49,7 +50,7 @@ function categoryIcon(name: string): Glyph {
 }
 function Categories({ items, selected }: { items: Community[]; selected: string }) {
  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
- useEffect(() => { try { const saved = JSON.parse(localStorage.getItem('forrum-category-folds') || 'null'); setCollapsed(new Set(Array.isArray(saved) ? saved.filter(item => typeof item === 'string') : items.filter(item => !item.parent).map(item => item.slug))); } catch {} }, []);
+ useEffect(() => { try { const saved = JSON.parse(localStorage.getItem('forrum-category-folds') || 'null'); setCollapsed(new Set(Array.isArray(saved) ? saved.filter(item => typeof item === 'string') : [])); } catch {} }, []);
  function toggle(slug: string) { setCollapsed(previous => { const next = new Set(previous); next.has(slug) ? next.delete(slug) : next.add(slug); try { localStorage.setItem('forrum-category-folds', JSON.stringify([...next])); } catch {} return next; }); }
  const known = new Set(items.map(item => item.slug));
  const roots = items.filter(item => !item.parent || !known.has(item.parent.slug));
@@ -58,59 +59,39 @@ function Categories({ items, selected }: { items: Community[]; selected: string 
   const nextTrail = new Set([...trail, root.slug]);
   const children = items.filter(item => item.parent?.slug === root.slug && !nextTrail.has(item.slug));
   const open = !collapsed.has(root.slug);
-  return <div className="forum-category" key={root.slug}><div className={`forum-category-heading ${selected === root.slug ? 'is-active' : ''}`}>
+  return <div className="forum-category" key={root.slug} style={categoryStyle(root.slug, root.accentColor)}><div className={`forum-category-heading ${selected === root.slug ? 'is-active' : ''}`}>
    <Link href={`/communities/${root.slug}`}><Icon name={categoryIcon(root.name)}/><span>{root.name}</span></Link>
-   {!root.parent && <span className="forum-category-counts"><span title="Подписчики" aria-label={`Подписчики: ${root.subscriberCount}`}>{formatCount(root.subscriberCount)}</span><span className="forum-category-online" title="Подписчики с активной сессией за последние 5 минут" aria-label={root.onlineCount === undefined ? "Онлайн недоступен" : `Из подписчиков онлайн: ${root.onlineCount}`}><i aria-hidden="true"/>{root.onlineCount === undefined ? "—" : formatCount(root.onlineCount)}</span></span>}
+   {<span className="forum-category-counts"><span title="Подписчики" aria-label={`Подписчики: ${root.subscriberCount}`}>{formatCount(root.subscriberCount)}</span><span className="forum-category-online" title="Подписчики с активной сессией за последние 5 минут" aria-label={root.onlineCount === undefined ? "Онлайн недоступен" : `Из подписчиков онлайн: ${root.onlineCount}`}><i aria-hidden="true"/>{root.onlineCount === undefined ? "—" : formatCount(root.onlineCount)}</span></span>}
    {!!children.length && <button type="button" aria-label={`${open ? 'Свернуть' : 'Развернуть'}: ${root.name}`} aria-expanded={open} onClick={() => toggle(root.slug)}><Icon name="chevron"/></button>}
   </div>{open && !!children.length && <div className="forum-category-children">{children.map(child => renderCategory(child, nextTrail))}</div>}</div>;
  }
  return <nav className="forum-categories" aria-label="Категории"><div className="forum-category-title"><p className="forum-eyebrow">Сообщества</p><details className="forum-help"><summary aria-label="Что означают числа у сообществ?">?</summary><p>Первое число — подписчики. Число с зелёной точкой — сколько из них были активны за последние 5 минут.</p></details></div>
   {(roots.length ? roots : items).map(root => renderCategory(root))}
+  <div className="forum-category forum-app-category"><div className="forum-category-heading"><Link href="/applications"><Icon name="game"/><span>Приложения</span></Link></div><div className="forum-category-children">{["AI-инструменты","Игры","Эксперименты","Neural Lab"].map((name,i)=><Link key={name} href={`/applications#section-${i}`}>{name}</Link>)}</div></div>
   <Link className="forum-all-communities" href="/communities">Все сообщества →</Link>
  </nav>;
 }
 
-function chipStyle(key: string, accent?: string): CSSProperties {
- const colors=['#789747','#5d8db5','#b49349','#9176ad'];
- const hash=Array.from(key).reduce((sum,char)=>sum+char.charCodeAt(0),0);
- return {'--chip-accent': accent && /^#[0-9a-f]{6}$/i.test(accent) ? accent : colors[hash%colors.length]} as CSSProperties;
-}
 function Topic({ item, history, communities, demo }: { item: PublicationCardData; history: ReadHistory | null; communities: Community[]; demo: boolean }) {
- const parent=communities.find(community=>community.slug===item.community.slug)?.parent;
- const readState = topicReadState(history, item.id, item.lastComment?.createdAt);
- const replyHref = `/p/${item.slug}${item.lastComment?.id ? `#comment-${item.lastComment.id}` : "#discussion"}`;
- const [saved, setSaved] = useState(item.isBookmarked ?? false);
- const [pending, setPending] = useState(false);
- const [error, setError] = useState('');
- async function bookmark() {
-  if (pending) return;
-  setPending(true); setError('');
-  try { const result = await api<{ bookmarked: boolean }>(`/publications/${item.slug}/bookmark`, { method: 'POST' }); setSaved(result.bookmarked); }
-  catch (cause) { setError(cause instanceof Error ? cause.message : 'Не удалось сохранить'); }
-  finally { setPending(false); }
- }
+ const category=communities.find(row=>row.slug===item.community.slug);
+ const parent=category?.parent;
+ const readState=topicReadState(history,item.id,item.lastComment?.createdAt);
  return <article className={`forum-topic is-${readState}`} data-reading-state={readState}>
-  <Link className="forum-topic-avatar" href={`/u/${item.author.username}`} title={item.author.displayName} aria-label={`Автор: ${item.author.displayName}`}><Avatar name={item.author.displayName} url={item.author.avatarUrl} size={48}/></Link>
+  <Link className="forum-topic-avatar" href={`/u/${item.author.username}`} title={item.author.displayName} aria-label={`Автор: ${item.author.displayName}`}><Avatar name={item.author.displayName} url={item.author.avatarUrl} size={36}/></Link>
   <div className="forum-topic-content">
-   <div className="forum-topic-context">{parent && <Link className="forum-category-chip" style={chipStyle(parent.slug,communities.find(row=>row.slug===parent.slug)?.accentColor)} href={`/communities/${parent.slug}`}>{parent.name}</Link>}<Link className="forum-category-chip" style={chipStyle(item.community.slug,item.community.accentColor)} href={`/communities/${item.community.slug}`}>{item.community.name}</Link>{item.tags?.slice(0,2).map(tag=><Link className="forum-tag" style={chipStyle(tag.slug,tag.styleEnabled?tag.backgroundColor:undefined)} href={`/tags/${tag.slug}`} key={tag.id}>#{tag.label}</Link>)}<Link className="forum-topic-author" href={`/u/${item.author.username}`}>{item.author.displayName}</Link></div>
    <h2><Link href={`/p/${item.slug}`}>{item.title?.trim() || 'Запись без заголовка'}</Link></h2>
-   {item.excerpt && <p className="forum-topic-summary">{item.excerpt}</p>}
-   <div className="forum-topic-service">
-    {readState === 'updated' && <Link className="forum-new-replies" href={`/p/${item.slug}#new-replies`} title="После прошлого открытия темы в этом браузере">Новые ответы →</Link>}
-    {item.lastComment ? <div className="forum-last-reply"><Link className="forum-reply-person" href={`/u/${item.lastComment.author.username}`}><Avatar name={item.lastComment.author.displayName} url={item.lastComment.author.avatarUrl} size={20}/><strong>{item.lastComment.author.displayName}</strong></Link><span className="forum-reply-verb">ответил:</span><Link className="forum-reply-preview" href={replyHref}>{item.lastComment.excerpt || 'Открыть ответ'}</Link></div> : <div className="forum-last-reply forum-reply-empty"><Link href={`/u/${item.author.username}`}>{item.author.displayName}</Link> · <span>{item.commentCount===0?'Пока без ответов':'Ответы в теме'}</span></div>}
+   <div className="forum-topic-context" aria-label="Раздел и метки темы">
+    {parent && <><Link className="forum-category-chip" style={categoryStyle(parent.slug,communities.find(row=>row.slug===parent.slug)?.accentColor)} href={`/communities/${parent.slug}`}>{parent.name}</Link><span className="forum-path-arrow" aria-hidden="true">›</span></>}
+    <Link className="forum-category-chip" style={categoryStyle(item.community.slug,category?.accentColor ?? item.community.accentColor)} href={`/communities/${item.community.slug}`}>{item.community.name}</Link>
+    {item.tags?.slice(0,2).map(tag=><Link className="forum-tag" href={`/tags/${tag.slug}`} key={tag.id}>#{tag.label}</Link>)}
+    {readState==='updated' && <Link className="forum-new-replies" href={`/p/${item.slug}#new-replies`}>Новые ответы</Link>}
    </div>
   </div>
-  <div className="forum-topic-meta">
-   <div className="forum-topic-share">{demo ? <button type="button" disabled title="Демонстрация: публикация недоступна">В Telegram</button> : <TelegramShareButton slug={item.slug} label="Опубликовать в Telegram" variant="endcap"/>}</div>
-   <button type="button" className={`forum-bookmark ${saved ? 'is-saved' : ''}`} disabled={pending || demo} aria-pressed={saved} aria-label={saved ? 'Убрать из сохранённого' : 'Сохранить тему'} onClick={() => void bookmark()}><Icon name="bookmark"/></button>
-   <Link className="forum-reply-count" href={`/p/${item.slug}#discussion`} title="Ответы" aria-label={`Ответы: ${item.commentCount}`}><Icon name="comment"/>{formatCount(item.commentCount)}</Link>
-   <span className="forum-view-count" title="Просмотры" aria-label={`Просмотры: ${item.viewCount ?? 0}`}><Icon name="eye"/>{formatCount(item.viewCount)}</span>
-  </div>
-  {error && <p className="forum-action-error" role="alert">{error}</p>}
+  <div className="forum-topic-meta"><Link className="forum-reply-count" href={`/p/${item.slug}#discussion`} aria-label={`Сообщения: ${item.commentCount}`} title="Сообщения"><Icon name="comment"/>{formatCount(item.commentCount)}</Link><span className="forum-view-count" title="Просмотры" aria-label={`Просмотры: ${item.viewCount ?? 0}`}><Icon name="eye"/>{formatCount(item.viewCount)}</span><TopicActions item={item} demo={demo}/></div>
  </article>;
 }
 
-const tabs = [{ id: 'all', label: 'Все темы', mode: 'all' }, { id: 'popular', label: 'Обсуждаемые', mode: 'popular' }, { id: 'new', label: 'Новые', mode: 'new' }, { id: 'unanswered', label: 'Без ответов', mode: 'all' }] as const;
+const tabs = [{ id: 'all', label: 'Все темы', mode: 'all' }, { id: 'popular', label: 'Популярные', mode: 'popular' }, { id: 'new', label: 'Новые', mode: 'new' }, { id: 'unanswered', label: 'Без ответов', mode: 'all' }] as const;
 type Tab = typeof tabs[number]['id'];
 export function HomeDashboard({ initialData, demo = false }: { initialData: HomeInitialData; demo?: boolean }) {
  const reading = useTopicReading();
@@ -209,9 +190,9 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
  }
  const visible = demo ? topics.filter(item=>item.format==='TOPIC' && (tab!=='unanswered'||!item.commentCount) && (!community||item.community.slug===community)) : topics;
  const news = initialData.announcements?.slice(0, 4) ?? [];
- return <div className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v39" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
+ return <div className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v40" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
   <aside ref={sidebarRef} className={`forum-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="Навигация форума">
-   <Link className="forum-brand" href="/"><span className="forum-brand-mark"><Icon name="comment"/></span><span><strong>FORRUM</strong><small>Нейросети. Люди. Проекты.</small></span></Link>
+   <Link className="forum-brand" href="/"><span className="forum-brand-mark"><Icon name="comment"/></span><span><strong>4rrum</strong><small>Нейросети. Люди. Проекты.</small></span></Link>
 
    <button type="button" className="forum-sidebar-close" onClick={()=>setSidebar(false)} aria-label="Закрыть меню"><Icon name="close"/></button>
    <Categories items={communities} selected={community}/>
@@ -220,28 +201,29 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
   </aside>
   {sidebar && <button type="button" className="forum-sidebar-backdrop" aria-label="Закрыть навигацию" onClick={() => setSidebar(false)}/>}
   <header className="forum-topbar"><button type="button" className="forum-menu" aria-label={sidebar ? 'Закрыть меню' : 'Открыть меню'} aria-expanded={sidebar} onClick={() => setSidebar(value => !value)}><Icon name="menu"/></button>
-   <nav className="forum-primary" aria-label="Основная навигация">{([{ href: '/', label: 'Главная', icon: 'home' }, { href: '/workshop', label: 'Мастерская', icon: 'work' }, { href: '/media', label: 'Медиа', icon: 'media' }, { href: '/services', label: 'Услуги', icon: 'service' }] as const).map(item => <Link key={item.href} href={item.href} aria-current={item.href === '/' ? 'page' : undefined}><Icon name={item.icon}/>{item.label}</Link>)}</nav>
+   <nav className="forum-primary" aria-label="Основная навигация">{([{ href: '/', label: 'Главная', icon: 'home' }, { href: '/workshop', label: 'Мастерская', icon: 'work' }, { href: '/media', label: 'Медиа', icon: 'media' }, { href: '/services', label: 'Услуги', icon: 'service' }, { href: '/applications', label: 'Приложения', icon: 'game' }] as const).map(item => <Link key={item.href} href={item.href} aria-current={item.href === '/' ? 'page' : undefined}><Icon name={item.icon}/>{item.label}</Link>)}</nav>
    <Link className="forum-button forum-top-create" href="/create"><Icon name="plus"/>Создать тему</Link><ThemeToggle/><Link className="forum-notifications" href="/notifications" aria-label="Уведомления"><Icon name="bell"/></Link><AuthActions/>{viewer === 'guest' && <Link className="forum-header-join" href="/register">Присоединиться</Link>}
   </header>
-  <section className={`forum-intro ${banners.length ? 'has-banners' : ''}`} aria-label="Найдите своё сообщество">
+  <section className="forum-intro" aria-label="Найдите своё сообщество">
    {demo && <span className="forum-demo-label">Демонстрационные данные · <Link href="/">На форум</Link></span>}
    <div className="forum-search-hero">
-    <div className="forum-hero-copy"><small className="forum-hero-kicker">Сообщество о нейросетях</small><h1>Найди своих. <span>Создай с AI.</span></h1><p>Код, творчество, работа — обсуждаем инструменты и делаем проекты вместе.</p><HeaderSearch inputRef={searchInput}/><nav className="forum-quick-links" aria-label="Начать обсуждение"><Link href="/create?intent=result">Показать работу</Link><Link href="/create?intent=review">Попросить разбор</Link><Link href="/create?intent=prompt">Поделиться промптом</Link><Link href="/create?intent=help">Найти помощь</Link></nav></div>
-    <div className="forum-hero-stats" aria-label="Статистика форума">{overview && !activityError ? <><span><strong>{formatCount(overview.stats.usersOnline)}</strong> онлайн <small>за 5 минут</small></span><span><strong>{formatCount(overview.stats.topics)}</strong> тем</span><span><strong>{formatCount(overview.stats.messages)}</strong> сообщений</span><Link href="/communities">Найти сообщество →</Link></> : <span>Место для ваших идей и первых совместных проектов</span>}</div>
+    <div className="forum-hero-copy"><h1>Найди своих. <span>Создай с AI.</span></h1><p>Код, творчество, идеи — обсуждаем, создаём, запускаем.</p><HeaderSearch inputRef={searchInput}/>
+    <div className="forum-hero-stats" aria-label="Статистика форума">{overview && !activityError ? <><span><i aria-hidden="true"/><strong>{formatCount(overview.stats.usersOnline)}</strong> онлайн</span><span><strong>{formatCount(overview.stats.topics)}</strong> тем</span><span><strong>{formatCount(overview.stats.messages)}</strong> сообщений</span></> : <span>Статистика временно недоступна</span>}</div></div>
    </div>
-   {!!banners.length && <div className="forum-banners" aria-label="Реклама и сообщества">{banners.map(item=><BannerCard key={item.slot} item={item}/>)}</div>}
+
   </section>
   <div className="forum-center">
-   <div className="forum-feed-heading"><div><span className="forum-eyebrow">Идеи становятся проектами</span><h2>Обсуждения</h2></div><span className="forum-feed-caption">Вопросы, находки и опыт сообщества</span></div>
+
    <div className="forum-feed-toolbar"><div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-pressed={item.id === tab} key={item.id} title={item.id === 'popular' ? 'Темы с ответами за последние 24 часа' : undefined} onClick={() => choose(item.id, community)}>{item.label}</button>)}</div><button type="button" className="forum-filter-toggle" aria-expanded={filters} onClick={() => setFilters(value => !value)}>Фильтры<Icon name="filter"/></button></div>
    {filters && <div className="forum-filters"><label>Сообщество<select aria-label="Сообщество" value={community} onChange={event => choose(tab,event.target.value)}><option value="">Все сообщества</option>{communities.map(item => <option key={item.slug} value={item.slug}>{item.name}</option>)}</select></label><button type="button" onClick={() => choose(tab,'')}>Сбросить</button></div>}
    {community && <div className="forum-active-filter">{communities.find(item=>item.slug===community)?.name || community}<button type="button" onClick={()=>choose(tab,'')} aria-label="Сбросить выбранное сообщество">×</button></div>}
    {pendingTopics && !loading && <button type="button" className="forum-feed-update" onClick={() => {setTopics(pendingTopics.slice(0,20));setHasMore(pendingTopics.length>20);setOffset(20);setPendingTopics(null);}}>Есть обновления в ленте · Показать</button>}
    <section className="forum-feed" aria-label="Темы форума" aria-busy={loading}>{loading ? <div className="forum-empty" role="status">Загружаем темы…</div> : error ? <div className="forum-empty" role="alert"><p>{error}</p><button type="button" className="forum-button" onClick={() => setRetry(value => value + 1)}>Попробовать снова</button></div> : visible.length ? visible.map(item => <Topic key={`${tab}-${item.id}`} item={item} history={history} communities={communities} demo={demo}/>) : <div className="forum-empty"><strong>{tab==='popular'?'За сутки новых ответов пока нет':tab==='unanswered'?'Вопросов без ответа пока нет':'Здесь пока нет тем'}</strong><p>Выберите другую подборку или начните своё обсуждение.</p><Link className="forum-button" href="/create">Создать тему</Link></div>}</section>
    {!loading && !error && hasMore && !demo && <div className="forum-load-more"><button className="forum-button" type="button" disabled={loadingMore} onClick={()=>void loadMore()}>{loadingMore?'Загружаем…':'Показать ещё обсуждения'}</button></div>}
+   {!!banners.length && <div className="forum-secondary-banners" aria-label="Реклама и сообщества">{banners.map(item=><BannerCard key={item.slot} item={item}/>)}</div>}
    {moreError && <p className="forum-action-error" role="alert">{moreError}</p>}
   </div>
-  <CommunityPanels overview={overview} unavailable={activityError || !overview} news={news}/>
+  <CommunityPanels overview={overview} unavailable={activityError || !overview} news={news} projects={initialData.projects} events={initialData.events}/>
 
  </div>;
 }

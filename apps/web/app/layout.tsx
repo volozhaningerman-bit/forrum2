@@ -4,9 +4,10 @@ import './home-reference.css';
 import './home-ai-reference.css';
 import './home-v35.css';
 import './home-v39.css';
+import './home-v40.css';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
-export const metadata: Metadata = { title: 'FORRUM — тестовая версия', description: 'Платформа сообществ, публикаций, проектов и живого общения.' };
+export const metadata: Metadata = { title: '4rrum — нейросети, люди, проекты', description: 'Платформа сообществ, публикаций, проектов и живого общения.' };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <html lang="ru"><body><a className="skip-link" href="#main-content">Перейти к содержимому</a><SiteHeader/><div className="app-page-frame"><main id="main-content" className="shell main" tabIndex={-1}>{children}</main><SiteFooter/></div></body></html>;
 }
