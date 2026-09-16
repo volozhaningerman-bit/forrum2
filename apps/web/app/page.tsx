@@ -38,11 +38,13 @@ async function publicApi<T>(path: string) {
 }
 
 export default async function Home() {
-  const [communities, announcements, feed, overview] = await Promise.all([
+  const [communities, announcements, feed, overview, projects, events] = await Promise.all([
     publicApi<HomeInitialData['communities']>('/communities'),
     publicApi<HomeInitialData['announcements']>('/announcements'),
     publicApi<HomeInitialData['feed']>('/feed?mode=all&browse=1'),
     publicApi<HomeInitialData['overview']>('/home/overview'),
+    publicApi<HomeInitialData['projects']>('/portfolio?kind=PROJECT'),
+    publicApi<HomeInitialData['events']>('/events'),
   ]);
-  return <HomeDashboard initialData={{ communities, announcements, feed, overview }}/>;
+  return <HomeDashboard initialData={{ communities, announcements, feed, overview, projects, events }}/>;
 }

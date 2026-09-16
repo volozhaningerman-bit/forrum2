@@ -15,6 +15,7 @@ const links = [
   ['/services', 'Услуги'],
   ['/media', 'Медиа'],
   ['/news', 'Новости'],
+  ['/applications', 'Приложения'],
 ] as const;
 
 const newsSeenKey = 'forrum.news.seen-signature';

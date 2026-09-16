@@ -79,6 +79,8 @@ export type HomeOverview = {
 };
 
 export type HomeInitialData = {
+ projects?: import("../portfolio-card").PortfolioCardData[];
+ events?: import("@/app/events/events-client").EventItem[];
   communities?: Community[];
   announcements?: PublicationCardData[];
   feed?: PublicationCardData[];

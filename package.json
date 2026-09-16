@@ -24,7 +24,7 @@
     "db:validate": "npm run db:validate -w @forrum/api",
     "validate:ux": "node scripts/ux-check.mjs",
     "validate:a11y": "node scripts/accessibility-check.mjs",
-    "test:home": "node scripts/test-home-reference.mjs"
+    "test:home": "node scripts/test-home-v40.mjs"
   },
   "devDependencies": {
     "typescript": "5.9.3",
