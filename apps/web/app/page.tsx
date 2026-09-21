@@ -41,7 +41,7 @@ export default async function Home() {
   const [communities, announcements, feed, overview, projects, events] = await Promise.all([
     publicApi<HomeInitialData['communities']>('/communities'),
     publicApi<HomeInitialData['announcements']>('/announcements'),
-    publicApi<HomeInitialData['feed']>('/feed?mode=all&browse=1'),
+    publicApi<HomeInitialData['feed']>('/feed?mode=new&browse=1'),
     publicApi<HomeInitialData['overview']>('/home/overview'),
     publicApi<HomeInitialData['projects']>('/portfolio?kind=PROJECT'),
     publicApi<HomeInitialData['events']>('/events'),
