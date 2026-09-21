@@ -1,12 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import './home-reference.css';
-import './home-ai-reference.css';
-import './home-v35.css';
-import './home-v39.css';
-import './home-v40.css';
-import './home-v41.css';
-import './home-v43.css';
+import './home.css';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 export const metadata: Metadata = { title: '4rrum — нейросети, люди, проекты', description: 'Платформа сообществ, публикаций, проектов и живого общения.' };
