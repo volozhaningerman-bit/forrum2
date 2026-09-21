@@ -2,6 +2,7 @@ import { activeBanners, defaultHomeBanners, homeBannerKey } from './banners.js';
 import { excerpt, replyExcerpt } from '../common/text.js';
 import { Injectable } from '@nestjs/common';
 import {
+  Prisma,
   PollStatus,
   PublicationFormat,
   PublicationStatus,
@@ -84,6 +85,42 @@ function readOnlineRecord(value: unknown) {
 @Injectable()
 export class HomeService {
   constructor(private readonly prisma: PrismaService) {}
+
+  async ranking(period: 'week' | 'all', mode: 'activity' | 'likes') {
+    const since = period === 'week' ? new Date(Date.now() - 7 * 86400000) : new Date(0);
+    // Aggregate in PostgreSQL: never load the complete history into the API process.
+    const counts = mode === 'likes' ? Prisma.sql`
+      SELECT p."authorId" AS id, 0::bigint AS topics, 0::bigint AS comments, count(*) AS likes
+      FROM "PublicationReaction" r JOIN "Publication" p ON p.id=r."publicationId"
+      JOIN "Community" c ON c.id=p."communityId"
+      WHERE r."createdAt">=${since} AND r.type='LIKE' AND r."userId"<>p."authorId"
+        AND p.status='PUBLISHED' AND p.format='TOPIC' AND c.status='ACTIVE'
+      GROUP BY p."authorId"` : Prisma.sql`
+      SELECT p."authorId" AS id, count(*) AS topics, 0::bigint AS comments, 0::bigint AS likes
+      FROM "Publication" p JOIN "Community" c ON c.id=p."communityId"
+      WHERE p."createdAt">=${since} AND p.status='PUBLISHED' AND p.format='TOPIC' AND c.status='ACTIVE'
+      GROUP BY p."authorId"
+      UNION ALL
+      SELECT r."authorId" AS id, 0::bigint AS topics, count(*) AS comments, 0::bigint AS likes
+      FROM "Comment" r JOIN "Publication" p ON p.id=r."publicationId"
+      JOIN "Community" c ON c.id=p."communityId"
+      WHERE r."createdAt">=${since} AND r."hiddenAt" IS NULL
+        AND p.status='PUBLISHED' AND p.format='TOPIC' AND c.status='ACTIVE'
+      GROUP BY r."authorId"`;
+    return this.prisma.$queryRaw<{
+      username:string; displayName:string; avatarUrl:string|null;
+      topicCount:number; commentCount:number; reactionCount:number; score:number;
+    }[]>(Prisma.sql`
+      WITH counts AS (${counts}), totals AS (
+        SELECT id, sum(topics)::int AS "topicCount", sum(comments)::int AS "commentCount",
+          sum(likes)::int AS "reactionCount", sum(topics+comments+likes)::int AS score
+        FROM counts GROUP BY id
+      )
+      SELECT u.username, u."displayName", u."avatarUrl", t."topicCount", t."commentCount", t."reactionCount", t.score
+      FROM totals t JOIN "User" u ON u.id=t.id
+      WHERE t.score>0 ORDER BY t.score DESC, u.username ASC LIMIT 5
+    `);
+  }
 
   async overview(userId?: string) {
     const now = new Date();
