@@ -29,7 +29,7 @@ const upstream = createServer(async (req,res) => {
  const url = new URL(req.url, 'http://localhost'); let data = []; let status = 200;
  requests.push({ path: url.pathname, query: url.search, method: req.method, cookie: req.headers.cookie });
  if (url.pathname === '/v1/communities') data = communities;
- else if (url.pathname === '/v1/feed') { data = url.searchParams.get('mode') === 'new' ? topics.map((item,i)=>({...item,createdAt:new Date(Date.now()+i*1000).toISOString()})).reverse() : allTopics.slice(Number(url.searchParams.get('offset')||0),Number(url.searchParams.get('offset')||0)+21); if(failFeed){status=503;data={message:'Сервис временно недоступен'};} }
+ else if (url.pathname === '/v1/feed') { data = allTopics.slice(Number(url.searchParams.get('offset')||0),Number(url.searchParams.get('offset')||0)+21); if(failFeed){status=503;data={message:'Сервис временно недоступен'};} }
  else if (url.pathname === '/v1/home/overview') data = { banners:showBanners?banners:[], pulse:emptyPeople ? {activeTopics:[],recentReplies:[]} : pulse, discussed: topics, weekly: { likes:people, activity:emptyPeople ? [] : people }, stats: {communities:9,topics:5,messages:134,usersOnline:emptyPeople ? 0 : 3,recordOnline:10} };
  else if (url.pathname === '/v1/admin/home-banners') {if(req.method==='PUT'){let body='';for await(const chunk of req)body+=chunk;bannerSettings=JSON.parse(body).banners;}data={banners:bannerSettings};}
  else if (url.pathname === '/v1/admin/ai-taxonomy') {if(req.method==='POST'){let body='';for await(const chunk of req)body+=chunk;assert.equal(JSON.parse(body).version,taxonomyPlan.version);taxonomyApplied=true;data={ok:true};}else data=taxonomyPlan;}
@@ -68,7 +68,11 @@ try {
  assert.equal(await page.locator('.forum-last-reply,.forum-topic-summary,.forum-quick-links').count(),0);
  assert.equal(await page.locator('.forum-category-online').count(),9);
  assert.equal(await page.locator('.forum-brand strong').textContent(),'4rrum');
- assert.equal(await page.locator('.forum-hero-copy h1').evaluate(el=>getComputedStyle(el).color),'rgb(244, 245, 238)');
+ assert.equal(await page.locator('.forum-hero-copy h1').evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)');
+ assert.equal(await page.locator('[aria-label*="светлую тему"],[aria-label*="тёмную тему"]').count(),0);
+ assert.deepEqual(await page.locator('.forum-primary a').allTextContents(),['Главная','Сообщества','Приложения','Сервисы','Услуги']);
+ assert.equal(await page.getByRole('search').count(),1);
+ assert.equal(await page.getByRole('button',{name:'Новые',exact:true}).getAttribute('aria-pressed'),'true');
  assert(requests.some(r=>r.path==='/v1/feed'&&r.cookie?.includes('forrum_test=viewer')));
  const first=page.locator('.forum-topic').first(),more=first.getByRole('button',{name:/Действия с темой/});
  await more.click();await page.keyboard.press('Escape');assert.equal(await more.getAttribute('aria-expanded'),'false');assert(await more.evaluate(el=>el===document.activeElement));
@@ -80,17 +84,25 @@ try {
  await more.click();await first.getByRole('button',{name:'Поделиться',exact:true}).click();await first.getByText('Ссылка скопирована',{exact:true}).waitFor();assert((await page.evaluate(()=>window.__copied)).endsWith('/p/topic-0'));await first.getByRole('button',{name:'Закрыть сообщение'}).click();
  await page.getByRole('button',{name:'Симпатии',exact:true}).click();assert.equal(await page.locator('.forum-author-ranking li>small').first().textContent(),'20');await page.getByRole('button',{name:'Сообщения',exact:true}).click();
  await page.getByRole('button',{name:'Показать ещё обсуждения',exact:true}).click();await page.waitForFunction(()=>document.querySelectorAll('.forum-topic').length===40);assert.equal(await page.getByRole('button',{name:'Показать ещё обсуждения',exact:true}).count(),0);
- for(const theme of ['paper','graphite']){
+ for(const theme of ['graphite']){
   await page.evaluate(theme=>{document.documentElement.classList.toggle('dark',theme==='graphite');document.documentElement.dataset.forrumTheme=theme;localStorage.setItem('forrum-theme',theme);},theme);
   for(const width of [1920,1600,1280,1024,760,390,320]){
    await page.setViewportSize({width,height:1000});await page.waitForTimeout(100);
    const size=await page.evaluate(()=>({w:innerWidth,scroll:document.documentElement.scrollWidth}));if(size.scroll>size.w+1)console.log(await page.evaluate(()=>Array.from(document.querySelectorAll('body *')).filter(el=>{const r=el.getBoundingClientRect();return r.width&&r.right>innerWidth+1}).slice(0,15).map(el=>({tag:el.tagName,cls:el.className,width:el.getBoundingClientRect().width,right:el.getBoundingClientRect().right}))));assert(size.scroll<=size.w+1,`${theme} ${width}: overflow ${size.scroll}`);
+   if(width<=760){const tabsFit=await page.locator('.forum-tabs').evaluate(el=>el.scrollWidth<=el.clientWidth+1);assert(tabsFit,`Filters must fit at ${width}px`);}
    if([1600,390].includes(width)){await page.evaluate(()=>{window.scrollTo({top:0,behavior:"instant"});document.activeElement?.blur();});await page.screenshot({path:`${output}/${theme}-${width}.png`});}
   }
  }
  await page.getByRole('button',{name:'Открыть меню',exact:true}).click();assert(await page.getByRole('button',{name:'Закрыть меню',exact:true}).last().isVisible());await page.keyboard.press('Escape');
  await page.setViewportSize({width:1600,height:1000});await page.getByRole('button',{name:'Фильтры',exact:true}).click();await page.getByLabel('Сообщество',{exact:true}).selectOption('category-0');await page.waitForTimeout(400);assert(requests.some(r=>r.query.includes('community=category-0')));
- failFeed=true;await page.getByRole('button',{name:'Новые',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
+ failFeed=true;await page.getByRole('button',{name:'Активные',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
  await page.goto('http://127.0.0.1:'+port+'/applications',{waitUntil:'networkidle'});assert.equal(await page.locator('.applications-grid article').count(),4);
- assert.deepEqual(errors,[]);console.log('V40: pagination, menu, share, bookmark, report, filters, retry, applications and 14 responsive/theme checks passed');
+ await page.goto('http://127.0.0.1:'+port+'/digital-services',{waitUntil:'domcontentloaded'});
+ await page.getByRole('heading',{name:'Цифровые сервисы'}).waitFor();
+ assert.equal(await page.locator('html').getAttribute('data-forrum-theme'),'graphite');
+ guest=true;emptyPeople=true;await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'domcontentloaded'});
+ await page.getByText('Первое слово — за вами',{exact:true}).waitFor();
+ assert.equal(await page.locator('.forum-author-ranking').count(),0);
+ assert.equal(await page.locator('.forum-sidebar-presence').textContent(),'0 онлайн на форуме');
+ assert.deepEqual(errors,[]);console.log('V43: pagination, menu, share, bookmark, report, filters, retry, applications and 7 responsive checks passed');
 } finally {await browser?.close();web.kill('SIGTERM');upstream.close();}
