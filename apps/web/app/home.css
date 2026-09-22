@@ -1371,3 +1371,60 @@ html.dark .forum-home[data-home-reference="v40"] .forum-panel:has(.forum-ranking
 html.dark .forum-home[data-home-reference="v40"] .forum-panel:has(.forum-ranking-period)>header h2 {flex:1 1 150px;}
 .forum-ranking-period {flex:0 0 auto; min-height:32px; max-width:110px; font-family:Arial,Helvetica,sans-serif;}
 .forum-ranking-period option {background:#293233; color:#fff;}
+
+/* V46 — editorial hierarchy: quiet rails, readable topics, a restrained mint accent. */
+html.dark .forum-home[data-home-reference="v40"] {--f-border:#343e3f; --f-line:#343e3f;}
+html.dark .forum-home[data-home-reference="v40"] .forum-topbar {border-color:#303a3b;}
+html.dark .forum-home[data-home-reference="v40"] .forum-primary a {font-weight:600; color:#bbc6c5;}
+html.dark .forum-home[data-home-reference="v40"] .forum-primary a[aria-current=page] {color:#fff;}
+html.dark .forum-home[data-home-reference="v40"] .forum-sidebar {background:#181f20; border-color:#303a3b; padding:16px 10px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-category-title {padding:0 8px; margin-bottom:16px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-category-heading {margin-top:0; min-height:40px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-categories>.forum-category {padding:3px 0; border-bottom:1px solid #ffffff08;}
+html.dark .forum-home[data-home-reference="v40"] .forum-category-heading>a {line-height:1.45; font-size:13px; padding-left:5px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-category-counts {font-size:11px; gap:5px; color:#aab8b6;}
+html.dark .forum-home[data-home-reference="v40"] .forum-category-children {margin-top:1px; margin-bottom:6px; border-color:#3c4e49;}
+html.dark .forum-home[data-home-reference="v40"] .forum-sidebar-bottom {border-color:#303a3b; padding-top:16px; gap:12px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-search-hero {border-color:#3b4b46; box-shadow:inset 3px 0 #a9dec7;}
+html.dark .forum-home[data-home-reference="v40"] .forum-hero-copy {padding-left:25px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-header-search:focus-within {outline:2px solid #a9dec7; outline-offset:3px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-hero-stats {text-shadow:none;}
+html.dark .forum-home[data-home-reference="v40"] .forum-hero-stats strong {color:#fff!important; text-shadow:none; font-size:13px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-feed-toolbar {margin-top:2px; margin-bottom:14px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-feed-title {font-size:20px; letter-spacing:-.3px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-tabs button {background:transparent; border-radius:0; padding:9px 8px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-tabs button[aria-pressed=true] {background:transparent; box-shadow:inset 0 -2px #a9dec7; color:#fff;}
+html.dark .forum-home[data-home-reference="v40"] .forum-feed {gap:8px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-topic {background:#21292a; border-color:#303a3b; box-shadow:none; min-height:74px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-topic:hover {background:#293334; border-color:#6a8b7f;}
+html.dark .forum-home[data-home-reference="v40"] .forum-topic.is-unread h2,
+html.dark .forum-home[data-home-reference="v40"] .forum-topic.is-updated h2 {font-weight:600;}
+html.dark .forum-home[data-home-reference="v40"] .forum-topic h2 {letter-spacing:0; line-height:1.45;}
+html.dark .forum-home[data-home-reference="v40"] .forum-topic-context {gap:5px; line-height:1.4;}
+html.dark .forum-home[data-home-reference="v40"] .forum-category-chip {border-radius:3px; padding:2px 6px; background:color-mix(in srgb,var(--chip-accent) 12%,transparent);}
+html.dark .forum-home[data-home-reference="v40"] .forum-topic-meta {color:#afbcba; font-weight:400;}
+html.dark .forum-home[data-home-reference="v40"] .forum-panel {background:#181f20; border-color:#303a3b; box-shadow:none; padding:16px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-panel>header {padding-bottom:10px; border-bottom:1px solid #303a3b;}
+html.dark .forum-home[data-home-reference="v40"] .forum-panel h2 {line-height:1.4; font-size:15px; font-weight:600;}
+html.dark .forum-home[data-home-reference="v40"] .forum-author-ranking li {background:transparent; border-bottom:1px solid #ffffff08; border-radius:0; margin:0; min-height:46px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-author-ranking li:last-child {border-bottom:0;}
+html.dark .forum-home[data-home-reference="v40"] .forum-rank {background:none; color:#aab8b6; font-variant-numeric:tabular-nums;}
+html.dark .forum-home[data-home-reference="v40"] .forum-author-ranking li:first-child .forum-rank {background:#a9dec71c; color:#c6f2df; border-radius:4px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-ranking-period {background:#21292a; padding:5px 8px; font-size:12px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-ranking-empty {padding:12px 0 0!important;}
+html.dark .forum-home[data-home-reference="v40"] .forum-ranking-empty strong {font-size:14px; font-weight:500;}
+html.dark .forum-home[data-home-reference="v40"] .forum-ranking-empty p {color:#afbcba; margin:7px 0 10px;}
+.forum-ranking-all {display:block; color:#a9dec7; background:none; border:0; padding:6px 0; font-size:13px; text-align:left; cursor:pointer;}
+.forum-ranking-all:hover {text-decoration:underline; text-underline-offset:3px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-ranking-empty>a {display:block; font-size:12px; color:#afbcba; margin-top:5px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-project-mini strong,
+html.dark .forum-home[data-home-reference="v40"] .forum-updates strong {font-size:14px; line-height:1.4; font-weight:500;}
+html.dark .forum-home[data-home-reference="v40"] .forum-update-kind {font-size:11px; letter-spacing:.2px; color:#aab8b6;}
+.forum-feed-end {display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; padding:22px 2px 8px; color:#aab8b6; font-size:12px;}
+.forum-feed-end a {color:#a9dec7;}
+@media(max-width:760px) {
+ html.dark .forum-home[data-home-reference="v40"] .forum-sidebar {padding-top:45px;}
+ html.dark .forum-home[data-home-reference="v40"] .forum-hero-copy {padding-left:16px;}
+ html.dark .forum-home[data-home-reference="v40"] .forum-tabs button {padding:9px 6px; font-size:12px;}
+ html.dark .forum-home[data-home-reference="v40"] .forum-topic {min-height:0;}
+}
