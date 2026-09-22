@@ -304,6 +304,7 @@ enum PromotionOrderStatus {
 }
 
 model User {
+  tyuryagaProfile TyuryagaProfile?
   id                 String       @id @default(uuid()) @db.Uuid
   forrumId           Int          @unique @default(autoincrement())
   email              String       @unique
@@ -1463,3 +1464,57 @@ model InventoryTransaction {
 }
 
 // /FORRUM_INVENTORY_V10
+
+
+model TyuryagaProfile {
+  id              String               @id @default(cuid())
+  userId          String               @unique
+  user            User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  level           Int                  @default(1)
+  respect         Int                  @default(0)
+  energy          Int                  @default(100)
+  maxEnergy       Int                  @default(100)
+  lastEnergySync  DateTime             @default(now())
+  
+  cigarettes      Int                  @default(150)
+  sugar           Int                  @default(10)
+  baseDamage      Int                  @default(15)
+  wins            Int                  @default(0)
+
+  tattoos         TyuryagaTattoo[]
+  activeBoss      TyuryagaBossBattle?
+
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  @@index([userId])
+}
+
+model TyuryagaTattoo {
+  id          String          @id @default(cuid())
+  profileId   String
+  profile     TyuryagaProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  tattooId    String
+  acquiredAt  DateTime        @default(now())
+
+  @@unique([profileId, tattooId])
+}
+
+model TyuryagaBossBattle {
+  id               String          @id @default(cuid())
+  profileId        String          @unique
+  profile          TyuryagaProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  bossId           String
+  bossName         String
+  currentHp        Int
+  maxHp            Int
+  rewardCigarettes Int
+  rewardRespect    Int
+  rewardSugar      Int
+  isDefeated       Boolean         @default(false)
+  expiresAt        DateTime
+  createdAt        DateTime        @default(now())
+
+  @@index([profileId])
+}
