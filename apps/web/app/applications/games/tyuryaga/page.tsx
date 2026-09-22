@@ -23,7 +23,7 @@ export default function TyuryagaPrototype() {
           </div>
         </div>
         <div className="tyu-app-meta">
-          <span>● 12 483 онлайн</span>
+          <span className="tyu-online-dot">12 483 онлайн</span>
           <span>★ 4.8</span>
           <button type="button">Сообщество игры</button>
         </div>
@@ -33,18 +33,22 @@ export default function TyuryagaPrototype() {
         <header className="tyu-game-header">
           <div className="tyu-logo">ТЮРЯГА <small>НОВАЯ ГЛАВА</small></div>
           <nav className="tyu-game-nav" aria-label="Навигация игры">
-            {nav.map((item, index) => <button className={index === 0 ? 'active' : ''} type="button" key={item}>{item}</button>)}
+            {nav.map((item, index) => (
+              <button className={index === 0 ? 'active' : ''} type="button" key={item}>{item}</button>
+            ))}
           </nav>
           <div className="tyu-wallet">
-            <span>💵 12 430</span>
-            <span>🪙 380</span>
+            <span>💵 <b>12 430</b></span>
+            <span>🪙 <b>380</b></span>
           </div>
         </header>
 
         <div className="tyu-dashboard">
           <aside className="tyu-profile">
-            <div className="tyu-avatar">Б</div>
-            <div className="tyu-name"><strong>Бродяга</strong><span>ID: 458732</span></div>
+            <div className="tyu-profile-head">
+              <div className="tyu-avatar" aria-hidden="true" />
+              <div className="tyu-name"><strong>Бродяга</strong><span>ID: 458732</span></div>
+            </div>
 
             <div className="tyu-level"><b>18 уровень</b><span>2 430 / 5 000</span></div>
             <div className="tyu-progress"><i /></div>
@@ -58,19 +62,19 @@ export default function TyuryagaPrototype() {
               <div><span>Защита</span><b>32</b></div>
               <div><span>Авторитет</span><b>1 240</b></div>
             </div>
+
+            <button className="tyu-details" type="button">Подробные характеристики →</button>
           </aside>
 
           <main className="tyu-scene">
-            <div className="tyu-cell">
-              <div className="tyu-window" />
-              <div className="tyu-walltext">СВОБОДА<br/>НАЧИНАЕТСЯ<br/>ВНУТРИ</div>
-              <div className="tyu-bed" />
-              <div className="tyu-prisoner">
-                <div className="tyu-head" />
-                <div className="tyu-body" />
-                <div className="tyu-legs" />
+            <div className="tyu-cell-photo" role="img" aria-label="Заключённый в тюремной камере">
+              <div className="tyu-scene-shade" />
+              <div className="tyu-scene-kicker">КАМЕРА №4 · СЕВЕРНЫЙ КОРПУС</div>
+              <div className="tyu-scene-copy">
+                <span>Сегодня</span>
+                <strong>Свобода начинается внутри.</strong>
+                <small>Восстанови энергию, потренируйся и выбери следующий шаг.</small>
               </div>
-              <div className="tyu-lamp" />
             </div>
 
             <div className="tyu-actions">
@@ -82,54 +86,71 @@ export default function TyuryagaPrototype() {
           </main>
 
           <aside className="tyu-side">
-            <section>
+            <section className="tyu-location">
               <small>Текущая локация</small>
               <h3>Барак №4</h3>
               <p>Новичок · Северный корпус</p>
               <button type="button">К карте тюрем →</button>
             </section>
+
             <section>
               <small>Задание дня</small>
               <h3>Победи 3 заключённых</h3>
-              <p>Прогресс: 1 / 3</p>
+              <div className="tyu-task-row"><span>Прогресс</span><b>1 / 3</b></div>
               <div className="tyu-taskbar"><i /></div>
-              <p>Награда: 💵 500 · 🪙 50</p>
+              <p className="tyu-reward">Награда: <b>💵 500</b> · <b>🪙 50</b></p>
             </section>
+
             <section>
-              <small>Новости</small>
-              <p>Открыта регистрация в турнир «Беспредел».</p>
-              <p>В магазин добавлены новые предметы.</p>
+              <div className="tyu-section-head"><small>Новости</small><button type="button">Все →</button></div>
+              <div className="tyu-news">
+                <p><span>Сегодня</span>Открыта регистрация в турнир «Беспредел».</p>
+                <p><span>Вчера</span>В магазин добавлены новые предметы.</p>
+              </div>
             </section>
           </aside>
         </div>
 
         <div className="tyu-bottom">
           <section>
-            <h3>Друзья в игре</h3>
+            <div className="tyu-section-head"><h3>Друзья в игре</h3><button type="button">Все друзья →</button></div>
             <div className="tyu-friends">
-              <span>Кот_Батя · онлайн</span><span>Лёша · в игре</span><span>Малой · 2ч назад</span>
+              <span><i className="online" />Кот_Батя</span>
+              <span><i className="playing" />Лёша</span>
+              <span><i />Малой · 2ч назад</span>
             </div>
           </section>
           <section>
-            <h3>Последние события</h3>
-            <p>Кот_Батя победил тебя в бою</p>
-            <p>Получен предмет: «Чёрная кепка»</p>
+            <div className="tyu-section-head"><h3>Последние события</h3><button type="button">Все →</button></div>
+            <p>⚔️ Кот_Батя победил тебя в бою</p>
+            <p>🎁 Получен предмет: «Чёрная кепка»</p>
           </section>
         </div>
       </div>
 
       <div className="tyu-footerline">
         <Link href="/applications">← Вернуться к приложениям</Link>
-        <span>Прототип v0.1 · без серверной логики</span>
+        <span>Прототип v0.2 · визуальная сборка</span>
       </div>
     </section>
   );
 }
 
 function Stat({ label, value, percent, tone }: { label: string; value: string; percent: string; tone: 'red'|'gold'|'mint' }) {
-  return <div className="tyu-stat"><div><span>{label}</span><b>{value}</b></div><div className={`tyu-meter ${tone}`}><i style={{width: percent}} /></div></div>;
+  return (
+    <div className="tyu-stat">
+      <div><span>{label}</span><b>{value}</b></div>
+      <div className={`tyu-meter ${tone}`}><i style={{ width: percent }} /></div>
+    </div>
+  );
 }
 
 function Action({ icon, title, text }: { icon: string; title: string; text: string }) {
-  return <button className="tyu-action" type="button"><span>{icon}</span><div><b>{title}</b><small>{text}</small></div></button>;
+  return (
+    <button className="tyu-action" type="button">
+      <span>{icon}</span>
+      <div><b>{title}</b><small>{text}</small></div>
+      <em>→</em>
+    </button>
+  );
 }
