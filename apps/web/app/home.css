@@ -1342,3 +1342,32 @@ html.dark .forum-home[data-home-reference="v40"] :is(button,a,input,select):focu
  html.dark .forum-home[data-home-reference="v40"] .forum-more-trigger {min-width:44px;min-height:44px;}
  html.dark .forum-home[data-home-reference="v40"] .forum-tabs button {font-size:12px;padding:9px 6px;}
 }
+
+/* V45: document scrolling and accessible full-row targets. */
+@media(min-width:761px) {
+ html.dark .forum-home[data-home-reference="v40"] .forum-sidebar {
+  position:static; top:auto; bottom:auto; height:auto; max-height:none;
+  overflow:visible; align-self:start; overscroll-behavior:auto;
+ }
+}
+html.dark .forum-home[data-home-reference="v40"] .forum-category-heading {position:relative; padding:4px 0; min-height:40px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-category-heading>a {position:relative; z-index:2; width:fit-content; max-width:100%; justify-self:start; padding-right:2px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-category-heading>.forum-category-toggle {
+ position:absolute; inset:0; width:100%; height:100%; min-height:0; min-width:0;
+ z-index:1; display:flex; justify-content:flex-end; align-items:center;
+ padding:0 5px; border-radius:5px; background:transparent;
+}
+html.dark .forum-home[data-home-reference="v40"] .forum-category-counts {pointer-events:none; position:relative; z-index:2;}
+html.dark .forum-home[data-home-reference="v40"] .forum-category-heading:has(.forum-category-toggle:hover) {background:#ffffff06;}
+html.dark .forum-home[data-home-reference="v40"] .forum-topic {position:relative; cursor:pointer;}
+.forum-topic-main-link::after {content:""; position:absolute; inset:0; z-index:1; border-radius:7px;}
+.forum-topic-main-link:focus-visible::after {outline:2px solid #a9dec7; outline-offset:2px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-topic-avatar,
+html.dark .forum-home[data-home-reference="v40"] .forum-topic-context a,
+html.dark .forum-home[data-home-reference="v40"] .forum-reply-count,
+html.dark .forum-home[data-home-reference="v40"] .forum-topic-actions {position:relative; z-index:2;}
+html.dark .forum-home[data-home-reference="v40"] .forum-topic:has(.forum-more-trigger[aria-expanded=true]) {z-index:5;}
+html.dark .forum-home[data-home-reference="v40"] .forum-panel:has(.forum-ranking-period)>header {display:flex; flex-wrap:wrap; align-items:center; gap:8px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-panel:has(.forum-ranking-period)>header h2 {flex:1 1 150px;}
+.forum-ranking-period {flex:0 0 auto; min-height:32px; max-width:110px; font-family:Arial,Helvetica,sans-serif;}
+.forum-ranking-period option {background:#293233; color:#fff;}
