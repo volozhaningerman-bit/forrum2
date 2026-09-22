@@ -128,7 +128,8 @@ try {
  await page.getByText('Первое слово — за вами',{exact:true}).waitFor();
  assert.equal(await page.locator('.forum-author-ranking').count(),0);
  assert.equal(await page.locator('.forum-sidebar-presence').textContent(),'0 онлайн на форуме');
- await page.getByLabel('Период рейтинга').selectOption('all');
+ await page.getByRole('button',{name:'Участники за всё время →',exact:true}).click();
+ assert.equal(await page.getByLabel('Период рейтинга').inputValue(),'all');
  await page.locator('.forum-author-ranking li').first().waitFor();
  assert(requests.some(r=>r.path==='/v1/home/ranking'&&r.query.includes('period=all')));
  await page.locator('.forum-topic').first().getByRole('button',{name:/Действия с темой/}).click();
