@@ -1,0 +1,109 @@
+name: "v43: Add Tyuryaga Game"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-v43:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Unpack game files
+        run: |
+          echo "H4sIAEtrsmoC/+1963IbR3awf+spWoqyAFYACIAXaSmRa1tWbKds2TG1X5JiqcQBMCTHAjDwzEAkF0aVLrvrpGxHa3/eZOPK2qvdpJKqJBVZltaUZMmvALyCXyD7CDmnb9Pd0zMDUjc7IcoWgZme7nNOn3uf7nH6/XDG6XszYdCa6frtQccNZ6KdQbDjbDjyS7Xl98LI6UVhNQqf2+unBp+FuTn6Fz7G33qjUV8Q19j1Blw9/hypPfcUPgPAK4Dhn/u/+XG3+34QEa8XucG603LJXwzcMHrJXSfDQ4R47UUSRoHX2zgJvyIv6rjqhbYbtgKvH3l+T73s9txgY+e0H0aLpDfoNt0Ar3a93mvuJbejXgvcLSdov+WGfbcVJW+c9jacwI0iN1wkq+xmmTc6j63CAdx/KfD7pzedXsuNOxgdOpRA7EU/DO149ZyuhlbX2X6lnwd6exA4iPgr/iAIs0GfGt8VxCcbi3NOFPn+dHj0nQAGKbQ2YUYL5F1SaDqti/SLE3Tp34s91w0L2LYFs2WHGe8YgBHS9HuD8CWn62y4icuvO9tnKAdkk9CG3V+6Tt/vTYfdHiFuU2BfH3Qir9/xXO0eMHGUzkJU95EzZ8+89fJfX3jrzMtnzl549ey5M2/9vxdeu7By5vQbZ19aIUukfqJ20njkL35yZuXcyqIUqdXz0G4VxkPkGHqFVsd1ehdgppxw0ymU6Q0uZ4Xxb8Y3x7fGdyZXJlfHu2T8zfjh5PLk+vj2+OH4Hplcwys3J5fh/78Z7/JnNZEsjP8/feCr8QNodJ1g2/EX0MvV8c0ygYsPsYs7cPkWXPw5dItd38I7d8jkyvgb0Tncvzn5u8nVKh9FlfB5dime4Dq7YPB6vaZe1iS7Pl8mjfnz7H5CpmvVWgNvjco65SLnonshchNE+wyw+wOAe3XyAZm8Bwjf5aRK4Gkn2aeTa4D4LybvU4LTll/Ck3fG99kc3KE/bsMI743vwc27ZT4z45sELtN2ODjM2nUbvQQh8gjWmE8l2GytTOZrGQSbtxGsCT1daG16615g0uwGneDLDHCk2u7kZ/D/ZeQEwOo+YPUVNNlNY7NP8HmC5IBOHgKL3cOf9Nl7wIHXYELuTa6VscUuEPc68vP4a2Sxm+OvKZGBbJMPxg8m78NlrRW9DH+R1F9b6XnCpGfDSs+5dHouAD1/lMWAJ2z07DtheKHrdHacSwkm/FxhEyQpYHkTULk+vgW8CPRld78iVLwvQ5NrwJYgonby/hbm4gqlAJAZqAGCCwLKme2h1h+bgl1kW/iLDb9EKYepgEtf4ZwiRJTcVu5sJKg5a6XmiQxxBg4n9YUM/qxb+bMHHe1cCLt+BD5nCIy6kxDt8RfAIF8yHJBRryD3wFdQcpO/BaQorlR/ITffnrxvp+evWR+E0unO5Cpn1V3gv6uMlJMr8BP0BiX4H6BnZME72DedJ2hlI95cQrTn7LpwNoN6QFnSyKJew6oOm4NedCHc9H7qm1T7CNB4gEgC8H+DxAIEfkZZ42vE+Sv4cp8KG3LMHTvFblAWfY9KLdCcsSPK7m6Z0C7vwNRcg3+pUKMGuD/5O8qgQDiwPFSVPuAifddGu4UE7ebtanEunXazDaDd3IkM2s0KzjtvGusX31hZOQPG+i235QftU8zPKAuvcRksNxL7ohf0vdbmokp5fo3jxNwUMCNU1r6Bf9/jd7hbWYfoJsUCGD5lYy4N07n5WorN0K5zJ2hW8kvo/dTb0YCnVwzQbyBXgKDd1QGHQWspymFqwIG77ZCfsEIe692LgYtcopIdr5hEZ7I7uZokeRp7TQ36fC0F9EajZoO9UePAj0xWO/fCuXNvvJHkNenbC25rOSjS/qDTRn9V9RqVGwm+e8hkHQT0DvAf/EuK9OplKo0o93cJqlK09tIYgIn6HXh4l8Hafj15v8Q75REEhgvsgul0S9QVn5tf0UKEeeWaEh/YfUfGqhCWhxdogKIzbHzdwPwf0JiCOruNrtsD7o9Q3wUVz8+BCr+hKpy602BGJ9cMNNVOTUQXLIg2LIjWG3ZMk15frMXbftcNL2BwpmEaX05w+TWqT+8Djmio7gmuZxqZIY/uO1o0qdE5kkp/Jo71eQuS8xYkGynT2bDrB4pk5G24wQUai2pYKtcNND/jRuY+oVaDm2w6sV9Sp/K2dEe1SNeO3KwNubptCudrduxm563W3Sbhf3nmhTffOJuUcBnfCgnvD3qGNaFXDEr8nvqRl3lAQpDDJz9PwTNVHpMBcL0qGivxrxY9rHu9i44GHr2SELyb1Ht4j7n9u+iHgl+KTr+coYTimJ8eztnqvA1OxYsMna7fdzq6omDXDFg/BtJd4R7LfQarjEK+QWYb30yB+PgeID5hp2wjhrjveyG6VurM00sGvP+F8w3K/AsGG7D/7cm1qae+ngZgo2GH0MLR68CQaCDJhhv9Vf/P/OCsux1RASh21IxOSXyhOAFMg6BHXneizep6x/eDYr1WIz9kF/r+VrFeXYCwn/ZAKqReKmHK5bmDz1P+OJn5/3bkx2sA8GM/2f+8/H+tNn+8oef/68dnF+oH+f+n8fG6VMiH5NXwrB+d6fajnTJ8X6EGi4zIeuB3MUvphGHlktPx2k7kBwXF3uEdcmbbbQ0ilyU6I59qgOdFL8US+yX6p7/fwaavKgnekdHlCkxLRKOvqfprQsus7l7x9tDZFjXTWd29ONjh3vpUHUa0rd7h90H+peyHbnDJa7lPQv4bcyDupvxDrHkg/09X/ntvQzTrNDtumbzoQHRLJfTMdsulSaAyAYb+M3/Qa8tLUjs834OWb4czLb/bBQfm5CHZ6ZuBF3adFcY8sn21OgP/9ek9/kcwmPIwiA3LyaBLkrn6gg0SzgleZAsw+I2H3PiV++bg4whwLMvcqOGej0kCQqyJ/zn+gMCMBuv4bDBogX4sAlKXnMgFL8hp+73ODmFYLuoEKZEh6BVCnHCn10IM3gz8dQ9GGwA1YmVR4k5ix42gH9oCogdny/EiEm16YZWTUGDBe6mCq97+Sc+DeSyyDkCxbboB+HlDwkZgrih1QHutzqDtCn+U5g+pzgK3EpByy/KyA87gJRd1qX6HdzUCP465tOukeJiDW5Ld7gX+FlAvimFHNzZyVAgJRyMGbhR/tWCUilM6VkqXiBn9e4h72Rjo9fwtwKXnbpGXEFbehN1re+vrr4d429+qwuye87rQApxdToQqsFLEgssVYIC4idpJ4G64vVdxgRSsL+0teyHyhwT87Jraw4bj9dz2Oa91EZ9WHHIO34w5hjqD6sPLpBZPJN4UeLA0LjklEeuKoLmkUJ8TzN1itwQsEE0XE8+VidH3MRUNTiCtU6QgUk+djTw6670C6VIIsVfGHfTbOuMqgoeRnoDLa6sMa+NvkSJfjOlW1m7rqC2qlFAbasNYJSNDNrKkQ+t6JCdmRNxO6CoDPCvyJejjbz1TuqgaRBWhuCfygx+Qw8nLVQ+XIVAhtnUhTHC78gzYLC9wwxeiEggnoK6KY/o84KMvAtLQV9sFozPFVKhwtu2oE0tjFNZBp2OlDpNsd33dpc1Zcg4eoBC3nE5r0AGsz/mR02H3JAGaTsibx2qET6KmWnvCVeCZfOg8meKQOgR/CYXAkxuCLNVqlTcTiBtgi8vmiOK6c8nxOuhn0AAKmCl2XOjtTuecYMI3muiTVEE/QdMid2tKiY6Qum6iOfOnZGsW5iRacQeJNxshyRQ3xVVCPcNRKZtRneA3Rm/wrCJDAyR8Hm2CaG/wAKMG9WeKxXdKZGmZvIN8trS0JEbUvA56rQQjBGCdUT4SrmuRlSzsjv/AFt5ZxQtdJb/LVy1vFjgs2CUFnfEASBLtvyrSwLFQxQNaHOgilvPcoevyV/i6C2ZMseIBC1Ro3cQtulbxAcGyH74eu0tXpK/G4IwMoKTxZVDFS6qPCBfWFXyIZAEgvqSVHzb/ZxWocNqDmQfTDX+xwInBYa6fqfPqOgEY3fie7pbQr4HTa/tdMNE/JEXWNfhNbCyw2vUS2m72M9kxzX2KPmVHgkDGojD5MamTRVLTFcNWrBIYlQP++5iGHm/FeQ/9c3iUMoV8kPLMSfW+XFGQbaTbo7UzGvF5riTmOX6IjvWTPjyy7oD5VURCwWjZpuUE2KWYaSQmx5ZI/WR8MQYfbswrNyS8aiNxPwYN7aSFkZjRb+/HQUgNakyHIMOXCmRJpqRUfFOkuTlF4htdpdJRQTpu0FKy80N0MAK36/ZgmIQIKDYzZLl7S3vG2aO0kMswS+Gg1XJN14RPhPjJ+DhUqaTCbIJpIZhFHhKoKNAbsMNwgyAAFFeAyUPbZHHG4Axvpb1o0s2eANGsZUGHAyqahCqokgHE3Y7OBZIU4n6gk2FkN6ShSHAyXythS/WM5iOa0iYvfl7iOZVV1vt51WzyNnmG8yNqKa4kTWa6weQ979lkro1/F5cWTa5iRSU5OjR7Gxnmc003VDE4hpNtXrS62Hm28/eElk5eIbTI8Y5SUvYFLbRAQn3BKIYFV4V82OKx9+eiaw56Esd2TkZDxgxqJI3/VCGAoDGzoL9WOQOGenaBrvBh/kFoJM58FNJM1a4gZKR9TCXOPe1XJXKekv8RMiNANO+dpauq4i6usWoKBWuFJHfhT0WRMDWV0SJZMSQamnfMZ2Qlkf5AQptq5UV62xVdYclJzDEVbGYMxbTJlkoSCslcFdFVErsLk8zDh1XR/HysFQ6za3ka5jNeMrzLFIzhmD8sGEio/HQ0AocvdOiCdZGhU4y2acggWIiBm0hIbE+TP81wNtT8gZEzSOQJdBFUgnkR+JN337UlAdT4fQqnHrXQzfE9Wj1zK64FRnV0PU0xSW2QEN4kOBrorJ1Vh+YDK2yKUKLfMG0OWv0PqmVRgNNSH3xsPd0hc7KWrMd2libVNajAC6Zay2bkofQxtVxfY+0rLVli5gArZ2nF3T2skEnBS1A6dlQAHyY6Vb3mY48MgcXLt2iId5NxB1a8fEMLVYH+BSNNpQNDXSIdDqp0HhEELL6hJdWX4xDXwoOh+1J34zFlf0SvXng68CJLoChQlJUx+nOBsyWzUexRVGBFAeQPxfNm1Q3GsnzMH5NGtUZoBVbJgIo99ZLrdCI1Rc7ZUJqhcgyG0QEmmV7BSMt8BGJHpXOTFkJsqdmnPZxawrD4UIrgpGZrp8jVJjO1eqDUdmXgY2V7PW8r4yX7Y0bQRKzKF8NnHgsZSUmUAbtSy9IleTlsRavkpbAVz6Omp59jsHLTz+lAP4mse2rYy9E2HSK9RyWiSn9YpDOMJ22xs/Zcghsool7PhLSut0kjZ8wzadycgrLauUTXhqGF05MIKdClLsE8OXZVWZTrjpTVD5l10BIVRNVLij9FdaXuwJ+OR2Kq0dku1sp81JLe9nXu0DPYDW89lh3Tv5ZTw0nJ4Ff846ao/Ul4yGaZj+4hR3Lr7pKoR1gVT6hOsmyX5yfj9lBW4n5PpLDBu7iGO6Gol3GLhc3fN3851zvOo8vn1J/5Gds8aM9TWBwcDkM19LtusRhRGkRVMUF0sUH8KO3F6flP9HUYAPFkCUf3Ad2Qu6sm+FOcQZFLkdxhyabsL5+S7HE0zYLE2h6c13iIR/JfrasU6U5shherA7QfR9a+YpLtzT4rJyqN/Pl+lIVO+kNKGlazn/GD+jaKPEcsQSKmaqcpBlIyQzHFyonqH7wfQ+e1s+FJmCprVl30rfScbkVEcZg1jMEoQhTSl2O9OEzYFjJaPa+X3DMvlpKbLIkVrXU/IEVuf4i/LnrUawikNZLq7rwqDazLY4rVittVla0z5jq+lmgCX+QY64kR4qDY//tU/wscFAV+p+MG+ygBzqn/bzSO18zzf+oL8wf1v0+1/ve0nOEyedmNyuRNUPi4/7m9UyY/Cd2XB9Q3JmANpyj8NQtkLbW2yYpfraq+bG4qKCs1/GV9e0Dcu7lhRe39z7eiFwbRJkXEqEV24PrMBsVw5u2tqIK/q/Q3LQSOaVMsbDhdRUIKpUPPS+IU1RFSKobjrvKLhiOdiIsmVUX98PMwX8UCXQ0plNR6YlxUdYvPw5QVS9DtO4vE6cmaTDUaMEZSFxPhsSr67mApYxP2PDJHsUD9ImVIrTbIGLZMnkdegiswLYvm5E4DlNa7AlYZe6zGhUA6jBgJztC1VgVQufaaA6XKZdOAaK7pJqBkC1R2IDc9FUSxCpMNYCwS04An+kyAJdZqEoAxOz8DIa8CWhwAZwOnivM04MX9JgCUkdeB8/BM7D+7s7/tP7n7/xZqdXP/T2Nh9sD+P1X7/zqd4Sdm2i32z77/ht9N7iIyALRtImJcSk02a03jRdYPng+jdkTPiInHw9tJGGkjCCYveW29CUee3md23n53lOIGcGSGz1yRUfnfcpugA/r4f8dr0aKOcEZ3dGb6EOCB/G8/dvlfgABgLrH/d37uQP6fxqcAZhZ403N7EcoNl7m3XKcFzj/N2lInsozfztCqdvr1tNPp4EkiUhwDfCIW2te83kV+B3PzMx34Tfs3DrKc+hTLfZ/7+HhOqjTOR/2+H46qn4r6/ToS1Twt9DtxVGgM1MswNhUZC1yd5BQn0Db3iKj33CSz2jjY3PSkEMJKhDAhM7KGQhtd39Si3mILqPHvnLwlNlFrouJDUGJQk1v69SI+9aq6/ihhsDCtvmTe9H08fJXdkLVDas8j8q6sBUju0cG/HBdlgw77wq+b23HwL7sl994wJsaL8RkDbXfdAe6Lj14RbgMy15uYJi7F2QOyGjINHfKAHzdhCL19KmZHhspyEf8tnYyf7vhOm65ewvOvse9qD0XMc6vt2WLha8pTL6hXtGfpPgTz4UvuOacpH6S/NJBZWiFkJxZTwtGvnKcKy0XRQO0Y/NSmA/BvhLTn0/Kn1jWb2tXzy8XV8+rTEBivbDoXGRFf4T+yMQld+NIOz/m4i0LsWsUpSF7XQGDcuFysn+BVsqy/dTdqba7wsm7FwIpFWWVJNgp2jMXZgO6hYUsntKNigcZ0hgvHM0RqZQs8WfUvJrfp4uqK7BIbvR36vaJS/iaYrYgtzf2NeHBda5MUlY3f2K2PNXpB4Ae0xhOPFeYHxX41vsmP9PoKj4wSR9Fdx41HhTIRFU4jPI8K6BKjH7OsMkEMjFGZ0Dk+RGLXpaiSMaY4wwsfiK9lPkoXoyk1Szyhodbae3wDMW7dcSOxnVjrQNbx49wqdda8bF7T3yVzY7is1O44/ZAWbCm7p9RS7Qrtv0RmRE22zjNdx+uhQqZnV0PjoujwTwljznimkzxdlM/rq+mij2Xa6Q9+QIxdasaOJ5XzzAlRGKqsVZXzHBIjKB6gHUgiC9rLGeW6MTGxjAhOuw06AihQ7IYbcdWGnCdNkxSL/cC9RO+uQvMy2/fpXqqGEDS5WIYyX2JaZaQMAb5CmxsNFCgmzYl9khpraRpW5zBT28ba+RH0AkvjlpWp6LrRpo9nkr35xsq5QrzKuek6LBAekgJGyWB0K+d2+m4BD4mMg8cZ1BYFdam36bfBRfnzlTfOVhnK3vpOcSh2b5JRydyTMKUiopIolFi8an+Gahl8tgqYhlir+e67RNM6ShUI44LiGh4Oxw9WfMBKzQ+TY0eHtBteGyT29oysJRHlRPPY4RoZhQpr5BiR5ClqD7EihWVSIz8ma8k+6e2RUmuwRoD8hZJGFPoE3+ylFS0yXPFMwd+OPxt/PP7V+Dfj/yDjz+mPfx//G144TMb/GW/9xBLmW6xAmx2cSQtD7rNdsngK9UN2vPU9gGh3/DVocfh1OFlNnJTv2FAEgbY2ocyJMmWL5OgQWoopHa1l2QVdTBLWISGhMtUfS6m5A+uZCqmyjvEsJJXR4rsiqB+xYvoH9BB+PFj9yuQ6MO3HePLrF0y+sPoLXYlbINNfsbcaJCR2cg1Zio4uAotRXNb03eZXvvITc2tye87j4FfFHzYuo0viD4RjpLZjwJfJbGyyH43tcWXsWTC9IOkzZns2EmYezoH/BaPRB+VWggJZHX8K2vzX49/B//8KCvwG/P71+B8JKPlPxr8c//bw+QI1ESdNZpUHyz6geh2PvefyoFTkympAaHT46FDAQdnZtDgplfKx3H4GwN0Q5uZXAPXfc4PzOT2GHs+Yp5Z3cQ+mdAoTCZCvfc8Mklw9jUU8WV/8TE2Ssjj8LKRTluZ+R4ySXo59hLMkg5LuNR0d0Qp+gel/z+SKvWiCvTmG8v/h77IVQqp1BJNpq/pF3tGptneJLXihSV060vV6lc1K2Apct0eaG5XVP6m1a+v1xnkSgSKp/NTrtSpztRpZ77jbxIvcblhpuRjJkbcHYQSzLX6uA9tUun7PZw+G3SPLkkvwGGoli3CTv6lj8j6EaQKuGQCMPRFXOqjB/OPHBv+ptPxOJlobTr8yq6Byqq+OJ1G1VG+rPg2mUSa/YP46euZzQTDonprpK/3SZZnNwF1fOsJqnjr+htc7khjN7bqB02lTNAY9kNqO13MZetshAPIx+l/spVTUr7qHBGevGTk1g4MsZ1FcaLlQ6reiGQyzNME0Jfni7B9t0vYzZfXElFFuC51eCJLRgaCv0vN7rpymU0yfqcNsVuoN0FYBXK40xRfa+YlabeZEjfS3K3MZXN50oy0OIX3qR/O1meM1gnnAduD3K83OIADSeK2LOySC3zXy00qjpjKOgXdyKJPVOFNo26EEgyirwUf0/V0Gu2yHButv+pfcYDHBSnZw6oRuQvFwIHWcZW3Mb3/xS0J3duzys+X5q2VUTDTWo1fCvtNLgEvBPF4Dws2cmsEW+Y8Ahowb3K7X9DttMuj33aCFVc0AfOsi8G1lC4sEiIn0ER0NJbXJJVRDQIeGS88ep7dBuu1FOs9Egx31pj7zU3VXr87HDFmjPNyAS/0dmDi689Vtc1Y3Od5A3U5ZB9PhjFDffnojOR/8ueWhmkgczQyNROIo9cnEiKv1Wn9blfx5HLw4tGT0R5MrJQuLxErtO0RI2ngWG//x80//I5eQsTtdjfzX/JaDKRB2gPXo+4Jya8fpMdb54+cf5qPMooJc5LSfp2aYmpdSeArT3ibmgA5wYmWrMr/dIVuV9UGnQ7rbWEbsE5RDEMh+ZYFsBF6b/oPmJcSHQFDjnw1Ks3lVnzshKBXNkrUXoXEFURCmRNorfHouU8Kp6avP1Y/X2+dTCI9mik9NBZDpJ0ZRJ9mcJWM4TgmHpkwrq3Mz8+dV2ybH6WykAfMjaOR2HFwmJGhT1jv+VmXTa7fBSk7vX5lkscHqNEO/M4hcalgbpOOuR/BHVRiG8ylUR6opSAwJ2v9T+qqRO/RVNn8yZ4JkCpkNTjr2AsxMt1lpION/9M/TPydMATVhmtbQYbeAPlSPdFpeIvOYeYBgXn0B3+74LiYajJaztOVHk/fpy/Tu0xeLkfglifKVnIXRvumxWq8nVDrpRpW6bQ7iOO3h+N6iQEz4mh23txFtpoCSAwuMOKuw5Vbg9G2ufj2dvAKKrtMXDm8x0Vaow4vuztIw9odHKiigaetM09bgDyPSj5BGqjrWhU44LUC7mdlawpER0moBniIQA1INwXGMioULhdJq7fzIBr9FVdMYoTQFD9jmIkXzwITkSz6dMNMF19SJkB0QOdvcJYyT7irGXNlAUzX+pZmGJkVMBFQ1ERuV0miUYf2pj61rKSYZR4QJlMtXM2I0s95oZB93KlnkVFdZbBOUqFDz9Kapxacy/2IwCyvp1k3hYRiaDhgHFxUHfooiNeoqWfoLo52OuzQcEtCD0eYiWTs6lIewQIhYFge2iRNBZ4idjiV2FFpp9KdrZJSUgZnlx8rohmfREIEA8H9OEJDiJogJpFFrPIdpdvp47cieOBXnp9nxWxdVCwuywVYlfzM17xvWTIu7vv30k//evS743KheexQ2f3bkwbT5R+NfjT/ZL4FiNfTHz6//QtAGy/emJ0gyFkjw6ePwO2fNbAz1s02Pc3NuWidnLsNV487U+J/kW5rfp+//vYLeyfg2FiVBIDCX7e0C+VpuZYfaXasWNoCRmnCHBQoYQWxWZhcSrDKMi9u4e0JTX1gekHQOLLlDOiIezijI40VOx2thHk++zpiduUbTplfBLoFDVq1WteQht9DguSUHVQCknkvH3ygTr72d7sAg7aj/Aq00x4WzRafSsPklEDT0O8Ivl74r83LSHBMAxu6DWEQdXRAT49FU3B//pDGbmrUJXVbFmRLGnSD7C8toUDmvS4ke/fWcpKPDDENakpL0mxiuNhNu06nmAJy7nkEbv3caGOni0lAuAsuSzrhK0yR+DNFwDdzUWZ4QEG6qtFRu2xt01RgxtuTk6DAxcbK0lAqHGN0y8RCN6J7CTH0+6e1m+ca2XvFVpmk5UKF1+TVhP3Ba5xKdjdZ0gpksqp1cv2vwJpulR546Xnb7jKaOj/6/cOr4OZdgXYZ7PZIY7xf++Pkn/1IYPZk5F/XVz2jSxfD/C2f9Bn13K67zKqdAgbHNncdTM6DBNcdqaNdyyBzFqZwTTL+ajkc/sIS1gkH1bQ/MvL+jlTKrbgA7S/I18FxpYbLx3gx5wNTJlEd7fnSm5w82Nu0vP8Au1BcfJHoxVm6nCB8J80LwfSIj622N+8E2qmtzC5LrFK7PX95jazMWkRBH03H6Id8bXsAcuI0wk160A5xNs2gWP4EzrXLjeM0qAknetXNwTMHlFJinXJk6kvb8njx5Gr/AlNEtd6OkY66xsaRmQkSmicbUtSK2UjXPstLpwbT+mVwhw3eMg9WqWWCkBHYp3miuO5saFFhDkm7EHGkAWdm+OLLEARkp0PpUWXPpjM5mMQUlxjEkobZP0F5+nUc71huujsUdxtsCMVVZsV2vnx/l9QyPme+VwfJtYDkx5ocwpnJYcLK9yBbxofYxzfYcdZY/IM9S80JU8e2lWFrefTehjOGSVmGWBqLhZSgbIIqoZlM52PQzhJchcitJlaDwVuxqpK9EpmpcRecm8c4QVuaYyNhJZ/DWIAj9oAK9Yd7R33LbhYyuFjUfZ0F1PdScZjwErp+Fm04bzHi3zZ2pxRCXceFW2kh2dZ+m8KnrcpvWpWEh1QepOrIuBb3nB12nI23UCVxYR6GKrfbo209vlLLkye7QZsfspj8xygvaS6Msr0rsOsz1qvjab3oIrnpS07v61ryOPvRwLWP5E7MDZg2RNaug+i1Hh2IXJPI1FSg8nLACCLLqYWCe5UP5FoBnpPNXVbrNVN2fXYQTW5PAbceLHpl1OalG5ttPf4tZ4vi1NrcIpsH4Ku2dQ3s10tOCHleepMkebqwZGlsDrS93lAUcWJLPizhWz+PxDZv+IICpa1Ta3gatoQdHZBC5yqWEqOTjmG5nrGuzWBLR3eFr1XdT7depzVlL0aPV/6tT/y9BELmFAzzC2angE6uEtHQDtCiu3x5Jd35zFw2TU52yYpjFKpynjyyP/4GeMUvP4Z18ML6T7YRolS4KVeTeeGXNT7lN98iPsvVxuscxzfrf7GNa/8sJ45JrgUjIKdYBG/Z1wNTVwGI6ieVioElgvhiYshaYsiKYQ/7pxTCxOBh2lbKjOZ4SjpfMF9Iy6Xy1iB1dwFIBWympAG3nitN7YX0dJljG88rh0MtLZMs8llhuG+Y7IUUTelLHyZSxMmL/aXxgmQrYSk0FmM7y4RixaX3jVP+Yb+cqbmV5yMl8RCP2j5UqKqpHsILJWEJL6KvMBJ02qsA0s5XmEccFJjIHoWcmjHWdKV1Y3WGWrrA6Eo4sPNC5vTriaS5ylpucb/etGYwttiskL7icuo6VR/B1NTmxDaOY59moG7qmGDwZ4WfWxaXXPif0SULwedC8RmP0o4n7I7I2mqbHFbmBmnX2YdwZvTWarhv1DbV0vRV6UweQF/EFVncmV8bfsEiJvqRslJnkycjVZEdA1nDHHvRkjmW9bF/czTEndd2cNDKSOmZOmR2LwwxJM8OQ5OSVmxl55SksQ6ZLQU1CM9Mk6Bp5bsoMcapSztTETzM3nK0NM9g3k7n3VH9H97vnaBFb4jglcGBqtynUblbeOFftpoZzr7y5SGCMfMd6Kl2wp9xtHUs69PfO0V93x7cpTNoBbaPJexl53dTy1jwaIChisSm9KEPjFVqR+yXWRON25EXCMrTNRCZ2lEsr0WGixHKRHJMdxoWOU/Z2Q+wiRtDAlsRdrfAdBXlTmKfv0xO30zmu9gTuo3mk8kCMYnMvPiktOeSxxP4SuDmuqMBwek/0UXOz+83PPgk3c6hYgJTXI5urTfR4GCpj3+CbimkmV76Tkr7/82aGt5LnjGTwttVPsXkpdmfkkVK4opwgP4c7lTuztzVzeRygWseftlzub/WoTyP3wxYjcdb+nrygKHd1PS8Oj/Lj8EiNwx/f8ns07fK7up/sMbtXdB4OZamTZNgKLpeiABCieobUL+brrly37lCWgvrulgLsz73bc01ANI1rN2QS98j1ANrOZmnIzEoluulR2YpjrxRXH2nkxc1Ul7NDJB4+/VKCjHRAPTsdMKVfCLOoHNosF9IRpmPGzREZ36OVy/RosoeT62DX8HiyryfXZI5jco3hM8odMH5JmX1MeZ8Ny888q5LJh/FhaVgonjXaPtfvh4dzmdYyMXNTFiPJeuAokUfrR5hjPJId7e0lRspLCw2jlKSQWr0RJRJDOWUTSs9ackgtz1Buj3K7y3Pp9+myP86UsjxAiDkUUyeVRenFE/LbdTQPvPi18Q18CWe61041/eSDJ+Sjj55wmYVijdg2iHhnPe6kZ7/kg6WTB+/2OfgcfA4+B5+Dz8Hn4HPwOfgcfA4+B5+Dz8Hn4HPweayf/wEy/dqnAMgAAA==" | base64 -d | tar -xzf -
+
+      - name: Patch schema and module
+        run: |
+          python3 -c "
+import os
+p_path = 'apps/api/prisma/schema.prisma'
+if os.path.exists(p_path):
+    with open(p_path, 'r', encoding='utf-8') as f:
+        c = f.read()
+    if 'model TyuryagaProfile' not in c:
+        if 'tyuryagaProfile' not in c and 'model User {' in c:
+            c = c.replace('model User {', 'model User {\n  tyuryagaProfile TyuryagaProfile?', 1)
+        schema_ext = '''
+
+model TyuryagaProfile {
+  id              String               @id @default(cuid())
+  userId          String               @unique
+  user            User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  level           Int                  @default(1)
+  respect         Int                  @default(0)
+  energy          Int                  @default(100)
+  maxEnergy       Int                  @default(100)
+  lastEnergySync  DateTime             @default(now())
+  
+  cigarettes      Int                  @default(150)
+  sugar           Int                  @default(10)
+  baseDamage      Int                  @default(15)
+  wins            Int                  @default(0)
+
+  tattoos         TyuryagaTattoo[]
+  activeBoss      TyuryagaBossBattle?
+
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  @@index([userId])
+}
+
+model TyuryagaTattoo {
+  id          String          @id @default(cuid())
+  profileId   String
+  profile     TyuryagaProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  tattooId    String
+  acquiredAt  DateTime        @default(now())
+
+  @@unique([profileId, tattooId])
+}
+
+model TyuryagaBossBattle {
+  id               String          @id @default(cuid())
+  profileId        String          @unique
+  profile          TyuryagaProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  bossId           String
+  bossName         String
+  currentHp        Int
+  maxHp            Int
+  rewardCigarettes Int
+  rewardRespect    Int
+  rewardSugar      Int
+  isDefeated       Boolean         @default(false)
+  expiresAt        DateTime
+  createdAt        DateTime        @default(now())
+
+  @@index([profileId])
+}
+'''
+        c += schema_ext
+        with open(p_path, 'w', encoding='utf-8') as f:
+            f.write(c)
+
+m_path = 'apps/api/src/app.module.ts'
+if os.path.exists(m_path):
+    with open(m_path, 'r', encoding='utf-8') as f:
+        m = f.read()
+    if 'TyuryagaModule' not in m:
+        m = "import { TyuryagaModule } from './modules/tyuryaga/tyuryaga.module';\n" + m
+        m = m.replace('imports: [', 'imports: [\n    TyuryagaModule,', 1)
+        with open(m_path, 'w', encoding='utf-8') as f:
+            f.write(m)
+"
+
+      - name: Commit and push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff --staged --quiet || git commit -m "feat: integrate Tyuryaga game [v43]"
+          git push origin main
