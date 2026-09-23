@@ -257,6 +257,7 @@ export type OfficePersistedState = {
   version: number;
   snapshot: OfficeSnapshot;
   workspace: OfficeWorkspaceItem[];
+  energyNextAt: number | null;
 };
 
 export function isOfficePersistedState(value: unknown): value is OfficePersistedState {
@@ -266,6 +267,7 @@ export function isOfficePersistedState(value: unknown): value is OfficePersisted
     candidate.version === OFFICE_STORAGE_VERSION &&
     !!candidate.snapshot &&
     typeof candidate.snapshot === 'object' &&
-    Array.isArray(candidate.workspace)
+    Array.isArray(candidate.workspace) &&
+    (candidate.energyNextAt === null || typeof candidate.energyNextAt === 'number')
   );
 }
