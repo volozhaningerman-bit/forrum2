@@ -1,93 +1,265 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   formatMoney,
   getCompanyStars,
   initialOfficeSnapshot,
   initialWorkspaceItems,
+  isOfficePersistedState,
   nextPromotion,
   officeActions,
   officeNavigation,
   officeNews,
+  OFFICE_ACTION_COOLDOWN_MS,
+  OFFICE_ENERGY_REGEN_SECONDS,
+  OFFICE_STORAGE_KEY,
+  OFFICE_STORAGE_VERSION,
   upgradeWorkspaceItem,
   type OfficeWorkspaceItem,
 } from './office-data';
+
+type FeedbackTone = 'money' | 'xp' | 'social' | 'warning';
+
+type ActionFeedback = {
+  id: number;
+  text: string;
+  tone: FeedbackTone;
+};
 
 export function OfficeGame() {
   const [snapshot, setSnapshot] = useState(initialOfficeSnapshot);
   const [workspace, setWorkspace] = useState<OfficeWorkspaceItem[]>(initialWorkspaceItems);
   const [selectedSlot, setSelectedSlot] = useState<OfficeWorkspaceItem['key']>('pc');
   const [notice, setNotice] = useState('Первый рабочий день. Начни с простого поручения.');
+  const [energyCountdown, setEnergyCountdown] = useState(OFFICE_ENERGY_REGEN_SECONDS);
+  const [energyNextAt, setEnergyNextAt] = useState<number | null>(null);
+  const [activeAction, setActiveAction] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<ActionFeedback | null>(null);
+  const [hydrated, setHydrated] = useState(false);
+
+  const feedbackTimerRef = useRef<number | null>(null);
+  const cooldownTimerRef = useRef<number | null>(null);
+  const feedbackIdRef = useRef(0);
 
   const selectedItem = useMemo(
     () => workspace.find((item) => item.key === selectedSlot) ?? workspace[0],
     [selectedSlot, workspace],
   );
 
-  const firstAssignmentDone = snapshot.daily.progress >= 1;
+  const firstAssignmentDone =
+    snapshot.firstAssignment.progress >= snapshot.firstAssignment.target;
+  const promotionCompleted = snapshot.role === nextPromotion.role;
   const promotionReady =
+    !promotionCompleted &&
     snapshot.skills.competence >= nextPromotion.competence &&
     snapshot.reputation >= nextPromotion.reputation &&
     firstAssignmentDone;
 
   const companyStars = getCompanyStars(snapshot.company.level, snapshot.company.maxLevel);
+  const dailyDone = snapshot.daily.progress >= snapshot.daily.target;
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(OFFICE_STORAGE_KEY);
+      if (raw) {
+        const parsed: unknown = JSON.parse(raw);
+        if (isOfficePersistedState(parsed)) {
+          setSnapshot({
+            ...initialOfficeSnapshot,
+            ...parsed.snapshot,
+            skills: { ...initialOfficeSnapshot.skills, ...parsed.snapshot.skills },
+            daily: { ...initialOfficeSnapshot.daily, ...parsed.snapshot.daily },
+            firstAssignment: {
+              ...initialOfficeSnapshot.firstAssignment,
+              ...parsed.snapshot.firstAssignment,
+            },
+            company: { ...initialOfficeSnapshot.company, ...parsed.snapshot.company },
+          });
+          if (parsed.workspace.length === initialWorkspaceItems.length) {
+            setWorkspace(parsed.workspace);
+          }
+          setEnergyNextAt(parsed.energyNextAt);
+        }
+      }
+    } catch {
+      window.localStorage.removeItem(OFFICE_STORAGE_KEY);
+    } finally {
+      setHydrated(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      window.localStorage.setItem(
+        OFFICE_STORAGE_KEY,
+        JSON.stringify({
+          version: OFFICE_STORAGE_VERSION,
+          snapshot,
+          workspace,
+          energyNextAt,
+        }),
+      );
+    } catch {
+      // Prototype remains playable even when storage is unavailable.
+    }
+  }, [energyNextAt, hydrated, snapshot, workspace]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+
+    if (snapshot.energy >= snapshot.maxEnergy) {
+      setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
+      if (energyNextAt !== null) setEnergyNextAt(null);
+      return;
+    }
+
+    if (energyNextAt === null) {
+      const target = Date.now() + OFFICE_ENERGY_REGEN_SECONDS * 1000;
+      setEnergyNextAt(target);
+      setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
+      return;
+    }
+
+    const tick = () => {
+      const now = Date.now();
+      const remainingMs = energyNextAt - now;
+
+      if (remainingMs > 0) {
+        setEnergyCountdown(Math.max(1, Math.ceil(remainingMs / 1000)));
+        return;
+      }
+
+      const intervalMs = OFFICE_ENERGY_REGEN_SECONDS * 1000;
+      const elapsedIntervals = Math.floor(Math.abs(remainingMs) / intervalMs) + 1;
+      const missingEnergy = snapshot.maxEnergy - snapshot.energy;
+      const restored = Math.min(missingEnergy, elapsedIntervals);
+
+      if (restored > 0) {
+        setSnapshot((state) => ({
+          ...state,
+          energy: Math.min(state.maxEnergy, state.energy + restored),
+        }));
+      }
+
+      if (restored >= missingEnergy) {
+        setEnergyNextAt(null);
+        setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
+      } else {
+        const nextTarget = energyNextAt + elapsedIntervals * intervalMs;
+        setEnergyNextAt(nextTarget);
+        setEnergyCountdown(Math.max(1, Math.ceil((nextTarget - now) / 1000)));
+      }
+    };
+
+    tick();
+    const timer = window.setInterval(tick, 1000);
+    return () => window.clearInterval(timer);
+  }, [energyNextAt, hydrated, snapshot.energy, snapshot.maxEnergy]);
+
+  useEffect(
+    () => () => {
+      if (feedbackTimerRef.current !== null) window.clearTimeout(feedbackTimerRef.current);
+      if (cooldownTimerRef.current !== null) window.clearTimeout(cooldownTimerRef.current);
+    },
+    [],
+  );
+
+  const showFeedback = (text: string, tone: FeedbackTone) => {
+    feedbackIdRef.current += 1;
+    setFeedback({ id: feedbackIdRef.current, text, tone });
+
+    if (feedbackTimerRef.current !== null) window.clearTimeout(feedbackTimerRef.current);
+    feedbackTimerRef.current = window.setTimeout(() => setFeedback(null), 1050);
+  };
+
+  const beginCooldown = (id: string) => {
+    setActiveAction(id);
+    if (cooldownTimerRef.current !== null) window.clearTimeout(cooldownTimerRef.current);
+    cooldownTimerRef.current = window.setTimeout(
+      () => setActiveAction(null),
+      OFFICE_ACTION_COOLDOWN_MS,
+    );
+  };
 
   const gainXp = (amount: number) => {
     setSnapshot((current) => {
-      const totalXp = current.xp + amount;
-      if (totalXp < current.xpToNext) {
-        return { ...current, xp: totalXp };
+      let nextXp = current.xp + amount;
+      let nextLevel = current.level;
+      let nextThreshold = current.xpToNext;
+      let nextMaxEnergy = current.maxEnergy;
+
+      while (nextXp >= nextThreshold) {
+        nextXp -= nextThreshold;
+        nextLevel += 1;
+        nextThreshold = Math.round(nextThreshold * 1.2);
+        nextMaxEnergy = Math.min(120, nextMaxEnergy + 2);
       }
 
       return {
         ...current,
-        level: current.level + 1,
-        xp: totalXp - current.xpToNext,
-        xpToNext: Math.round(current.xpToNext * 1.2),
-        maxEnergy: Math.min(120, current.maxEnergy + 2),
+        xp: nextXp,
+        level: nextLevel,
+        xpToNext: nextThreshold,
+        maxEnergy: nextMaxEnergy,
       };
     });
   };
 
   const triggerAction = (id: (typeof officeActions)[number]['id']) => {
+    if (activeAction) return;
+
     if (id === 'work') {
       if (snapshot.energy <= 0) {
-        setNotice('Энергия закончилась. Даже стажёрам иногда нужен кофе.');
+        setNotice('Энергия закончилась. Следующая единица восстановится автоматически.');
+        showFeedback('Нет энергии', 'warning');
         return;
       }
 
-      const finishingDaily =
-        snapshot.daily.progress < snapshot.daily.target &&
-        snapshot.daily.progress + 1 >= snapshot.daily.target;
+      beginCooldown(id);
+      setSnapshot((current) => {
+        const nextProgress = Math.min(current.daily.target, current.daily.progress + 1);
+        const completesNow =
+          !current.daily.claimed &&
+          current.daily.progress < current.daily.target &&
+          nextProgress >= current.daily.target;
 
-      setSnapshot((current) => ({
-        ...current,
-        energy: Math.max(0, current.energy - 1),
-        money: current.money + 75 + (finishingDaily ? current.daily.moneyReward : 0),
-        motivation: Math.min(
-          100,
-          current.motivation + (finishingDaily ? current.daily.motivationReward : 0),
-        ),
-        daily: {
-          ...current.daily,
-          progress: Math.min(current.daily.target, current.daily.progress + 1),
-        },
-      }));
+        return {
+          ...current,
+          energy: Math.max(0, current.energy - 1),
+          money: current.money + 75 + (completesNow ? current.daily.moneyReward : 0),
+          motivation: Math.min(
+            100,
+            current.motivation + (completesNow ? current.daily.motivationReward : 0),
+          ),
+          daily: {
+            ...current.daily,
+            progress: nextProgress,
+            claimed: current.daily.claimed || completesNow,
+          },
+        };
+      });
       gainXp(8);
+
+      const closesDaily = !snapshot.daily.claimed && snapshot.daily.progress + 1 >= snapshot.daily.target;
+      showFeedback(closesDaily ? '+125 ₽ · +8 XP · ежедневка' : '+75 ₽ · +8 XP', 'money');
       setNotice(
-        finishingDaily
-          ? 'Ежедневка закрыта. Награда начислена — можно сделать вид, что день прошёл продуктивно.'
-          : 'Задача закрыта: +75 ₽ и +8 опыта. Осталось правильно отправить результат.',
+        closesDaily
+          ? 'Ежедневка закрыта. Награда выдана один раз — дальше работа приносит обычную оплату.'
+          : 'Задача закрыта. Результат отправлен, никто даже не попросил переделать.',
       );
       return;
     }
 
     if (id === 'approve') {
       if (snapshot.energy <= 0) {
-        setNotice('На согласования тоже нужны силы. Энергия закончилась.');
+        setNotice('На согласования тоже нужны силы. Подожди восстановления энергии.');
+        showFeedback('Нет энергии', 'warning');
         return;
       }
+
+      beginCooldown(id);
       setSnapshot((current) => ({
         ...current,
         energy: Math.max(0, current.energy - 1),
@@ -95,15 +267,19 @@ export function OfficeGame() {
         motivation: Math.min(100, current.motivation + 1),
       }));
       gainXp(4);
-      setNotice('Согласование прошло без трёх созвонов. Репутация +2.');
+      showFeedback('Репутация +2 · XP +4', 'social');
+      setNotice('Согласование прошло без трёх созвонов. Это уже карьерное достижение.');
       return;
     }
 
     if (id === 'learn') {
       if (snapshot.energy < 2) {
         setNotice('Для обучения нужно минимум 2 энергии.');
+        showFeedback('Нужно 2 энергии', 'warning');
         return;
       }
+
+      beginCooldown(id);
       setSnapshot((current) => ({
         ...current,
         energy: Math.max(0, current.energy - 2),
@@ -113,27 +289,55 @@ export function OfficeGame() {
         },
       }));
       gainXp(6);
-      setNotice('Компетентность +1. Теперь можно увереннее говорить «я посмотрю».');
+      showFeedback('Компетентность +1 · XP +6', 'xp');
+      setNotice('Компетентность выросла. Теперь можно увереннее говорить «я посмотрю».');
       return;
     }
 
+    beginCooldown(id);
     setSnapshot((current) => ({
       ...current,
       motivation: Math.min(100, current.motivation + 3),
       stress: Math.max(0, current.stress - 2),
       reputation: Math.max(0, current.reputation - (current.reputation > 12 ? 1 : 0)),
     }));
-    setNotice('Шалость удалась: настроение +3, стресс −2. Никто ничего не видел.');
+    showFeedback('Мотивация +3 · Стресс −2', 'social');
+    setNotice('Шалость удалась. Никто ничего не видел, а рабочий день стал короче.');
+  };
+
+  const handleBoss = () => {
+    if (snapshot.level < 3) {
+      setNotice('Сергей Петрович пока не зовёт: испытание откроется на 3 уровне.');
+      showFeedback('Нужен 3 уровень', 'warning');
+      return;
+    }
+
+    if (firstAssignmentDone) {
+      setNotice('Первое поручение уже выполнено. Теперь готовь требования к повышению.');
+      return;
+    }
+
+    setSnapshot((current) => ({
+      ...current,
+      money: current.money + 300,
+      reputation: Math.min(100, current.reputation + 5),
+      firstAssignment: {
+        ...current.firstAssignment,
+        progress: current.firstAssignment.target,
+      },
+    }));
+    gainXp(25);
+    showFeedback('+300 ₽ · Репутация +5 · XP +25', 'money');
+    setNotice('Первое поручение принято. Сергей Петрович сказал «нормально» — это почти похвала.');
   };
 
   const upgradeSelectedItem = () => {
     const item = selectedItem;
-    if (!item) {
-      return;
-    }
+    if (!item) return;
 
     if (snapshot.money < item.upgradePrice) {
       setNotice(`Не хватает денег. Нужно ещё ${formatMoney(item.upgradePrice - snapshot.money)} ₽.`);
+      showFeedback('Не хватает денег', 'warning');
       return;
     }
 
@@ -146,6 +350,7 @@ export function OfficeGame() {
         candidate.key === item.key ? upgradeWorkspaceItem(candidate) : candidate,
       ),
     );
+    showFeedback(`−${formatMoney(item.upgradePrice)} ₽ · предмет улучшен`, 'xp');
     setNotice(
       item.level === 0
         ? 'Первый аксессуар появился на столе. Рабочее место начинает становиться твоим.'
@@ -154,8 +359,14 @@ export function OfficeGame() {
   };
 
   const requestPromotion = () => {
+    if (promotionCompleted) {
+      setNotice('Это повышение уже получено. Следующая карьерная ступень появится позже.');
+      return;
+    }
+
     if (!promotionReady) {
-      setNotice('Повышение пока рано просить: закрой требования справа.');
+      setNotice('Повышение пока рано просить: закрой все требования.');
+      showFeedback('Не все требования закрыты', 'warning');
       return;
     }
 
@@ -166,7 +377,18 @@ export function OfficeGame() {
       reputation: Math.min(100, current.reputation + 5),
       motivation: Math.min(100, current.motivation + 10),
     }));
+    showFeedback('Повышение! Зарплата 50 000 ₽', 'money');
     setNotice('Повышение получено. В резюме появилась новая строчка, а зарплата наконец выросла.');
+  };
+
+  const resetPrototype = () => {
+    setSnapshot(initialOfficeSnapshot);
+    setWorkspace(initialWorkspaceItems);
+    setSelectedSlot('pc');
+    setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
+    setEnergyNextAt(null);
+    setNotice('Прототип сброшен. Снова первый рабочий день.');
+    window.localStorage.removeItem(OFFICE_STORAGE_KEY);
   };
 
   return (
@@ -192,7 +414,16 @@ export function OfficeGame() {
             <em>{snapshot.xp} / {snapshot.xpToNext}</em>
           </div>
 
-          <Resource icon="energy" value={`${snapshot.energy} (+1)`} detail="02:45" className="office-energy" />
+          <Resource
+            icon="energy"
+            value={`${snapshot.energy} (+1)`}
+            detail={
+              snapshot.energy >= snapshot.maxEnergy
+                ? 'полная'
+                : formatCountdown(energyCountdown)
+            }
+            className="office-energy"
+          />
           <Resource icon="cash" value={formatMoney(snapshot.money)} className="office-money" />
           <Resource icon="morale" value={String(snapshot.motivation)} className="office-motivation" />
 
@@ -200,7 +431,15 @@ export function OfficeGame() {
             <button type="button" title="Рейтинг"><OfficeIcon name="rating" /></button>
             <button type="button" title="Сообщения" className="office-mail"><OfficeIcon name="mail" /><sup>3</sup></button>
             <button type="button" title="Ночной режим"><OfficeIcon name="moon" /></button>
-            <button type="button" title="Настройки"><OfficeIcon name="settings" /></button>
+            <button
+              type="button"
+              title="Сбросить прототип"
+              onClick={() => {
+                if (window.confirm('Сбросить локальный прогресс «В Офисе»?')) resetPrototype();
+              }}
+            >
+              <OfficeIcon name="settings" />
+            </button>
           </div>
         </header>
 
@@ -270,10 +509,6 @@ export function OfficeGame() {
               >
                 <span>＋</span> Стул
               </button>
-              <div className="office-scene-rank">
-                <small>{snapshot.company.name}</small>
-                <b>{snapshot.role}</b>
-              </div>
               <div className="office-scene-note">{notice}</div>
             </section>
 
@@ -283,12 +518,19 @@ export function OfficeGame() {
                   type="button"
                   key={item.id}
                   onClick={() => triggerAction(item.id)}
-                  className={'office-action office-action-' + item.tone}
+                  disabled={activeAction !== null}
+                  aria-busy={activeAction === item.id}
+                  className={`office-action office-action-${item.tone} ${activeAction === item.id ? 'is-active' : ''}`}
                 >
                   <OfficeIcon name={item.icon} />
                   <div><b>{item.title}</b><small>{item.text}</small></div>
                 </button>
               ))}
+              {feedback ? (
+                <div key={feedback.id} className={`office-action-feedback office-feedback-${feedback.tone}`}>
+                  {feedback.text}
+                </div>
+              ) : null}
             </div>
           </main>
 
@@ -320,27 +562,30 @@ export function OfficeGame() {
               <button type="button">О компании →</button>
             </section>
 
-            <section className="office-daily">
+            <section className={`office-daily ${dailyDone ? 'is-complete' : ''}`}>
               <div className="office-card-head">
                 <h3>Задание дня</h3>
-                <b className="office-daily-count">{snapshot.daily.progress}/{snapshot.daily.target}</b>
+                <b className="office-daily-count">{dailyDone ? 'Выполнено' : `${snapshot.daily.progress}/${snapshot.daily.target}`}</b>
               </div>
               <label>
-                <span className={`office-checkbox ${snapshot.daily.progress >= snapshot.daily.target ? 'done' : ''}`} />
+                <span className={`office-checkbox ${dailyDone ? 'done' : ''}`} />
                 {snapshot.daily.title}
               </label>
               <div className="office-progress">
                 <i style={{ width: `${Math.min(100, snapshot.daily.progress / snapshot.daily.target * 100)}%` }} />
               </div>
               <div className="office-reward">
-                <span>Награда:</span>
+                <span>{snapshot.daily.claimed ? 'Получено:' : 'Награда:'}</span>
                 <b><OfficeIcon name="cash" /> +{snapshot.daily.moneyReward}</b>
                 <b><OfficeIcon name="morale" /> +{snapshot.daily.motivationReward}</b>
               </div>
             </section>
 
-            <section className="office-boss">
-              <div className="office-card-head"><h3>Следующий босс</h3></div>
+            <section className={`office-boss ${firstAssignmentDone ? 'is-complete' : ''}`}>
+              <div className="office-card-head">
+                <h3>Следующий босс</h3>
+                {firstAssignmentDone ? <b className="office-boss-done">Пройден</b> : null}
+              </div>
               <div className="office-boss-row">
                 <img src="/games/office/boss.svg" alt="Сергей Петрович" />
                 <div>
@@ -349,9 +594,12 @@ export function OfficeGame() {
                   <blockquote>«Посмотрим, на что ты способен»</blockquote>
                 </div>
               </div>
-              <div className="office-boss-requirement"><OfficeIcon name="task" /> Первое поручение · требуется ур. 3</div>
-              <button type="button" onClick={() => setNotice('Испытание откроется на 3 уровне. Пока Сергей Петрович просто наблюдает.')}>
-                К испытанию »
+              <div className="office-boss-requirement">
+                <OfficeIcon name="task" />
+                Первое поручение · {firstAssignmentDone ? 'выполнено' : 'требуется ур. 3'}
+              </div>
+              <button type="button" onClick={handleBoss}>
+                {firstAssignmentDone ? 'Поручение выполнено' : snapshot.level >= 3 ? 'Начать поручение »' : 'К испытанию »'}
               </button>
             </section>
 
@@ -392,26 +640,29 @@ export function OfficeGame() {
             <div className="office-promotion-head">
               <OfficeIcon name="briefcase" />
               <div>
-                <strong>{nextPromotion.role}</strong>
-                <small>{formatMoney(snapshot.salary)} ₽ → {formatMoney(nextPromotion.salary)} ₽</small>
+                <strong>{promotionCompleted ? 'Повышение получено' : nextPromotion.role}</strong>
+                <small>{promotionCompleted ? `${formatMoney(snapshot.salary)} ₽` : `${formatMoney(snapshot.salary)} ₽ → ${formatMoney(nextPromotion.salary)} ₽`}</small>
               </div>
             </div>
             <Requirement label="Компетентность" value={`${snapshot.skills.competence} / ${nextPromotion.competence}`} progress={snapshot.skills.competence / nextPromotion.competence * 100} />
             <Requirement label="Репутация" value={`${snapshot.reputation} / ${nextPromotion.reputation}`} progress={snapshot.reputation / nextPromotion.reputation * 100} />
             <Requirement label="Первое поручение" value={firstAssignmentDone ? '1 / 1' : '0 / 1'} progress={firstAssignmentDone ? 100 : 0} />
             <div className="office-promotion-actions">
-              <button type="button" className="primary" onClick={() => setNotice('Подготовка: работай, учись и подними репутацию до требований.')}>Подготовиться</button>
-              <button type="button" disabled={!promotionReady} onClick={requestPromotion}>Просить повышение</button>
+              <button type="button" className="primary" onClick={() => setNotice('Подготовка: работай, учись, пройди поручение и подними репутацию.')}>Подготовиться</button>
+              <button type="button" disabled={!promotionReady} onClick={requestPromotion}>
+                {promotionCompleted ? 'Получено' : 'Просить повышение'}
+              </button>
             </div>
             <small className="office-unlocks">Откроется: новая компания · новое кресло · новые задания</small>
           </section>
 
           <aside className="office-item-details">
-            <small>Выбрано</small>
             <OfficeIcon name={selectedItem.icon} />
-            <strong>{selectedItem.item}</strong>
-            <em>{selectedItem.rarity} · {selectedItem.level ? `${selectedItem.level} ур.` : 'пусто'}</em>
-            <p>{selectedItem.description}</p>
+            <div className="office-item-copy">
+              <small>Выбрано · {selectedItem.rarity}</small>
+              <strong>{selectedItem.item}</strong>
+              <p>{selectedItem.description}</p>
+            </div>
             <div className="office-item-effect">
               <span>{selectedItem.effectLabel}</span>
               <b>+{selectedItem.effectValue} → +{selectedItem.nextEffectValue}</b>
@@ -473,4 +724,10 @@ function Requirement({ label, value, progress }: { label: string; value: string;
       <div><i style={{ width: `${Math.min(100, progress)}%` }} /></div>
     </div>
   );
+}
+
+function formatCountdown(seconds: number) {
+  const minutes = Math.floor(seconds / 60);
+  const rest = seconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(rest).padStart(2, '0')}`;
 }

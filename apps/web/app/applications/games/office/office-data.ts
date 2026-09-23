@@ -36,6 +36,11 @@ export type OfficeSnapshot = {
     target: number;
     moneyReward: number;
     motivationReward: number;
+    claimed: boolean;
+  };
+  firstAssignment: {
+    progress: number;
+    target: number;
   };
   company: {
     name: string;
@@ -84,6 +89,11 @@ export const initialOfficeSnapshot: OfficeSnapshot = {
     target: 10,
     moneyReward: 50,
     motivationReward: 10,
+    claimed: false,
+  },
+  firstAssignment: {
+    progress: 0,
+    target: 1,
   },
   company: {
     name: 'ООО «Потенциал+»',
@@ -235,4 +245,29 @@ export function upgradeWorkspaceItem(item: OfficeWorkspaceItem): OfficeWorkspace
     nextEffectValue: item.nextEffectValue + 1,
     upgradePrice: Math.round(item.upgradePrice * 1.45 / 10) * 10,
   };
+}
+
+
+export const OFFICE_ENERGY_REGEN_SECONDS = 180;
+export const OFFICE_ACTION_COOLDOWN_MS = 520;
+export const OFFICE_STORAGE_KEY = '4rrum.office.v4_1';
+export const OFFICE_STORAGE_VERSION = 1;
+
+export type OfficePersistedState = {
+  version: number;
+  snapshot: OfficeSnapshot;
+  workspace: OfficeWorkspaceItem[];
+  energyNextAt: number | null;
+};
+
+export function isOfficePersistedState(value: unknown): value is OfficePersistedState {
+  if (!value || typeof value !== 'object') return false;
+  const candidate = value as Partial<OfficePersistedState>;
+  return (
+    candidate.version === OFFICE_STORAGE_VERSION &&
+    !!candidate.snapshot &&
+    typeof candidate.snapshot === 'object' &&
+    Array.isArray(candidate.workspace) &&
+    (candidate.energyNextAt === null || typeof candidate.energyNextAt === 'number')
+  );
 }
