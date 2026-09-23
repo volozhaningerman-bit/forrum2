@@ -1397,3 +1397,11 @@
   .office-career-node{width:112px}
   .office-promotion-help-actions{grid-template-columns:1fr}
 }
+
+
+/* v5 modal containment fix: keep the game centered without a transformed ancestor */
+.office-page{
+  margin-left:auto;
+  margin-right:auto;
+  transform:none;
+}
