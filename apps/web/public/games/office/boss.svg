@@ -1,1 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220"><rect width="220" height="220" fill="#6d6256"/><path d="M40 220q12-78 72-79q64 0 76 79z" fill="#2e3337"/><ellipse cx="111" cy="93" rx="53" ry="61" fill="#a36f52" stroke="#30231c" stroke-width="5"/><path d="M59 77q9-55 53-56q47 1 55 51q-20-23-55-23q-36 0-53 28z" fill="#2b221d"/><path d="M63 112q20 39 49 40q32-1 49-42q-18 9-31 7q-13-3-19-11q-7 8-19 11q-13 2-29-5z" fill="#392a22"/><path d="M80 85q13-12 27-1M119 84q15-11 28 1" fill="none" stroke="#37271f" stroke-width="5"/><path d="M94 123q19 8 36 0" fill="none" stroke="#5a382c" stroke-width="4"/><path d="M82 151l30 22l28-23l17 70H66z" fill="#333a40"/><path d="M105 171l14 0l8 49h-30z" fill="#6a2e2c"/><rect x="92" y="77" width="40" height="30" rx="4" fill="none" stroke="#1b1b1b" stroke-width="5"/><path d="M132 91h16" stroke="#1b1b1b" stroke-width="5"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#6b6257"/><stop offset="1" stop-color="#3e3a35"/></linearGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#aa7658"/><stop offset="1" stop-color="#80503d"/></linearGradient>
+  </defs>
+  <rect width="220" height="220" fill="url(#bg)"/>
+  <path d="M36 220q13-78 77-81q66 4 75 81z" fill="#2d3236" stroke="#1d2022" stroke-width="5"/>
+  <ellipse cx="112" cy="88" rx="52" ry="60" fill="url(#skin)" stroke="#31231d" stroke-width="5"/>
+  <path d="M61 76q8-53 52-58q45-2 56 45q-21-20-55-18q-36 1-53 31z" fill="#29211c" stroke="#31231d" stroke-width="4"/>
+  <path d="M66 58q17-33 50-34q32 1 48 24q-22-11-46-7q-29 4-52 17z" fill="#181310"/>
+  <path d="M77 83q14-10 29-3M122 80q17-8 30 4" fill="none" stroke="#34271f" stroke-width="5" stroke-linecap="round"/>
+  <path d="M86 94q10 6 20 0M128 94q11 6 21 0" fill="none" stroke="#34271f" stroke-width="3"/>
+  <circle cx="99" cy="94" r="2.5" fill="#171311"/><circle cx="141" cy="94" r="2.5" fill="#171311"/>
+  <path d="M113 91q-4 15-1 25q4 5 10 2" fill="none" stroke="#3d2d25" stroke-width="3"/>
+  <path d="M73 114q16 39 40 41q29-2 42-40q-20 9-33 5q-8-2-12-8q-5 6-13 8q-11 3-24-6z" fill="#352821"/>
+  <path d="M90 128q22 8 42-1" fill="none" stroke="#654034" stroke-width="3"/>
+  <rect x="80" y="78" width="43" height="29" rx="4" fill="none" stroke="#151617" stroke-width="5"/>
+  <rect x="127" y="78" width="43" height="29" rx="4" fill="none" stroke="#151617" stroke-width="5"/>
+  <path d="M123 91h4" stroke="#151617" stroke-width="5"/>
+  <path d="M82 148l30 22l30-22l20 72H60z" fill="#343b40"/>
+  <path d="M105 168h15l10 52H95z" fill="#6a3431"/>
+  <path d="M92 144l20 20l20-20" fill="none" stroke="#d3c8b8" stroke-width="8"/>
+</svg>
