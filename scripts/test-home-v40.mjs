@@ -75,7 +75,7 @@ try {
  assert.equal(await page.locator('.forum-category-online').count(),8);
  assert.equal(await page.locator('.forum-category-children').count(),0);
  assert.equal(await page.locator('.forum-secondary-banners').count(),0);
- await page.getByRole('button',{name:'Развернуть: Разработка',exact:true}).click({position:{x:100,y:35}});
+ await page.getByRole('button',{name:'Развернуть: Разработка',exact:true}).click({position:{x:180,y:16}});
  await page.locator('.forum-category-children').first().waitFor();
  await page.reload({waitUntil:'networkidle'});
  assert.equal(await page.locator('.forum-category-children').count(),0);
