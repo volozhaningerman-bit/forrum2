@@ -10,42 +10,50 @@ type WorkspaceSlot = {
   icon: string;
 };
 
+type ActionCard = {
+  id: string;
+  icon: string;
+  title: string;
+  text: string;
+  tone: 'green' | 'blue' | 'purple' | 'orange';
+};
+
 const workspace: WorkspaceSlot[] = [
-  { key: 'clothes', label: 'Одежда', item: 'Обычная рубашка', level: 1, icon: '👔' },
-  { key: 'chair', label: 'Стул', item: 'Старый офисный', level: 1, icon: '🪑' },
-  { key: 'desk', label: 'Стол', item: 'Потрёпанный', level: 1, icon: '🗄️' },
-  { key: 'pc', label: 'ПК', item: 'Старый системник', level: 1, icon: '🖥️' },
-  { key: 'monitor', label: 'Монитор', item: 'CRT 15″', level: 1, icon: '📺' },
-  { key: 'accessory', label: 'Аксессуар', item: 'Пусто', level: 0, icon: '＋' },
+  { key: 'clothes', label: 'Одежда', item: 'Обычная рубашка', level: 1, icon: 'clothes' },
+  { key: 'chair', label: 'Стул', item: 'Старый офисный', level: 1, icon: 'chair' },
+  { key: 'desk', label: 'Стол', item: 'Потрёпанный', level: 1, icon: 'desk' },
+  { key: 'pc', label: 'ПК', item: 'Старый системник', level: 1, icon: 'pc' },
+  { key: 'monitor', label: 'Монитор', item: 'CRT 15″', level: 1, icon: 'monitor' },
+  { key: 'accessory', label: 'Аксессуар', item: 'Пусто', level: 0, icon: 'plus' },
 ];
 
 const nav = [
-  ['⌂', 'Главная'],
-  ['▥', 'Карьера'],
-  ['▤', 'Компания'],
-  ['▣', 'Инвентарь'],
-  ['★', 'Достижения'],
-  ['●', 'Персонаж'],
-  ['🛒', 'Магазин'],
-];
+  ['home', 'Главная'],
+  ['career', 'Карьера'],
+  ['company', 'Компания'],
+  ['inventory', 'Инвентарь'],
+  ['achievement', 'Достижения'],
+  ['character', 'Персонаж'],
+  ['shop', 'Магазин'],
+] as const;
 
-const actionCards = [
-  { id: 'work', icon: '▰', title: 'Работать', text: 'Выполнять задачи', tone: 'green' },
-  { id: 'approve', icon: '●●', title: 'Согласовать', text: 'Общаться с коллегами', tone: 'blue' },
-  { id: 'learn', icon: '▥', title: 'Обучение', text: 'Развивать навыки', tone: 'purple' },
-  { id: 'prank', icon: '◡', title: 'Шалости', text: 'Немного отвлечься', tone: 'orange' },
+const actionCards: ActionCard[] = [
+  { id: 'work', icon: 'work', title: 'Работать', text: 'Выполнять задачи', tone: 'green' },
+  { id: 'approve', icon: 'approve', title: 'Согласовать', text: 'Общаться с коллегами', tone: 'blue' },
+  { id: 'learn', icon: 'training', title: 'Обучение', text: 'Развивать навыки', tone: 'purple' },
+  { id: 'prank', icon: 'prank', title: 'Шалости', text: 'Немного отвлечься', tone: 'orange' },
 ];
 
 const news = [
-  ['Новый финансовый директор', 'Сегодня, 12:30'],
-  ['Пятничная пицца в 17:00', 'Вчера, 15:20'],
-  ['Кофемашина снова работает!', 'Вчера, 11:05'],
+  ['Новый финансовый директор', 'Сегодня, 12:30', 'green'],
+  ['Пятничная пицца в 17:00', 'Вчера, 15:20', 'gold'],
+  ['Кофемашина снова работает!', 'Вчера, 11:05', 'blue'],
 ];
 
 export function OfficeGame() {
   const [selectedSlot, setSelectedSlot] = useState('pc');
   const [notice, setNotice] = useState('Первый рабочий день. Начни с простого поручения.');
-  const [energy, setEnergy] = useState(10);
+  const [energy, setEnergy] = useState(8);
 
   const slot = useMemo(
     () => workspace.find((item) => item.key === selectedSlot) ?? workspace[0],
@@ -55,21 +63,21 @@ export function OfficeGame() {
   const triggerAction = (id: string) => {
     if (id === 'work') {
       if (energy <= 0) {
-        setNotice('Энергия закончилась. Кофе или отдых помогут вернуться в строй.');
+        setNotice('Энергия закончилась. Даже стажёрам иногда нужен кофе.');
         return;
       }
       setEnergy((value) => Math.max(0, value - 1));
-      setNotice('Задача выполнена: +1 опыт. Осталось разобраться, кому отправлять результат.');
+      setNotice('Задача закрыта. Теперь главное — правильно отправить результат.');
       return;
     }
 
     if (id === 'approve') {
-      setNotice('Открыты согласования: убеждай коллег и прокачивай коммуникацию.');
+      setNotice('Согласования открыты: убеждай коллег и прокачивай коммуникацию.');
       return;
     }
 
     if (id === 'learn') {
-      setNotice('Раздел обучения откроет новые навыки и варианты карьерного развития.');
+      setNotice('Обучение откроет новые навыки и карьерные развилки.');
       return;
     }
 
@@ -81,7 +89,7 @@ export function OfficeGame() {
       <div className="office-game">
         <header className="office-topbar">
           <div className="office-logo">
-            <span className="office-logo-mark">▣</span>
+            <div className="office-logo-emblem"><OfficeIcon name="briefcase" /></div>
             <div>
               <b>В ОФИСЕ</b>
               <small>КАРЬЕРА — ТОЖЕ ИГРА</small>
@@ -97,20 +105,15 @@ export function OfficeGame() {
             <em>0 / 100</em>
           </div>
 
-          <div className="office-resource office-energy">
-            <span>⚡</span>
-            <b>{energy} (+1)</b>
-            <small>02:45</small>
-            <button type="button">+</button>
-          </div>
-          <div className="office-resource"><span>💵</span><b>1 250</b><button type="button">+</button></div>
-          <div className="office-resource"><span>🙂</span><b>25</b><button type="button">+</button></div>
+          <Resource icon="energy" value={`${energy} (+1)`} detail="02:45" className="office-energy" />
+          <Resource icon="cash" value="1 250" />
+          <Resource icon="morale" value="25" />
 
           <div className="office-top-icons">
-            <button type="button" title="Рейтинг">♛</button>
-            <button type="button" title="Сообщения">✉<sup>3</sup></button>
-            <button type="button" title="Звук">◖</button>
-            <button type="button" title="Настройки">⚙</button>
+            <button type="button" title="Рейтинг"><OfficeIcon name="rating" /></button>
+            <button type="button" title="Сообщения" className="office-mail"><OfficeIcon name="mail" /><sup>3</sup></button>
+            <button type="button" title="Ночной режим"><OfficeIcon name="moon" /></button>
+            <button type="button" title="Настройки"><OfficeIcon name="settings" /></button>
           </div>
         </header>
 
@@ -118,12 +121,12 @@ export function OfficeGame() {
           <nav className="office-side-nav" aria-label="Разделы игры">
             {nav.map(([icon, label], index) => (
               <button className={index === 0 ? 'active' : ''} type="button" key={label}>
-                <span>{icon}</span>
+                <OfficeIcon name={icon} />
                 <small>{label}</small>
               </button>
             ))}
             <div className="office-bonus">
-              <b>🎁</b>
+              <OfficeIcon name="gift" />
               <span>Бонус</span>
               <small>03:12:45</small>
             </div>
@@ -132,7 +135,7 @@ export function OfficeGame() {
           <aside className="office-profile">
             <div className="office-portrait">
               <img src="/games/office/avatar.svg" alt="Персонаж Бродяга" />
-              <button type="button" title="Редактор персонажа">✎</button>
+              <button type="button" title="Редактор персонажа"><OfficeIcon name="edit" /></button>
             </div>
 
             <div className="office-profile-name">
@@ -141,14 +144,14 @@ export function OfficeGame() {
               <b>Уровень 1</b>
             </div>
 
-            <Stat label="Энергия" value={energy} max={100} icon="⚡" tone="yellow" />
-            <Stat label="Репутация" value={5} max={100} icon="♛" tone="green" />
-            <Stat label="Стресс" value={20} max={100} icon="☹" tone="red" />
+            <Stat label="Энергия" value={energy} max={100} icon="energy" tone="yellow" />
+            <Stat label="Репутация" value={5} max={100} icon="reputation" tone="green" />
+            <Stat label="Стресс" value={20} max={100} icon="stress" tone="red" />
 
             <div className="office-skill-title">Навыки <span>?</span></div>
-            <Skill label="Компетентность" value={1} icon="⚙" />
-            <Skill label="Коммуникация" value={1} icon="●" />
-            <Skill label="Напор" value={1} icon="✊" />
+            <Skill label="Компетентность" value={1} icon="competence" />
+            <Skill label="Коммуникация" value={1} icon="communication" />
+            <Skill label="Напор" value={1} icon="drive" />
 
             <div className="office-quick-links">
               <button type="button">Инвентарь <span>›</span></button>
@@ -179,7 +182,7 @@ export function OfficeGame() {
                   onClick={() => triggerAction(item.id)}
                   className={'office-action office-action-' + item.tone}
                 >
-                  <span>{item.icon}</span>
+                  <OfficeIcon name={item.icon} />
                   <div><b>{item.title}</b><small>{item.text}</small></div>
                 </button>
               ))}
@@ -203,7 +206,11 @@ export function OfficeGame() {
               <h3>Задание дня</h3>
               <label><span className="office-checkbox" />Разобрать входящие письма</label>
               <div className="office-progress"><i /></div>
-              <div className="office-reward"><span>Награда:</span><b>💵 +50</b><b>🙂 +10</b></div>
+              <div className="office-reward">
+                <span>Награда:</span>
+                <b><OfficeIcon name="cash" /> +50</b>
+                <b><OfficeIcon name="morale" /> +10</b>
+              </div>
             </section>
 
             <section className="office-boss">
@@ -216,7 +223,7 @@ export function OfficeGame() {
                   <blockquote>«Посмотрим, на что ты способен»</blockquote>
                 </div>
               </div>
-              <div className="office-boss-requirement">▥ Первое поручение · требуется ур. 3</div>
+              <div className="office-boss-requirement"><OfficeIcon name="task" /> Первое поручение · требуется ур. 3</div>
               <button type="button" onClick={() => setNotice('Испытание пока закрыто: сначала достигни 3 уровня.')}>
                 К испытанию »
               </button>
@@ -224,9 +231,9 @@ export function OfficeGame() {
 
             <section className="office-news">
               <div className="office-card-head"><h3>Новости офиса</h3><button type="button">Все »</button></div>
-              {news.map(([title, time], index) => (
+              {news.map(([title, time, color]) => (
                 <div className="office-news-row" key={title}>
-                  <span className={'dot dot-' + index} />
+                  <span className={'dot dot-' + color} />
                   <div><b>{title}</b><small>{time}</small></div>
                 </div>
               ))}
@@ -246,7 +253,7 @@ export function OfficeGame() {
                   className={selectedSlot === item.key ? 'selected' : ''}
                 >
                   <small>{item.label}</small>
-                  <span>{item.icon}</span>
+                  <OfficeIcon name={item.icon} />
                   <b>{item.item}</b>
                   <em>{item.level ? 'Обычный · ' + item.level + ' ур.' : 'Пусто'}</em>
                 </button>
@@ -257,7 +264,7 @@ export function OfficeGame() {
           <section className="office-promotion">
             <div className="office-bottom-title">Следующее повышение <span>?</span></div>
             <div className="office-promotion-head">
-              <span>💼</span>
+              <OfficeIcon name="briefcase" />
               <strong>Младший специалист</strong>
             </div>
             <Requirement label="Компетентность" value="1 / 5" progress={20} />
@@ -272,7 +279,7 @@ export function OfficeGame() {
 
           <aside className="office-item-details">
             <small>Выбрано</small>
-            <span>{slot.icon}</span>
+            <OfficeIcon name={slot.icon} />
             <strong>{slot.label}</strong>
             <b>{slot.item}</b>
             <button type="button" onClick={() => setNotice(slot.key === 'accessory' ? 'Слот пуст. Первый аксессуар откроется после поручения.' : 'Улучшения появятся после первого поручения.')}>
@@ -285,10 +292,29 @@ export function OfficeGame() {
   );
 }
 
+function OfficeIcon({ name }: { name: string }) {
+  return (
+    <svg className="office-icon" aria-hidden="true">
+      <use href={`/games/office/ui-icons.svg#${name}`} />
+    </svg>
+  );
+}
+
+function Resource({ icon, value, detail, className = '' }: { icon: string; value: string; detail?: string; className?: string }) {
+  return (
+    <div className={`office-resource ${className}`.trim()}>
+      <OfficeIcon name={icon} />
+      <b>{value}</b>
+      {detail ? <small>{detail}</small> : null}
+      <button type="button">+</button>
+    </div>
+  );
+}
+
 function Stat({ label, value, max, icon, tone }: { label: string; value: number; max: number; icon: string; tone: string }) {
   return (
     <div className="office-stat">
-      <div><span>{icon} {label}</span><b>{value} / {max}</b><button type="button">+</button></div>
+      <div><span><OfficeIcon name={icon} /> {label}</span><b>{value} / {max}</b><button type="button">+</button></div>
       <div className="office-statbar"><i className={tone} style={{ width: `${Math.min(100, value / max * 100)}%` }} /></div>
     </div>
   );
@@ -297,7 +323,7 @@ function Stat({ label, value, max, icon, tone }: { label: string; value: number;
 function Skill({ label, value, icon }: { label: string; value: number; icon: string }) {
   return (
     <div className="office-skill">
-      <span>{icon}</span><b>{label}</b><em>{value}</em><button type="button">+</button>
+      <OfficeIcon name={icon} /><b>{label}</b><em>{value}</em><button type="button">+</button>
     </div>
   );
 }
