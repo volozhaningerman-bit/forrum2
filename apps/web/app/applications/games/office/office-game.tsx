@@ -1,87 +1,172 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-
-type WorkspaceSlot = {
-  key: string;
-  label: string;
-  item: string;
-  level: number;
-  icon: string;
-};
-
-type ActionCard = {
-  id: string;
-  icon: string;
-  title: string;
-  text: string;
-  tone: 'green' | 'blue' | 'purple' | 'orange';
-};
-
-const workspace: WorkspaceSlot[] = [
-  { key: 'clothes', label: 'Одежда', item: 'Обычная рубашка', level: 1, icon: 'clothes' },
-  { key: 'chair', label: 'Стул', item: 'Старый офисный', level: 1, icon: 'chair' },
-  { key: 'desk', label: 'Стол', item: 'Потрёпанный', level: 1, icon: 'desk' },
-  { key: 'pc', label: 'ПК', item: 'Старый системник', level: 1, icon: 'pc' },
-  { key: 'monitor', label: 'Монитор', item: 'CRT 15″', level: 1, icon: 'monitor' },
-  { key: 'accessory', label: 'Аксессуар', item: 'Пусто', level: 0, icon: 'plus' },
-];
-
-const nav = [
-  ['home', 'Главная'],
-  ['career', 'Карьера'],
-  ['company', 'Компания'],
-  ['inventory', 'Инвентарь'],
-  ['achievement', 'Достижения'],
-  ['character', 'Персонаж'],
-  ['shop', 'Магазин'],
-] as const;
-
-const actionCards: ActionCard[] = [
-  { id: 'work', icon: 'work', title: 'Работать', text: 'Выполнять задачи', tone: 'green' },
-  { id: 'approve', icon: 'approve', title: 'Согласовать', text: 'Общаться с коллегами', tone: 'blue' },
-  { id: 'learn', icon: 'training', title: 'Обучение', text: 'Развивать навыки', tone: 'purple' },
-  { id: 'prank', icon: 'prank', title: 'Шалости', text: 'Немного отвлечься', tone: 'orange' },
-];
-
-const news = [
-  ['Новый финансовый директор', 'Сегодня, 12:30', 'green'],
-  ['Пятничная пицца в 17:00', 'Вчера, 15:20', 'gold'],
-  ['Кофемашина снова работает!', 'Вчера, 11:05', 'blue'],
-];
+import {
+  formatMoney,
+  getCompanyStars,
+  initialOfficeSnapshot,
+  initialWorkspaceItems,
+  nextPromotion,
+  officeActions,
+  officeNavigation,
+  officeNews,
+  upgradeWorkspaceItem,
+  type OfficeWorkspaceItem,
+} from './office-data';
 
 export function OfficeGame() {
-  const [selectedSlot, setSelectedSlot] = useState('pc');
+  const [snapshot, setSnapshot] = useState(initialOfficeSnapshot);
+  const [workspace, setWorkspace] = useState<OfficeWorkspaceItem[]>(initialWorkspaceItems);
+  const [selectedSlot, setSelectedSlot] = useState<OfficeWorkspaceItem['key']>('pc');
   const [notice, setNotice] = useState('Первый рабочий день. Начни с простого поручения.');
-  const [energy, setEnergy] = useState(8);
 
-  const slot = useMemo(
+  const selectedItem = useMemo(
     () => workspace.find((item) => item.key === selectedSlot) ?? workspace[0],
-    [selectedSlot],
+    [selectedSlot, workspace],
   );
 
-  const triggerAction = (id: string) => {
+  const firstAssignmentDone = snapshot.daily.progress >= 1;
+  const promotionReady =
+    snapshot.skills.competence >= nextPromotion.competence &&
+    snapshot.reputation >= nextPromotion.reputation &&
+    firstAssignmentDone;
+
+  const companyStars = getCompanyStars(snapshot.company.level, snapshot.company.maxLevel);
+
+  const gainXp = (amount: number) => {
+    setSnapshot((current) => {
+      const totalXp = current.xp + amount;
+      if (totalXp < current.xpToNext) {
+        return { ...current, xp: totalXp };
+      }
+
+      return {
+        ...current,
+        level: current.level + 1,
+        xp: totalXp - current.xpToNext,
+        xpToNext: Math.round(current.xpToNext * 1.2),
+        maxEnergy: Math.min(120, current.maxEnergy + 2),
+      };
+    });
+  };
+
+  const triggerAction = (id: (typeof officeActions)[number]['id']) => {
     if (id === 'work') {
-      if (energy <= 0) {
+      if (snapshot.energy <= 0) {
         setNotice('Энергия закончилась. Даже стажёрам иногда нужен кофе.');
         return;
       }
-      setEnergy((value) => Math.max(0, value - 1));
-      setNotice('Задача закрыта. Теперь главное — правильно отправить результат.');
+
+      const finishingDaily =
+        snapshot.daily.progress < snapshot.daily.target &&
+        snapshot.daily.progress + 1 >= snapshot.daily.target;
+
+      setSnapshot((current) => ({
+        ...current,
+        energy: Math.max(0, current.energy - 1),
+        money: current.money + 75 + (finishingDaily ? current.daily.moneyReward : 0),
+        motivation: Math.min(
+          100,
+          current.motivation + (finishingDaily ? current.daily.motivationReward : 0),
+        ),
+        daily: {
+          ...current.daily,
+          progress: Math.min(current.daily.target, current.daily.progress + 1),
+        },
+      }));
+      gainXp(8);
+      setNotice(
+        finishingDaily
+          ? 'Ежедневка закрыта. Награда начислена — можно сделать вид, что день прошёл продуктивно.'
+          : 'Задача закрыта: +75 ₽ и +8 опыта. Осталось правильно отправить результат.',
+      );
       return;
     }
 
     if (id === 'approve') {
-      setNotice('Согласования открыты: убеждай коллег и прокачивай коммуникацию.');
+      if (snapshot.energy <= 0) {
+        setNotice('На согласования тоже нужны силы. Энергия закончилась.');
+        return;
+      }
+      setSnapshot((current) => ({
+        ...current,
+        energy: Math.max(0, current.energy - 1),
+        reputation: Math.min(100, current.reputation + 2),
+        motivation: Math.min(100, current.motivation + 1),
+      }));
+      gainXp(4);
+      setNotice('Согласование прошло без трёх созвонов. Репутация +2.');
       return;
     }
 
     if (id === 'learn') {
-      setNotice('Обучение откроет новые навыки и карьерные развилки.');
+      if (snapshot.energy < 2) {
+        setNotice('Для обучения нужно минимум 2 энергии.');
+        return;
+      }
+      setSnapshot((current) => ({
+        ...current,
+        energy: Math.max(0, current.energy - 2),
+        skills: {
+          ...current.skills,
+          competence: current.skills.competence + 1,
+        },
+      }));
+      gainXp(6);
+      setNotice('Компетентность +1. Теперь можно увереннее говорить «я посмотрю».');
       return;
     }
 
-    setNotice('Шалость дня: переставить чужую кружку. Риск небольшой, настроение +1.');
+    setSnapshot((current) => ({
+      ...current,
+      motivation: Math.min(100, current.motivation + 3),
+      stress: Math.max(0, current.stress - 2),
+      reputation: Math.max(0, current.reputation - (current.reputation > 12 ? 1 : 0)),
+    }));
+    setNotice('Шалость удалась: настроение +3, стресс −2. Никто ничего не видел.');
+  };
+
+  const upgradeSelectedItem = () => {
+    const item = selectedItem;
+    if (!item) {
+      return;
+    }
+
+    if (snapshot.money < item.upgradePrice) {
+      setNotice(`Не хватает денег. Нужно ещё ${formatMoney(item.upgradePrice - snapshot.money)} ₽.`);
+      return;
+    }
+
+    setSnapshot((current) => ({
+      ...current,
+      money: current.money - item.upgradePrice,
+    }));
+    setWorkspace((items) =>
+      items.map((candidate) =>
+        candidate.key === item.key ? upgradeWorkspaceItem(candidate) : candidate,
+      ),
+    );
+    setNotice(
+      item.level === 0
+        ? 'Первый аксессуар появился на столе. Рабочее место начинает становиться твоим.'
+        : `${item.item}: улучшение куплено. Рабочее место стало немного менее печальным.`,
+    );
+  };
+
+  const requestPromotion = () => {
+    if (!promotionReady) {
+      setNotice('Повышение пока рано просить: закрой требования справа.');
+      return;
+    }
+
+    setSnapshot((current) => ({
+      ...current,
+      role: nextPromotion.role,
+      salary: nextPromotion.salary,
+      reputation: Math.min(100, current.reputation + 5),
+      motivation: Math.min(100, current.motivation + 10),
+    }));
+    setNotice('Повышение получено. В резюме появилась новая строчка, а зарплата наконец выросла.');
   };
 
   return (
@@ -98,16 +183,18 @@ export function OfficeGame() {
 
           <div className="office-player-chip">
             <div>
-              <strong>Бродяга</strong>
-              <span>ур. 1 · Стажёр</span>
+              <strong>{snapshot.playerName}</strong>
+              <span>ур. {snapshot.level} · {snapshot.role}</span>
             </div>
-            <div className="office-xp"><i /></div>
-            <em>0 / 100</em>
+            <div className="office-xp">
+              <i style={{ width: `${Math.min(100, snapshot.xp / snapshot.xpToNext * 100)}%` }} />
+            </div>
+            <em>{snapshot.xp} / {snapshot.xpToNext}</em>
           </div>
 
-          <Resource icon="energy" value={`${energy} (+1)`} detail="02:45" className="office-energy" />
-          <Resource icon="cash" value="1 250" />
-          <Resource icon="morale" value="25" />
+          <Resource icon="energy" value={`${snapshot.energy} (+1)`} detail="02:45" className="office-energy" />
+          <Resource icon="cash" value={formatMoney(snapshot.money)} className="office-money" />
+          <Resource icon="morale" value={String(snapshot.motivation)} className="office-motivation" />
 
           <div className="office-top-icons">
             <button type="button" title="Рейтинг"><OfficeIcon name="rating" /></button>
@@ -119,10 +206,14 @@ export function OfficeGame() {
 
         <div className="office-body">
           <nav className="office-side-nav" aria-label="Разделы игры">
-            {nav.map(([icon, label], index) => (
-              <button className={index === 0 ? 'active' : ''} type="button" key={label}>
-                <OfficeIcon name={icon} />
-                <small>{label}</small>
+            {officeNavigation.map((item, index) => (
+              <button className={index === 0 ? 'active' : ''} type="button" key={item.label}>
+                <OfficeIcon name={item.icon} />
+                <small>{item.label}</small>
+                <span className="office-nav-tooltip">
+                  <b>{item.label}</b>
+                  <em>{item.hint}</em>
+                </span>
               </button>
             ))}
             <div className="office-bonus">
@@ -139,19 +230,19 @@ export function OfficeGame() {
             </div>
 
             <div className="office-profile-name">
-              <strong>Бродяга</strong>
-              <span>Стажёр</span>
-              <b>Уровень 1</b>
+              <strong>{snapshot.playerName}</strong>
+              <span>{snapshot.role}</span>
+              <b>Уровень {snapshot.level}</b>
             </div>
 
-            <Stat label="Энергия" value={energy} max={100} icon="energy" tone="yellow" />
-            <Stat label="Репутация" value={5} max={100} icon="reputation" tone="green" />
-            <Stat label="Стресс" value={20} max={100} icon="stress" tone="red" />
+            <Stat label="Энергия" value={snapshot.energy} max={snapshot.maxEnergy} icon="energy" tone="yellow" />
+            <Stat label="Репутация" value={snapshot.reputation} max={100} icon="reputation" tone="green" />
+            <Stat label="Стресс" value={snapshot.stress} max={100} icon="stress" tone="red" />
 
             <div className="office-skill-title">Навыки <span>?</span></div>
-            <Skill label="Компетентность" value={1} icon="competence" />
-            <Skill label="Коммуникация" value={1} icon="communication" />
-            <Skill label="Напор" value={1} icon="drive" />
+            <Skill label="Компетентность" value={snapshot.skills.competence} icon="competence" />
+            <Skill label="Коммуникация" value={snapshot.skills.communication} icon="communication" />
+            <Skill label="Напор" value={snapshot.skills.drive} icon="drive" />
 
             <div className="office-quick-links">
               <button type="button">Инвентарь <span>›</span></button>
@@ -164,18 +255,30 @@ export function OfficeGame() {
             <section className="office-scene">
               <img src="/games/office/office-start.svg" alt="Первое рабочее место стажёра" />
               <button
-                className="office-hotspot"
+                className="office-hotspot office-hotspot-pc"
                 type="button"
                 onClick={() => setSelectedSlot('pc')}
                 aria-label="Старый компьютер"
               >
                 <span>＋</span> Старый ПК
               </button>
+              <button
+                className="office-hotspot office-hotspot-chair"
+                type="button"
+                onClick={() => setSelectedSlot('chair')}
+                aria-label="Старый офисный стул"
+              >
+                <span>＋</span> Стул
+              </button>
+              <div className="office-scene-rank">
+                <small>{snapshot.company.name}</small>
+                <b>{snapshot.role}</b>
+              </div>
               <div className="office-scene-note">{notice}</div>
             </section>
 
             <div className="office-actions">
-              {actionCards.map((item) => (
+              {officeActions.map((item) => (
                 <button
                   type="button"
                   key={item.id}
@@ -192,24 +295,47 @@ export function OfficeGame() {
           <aside className="office-right">
             <section className="office-company-card">
               <div className="office-card-head">
-                <h3>ООО «Потенциал+»</h3>
+                <h3>{snapshot.company.name}</h3>
                 <span>?</span>
               </div>
               <div className="office-company-row">
                 <img src="/games/office/company.svg" alt="" />
-                <div><b>IT / Разработка</b><small>Небольшая компания с большими планами.</small></div>
+                <div>
+                  <b>{snapshot.company.industry}</b>
+                  <small>{snapshot.company.description}</small>
+                </div>
+              </div>
+              <div className="office-company-meta">
+                <span>
+                  <small>Компания</small>
+                  <b className="office-stars" aria-label={`Уровень компании ${snapshot.company.level} из ${snapshot.company.maxLevel}`}>
+                    {companyStars.map((filled, index) => <i key={index} className={filled ? 'filled' : ''}>★</i>)}
+                  </b>
+                </span>
+                <span>
+                  <small>Зарплата</small>
+                  <b>{formatMoney(snapshot.salary)} ₽</b>
+                </span>
               </div>
               <button type="button">О компании →</button>
             </section>
 
             <section className="office-daily">
-              <h3>Задание дня</h3>
-              <label><span className="office-checkbox" />Разобрать входящие письма</label>
-              <div className="office-progress"><i /></div>
+              <div className="office-card-head">
+                <h3>Задание дня</h3>
+                <b className="office-daily-count">{snapshot.daily.progress}/{snapshot.daily.target}</b>
+              </div>
+              <label>
+                <span className={`office-checkbox ${snapshot.daily.progress >= snapshot.daily.target ? 'done' : ''}`} />
+                {snapshot.daily.title}
+              </label>
+              <div className="office-progress">
+                <i style={{ width: `${Math.min(100, snapshot.daily.progress / snapshot.daily.target * 100)}%` }} />
+              </div>
               <div className="office-reward">
                 <span>Награда:</span>
-                <b><OfficeIcon name="cash" /> +50</b>
-                <b><OfficeIcon name="morale" /> +10</b>
+                <b><OfficeIcon name="cash" /> +{snapshot.daily.moneyReward}</b>
+                <b><OfficeIcon name="morale" /> +{snapshot.daily.motivationReward}</b>
               </div>
             </section>
 
@@ -224,14 +350,14 @@ export function OfficeGame() {
                 </div>
               </div>
               <div className="office-boss-requirement"><OfficeIcon name="task" /> Первое поручение · требуется ур. 3</div>
-              <button type="button" onClick={() => setNotice('Испытание пока закрыто: сначала достигни 3 уровня.')}>
+              <button type="button" onClick={() => setNotice('Испытание откроется на 3 уровне. Пока Сергей Петрович просто наблюдает.')}>
                 К испытанию »
               </button>
             </section>
 
             <section className="office-news">
               <div className="office-card-head"><h3>Новости офиса</h3><button type="button">Все »</button></div>
-              {news.map(([title, time, color]) => (
+              {officeNews.map(([title, time, color]) => (
                 <div className="office-news-row" key={title}>
                   <span className={'dot dot-' + color} />
                   <div><b>{title}</b><small>{time}</small></div>
@@ -255,7 +381,7 @@ export function OfficeGame() {
                   <small>{item.label}</small>
                   <OfficeIcon name={item.icon} />
                   <b>{item.item}</b>
-                  <em>{item.level ? 'Обычный · ' + item.level + ' ур.' : 'Пусто'}</em>
+                  <em>{item.level ? `${item.rarity} · ${item.level} ур.` : 'Пусто'}</em>
                 </button>
               ))}
             </div>
@@ -265,25 +391,37 @@ export function OfficeGame() {
             <div className="office-bottom-title">Следующее повышение <span>?</span></div>
             <div className="office-promotion-head">
               <OfficeIcon name="briefcase" />
-              <strong>Младший специалист</strong>
+              <div>
+                <strong>{nextPromotion.role}</strong>
+                <small>{formatMoney(snapshot.salary)} ₽ → {formatMoney(nextPromotion.salary)} ₽</small>
+              </div>
             </div>
-            <Requirement label="Компетентность" value="1 / 5" progress={20} />
-            <Requirement label="Репутация" value="5 / 30" progress={17} />
-            <Requirement label="Первое поручение" value="0 / 1" progress={0} />
+            <Requirement label="Компетентность" value={`${snapshot.skills.competence} / ${nextPromotion.competence}`} progress={snapshot.skills.competence / nextPromotion.competence * 100} />
+            <Requirement label="Репутация" value={`${snapshot.reputation} / ${nextPromotion.reputation}`} progress={snapshot.reputation / nextPromotion.reputation * 100} />
+            <Requirement label="Первое поручение" value={firstAssignmentDone ? '1 / 1' : '0 / 1'} progress={firstAssignmentDone ? 100 : 0} />
             <div className="office-promotion-actions">
-              <button type="button" className="primary" onClick={() => setNotice('Подготовка к повышению: выполняй задачи и прокачивай навыки.')}>Подготовиться</button>
-              <button type="button" disabled>Просить повышение</button>
+              <button type="button" className="primary" onClick={() => setNotice('Подготовка: работай, учись и подними репутацию до требований.')}>Подготовиться</button>
+              <button type="button" disabled={!promotionReady} onClick={requestPromotion}>Просить повышение</button>
             </div>
             <small className="office-unlocks">Откроется: новая компания · новое кресло · новые задания</small>
           </section>
 
           <aside className="office-item-details">
             <small>Выбрано</small>
-            <OfficeIcon name={slot.icon} />
-            <strong>{slot.label}</strong>
-            <b>{slot.item}</b>
-            <button type="button" onClick={() => setNotice(slot.key === 'accessory' ? 'Слот пуст. Первый аксессуар откроется после поручения.' : 'Улучшения появятся после первого поручения.')}>
-              {slot.key === 'accessory' ? 'Найти предмет' : 'Улучшить'}
+            <OfficeIcon name={selectedItem.icon} />
+            <strong>{selectedItem.item}</strong>
+            <em>{selectedItem.rarity} · {selectedItem.level ? `${selectedItem.level} ур.` : 'пусто'}</em>
+            <p>{selectedItem.description}</p>
+            <div className="office-item-effect">
+              <span>{selectedItem.effectLabel}</span>
+              <b>+{selectedItem.effectValue} → +{selectedItem.nextEffectValue}</b>
+            </div>
+            <div className="office-item-price">
+              <span>Улучшение</span>
+              <b>{formatMoney(selectedItem.upgradePrice)} ₽</b>
+            </div>
+            <button type="button" onClick={upgradeSelectedItem}>
+              {selectedItem.level === 0 ? 'Найти предмет' : 'Улучшить'}
             </button>
           </aside>
         </footer>
@@ -332,7 +470,7 @@ function Requirement({ label, value, progress }: { label: string; value: string;
   return (
     <div className="office-requirement">
       <div><span>{label}</span><b>{value}</b></div>
-      <div><i style={{ width: `${progress}%` }} /></div>
+      <div><i style={{ width: `${Math.min(100, progress)}%` }} /></div>
     </div>
   );
 }
