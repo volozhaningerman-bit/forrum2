@@ -16,6 +16,7 @@ import {
   OFFICE_STORAGE_KEY,
   OFFICE_STORAGE_VERSION,
   upgradeWorkspaceItem,
+  type OfficeSnapshot,
   type OfficeWorkspaceItem,
 } from './office-data';
 import {
@@ -911,6 +912,212 @@ function Requirement({ label, value, progress }: { label: string; value: string;
     <div className="office-requirement">
       <div><span>{label}</span><b>{value}</b></div>
       <div><i style={{ width: `${Math.min(100, progress)}%` }} /></div>
+    </div>
+  );
+}
+
+function CareerView({
+  role,
+  level,
+  salary,
+  reputation,
+  competence,
+  communication,
+  drive,
+  onBack,
+}: {
+  role: string;
+  level: number;
+  salary: number;
+  reputation: number;
+  competence: number;
+  communication: number;
+  drive: number;
+  onBack: () => void;
+}) {
+  const getStatus = (id: string) => {
+    if (id === 'intern') return role === 'Стажёр' ? 'current' : 'done';
+    if (id === 'junior') {
+      if (role === 'Младший специалист') return 'current';
+      return competence >= 5 && reputation >= 30 ? 'ready' : 'locked';
+    }
+    if (id === 'specialist') return level >= 8 && reputation >= 50 ? 'ready' : 'locked';
+    if (id === 'expert') return competence >= 18 ? 'ready' : 'locked';
+    if (id === 'teamlead') return communication >= 14 && drive >= 10 ? 'ready' : 'locked';
+    if (id === 'sales') return communication >= 16 ? 'ready' : 'locked';
+    return 'locked';
+  };
+
+  return (
+    <section className="office-career-view">
+      <header className="office-career-header">
+        <div>
+          <small>Карьера</small>
+          <h2>Куда приведёт этот офис?</h2>
+          <p>После уровня специалиста путь расходится. Можно стать экспертом, руководителем или уйти в продажи.</p>
+        </div>
+        <button type="button" onClick={onBack}>← Вернуться в офис</button>
+      </header>
+
+      <div className="office-career-summary">
+        <div><small>Сейчас</small><b>{role}</b></div>
+        <div><small>Уровень</small><b>{level}</b></div>
+        <div><small>Зарплата</small><b>{formatMoney(salary)} ₽</b></div>
+        <div><small>Репутация</small><b>{reputation}</b></div>
+      </div>
+
+      <div className="office-career-map">
+        <svg className="office-career-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M12 50 H24 M32 50 H45 M53 50 H64" />
+          <path d="M53 48 C60 48 60 20 66 20 H84" />
+          <path d="M53 52 H84" />
+          <path d="M53 52 C60 52 60 80 66 80 H84" />
+        </svg>
+        {careerNodes.map((node) => {
+          const status = getStatus(node.id);
+          return (
+            <article
+              className={`office-career-node office-career-${status} office-career-branch-${node.branch}`}
+              key={node.id}
+              style={{ left: `${node.x}%`, top: `${node.y}%` }}
+            >
+              <small>{node.subtitle}</small>
+              <strong>{node.title}</strong>
+              <span>{formatMoney(node.salary)} ₽</span>
+              <em>{node.requirement}</em>
+              <b>{status === 'current' ? 'Сейчас' : status === 'done' ? 'Пройдено' : status === 'ready' ? 'Доступно' : 'Закрыто'}</b>
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="office-career-legend">
+        <div><i className="expert" /><span>Экспертная ветка</span><b>Компетентность {competence}</b></div>
+        <div><i className="management" /><span>Управление</span><b>Коммуникация {communication} · Напор {drive}</b></div>
+        <div><i className="sales" /><span>Продажи</span><b>Коммуникация {communication}</b></div>
+      </div>
+    </section>
+  );
+}
+
+function OfficeOverlay({
+  modal,
+  snapshot,
+  onClose,
+  onStoryChoice,
+  onPrank,
+  onGoToCareer,
+}: {
+  modal: OfficeModal;
+  snapshot: OfficeSnapshot;
+  onClose: () => void;
+  onStoryChoice: (event: OfficeStoryEvent, choice: OfficeStoryChoice, boss?: boolean) => void;
+  onPrank: (prank: OfficePrank) => void;
+  onGoToCareer: () => void;
+}) {
+  if (!modal) return null;
+
+  if (modal.type === 'event' || modal.type === 'boss') {
+    const isBoss = modal.type === 'boss';
+    return (
+      <div className="office-modal-backdrop" role="presentation" onMouseDown={onClose}>
+        <section
+          className={`office-modal office-story-modal ${isBoss ? 'office-boss-modal' : ''}`}
+          role="dialog"
+          aria-modal="true"
+          aria-label={modal.event.title}
+          onMouseDown={(event) => event.stopPropagation()}
+        >
+          <button type="button" className="office-modal-close" onClick={onClose}>×</button>
+          <div className="office-story-heading">
+            {isBoss ? <img src="/games/office/boss.svg" alt="" /> : <OfficeIcon name="work" />}
+            <div>
+              <small>{modal.event.eyebrow}</small>
+              <h2>{modal.event.title}</h2>
+              {modal.event.speaker ? <b>{modal.event.speaker}</b> : null}
+            </div>
+          </div>
+          <p className="office-story-description">{modal.event.description}</p>
+          <div className="office-story-choices">
+            {modal.event.choices.map((choice) => {
+              const energyCost = Math.max(0, -(choice.outcome.energy ?? 0));
+              const lacksEnergy = snapshot.energy < energyCost;
+              const lacksSkill =
+                choice.requirement &&
+                snapshot.skills[choice.requirement.skill] < choice.requirement.min;
+              const disabled = lacksEnergy || Boolean(lacksSkill);
+              const requirement = choice.requirement
+                ? `${getSkillLabel(choice.requirement.skill)} ${snapshot.skills[choice.requirement.skill]}/${choice.requirement.min}`
+                : energyCost
+                  ? `Энергия −${energyCost}`
+                  : 'Без затрат энергии';
+
+              return (
+                <button
+                  type="button"
+                  key={choice.id}
+                  disabled={disabled}
+                  onClick={() => onStoryChoice(modal.event, choice, isBoss)}
+                >
+                  <div>
+                    <strong>{choice.label}</strong>
+                    <span>{choice.description}</span>
+                  </div>
+                  <small className={disabled ? 'blocked' : ''}>{lacksEnergy ? `Нужно энергии: ${energyCost}` : requirement}</small>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  if (modal.type === 'pranks') {
+    return (
+      <div className="office-modal-backdrop" role="presentation" onMouseDown={onClose}>
+        <section className="office-modal office-prank-modal" role="dialog" aria-modal="true" aria-label="Шалости" onMouseDown={(event) => event.stopPropagation()}>
+          <button type="button" className="office-modal-close" onClick={onClose}>×</button>
+          <header>
+            <small>Перерыв от продуктивности</small>
+            <h2>Чем займёмся?</h2>
+            <p>Шалости поднимают мотивацию, но некоторые могут ударить по репутации.</p>
+          </header>
+          <div className="office-prank-grid">
+            {officePranks.map((prank) => (
+              <button type="button" key={prank.id} onClick={() => onPrank(prank)}>
+                <span className={`office-risk office-risk-${prank.risk === 'Низкий' ? 'low' : prank.risk === 'Средний' ? 'mid' : 'high'}`}>{prank.risk} риск</span>
+                <strong>{prank.title}</strong>
+                <p>{prank.description}</p>
+                <div><b>{Math.round(prank.successChance * 100)}%</b><small>шанс успеха</small></div>
+              </button>
+            ))}
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  const competenceLeft = Math.max(0, nextPromotion.competence - snapshot.skills.competence);
+  const reputationLeft = Math.max(0, nextPromotion.reputation - snapshot.reputation);
+  const assignmentLeft = Math.max(0, nextPromotion.firstAssignment - snapshot.firstAssignment.progress);
+
+  return (
+    <div className="office-modal-backdrop" role="presentation" onMouseDown={onClose}>
+      <section className="office-modal office-promotion-modal" role="dialog" aria-modal="true" aria-label="Подготовка к повышению" onMouseDown={(event) => event.stopPropagation()}>
+        <button type="button" className="office-modal-close" onClick={onClose}>×</button>
+        <small>Карьерный помощник</small>
+        <h2>До повышения осталось</h2>
+        <div className="office-promotion-todo">
+          <div className={competenceLeft === 0 ? 'done' : ''}><OfficeIcon name="competence" /><span>Компетентность</span><b>{competenceLeft === 0 ? 'Готово' : `ещё ${competenceLeft}`}</b></div>
+          <div className={reputationLeft === 0 ? 'done' : ''}><OfficeIcon name="reputation" /><span>Репутация</span><b>{reputationLeft === 0 ? 'Готово' : `ещё ${reputationLeft}`}</b></div>
+          <div className={assignmentLeft === 0 ? 'done' : ''}><OfficeIcon name="task" /><span>Первое поручение</span><b>{assignmentLeft === 0 ? 'Готово' : 'не выполнено'}</b></div>
+        </div>
+        <div className="office-promotion-help-actions">
+          <button type="button" onClick={onClose}>Продолжить подготовку</button>
+          <button type="button" onClick={onGoToCareer}>Посмотреть карьеру →</button>
+        </div>
+      </section>
     </div>
   );
 }
