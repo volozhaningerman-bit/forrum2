@@ -83,6 +83,8 @@ export function OfficeGame() {
 
   const companyStars = getCompanyStars(snapshot.company.level, snapshot.company.maxLevel);
   const dailyDone = snapshot.daily.progress >= snapshot.daily.target;
+  const firstDayDone = story.completedEvents.length >= 3;
+  const bossUnlocked = snapshot.level >= 3 || firstDayDone;
 
   useEffect(() => {
     try {
@@ -465,9 +467,9 @@ export function OfficeGame() {
   };
 
   const handleBoss = () => {
-    if (snapshot.level < 3) {
-      setNotice('Сергей Петрович пока не зовёт: испытание откроется на 3 уровне.');
-      showFeedback('Нужен 3 уровень', 'warning');
+    if (!bossUnlocked) {
+      setNotice('Сергей Петрович пока не зовёт: закончи три задачи первого дня или достигни 3 уровня.');
+      showFeedback('Закончи первый день', 'warning');
       return;
     }
 
@@ -685,7 +687,10 @@ export function OfficeGame() {
                   className={`office-action office-action-${item.tone} ${activeAction === item.id ? 'is-active' : ''}`}
                 >
                   <OfficeIcon name={item.icon} />
-                  <div><b>{item.title}</b><small>{item.text}</small></div>
+                  <div>
+                    <b>{item.title}</b>
+                    <small>{item.id === 'work' && !firstDayDone ? `Первый день · ${story.completedEvents.length}/3` : item.text}</small>
+                  </div>
                 </button>
               ))}
               {feedback ? (
@@ -758,10 +763,10 @@ export function OfficeGame() {
               </div>
               <div className="office-boss-requirement">
                 <OfficeIcon name="task" />
-                Первое поручение · {firstAssignmentDone ? 'выполнено' : 'требуется ур. 3'}
+                Первое поручение · {firstAssignmentDone ? 'выполнено' : bossUnlocked ? 'доступно' : '3 задачи или ур. 3'}
               </div>
               <button type="button" onClick={handleBoss}>
-                {firstAssignmentDone ? 'Поручение выполнено' : snapshot.level >= 3 ? 'Начать поручение »' : 'К испытанию »'}
+                {firstAssignmentDone ? 'Поручение выполнено' : bossUnlocked ? 'Начать поручение »' : 'К испытанию »'}
               </button>
             </section>
 
