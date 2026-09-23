@@ -1468,7 +1468,7 @@ model InventoryTransaction {
 
 model TyuryagaProfile {
   id              String               @id @default(cuid())
-  userId          String               @unique
+  userId          String               @unique @db.Uuid
   user            User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   level           Int                  @default(1)
