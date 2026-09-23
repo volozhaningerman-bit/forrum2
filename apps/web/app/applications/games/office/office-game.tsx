@@ -535,6 +535,9 @@ export function OfficeGame() {
     setSelectedSlot('pc');
     setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
     setEnergyNextAt(null);
+    setStory(initialOfficeStoryState);
+    setActiveView('home');
+    setModal(null);
     setNotice('Прототип сброшен. Снова первый рабочий день.');
     window.localStorage.removeItem(OFFICE_STORAGE_KEY);
   };
@@ -593,8 +596,17 @@ export function OfficeGame() {
 
         <div className="office-body">
           <nav className="office-side-nav" aria-label="Разделы игры">
-            {officeNavigation.map((item, index) => (
-              <button className={index === 0 ? 'active' : ''} type="button" key={item.label}>
+            {officeNavigation.map((item) => {
+              const isActive =
+                (activeView === 'home' && item.label === 'Главная') ||
+                (activeView === 'career' && item.label === 'Карьера');
+              return (
+              <button
+                className={isActive ? 'active' : ''}
+                type="button"
+                key={item.label}
+                onClick={() => handleNavigation(item.label)}
+              >
                 <OfficeIcon name={item.icon} />
                 <small>{item.label}</small>
                 <span className="office-nav-tooltip">
@@ -602,7 +614,7 @@ export function OfficeGame() {
                   <em>{item.hint}</em>
                 </span>
               </button>
-            ))}
+            )})}
             <div className="office-bonus">
               <OfficeIcon name="gift" />
               <span>Бонус</span>
@@ -610,6 +622,8 @@ export function OfficeGame() {
             </div>
           </nav>
 
+          {activeView === 'home' ? (
+            <>
           <aside className="office-profile">
             <div className="office-portrait">
               <img src="/games/office/avatar.svg" alt="Персонаж Бродяга" />
@@ -761,8 +775,22 @@ export function OfficeGame() {
               ))}
             </section>
           </aside>
+            </>
+          ) : (
+            <CareerView
+              role={snapshot.role}
+              level={snapshot.level}
+              salary={snapshot.salary}
+              reputation={snapshot.reputation}
+              competence={snapshot.skills.competence}
+              communication={snapshot.skills.communication}
+              drive={snapshot.skills.drive}
+              onBack={() => setActiveView('home')}
+            />
+          )}
         </div>
 
+        {activeView === 'home' ? (
         <footer className="office-bottom">
           <section className="office-workspace">
             <div className="office-bottom-title">Моё рабочее место <span>?</span></div>
@@ -796,7 +824,7 @@ export function OfficeGame() {
             <Requirement label="Репутация" value={`${snapshot.reputation} / ${nextPromotion.reputation}`} progress={snapshot.reputation / nextPromotion.reputation * 100} />
             <Requirement label="Первое поручение" value={firstAssignmentDone ? '1 / 1' : '0 / 1'} progress={firstAssignmentDone ? 100 : 0} />
             <div className="office-promotion-actions">
-              <button type="button" className="primary" onClick={() => setNotice('Подготовка: работай, учись, пройди поручение и подними репутацию.')}>Подготовиться</button>
+              <button type="button" className="primary" onClick={() => setModal({ type: 'promotion-help' })}>Подготовиться</button>
               <button type="button" disabled={!promotionReady} onClick={requestPromotion}>
                 {promotionCompleted ? 'Получено' : 'Просить повышение'}
               </button>
@@ -824,6 +852,19 @@ export function OfficeGame() {
             </button>
           </aside>
         </footer>
+        ) : null}
+
+        <OfficeOverlay
+          modal={modal}
+          snapshot={snapshot}
+          onClose={() => setModal(null)}
+          onStoryChoice={completeStoryChoice}
+          onPrank={handlePrank}
+          onGoToCareer={() => {
+            setModal(null);
+            setActiveView('career');
+          }}
+        />
       </div>
     </div>
   );
