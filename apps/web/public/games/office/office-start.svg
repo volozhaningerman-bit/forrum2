@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620">
+<defs>
+  <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#777064"/><stop offset="1" stop-color="#403b36"/></linearGradient>
+  <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#40382f"/><stop offset="1" stop-color="#251f1a"/></linearGradient>
+  <linearGradient id="shirt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ddd4c7"/><stop offset="1" stop-color="#a79c8d"/></linearGradient>
+  <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b97a5f"/><stop offset="1" stop-color="#87533f"/></linearGradient>
+  <filter id="grain"><feTurbulence baseFrequency=".7" numOctaves="2" seed="5" type="fractalNoise" result="n"/><feColorMatrix in="n" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 .08 0"/><feBlend in="SourceGraphic" mode="multiply"/></filter>
+</defs>
+<rect width="960" height="620" fill="url(#wall)"/>
+<rect y="495" width="960" height="125" fill="url(#floor)"/>
+<g opacity=".28" stroke="#201c18" stroke-width="2"><path d="M0 95H960M0 187H960M0 280H960M0 372H960M0 464H960"/><path d="M122 0V495M340 0V495M615 0V495M820 0V495"/></g>
+
+<!-- window -->
+<rect x="680" y="36" width="205" height="195" rx="4" fill="#262728" stroke="#1b1c1c" stroke-width="12"/>
+<rect x="695" y="51" width="175" height="165" fill="#a4b9bd"/>
+<rect x="695" y="51" width="175" height="165" fill="#d3aa7a" opacity=".17"/>
+<g fill="#778f94" opacity=".85"><rect x="705" y="112" width="40" height="104"/><rect x="750" y="90" width="33" height="126"/><rect x="789" y="124" width="36" height="92"/><rect x="832" y="74" width="32" height="142"/></g>
+<g stroke="#526065" opacity=".75"><path d="M704 140H866M704 168H866M719 90V216M765 80V216M808 100V216M848 64V216"/></g>
+<g fill="#2e2b29"><rect x="690" y="70" width="188" height="9"/><rect x="690" y="92" width="188" height="5"/><rect x="690" y="111" width="188" height="4"/></g>
+
+<!-- battered cabinet -->
+<g filter="url(#grain)"><rect x="55" y="160" width="180" height="335" rx="4" fill="#514f4a" stroke="#262421" stroke-width="5"/>
+<path d="M66 257H224M66 355H224" stroke="#292723" stroke-width="5"/>
+<g fill="#272623"><rect x="142" y="210" width="18" height="5"/><rect x="142" y="306" width="18" height="5"/><rect x="142" y="404" width="18" height="5"/></g></g>
+<rect x="70" y="116" width="142" height="48" fill="#5f574c" stroke="#37312b" stroke-width="4"/>
+<text x="92" y="142" fill="#271f18" font-size="18" font-family="Arial" transform="rotate(-4 92 142)">АРХИВ</text>
+<text x="95" y="159" fill="#271f18" font-size="12" font-family="Arial">(когда-нибудь)</text>
+
+<!-- poster -->
+<rect x="360" y="56" width="185" height="138" fill="#b8a98d" stroke="#5b5143" stroke-width="3" transform="rotate(-2 360 56)"/>
+<text x="390" y="95" fill="#393028" font-size="22" font-family="Arial" font-weight="700">ПЛАНЫ:</text>
+<text x="385" y="125" fill="#393028" font-size="18" font-family="Arial">1. Выжить</text>
+<text x="385" y="150" fill="#393028" font-size="18" font-family="Arial">2. Получить ЗП</text>
+<text x="385" y="176" fill="#393028" font-size="18" font-family="Arial">3. Стать кем-то</text>
+
+<!-- desk -->
+<rect x="310" y="332" width="570" height="42" rx="3" fill="#6f533a" stroke="#2e241d" stroke-width="5"/>
+<rect x="335" y="370" width="38" height="165" fill="#4a3728"/>
+<rect x="825" y="370" width="38" height="165" fill="#4a3728"/>
+<rect x="734" y="375" width="84" height="145" fill="#3d3e3c" stroke="#222" stroke-width="4"/>
+<rect x="746" y="392" width="61" height="42" fill="#555752"/><rect x="746" y="440" width="61" height="65" fill="#2e302e"/>
+<!-- CRT -->
+<rect x="596" y="221" width="165" height="120" rx="9" fill="#a59c87" stroke="#413a31" stroke-width="6"/>
+<rect x="613" y="237" width="131" height="80" rx="4" fill="#365260"/>
+<rect x="630" y="247" width="97" height="5" fill="#79949a" opacity=".7"/><rect x="630" y="258" width="70" height="4" fill="#79949a" opacity=".6"/><rect x="630" y="268" width="85" height="4" fill="#79949a" opacity=".6"/>
+<circle cx="724" cy="326" r="5" fill="#736e61"/>
+<rect x="598" y="344" width="168" height="16" fill="#8b806b" stroke="#413a31" stroke-width="3"/>
+<g fill="#2d2b27"><rect x="615" y="348" width="12" height="5"/><rect x="632" y="348" width="12" height="5"/><rect x="649" y="348" width="12" height="5"/><rect x="666" y="348" width="12" height="5"/></g>
+<ellipse cx="781" cy="351" rx="22" ry="10" fill="#282725"/>
+<!-- mug -->
+<rect x="785" y="300" width="45" height="46" rx="4" fill="#d8d0bf" stroke="#4c4439" stroke-width="3"/><path d="M830 310q24 0 16 20q-5 10-16 7" fill="none" stroke="#4c4439" stroke-width="5"/>
+<text x="791" y="319" fill="#352b23" font-size="8" font-family="Arial">ЕЩЁ</text><text x="790" y="331" fill="#352b23" font-size="8" font-family="Arial">ОДИН</text><text x="790" y="342" fill="#352b23" font-size="8" font-family="Arial">ДЕНЬ</text>
+
+<!-- chair -->
+<ellipse cx="523" cy="536" rx="122" ry="24" fill="#171616" opacity=".35"/>
+<rect x="470" y="310" width="118" height="188" rx="32" fill="#262729" stroke="#171819" stroke-width="6"/>
+<rect x="506" y="490" width="38" height="90" fill="#191a1b"/><path d="M525 573l-55 24M525 573l57 25M525 573l-2 30" stroke="#171819" stroke-width="9"/>
+
+<!-- person -->
+<g stroke="#3b2c24" stroke-width="3">
+<ellipse cx="526" cy="242" rx="54" ry="65" fill="url(#skin)"/>
+<path d="M473 233q4-63 56-64q51 2 55 53q-22-30-55-29q-35 0-56 40z" fill="#2d211b"/>
+<path d="M478 216q14-40 49-43q29 0 53 27q-15-47-58-43q-42 5-44 59z" fill="#211915"/>
+<path d="M486 245q13 9 27 0M542 245q13 9 27 0" fill="none"/>
+<path d="M520 269q17 7 33-2" fill="none"/>
+<path d="M517 230q-6 9-2 24" fill="none"/>
+<path d="M463 305q48-35 127 0l43 160q-54 34-187 2z" fill="url(#shirt)"/>
+<path d="M522 294l21 4l17 168h-38z" fill="#4d2d29"/>
+<path d="M451 323q-28 65-46 117q12 12 31 3l56-90" fill="url(#skin)"/>
+<path d="M590 320q35 43 60 99q-4 17-27 12l-67-76" fill="url(#skin)"/>
+<path d="M448 448q-3 54 43 127l66-3q-10-52-20-89q-6-23-20-35z" fill="#2f3031"/>
+<path d="M563 447q50 33 98 107l-46 45q-51-54-101-89z" fill="#2b2c2e"/>
+<path d="M473 579q-22 16-12 27h77q7-14-20-30z" fill="#1e1f20"/>
+<path d="M614 590q6 18 28 19h69q8-17-28-30z" fill="#1e1f20"/>
+</g>
+<!-- badge -->
+<rect x="515" y="339" width="52" height="38" rx="3" fill="#d5c9b5" stroke="#483c30"/><circle cx="541" cy="349" r="7" fill="#d0633f"/><text x="524" y="370" fill="#2b241f" font-size="9" font-family="Arial" font-weight="700">СТАЖЁР</text>
+
+<!-- trash -->
+<path d="M266 475h57l-7 78h-44z" fill="#242526" stroke="#151617" stroke-width="4"/><g fill="#c3b7a5"><path d="M279 486l13 9l-8 12z"/><path d="M304 483l9 15l-13 7z"/></g>
+<!-- box -->
+<rect x="55" y="455" width="162" height="116" fill="#8d6c45" stroke="#413322" stroke-width="4"/><text x="84" y="493" fill="#382b20" font-size="18" font-family="Arial" transform="rotate(-7 84 493)">ВАЖНЫЕ</text><text x="89" y="516" fill="#382b20" font-size="18" font-family="Arial" transform="rotate(-7 89 516)">ДЕЛА...</text><text x="99" y="543" fill="#382b20" font-size="15" font-family="Arial" transform="rotate(-7 99 543)">(ПОТОМ)</text>
+</svg>
