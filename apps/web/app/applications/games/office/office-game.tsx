@@ -246,10 +246,138 @@ export function OfficeGame() {
     });
   };
 
+  const applyOutcome = (outcome: OfficeOutcome) => {
+    setSnapshot((current) => ({
+      ...current,
+      energy: Math.max(0, Math.min(current.maxEnergy, current.energy + (outcome.energy ?? 0))),
+      money: Math.max(0, current.money + (outcome.money ?? 0)),
+      reputation: Math.max(0, Math.min(100, current.reputation + (outcome.reputation ?? 0))),
+      motivation: Math.max(0, Math.min(100, current.motivation + (outcome.motivation ?? 0))),
+      stress: Math.max(0, Math.min(100, current.stress + (outcome.stress ?? 0))),
+      skills: {
+        competence: current.skills.competence + (outcome.skills?.competence ?? 0),
+        communication: current.skills.communication + (outcome.skills?.communication ?? 0),
+        drive: current.skills.drive + (outcome.skills?.drive ?? 0),
+      },
+    }));
+    if (outcome.xp) gainXp(outcome.xp);
+  };
+
+  const choiceBlockedReason = (choice: OfficeStoryChoice) => {
+    const energyCost = Math.max(0, -(choice.outcome.energy ?? 0));
+    if (snapshot.energy < energyCost) return `Нужно энергии: ${energyCost}`;
+    if (choice.requirement && snapshot.skills[choice.requirement.skill] < choice.requirement.min) {
+      return `${getSkillLabel(choice.requirement.skill)} ${choice.requirement.min}`;
+    }
+    return null;
+  };
+
+  const completeStoryChoice = (event: OfficeStoryEvent, choice: OfficeStoryChoice, boss = false) => {
+    const blocked = choiceBlockedReason(choice);
+    if (blocked) {
+      showFeedback(blocked, 'warning');
+      return;
+    }
+
+    applyOutcome(choice.outcome);
+
+    if (boss) {
+      setSnapshot((current) => ({
+        ...current,
+        firstAssignment: {
+          ...current.firstAssignment,
+          progress: current.firstAssignment.target,
+        },
+      }));
+      setStory((current) => ({
+        ...current,
+        bossResolved: true,
+        bossChoiceId: choice.id,
+      }));
+    } else {
+      setStory((current) => ({
+        ...current,
+        completedEvents: current.completedEvents.includes(event.id)
+          ? current.completedEvents
+          : [...current.completedEvents, event.id],
+      }));
+      setSnapshot((current) => {
+        const nextProgress = Math.min(current.daily.target, current.daily.progress + 1);
+        const completesNow =
+          !current.daily.claimed &&
+          current.daily.progress < current.daily.target &&
+          nextProgress >= current.daily.target;
+        return {
+          ...current,
+          money: current.money + (completesNow ? current.daily.moneyReward : 0),
+          motivation: Math.min(
+            100,
+            current.motivation + (completesNow ? current.daily.motivationReward : 0),
+          ),
+          daily: {
+            ...current.daily,
+            progress: nextProgress,
+            claimed: current.daily.claimed || completesNow,
+          },
+        };
+      });
+    }
+
+    const rewardBits = [
+      choice.outcome.money ? `+${choice.outcome.money} ₽` : null,
+      choice.outcome.xp ? `+${choice.outcome.xp} XP` : null,
+      choice.outcome.reputation ? `Репутация ${choice.outcome.reputation > 0 ? '+' : ''}${choice.outcome.reputation}` : null,
+    ].filter(Boolean);
+
+    showFeedback(rewardBits.join(' · ') || 'Событие завершено', boss ? 'money' : 'xp');
+    setNotice(choice.result);
+    setModal(null);
+  };
+
+  const handlePrank = (prank: OfficePrank) => {
+    const succeeded = Math.random() <= prank.successChance;
+    const outcome = succeeded ? prank.success : prank.fail;
+    applyOutcome(outcome);
+    setStory((current) => ({
+      ...current,
+      completedPranks: current.completedPranks.includes(prank.id)
+        ? current.completedPranks
+        : [...current.completedPranks, prank.id],
+    }));
+    showFeedback(
+      succeeded
+        ? `Успех · ${Math.round(prank.successChance * 100)}%`
+        : 'Поймали',
+      succeeded ? 'social' : 'warning',
+    );
+    setNotice(succeeded ? prank.successText : prank.failText);
+    setModal(null);
+  };
+
+  const handleNavigation = (label: string) => {
+    if (label === 'Главная') {
+      setActiveView('home');
+      return;
+    }
+    if (label === 'Карьера') {
+      setActiveView('career');
+      return;
+    }
+    setActiveView('home');
+    setNotice(`Раздел «${label}» уже заложен в структуру и будет следующим контентным экраном.`);
+    showFeedback(`${label}: скоро`, 'xp');
+  };
+
   const triggerAction = (id: (typeof officeActions)[number]['id']) => {
     if (activeAction) return;
 
     if (id === 'work') {
+      const nextEvent = getNextFirstDayEvent(story.completedEvents);
+      if (nextEvent) {
+        setModal({ type: 'event', event: nextEvent });
+        return;
+      }
+
       if (snapshot.energy <= 0) {
         setNotice('Энергия закончилась. Следующая единица восстановится автоматически.');
         showFeedback('Нет энергии', 'warning');
@@ -286,7 +414,7 @@ export function OfficeGame() {
       setNotice(
         closesDaily
           ? 'Ежедневка закрыта. Награда выдана один раз — дальше работа приносит обычную оплату.'
-          : 'Задача закрыта. Результат отправлен, никто даже не попросил переделать.',
+          : 'Обычная задача закрыта. После первых трёх историй начинается нормальная офисная рутина.',
       );
       return;
     }
@@ -333,15 +461,7 @@ export function OfficeGame() {
       return;
     }
 
-    beginCooldown(id);
-    setSnapshot((current) => ({
-      ...current,
-      motivation: Math.min(100, current.motivation + 3),
-      stress: Math.max(0, current.stress - 2),
-      reputation: Math.max(0, current.reputation - (current.reputation > 12 ? 1 : 0)),
-    }));
-    showFeedback('Мотивация +3 · Стресс −2', 'social');
-    setNotice('Шалость удалась. Никто ничего не видел, а рабочий день стал короче.');
+    setModal({ type: 'pranks' });
   };
 
   const handleBoss = () => {
@@ -351,23 +471,12 @@ export function OfficeGame() {
       return;
     }
 
-    if (firstAssignmentDone) {
+    if (firstAssignmentDone || story.bossResolved) {
       setNotice('Первое поручение уже выполнено. Теперь готовь требования к повышению.');
       return;
     }
 
-    setSnapshot((current) => ({
-      ...current,
-      money: current.money + 300,
-      reputation: Math.min(100, current.reputation + 5),
-      firstAssignment: {
-        ...current.firstAssignment,
-        progress: current.firstAssignment.target,
-      },
-    }));
-    gainXp(25);
-    showFeedback('+300 ₽ · Репутация +5 · XP +25', 'money');
-    setNotice('Первое поручение принято. Сергей Петрович сказал «нормально» — это почти похвала.');
+    setModal({ type: 'boss', event: bossEvent });
   };
 
   const upgradeSelectedItem = () => {
