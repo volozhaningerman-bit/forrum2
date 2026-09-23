@@ -30,6 +30,7 @@ export type PublicationCardData = {
     };
   } | null;
   pinnedUntil?: string | null;
+  isOfficial?: boolean;
   reason?: string | null;
   feedbackEnabled?: boolean;
   recentCommentCount?: number;

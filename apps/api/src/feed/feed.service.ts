@@ -274,6 +274,7 @@ export class FeedService {
       lastActivityAt: publication.lastActivityAt,
       lastComment: latestCommentByPublication.get(publication.id) ?? null,
       pinnedUntil: publication.pinnedUntil,
+      isOfficial: publication.isOfficial,
       reason: showReasons ? reason : null,
       feedbackEnabled: Boolean(userId && ['for-you', 'all', 'popular', 'new'].includes(mode)),
       author: { username: publication.author.username, displayName: publication.author.displayName, avatarUrl: publication.author.avatarUrl },

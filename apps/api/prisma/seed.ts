@@ -599,6 +599,19 @@ async function main() {
   for (const tag of tags) await prisma.tag.upsert({ where: { slug: tag.slug }, update: tag, create: tag });
 
   const start = await prisma.community.findUniqueOrThrow({ where: { slug: 'forrum-start' } });
+  // One editorial discussion. Repeated deployments leave its title, votes and replies alone.
+  await prisma.publication.upsert({
+    where: { slug: 'vote-next-forrum-feature' },
+    update: {},
+    create: {
+      slug: 'vote-next-forrum-feature', format: PublicationFormat.TOPIC,
+      type: PublicationType.DISCUSSION,
+      title: 'Голосование: что добавить на 4rrum следующим?',
+      body: 'Помогите выбрать, что развивать следующим: приложения и браузерные игры, инструменты для проектов или возможности сообществ. Напишите в ответе свой вариант и коротко объясните, почему он нужен. Поддержите понравившиеся предложения симпатией к ответу. Итоги обсудим здесь же.',
+      authorId: owner.id, communityId: start.id, isOfficial: true,
+      pinnedUntil: new Date('2027-12-31T23:59:59.000Z'),
+    },
+  });
   const projects = await prisma.community.findUniqueOrThrow({ where: { slug: 'internet-projects' } });
   const promotion = await prisma.community.findUniqueOrThrow({ where: { slug: 'promotion' } });
 

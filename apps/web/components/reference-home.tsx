@@ -16,9 +16,11 @@ import { formatCount } from './home/utils';
 import type { Community, HomeInitialData, HomeOverview } from './home/types';
 export type { HomeInitialData } from './home/types';
 
-type Glyph = 'home' | 'work' | 'media' | 'service' | 'search' | 'plus' | 'bell' | 'comment' | 'eye' | 'bookmark' | 'close' | 'chevron' | 'menu' | 'filter' | 'code' | 'flame' | 'game' | 'growth' | 'community';
+type Glyph = 'home' | 'work' | 'media' | 'service' | 'search' | 'plus' | 'bell' | 'comment' | 'eye' | 'bookmark' | 'close' | 'chevron' | 'menu' | 'filter' | 'code' | 'flame' | 'game' | 'growth' | 'community' | 'pin' | 'paperclip';
 const paths: Record<Glyph, string> = {
  game: 'M7 7h10l4 10-3 2-4-4h-4l-4 4-3-2ZM7 10v4M5 12h4M16 11h.01M18 13h.01',
+ pin: 'm16 3 5 5-3 1-3 3v5l-2 2-4-4-5 5-1-1 5-5-4-4 2-2h5l3-3z',
+ paperclip: 'm21 11.5-8.8 8.8a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5',
  growth: 'M4 20V4M4 20h16M7 15l5-5 4 2 5-8M16 4h5v5',
  community: 'M8 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM2 20v-4a6 6 0 0 1 12 0v4M16 4a3 3 0 0 1 0 6M17 13a5 5 0 0 1 5 5v2',
  flame: 'M12 2c2 5 8 7 8 13a8 8 0 0 1-16 0c0-3 2-5 4-7 0 4 2 5 3 5 2-3 2-7 1-11Z',
@@ -77,10 +79,11 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
  const category=communities.find(row=>row.slug===item.community.slug);
  const parent=category?.parent;
  const readState=topicReadState(history,item.id,item.lastComment?.createdAt);
+ const important=Boolean(item.isOfficial && item.pinnedUntil && Date.parse(item.pinnedUntil)>Date.now());
  return <article className={`forum-topic is-${readState}`} style={categoryStyle(item.community.slug, category?.accentColor ?? item.community.accentColor)} data-reading-state={readState}>
   <Link className="forum-topic-avatar" href={`/u/${item.author.username}`} title={item.author.displayName} aria-label={`Автор: ${item.author.displayName}`}><Avatar name={item.author.displayName} url={item.author.avatarUrl} size={36}/></Link>
   <div className="forum-topic-content">
-   <h2><Link className="forum-topic-main-link" href={`/p/${item.slug}`}>{item.title?.trim() || 'Запись без заголовка'}</Link></h2>
+   <h2>{important && <span className="forum-topic-pinned" title="Закреплена форумом"><Icon name="pin"/></span>}{important && <span className="forum-topic-important">Важно</span>}<Link className="forum-topic-main-link" href={`/p/${item.slug}`}>{item.title?.trim() || 'Запись без заголовка'}</Link>{important && <span className="forum-topic-attachment" title="Прикреплено к ленте"><Icon name="paperclip"/></span>}</h2>
    <div className="forum-topic-context" aria-label="Раздел и метки темы"><Link className="forum-topic-author" href={`/u/${item.author.username}`}>{item.author.displayName}</Link>
     {parent && <><Link className="forum-category-chip" style={categoryStyle(parent.slug,communities.find(row=>row.slug===parent.slug)?.accentColor)} href={`/communities/${parent.slug}`}>{parent.name.replace(/^FORRUM\b/i, '4rrum')}</Link><span className="forum-path-arrow" aria-hidden="true">›</span></>}
     <Link className="forum-category-chip" style={categoryStyle(item.community.slug,category?.accentColor ?? item.community.accentColor)} href={`/communities/${item.community.slug}`}>{item.community.name.replace(/^FORRUM\b/i, '4rrum')}</Link>

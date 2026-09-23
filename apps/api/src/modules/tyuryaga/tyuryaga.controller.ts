@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
-import { TyuryagaService } from './tyuryaga.service';
-import { BuyTattooDto, ExecuteQuestDto, HitBossDto, StartBossDto } from './dto/tyuryaga.dto';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { TyuryagaService } from './tyuryaga.service.js';
+import { BuyTattooDto, ExecuteQuestDto, HitBossDto, StartBossDto } from './dto/tyuryaga.dto.js';
+import { SessionGuard } from '../../auth/session.guard.js';
 
 @Controller('games/tyuryaga')
-@UseGuards(JwtAuthGuard)
+@UseGuards(SessionGuard)
 export class TyuryagaController {
   constructor(private readonly tyuryagaService: TyuryagaService) {}
 

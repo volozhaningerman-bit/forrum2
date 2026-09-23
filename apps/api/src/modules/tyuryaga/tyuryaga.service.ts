@@ -1,5 +1,5 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service.js';
 import {
   BOSSES,
   ENERGY_REGEN_INTERVAL_SECONDS,
@@ -7,7 +7,7 @@ import {
   QUESTS,
   TATTOOS,
   WEAPONS,
-} from './tyuryaga.constants';
+} from './tyuryaga.constants.js';
 
 @Injectable()
 export class TyuryagaService {

@@ -3,23 +3,23 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class ExecuteQuestDto {
   @IsString()
   @IsNotEmpty()
-  questId: string;
+  questId!: string;
 }
 
 export class StartBossDto {
   @IsString()
   @IsNotEmpty()
-  bossId: string;
+  bossId!: string;
 }
 
 export class HitBossDto {
   @IsString()
   @IsNotEmpty()
-  weaponId: string;
+  weaponId!: string;
 }
 
 export class BuyTattooDto {
   @IsString()
   @IsNotEmpty()
-  tattooId: string;
+  tattooId!: string;
 }
