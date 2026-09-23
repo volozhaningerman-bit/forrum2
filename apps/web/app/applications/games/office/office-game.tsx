@@ -33,6 +33,7 @@ export function OfficeGame() {
   const [selectedSlot, setSelectedSlot] = useState<OfficeWorkspaceItem['key']>('pc');
   const [notice, setNotice] = useState('Первый рабочий день. Начни с простого поручения.');
   const [energyCountdown, setEnergyCountdown] = useState(OFFICE_ENERGY_REGEN_SECONDS);
+  const [energyNextAt, setEnergyNextAt] = useState<number | null>(null);
   const [activeAction, setActiveAction] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<ActionFeedback | null>(null);
   const [hydrated, setHydrated] = useState(false);
@@ -78,6 +79,7 @@ export function OfficeGame() {
           if (parsed.workspace.length === initialWorkspaceItems.length) {
             setWorkspace(parsed.workspace);
           }
+          setEnergyNextAt(parsed.energyNextAt);
         }
       }
     } catch {
@@ -89,37 +91,72 @@ export function OfficeGame() {
 
   useEffect(() => {
     if (!hydrated) return;
-    window.localStorage.setItem(
-      OFFICE_STORAGE_KEY,
-      JSON.stringify({
-        version: OFFICE_STORAGE_VERSION,
-        snapshot,
-        workspace,
-      }),
-    );
-  }, [hydrated, snapshot, workspace]);
+    try {
+      window.localStorage.setItem(
+        OFFICE_STORAGE_KEY,
+        JSON.stringify({
+          version: OFFICE_STORAGE_VERSION,
+          snapshot,
+          workspace,
+          energyNextAt,
+        }),
+      );
+    } catch {
+      // Prototype remains playable even when storage is unavailable.
+    }
+  }, [energyNextAt, hydrated, snapshot, workspace]);
 
   useEffect(() => {
+    if (!hydrated) return;
+
     if (snapshot.energy >= snapshot.maxEnergy) {
+      setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
+      if (energyNextAt !== null) setEnergyNextAt(null);
+      return;
+    }
+
+    if (energyNextAt === null) {
+      const target = Date.now() + OFFICE_ENERGY_REGEN_SECONDS * 1000;
+      setEnergyNextAt(target);
       setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
       return;
     }
 
-    const timer = window.setInterval(() => {
-      setEnergyCountdown((current) => {
-        if (current <= 1) {
-          setSnapshot((state) => ({
-            ...state,
-            energy: Math.min(state.maxEnergy, state.energy + 1),
-          }));
-          return OFFICE_ENERGY_REGEN_SECONDS;
-        }
-        return current - 1;
-      });
-    }, 1000);
+    const tick = () => {
+      const now = Date.now();
+      const remainingMs = energyNextAt - now;
 
+      if (remainingMs > 0) {
+        setEnergyCountdown(Math.max(1, Math.ceil(remainingMs / 1000)));
+        return;
+      }
+
+      const intervalMs = OFFICE_ENERGY_REGEN_SECONDS * 1000;
+      const elapsedIntervals = Math.floor(Math.abs(remainingMs) / intervalMs) + 1;
+      const missingEnergy = snapshot.maxEnergy - snapshot.energy;
+      const restored = Math.min(missingEnergy, elapsedIntervals);
+
+      if (restored > 0) {
+        setSnapshot((state) => ({
+          ...state,
+          energy: Math.min(state.maxEnergy, state.energy + restored),
+        }));
+      }
+
+      if (restored >= missingEnergy) {
+        setEnergyNextAt(null);
+        setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
+      } else {
+        const nextTarget = energyNextAt + elapsedIntervals * intervalMs;
+        setEnergyNextAt(nextTarget);
+        setEnergyCountdown(Math.max(1, Math.ceil((nextTarget - now) / 1000)));
+      }
+    };
+
+    tick();
+    const timer = window.setInterval(tick, 1000);
     return () => window.clearInterval(timer);
-  }, [snapshot.energy, snapshot.maxEnergy]);
+  }, [energyNextAt, hydrated, snapshot.energy, snapshot.maxEnergy]);
 
   useEffect(
     () => () => {
@@ -349,6 +386,7 @@ export function OfficeGame() {
     setWorkspace(initialWorkspaceItems);
     setSelectedSlot('pc');
     setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
+    setEnergyNextAt(null);
     setNotice('Прототип сброшен. Снова первый рабочий день.');
     window.localStorage.removeItem(OFFICE_STORAGE_KEY);
   };
@@ -393,7 +431,15 @@ export function OfficeGame() {
             <button type="button" title="Рейтинг"><OfficeIcon name="rating" /></button>
             <button type="button" title="Сообщения" className="office-mail"><OfficeIcon name="mail" /><sup>3</sup></button>
             <button type="button" title="Ночной режим"><OfficeIcon name="moon" /></button>
-            <button type="button" title="Сбросить прототип" onClick={resetPrototype}><OfficeIcon name="settings" /></button>
+            <button
+              type="button"
+              title="Сбросить прототип"
+              onClick={() => {
+                if (window.confirm('Сбросить локальный прогресс «В Офисе»?')) resetPrototype();
+              }}
+            >
+              <OfficeIcon name="settings" />
+            </button>
           </div>
         </header>
 
