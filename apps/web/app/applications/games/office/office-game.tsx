@@ -18,6 +18,20 @@ import {
   upgradeWorkspaceItem,
   type OfficeWorkspaceItem,
 } from './office-data';
+import {
+  bossEvent,
+  careerNodes,
+  firstDayEvents,
+  getNextFirstDayEvent,
+  getSkillLabel,
+  initialOfficeStoryState,
+  officePranks,
+  type OfficeOutcome,
+  type OfficePrank,
+  type OfficeStoryChoice,
+  type OfficeStoryEvent,
+  type OfficeStoryState,
+} from './office-v5-content';
 
 type FeedbackTone = 'money' | 'xp' | 'social' | 'warning';
 
@@ -26,6 +40,14 @@ type ActionFeedback = {
   text: string;
   tone: FeedbackTone;
 };
+
+type OfficeView = 'home' | 'career';
+type OfficeModal =
+  | { type: 'event'; event: OfficeStoryEvent }
+  | { type: 'boss'; event: OfficeStoryEvent }
+  | { type: 'pranks' }
+  | { type: 'promotion-help' }
+  | null;
 
 export function OfficeGame() {
   const [snapshot, setSnapshot] = useState(initialOfficeSnapshot);
