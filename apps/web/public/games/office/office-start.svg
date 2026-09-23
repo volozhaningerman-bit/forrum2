@@ -131,6 +131,18 @@
     </g>
   </g>
 
+  <!-- keyboard, mouse and cables -->
+  <g>
+    <rect x="579" y="364" width="152" height="20" rx="3" fill="#6d6558" stroke="#342e27" stroke-width="3"/>
+    <g stroke="#3e3932" stroke-width="1.5" opacity=".8">
+      <path d="M590 371h128M590 377h128"/>
+      <path d="M604 367v16M621 367v16M638 367v16M655 367v16M672 367v16M689 367v16M706 367v16"/>
+    </g>
+    <ellipse cx="758" cy="373" rx="18" ry="11" fill="#6b655a" stroke="#342e27" stroke-width="3"/>
+    <path d="M758 361q-2-24 18-31q18-7 20-30" fill="none" stroke="#1f2021" stroke-width="4" stroke-linecap="round"/>
+    <path d="M730 386q11 18 7 45q-2 14 10 25" fill="none" stroke="#1a1b1c" stroke-width="3" opacity=".8"/>
+  </g>
+
   <!-- mug -->
   <g>
     <rect x="790" y="301" width="46" height="46" rx="4" fill="#d4ccb9" stroke="#4b4238" stroke-width="3"/>
@@ -180,6 +192,8 @@
     <path d="M515 274q28 10 49-3" fill="none" stroke-width="3"/>
     <path d="M506 250q7 4 14 0M561 250q7 4 13 0" fill="none" stroke="#6e4134" stroke-width="2" opacity=".6"/>
     <path d="M520 286q20 7 40-2" fill="none" stroke="#714236" stroke-width="2" opacity=".7"/>
+    <path d="M495 244q15 8 30 3M557 244q15 8 29 2" fill="none" stroke="#6e4134" stroke-width="5" opacity=".16"/>
+    <path d="M510 292q17 11 38 9" fill="none" stroke="#6f4438" stroke-width="3" opacity=".22"/>
     <g stroke="#6d4437" stroke-width="2" opacity=".38">
       <path d="M500 263l6 3M513 267l6 3M568 263l6 2M556 269l7 2M525 285l5 2M548 287l6 1"/>
     </g>
@@ -196,6 +210,8 @@
     <path d="M537 337l9-10l10 10l-9 17z" fill="#6b3a33"/>
     <path d="M476 348q35 18 54 7M579 356q24 0 42-16" fill="none" stroke="#998f82" stroke-width="3" opacity=".75"/>
     <path d="M477 397q17 8 37 3M582 401q18 4 31-4" fill="none" stroke="#8e8579" stroke-width="3" opacity=".6"/>
+    <path d="M465 363q24 17 48 9M586 370q17 7 35-3M486 436q22 9 41 3M579 438q19 8 31 0" fill="none" stroke="#7f766b" stroke-width="2" opacity=".52"/>
+    <path d="M454 333q18 6 30 20M612 342q-17 8-26 23" fill="none" stroke="#f2e9dd" stroke-width="3" opacity=".24"/>
   </g>
 
   <!-- arms and hands -->
@@ -235,6 +251,10 @@
     <text x="95" y="535" fill="#392c20" font-size="17" font-family="Arial" transform="rotate(-6 95 535)">ДЕЛА...</text>
     <text x="111" y="558" fill="#392c20" font-size="14" font-family="Arial" transform="rotate(-6 111 558)">(ПОТОМ)</text>
   </g>
+
+  <!-- soft scene lighting -->
+  <path d="M645 0h315v420q-150-55-278 10q-92 47-172 32q84-123 135-462z" fill="#d7e8e5" opacity=".035"/>
+  <ellipse cx="545" cy="332" rx="186" ry="248" fill="#f6e1ba" opacity=".022"/>
 
   <!-- tiny scratches -->
   <g stroke="#211e1a" opacity=".18">
