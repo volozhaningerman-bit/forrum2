@@ -201,3 +201,285 @@
 .office-right section{background:linear-gradient(180deg,#202122,#1a1b1c)}
 .office-boss{box-shadow:inset 0 0 0 1px #4c2d1c,0 0 0 1px #20160f}
 .office-slots button:hover{border-color:#8b6a44;background:#312b25}
+
+
+/* office visual v3: classic illustrated browser-game pass */
+.office-page{
+  --frame:#111315;
+  --frame-2:#1b1d1f;
+  --bronze:#a5662e;
+  --bronze-hi:#df9a4c;
+  --paper-dark:#a9895d;
+  --cream:#ead5a8;
+}
+.office-icon{
+  width:1em;
+  height:1em;
+  display:block;
+  fill:currentColor;
+  color:currentColor;
+  overflow:visible;
+}
+.office-game{
+  border-color:#1c120b;
+  border-radius:8px;
+  box-shadow:0 20px 55px #0009,0 0 0 1px #8b6038, inset 0 0 0 1px #000;
+}
+.office-topbar{
+  gap:7px;
+  padding:6px 7px;
+  background:
+    linear-gradient(180deg,#262728 0%,#17191a 72%,#111213 100%);
+  box-shadow:inset 0 1px #665644,inset 0 -1px #000;
+}
+.office-logo{
+  height:52px;
+  background:
+    linear-gradient(180deg,#533820 0%,#332317 55%,#241a13 100%);
+  border-color:#8b623d;
+  box-shadow:inset 0 0 0 1px #17100b, inset 0 1px #9b7249;
+}
+.office-logo-emblem{
+  display:grid!important;
+  place-items:center;
+  width:39px;
+  height:39px;
+  flex:0 0 39px;
+  border-radius:4px;
+  color:#e4a24b;
+  background:linear-gradient(#2b1e13,#18120e);
+  border:1px solid #9a6732;
+  box-shadow:inset 0 0 0 1px #4d321c;
+}
+.office-logo-emblem .office-icon{width:24px;height:24px}
+.office-logo b{
+  color:#f0d6a5;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:27px;
+  letter-spacing:.055em;
+  text-shadow:0 2px 0 #1a0e08,1px 0 #1a0e08;
+}
+.office-logo small{color:#c89a61;letter-spacing:.16em}
+.office-player-chip{
+  background:
+    linear-gradient(180deg,#e0c28c 0%,#c9a96f 100%);
+  border-color:#563c25;
+  box-shadow:inset 0 0 0 1px #f2ddb1, inset 0 -10px 16px #8f6c3c19;
+}
+.office-player-chip strong{font-size:17px;font-family:Georgia,"Times New Roman",serif}
+.office-xp{background:#38352f;border-color:#1d1a17}
+.office-xp i{background:linear-gradient(90deg,#ef8c35,#c95624)}
+.office-resource{
+  border-color:#4f4438;
+  background:linear-gradient(180deg,#2a2b2d,#191b1d);
+  box-shadow:inset 0 1px #434548,inset 0 -1px #0b0c0c;
+}
+.office-resource>.office-icon{width:24px;height:24px;color:#e0a34f}
+.office-resource:nth-of-type(4)>.office-icon{color:#62a874}
+.office-resource:nth-of-type(5)>.office-icon{color:#d9b252}
+.office-resource button{
+  background:linear-gradient(#dc7435,#b94f22);
+  border-color:#7b371b;
+  box-shadow:inset 0 1px #f7a064;
+}
+.office-top-icons button{
+  color:#bfc4c5;
+  background:linear-gradient(#292c2e,#1c1f21);
+  border-color:#464b4c;
+  box-shadow:inset 0 1px #3d4143;
+}
+.office-top-icons button .office-icon{width:20px;height:20px;margin:auto}
+.office-top-icons button:hover{color:#f0c78d;border-color:#756047}
+.office-side-nav{
+  padding:6px 5px;
+  gap:4px;
+  background:linear-gradient(180deg,#151719,#101213);
+}
+.office-side-nav>button{
+  min-height:68px;
+  color:#d5d0c8;
+  background:linear-gradient(#272a2c,#1e2123);
+  border-color:#3d4142;
+  box-shadow:inset 0 1px #35393b;
+}
+.office-side-nav>button>.office-icon{width:27px;height:27px}
+.office-side-nav>button.active{
+  color:#f1d2a1;
+  border-color:#b15c2e;
+  background:linear-gradient(#4a2b18,#2f2118);
+  box-shadow:inset 4px 0 #eb7f38,inset 0 1px #6f4529;
+}
+.office-bonus{background:linear-gradient(#3a2119,#251713);border-color:#8f4327}
+.office-bonus>.office-icon{width:30px;height:30px;margin:auto;color:#e9663a}
+.office-profile{
+  background:
+    radial-gradient(circle at 30% 2%,#ceb181 0,#b69767 35%,#9e7f56 100%);
+  border-right-color:#25180f;
+  box-shadow:inset -12px 0 18px #4b311e2c,inset 0 1px #dcc595;
+}
+.office-portrait{
+  height:147px;
+  border-color:#5c422b;
+  background:#665d53;
+  box-shadow:inset 0 0 0 1px #d4b98b55,0 2px 4px #2b1c1080;
+}
+.office-portrait button{background:#dfbf85;border-color:#765735;color:#3a291c}
+.office-portrait button .office-icon{width:17px;height:17px;margin:auto}
+.office-profile-name{border-bottom-color:#80623f}
+.office-profile-name strong{font-family:Georgia,"Times New Roman",serif;font-size:23px}
+.office-stat{border-bottom-color:#8a6b48}
+.office-stat>div:first-child span{display:flex;align-items:center;gap:5px}
+.office-stat>div:first-child span .office-icon{width:15px;height:15px}
+.office-stat button,.office-skill button{
+  background:linear-gradient(#34383a,#232628);
+  border-color:#4a4d4f;
+  box-shadow:inset 0 1px #4a4d4f;
+}
+.office-statbar{height:8px;background:#37332d}
+.office-skill{grid-template-columns:25px 1fr auto 25px}
+.office-skill>.office-icon{width:19px;height:19px;color:#4e3b22}
+.office-quick-links button{background:#b99a6b;border-bottom-color:#765936}
+.office-quick-links button:hover{background:#c4a775}
+.office-center{background:#201d19}
+.office-scene{
+  min-height:565px;
+  background:#403932;
+  border-left:1px solid #100d0b;
+  border-right:1px solid #100d0b;
+}
+.office-scene>img{
+  min-height:565px;
+  filter:saturate(.88) contrast(1.06) brightness(.96);
+}
+.office-scene::after{
+  background:
+    linear-gradient(180deg,#00000013 0%,transparent 28%,#0806041f 68%,#07050355 100%),
+    radial-gradient(circle at 50% 35%,transparent 25%,#00000016 100%);
+  box-shadow:inset 0 0 52px #07050366;
+}
+.office-hotspot{
+  border-color:#836039;
+  background:#17120edc;
+  color:#ead3aa;
+  box-shadow:0 5px 14px #0009,inset 0 0 0 1px #3d2d1b;
+}
+.office-actions{
+  gap:8px;
+  padding:8px 9px;
+  background:linear-gradient(#141617,#0f1112);
+}
+.office-action{
+  min-height:72px;
+  grid-template-columns:50px 1fr;
+  border-radius:3px;
+  border-color:#101112;
+  box-shadow:inset 0 1px #ffffff2e,inset 0 -1px #0008,0 1px 2px #0007;
+}
+.office-action>.office-icon{width:31px;height:31px;margin:auto;color:#f3eadb}
+.office-action b{font-family:Georgia,"Times New Roman",serif;font-size:17px}
+.office-action small{opacity:.9}
+.office-action-green{background:linear-gradient(#2e753d,#1e562b)}
+.office-action-blue{background:linear-gradient(#2f7099,#214d6a)}
+.office-action-purple{background:linear-gradient(#6a4987,#4c335f)}
+.office-action-orange{background:linear-gradient(#965035,#693620)}
+.office-right{
+  gap:6px;
+  padding:7px;
+  background:linear-gradient(180deg,#141617,#0f1112);
+}
+.office-right section{
+  padding:9px;
+  border-color:#59412b;
+  background:linear-gradient(180deg,#222325,#191b1c);
+  box-shadow:inset 0 0 0 1px #0d0e0f,inset 0 1px #303234;
+}
+.office-right h3{
+  color:#e2a94f;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:16px;
+}
+.office-company-row img{border-color:#705537}
+.office-company-card>button{
+  background:linear-gradient(#60351d,#432617);
+  border-color:#874825;
+  color:#f0d5aa;
+}
+.office-reward b{display:flex;align-items:center;gap:3px}
+.office-reward b .office-icon{width:13px;height:13px}
+.office-boss{
+  border-color:#8d522a!important;
+  box-shadow:inset 0 0 0 1px #3b2315,0 0 0 1px #170e09;
+}
+.office-boss-row img{border-color:#835731}
+.office-boss-row blockquote{background:#d9bd87;border:1px solid #6b4a2d}
+.office-boss-requirement{display:flex;align-items:center;gap:5px}
+.office-boss-requirement .office-icon{width:12px;height:12px;color:#d1a159}
+.office-news-row .dot{width:7px;height:7px}
+.office-news-row .dot-green{background:#65c878}
+.office-news-row .dot-gold{background:#dfb850}
+.office-news-row .dot-blue{background:#6fa5d2}
+.office-bottom{
+  grid-template-columns:minmax(0,1.72fr) minmax(390px,.9fr) 180px;
+  gap:6px;
+  padding:7px;
+  background:linear-gradient(#161819,#111314);
+}
+.office-workspace,.office-promotion,.office-item-details{
+  border-color:#5a432d;
+  background:linear-gradient(#232526,#191b1c);
+  box-shadow:inset 0 0 0 1px #0e0f10,inset 0 1px #303233;
+}
+.office-bottom-title{
+  color:#e0aa55;
+  font-family:Georgia,"Times New Roman",serif;
+}
+.office-slots{gap:5px}
+.office-slots button{
+  min-height:108px;
+  padding:7px 5px 8px;
+  background:linear-gradient(#303234,#27292b);
+  border-color:#615340;
+  box-shadow:inset 0 1px #3a3c3e;
+}
+.office-slots button.selected{
+  border-color:#e08a32;
+  background:linear-gradient(#443324,#32271e);
+  box-shadow:inset 0 0 0 1px #8f5528,0 0 0 1px #342116;
+}
+.office-slots button>.office-icon{
+  width:42px;
+  height:42px;
+  color:#d0b079;
+  filter:drop-shadow(0 2px 1px #0008);
+}
+.office-slots button:nth-child(1)>.office-icon{color:#e2ddd1}
+.office-slots button:nth-child(2)>.office-icon{color:#9d6d58}
+.office-slots button:nth-child(3)>.office-icon{color:#a66b3d}
+.office-slots button:nth-child(4)>.office-icon{color:#c4aa79}
+.office-slots button:nth-child(5)>.office-icon{color:#8fb1bb}
+.office-slots b{font-size:10px}
+.office-slots em{font-size:9px;color:#c1ad8e}
+.office-promotion-head>.office-icon{width:24px;height:24px;color:#b76b42}
+.office-item-details>.office-icon{width:38px;height:38px;color:#c7ad7d}
+.office-item-details button{
+  background:linear-gradient(#714524,#4a2d1d);
+  border-color:#8f5a31;
+  color:#f1d1a0;
+}
+.office-requirement i{background:linear-gradient(90deg,#df7a39,#b54b25)}
+.office-promotion-actions .primary{
+  background:linear-gradient(#305d7c,#24465e);
+  border-color:#507b98;
+}
+@media(max-width:1250px){
+  .office-bottom{grid-template-columns:1fr 390px}
+  .office-scene,.office-scene>img{min-height:520px}
+}
+@media(max-width:980px){
+  .office-scene,.office-scene>img{min-height:445px}
+}
+@media(max-width:720px){
+  .office-side-nav>button>.office-icon{width:22px;height:22px}
+  .office-action>.office-icon{width:27px;height:27px}
+  .office-scene,.office-scene>img{min-height:370px}
+}
