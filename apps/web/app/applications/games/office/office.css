@@ -954,3 +954,446 @@
   .office-slots button{min-height:78px}
   .office-slots button>.office-icon{width:32px;height:32px}
 }
+
+
+/* office v5: first-day story, career tree and interactive encounters */
+.office-action-green{background:linear-gradient(#2d6638,#214b2b)}
+.office-action-blue{background:linear-gradient(#2d6487,#234b63)}
+.office-action-purple{background:linear-gradient(#604278,#493358)}
+.office-action-orange{background:linear-gradient(#84472f,#63351f)}
+.office-action:hover:not(:disabled){filter:brightness(1.15) saturate(1.08)}
+
+.office-hotspot{
+  opacity:.5;
+  pointer-events:auto;
+  transform:none;
+  padding:5px 6px;
+  border-radius:999px;
+  font-size:0;
+}
+.office-hotspot span{font-size:12px}
+.office-hotspot:hover,
+.office-hotspot:focus-visible{
+  opacity:1!important;
+  padding:6px 9px;
+  border-radius:5px;
+  font-size:11px;
+}
+.office-scene:hover .office-hotspot{opacity:.5}
+
+.office-modal-backdrop{
+  position:fixed;
+  z-index:1200;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:24px;
+  background:#050607c7;
+  backdrop-filter:blur(3px);
+}
+.office-modal{
+  position:relative;
+  width:min(720px,calc(100vw - 32px));
+  max-height:min(760px,calc(100vh - 48px));
+  overflow:auto;
+  border:1px solid #8a5b34;
+  border-radius:7px;
+  background:
+    linear-gradient(180deg,#262729 0%,#1a1c1d 100%);
+  color:#eee2cf;
+  box-shadow:0 28px 80px #000d,inset 0 0 0 1px #101112,inset 0 1px #3d3d3b;
+}
+.office-modal-close{
+  position:absolute;
+  z-index:4;
+  top:9px;
+  right:9px;
+  width:30px;
+  height:30px;
+  display:grid;
+  place-items:center;
+  border:1px solid #554637;
+  border-radius:3px;
+  background:#161819;
+  color:#bcb3a5;
+  font-size:20px;
+  line-height:1;
+  cursor:pointer;
+}
+.office-modal-close:hover{color:#f0c27f;border-color:#9a683a}
+.office-story-modal{padding:18px}
+.office-story-heading{
+  display:grid;
+  grid-template-columns:56px 1fr;
+  align-items:center;
+  gap:12px;
+  padding-right:38px;
+}
+.office-story-heading>.office-icon{
+  width:48px;
+  height:48px;
+  color:#d3a15d;
+  padding:9px;
+  border:1px solid #60452e;
+  background:#181512;
+}
+.office-story-heading img{
+  width:56px;
+  height:62px;
+  object-fit:cover;
+  border:1px solid #76502f;
+  background:#62584c;
+}
+.office-story-heading small,
+.office-prank-modal header>small,
+.office-promotion-modal>small{
+  color:#c88747;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.office-story-heading h2,
+.office-prank-modal h2,
+.office-promotion-modal h2{
+  margin:3px 0 0;
+  color:#f0dec2;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:22px;
+  line-height:1.1;
+}
+.office-story-heading b{
+  display:block;
+  margin-top:3px;
+  color:#a89c8c;
+  font-size:10px;
+}
+.office-story-description{
+  margin:14px 0;
+  padding:11px 12px;
+  border:1px solid #3e3831;
+  background:#141617;
+  color:#c9c0b3;
+  font-size:12px;
+  line-height:1.48;
+}
+.office-story-choices{
+  display:grid;
+  gap:7px;
+}
+.office-story-choices>button{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:14px;
+  min-height:62px;
+  padding:10px 11px;
+  border:1px solid #514536;
+  border-radius:3px;
+  background:linear-gradient(#2c2e2f,#242627);
+  color:#e8ddcb;
+  text-align:left;
+  cursor:pointer;
+}
+.office-story-choices>button:hover:not(:disabled){
+  border-color:#a36938;
+  background:linear-gradient(#36302a,#292725);
+}
+.office-story-choices>button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+.office-story-choices>button>div{display:grid;gap:3px}
+.office-story-choices strong{
+  color:#efc37f;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:14px;
+}
+.office-story-choices span{font-size:10px;color:#a9a194;line-height:1.35}
+.office-story-choices small{
+  min-width:94px;
+  padding:5px 7px;
+  border:1px solid #4e4438;
+  background:#171819;
+  color:#b6a98f;
+  text-align:center;
+  font-size:9px;
+}
+.office-story-choices small.blocked{color:#dc8e79;border-color:#704438}
+.office-boss-modal{border-color:#a15b30}
+.office-boss-modal .office-story-description{border-color:#573c29}
+.office-boss-modal .office-story-heading h2{color:#f1c47d}
+
+.office-prank-modal{width:min(820px,calc(100vw - 32px));padding:18px}
+.office-prank-modal header{padding-right:40px}
+.office-prank-modal header p{
+  margin:6px 0 14px;
+  color:#a8a095;
+  font-size:11px;
+}
+.office-prank-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.office-prank-grid>button{
+  position:relative;
+  min-height:150px;
+  padding:13px;
+  border:1px solid #594534;
+  border-radius:4px;
+  background:linear-gradient(145deg,#2d2925,#1e2021 58%);
+  color:#e8decd;
+  text-align:left;
+  cursor:pointer;
+}
+.office-prank-grid>button:hover{
+  border-color:#a25c33;
+  transform:translateY(-1px);
+}
+.office-prank-grid strong{
+  display:block;
+  margin-top:24px;
+  color:#efc27c;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:16px;
+}
+.office-prank-grid p{
+  min-height:39px;
+  margin:6px 0 12px;
+  color:#aaa196;
+  font-size:10px;
+  line-height:1.35;
+}
+.office-prank-grid>button>div{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+}
+.office-prank-grid>button>div b{font-size:17px;color:#ddd0bb}
+.office-prank-grid>button>div small{font-size:9px;color:#888176}
+.office-risk{
+  position:absolute;
+  top:10px;
+  left:10px;
+  padding:3px 6px;
+  border:1px solid;
+  border-radius:999px;
+  font-size:8px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+.office-risk-low{color:#91c38b;border-color:#436d40;background:#18251a}
+.office-risk-mid{color:#d8b36b;border-color:#745c31;background:#282217}
+.office-risk-high{color:#dd8975;border-color:#754237;background:#2b1c18}
+
+.office-promotion-modal{width:min(520px,calc(100vw - 32px));padding:18px}
+.office-promotion-todo{
+  display:grid;
+  gap:6px;
+  margin:15px 0;
+}
+.office-promotion-todo>div{
+  display:grid;
+  grid-template-columns:25px 1fr auto;
+  align-items:center;
+  gap:7px;
+  padding:8px 9px;
+  border:1px solid #493e32;
+  background:#181a1b;
+}
+.office-promotion-todo .office-icon{width:18px;height:18px;color:#a57649}
+.office-promotion-todo span{font-size:11px}
+.office-promotion-todo b{font-size:10px;color:#d28d66}
+.office-promotion-todo>div.done{border-color:#405c3d}
+.office-promotion-todo>div.done .office-icon,
+.office-promotion-todo>div.done b{color:#82b87d}
+.office-promotion-help-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+}
+.office-promotion-help-actions button{
+  min-height:36px;
+  border:1px solid #5a4836;
+  background:#262829;
+  color:#ddd1bf;
+  cursor:pointer;
+}
+.office-promotion-help-actions button:last-child{
+  border-color:#4d6f83;
+  background:#27465a;
+  color:#e5f0f5;
+}
+
+.office-career-view{
+  grid-column:2/-1;
+  min-width:0;
+  padding:14px;
+  background:
+    radial-gradient(circle at 55% 38%,#292824 0,#1a1c1d 52%,#111314 100%);
+  border-left:1px solid #342719;
+}
+.office-career-header{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:flex-start;
+  padding:4px 2px 12px;
+  border-bottom:1px solid #45392d;
+}
+.office-career-header small{
+  color:#c98646;
+  font-size:9px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.office-career-header h2{
+  margin:3px 0;
+  color:#f0d6aa;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:24px;
+}
+.office-career-header p{
+  max-width:680px;
+  margin:0;
+  color:#958e84;
+  font-size:10px;
+}
+.office-career-header button{
+  padding:7px 10px;
+  border:1px solid #5b4733;
+  background:#202223;
+  color:#d4c3a9;
+  cursor:pointer;
+}
+.office-career-summary{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+  margin:9px 0;
+}
+.office-career-summary>div{
+  display:grid;
+  gap:2px;
+  padding:7px 9px;
+  border:1px solid #40382f;
+  background:#191b1c;
+}
+.office-career-summary small{font-size:8px;color:#817b72}
+.office-career-summary b{font-size:11px;color:#d8c7ad}
+.office-career-map{
+  position:relative;
+  height:440px;
+  overflow:hidden;
+  border:1px solid #4c3d2e;
+  background:
+    linear-gradient(#ffffff05 1px,transparent 1px),
+    linear-gradient(90deg,#ffffff04 1px,transparent 1px),
+    radial-gradient(circle at 50% 50%,#25231f,#151718 72%);
+  background-size:32px 32px,32px 32px,auto;
+}
+.office-career-lines{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+.office-career-lines path{
+  fill:none;
+  stroke:#6e5438;
+  stroke-width:.65;
+  stroke-dasharray:1.2 1;
+  vector-effect:non-scaling-stroke;
+}
+.office-career-node{
+  position:absolute;
+  z-index:2;
+  width:142px;
+  min-height:92px;
+  transform:translate(-50%,-50%);
+  display:grid;
+  align-content:start;
+  gap:2px;
+  padding:8px;
+  border:1px solid #4b443b;
+  border-radius:4px;
+  background:linear-gradient(#292b2c,#1d1f20);
+  box-shadow:0 8px 20px #0007,inset 0 1px #343637;
+}
+.office-career-node small{font-size:8px;color:#8e867b}
+.office-career-node strong{
+  color:#ded3c3;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:13px;
+}
+.office-career-node span{font-size:10px;color:#d19b55}
+.office-career-node em{
+  min-height:22px;
+  font-size:8px;
+  line-height:1.25;
+  font-style:normal;
+  color:#817b72;
+}
+.office-career-node>b{
+  justify-self:start;
+  padding:2px 5px;
+  border-radius:2px;
+  font-size:8px;
+  color:#8d887f;
+  background:#151617;
+}
+.office-career-current{
+  border-color:#df8232;
+  background:linear-gradient(#463324,#29231e);
+  box-shadow:0 0 0 1px #6e4425,0 9px 24px #0009;
+}
+.office-career-current>b{color:#f0bd71}
+.office-career-done{border-color:#456344}
+.office-career-done>b{color:#88b67f}
+.office-career-ready{border-color:#647b4d}
+.office-career-ready>b{color:#a8c97f}
+.office-career-locked{opacity:.62;filter:saturate(.5)}
+.office-career-branch-expert strong{color:#9db8cb}
+.office-career-branch-management strong{color:#d1b27b}
+.office-career-branch-sales strong{color:#b8a0cc}
+.office-career-legend{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  margin-top:8px;
+}
+.office-career-legend>div{
+  display:grid;
+  grid-template-columns:10px 1fr auto;
+  align-items:center;
+  gap:6px;
+  padding:6px 8px;
+  border:1px solid #393632;
+  background:#181a1b;
+  font-size:9px;
+}
+.office-career-legend i{width:7px;height:7px;border-radius:50%}
+.office-career-legend i.expert{background:#789bb1}
+.office-career-legend i.management{background:#b88e51}
+.office-career-legend i.sales{background:#9475aa}
+.office-career-legend span{color:#aaa196}
+.office-career-legend b{color:#cec0aa;font-size:9px}
+
+@media(max-width:980px){
+  .office-modal-backdrop{padding:12px}
+  .office-career-view{grid-column:2/-1}
+  .office-career-node{width:124px}
+}
+@media(max-width:720px){
+  .office-prank-grid{grid-template-columns:1fr}
+  .office-story-choices>button{grid-template-columns:1fr}
+  .office-story-choices small{justify-self:start}
+  .office-career-view{grid-column:1/-1;padding:9px}
+  .office-career-header{display:grid}
+  .office-career-summary{grid-template-columns:1fr 1fr}
+  .office-career-map{height:620px;overflow:auto}
+  .office-career-node{width:112px}
+  .office-promotion-help-actions{grid-template-columns:1fr}
+}
