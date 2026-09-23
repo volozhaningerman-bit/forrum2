@@ -1,83 +1,225 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620">
-<defs>
-  <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#777064"/><stop offset="1" stop-color="#403b36"/></linearGradient>
-  <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#40382f"/><stop offset="1" stop-color="#251f1a"/></linearGradient>
-  <linearGradient id="shirt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ddd4c7"/><stop offset="1" stop-color="#a79c8d"/></linearGradient>
-  <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b97a5f"/><stop offset="1" stop-color="#87533f"/></linearGradient>
-  <filter id="grain"><feTurbulence baseFrequency=".7" numOctaves="2" seed="5" type="fractalNoise" result="n"/><feColorMatrix in="n" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 .08 0"/><feBlend in="SourceGraphic" mode="multiply"/></filter>
-</defs>
-<rect width="960" height="620" fill="url(#wall)"/>
-<rect y="495" width="960" height="125" fill="url(#floor)"/>
-<g opacity=".28" stroke="#201c18" stroke-width="2"><path d="M0 95H960M0 187H960M0 280H960M0 372H960M0 464H960"/><path d="M122 0V495M340 0V495M615 0V495M820 0V495"/></g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#70695f"/>
+      <stop offset=".55" stop-color="#575149"/>
+      <stop offset="1" stop-color="#3c3833"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#453b32"/>
+      <stop offset="1" stop-color="#26211d"/>
+    </linearGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#b97a59"/>
+      <stop offset=".55" stop-color="#a5654a"/>
+      <stop offset="1" stop-color="#86503d"/>
+    </linearGradient>
+    <linearGradient id="shirt" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#d8d1c4"/>
+      <stop offset=".6" stop-color="#c1b7a7"/>
+      <stop offset="1" stop-color="#9f9587"/>
+    </linearGradient>
+    <linearGradient id="pants" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#353638"/>
+      <stop offset="1" stop-color="#202124"/>
+    </linearGradient>
+    <linearGradient id="crt" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#9b927e"/>
+      <stop offset="1" stop-color="#6f6758"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7"/>
+    </filter>
+    <filter id="grain">
+      <feTurbulence baseFrequency=".8" numOctaves="2" seed="13" type="fractalNoise" result="noise"/>
+      <feColorMatrix in="noise" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 .055 0"/>
+      <feBlend in="SourceGraphic" mode="multiply"/>
+    </filter>
+  </defs>
 
-<!-- window -->
-<rect x="680" y="36" width="205" height="195" rx="4" fill="#262728" stroke="#1b1c1c" stroke-width="12"/>
-<rect x="695" y="51" width="175" height="165" fill="#a4b9bd"/>
-<rect x="695" y="51" width="175" height="165" fill="#d3aa7a" opacity=".17"/>
-<g fill="#778f94" opacity=".85"><rect x="705" y="112" width="40" height="104"/><rect x="750" y="90" width="33" height="126"/><rect x="789" y="124" width="36" height="92"/><rect x="832" y="74" width="32" height="142"/></g>
-<g stroke="#526065" opacity=".75"><path d="M704 140H866M704 168H866M719 90V216M765 80V216M808 100V216M848 64V216"/></g>
-<g fill="#2e2b29"><rect x="690" y="70" width="188" height="9"/><rect x="690" y="92" width="188" height="5"/><rect x="690" y="111" width="188" height="4"/></g>
+  <rect width="960" height="640" fill="url(#wall)"/>
+  <rect y="500" width="960" height="140" fill="url(#floor)"/>
+  <g stroke="#28231f" stroke-width="2" opacity=".27">
+    <path d="M0 98H960M0 196H960M0 294H960M0 392H960M0 490H960"/>
+    <path d="M122 0V500M340 0V500M616 0V500M820 0V500"/>
+  </g>
 
-<!-- battered cabinet -->
-<g filter="url(#grain)"><rect x="55" y="160" width="180" height="335" rx="4" fill="#514f4a" stroke="#262421" stroke-width="5"/>
-<path d="M66 257H224M66 355H224" stroke="#292723" stroke-width="5"/>
-<g fill="#272623"><rect x="142" y="210" width="18" height="5"/><rect x="142" y="306" width="18" height="5"/><rect x="142" y="404" width="18" height="5"/></g></g>
-<rect x="70" y="116" width="142" height="48" fill="#5f574c" stroke="#37312b" stroke-width="4"/>
-<text x="92" y="142" fill="#271f18" font-size="18" font-family="Arial" transform="rotate(-4 92 142)">АРХИВ</text>
-<text x="95" y="159" fill="#271f18" font-size="12" font-family="Arial">(когда-нибудь)</text>
+  <!-- fluorescent lamp -->
+  <g opacity=".75">
+    <rect x="325" y="22" width="322" height="20" rx="4" fill="#2a2926"/>
+    <rect x="350" y="27" width="272" height="8" rx="4" fill="#d7d0b7"/>
+    <path d="M365 44L302 192M607 44L692 182" stroke="#d9cfad" stroke-width="22" opacity=".035"/>
+  </g>
 
-<!-- poster -->
-<rect x="360" y="56" width="185" height="138" fill="#b8a98d" stroke="#5b5143" stroke-width="3" transform="rotate(-2 360 56)"/>
-<text x="390" y="95" fill="#393028" font-size="22" font-family="Arial" font-weight="700">ПЛАНЫ:</text>
-<text x="385" y="125" fill="#393028" font-size="18" font-family="Arial">1. Выжить</text>
-<text x="385" y="150" fill="#393028" font-size="18" font-family="Arial">2. Получить ЗП</text>
-<text x="385" y="176" fill="#393028" font-size="18" font-family="Arial">3. Стать кем-то</text>
+  <!-- archive cabinet -->
+  <g filter="url(#grain)">
+    <rect x="45" y="173" width="176" height="330" rx="5" fill="#55534e" stroke="#292724" stroke-width="5"/>
+    <path d="M56 274H210M56 376H210" stroke="#2a2825" stroke-width="5"/>
+    <g fill="#2e2c28">
+      <rect x="126" y="222" width="20" height="5" rx="2"/>
+      <rect x="126" y="324" width="20" height="5" rx="2"/>
+      <rect x="126" y="426" width="20" height="5" rx="2"/>
+    </g>
+    <rect x="60" y="118" width="138" height="49" fill="#665c4f" stroke="#352f29" stroke-width="4"/>
+    <text x="82" y="143" fill="#2e251f" font-size="18" font-family="Arial" font-weight="700">АРХИВ</text>
+    <text x="82" y="158" fill="#2e251f" font-size="11" font-family="Arial">(когда-нибудь)</text>
+  </g>
 
-<!-- desk -->
-<rect x="310" y="332" width="570" height="42" rx="3" fill="#6f533a" stroke="#2e241d" stroke-width="5"/>
-<rect x="335" y="370" width="38" height="165" fill="#4a3728"/>
-<rect x="825" y="370" width="38" height="165" fill="#4a3728"/>
-<rect x="734" y="375" width="84" height="145" fill="#3d3e3c" stroke="#222" stroke-width="4"/>
-<rect x="746" y="392" width="61" height="42" fill="#555752"/><rect x="746" y="440" width="61" height="65" fill="#2e302e"/>
-<!-- CRT -->
-<rect x="596" y="221" width="165" height="120" rx="9" fill="#a59c87" stroke="#413a31" stroke-width="6"/>
-<rect x="613" y="237" width="131" height="80" rx="4" fill="#365260"/>
-<rect x="630" y="247" width="97" height="5" fill="#79949a" opacity=".7"/><rect x="630" y="258" width="70" height="4" fill="#79949a" opacity=".6"/><rect x="630" y="268" width="85" height="4" fill="#79949a" opacity=".6"/>
-<circle cx="724" cy="326" r="5" fill="#736e61"/>
-<rect x="598" y="344" width="168" height="16" fill="#8b806b" stroke="#413a31" stroke-width="3"/>
-<g fill="#2d2b27"><rect x="615" y="348" width="12" height="5"/><rect x="632" y="348" width="12" height="5"/><rect x="649" y="348" width="12" height="5"/><rect x="666" y="348" width="12" height="5"/></g>
-<ellipse cx="781" cy="351" rx="22" ry="10" fill="#282725"/>
-<!-- mug -->
-<rect x="785" y="300" width="45" height="46" rx="4" fill="#d8d0bf" stroke="#4c4439" stroke-width="3"/><path d="M830 310q24 0 16 20q-5 10-16 7" fill="none" stroke="#4c4439" stroke-width="5"/>
-<text x="791" y="319" fill="#352b23" font-size="8" font-family="Arial">ЕЩЁ</text><text x="790" y="331" fill="#352b23" font-size="8" font-family="Arial">ОДИН</text><text x="790" y="342" fill="#352b23" font-size="8" font-family="Arial">ДЕНЬ</text>
+  <!-- wall poster -->
+  <g transform="rotate(-2 435 125)">
+    <rect x="340" y="58" width="190" height="142" fill="#b7a88c" stroke="#544b40" stroke-width="3"/>
+    <text x="373" y="92" fill="#383027" font-size="20" font-family="Arial" font-weight="700">ПЛАНЫ:</text>
+    <text x="368" y="121" fill="#383027" font-size="17" font-family="Arial">1. Не опоздать</text>
+    <text x="368" y="148" fill="#383027" font-size="17" font-family="Arial">2. Пережить дейлик</text>
+    <text x="368" y="175" fill="#383027" font-size="17" font-family="Arial">3. Получить ЗП</text>
+  </g>
 
-<!-- chair -->
-<ellipse cx="523" cy="536" rx="122" ry="24" fill="#171616" opacity=".35"/>
-<rect x="470" y="310" width="118" height="188" rx="32" fill="#262729" stroke="#171819" stroke-width="6"/>
-<rect x="506" y="490" width="38" height="90" fill="#191a1b"/><path d="M525 573l-55 24M525 573l57 25M525 573l-2 30" stroke="#171819" stroke-width="9"/>
+  <!-- window and city -->
+  <g>
+    <rect x="696" y="44" width="200" height="195" rx="4" fill="#242526" stroke="#18191a" stroke-width="11"/>
+    <rect x="711" y="59" width="170" height="165" fill="#9db1b5"/>
+    <g fill="#71868b">
+      <rect x="720" y="121" width="35" height="103"/>
+      <rect x="761" y="88" width="34" height="136"/>
+      <rect x="801" y="134" width="31" height="90"/>
+      <rect x="839" y="104" width="34" height="120"/>
+    </g>
+    <g stroke="#506066" opacity=".75">
+      <path d="M711 146H881M711 178H881"/>
+      <path d="M737 110V224M778 81V224M816 111V224M856 93V224"/>
+    </g>
+    <g fill="#2d2c29">
+      <rect x="700" y="77" width="190" height="7"/>
+      <rect x="700" y="98" width="190" height="5"/>
+      <rect x="700" y="118" width="190" height="4"/>
+    </g>
+  </g>
 
-<!-- person -->
-<g stroke="#3b2c24" stroke-width="3">
-<ellipse cx="526" cy="242" rx="54" ry="65" fill="url(#skin)"/>
-<path d="M473 233q4-63 56-64q51 2 55 53q-22-30-55-29q-35 0-56 40z" fill="#2d211b"/>
-<path d="M478 216q14-40 49-43q29 0 53 27q-15-47-58-43q-42 5-44 59z" fill="#211915"/>
-<path d="M486 245q13 9 27 0M542 245q13 9 27 0" fill="none"/>
-<path d="M520 269q17 7 33-2" fill="none"/>
-<path d="M517 230q-6 9-2 24" fill="none"/>
-<path d="M463 305q48-35 127 0l43 160q-54 34-187 2z" fill="url(#shirt)"/>
-<path d="M522 294l21 4l17 168h-38z" fill="#4d2d29"/>
-<path d="M451 323q-28 65-46 117q12 12 31 3l56-90" fill="url(#skin)"/>
-<path d="M590 320q35 43 60 99q-4 17-27 12l-67-76" fill="url(#skin)"/>
-<path d="M448 448q-3 54 43 127l66-3q-10-52-20-89q-6-23-20-35z" fill="#2f3031"/>
-<path d="M563 447q50 33 98 107l-46 45q-51-54-101-89z" fill="#2b2c2e"/>
-<path d="M473 579q-22 16-12 27h77q7-14-20-30z" fill="#1e1f20"/>
-<path d="M614 590q6 18 28 19h69q8-17-28-30z" fill="#1e1f20"/>
-</g>
-<!-- badge -->
-<rect x="515" y="339" width="52" height="38" rx="3" fill="#d5c9b5" stroke="#483c30"/><circle cx="541" cy="349" r="7" fill="#d0633f"/><text x="524" y="370" fill="#2b241f" font-size="9" font-family="Arial" font-weight="700">СТАЖЁР</text>
+  <!-- desk -->
+  <g filter="url(#grain)">
+    <rect x="288" y="344" width="598" height="42" rx="4" fill="#6b4f38" stroke="#31251d" stroke-width="5"/>
+    <rect x="314" y="383" width="42" height="174" fill="#4a3628"/>
+    <rect x="827" y="383" width="42" height="174" fill="#4a3628"/>
+    <path d="M300 351H873" stroke="#927053" stroke-width="4" opacity=".7"/>
+  </g>
 
-<!-- trash -->
-<path d="M266 475h57l-7 78h-44z" fill="#242526" stroke="#151617" stroke-width="4"/><g fill="#c3b7a5"><path d="M279 486l13 9l-8 12z"/><path d="M304 483l9 15l-13 7z"/></g>
-<!-- box -->
-<rect x="55" y="455" width="162" height="116" fill="#8d6c45" stroke="#413322" stroke-width="4"/><text x="84" y="493" fill="#382b20" font-size="18" font-family="Arial" transform="rotate(-7 84 493)">ВАЖНЫЕ</text><text x="89" y="516" fill="#382b20" font-size="18" font-family="Arial" transform="rotate(-7 89 516)">ДЕЛА...</text><text x="99" y="543" fill="#382b20" font-size="15" font-family="Arial" transform="rotate(-7 99 543)">(ПОТОМ)</text>
+  <!-- PC tower -->
+  <g>
+    <rect x="737" y="389" width="84" height="153" rx="3" fill="#3d3f3e" stroke="#232423" stroke-width="4"/>
+    <rect x="749" y="404" width="60" height="41" fill="#555852"/>
+    <circle cx="779" cy="423" r="6" fill="#74776f"/>
+    <rect x="749" y="456" width="60" height="68" fill="#2d2f2e"/>
+    <circle cx="779" cy="488" r="11" fill="none" stroke="#4d514f" stroke-width="3"/>
+  </g>
+
+  <!-- CRT monitor -->
+  <g>
+    <rect x="586" y="220" width="176" height="125" rx="10" fill="url(#crt)" stroke="#433c33" stroke-width="6"/>
+    <rect x="604" y="236" width="140" height="82" rx="5" fill="#355361"/>
+    <g fill="#77919a">
+      <rect x="620" y="248" width="99" height="5"/>
+      <rect x="620" y="259" width="77" height="4" opacity=".85"/>
+      <rect x="620" y="269" width="90" height="4" opacity=".75"/>
+    </g>
+    <circle cx="722" cy="329" r="5" fill="#676155"/>
+    <rect x="584" y="345" width="183" height="18" rx="2" fill="#847966" stroke="#433c33" stroke-width="3"/>
+    <g fill="#2d2b28">
+      <rect x="602" y="350" width="13" height="5"/>
+      <rect x="621" y="350" width="13" height="5"/>
+      <rect x="640" y="350" width="13" height="5"/>
+      <rect x="659" y="350" width="13" height="5"/>
+    </g>
+  </g>
+
+  <!-- mug -->
+  <g>
+    <rect x="790" y="301" width="46" height="46" rx="4" fill="#d4ccb9" stroke="#4b4238" stroke-width="3"/>
+    <path d="M836 311q24 0 17 19q-4 11-17 8" fill="none" stroke="#4b4238" stroke-width="5"/>
+    <text x="795" y="319" fill="#332a23" font-size="8" font-family="Arial">ЕЩЁ</text>
+    <text x="795" y="330" fill="#332a23" font-size="8" font-family="Arial">ОДИН</text>
+    <text x="795" y="341" fill="#332a23" font-size="8" font-family="Arial">ДЕНЬ</text>
+  </g>
+
+  <!-- chair -->
+  <ellipse cx="536" cy="560" rx="145" ry="25" fill="#111" opacity=".32" filter="url(#shadow)"/>
+  <g>
+    <rect x="465" y="314" width="135" height="198" rx="38" fill="#292a2c" stroke="#171819" stroke-width="7"/>
+    <path d="M482 335q53-20 101 0" fill="none" stroke="#414244" stroke-width="5" opacity=".7"/>
+    <rect x="513" y="500" width="39" height="84" fill="#1b1c1d"/>
+    <path d="M533 577l-69 26M533 577l68 27M533 577l2 35" stroke="#171819" stroke-width="10" stroke-linecap="round"/>
+  </g>
+
+  <!-- character: head -->
+  <g stroke="#3a2921" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M474 211q9-61 59-65q55-4 71 54q7 25-3 53q-10 31-32 46q-20 13-43 10q-29-4-45-30q-16-25-7-68z" fill="url(#skin)" stroke-width="4"/>
+    <path d="M477 210q5-58 55-66q46-5 67 40q-28-21-64-17q-38 5-58 43z" fill="#251b16" stroke-width="4"/>
+    <path d="M485 196q23-39 62-36q34 3 49 28q-25-14-53-10q-35 4-58 18z" fill="#17110f" stroke="none"/>
+    <path d="M492 226q14-10 30-3M555 223q15-8 30 4" fill="none" stroke-width="5"/>
+    <path d="M500 235q13 7 24 0M557 235q12 7 24 0" fill="none" stroke-width="3"/>
+    <circle cx="514" cy="235" r="2.5" fill="#1b1714" stroke="none"/>
+    <circle cx="569" cy="235" r="2.5" fill="#1b1714" stroke="none"/>
+    <path d="M541 228q-6 18-3 31q4 5 12 2" fill="none" stroke-width="3"/>
+    <path d="M515 274q28 10 49-3" fill="none" stroke-width="3"/>
+    <path d="M520 286q20 7 40-2" fill="none" stroke="#714236" stroke-width="2" opacity=".7"/>
+    <g stroke="#6d4437" stroke-width="2" opacity=".38">
+      <path d="M500 263l6 3M513 267l6 3M568 263l6 2M556 269l7 2M525 285l5 2M548 287l6 1"/>
+    </g>
+  </g>
+
+  <!-- neck -->
+  <path d="M516 294l4 34q18 15 43 0l-1-36" fill="url(#skin)" stroke="#3a2921" stroke-width="4"/>
+
+  <!-- torso, shirt and tie -->
+  <g stroke="#3a3028" stroke-width="4" stroke-linejoin="round">
+    <path d="M461 319q39-26 65-18q18 17 39 0q43 8 73 48l-24 144q-69 34-171 0l-17-136q12-24 35-38z" fill="url(#shirt)"/>
+    <path d="M521 305l24 31l20-34q14 10 28 23l-26 32l-45-2l-25-32q10-10 24-18z" fill="#eee5d8"/>
+    <path d="M537 337l18 0l14 132l-34 0z" fill="#51312d"/>
+    <path d="M537 337l9-10l10 10l-9 17z" fill="#6b3a33"/>
+    <path d="M476 348q35 18 54 7M579 356q24 0 42-16" fill="none" stroke="#998f82" stroke-width="3" opacity=".75"/>
+    <path d="M477 397q17 8 37 3M582 401q18 4 31-4" fill="none" stroke="#8e8579" stroke-width="3" opacity=".6"/>
+  </g>
+
+  <!-- arms and hands -->
+  <g stroke="#3a2921" stroke-width="4" stroke-linejoin="round">
+    <path d="M460 330q-34 39-53 104q-7 24 14 35q17 8 29-12l58-97q-16-22-48-30z" fill="url(#skin)"/>
+    <path d="M620 336q38 41 61 92q11 25-9 38q-18 10-33-11l-70-92q17-22 51-27z" fill="url(#skin)"/>
+    <path d="M403 436q13-5 26 2q14 8 14 25q-14 15-30 6q-15-8-10-33z" fill="url(#skin)"/>
+    <path d="M650 435q13-8 27-3q13 6 17 20q-9 19-27 17q-17-2-17-34z" fill="url(#skin)"/>
+    <path d="M410 448l19 7M659 450l22-6" fill="none" stroke-width="2"/>
+  </g>
+
+  <!-- badge -->
+  <g>
+    <rect x="548" y="374" width="55" height="41" rx="4" fill="#d9cfbd" stroke="#4a4034" stroke-width="2"/>
+    <circle cx="575" cy="385" r="7" fill="#cd6844"/>
+    <text x="558" y="407" fill="#2c251f" font-size="9" font-family="Arial" font-weight="700">СТАЖЁР</text>
+  </g>
+
+  <!-- legs -->
+  <g stroke="#1c1d1f" stroke-width="5" stroke-linejoin="round">
+    <path d="M455 475q42-18 84-4q16 7 23 30l-30 119h-67q-24-76-10-145z" fill="url(#pants)"/>
+    <path d="M556 473q51-9 78 29q31 48 73 101l-57 29q-69-59-124-119q-3-24 30-40z" fill="url(#pants)"/>
+    <path d="M459 615q31-14 69-3q27 8 21 22h-105q-5-11 15-19z" fill="#191a1c"/>
+    <path d="M646 612q23-18 52-8q34 12 39 26q-31 9-91 1q-8-8 0-19z" fill="#191a1c"/>
+    <path d="M462 493q37 11 69 2M579 501q24 10 42 30" fill="none" stroke="#434548" stroke-width="3" opacity=".6"/>
+  </g>
+
+  <!-- poor office clutter -->
+  <g>
+    <path d="M245 486h56l-7 76h-42z" fill="#252627" stroke="#171819" stroke-width="4"/>
+    <g fill="#c4b8a5">
+      <path d="M254 498l13 10l-8 14z"/>
+      <path d="M279 492l10 16l-13 8z"/>
+    </g>
+    <rect x="64" y="472" width="148" height="106" fill="#8d6b44" stroke="#403121" stroke-width="4"/>
+    <text x="91" y="511" fill="#392c20" font-size="17" font-family="Arial" transform="rotate(-6 91 511)">ВАЖНЫЕ</text>
+    <text x="95" y="535" fill="#392c20" font-size="17" font-family="Arial" transform="rotate(-6 95 535)">ДЕЛА...</text>
+    <text x="111" y="558" fill="#392c20" font-size="14" font-family="Arial" transform="rotate(-6 111 558)">(ПОТОМ)</text>
+  </g>
+
+  <!-- tiny scratches -->
+  <g stroke="#211e1a" opacity=".18">
+    <path d="M18 318l83-29M222 46l47 18M915 276l29-22M253 421l36-8"/>
+    <path d="M31 450l77-18M580 111l43-9M876 403l59-8"/>
+  </g>
 </svg>
