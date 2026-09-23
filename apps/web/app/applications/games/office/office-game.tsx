@@ -22,7 +22,6 @@ import {
 import {
   bossEvent,
   careerNodes,
-  firstDayEvents,
   getNextFirstDayEvent,
   getSkillLabel,
   initialOfficeStoryState,
