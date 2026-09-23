@@ -59,6 +59,9 @@ export function OfficeGame() {
   const [activeAction, setActiveAction] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<ActionFeedback | null>(null);
   const [hydrated, setHydrated] = useState(false);
+  const [story, setStory] = useState<OfficeStoryState>(initialOfficeStoryState);
+  const [activeView, setActiveView] = useState<OfficeView>('home');
+  const [modal, setModal] = useState<OfficeModal>(null);
 
   const feedbackTimerRef = useRef<number | null>(null);
   const cooldownTimerRef = useRef<number | null>(null);
@@ -102,6 +105,19 @@ export function OfficeGame() {
             setWorkspace(parsed.workspace);
           }
           setEnergyNextAt(parsed.energyNextAt);
+          const persistedStory = (parsed as typeof parsed & { story?: OfficeStoryState }).story;
+          if (persistedStory) {
+            setStory({
+              ...initialOfficeStoryState,
+              ...persistedStory,
+              completedEvents: Array.isArray(persistedStory.completedEvents)
+                ? persistedStory.completedEvents
+                : [],
+              completedPranks: Array.isArray(persistedStory.completedPranks)
+                ? persistedStory.completedPranks
+                : [],
+            });
+          }
         }
       }
     } catch {
@@ -121,12 +137,13 @@ export function OfficeGame() {
           snapshot,
           workspace,
           energyNextAt,
+          story,
         }),
       );
     } catch {
       // Prototype remains playable even when storage is unavailable.
     }
-  }, [energyNextAt, hydrated, snapshot, workspace]);
+  }, [energyNextAt, hydrated, snapshot, story, workspace]);
 
   useEffect(() => {
     if (!hydrated) return;
