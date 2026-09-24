@@ -4723,3 +4723,744 @@ body.office-no-scroll{
     display:none;
   }
 }
+
+
+/* ==========================================================================
+   OFFICE v6.5 — ONE SCREEN GAME LOOP
+   Forum header remains visible; everything is on the surface.
+   Only the equipment shelf scrolls, horizontally, including mouse wheel.
+   ========================================================================== */
+
+.office-page{
+  height:var(--office-viewport-height,calc(100dvh - 68px));
+  max-height:var(--office-viewport-height,calc(100dvh - 68px));
+  margin-top:0;
+  overflow:hidden;
+}
+
+.office-game{
+  height:100%;
+  min-height:0;
+  grid-template-rows:58px minmax(0,1fr) auto;
+}
+
+.office-topbar{
+  min-height:58px;
+  height:58px;
+  padding:5px 8px;
+}
+
+.office-logo,
+.office-player-chip,
+.office-resource{
+  height:44px;
+}
+
+.office-logo b{font-size:25px}
+.office-logo small{font-size:8px}
+.office-resource{min-width:112px}
+.office-energy{min-width:144px}
+.office-top-icons button{width:39px;height:39px}
+
+.office-body{
+  min-height:0!important;
+  height:100%;
+  overflow:hidden;
+  grid-template-columns:76px 190px minmax(0,1fr) 275px;
+}
+
+.office-side-nav{
+  min-height:0;
+  overflow:hidden;
+  gap:4px;
+  padding:5px 4px;
+}
+
+.office-side-nav>button{
+  flex:0 0 51px;
+  min-height:51px;
+  height:51px;
+  gap:1px;
+}
+
+.office-side-nav>button .office-icon{
+  width:21px;
+  height:21px;
+}
+
+.office-side-nav>button small{font-size:9px}
+
+.office-bonus{
+  min-height:58px;
+  padding:6px 3px;
+  gap:2px;
+}
+
+.office-bonus .office-icon{width:23px;height:23px}
+.office-bonus span{font-size:10px}
+.office-bonus small{font-size:8px}
+
+.office-profile{
+  min-height:0;
+  overflow:hidden!important;
+  padding:7px;
+}
+
+.office-portrait{height:112px}
+.office-profile-name{padding:5px 2px 6px}
+.office-profile-name strong{font-size:18px}
+.office-profile-name span{font-size:10px}
+.office-profile-name b{font-size:12px;margin-top:1px}
+.office-stat{padding:6px 0}
+.office-stat>div:first-child{font-size:9px;grid-template-columns:1fr auto 23px}
+.office-stat button,.office-skill button{width:21px;height:21px}
+.office-statbar{height:7px;margin-top:4px}
+.office-skill-title{padding:7px 0 4px;font-size:14px}
+.office-skill{grid-template-columns:21px 1fr auto 21px;padding:3px 0;font-size:9px}
+
+.office-center{
+  min-height:0;
+  height:100%;
+  grid-template-rows:minmax(0,1fr) 52px;
+  overflow:hidden;
+}
+
+.office-scene{
+  min-height:0!important;
+  height:100%;
+}
+
+.office-scene>img{
+  min-height:0!important;
+  height:100%;
+}
+
+.office-scene-note{
+  left:12px;
+  right:12px;
+  bottom:8px;
+  padding:6px 9px;
+  font-size:9px;
+}
+
+/* Tyuryaga-like room exits: navigation, not energy actions. */
+.office-room-links{
+  position:relative;
+  min-width:0;
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:4px;
+  padding:5px;
+  border-top:3px solid #090a0b;
+  background:#131516;
+}
+
+.office-room-links>button{
+  min-width:0;
+  display:grid;
+  grid-template-columns:26px minmax(0,1fr) 12px;
+  align-items:center;
+  gap:5px;
+  padding:5px 7px;
+  border:1px solid #474139;
+  border-radius:2px;
+  background:linear-gradient(#292b2c,#202223);
+  color:#d8cbb8;
+  text-align:left;
+  cursor:pointer;
+}
+
+.office-room-links>button:hover{
+  border-color:#8e663b;
+  background:linear-gradient(#332b24,#242322);
+}
+
+.office-room-links .office-icon{
+  width:22px;
+  height:22px;
+  color:#d0ad76;
+}
+
+.office-room-links span{
+  min-width:0;
+  display:grid;
+  line-height:1.05;
+}
+
+.office-room-links b{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#e7d5bb;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:10px;
+}
+
+.office-room-links small{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  margin-top:2px;
+  color:#807970;
+  font-size:6px;
+}
+
+.office-room-links i{
+  color:#9a7448;
+  font-style:normal;
+  font-size:12px;
+}
+
+.office-room-links .office-action-feedback{
+  position:absolute;
+  left:50%;
+  bottom:56px;
+  transform:translateX(-50%);
+}
+
+/* Right column is fully surfaced: no inner scrolling, no boss card. */
+.office-right{
+  min-height:0;
+  height:100%;
+  overflow:hidden!important;
+  display:grid;
+  grid-template-rows:auto auto auto minmax(0,1fr);
+  align-content:stretch;
+  gap:5px;
+  padding:5px;
+}
+
+.office-right section{
+  min-height:0;
+  padding:7px;
+}
+
+.office-right h3{font-size:12px}
+.office-company-row{grid-template-columns:60px 1fr;gap:6px;margin:5px 0}
+.office-company-row img{width:60px;height:43px}
+.office-company-row b{font-size:9px}
+.office-company-row small{font-size:6px}
+.office-company-meta{gap:4px}
+.office-company-meta span{padding:4px}
+.office-company-meta small{font-size:6px}
+.office-company-meta b{font-size:8px}
+.office-right section>button{padding:5px;font-size:8px}
+.office-daily label{margin:6px 0;font-size:8px}
+.office-checkbox{width:13px;height:13px}
+.office-progress{height:6px}
+.office-reward{gap:6px;margin-top:5px;font-size:7px}
+.office-news{overflow:hidden}
+.office-news-row{padding:4px 0}
+.office-news-row b{font-size:7px}
+.office-news-row small{font-size:6px}
+
+/* Promotion moved into the right rail in compact form, freeing the whole footer for items. */
+.office-promotion-compact{
+  border-color:#665039!important;
+}
+
+.office-promotion-compact .office-card-head>b{
+  color:#d8b06f;
+  font-size:7px;
+}
+
+.office-promotion-compact-salary{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin:5px 0 2px;
+  color:#d4c1a2;
+  font-size:8px;
+}
+
+.office-promotion-compact-salary .office-icon{
+  width:16px;
+  height:16px;
+  color:#bd7c3b;
+}
+
+.office-promotion-compact-bars .office-requirement{
+  padding:2px 0;
+}
+
+.office-promotion-compact-bars .office-requirement>div:first-child{
+  font-size:6.5px;
+}
+
+.office-promotion-compact-bars .office-requirement>div:last-child{
+  height:4px;
+  margin-top:2px;
+}
+
+.office-promotion-compact>button{
+  margin-top:4px;
+}
+
+/* Entire bottom shelf belongs to equipment now. */
+.office-v6-bottom,
+.office-v6-bottom.has-equipment-drawer{
+  height:205px;
+  min-height:205px;
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:0;
+  padding:5px;
+}
+
+.office-v6-workplace-stack{
+  width:100%;
+  height:100%;
+  grid-template-rows:31px minmax(0,1fr);
+}
+
+.office-v6-workplace-header{
+  padding:0 7px;
+}
+
+.office-v6-workplace-header .office-bottom-title{
+  font-size:11px;
+}
+
+.office-v6-workplace-header .office-bottom-title>span{
+  width:auto;
+  height:auto;
+  border-radius:0;
+  background:transparent;
+  color:#81786d;
+  font-size:6.5px;
+}
+
+.office-v6-workplace-empty{
+  padding:8px;
+}
+
+.office-v6-workplace-empty strong{font-size:12px}
+.office-v6-workplace-empty span{font-size:7px}
+
+.office-v6-inline-drawer .office-v6-drawer{
+  grid-template-rows:28px minmax(0,1fr);
+}
+
+.office-v6-inline-drawer .office-v6-drawer>header{
+  min-height:28px;
+  height:28px;
+}
+
+.office-v6-inline-drawer .office-v6-item-list{
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scroll-behavior:smooth;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+}
+
+.office-v6-inline-drawer .office-v6-item-card{
+  flex:0 0 320px;
+  width:320px;
+}
+
+/* All standalone game pages must fit the visible game surface. */
+.office-v6-page{
+  height:100%;
+  min-height:0;
+  max-height:100%;
+  overflow:hidden!important;
+  padding:9px;
+}
+
+.office-v6-page-header{
+  min-height:54px;
+  max-height:62px;
+  padding:1px 1px 7px;
+  overflow:hidden;
+}
+
+.office-v6-page-header h2{font-size:19px}
+.office-v6-page-header p{
+  max-width:760px;
+  font-size:7px;
+  line-height:1.3;
+}
+.office-v6-page-header>button{padding:5px 8px;font-size:7px}
+
+/* Tasks: all task types visible at once, no vertical scroll. */
+.office-v65-tasks{
+  display:grid;
+  grid-template-rows:auto 48px minmax(0,1fr) 45px;
+  gap:7px;
+}
+
+.office-v65-task-summary{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:5px;
+}
+
+.office-v65-task-summary>div{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:7px;
+  padding:6px 8px;
+  border:1px solid #453d34;
+  background:#1b1d1e;
+}
+
+.office-v65-task-summary small{color:#817970;font-size:6px}
+.office-v65-task-summary strong{color:#d9b073;font-size:12px}
+
+.office-v65-task-grid{
+  min-height:0;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:7px;
+}
+
+.office-v65-task-card{
+  min-width:0;
+  min-height:0;
+  display:grid;
+  grid-template-columns:58px minmax(0,1fr) 150px;
+  grid-template-rows:minmax(0,1fr) 24px;
+  gap:7px;
+  padding:9px;
+  border:1px solid #4c443a;
+  background:
+    linear-gradient(115deg,rgba(255,255,255,.025),transparent 38%),
+    linear-gradient(#292b2c,#202223);
+  color:#d9ccb8;
+  text-align:left;
+  cursor:pointer;
+  overflow:hidden;
+}
+
+.office-v65-task-card:not(:disabled):hover{
+  border-color:#95683a;
+  transform:translateY(-1px);
+}
+
+.office-v65-task-card:disabled{opacity:.48;cursor:not-allowed}
+.office-v65-task-card.tone-green{border-left:3px solid #4f8b59}
+.office-v65-task-card.tone-blue{border-left:3px solid #4b809e}
+.office-v65-task-card.tone-purple{border-left:3px solid #80609a}
+.office-v65-task-card.tone-orange{border-left:3px solid #a8623c}
+
+.office-v65-task-icon{
+  grid-row:1/3;
+  align-self:stretch;
+  display:grid;
+  place-items:center;
+  border:1px solid #433d35;
+  background:#181a1b;
+}
+
+.office-v65-task-icon .office-icon{width:31px;height:31px;color:#d0ad73}
+
+.office-v65-task-copy small{color:#a27649;font-size:6px;text-transform:uppercase}
+.office-v65-task-copy strong{
+  display:block;
+  margin:3px 0;
+  color:#ead8bb;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:15px;
+}
+.office-v65-task-copy p{margin:0;color:#8a8278;font-size:7px;line-height:1.35}
+
+.office-v65-task-meta{
+  display:grid;
+  align-content:start;
+  gap:5px;
+}
+
+.office-v65-task-meta span{
+  display:grid;
+  gap:2px;
+  padding:5px;
+  border:1px solid #3f3c36;
+  background:#181a1b;
+  color:#aaa092;
+  font-size:6.5px;
+}
+
+.office-v65-task-meta b{color:#766f65;font-size:5.5px;text-transform:uppercase}
+.office-v65-task-card>i{
+  grid-column:2/4;
+  align-self:end;
+  color:#c18c52;
+  font-size:7px;
+  font-style:normal;
+  text-align:right;
+}
+
+.office-v65-task-tip{
+  display:grid;
+  grid-template-columns:27px 1fr;
+  align-items:center;
+  gap:7px;
+  padding:6px 8px;
+  border:1px solid #4b4033;
+  background:#211d18;
+}
+.office-v65-task-tip .office-icon{width:22px;height:22px;color:#c38d4e}
+.office-v65-task-tip strong{display:block;color:#d4b27f;font-size:8px}
+.office-v65-task-tip span{display:block;color:#81796e;font-size:6.5px}
+
+/* Bosses: dedicated page, no modal / no right-column boss clutter. */
+.office-v65-bosses{
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  gap:8px;
+}
+
+.office-v65-boss-layout{
+  min-height:0;
+  display:grid;
+  grid-template-columns:minmax(360px,.9fr) minmax(0,1.15fr);
+  gap:8px;
+}
+
+.office-v65-boss-stage,
+.office-v65-boss-panel{
+  min-height:0;
+  border:1px solid #544331;
+  background:#1a1c1d;
+  box-shadow:inset 0 0 0 1px #101112;
+}
+
+.office-v65-boss-stage{
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-rows:minmax(0,1fr) auto auto;
+  padding:10px;
+  background:linear-gradient(#6b6258 0 56%,#40372f 56%);
+}
+
+.office-v65-boss-room{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.office-v65-boss-room .boss-window{
+  position:absolute;
+  right:8%;
+  top:8%;
+  width:33%;
+  height:30%;
+  border:7px solid #292a29;
+  background:linear-gradient(90deg,#9aabad 0 22%,#61777b 22% 28%,#9aabad 28% 52%,#61777b 52% 58%,#9aabad 58%);
+}
+
+.office-v65-boss-room .boss-desk{
+  position:absolute;
+  left:10%;
+  right:8%;
+  bottom:27%;
+  height:14px;
+  border:3px solid #39291f;
+  background:#755138;
+}
+
+.office-v65-boss-room .boss-lamp{
+  position:absolute;
+  left:15%;
+  top:14%;
+  width:50px;
+  height:72px;
+  border-left:5px solid #333;
+  border-top:5px solid #333;
+}
+
+.office-v65-boss-stage>img{
+  position:relative;
+  z-index:2;
+  align-self:end;
+  justify-self:center;
+  width:min(72%,310px);
+  max-height:72%;
+  object-fit:contain;
+}
+
+.office-v65-boss-title{
+  position:relative;
+  z-index:3;
+  padding:7px 9px;
+  border:1px solid #4e3d2e;
+  background:#171819e8;
+}
+
+.office-v65-boss-title small{color:#aa7947;font-size:6px;text-transform:uppercase}
+.office-v65-boss-title h3{margin:2px 0;color:#efcea0;font-family:Georgia,"Times New Roman",serif;font-size:18px}
+.office-v65-boss-title blockquote{margin:0;color:#978c7d;font-size:7px}
+
+.office-v65-boss-health{
+  position:relative;
+  z-index:3;
+  margin-top:5px;
+}
+.office-v65-boss-health>div:first-child{display:flex;justify-content:space-between;font-size:7px}
+.office-v65-boss-health>div:last-child{height:8px;margin-top:3px;border:1px solid #3f2924;background:#111}
+.office-v65-boss-health i{display:block;height:100%;background:linear-gradient(90deg,#8f3e31,#ca6546)}
+
+.office-v65-boss-panel{
+  display:grid;
+  grid-template-rows:58px minmax(0,1fr) 54px auto;
+  gap:7px;
+  padding:9px;
+  overflow:hidden;
+}
+
+.office-v65-boss-status{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+}
+.office-v65-boss-status>div{padding:7px;border:1px solid #443d35;background:#181a1b}
+.office-v65-boss-status small{display:block;color:#766f66;font-size:6px;text-transform:uppercase}
+.office-v65-boss-status strong{display:block;margin-top:2px;color:#d9b073;font-size:9px}
+
+.office-v65-boss-actions{
+  min-height:0;
+  display:grid;
+  grid-template-rows:repeat(3,1fr);
+  gap:6px;
+}
+
+.office-v65-boss-actions button{
+  min-height:0;
+  display:grid;
+  grid-template-columns:38px minmax(0,1fr) 50px 65px;
+  align-items:center;
+  gap:7px;
+  padding:8px;
+  border:1px solid #4a4239;
+  background:linear-gradient(#292b2c,#202223);
+  color:#d8ccb9;
+  text-align:left;
+  cursor:pointer;
+}
+
+.office-v65-boss-actions button:not(:disabled):hover{border-color:#9b6939}
+.office-v65-boss-actions button:disabled{opacity:.45;cursor:not-allowed}
+.office-v65-boss-actions .office-icon{width:29px;height:29px;color:#c9a46e}
+.office-v65-boss-actions div{display:grid}
+.office-v65-boss-actions strong{color:#e3d2b7;font-size:10px}
+.office-v65-boss-actions span{color:#817a71;font-size:6px}
+.office-v65-boss-actions>b{color:#d77c4d;font-size:14px;text-align:center}
+.office-v65-boss-actions>small{color:#a38864;font-size:6px;text-align:right}
+
+.office-v65-boss-reward{
+  padding:7px;
+  border:1px solid #46503e;
+  background:#192019;
+}
+.office-v65-boss-reward small{display:block;color:#76806f;font-size:6px;text-transform:uppercase}
+.office-v65-boss-reward strong{display:block;margin-top:2px;color:#b9c9ad;font-size:8px}
+
+.office-v65-boss-lock{
+  padding:6px 8px;
+  border:1px solid #65412f;
+  background:#281e19;
+  color:#c59c70;
+  font-size:7px;
+}
+
+/* Remove scrolling from the rest of the game. */
+.office-profile,
+.office-right,
+.office-v6-page,
+.office-v64-company-grid,
+.office-v6-career-detail,
+.office-v64-character-build,
+.office-v64-archetype-grid{
+  overflow:hidden!important;
+  scrollbar-width:none;
+}
+
+.office-v64-company-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:1fr 1fr;
+  align-content:stretch;
+  height:100%;
+}
+
+.office-v64-company-grid>article{
+  height:auto;
+  min-height:0;
+}
+
+.office-v6-career-stage,
+.office-v6-career-viewport{
+  min-height:0;
+  height:100%;
+}
+
+/* The career map itself can pan/zoom, but the page never scrolls. */
+.office-v6-career-viewport{
+  overflow:hidden!important;
+}
+
+/* Desktop is deliberately one-screen. */
+@media(min-width:721px){
+  html:has(.office-page),
+  body:has(.office-page){
+    overflow:hidden!important;
+  }
+}
+
+@media(max-height:820px) and (min-width:721px){
+  .office-game{grid-template-rows:54px minmax(0,1fr) auto}
+  .office-topbar{height:54px;min-height:54px}
+  .office-logo,.office-player-chip,.office-resource{height:40px}
+  .office-v6-bottom,.office-v6-bottom.has-equipment-drawer{height:184px;min-height:184px}
+  .office-side-nav>button{flex-basis:46px;height:46px;min-height:46px}
+  .office-bonus{min-height:50px}
+  .office-portrait{height:96px}
+  .office-stat{padding:4px 0}
+  .office-skill{padding:2px 0}
+  .office-center{grid-template-rows:minmax(0,1fr) 47px}
+  .office-room-links{padding:4px}
+  .office-room-links>button{padding:4px 5px}
+  .office-v65-task-grid{gap:5px}
+  .office-v65-task-card{padding:7px}
+}
+
+@media(max-width:1250px) and (min-width:721px){
+  .office-body{grid-template-columns:68px 176px minmax(0,1fr) 248px}
+  .office-v6-inline-drawer .office-v6-item-card{flex-basis:286px;width:286px}
+  .office-room-links small{display:none}
+  .office-v65-boss-layout{grid-template-columns:330px minmax(0,1fr)}
+}
+
+@media(max-width:980px) and (min-width:721px){
+  .office-body{
+    grid-template-columns:62px 165px minmax(0,1fr) 220px;
+  }
+  .office-right{
+    grid-column:auto;
+    border-left:3px solid #080909;
+    border-top:0;
+    grid-template-columns:1fr;
+  }
+  .office-room-links b{font-size:8px}
+  .office-room-links .office-icon{width:18px;height:18px}
+  .office-v65-task-card{grid-template-columns:48px minmax(0,1fr) 120px}
+  .office-v65-boss-layout{grid-template-columns:290px minmax(0,1fr)}
+}
+
+/* Mobile remains document-flow; desktop no-scroll rule must not trap small screens. */
+@media(max-width:720px){
+  body.office-no-scroll{overflow:auto!important}
+  .office-page{height:auto;max-height:none;overflow:visible}
+  .office-game{height:auto;display:block}
+  .office-body{height:auto;overflow:visible}
+  .office-v6-bottom,.office-v6-bottom.has-equipment-drawer{height:auto;min-height:190px}
+  .office-room-links{grid-template-columns:1fr 1fr}
+  .office-v65-task-grid{grid-template-columns:1fr;grid-template-rows:auto}
+  .office-v65-task-card{min-height:150px}
+  .office-v65-boss-layout{grid-template-columns:1fr}
+  .office-v65-boss-stage{min-height:430px}
+  .office-v64-company-grid{grid-template-columns:1fr;grid-template-rows:auto}
+  .office-v64-company-grid>article{min-height:270px}
+}
