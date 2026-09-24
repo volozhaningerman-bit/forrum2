@@ -2644,3 +2644,13 @@ body.office-no-scroll{
     height:560px;
   }
 }
+
+
+/* v6.1 hotspot overlap fix: clothing only covers the torso, not the desk */
+.office-hotspot-zone-character{
+  left:46%;
+  top:34%;
+  width:22%;
+  height:21%;
+  border-radius:42% 42% 26% 26%;
+}
