@@ -317,6 +317,14 @@ export function V6CareerView({
   onSelectBranch: (branch: V6CareerBranch) => void;
   onBack: () => void;
 }) {
+  const build = getV6BuildBonuses(state);
+  const effectiveSkills = {
+    competence: snapshot.skills.competence + (build.competence ?? 0),
+    communication: snapshot.skills.communication + (build.communication ?? 0),
+    drive: snapshot.skills.drive + (build.drive ?? 0),
+  };
+  const effectiveReputation = snapshot.reputation + (build.reputation ?? 0);
+
   return (
     <section className="office-v6-page office-v6-career">
       <PageHeader eyebrow="Карьера" title="Большое дерево развития" onBack={onBack}>
@@ -349,8 +357,8 @@ export function V6CareerView({
         {v6CareerNodes.map((node) => {
           const available = v6CareerAvailable(node, {
             level: snapshot.level,
-            reputation: snapshot.reputation,
-            skills: snapshot.skills,
+            reputation: effectiveReputation,
+            skills: effectiveSkills,
             branch: state.careerBranch,
           });
           const activeBranch = node.branch === 'general' || state.careerBranch === 'general' || state.careerBranch === node.branch;
