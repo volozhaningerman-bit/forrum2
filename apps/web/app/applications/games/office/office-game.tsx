@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   formatMoney,
   getCompanyStars,
@@ -41,7 +41,6 @@ import {
 import {
   getV6BuildBonuses,
   initialV6State,
-  v6Archetypes,
   v6Bosses,
   v6CategoryMeta,
   v6Companies,
@@ -1291,7 +1290,7 @@ function OfficeDevelopmentHeader({
   title: string;
   description: string;
   onBack: () => void;
-  aside?: React.ReactNode;
+  aside?: ReactNode;
 }) {
   return (
     <header className="office-v67-dev-head">
