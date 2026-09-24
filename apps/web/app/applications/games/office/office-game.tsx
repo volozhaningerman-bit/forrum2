@@ -1176,12 +1176,51 @@ export function OfficeGame() {
               onFight={handleBoss}
               onBack={() => setActiveView('home')}
             />
-          ) : (
+          ) : activeView === 'events' ? (
+            <OfficeEventsView
+              snapshot={snapshot}
+              story={story}
+              onTasks={() => setActiveView('tasks')}
+              onBack={() => setActiveView('home')}
+            />
+          ) : activeView === 'character' ? (
             <V6CharacterView
               state={v6}
               snapshot={snapshot}
               onGender={selectGender}
               onArchetype={selectArchetype}
+              onBack={() => setActiveView('home')}
+            />
+          ) : activeView === 'stats' ? (
+            <OfficeCharacteristicsView
+              snapshot={snapshot}
+              buildBonuses={buildBonuses}
+              onUpgrade={upgradePrimarySkill}
+              onBack={() => setActiveView('home')}
+            />
+          ) : activeView === 'skills' ? (
+            <OfficeSkillsView
+              snapshot={snapshot}
+              buildBonuses={buildBonuses}
+              onBack={() => setActiveView('home')}
+            />
+          ) : activeView === 'talents' ? (
+            <OfficeTalentsView
+              snapshot={snapshot}
+              v6={v6}
+              onCareer={() => setActiveView('career')}
+              onBack={() => setActiveView('home')}
+            />
+          ) : activeView === 'inventory' ? (
+            <OfficeInventoryView
+              v6={v6}
+              onBack={() => setActiveView('home')}
+            />
+          ) : (
+            <OfficeAchievementsView
+              snapshot={snapshot}
+              story={story}
+              v6={v6}
               onBack={() => setActiveView('home')}
             />
           )}
@@ -1239,6 +1278,398 @@ export function OfficeGame() {
   );
 }
 
+
+
+function OfficeDevelopmentHeader({
+  eyebrow,
+  title,
+  description,
+  onBack,
+  aside,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  onBack: () => void;
+  aside?: React.ReactNode;
+}) {
+  return (
+    <header className="office-v67-dev-head">
+      <div>
+        <small>{eyebrow}</small>
+        <h2>{title}</h2>
+        <p>{description}</p>
+      </div>
+      <div className="office-v67-dev-head-actions">
+        {aside}
+        <button type="button" onClick={onBack}>← В офис</button>
+      </div>
+    </header>
+  );
+}
+
+function OfficeCharacteristicsView({
+  snapshot,
+  buildBonuses,
+  onUpgrade,
+  onBack,
+}: {
+  snapshot: OfficeSnapshot;
+  buildBonuses: ReturnType<typeof getV6BuildBonuses>;
+  onUpgrade: (skill: OfficeSkillKey) => void;
+  onBack: () => void;
+}) {
+  const primary = [
+    { key: 'competence' as const, icon: 'competence', name: 'Компетентность', text: 'Сложные задачи, обучение и логический урон.', bonus: buildBonuses.competence ?? 0 },
+    { key: 'communication' as const, icon: 'communication', name: 'Коммуникация', text: 'Согласования, коллеги и социальный урон.', bonus: buildBonuses.communication ?? 0 },
+    { key: 'drive' as const, icon: 'drive', name: 'Напор', text: 'Давление, продажи и авторитетные ответы.', bonus: buildBonuses.drive ?? 0 },
+  ];
+
+  const derived = [
+    ['productivity', 'Продуктивность', buildBonuses.productivity ?? 0, 'Сколько пользы приносит обычная работа.'],
+    ['charisma', 'Харизма', buildBonuses.charisma ?? 0, 'Сила первого впечатления и социальных решений.'],
+    ['authority', 'Авторитет', buildBonuses.authority ?? 0, 'Вес слова в переговорах и управлении.'],
+    ['stressResist', 'Стрессоустойчивость', buildBonuses.stressResist ?? 0, 'Снижает негативный эффект тяжёлых событий.'],
+    ['logicDamage', 'Логический урон', buildBonuses.logicDamage ?? 0, 'Урон боссам через аргументы и экспертизу.'],
+    ['socialDamage', 'Социальный урон', buildBonuses.socialDamage ?? 0, 'Урон боссам через коммуникацию и связи.'],
+    ['pressureDamage', 'Урон напором', buildBonuses.pressureDamage ?? 0, 'Урон боссам через давление и уверенность.'],
+    ['incomeBonus', 'Доход', buildBonuses.incomeBonus ?? 0, 'Дополнительная прибыль от рабочих действий.'],
+  ] as const;
+
+  return (
+    <section className="office-v67-dev-page office-v67-characteristics">
+      <OfficeDevelopmentHeader
+        eyebrow="Развитие персонажа"
+        title="Характеристики"
+        description="База прокачивается очками развития, зелёные значения приходят от одежды, техники, архетипа и рабочего места."
+        onBack={onBack}
+        aside={<div className="office-v67-point-bank"><span>Свободные очки</span><b>{snapshot.skillPoints}</b></div>}
+      />
+
+      <div className="office-v67-primary-grid">
+        {primary.map((stat) => (
+          <article key={stat.key}>
+            <div className="office-v67-primary-icon"><OfficeIcon name={stat.icon} /></div>
+            <div className="office-v67-primary-copy">
+              <small>Основная характеристика</small>
+              <h3>{stat.name}</h3>
+              <p>{stat.text}</p>
+              <div className="office-v67-stat-value">
+                <strong>{snapshot.skills[stat.key]}</strong>
+                {stat.bonus ? <em>+{stat.bonus} от билда</em> : <em>без бонусов</em>}
+              </div>
+            </div>
+            <button type="button" disabled={snapshot.skillPoints <= 0} onClick={() => onUpgrade(stat.key)}>
+              +1 <span>за очко</span>
+            </button>
+          </article>
+        ))}
+      </div>
+
+      <div className="office-v67-derived-wrap">
+        <header><div><small>Производные параметры</small><h3>Что даёт твой текущий билд</h3></div><span>Эти значения меняются вместе с предметами и веткой развития</span></header>
+        <div className="office-v67-derived-grid">
+          {derived.map(([key, label, value, hint]) => (
+            <article key={key}>
+              <div><span>{label}</span><b>{value > 0 ? '+' : ''}{value}{key === 'incomeBonus' ? '%' : ''}</b></div>
+              <p>{hint}</p>
+              <i><em style={{ width: String(Math.min(100, Math.max(8, Number(value) * 9))) + '%' }} /></i>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function OfficeSkillsView({
+  snapshot,
+  buildBonuses,
+  onBack,
+}: {
+  snapshot: OfficeSnapshot;
+  buildBonuses: ReturnType<typeof getV6BuildBonuses>;
+  onBack: () => void;
+}) {
+  const skills = [
+    ['Excel без паники', 'work', snapshot.skills.competence, buildBonuses.productivity ?? 0, 'Работа', 'Быстрее закрывает обычные поручения.'],
+    ['Аргументация', 'competence', snapshot.skills.competence, buildBonuses.logicDamage ?? 0, 'Боссы', 'Усиливает логические ответы на испытаниях.'],
+    ['Созвоны без боли', 'communication', snapshot.skills.communication, buildBonuses.socialDamage ?? 0, 'Коллеги', 'Повышает силу социальных решений.'],
+    ['Офисная дипломатия', 'approve', snapshot.skills.communication, buildBonuses.reputation ?? 0, 'Репутация', 'Помогает выходить из конфликтов с выгодой.'],
+    ['Уверенная подача', 'drive', snapshot.skills.drive, buildBonuses.pressureDamage ?? 0, 'Напор', 'Усиливает давление и переговоры о выгоде.'],
+    ['Личная эффективность', 'energy', snapshot.level, buildBonuses.energyRecovery ?? 0, 'Энергия', 'Связывает уровень, комфорт и восстановление энергии.'],
+  ] as const;
+
+  return (
+    <section className="office-v67-dev-page office-v67-skills">
+      <OfficeDevelopmentHeader
+        eyebrow="Развитие персонажа"
+        title="Навыки"
+        description="Навыки — это не ещё одна валюта. Они показывают, во что превращаются твои характеристики и предметы в реальных офисных ситуациях."
+        onBack={onBack}
+      />
+
+      <div className="office-v67-skill-board">
+        {skills.map(([name, icon, base, bonus, use, description], index) => {
+          const level = Math.max(1, Math.floor(Number(base) / 2) + Math.floor(Number(bonus) / 2));
+          return (
+            <article key={name} className={index < 3 ? 'core' : ''}>
+              <div className="office-v67-skill-badge"><OfficeIcon name={icon} /><span>{String(level).padStart(2, '0')}</span></div>
+              <div>
+                <small>{use}</small>
+                <h3>{name}</h3>
+                <p>{description}</p>
+                <div className="office-v67-skill-source">
+                  <span>База {base}</span><span>Билд +{bonus}</span>
+                </div>
+              </div>
+              <i><em style={{ width: String(Math.min(100, level * 9)) + '%' }} /></i>
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="office-v67-skill-note">
+        <OfficeIcon name="training" />
+        <div><strong>Навыки растут через действия</strong><span>Задачи дают практику, характеристики задают основу, а предметы и таланты усиливают конкретный стиль.</span></div>
+      </div>
+    </section>
+  );
+}
+
+function OfficeTalentsView({
+  snapshot,
+  v6,
+  onCareer,
+  onBack,
+}: {
+  snapshot: OfficeSnapshot;
+  v6: V6State;
+  onCareer: () => void;
+  onBack: () => void;
+}) {
+  const branches = [
+    {
+      id: 'expert' as const,
+      title: 'Эксперт',
+      icon: 'competence',
+      description: 'Техника, сложные задачи и логический урон.',
+      talents: [
+        ['Чистая логика', 3, '+5% логический урон'],
+        ['Рабочая станция', 6, 'техника даёт больше продуктивности'],
+        ['Глубокая экспертиза', 10, '+1 компетентность от премиум-техники'],
+      ],
+    },
+    {
+      id: 'management' as const,
+      title: 'Управление',
+      icon: 'communication',
+      description: 'Авторитет, люди и статус рабочего места.',
+      talents: [
+        ['Собрать созвон', 3, '+5% социальный урон'],
+        ['Вес слова', 6, 'одежда сильнее повышает репутацию'],
+        ['Руководительская аура', 10, '+2 авторитет в босс-файтах'],
+      ],
+    },
+    {
+      id: 'sales' as const,
+      title: 'Продажи',
+      icon: 'drive',
+      description: 'Напор, сделки, доход и имиджевые предметы.',
+      talents: [
+        ['Закрыть сделку', 3, '+5% доход с работы'],
+        ['Дорогой вид', 6, 'аксессуары дают больше харизмы'],
+        ['Дожать', 10, '+2 урон напором против боссов'],
+      ],
+    },
+  ];
+
+  return (
+    <section className="office-v67-dev-page office-v67-talents">
+      <OfficeDevelopmentHeader
+        eyebrow="Развитие персонажа"
+        title="Таланты"
+        description="Таланты связывают карьерную ветку с боем, мебелью и экономикой. Здесь видно, ради чего имеет смысл идти по выбранному пути."
+        onBack={onBack}
+        aside={<button className="office-v67-head-link" type="button" onClick={onCareer}>Открыть дерево карьеры →</button>}
+      />
+
+      <div className="office-v67-talent-columns">
+        {branches.map((branch) => {
+          const active = v6.careerBranch === branch.id;
+          return (
+            <article key={branch.id} className={active ? 'active' : ''} data-branch={branch.id}>
+              <header>
+                <OfficeIcon name={branch.icon} />
+                <div><small>{active ? 'Твоя ветка' : 'Альтернативная ветка'}</small><h3>{branch.title}</h3><p>{branch.description}</p></div>
+              </header>
+              <div className="office-v67-talent-list">
+                {branch.talents.map(([name, level, effect], index) => {
+                  const unlocked = active && snapshot.level >= Number(level);
+                  return (
+                    <div key={name} className={unlocked ? 'unlocked' : ''}>
+                      <span>{index + 1}</span>
+                      <div><b>{name}</b><small>{effect}</small></div>
+                      <em>{unlocked ? 'Открыто' : 'ур. ' + level}</em>
+                    </div>
+                  );
+                })}
+              </div>
+              <footer>{active ? 'Эта ветка усиливает текущий билд' : 'Выбор ветки делается в карьере'}</footer>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function OfficeInventoryView({
+  v6,
+  onBack,
+}: {
+  v6: V6State;
+  onBack: () => void;
+}) {
+  const categories = Object.entries(v6CategoryMeta) as Array<[V6ItemCategory, (typeof v6CategoryMeta)[V6ItemCategory]]>;
+
+  return (
+    <section className="office-v67-dev-page office-v67-inventory">
+      <OfficeDevelopmentHeader
+        eyebrow="Развитие персонажа"
+        title="Инвентарь"
+        description="Только то, что уже принадлежит тебе. Покупка новых вещей остаётся в самом офисе — кликом по предметам комнаты."
+        onBack={onBack}
+        aside={<div className="office-v67-owned-counter"><span>Куплено</span><b>{v6.ownedItemIds.length}</b></div>}
+      />
+
+      <div className="office-v67-inventory-grid">
+        {categories.map(([category, meta]) => {
+          const owned = v6Items.filter((item) => item.category === category && v6.ownedItemIds.includes(item.id));
+          const equippedId = v6.equipped[category];
+          const equipped = v6Items.find((item) => item.id === equippedId);
+          return (
+            <article key={category}>
+              <header><OfficeIcon name={meta.icon} /><div><small>{meta.label}</small><strong>{equipped?.name ?? 'Не установлено'}</strong></div><b>{owned.length}</b></header>
+              <p>{meta.hint}</p>
+              <div className="office-v67-inventory-items">
+                {owned.slice(0, 4).map((item) => (
+                  <span key={item.id} className={item.id === equippedId ? 'equipped' : ''}>
+                    {item.name}<small>{item.id === equippedId ? 'установлено' : item.rarity}</small>
+                  </span>
+                ))}
+                {owned.length === 0 ? <em>Пока пусто</em> : null}
+                {owned.length > 4 ? <em>+ ещё {owned.length - 4}</em> : null}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function OfficeAchievementsView({
+  snapshot,
+  story,
+  v6,
+  onBack,
+}: {
+  snapshot: OfficeSnapshot;
+  story: OfficeStoryState;
+  v6: V6State;
+  onBack: () => void;
+}) {
+  const achievements = [
+    ['Первый день', 'task', story.completedEvents.length >= 3, story.completedEvents.length + '/3', 'Пройти три первых офисных события.'],
+    ['Новая строчка в резюме', 'career', snapshot.role !== 'Стажёр', snapshot.role, 'Получить первое повышение.'],
+    ['Свой человек', 'company', snapshot.reputation >= 30, snapshot.reputation + '/30', 'Набрать 30 репутации.'],
+    ['Сергей Петрович', 'achievement', v6.bossResolved, v6.bossResolved ? 'пройден' : 'впереди', 'Пройти первое испытание руководителя.'],
+    ['Обживаюсь', 'inventory', v6.ownedItemIds.length >= 10, v6.ownedItemIds.length + '/10', 'Собрать десять предметов.'],
+    ['Не новичок', 'rating', snapshot.level >= 5, 'ур. ' + snapshot.level, 'Достичь пятого уровня.'],
+  ] as const;
+
+  const completed = achievements.filter(([, , done]) => done).length;
+
+  return (
+    <section className="office-v67-dev-page office-v67-achievements">
+      <OfficeDevelopmentHeader
+        eyebrow="Развитие персонажа"
+        title="Достижения"
+        description="Не отдельная работа, а след твоего прогресса: задачи, карьера, компании, боссы и коллекция."
+        onBack={onBack}
+        aside={<div className="office-v67-owned-counter"><span>Получено</span><b>{completed}/{achievements.length}</b></div>}
+      />
+
+      <div className="office-v67-achievement-grid">
+        {achievements.map(([title, icon, done, progress, description]) => (
+          <article key={title} className={done ? 'done' : ''}>
+            <div className="office-v67-achievement-icon"><OfficeIcon name={icon} /></div>
+            <small>{done ? 'Получено' : 'В процессе'}</small>
+            <h3>{title}</h3>
+            <p>{description}</p>
+            <footer><span>{progress}</span><b>{done ? '✓' : '...'}</b></footer>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function OfficeEventsView({
+  snapshot,
+  story,
+  onTasks,
+  onBack,
+}: {
+  snapshot: OfficeSnapshot;
+  story: OfficeStoryState;
+  onTasks: () => void;
+  onBack: () => void;
+}) {
+  const firstDayProgress = Math.min(3, story.completedEvents.length);
+
+  return (
+    <section className="office-v67-dev-page office-v67-events">
+      <OfficeDevelopmentHeader
+        eyebrow="Жизнь офиса"
+        title="События"
+        description="Здесь собирается то, что происходит вокруг работы: новости, ежедневные цели и короткие офисные истории."
+        onBack={onBack}
+        aside={<button className="office-v67-head-link" type="button" onClick={onTasks}>Перейти к задачам →</button>}
+      />
+
+      <div className="office-v67-events-layout">
+        <section className="office-v67-event-feed">
+          <header><small>Лента офиса</small><h3>Сегодня</h3></header>
+          {officeNews.map(([title, time, color], index) => (
+            <article key={title}>
+              <i className={'dot dot-' + color} />
+              <div><small>{time}</small><strong>{title}</strong><p>{index === 0 ? 'В компании меняется расклад сил. Такие события позже будут влиять на доступные задачи и карьеру.' : index === 1 ? 'Небольшое событие для мотивации и общения с коллегами.' : 'Комфорт офиса снова немного выше.'}</p></div>
+              <span>{index === 0 ? 'Компания' : index === 1 ? 'Коллеги' : 'Офис'}</span>
+            </article>
+          ))}
+        </section>
+
+        <aside className="office-v67-event-goals">
+          <article className={snapshot.daily.claimed ? 'done' : ''}>
+            <small>Ежедневная цель</small>
+            <h3>{snapshot.daily.title}</h3>
+            <div><i><em style={{ width: String(Math.min(100, snapshot.daily.progress / snapshot.daily.target * 100)) + '%' }} /></i><b>{snapshot.daily.progress}/{snapshot.daily.target}</b></div>
+            <p>Награда: {snapshot.daily.moneyReward} ₽ · мотивация +{snapshot.daily.motivationReward}</p>
+          </article>
+          <article className={firstDayProgress >= 3 ? 'done' : ''}>
+            <small>История</small>
+            <h3>Первый день</h3>
+            <div><i><em style={{ width: String(firstDayProgress / 3 * 100) + '%' }} /></i><b>{firstDayProgress}/3</b></div>
+            <p>После первых историй офис переходит в обычный игровой цикл.</p>
+          </article>
+          <button type="button" onClick={onTasks}>Открыть задачи</button>
+        </aside>
+      </div>
+    </section>
+  );
+}
 
 function OfficeTasksView(props: {
   snapshot: OfficeSnapshot;
