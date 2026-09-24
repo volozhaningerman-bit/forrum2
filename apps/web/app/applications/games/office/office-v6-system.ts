@@ -447,10 +447,19 @@ export function getBossDamage(
 ) {
   const base =
     kind === 'logic'
-      ? 8 + input.skills.competence * 2 + (input.bonuses.logicDamage ?? 0)
+      ? 8 +
+        (input.skills.competence + (input.bonuses.competence ?? 0)) * 2 +
+        (input.bonuses.logicDamage ?? 0) +
+        Math.floor((input.bonuses.productivity ?? 0) / 3)
       : kind === 'social'
-        ? 8 + input.skills.communication * 2 + (input.bonuses.socialDamage ?? 0)
-        : 8 + input.skills.drive * 2 + (input.bonuses.pressureDamage ?? 0);
+        ? 8 +
+          (input.skills.communication + (input.bonuses.communication ?? 0)) * 2 +
+          (input.bonuses.socialDamage ?? 0) +
+          Math.floor((input.bonuses.charisma ?? 0) / 2)
+        : 8 +
+          (input.skills.drive + (input.bonuses.drive ?? 0)) * 2 +
+          (input.bonuses.pressureDamage ?? 0) +
+          Math.floor((input.bonuses.authority ?? 0) / 2);
 
   const branchBoost =
     (kind === 'logic' && input.branch === 'expert') ||
