@@ -387,6 +387,7 @@ export function OfficeGame() {
   };
 
   const handleNavigation = (label: string) => {
+    setDrawerCategory(null);
     if (label === 'Главная') {
       setActiveView('home');
       return;
@@ -395,9 +396,22 @@ export function OfficeGame() {
       setActiveView('career');
       return;
     }
+    if (label === 'Компания') {
+      setActiveView('company');
+      return;
+    }
+    if (label === 'Персонаж') {
+      setActiveView('character');
+      return;
+    }
+    if (label === 'Инвентарь' || label === 'Магазин') {
+      setActiveView('home');
+      setDrawerCategory('pc');
+      return;
+    }
     setActiveView('home');
-    setNotice(`Раздел «${label}» уже заложен в структуру и будет следующим контентным экраном.`);
-    showFeedback(`${label}: скоро`, 'xp');
+    setNotice(`Раздел «${label}» будет добавлен после базовых RPG-систем.`);
+    showFeedback(`${label}: в разработке`, 'xp');
   };
 
   const triggerAction = (id: (typeof officeActions)[number]['id']) => {
@@ -427,7 +441,13 @@ export function OfficeGame() {
         return {
           ...current,
           energy: Math.max(0, current.energy - 1),
-          money: current.money + 75 + (completesNow ? current.daily.moneyReward : 0),
+          money:
+            current.money +
+            Math.round(
+              (75 + (buildBonuses.productivity ?? 0) * 3) *
+                (1 + (buildBonuses.incomeBonus ?? 0) / 100),
+            ) +
+            (completesNow ? current.daily.moneyReward : 0),
           motivation: Math.min(
             100,
             current.motivation + (completesNow ? current.daily.motivationReward : 0),
@@ -503,39 +523,127 @@ export function OfficeGame() {
       return;
     }
 
-    if (firstAssignmentDone || story.bossResolved) {
-      setNotice('Первое поручение уже выполнено. Теперь готовь требования к повышению.');
+    if (firstAssignmentDone || v6.bossResolved) {
+      setNotice('Сергей Петрович уже пройден. Твой билд готовится к следующему боссу.');
       return;
     }
 
-    setModal({ type: 'boss', event: bossEvent });
+    setBossBattleOpen(true);
   };
 
-  const upgradeSelectedItem = () => {
-    const item = selectedItem;
-    if (!item) return;
-
-    if (snapshot.money < item.upgradePrice) {
-      setNotice(`Не хватает денег. Нужно ещё ${formatMoney(item.upgradePrice - snapshot.money)} ₽.`);
+  const buyV6Item = (item: V6Item) => {
+    const lockReason = v6ItemLockReason(item, {
+      level: snapshot.level,
+      reputation: snapshot.reputation,
+      state: v6,
+    });
+    if (lockReason) {
+      showFeedback(lockReason, 'warning');
+      return;
+    }
+    if (v6.ownedItemIds.includes(item.id)) {
+      equipV6Item(item);
+      return;
+    }
+    if (snapshot.money < item.price) {
       showFeedback('Не хватает денег', 'warning');
+      setNotice(`Для покупки «${item.name}» не хватает ${formatMoney(item.price - snapshot.money)} ₽.`);
       return;
     }
 
+    setSnapshot((current) => ({ ...current, money: current.money - item.price }));
+    setV6((current) => ({
+      ...current,
+      ownedItemIds: [...current.ownedItemIds, item.id],
+      equipped: { ...current.equipped, [item.category]: item.id },
+    }));
+    showFeedback(`Куплено: ${item.name}`, 'money');
+    setNotice(`${item.name} куплен и сразу установлен.`);
+  };
+
+  const equipV6Item = (item: V6Item) => {
+    if (!v6.ownedItemIds.includes(item.id)) return;
+    setV6((current) => ({
+      ...current,
+      equipped: { ...current.equipped, [item.category]: item.id },
+    }));
+    showFeedback(`Установлено: ${item.name}`, 'xp');
+    setNotice(`${item.name} теперь влияет на твой билд.`);
+  };
+
+  const selectGender = (gender: V6Gender) => {
+    setV6((current) => ({ ...current, gender }));
+    setNotice('Профиль персонажа обновлён. Общая сила остаётся сбалансированной, меняются синергии.');
+  };
+
+  const selectArchetype = (archetypeId: V6ArchetypeId) => {
+    setV6((current) => ({ ...current, archetypeId }));
+    setNotice('Архетип изменён. Новый стиль уже влияет на экипировку и боссов.');
+  };
+
+  const selectCareerBranch = (careerBranch: V6CareerBranch) => {
+    setV6((current) => ({ ...current, careerBranch }));
+    showFeedback(`Ветка: ${careerBranch === 'expert' ? 'Эксперт' : careerBranch === 'management' ? 'Управление' : 'Продажи'}`, 'xp');
+  };
+
+  const switchCompany = (companyId: string) => {
+    const company = v6Companies.find((candidate) => candidate.id === companyId);
+    if (!company) return;
+    if (snapshot.level < company.minLevel || snapshot.reputation < company.minReputation) {
+      showFeedback('Компания пока недоступна', 'warning');
+      return;
+    }
+
+    const baseSalary = snapshot.role === 'Младший специалист' ? 50000 : snapshot.role === 'Стажёр' ? 35000 : snapshot.salary;
+    const salary = Math.round(baseSalary * company.salaryMultiplier / 1000) * 1000;
+    setV6((current) => ({ ...current, companyId }));
     setSnapshot((current) => ({
       ...current,
-      money: current.money - item.upgradePrice,
+      salary,
+      company: {
+        ...current.company,
+        name: company.name,
+        industry: company.industry,
+        description: company.description,
+        level: Math.min(5, v6Companies.findIndex((candidate) => candidate.id === companyId) + 1),
+      },
     }));
-    setWorkspace((items) =>
-      items.map((candidate) =>
-        candidate.key === item.key ? upgradeWorkspaceItem(candidate) : candidate,
-      ),
-    );
-    showFeedback(`−${formatMoney(item.upgradePrice)} ₽ · предмет улучшен`, 'xp');
-    setNotice(
-      item.level === 0
-        ? 'Первый аксессуар появился на столе. Рабочее место начинает становиться твоим.'
-        : `${item.item}: улучшение куплено. Рабочее место стало немного менее печальным.`,
-    );
+    showFeedback(`Новая компания: ${company.name}`, 'money');
+    setNotice(`Ты перешёл в ${company.name}. Офис и доступные предметы начинают меняться вместе с компанией.`);
+  };
+
+  const attackBoss = (kind: 'logic' | 'social' | 'pressure', expectedDamage: number) => {
+    if (snapshot.energy <= 0 || v6.bossResolved) {
+      showFeedback('Нет энергии', 'warning');
+      return;
+    }
+
+    const boss = v6Bosses[0];
+    const nextHp = Math.max(0, v6.bossHp - expectedDamage);
+    setSnapshot((current) => ({ ...current, energy: Math.max(0, current.energy - 1) }));
+    setV6((current) => ({ ...current, bossHp: nextHp }));
+    showFeedback(`${kind === 'logic' ? 'Логика' : kind === 'social' ? 'Переговоры' : 'Напор'} −${expectedDamage}`, 'social');
+
+    if (nextHp > 0) {
+      setNotice(`Сергей Петрович теряет терпение: осталось ${nextHp}.`);
+      return;
+    }
+
+    setV6((current) => ({ ...current, bossHp: 0, bossResolved: true }));
+    setSnapshot((current) => ({
+      ...current,
+      money: current.money + boss.rewardMoney,
+      reputation: Math.min(100, current.reputation + boss.rewardReputation),
+      firstAssignment: {
+        ...current.firstAssignment,
+        progress: current.firstAssignment.target,
+      },
+    }));
+    setStory((current) => ({ ...current, bossResolved: true, bossChoiceId: `v6-${kind}` }));
+    gainXp(boss.rewardXp);
+    setBossBattleOpen(false);
+    showFeedback('Босс пройден!', 'money');
+    setNotice('Сергей Петрович сдался перед твоим билдом. Первое поручение выполнено.');
   };
 
   const requestPromotion = () => {
@@ -564,7 +672,9 @@ export function OfficeGame() {
   const resetPrototype = () => {
     setSnapshot(initialOfficeSnapshot);
     setWorkspace(initialWorkspaceItems);
-    setSelectedSlot('pc');
+    setV6(initialV6State);
+    setDrawerCategory(null);
+    setBossBattleOpen(false);
     setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
     setEnergyNextAt(null);
     setStory(initialOfficeStoryState);
