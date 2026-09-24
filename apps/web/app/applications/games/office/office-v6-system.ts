@@ -20,6 +20,7 @@ export type V6BonusKey =
   | 'energyMax'
   | 'energyRecovery'
   | 'stressResist'
+  | 'motivation'
   | 'reputation'
   | 'competence'
   | 'communication'
@@ -364,6 +365,7 @@ export const v6BonusLabels: Record<V6BonusKey,string> = {
   energyMax:'Макс. энергия',
   energyRecovery:'Восстановление энергии',
   stressResist:'Устойчивость к стрессу',
+  motivation:'Мотивация',
   reputation:'Репутация',
   competence:'Компетентность',
   communication:'Коммуникация',
