@@ -208,16 +208,18 @@ try {
   await page.getByRole('button', { name: 'Увеличить дерево' }).click();
   const transformAfterZoom = await canvas.getAttribute('style');
   assert.notEqual(transformAfterZoom, transformBeforeZoom);
-  await page.screenshot({ path: output + '/career-v63-1600.png', fullPage: false });
+  await page.screenshot({ path: output + '/career-v67-1600.png', fullPage: false });
+  await page.getByRole('button', { name: /Вернуться в офис/ }).click();
 
-  // Companies are now a real screen.
+  // Companies are a world location, not a duplicated side-navigation item.
   await page.getByRole('button', { name: /Компания/ }).first().click();
   await page.getByRole('heading', { name: 'Меняй офис вместе с карьерой' }).waitFor();
   assert.equal(await page.locator('.office-v6-company-grid>article').count(), 6);
   assert.equal(await page.locator('.office-v64-company-scene').count(), 6);
   assert.equal(await page.locator('.office-v64-company-progress>div').count(), 6);
   assert.match(await page.locator('.office-v6-company-grid>article').first().textContent(), /Пассивный бонус/i);
-  await page.screenshot({ path: output + '/companies-v64-1600.png', fullPage: false });
+  await page.screenshot({ path: output + '/companies-v67-1600.png', fullPage: false });
+  await page.getByRole('button', { name: /Вернуться в офис/ }).click();
 
   // Complete first-day story from the dedicated Tasks screen.
   await page.getByRole('button', { name: /Задачи/ }).first().click();
