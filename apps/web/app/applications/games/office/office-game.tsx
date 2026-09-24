@@ -872,7 +872,7 @@ export function OfficeGame() {
                       }
                     }}
                   >
-                    <path d="M288 344H886V386H288Z M314 383H356V557H314Z M827 383H869V557H827Z" />
+                    <path d="M288 344H426V386H288Z M638 344H886V386H638Z M314 383H356V557H314Z M827 383H869V557H827Z" />
                   </g>
 
                   <g
