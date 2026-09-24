@@ -581,8 +581,14 @@ export function OfficeGame() {
   };
 
   const selectCareerBranch = (careerBranch: V6CareerBranch) => {
+    if (v6.careerBranch !== 'general' && v6.careerBranch !== careerBranch) {
+      showFeedback('Ветка уже выбрана', 'warning');
+      setNotice('Карьерная специализация уже выбрана. Смена ветки позже будет отдельной механикой переподготовки.');
+      return;
+    }
     setV6((current) => ({ ...current, careerBranch }));
     showFeedback(`Ветка: ${careerBranch === 'expert' ? 'Эксперт' : careerBranch === 'management' ? 'Управление' : 'Продажи'}`, 'xp');
+    setNotice('Карьерная ветка зафиксирована и теперь влияет на предметы и урон по боссам.');
   };
 
   const switchCompany = (companyId: string) => {
