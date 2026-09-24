@@ -102,7 +102,7 @@ export function OfficeGame() {
   const firstDayDone = story.completedEvents.length >= 3;
   const bossUnlocked = snapshot.level >= 3 || firstDayDone;
   const buildBonuses = getV6BuildBonuses(v6);
-  const effectiveMaxEnergy = effectiveMaxEnergy + (buildBonuses.energyMax ?? 0);
+  const effectiveMaxEnergy = snapshot.maxEnergy + (buildBonuses.energyMax ?? 0);
 
   useEffect(() => {
     try {
@@ -210,7 +210,7 @@ export function OfficeGame() {
       if (restored > 0) {
         setSnapshot((state) => ({
           ...state,
-          energy: Math.min(state.maxEnergy, state.energy + restored),
+          energy: Math.min(effectiveMaxEnergy, state.energy + restored),
         }));
       }
 
