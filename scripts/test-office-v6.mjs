@@ -84,7 +84,9 @@ try {
 
   await page.locator('.office-game').waitFor();
   assert.equal(await page.locator('.office-action').count(), 0);
-  assert.equal(await page.locator('.office-location-strip>button').count(), 6);
+  assert.equal(await page.locator('.office-location-strip>button').count(), 5);
+  assert.equal(await page.locator('.office-side-nav>button').count(), 6);
+  assert.equal(await page.locator('.office-profile-compact').count(), 1);
   assert.equal(await page.locator('.office-v6-equipment-slot').count(), 0);
   assert.equal(await page.locator('.office-v6-bottom').count(), 0);
   assert.equal(await page.locator('.office-equipment-modal').count(), 0);
@@ -143,8 +145,8 @@ try {
   assert.equal(await page.locator('.office-v65-task-grid').count(), 1);
   await page.getByRole('button', { name: '← Вернуться в офис' }).click();
 
-  // Character build screen.
-  await page.getByRole('button', { name: /Персонаж/ }).first().click();
+  // Player progression lives in the left rail; Profile is no longer duplicated in the world strip.
+  await page.getByRole('button', { name: /Профиль/ }).first().click();
   await page.getByRole('heading', { name: 'Собери свой офисный билд' }).waitFor();
   await page.locator('.office-v64-character-avatar').waitFor();
   assert((await page.locator('.office-v64-loadout-slot').count()) >= 4);
@@ -152,7 +154,39 @@ try {
   await page.getByRole('button', { name: /Женщина/ }).click();
   await page.getByRole('button', { name: /Коммуникатор/ }).click();
   assert.match(await page.locator('.office-v64-build-head').textContent(), /Коммуникатор/i);
-  await page.screenshot({ path: output + '/character-v64-1600.png', fullPage: false });
+  await page.screenshot({ path: output + '/character-v67-1600.png', fullPage: false });
+
+  // Characteristics have real spendable development points.
+  await page.getByRole('button', { name: /Характеристики/ }).first().click();
+  await page.getByRole('heading', { name: 'Характеристики' }).waitFor();
+  assert.equal(await page.locator('.office-v67-primary-grid>article').count(), 3);
+  assert.equal(await page.locator('.office-v67-derived-grid>article').count(), 8);
+  assert.match(await page.locator('.office-v67-point-bank').textContent(), /3/);
+  await page.getByRole('button', { name: /^\+1/ }).first().click();
+  assert.match(await page.locator('.office-v67-point-bank').textContent(), /2/);
+
+  await page.getByRole('button', { name: /Навыки/ }).first().click();
+  await page.getByRole('heading', { name: 'Навыки' }).waitFor();
+  assert.equal(await page.locator('.office-v67-skill-board>article').count(), 6);
+
+  await page.getByRole('button', { name: /Таланты/ }).first().click();
+  await page.getByRole('heading', { name: 'Таланты' }).waitFor();
+  assert.equal(await page.locator('.office-v67-talent-columns>article').count(), 3);
+
+  await page.getByRole('button', { name: /Инвентарь/ }).first().click();
+  await page.getByRole('heading', { name: 'Инвентарь' }).waitFor();
+  assert.equal(await page.locator('.office-v67-inventory-grid>article').count(), 8);
+
+  await page.getByRole('button', { name: /Достижения/ }).first().click();
+  await page.getByRole('heading', { name: 'Достижения' }).waitFor();
+  assert.equal(await page.locator('.office-v67-achievement-grid>article').count(), 6);
+  await page.getByRole('button', { name: '← В офис' }).click();
+
+  // Events replace the old bottom Store duplicate.
+  await page.getByRole('button', { name: /События/ }).first().click();
+  await page.getByRole('heading', { name: 'События' }).waitFor();
+  assert.equal(await page.locator('.office-v67-event-feed>article').count(), 3);
+  await page.getByRole('button', { name: '← В офис' }).click();
 
   // Expanded career tree.
   await page.getByRole('button', { name: /Карьера/ }).first().click();
@@ -174,16 +208,18 @@ try {
   await page.getByRole('button', { name: 'Увеличить дерево' }).click();
   const transformAfterZoom = await canvas.getAttribute('style');
   assert.notEqual(transformAfterZoom, transformBeforeZoom);
-  await page.screenshot({ path: output + '/career-v63-1600.png', fullPage: false });
+  await page.screenshot({ path: output + '/career-v67-1600.png', fullPage: false });
+  await page.getByRole('button', { name: /Вернуться в офис/ }).click();
 
-  // Companies are now a real screen.
+  // Companies are a world location, not a duplicated side-navigation item.
   await page.getByRole('button', { name: /Компания/ }).first().click();
   await page.getByRole('heading', { name: 'Меняй офис вместе с карьерой' }).waitFor();
   assert.equal(await page.locator('.office-v6-company-grid>article').count(), 6);
   assert.equal(await page.locator('.office-v64-company-scene').count(), 6);
   assert.equal(await page.locator('.office-v64-company-progress>div').count(), 6);
   assert.match(await page.locator('.office-v6-company-grid>article').first().textContent(), /Пассивный бонус/i);
-  await page.screenshot({ path: output + '/companies-v64-1600.png', fullPage: false });
+  await page.screenshot({ path: output + '/companies-v67-1600.png', fullPage: false });
+  await page.getByRole('button', { name: /Вернуться в офис/ }).click();
 
   // Complete first-day story from the dedicated Tasks screen.
   await page.getByRole('button', { name: /Задачи/ }).first().click();
@@ -194,6 +230,8 @@ try {
     await dialog.getByRole('button', { name: choiceName }).click();
     await dialog.waitFor({ state: 'detached' });
   }
+
+  await page.getByRole('button', { name: '← Вернуться в офис' }).click();
 
   // Bosses have their own navigation screen.
   await page.getByRole('button', { name: /Боссы/ }).first().click();
@@ -242,7 +280,7 @@ try {
   assert(persisted && persisted.includes('"v6"'));
   assert(persisted && persisted.includes('"gender":"female"'));
   assert.deepEqual(pageErrors, []);
-  console.log('Office v6.6: full-height room, popup equipment, tasks, career, companies, bosses and persistence passed');
+  console.log('Office v6.7: progression rail, compact profile, stats, skills, talents, inventory, achievements, events and world loop passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');

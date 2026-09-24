@@ -29,6 +29,7 @@ export type OfficeSnapshot = {
   stress: number;
   salary: number;
   role: string;
+  skillPoints: number;
   skills: Record<OfficeSkillKey, number>;
   daily: {
     title: string;
@@ -78,6 +79,7 @@ export const initialOfficeSnapshot: OfficeSnapshot = {
   stress: 20,
   salary: 35000,
   role: 'Стажёр',
+  skillPoints: 3,
   skills: {
     competence: 1,
     communication: 1,
@@ -185,15 +187,24 @@ export const initialWorkspaceItems: OfficeWorkspaceItem[] = [
   },
 ];
 
-export const officeNavigation: OfficeNavigationItem[] = [
-  { icon: 'home', label: 'Главная', hint: 'Текущий офис и интерактивное рабочее место.' },
-  { icon: 'task', label: 'Задачи', hint: 'Основной игровой цикл: трати энергию, выполняй поручения и получай награды.' },
-  { icon: 'career', label: 'Карьера', hint: 'Путь развития, должности и будущие профессии.' },
-  { icon: 'company', label: 'Компания', hint: 'Офисы, зарплата и переходы между работодателями.' },
-  { icon: 'achievement', label: 'Боссы', hint: 'Испытания руководителей и ключевые карьерные проверки.' },
-  { icon: 'character', label: 'Персонаж', hint: 'Билд, одежда, аксессуары и стиль развития.' },
-  { icon: 'shop', label: 'Магазин', hint: 'Покупай вещи через объекты в своём офисе.' },
+export const officeDevelopmentNavigation: OfficeNavigationItem[] = [
+  { icon: 'character', label: 'Профиль', hint: 'Персонаж, архетип, экипировка и общий офисный билд.' },
+  { icon: 'rating', label: 'Характеристики', hint: 'Основные параметры, свободные очки и бонусы от предметов.' },
+  { icon: 'training', label: 'Навыки', hint: 'Рабочие специализации и производные способности персонажа.' },
+  { icon: 'career', label: 'Таланты', hint: 'Пассивные эффекты и синергии выбранной карьерной ветки.' },
+  { icon: 'inventory', label: 'Инвентарь', hint: 'Все купленные предметы и то, что сейчас установлено.' },
+  { icon: 'achievement', label: 'Достижения', hint: 'Прогресс, редкие события и важные карьерные отметки.' },
 ];
+
+export const officeLocationNavigation: OfficeNavigationItem[] = [
+  { icon: 'task', label: 'Задачи', hint: 'Рабочий стол: задания, энергия и ежедневный прогресс.' },
+  { icon: 'career', label: 'Карьера', hint: 'Должности, развилки и будущие профессии.' },
+  { icon: 'company', label: 'Компания', hint: 'Работодатели, зарплата и новые офисы.' },
+  { icon: 'achievement', label: 'Боссы', hint: 'Ключевые карьерные испытания и руководители.' },
+  { icon: 'mail', label: 'События', hint: 'Новости, случайные ситуации и жизнь офиса.' },
+];
+
+export const officeNavigation = officeDevelopmentNavigation;
 
 export const officeActions: OfficeActionCard[] = [
   { id: 'work', icon: 'work', title: 'Работать', text: 'Выполнять задачи', tone: 'green' },
