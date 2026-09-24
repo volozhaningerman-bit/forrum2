@@ -1205,6 +1205,167 @@ export function OfficeGame() {
   );
 }
 
+
+function OfficeTasksView(props: {
+  snapshot: OfficeSnapshot;
+  story: OfficeStoryState;
+  buildBonuses: ReturnType<typeof getV6BuildBonuses>;
+  activeAction: string | null;
+  onAction: (id: (typeof officeActions)[number]['id']) => void;
+  onBack: () => void;
+}) {
+  const { snapshot, story, buildBonuses, activeAction, onAction, onBack } = props;
+  const taskMeta = {
+    work: {
+      cost: 1,
+      reward: 'Деньги · XP',
+      stat: 'Продуктивность +' + String(buildBonuses.productivity ?? 0),
+      description: 'Письма, таблицы, баги и обычные поручения. Основной источник денег и прогресса дня.',
+    },
+    approve: {
+      cost: 1,
+      reward: 'Репутация +2 · XP',
+      stat: 'Коммуникация ' + String(snapshot.skills.communication),
+      description: 'Согласуй документ или договорись с коллегами. Социальный билд и аксессуары помогают.',
+    },
+    learn: {
+      cost: 2,
+      reward: 'Компетентность +1 · XP',
+      stat: 'Обучение +' + String(buildBonuses.trainingBonus ?? 0),
+      description: 'Разбирайся в инструментах и прокачивай техническую часть персонажа.',
+    },
+    prank: {
+      cost: 0,
+      reward: 'Мотивация / риск',
+      stat: 'Стресс-защита +' + String(buildBonuses.stressResist ?? 0),
+      description: 'Офисные шалости и короткие события. Иногда помогают выдохнуть, иногда создают проблемы.',
+    },
+  } satisfies Record<(typeof officeActions)[number]['id'], { cost: number; reward: string; stat: string; description: string }>;
+
+  return (
+    <section className="office-v65-screen office-v65-tasks">
+      <header className="office-v65-screen-head">
+        <div>
+          <small>Рабочий стол</small>
+          <h2>Задачи</h2>
+          <p>Энергия тратится только здесь. Экипировка и билд меняют награды и эффективность.</p>
+        </div>
+        <button type="button" onClick={onBack}>← Вернуться в офис</button>
+      </header>
+
+      <div className="office-v65-task-summary">
+        <div><OfficeIcon name="energy" /><span>Энергия</span><b>{snapshot.energy}/{snapshot.maxEnergy}</b></div>
+        <div><OfficeIcon name="task" /><span>Первый день</span><b>{story.completedEvents.length}/3</b></div>
+        <div><OfficeIcon name="cash" /><span>Деньги</span><b>{formatMoney(snapshot.money)} ₽</b></div>
+        <div><OfficeIcon name="reputation" /><span>Репутация</span><b>{snapshot.reputation}</b></div>
+      </div>
+
+      <div className="office-v65-task-grid">
+        {officeActions.map((task) => {
+          const meta = taskMeta[task.id];
+          const blocked = activeAction !== null || snapshot.energy < meta.cost;
+          return (
+            <article key={task.id} className={'office-v65-task-card tone-' + task.tone}>
+              <div className="office-v65-task-icon"><OfficeIcon name={task.icon} /></div>
+              <div className="office-v65-task-copy">
+                <small>{task.id === 'work' ? 'Основная задача' : task.id === 'learn' ? 'Развитие' : task.id === 'approve' ? 'Коммуникация' : 'Событие'}</small>
+                <h3>{task.title}</h3>
+                <p>{meta.description}</p>
+                <div className="office-v65-task-tags"><span>{meta.stat}</span><span>{meta.reward}</span></div>
+              </div>
+              <div className="office-v65-task-action">
+                <div><span>Стоимость</span><b>{meta.cost ? '⚡ ' + String(meta.cost) : 'Без энергии'}</b></div>
+                <button type="button" disabled={blocked} onClick={() => onAction(task.id)}>
+                  {blocked && meta.cost ? 'Не хватает энергии' : task.id === 'prank' ? 'Открыть события' : 'Выполнить'}
+                </button>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="office-v65-task-foot">
+        <div><strong>Предметы участвуют в задачах</strong><span>ПК и монитор усиливают продуктивность, одежда и аксессуары — социальные задачи, кресло и свет помогают переживать стресс.</span></div>
+        <button type="button" onClick={onBack}>Проверить рабочее место →</button>
+      </div>
+    </section>
+  );
+}
+
+function OfficeBossesView(props: {
+  snapshot: OfficeSnapshot;
+  v6: V6State;
+  bossUnlocked: boolean;
+  firstAssignmentDone: boolean;
+  onFight: () => void;
+  onBack: () => void;
+}) {
+  const { snapshot, v6, bossUnlocked, firstAssignmentDone, onFight, onBack } = props;
+  const boss = v6Bosses[0];
+  const futureBosses = [
+    ['HR-партнёр', 'Испытание коммуникации', 'ур. 8'],
+    ['Директор направления', 'Испытание авторитета', 'ур. 15'],
+    ['Генеральный директор', 'Финальная защита результата', 'ур. 25'],
+  ] as const;
+
+  return (
+    <section className="office-v65-screen office-v65-bosses">
+      <header className="office-v65-screen-head">
+        <div>
+          <small>Испытания</small>
+          <h2>Боссы</h2>
+          <p>Руководители проверяют разные части билда. Карьера и экипировка определяют лучший способ пройти встречу.</p>
+        </div>
+        <button type="button" onClick={onBack}>← Вернуться в офис</button>
+      </header>
+
+      <div className="office-v65-boss-layout">
+        <article className={'office-v65-current-boss ' + (firstAssignmentDone || v6.bossResolved ? 'is-complete' : '')}>
+          <div className="office-v65-boss-portrait">
+            <img src="/games/office/boss.svg" alt="" />
+            <span>{firstAssignmentDone || v6.bossResolved ? 'Пройден' : bossUnlocked ? 'Доступен' : 'Закрыт'}</span>
+          </div>
+
+          <div className="office-v65-boss-copy">
+            <small>Первое карьерное испытание</small>
+            <h3>{boss.name}</h3>
+            <p>{boss.title}. Он проверяет, умеешь ли ты не только работать, но и защищать результат.</p>
+
+            <div className="office-v65-boss-hp">
+              <div><span>Терпение босса</span><b>{v6.bossHp}/{boss.maxHp}</b></div>
+              <i><em style={{ width: String(Math.max(0, Math.min(100, v6.bossHp / boss.maxHp * 100))) + '%' }} /></i>
+            </div>
+
+            <div className="office-v65-boss-styles">
+              <div><OfficeIcon name="competence" /><span>Логика</span><b>Компетентность</b></div>
+              <div><OfficeIcon name="communication" /><span>Переговоры</span><b>Коммуникация</b></div>
+              <div><OfficeIcon name="drive" /><span>Напор</span><b>Авторитет</b></div>
+            </div>
+
+            <div className="office-v65-boss-reward">
+              <span>Награда</span><b>+{formatMoney(boss.rewardMoney)} ₽</b><b>+{boss.rewardXp} XP</b><b>реп. +{boss.rewardReputation}</b>
+            </div>
+
+            <button type="button" disabled={!bossUnlocked || firstAssignmentDone || v6.bossResolved} onClick={onFight}>
+              {firstAssignmentDone || v6.bossResolved ? 'Испытание пройдено' : bossUnlocked ? 'Начать переговоры' : 'Откроется после 3 задач или на 3 уровне'}
+            </button>
+          </div>
+        </article>
+
+        <aside className="office-v65-boss-road">
+          <h3>Карьерные испытания</h3>
+          <div className="office-v65-boss-road-item current"><span>01</span><div><b>{boss.name}</b><small>Руководитель отдела</small></div><em>{snapshot.level >= 3 ? 'сейчас' : 'ур. 3'}</em></div>
+          {futureBosses.map(([name, description, requirement], index) => (
+            <div className="office-v65-boss-road-item locked" key={name}>
+              <span>{'0' + String(index + 2)}</span><div><b>{name}</b><small>{description}</small></div><em>{requirement}</em>
+            </div>
+          ))}
+        </aside>
+      </div>
+    </section>
+  );
+}
+
 function OfficeIcon({ name }: { name: string }) {
   return (
     <svg className="office-icon" aria-hidden="true">
