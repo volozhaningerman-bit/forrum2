@@ -6029,3 +6029,1236 @@ body:has(.office-page) .app-page-frame{
     display:none;
   }
 }
+
+
+/* ==========================================================================
+   OFFICE v6.7 — player progression navigation
+   Left = "my character", bottom = "where I go". No duplicated world navigation.
+   ========================================================================== */
+
+.office-body{
+  grid-template-columns:68px 132px minmax(0,1fr) 248px!important;
+}
+
+/* Left rail is now exclusively player progression. */
+.office-side-nav{
+  padding:5px 4px;
+  gap:4px;
+}
+
+.office-side-nav>button{
+  min-height:60px;
+  padding:4px 2px;
+  gap:2px;
+}
+
+.office-side-nav>button>.office-icon{
+  width:24px;
+  height:24px;
+}
+
+.office-side-nav>button>small{
+  max-width:58px;
+  font-size:7.5px;
+  line-height:1.05;
+  overflow-wrap:anywhere;
+  text-align:center;
+}
+
+.office-side-nav .office-bonus{
+  padding:7px 2px;
+}
+
+.office-side-nav .office-bonus>.office-icon{
+  width:25px;
+  height:25px;
+}
+
+.office-side-nav .office-bonus>span{
+  font-size:10px;
+}
+
+.office-side-nav .office-bonus>small{
+  font-size:7px;
+}
+
+/* Compact character card on the office screen; the detailed stats moved to their own section. */
+.office-profile.office-profile-compact{
+  min-width:0;
+  align-self:stretch;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  padding:7px;
+  overflow:hidden!important;
+  background:
+    radial-gradient(circle at 35% 1%,#ceb181 0,#b69767 34%,#95754b 100%);
+}
+
+.office-profile-compact .office-profile-open{
+  position:relative;
+  width:100%;
+  height:116px;
+  min-height:116px;
+  padding:0;
+  overflow:hidden;
+  border:2px solid #5c422b;
+  border-radius:0;
+  background:#665d53;
+  cursor:pointer;
+  box-shadow:inset 0 0 0 1px #d4b98b55,0 2px 4px #2b1c1080;
+}
+
+.office-profile-compact .office-profile-open img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.office-profile-compact .office-profile-open>span{
+  position:absolute;
+  left:5px;
+  right:5px;
+  bottom:5px;
+  padding:3px 4px;
+  border:1px solid #72502f;
+  background:#1a1511d9;
+  color:#e7c48d;
+  font-size:7px;
+  font-weight:800;
+  text-align:center;
+}
+
+.office-profile-compact .office-profile-name{
+  display:grid;
+  gap:1px;
+  padding:0 2px 7px;
+  border-bottom:1px solid #80623f;
+}
+
+.office-profile-compact .office-profile-name strong{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:18px;
+}
+
+.office-profile-compact .office-profile-name span{
+  font-size:9px;
+}
+
+.office-profile-compact .office-profile-name b{
+  margin:1px 0 0;
+  font-size:10px;
+}
+
+.office-profile-xp{
+  display:grid;
+  gap:4px;
+}
+
+.office-profile-xp>div{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:5px;
+  font-size:7px;
+}
+
+.office-profile-xp>div span{
+  color:#4f3d2c;
+  font-weight:700;
+}
+
+.office-profile-xp>div b{
+  font-size:7px;
+}
+
+.office-profile-xp>i{
+  display:block;
+  height:6px;
+  overflow:hidden;
+  border:1px solid #4d3c2d;
+  background:#3a332c;
+}
+
+.office-profile-xp>i>em{
+  display:block;
+  height:100%;
+  background:linear-gradient(90deg,#d87335,#e6ad55);
+}
+
+.office-profile-mini-stats{
+  display:grid;
+  gap:4px;
+}
+
+.office-profile-mini-stats>button{
+  min-width:0;
+  min-height:42px;
+  display:grid;
+  grid-template-columns:22px minmax(0,1fr);
+  grid-template-rows:auto auto;
+  align-items:center;
+  gap:0 5px;
+  padding:5px 6px;
+  border:1px solid #7f6647;
+  background:#b89968cc;
+  color:#211a14;
+  text-align:left;
+  cursor:pointer;
+}
+
+.office-profile-mini-stats .office-icon{
+  grid-row:1 / 3;
+  width:19px;
+  height:19px;
+  color:#4d3725;
+}
+
+.office-profile-mini-stats b{
+  font-size:11px;
+  line-height:1;
+}
+
+.office-profile-mini-stats small{
+  color:#5d4934;
+  font-size:6px;
+}
+
+.office-profile-points{
+  margin-top:auto;
+  min-height:48px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 34px;
+  align-items:center;
+  gap:5px;
+  padding:6px;
+  border:1px solid #6f4d2f;
+  background:linear-gradient(#3a2a1e,#281d16);
+  color:#e5c28f;
+  text-align:left;
+  cursor:pointer;
+}
+
+.office-profile-points span{
+  font-size:7px;
+  line-height:1.15;
+}
+
+.office-profile-points b{
+  display:grid;
+  place-items:center;
+  width:31px;
+  height:31px;
+  border:1px solid #aa6b32;
+  border-radius:50%;
+  background:#1a1714;
+  color:#f0b565;
+  font-size:13px;
+}
+
+/* The room gets the width freed by removing permanent stats from the beige column. */
+.office-center{
+  min-width:0;
+}
+
+.office-location-strip{
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+}
+
+/* ---------- shared player-development screens ---------- */
+.office-v67-dev-page{
+  grid-column:2 / -1;
+  min-width:0;
+  min-height:0;
+  height:100%;
+  display:grid;
+  gap:8px;
+  padding:11px 12px 12px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 76% 4%,rgba(176,116,55,.055),transparent 28%),
+    #17191a;
+}
+
+.office-v67-dev-head{
+  min-width:0;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  padding-bottom:9px;
+  border-bottom:1px solid #4c3e31;
+}
+
+.office-v67-dev-head>div:first-child{
+  min-width:0;
+}
+
+.office-v67-dev-head small{
+  color:#bb7f43;
+  font-size:7px;
+  text-transform:uppercase;
+  letter-spacing:.09em;
+}
+
+.office-v67-dev-head h2{
+  margin:2px 0;
+  color:#efd4aa;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:22px;
+  line-height:1;
+}
+
+.office-v67-dev-head p{
+  max-width:770px;
+  margin:0;
+  color:#837c72;
+  font-size:8px;
+  line-height:1.35;
+}
+
+.office-v67-dev-head-actions{
+  flex:0 0 auto;
+  display:flex;
+  align-items:stretch;
+  gap:6px;
+}
+
+.office-v67-dev-head-actions>button,
+.office-v67-head-link{
+  min-height:31px;
+  padding:0 10px;
+  border:1px solid #65482f;
+  background:#211d19;
+  color:#d4ad76;
+  font-size:7px;
+  cursor:pointer;
+}
+
+.office-v67-point-bank,
+.office-v67-owned-counter{
+  min-width:92px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:7px;
+  padding:5px 7px;
+  border:1px solid #76502f;
+  background:#2a211a;
+}
+
+.office-v67-point-bank span,
+.office-v67-owned-counter span{
+  color:#a38662;
+  font-size:6px;
+}
+
+.office-v67-point-bank b,
+.office-v67-owned-counter b{
+  color:#efb566;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:17px;
+}
+
+/* Characteristics */
+.office-v67-characteristics{
+  grid-template-rows:auto 176px minmax(0,1fr);
+}
+
+.office-v67-primary-grid{
+  min-height:0;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+}
+
+.office-v67-primary-grid>article{
+  min-width:0;
+  display:grid;
+  grid-template-columns:54px minmax(0,1fr) 54px;
+  gap:8px;
+  align-items:center;
+  padding:10px;
+  border:1px solid #574837;
+  background:
+    linear-gradient(120deg,rgba(210,141,67,.05),transparent 38%),
+    linear-gradient(#292b2c,#202223);
+  box-shadow:inset 0 1px rgba(255,255,255,.025);
+}
+
+.office-v67-primary-icon{
+  width:50px;
+  height:50px;
+  display:grid;
+  place-items:center;
+  border:1px solid #654d35;
+  background:#181a1b;
+}
+
+.office-v67-primary-icon .office-icon{
+  width:30px;
+  height:30px;
+  color:#cca56c;
+}
+
+.office-v67-primary-copy{
+  min-width:0;
+}
+
+.office-v67-primary-copy small{
+  color:#916b44;
+  font-size:5.8px;
+  text-transform:uppercase;
+}
+
+.office-v67-primary-copy h3{
+  margin:2px 0;
+  color:#e4cfaf;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:13px;
+}
+
+.office-v67-primary-copy p{
+  margin:0;
+  color:#827b72;
+  font-size:6.5px;
+  line-height:1.3;
+}
+
+.office-v67-stat-value{
+  display:flex;
+  align-items:end;
+  gap:6px;
+  margin-top:6px;
+}
+
+.office-v67-stat-value strong{
+  color:#f0b564;
+  font-size:20px;
+}
+
+.office-v67-stat-value em{
+  color:#8faa85;
+  font-size:6px;
+  font-style:normal;
+}
+
+.office-v67-primary-grid>article>button{
+  min-height:50px;
+  display:grid;
+  place-items:center;
+  align-content:center;
+  gap:1px;
+  border:1px solid #8e592e;
+  background:linear-gradient(#6f4226,#492b1c);
+  color:#f0c58b;
+  font-size:10px;
+  cursor:pointer;
+}
+
+.office-v67-primary-grid>article>button span{
+  font-size:5.5px;
+}
+
+.office-v67-primary-grid>article>button:disabled{
+  opacity:.36;
+  cursor:not-allowed;
+}
+
+.office-v67-derived-wrap{
+  min-height:0;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  gap:6px;
+  padding:8px;
+  border:1px solid #473f35;
+  background:#1b1d1e;
+}
+
+.office-v67-derived-wrap>header{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:9px;
+}
+
+.office-v67-derived-wrap>header small{
+  color:#8e6942;
+  font-size:6px;
+  text-transform:uppercase;
+}
+
+.office-v67-derived-wrap>header h3{
+  margin:1px 0 0;
+  color:#d8bd93;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:12px;
+}
+
+.office-v67-derived-wrap>header>span{
+  color:#706b64;
+  font-size:6px;
+}
+
+.office-v67-derived-grid{
+  min-height:0;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  grid-template-rows:repeat(2,1fr);
+  gap:5px;
+}
+
+.office-v67-derived-grid>article{
+  min-width:0;
+  min-height:0;
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+  gap:4px;
+  padding:7px;
+  border:1px solid #3e403b;
+  background:#202223;
+}
+
+.office-v67-derived-grid>article>div{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:5px;
+}
+
+.office-v67-derived-grid span{
+  color:#aaa094;
+  font-size:7px;
+}
+
+.office-v67-derived-grid b{
+  color:#9fc293;
+  font-size:10px;
+}
+
+.office-v67-derived-grid p{
+  margin:0;
+  color:#716c65;
+  font-size:6px;
+  line-height:1.25;
+}
+
+.office-v67-derived-grid>article>i{
+  height:4px;
+  overflow:hidden;
+  background:#131516;
+}
+
+.office-v67-derived-grid>article>i>em{
+  display:block;
+  height:100%;
+  background:linear-gradient(90deg,#577a53,#91a867);
+}
+
+/* Skills */
+.office-v67-skills{
+  grid-template-rows:auto minmax(0,1fr) auto;
+}
+
+.office-v67-skill-board{
+  min-height:0;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(2,1fr);
+  gap:7px;
+}
+
+.office-v67-skill-board>article{
+  position:relative;
+  min-width:0;
+  min-height:0;
+  display:grid;
+  grid-template-columns:63px minmax(0,1fr);
+  grid-template-rows:1fr 5px;
+  gap:8px;
+  padding:10px;
+  border:1px solid #45423d;
+  background:linear-gradient(#282a2b,#1e2021);
+}
+
+.office-v67-skill-board>article.core{
+  border-color:#5c4a37;
+}
+
+.office-v67-skill-badge{
+  position:relative;
+  display:grid;
+  place-items:center;
+  align-content:center;
+  border:1px solid #5b4c3b;
+  background:#181a1b;
+}
+
+.office-v67-skill-badge .office-icon{
+  width:31px;
+  height:31px;
+  color:#c8a16b;
+}
+
+.office-v67-skill-badge span{
+  margin-top:3px;
+  color:#e0a75e;
+  font-size:8px;
+}
+
+.office-v67-skill-board small{
+  color:#97714a;
+  font-size:6px;
+  text-transform:uppercase;
+}
+
+.office-v67-skill-board h3{
+  margin:2px 0 3px;
+  color:#dec9aa;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:13px;
+}
+
+.office-v67-skill-board p{
+  margin:0;
+  color:#7f786f;
+  font-size:6.5px;
+  line-height:1.35;
+}
+
+.office-v67-skill-source{
+  display:flex;
+  gap:4px;
+  margin-top:6px;
+}
+
+.office-v67-skill-source span{
+  padding:2px 4px;
+  border:1px solid #3e493c;
+  background:#182019;
+  color:#94aa8d;
+  font-size:5.7px;
+}
+
+.office-v67-skill-board>article>i{
+  grid-column:1 / -1;
+  height:5px;
+  overflow:hidden;
+  background:#111314;
+}
+
+.office-v67-skill-board>article>i>em{
+  display:block;
+  height:100%;
+  background:linear-gradient(90deg,#9a6235,#d39a54);
+}
+
+.office-v67-skill-note{
+  display:grid;
+  grid-template-columns:35px 1fr;
+  align-items:center;
+  gap:8px;
+  padding:7px 9px;
+  border:1px solid #4a4136;
+  background:#211e1a;
+}
+
+.office-v67-skill-note>.office-icon{
+  width:29px;
+  height:29px;
+  color:#c69c60;
+}
+
+.office-v67-skill-note strong{
+  display:block;
+  color:#d7b984;
+  font-size:8px;
+}
+
+.office-v67-skill-note span{
+  color:#7f786e;
+  font-size:6.5px;
+}
+
+/* Talents */
+.office-v67-talents{
+  grid-template-rows:auto minmax(0,1fr);
+}
+
+.office-v67-talent-columns{
+  min-height:0;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+}
+
+.office-v67-talent-columns>article{
+  min-width:0;
+  min-height:0;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  gap:8px;
+  padding:10px;
+  border:1px solid #44413c;
+  background:linear-gradient(#252728,#1b1d1e);
+  opacity:.62;
+}
+
+.office-v67-talent-columns>article.active{
+  opacity:1;
+  border-color:#a66a35;
+  box-shadow:inset 0 3px #c17b3a;
+}
+
+.office-v67-talent-columns>article[data-branch="expert"].active{box-shadow:inset 0 3px #64859a}
+.office-v67-talent-columns>article[data-branch="management"].active{box-shadow:inset 0 3px #c18a43}
+.office-v67-talent-columns>article[data-branch="sales"].active{box-shadow:inset 0 3px #86699a}
+
+.office-v67-talent-columns>article>header{
+  display:grid;
+  grid-template-columns:40px 1fr;
+  gap:8px;
+}
+
+.office-v67-talent-columns>article>header>.office-icon{
+  width:36px;
+  height:36px;
+  padding:7px;
+  border:1px solid #574937;
+  background:#17191a;
+  color:#c69e67;
+}
+
+.office-v67-talent-columns header small{
+  color:#936e47;
+  font-size:6px;
+  text-transform:uppercase;
+}
+
+.office-v67-talent-columns h3{
+  margin:1px 0;
+  color:#dfc7a5;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:15px;
+}
+
+.office-v67-talent-columns p{
+  margin:0;
+  color:#7e786f;
+  font-size:6.5px;
+}
+
+.office-v67-talent-list{
+  display:grid;
+  align-content:start;
+  gap:6px;
+}
+
+.office-v67-talent-list>div{
+  min-width:0;
+  display:grid;
+  grid-template-columns:30px minmax(0,1fr) auto;
+  align-items:center;
+  gap:7px;
+  padding:8px;
+  border:1px solid #393b38;
+  background:#1c1e1f;
+}
+
+.office-v67-talent-list>div.unlocked{
+  border-color:#496047;
+  background:#182019;
+}
+
+.office-v67-talent-list>div>span{
+  display:grid;
+  place-items:center;
+  width:27px;
+  height:27px;
+  border:1px solid #5b4936;
+  border-radius:50%;
+  color:#c79a5d;
+  font-size:7px;
+}
+
+.office-v67-talent-list b{
+  display:block;
+  color:#cfc0aa;
+  font-size:8px;
+}
+
+.office-v67-talent-list small{
+  display:block;
+  margin-top:2px;
+  color:#777168;
+  font-size:6px;
+}
+
+.office-v67-talent-list em{
+  color:#8a7d6d;
+  font-size:6px;
+  font-style:normal;
+}
+
+.office-v67-talent-list .unlocked em{
+  color:#88af80;
+}
+
+.office-v67-talent-columns>article>footer{
+  padding-top:6px;
+  border-top:1px solid #383632;
+  color:#756f67;
+  font-size:6.5px;
+}
+
+/* Inventory */
+.office-v67-inventory{
+  grid-template-rows:auto minmax(0,1fr);
+}
+
+.office-v67-inventory-grid{
+  min-height:0;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  grid-template-rows:repeat(2,1fr);
+  gap:6px;
+}
+
+.office-v67-inventory-grid>article{
+  min-width:0;
+  min-height:0;
+  display:grid;
+  grid-template-rows:auto auto minmax(0,1fr);
+  gap:5px;
+  padding:8px;
+  border:1px solid #45413a;
+  background:linear-gradient(#27292a,#1c1e1f);
+}
+
+.office-v67-inventory-grid>article>header{
+  display:grid;
+  grid-template-columns:31px minmax(0,1fr) auto;
+  align-items:center;
+  gap:6px;
+}
+
+.office-v67-inventory-grid>article>header>.office-icon{
+  width:28px;
+  height:28px;
+  color:#cba269;
+}
+
+.office-v67-inventory-grid header small{
+  display:block;
+  color:#82725f;
+  font-size:5.5px;
+  text-transform:uppercase;
+}
+
+.office-v67-inventory-grid header strong{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#d6c3a7;
+  font-size:8px;
+}
+
+.office-v67-inventory-grid header>b{
+  display:grid;
+  place-items:center;
+  width:24px;
+  height:24px;
+  border:1px solid #5c4935;
+  background:#17191a;
+  color:#d99d54;
+  font-size:8px;
+}
+
+.office-v67-inventory-grid>article>p{
+  margin:0;
+  color:#756f68;
+  font-size:6px;
+}
+
+.office-v67-inventory-items{
+  min-height:0;
+  display:grid;
+  align-content:start;
+  gap:3px;
+}
+
+.office-v67-inventory-items>span{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:5px;
+  padding:4px 5px;
+  border:1px solid #363a36;
+  background:#1a1c1d;
+  color:#9f978b;
+  font-size:6px;
+}
+
+.office-v67-inventory-items>span.equipped{
+  border-color:#80562f;
+  color:#d3b281;
+}
+
+.office-v67-inventory-items small{
+  flex:0 0 auto;
+  color:#6f8f69;
+  font-size:5px;
+}
+
+.office-v67-inventory-items em{
+  color:#6f6a64;
+  font-size:6px;
+  font-style:normal;
+}
+
+/* Achievements */
+.office-v67-achievements{
+  grid-template-rows:auto minmax(0,1fr);
+}
+
+.office-v67-achievement-grid{
+  min-height:0;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(2,1fr);
+  gap:7px;
+}
+
+.office-v67-achievement-grid>article{
+  min-width:0;
+  min-height:0;
+  display:grid;
+  grid-template-columns:52px minmax(0,1fr);
+  grid-template-rows:auto auto 1fr auto;
+  gap:2px 8px;
+  padding:10px;
+  border:1px solid #41403c;
+  background:linear-gradient(#252728,#1c1e1f);
+  opacity:.62;
+}
+
+.office-v67-achievement-grid>article.done{
+  opacity:1;
+  border-color:#66513a;
+  background:
+    radial-gradient(circle at 10% 25%,rgba(195,134,65,.10),transparent 27%),
+    linear-gradient(#292824,#1e2021);
+}
+
+.office-v67-achievement-icon{
+  grid-row:1 / 5;
+  width:49px;
+  height:49px;
+  display:grid;
+  place-items:center;
+  align-self:start;
+  border:1px solid #554838;
+  background:#17191a;
+}
+
+.office-v67-achievement-icon .office-icon{
+  width:30px;
+  height:30px;
+  color:#a9916f;
+}
+
+.office-v67-achievement-grid .done .office-v67-achievement-icon .office-icon{
+  color:#d3a45f;
+}
+
+.office-v67-achievement-grid small{
+  color:#8e6c48;
+  font-size:5.8px;
+  text-transform:uppercase;
+}
+
+.office-v67-achievement-grid h3{
+  margin:1px 0 2px;
+  color:#d6c3a8;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:13px;
+}
+
+.office-v67-achievement-grid p{
+  margin:0;
+  color:#7e776e;
+  font-size:6.5px;
+  line-height:1.3;
+}
+
+.office-v67-achievement-grid footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  padding-top:5px;
+  border-top:1px solid #393733;
+}
+
+.office-v67-achievement-grid footer span{
+  color:#918574;
+  font-size:6.5px;
+}
+
+.office-v67-achievement-grid footer b{
+  color:#7b9c72;
+  font-size:10px;
+}
+
+/* Events */
+.office-v67-events{
+  grid-template-rows:auto minmax(0,1fr);
+}
+
+.office-v67-events-layout{
+  min-height:0;
+  display:grid;
+  grid-template-columns:minmax(0,1.5fr) minmax(260px,.62fr);
+  gap:8px;
+}
+
+.office-v67-event-feed,
+.office-v67-event-goals{
+  min-height:0;
+  border:1px solid #444039;
+  background:#1b1d1e;
+}
+
+.office-v67-event-feed{
+  display:grid;
+  grid-template-rows:auto repeat(3,1fr);
+  padding:9px;
+}
+
+.office-v67-event-feed>header{
+  padding-bottom:6px;
+  border-bottom:1px solid #3b3833;
+}
+
+.office-v67-event-feed>header small{
+  color:#956d44;
+  font-size:6px;
+  text-transform:uppercase;
+}
+
+.office-v67-event-feed>header h3{
+  margin:1px 0 0;
+  color:#d9bd91;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:14px;
+}
+
+.office-v67-event-feed>article{
+  min-width:0;
+  display:grid;
+  grid-template-columns:8px minmax(0,1fr) auto;
+  align-items:center;
+  gap:8px;
+  padding:8px 4px;
+  border-bottom:1px solid #333431;
+}
+
+.office-v67-event-feed>article:last-child{
+  border-bottom:0;
+}
+
+.office-v67-event-feed .dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+}
+
+.office-v67-event-feed article small{
+  color:#68645f;
+  font-size:5.7px;
+}
+
+.office-v67-event-feed article strong{
+  display:block;
+  margin-top:1px;
+  color:#cfc0aa;
+  font-size:9px;
+}
+
+.office-v67-event-feed article p{
+  margin:2px 0 0;
+  color:#787169;
+  font-size:6.4px;
+}
+
+.office-v67-event-feed article>span{
+  padding:3px 5px;
+  border:1px solid #494038;
+  background:#211d19;
+  color:#9a7a57;
+  font-size:5.8px;
+}
+
+.office-v67-event-goals{
+  display:grid;
+  grid-template-rows:1fr 1fr auto;
+  gap:7px;
+  padding:9px;
+}
+
+.office-v67-event-goals>article{
+  display:grid;
+  align-content:center;
+  gap:5px;
+  padding:9px;
+  border:1px solid #403c36;
+  background:#202223;
+}
+
+.office-v67-event-goals>article.done{
+  border-color:#476044;
+  background:#192019;
+}
+
+.office-v67-event-goals small{
+  color:#936d46;
+  font-size:6px;
+  text-transform:uppercase;
+}
+
+.office-v67-event-goals h3{
+  margin:0;
+  color:#d6c2a5;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:13px;
+}
+
+.office-v67-event-goals>article>div{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:7px;
+}
+
+.office-v67-event-goals i{
+  height:6px;
+  overflow:hidden;
+  background:#111314;
+}
+
+.office-v67-event-goals i>em{
+  display:block;
+  height:100%;
+  background:linear-gradient(90deg,#5f7c55,#9db36f);
+}
+
+.office-v67-event-goals b{
+  color:#b8aa96;
+  font-size:7px;
+}
+
+.office-v67-event-goals p{
+  margin:0;
+  color:#777169;
+  font-size:6.3px;
+}
+
+.office-v67-event-goals>button{
+  min-height:32px;
+  border:1px solid #85542e;
+  background:linear-gradient(#704225,#4d2c1c);
+  color:#e6c395;
+  font-size:7px;
+  cursor:pointer;
+}
+
+/* Slightly tighter medium desktop layouts still keep everything on one surface. */
+@media(max-width:1250px){
+  .office-body{
+    grid-template-columns:62px 112px minmax(0,1fr) 220px!important;
+  }
+
+  .office-side-nav>button{
+    min-height:58px;
+  }
+
+  .office-profile-compact .office-profile-open{
+    height:102px;
+    min-height:102px;
+  }
+
+  .office-profile-mini-stats>button{
+    min-height:38px;
+    grid-template-columns:19px minmax(0,1fr);
+  }
+
+  .office-profile-mini-stats .office-icon{
+    width:16px;
+    height:16px;
+  }
+
+  .office-v67-primary-grid>article{
+    grid-template-columns:45px minmax(0,1fr) 48px;
+    padding:7px;
+  }
+
+  .office-v67-primary-icon{
+    width:42px;
+    height:42px;
+  }
+
+  .office-v67-inventory-grid{
+    gap:4px;
+  }
+}
+
+@media(max-height:820px){
+  .office-side-nav>button{
+    min-height:52px;
+  }
+
+  .office-profile.office-profile-compact{
+    gap:5px;
+    padding:5px;
+  }
+
+  .office-profile-compact .office-profile-open{
+    height:92px;
+    min-height:92px;
+  }
+
+  .office-profile-mini-stats{
+    gap:3px;
+  }
+
+  .office-profile-mini-stats>button{
+    min-height:35px;
+    padding:3px 5px;
+  }
+
+  .office-profile-points{
+    min-height:42px;
+  }
+
+  .office-v67-dev-page{
+    padding-top:8px;
+    padding-bottom:8px;
+    gap:6px;
+  }
+
+  .office-v67-characteristics{
+    grid-template-rows:auto 148px minmax(0,1fr);
+  }
+
+  .office-v67-primary-grid>article{
+    padding:6px;
+  }
+
+  .office-v67-primary-copy p{
+    display:none;
+  }
+}
