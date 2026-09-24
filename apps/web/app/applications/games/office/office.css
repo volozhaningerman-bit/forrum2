@@ -3054,3 +3054,449 @@ body.office-no-scroll{
     min-height:180px;
   }
 }
+
+
+/* office v6.3: readability pass from deployed screenshots */
+
+/* Scene contours should read as a subtle glow around the object, not a heavy orange frame. */
+.office-scene-shape path{
+  fill:rgba(226,170,92,.001);
+  stroke-width:2.1;
+}
+
+.office-scene-shape:hover path,
+.office-scene-shape:focus-visible path,
+.office-scene-shape.is-active path{
+  fill:rgba(224,166,90,.025);
+  stroke:rgba(238,188,113,.42);
+  filter:drop-shadow(0 0 3px rgba(218,139,55,.14));
+}
+
+.office-scene-shape.is-active path{
+  fill:rgba(224,166,90,.035);
+  stroke:rgba(242,191,117,.55);
+}
+
+/* The category is already named in the "Рабочее место и персонаж" header.
+   The drawer therefore uses the scarce vertical space for filters + actual items. */
+.office-v6-inline-drawer .office-v6-drawer{
+  grid-template-rows:27px minmax(0,1fr);
+}
+
+.office-v6-inline-drawer .office-v6-drawer>header{
+  min-height:27px;
+  height:27px;
+  justify-content:flex-end;
+  padding:2px 5px;
+}
+
+.office-v6-inline-drawer .office-v6-drawer-title{
+  display:none;
+}
+
+.office-v6-inline-drawer .office-v6-drawer-controls{
+  width:100%;
+  justify-content:flex-end;
+}
+
+.office-v6-inline-drawer .office-v6-filter{
+  margin-right:auto;
+}
+
+.office-v6-inline-drawer .office-v6-filter button,
+.office-v6-inline-drawer .office-v6-drawer-controls select{
+  min-height:22px;
+  height:22px;
+  font-size:7px;
+}
+
+.office-v6-inline-drawer .office-v6-item-list{
+  gap:6px;
+  padding:5px 6px 6px;
+}
+
+.office-v6-inline-drawer .office-v6-item-card{
+  flex:0 0 244px;
+  width:244px;
+  grid-template-columns:48px minmax(0,1fr) 72px;
+  gap:6px;
+  padding:5px;
+  background:linear-gradient(105deg,#2b2d2e,#202223);
+}
+
+.office-v6-inline-drawer .office-v6-item-visual{
+  gap:2px;
+}
+
+.office-v6-inline-drawer .office-v6-item-visual>.office-icon{
+  width:29px;
+  height:29px;
+}
+
+.office-v6-inline-drawer .office-v6-item-visual>span{
+  max-width:44px;
+  font-size:6.5px;
+}
+
+.office-v6-inline-drawer .office-v6-item-head small,
+.office-v6-inline-drawer .office-v6-item-head b{
+  font-size:6px;
+}
+
+.office-v6-inline-drawer .office-v6-item-copy>strong{
+  display:block;
+  margin-top:1px;
+  font-size:9.5px;
+  line-height:1.1;
+}
+
+.office-v6-inline-drawer .office-v6-item-copy>p{
+  display:none;
+}
+
+.office-v6-inline-drawer .office-v6-bonus-chips{
+  margin-top:4px;
+}
+
+.office-v6-inline-drawer .office-v6-bonus-chips>span{
+  padding:2px 4px;
+  font-size:6.5px;
+}
+
+.office-v6-inline-drawer .office-v6-bonus-chips>span:nth-child(n+3){
+  display:none;
+}
+
+.office-v6-inline-drawer .office-v6-item-buy{
+  padding:3px;
+  align-content:center;
+}
+
+.office-v6-inline-drawer .office-v6-item-buy small{
+  font-size:6px;
+}
+
+.office-v6-inline-drawer .office-v6-item-buy>b{
+  font-size:7.5px;
+  line-height:1.1;
+}
+
+.office-v6-inline-drawer .office-v6-item-buy>button{
+  min-height:24px;
+  font-size:6.5px;
+}
+
+/* Career map: the deployed version was technically complete but too dim and too small.
+   Keep the map, but make cards legible and move detailed information into a dedicated side panel. */
+.office-v6-career{
+  grid-template-rows:auto auto auto minmax(0,1fr);
+}
+
+.office-v6-career-stage{
+  min-height:0;
+  height:100%;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 270px;
+  gap:7px;
+}
+
+.office-v6-career-viewport{
+  min-width:0;
+  min-height:0;
+  height:100%;
+}
+
+.office-v6-career-canvas{
+  width:1360px;
+  height:600px;
+}
+
+.office-v6-career-node{
+  width:168px;
+  min-height:108px;
+  gap:4px;
+  padding:8px;
+  opacity:1;
+  transition:
+    border-color .14s ease,
+    box-shadow .14s ease,
+    opacity .14s ease,
+    filter .14s ease,
+    transform .14s ease;
+}
+
+.office-v6-career-node:hover,
+.office-v6-career-node:focus-visible{
+  outline:none;
+  transform:translate(-50%,-50%) scale(1.025);
+  z-index:8;
+}
+
+.office-v6-career-node.locked{
+  opacity:.74;
+  filter:saturate(.72);
+}
+
+.office-v6-career-node.is-alternate{
+  opacity:.5;
+  filter:saturate(.45);
+}
+
+.office-v6-career-node.is-selected{
+  z-index:9;
+  border-color:#df934c;
+  box-shadow:
+    0 0 0 1px rgba(218,128,49,.55),
+    0 0 0 4px rgba(218,128,49,.10),
+    0 9px 24px #000a;
+}
+
+.office-v6-career-node>strong{
+  font-size:15px;
+}
+
+.office-v6-career-node-meta span{
+  font-size:9.5px;
+}
+
+.office-v6-career-node-meta em{
+  font-size:6.8px;
+}
+
+.office-v6-career-requirement{
+  font-size:6.8px;
+}
+
+.office-v6-career-node-preview{
+  display:grid;
+  gap:2px;
+  margin-top:2px;
+}
+
+.office-v6-career-node-preview span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  padding-left:8px;
+  position:relative;
+  color:#a79d90;
+  font-size:6.4px;
+}
+
+.office-v6-career-node-preview span::before{
+  content:"";
+  position:absolute;
+  left:1px;
+  top:50%;
+  width:4px;
+  height:4px;
+  margin-top:-2px;
+  border-radius:50%;
+  background:#6b8c5d;
+}
+
+.office-v6-career-node-preview span+span::before{
+  background:#a37849;
+}
+
+.office-v6-career-detail{
+  min-width:0;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:10px;
+  overflow:auto;
+  border:1px solid #594631;
+  background:
+    radial-gradient(circle at 85% 0%,rgba(198,137,67,.08),transparent 30%),
+    linear-gradient(#252627,#191b1c);
+  box-shadow:inset 0 0 0 1px #101112;
+  scrollbar-width:thin;
+  scrollbar-color:#6a4d31 #17191a;
+}
+
+.office-v6-career-detail.branch-expert{
+  border-top-color:#68889c;
+}
+
+.office-v6-career-detail.branch-management{
+  border-top-color:#c18a43;
+}
+
+.office-v6-career-detail.branch-sales{
+  border-top-color:#87699c;
+}
+
+.office-v6-career-detail-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:8px;
+  padding-bottom:8px;
+  border-bottom:1px solid #3c3832;
+}
+
+.office-v6-career-detail-head small{
+  display:block;
+  color:#8e8579;
+  font-size:7px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.office-v6-career-detail-head h3{
+  margin:2px 0 1px;
+  color:#f0d2a0;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:19px;
+  line-height:1;
+}
+
+.office-v6-career-detail-head p{
+  margin:0;
+  color:#8d867c;
+  font-size:8px;
+}
+
+.office-v6-career-detail-head>.status{
+  flex:0 0 auto;
+  padding:4px 6px;
+  border:1px solid #4a4035;
+  background:#17191a;
+  font-size:6px;
+  text-transform:uppercase;
+}
+
+.office-v6-career-detail-head>.status-current{color:#f0b467;border-color:#79502d}
+.office-v6-career-detail-head>.status-available{color:#9dc88d;border-color:#486043}
+.office-v6-career-detail-head>.status-locked{color:#8b8d90}
+
+.office-v6-career-detail-salary{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:8px;
+  padding:8px;
+  border:1px solid #413a31;
+  background:#17191a;
+}
+
+.office-v6-career-detail-salary span{
+  color:#8c8376;
+  font-size:7px;
+}
+
+.office-v6-career-detail-salary strong{
+  color:#e0a75f;
+  font-size:16px;
+}
+
+.office-v6-career-detail-section{
+  display:grid;
+  gap:5px;
+}
+
+.office-v6-career-detail-section>span{
+  color:#8c8376;
+  font-size:7px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+
+.office-v6-career-detail-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+}
+
+.office-v6-career-detail-chips b{
+  padding:4px 6px;
+  border:1px solid #474139;
+  background:#17191a;
+  color:#c3b6a3;
+  font-size:7px;
+}
+
+.office-v6-career-detail-section ul{
+  display:grid;
+  gap:4px;
+  margin:0;
+  padding:0;
+  list-style:none;
+}
+
+.office-v6-career-detail-section li{
+  position:relative;
+  padding:5px 6px 5px 20px;
+  border:1px solid #3c4038;
+  background:#182019;
+  color:#b8cbb1;
+  font-size:7.5px;
+}
+
+.office-v6-career-detail-section li::before{
+  content:"+";
+  position:absolute;
+  left:7px;
+  top:4px;
+  color:#82aa73;
+  font-weight:900;
+}
+
+.office-v6-career-detail-section.unlocks li{
+  border-color:#4b4136;
+  background:#211d18;
+  color:#d0b58e;
+}
+
+.office-v6-career-detail-section.unlocks li::before{
+  content:"→";
+  color:#c38b4b;
+}
+
+.office-v6-career-detail-tip{
+  margin-top:auto;
+  padding:8px;
+  border-top:1px solid #3c3832;
+  color:#8b8479;
+  font-size:7.5px;
+  line-height:1.4;
+}
+
+@media(max-width:1250px){
+  .office-v6-career-stage{
+    grid-template-columns:minmax(0,1fr) 230px;
+  }
+
+  .office-v6-career-detail{
+    padding:8px;
+  }
+
+  .office-v6-career-detail-head h3{
+    font-size:16px;
+  }
+}
+
+@media(max-width:980px){
+  .office-v6-career-stage{
+    grid-template-columns:minmax(0,1fr) 205px;
+  }
+
+  .office-v6-career-detail-section li{
+    padding-left:17px;
+    font-size:6.8px;
+  }
+}
+
+@media(max-width:720px){
+  .office-v6-career-stage{
+    display:block;
+  }
+
+  .office-v6-career-detail{
+    margin-top:7px;
+    min-height:220px;
+  }
+}

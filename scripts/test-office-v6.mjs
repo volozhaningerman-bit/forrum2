@@ -127,8 +127,14 @@ try {
   await page.getByRole('button', { name: /Карьера/ }).first().click();
   await page.getByRole('heading', { name: 'Большое дерево развития' }).waitFor();
   assert((await page.locator('.office-v6-career-node').count()) >= 15);
-  assert((await page.locator('.office-v6-career-node .office-v6-career-benefits').count()) >= 15);
-  assert((await page.locator('.office-v6-career-node .office-v6-career-unlocks').count()) >= 15);
+  await page.locator('.office-v6-career-detail').waitFor();
+  assert.match(await page.locator('.office-v6-career-detail').textContent(), /Что получишь/i);
+  assert.match(await page.locator('.office-v6-career-detail').textContent(), /Что откроется/i);
+
+  await page.getByRole('button', { name: /Подробнее: Младший специалист/ }).click();
+  assert.match(await page.locator('.office-v6-career-detail').textContent(), /Младший специалист/i);
+  assert.match(await page.locator('.office-v6-career-detail').textContent(), /50[\s\u00a0]000/i);
+
   await page.getByRole('button', { name: /Эксперт/ }).click();
 
   const canvas = page.locator('.office-v6-career-canvas');
@@ -136,7 +142,7 @@ try {
   await page.getByRole('button', { name: 'Увеличить дерево' }).click();
   const transformAfterZoom = await canvas.getAttribute('style');
   assert.notEqual(transformAfterZoom, transformBeforeZoom);
-  await page.screenshot({ path: output + '/career-v61-1600.png', fullPage: false });
+  await page.screenshot({ path: output + '/career-v63-1600.png', fullPage: false });
 
   // Companies are now a real screen.
   await page.getByRole('button', { name: /Компания/ }).first().click();
