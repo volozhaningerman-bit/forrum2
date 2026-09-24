@@ -741,7 +741,9 @@ export function OfficeGame() {
             {officeNavigation.map((item) => {
               const isActive =
                 (activeView === 'home' && item.label === 'Главная') ||
-                (activeView === 'career' && item.label === 'Карьера');
+                (activeView === 'career' && item.label === 'Карьера') ||
+                (activeView === 'company' && item.label === 'Компания') ||
+                (activeView === 'character' && item.label === 'Персонаж');
               return (
               <button
                 className={isActive ? 'active' : ''}
@@ -788,9 +790,9 @@ export function OfficeGame() {
             <Skill label="Напор" value={snapshot.skills.drive} icon="drive" />
 
             <div className="office-quick-links">
-              <button type="button">Инвентарь <span>›</span></button>
-              <button type="button">Достижения <span>›</span></button>
-              <button type="button">Персонаж <span>›</span></button>
+              <button type="button" onClick={() => setDrawerCategory('pc')}>Инвентарь <span>›</span></button>
+              <button type="button" onClick={() => handleNavigation('Достижения')}>Достижения <span>›</span></button>
+              <button type="button" onClick={() => setActiveView('character')}>Персонаж <span>›</span></button>
             </div>
           </aside>
 
@@ -800,7 +802,7 @@ export function OfficeGame() {
               <button
                 className="office-hotspot office-hotspot-pc"
                 type="button"
-                onClick={() => setSelectedSlot('pc')}
+                onClick={() => setDrawerCategory('pc')}
                 aria-label="Старый компьютер"
               >
                 <span>＋</span> Старый ПК
@@ -808,7 +810,7 @@ export function OfficeGame() {
               <button
                 className="office-hotspot office-hotspot-chair"
                 type="button"
-                onClick={() => setSelectedSlot('chair')}
+                onClick={() => setDrawerCategory('chair')}
                 aria-label="Старый офисный стул"
               >
                 <span>＋</span> Стул
@@ -866,7 +868,7 @@ export function OfficeGame() {
                   <b>{formatMoney(snapshot.salary)} ₽</b>
                 </span>
               </div>
-              <button type="button">О компании →</button>
+              <button type="button" onClick={() => setActiveView('company')}>О компании →</button>
             </section>
 
             <section className={`office-daily ${dailyDone ? 'is-complete' : ''}`}>
@@ -921,40 +923,34 @@ export function OfficeGame() {
             </section>
           </aside>
             </>
+          ) : activeView === 'career' ? (
+            <V6CareerView
+              state={v6}
+              snapshot={snapshot}
+              onSelectBranch={selectCareerBranch}
+              onBack={() => setActiveView('home')}
+            />
+          ) : activeView === 'company' ? (
+            <V6CompanyView
+              state={v6}
+              snapshot={snapshot}
+              onSwitch={switchCompany}
+              onBack={() => setActiveView('home')}
+            />
           ) : (
-            <CareerView
-              role={snapshot.role}
-              level={snapshot.level}
-              salary={snapshot.salary}
-              reputation={snapshot.reputation}
-              competence={snapshot.skills.competence}
-              communication={snapshot.skills.communication}
-              drive={snapshot.skills.drive}
+            <V6CharacterView
+              state={v6}
+              snapshot={snapshot}
+              onGender={selectGender}
+              onArchetype={selectArchetype}
               onBack={() => setActiveView('home')}
             />
           )}
         </div>
 
         {activeView === 'home' ? (
-        <footer className="office-bottom">
-          <section className="office-workspace">
-            <div className="office-bottom-title">Моё рабочее место <span>?</span></div>
-            <div className="office-slots">
-              {workspace.map((item) => (
-                <button
-                  type="button"
-                  key={item.key}
-                  onClick={() => setSelectedSlot(item.key)}
-                  className={selectedSlot === item.key ? 'selected' : ''}
-                >
-                  <small>{item.label}</small>
-                  <OfficeIcon name={item.icon} />
-                  <b>{item.item}</b>
-                  <em>{item.level ? `${item.rarity} · ${item.level} ур.` : 'Пусто'}</em>
-                </button>
-              ))}
-            </div>
-          </section>
+        <footer className="office-bottom office-v6-bottom">
+          <EquipmentDock state={v6} onOpen={setDrawerCategory} />
 
           <section className="office-promotion">
             <div className="office-bottom-title">Следующее повышение <span>?</span></div>
@@ -974,29 +970,29 @@ export function OfficeGame() {
                 {promotionCompleted ? 'Получено' : 'Просить повышение'}
               </button>
             </div>
-            <small className="office-unlocks">Откроется: новая компания · новое кресло · новые задания</small>
+            <small className="office-unlocks">Ветка карьеры и экипировка влияют на дальнейшие повышения</small>
           </section>
-
-          <aside className="office-item-details">
-            <OfficeIcon name={selectedItem.icon} />
-            <div className="office-item-copy">
-              <small>Выбрано · {selectedItem.rarity}</small>
-              <strong>{selectedItem.item}</strong>
-              <p>{selectedItem.description}</p>
-            </div>
-            <div className="office-item-effect">
-              <span>{selectedItem.effectLabel}</span>
-              <b>+{selectedItem.effectValue} → +{selectedItem.nextEffectValue}</b>
-            </div>
-            <div className="office-item-price">
-              <span>Улучшение</span>
-              <b>{formatMoney(selectedItem.upgradePrice)} ₽</b>
-            </div>
-            <button type="button" onClick={upgradeSelectedItem}>
-              {selectedItem.level === 0 ? 'Найти предмет' : 'Улучшить'}
-            </button>
-          </aside>
         </footer>
+
+        <EquipmentDrawer
+          category={drawerCategory}
+          state={v6}
+          level={snapshot.level}
+          reputation={snapshot.reputation}
+          money={snapshot.money}
+          onClose={() => setDrawerCategory(null)}
+          onBuy={buyV6Item}
+          onEquip={equipV6Item}
+        />
+        ) : null}
+
+        {bossBattleOpen ? (
+          <V6BossBattle
+            state={v6}
+            snapshot={snapshot}
+            onAttack={attackBoss}
+            onClose={() => setBossBattleOpen(false)}
+          />
         ) : null}
 
         <OfficeOverlay
@@ -1057,90 +1053,6 @@ function Requirement({ label, value, progress }: { label: string; value: string;
       <div><span>{label}</span><b>{value}</b></div>
       <div><i style={{ width: `${Math.min(100, progress)}%` }} /></div>
     </div>
-  );
-}
-
-function CareerView({
-  role,
-  level,
-  salary,
-  reputation,
-  competence,
-  communication,
-  drive,
-  onBack,
-}: {
-  role: string;
-  level: number;
-  salary: number;
-  reputation: number;
-  competence: number;
-  communication: number;
-  drive: number;
-  onBack: () => void;
-}) {
-  const getStatus = (id: string) => {
-    if (id === 'intern') return role === 'Стажёр' ? 'current' : 'done';
-    if (id === 'junior') {
-      if (role === 'Младший специалист') return 'current';
-      return competence >= 5 && reputation >= 30 ? 'ready' : 'locked';
-    }
-    if (id === 'specialist') return level >= 8 && reputation >= 50 ? 'ready' : 'locked';
-    if (id === 'expert') return competence >= 18 ? 'ready' : 'locked';
-    if (id === 'teamlead') return communication >= 14 && drive >= 10 ? 'ready' : 'locked';
-    if (id === 'sales') return communication >= 16 ? 'ready' : 'locked';
-    return 'locked';
-  };
-
-  return (
-    <section className="office-career-view">
-      <header className="office-career-header">
-        <div>
-          <small>Карьера</small>
-          <h2>Куда приведёт этот офис?</h2>
-          <p>После уровня специалиста путь расходится. Можно стать экспертом, руководителем или уйти в продажи.</p>
-        </div>
-        <button type="button" onClick={onBack}>← Вернуться в офис</button>
-      </header>
-
-      <div className="office-career-summary">
-        <div><small>Сейчас</small><b>{role}</b></div>
-        <div><small>Уровень</small><b>{level}</b></div>
-        <div><small>Зарплата</small><b>{formatMoney(salary)} ₽</b></div>
-        <div><small>Репутация</small><b>{reputation}</b></div>
-      </div>
-
-      <div className="office-career-map">
-        <svg className="office-career-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M12 50 H24 M32 50 H45 M53 50 H64" />
-          <path d="M53 48 C60 48 60 20 66 20 H84" />
-          <path d="M53 52 H84" />
-          <path d="M53 52 C60 52 60 80 66 80 H84" />
-        </svg>
-        {careerNodes.map((node) => {
-          const status = getStatus(node.id);
-          return (
-            <article
-              className={`office-career-node office-career-${status} office-career-branch-${node.branch}`}
-              key={node.id}
-              style={{ left: `${node.x}%`, top: `${node.y}%` }}
-            >
-              <small>{node.subtitle}</small>
-              <strong>{node.title}</strong>
-              <span>{formatMoney(node.salary)} ₽</span>
-              <em>{node.requirement}</em>
-              <b>{status === 'current' ? 'Сейчас' : status === 'done' ? 'Пройдено' : status === 'ready' ? 'Доступно' : 'Закрыто'}</b>
-            </article>
-          );
-        })}
-      </div>
-
-      <div className="office-career-legend">
-        <div><i className="expert" /><span>Экспертная ветка</span><b>Компетентность {competence}</b></div>
-        <div><i className="management" /><span>Управление</span><b>Коммуникация {communication} · Напор {drive}</b></div>
-        <div><i className="sales" /><span>Продажи</span><b>Коммуникация {communication}</b></div>
-      </div>
-    </section>
   );
 }
 
