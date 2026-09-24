@@ -98,7 +98,7 @@ try {
   assert(initialGameRect && initialGameRect.y + initialGameRect.height <= 1001);
 
   // Scene-only interaction: the category strip is gone and object clicks replace the content in-place.
-  await page.getByRole('button', { name: 'Выбрать стол' }).click();
+  await page.getByRole('button', { name: 'Выбрать стол' }).click({ position: { x: 42, y: 18 } });
   await page.locator('.office-v6-workplace-stack .office-v6-drawer').waitFor();
   assert.match(await page.locator('.office-v6-drawer-title h3').textContent(), /Стол/i);
   const openHeight = await page.locator('.office-v6-bottom').evaluate((node) => node.getBoundingClientRect().height);
