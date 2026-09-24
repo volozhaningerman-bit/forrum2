@@ -1231,7 +1231,7 @@ function OfficeTasksView(props: {
     learn: {
       cost: 2,
       reward: 'Компетентность +1 · XP',
-      stat: 'Обучение +' + String(buildBonuses.trainingBonus ?? 0),
+      stat: 'Компетентность +' + String(buildBonuses.competence ?? 0),
       description: 'Разбирайся в инструментах и прокачивай техническую часть персонажа.',
     },
     prank: {
