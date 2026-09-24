@@ -1047,7 +1047,15 @@ export function OfficeGame() {
                   </g>
                 </svg>
               </div>
-              <div className="office-scene-note">{notice}</div>
+              <div className="office-scene-note office-v68-scene-status">
+                <span className="office-v68-scene-message">{notice}</span>
+                <span className={dailyDone ? 'is-done' : ''}>
+                  День: {snapshot.daily.progress}/{snapshot.daily.target}
+                </span>
+                <span className={promotionReady || promotionCompleted ? 'is-done' : ''}>
+                  Далее: {promotionCompleted ? snapshot.role : nextPromotion.role}
+                </span>
+              </div>
             </section>
 
             <nav className="office-location-strip" aria-label="Локации офиса">
@@ -1365,6 +1373,23 @@ function OfficeCharacteristicsView({
         ))}
       </div>
 
+      <div className="office-v68-build-direction">
+        <div>
+          <small>Сейчас сильнее всего</small>
+          <strong>{
+            snapshot.skills.competence >= snapshot.skills.communication && snapshot.skills.competence >= snapshot.skills.drive
+              ? 'Экспертный путь'
+              : snapshot.skills.communication >= snapshot.skills.drive
+                ? 'Социальный путь'
+                : 'Путь напора'
+          }</strong>
+        </div>
+        <span>База: {snapshot.skills.competence + snapshot.skills.communication + snapshot.skills.drive} · Бонусы билда: +{
+          (buildBonuses.competence ?? 0) + (buildBonuses.communication ?? 0) + (buildBonuses.drive ?? 0)
+        }</span>
+        <em>Очки лучше вкладывать под карьерную ветку и тип урона по боссам.</em>
+      </div>
+
       <div className="office-v67-derived-wrap">
         <header><div><small>Производные параметры</small><h3>Что даёт твой текущий билд</h3></div><span>Эти значения меняются вместе с предметами и веткой развития</span></header>
         <div className="office-v67-derived-grid">
@@ -1408,24 +1433,47 @@ function OfficeSkillsView({
         onBack={onBack}
       />
 
-      <div className="office-v67-skill-board">
-        {skills.map(([name, icon, base, bonus, use, description], index) => {
-          const level = Math.max(1, Math.floor(Number(base) / 2) + Math.floor(Number(bonus) / 2));
-          return (
-            <article key={name} className={index < 3 ? 'core' : ''}>
-              <div className="office-v67-skill-badge"><OfficeIcon name={icon} /><span>{String(level).padStart(2, '0')}</span></div>
-              <div>
-                <small>{use}</small>
-                <h3>{name}</h3>
-                <p>{description}</p>
-                <div className="office-v67-skill-source">
-                  <span>База {base}</span><span>Билд +{bonus}</span>
+      <div className="office-v68-skills-layout">
+        <div className="office-v67-skill-board">
+          {skills.map(([name, icon, base, bonus, use, description], index) => {
+            const level = Math.max(1, Math.floor(Number(base) / 2) + Math.floor(Number(bonus) / 2));
+            return (
+              <article key={name} className={index < 3 ? 'core' : ''}>
+                <div className="office-v67-skill-badge"><OfficeIcon name={icon} /><span>{String(level).padStart(2, '0')}</span></div>
+                <div>
+                  <small>{use}</small>
+                  <h3>{name}</h3>
+                  <p>{description}</p>
+                  <div className="office-v67-skill-source">
+                    <span>База {base}</span><span>Билд +{bonus}</span>
+                  </div>
                 </div>
-              </div>
-              <i><em style={{ width: String(Math.min(100, level * 9)) + '%' }} /></i>
-            </article>
-          );
-        })}
+                <i><em style={{ width: String(Math.min(100, level * 9)) + '%' }} /></i>
+              </article>
+            );
+          })}
+        </div>
+
+        <aside className="office-v68-skill-focus">
+          <small>Как развиваться быстрее</small>
+          <h3>Свяжи навык с действием</h3>
+          <div>
+            <OfficeIcon name="task" />
+            <span><b>Задачи</b><em>дают практику и деньги</em></span>
+          </div>
+          <div>
+            <OfficeIcon name="rating" />
+            <span><b>Характеристики</b><em>задают базовую силу навыка</em></span>
+          </div>
+          <div>
+            <OfficeIcon name="inventory" />
+            <span><b>Предметы</b><em>дают специализацию и синергии</em></span>
+          </div>
+          <footer>
+            <strong>Текущий профиль</strong>
+            <span>Комп. {snapshot.skills.competence} · Комм. {snapshot.skills.communication} · Напор {snapshot.skills.drive}</span>
+          </footer>
+        </aside>
       </div>
 
       <div className="office-v67-skill-note">
@@ -1542,6 +1590,12 @@ function OfficeInventoryView({
         aside={<div className="office-v67-owned-counter"><span>Куплено</span><b>{v6.ownedItemIds.length}</b></div>}
       />
 
+      <div className="office-v68-inventory-summary">
+        <div><OfficeIcon name="inventory" /><span>В коллекции</span><b>{v6.ownedItemIds.length}</b></div>
+        <div><OfficeIcon name="star" /><span>Установлено</span><b>{Object.values(v6.equipped).filter(Boolean).length}</b></div>
+        <p>Новые вещи покупаются не здесь: вернись в офис и нажми прямо на нужный предмет в комнате.</p>
+      </div>
+
       <div className="office-v67-inventory-grid">
         {categories.map(([category, meta]) => {
           const owned = v6Items.filter((item) => item.category === category && v6.ownedItemIds.includes(item.id));
@@ -1600,6 +1654,12 @@ function OfficeAchievementsView({
         aside={<div className="office-v67-owned-counter"><span>Получено</span><b>{completed}/{achievements.length}</b></div>}
       />
 
+      <div className="office-v68-achievement-progress">
+        <div><span>Общий прогресс</span><b>{completed}/{achievements.length}</b></div>
+        <i><em style={{ width: String(completed / achievements.length * 100) + '%' }} /></i>
+        <p>{completed === achievements.length ? 'Все текущие достижения собраны.' : 'Следующие награды приходят из разных частей игры — не нужно фармить один экран.'}</p>
+      </div>
+
       <div className="office-v67-achievement-grid">
         {achievements.map(([title, icon, done, progress, description]) => (
           <article key={title} className={done ? 'done' : ''}>
@@ -1644,7 +1704,12 @@ function OfficeEventsView({
           {officeNews.map(([title, time, color], index) => (
             <article key={title}>
               <i className={'dot dot-' + color} />
-              <div><small>{time}</small><strong>{title}</strong><p>{index === 0 ? 'В компании меняется расклад сил. Такие события позже будут влиять на доступные задачи и карьеру.' : index === 1 ? 'Небольшое событие для мотивации и общения с коллегами.' : 'Комфорт офиса снова немного выше.'}</p></div>
+              <div>
+                <small>{time}</small>
+                <strong>{title}</strong>
+                <p>{index === 0 ? 'В компании меняется расклад сил. Событие влияет на будущие задачи и карьеру.' : index === 1 ? 'Небольшой повод восстановить мотивацию и отношения с коллегами.' : 'Комфорт офиса снова немного выше — рабочая среда влияет на эффективность.'}</p>
+                <em>{index === 0 ? 'Ожидается новая цепочка задач' : index === 1 ? 'Социальное событие' : 'Бонус рабочего места'}</em>
+              </div>
               <span>{index === 0 ? 'Компания' : index === 1 ? 'Коллеги' : 'Офис'}</span>
             </article>
           ))}
@@ -1804,6 +1869,18 @@ function OfficeBossesView(props: {
               <div><OfficeIcon name="competence" /><span>Логика</span><b>Компетентность</b></div>
               <div><OfficeIcon name="communication" /><span>Переговоры</span><b>Коммуникация</b></div>
               <div><OfficeIcon name="drive" /><span>Напор</span><b>Авторитет</b></div>
+            </div>
+
+            <div className="office-v68-boss-advice">
+              <span>Твой лучший подход сейчас</span>
+              <strong>{
+                snapshot.skills.competence >= snapshot.skills.communication && snapshot.skills.competence >= snapshot.skills.drive
+                  ? 'Логика'
+                  : snapshot.skills.communication >= snapshot.skills.drive
+                    ? 'Переговоры'
+                    : 'Напор'
+              }</strong>
+              <em>Комп. {snapshot.skills.competence + (getV6BuildBonuses(v6).competence ?? 0)} · Комм. {snapshot.skills.communication + (getV6BuildBonuses(v6).communication ?? 0)} · Напор {snapshot.skills.drive + (getV6BuildBonuses(v6).drive ?? 0)}</em>
             </div>
 
             <div className="office-v65-boss-reward">
