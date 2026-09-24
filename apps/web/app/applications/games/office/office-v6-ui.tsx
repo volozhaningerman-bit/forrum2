@@ -153,7 +153,14 @@ export function EquipmentDrawer({
         </div>
       </header>
 
-      <div className="office-v6-item-list">
+      <div
+        className="office-v6-item-list"
+        onWheel={(event) => {
+          if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+          event.currentTarget.scrollLeft += event.deltaY;
+          event.preventDefault();
+        }}
+      >
         {items.map((item) => {
           const lockReason = v6ItemLockReason(item, { level, reputation, state });
           const owned = state.ownedItemIds.includes(item.id);
@@ -231,6 +238,236 @@ export function BonusChips({ bonuses }: { bonuses: V6Bonuses }) {
         </span>
       ))}
     </div>
+  );
+}
+
+
+export type V65TaskId = 'work' | 'approve' | 'learn' | 'prank';
+
+export function V65TasksView({
+  state,
+  snapshot,
+  firstDayProgress,
+  firstDayDone,
+  activeAction,
+  onTask,
+  onBack,
+}: {
+  state: V6State;
+  snapshot: OfficeSnapshot;
+  firstDayProgress: number;
+  firstDayDone: boolean;
+  activeAction: string | null;
+  onTask: (id: V65TaskId) => void;
+  onBack: () => void;
+}) {
+  const bonuses = getV6BuildBonuses(state);
+  const tasks: Array<{
+    id: V65TaskId;
+    icon: string;
+    title: string;
+    description: string;
+    energy: number;
+    reward: string;
+    build: string;
+    accent: string;
+  }> = [
+    {
+      id: 'work',
+      icon: 'work',
+      title: firstDayDone ? 'Рабочая задача' : 'Первый рабочий день',
+      description: firstDayDone
+        ? 'Закрывай обычные офисные задачи и получай деньги и опыт.'
+        : 'Пройди три первых поручения: ' + firstDayProgress + '/3.',
+      energy: 1,
+      reward: '+ деньги · + XP',
+      build: 'Продуктивность +' + (bonuses.productivity ?? 0),
+      accent: 'green',
+    },
+    {
+      id: 'approve',
+      icon: 'approve',
+      title: 'Согласование',
+      description: 'Продвинь документ без лишнего созвона и укрепи репутацию.',
+      energy: 1,
+      reward: '+ репутация · + XP',
+      build: 'Соц. урон +' + (bonuses.socialDamage ?? 0),
+      accent: 'blue',
+    },
+    {
+      id: 'learn',
+      icon: 'training',
+      title: 'Обучение',
+      description: 'Потрать больше сил, чтобы быстрее поднять компетентность.',
+      energy: 2,
+      reward: '+ компетентность · + XP',
+      build: 'Логика +' + (bonuses.logicDamage ?? 0),
+      accent: 'purple',
+    },
+    {
+      id: 'prank',
+      icon: 'prank',
+      title: 'Офисная шалость',
+      description: 'Рискни репутацией ради мотивации и необычных событий.',
+      energy: 0,
+      reward: 'риск · мотивация',
+      build: 'Харизма +' + (bonuses.charisma ?? 0),
+      accent: 'orange',
+    },
+  ];
+
+  return (
+    <section className="office-v6-page office-v65-tasks">
+      <PageHeader eyebrow="Задачи" title="Работа — это расход энергии" onBack={onBack}>
+        Все действия, которые реально тратят энергию, собраны здесь. Предметы и билд усиливают
+        результат, а главная теперь остаётся чистой игровой сценой.
+      </PageHeader>
+
+      <div className="office-v65-task-summary">
+        <div>
+          <V6Icon name="energy" />
+          <span>Энергия</span>
+          <strong>{snapshot.energy} / {snapshot.maxEnergy}</strong>
+        </div>
+        <div>
+          <V6Icon name="cash" />
+          <span>Деньги</span>
+          <strong>{formatMoney(snapshot.money)} ₽</strong>
+        </div>
+        <div>
+          <V6Icon name="reputation" />
+          <span>Репутация</span>
+          <strong>{snapshot.reputation}</strong>
+        </div>
+        <div>
+          <V6Icon name="competence" />
+          <span>Продуктивность билда</span>
+          <strong>+{bonuses.productivity ?? 0}</strong>
+        </div>
+      </div>
+
+      <div className="office-v65-task-grid">
+        {tasks.map((task) => {
+          const enoughEnergy = snapshot.energy >= task.energy;
+          const disabled = activeAction !== null || !enoughEnergy;
+          return (
+            <article key={task.id} className={'office-v65-task-card tone-' + task.accent}>
+              <div className="office-v65-task-icon"><V6Icon name={task.icon} /></div>
+              <div className="office-v65-task-copy">
+                <small>{task.energy ? 'Энергия −' + task.energy : 'Без прямой траты энергии'}</small>
+                <h3>{task.title}</h3>
+                <p>{task.description}</p>
+                <div className="office-v65-task-tags">
+                  <span>{task.reward}</span>
+                  <span>{task.build}</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                disabled={disabled}
+                aria-busy={activeAction === task.id}
+                onClick={() => onTask(task.id)}
+              >
+                {!enoughEnergy ? 'Не хватает энергии' : activeAction === task.id ? 'Выполняется…' : 'Выполнить'}
+              </button>
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="office-v65-task-daily">
+        <div>
+          <small>Задание дня</small>
+          <strong>{snapshot.daily.title}</strong>
+          <span>{snapshot.daily.progress} / {snapshot.daily.target}</span>
+        </div>
+        <div className="office-v65-task-daily-progress">
+          <i style={{ width: String(Math.min(100, snapshot.daily.progress / snapshot.daily.target * 100)) + '%' }} />
+        </div>
+        <b>Награда: +{snapshot.daily.moneyReward} ₽ · +{snapshot.daily.motivationReward} мотивации</b>
+      </div>
+    </section>
+  );
+}
+
+export function V65BossesView({
+  state,
+  snapshot,
+  unlocked,
+  completed,
+  onFight,
+  onBack,
+}: {
+  state: V6State;
+  snapshot: OfficeSnapshot;
+  unlocked: boolean;
+  completed: boolean;
+  onFight: () => void;
+  onBack: () => void;
+}) {
+  const boss = v6Bosses[0];
+  const bonuses = getV6BuildBonuses(state);
+  const logic = getBossDamage('logic', { skills: snapshot.skills, bonuses, branch: state.careerBranch, boss });
+  const social = getBossDamage('social', { skills: snapshot.skills, bonuses, branch: state.careerBranch, boss });
+  const pressure = getBossDamage('pressure', { skills: snapshot.skills, bonuses, branch: state.careerBranch, boss });
+  const best = Math.max(logic, social, pressure);
+
+  return (
+    <section className="office-v6-page office-v65-bosses">
+      <PageHeader eyebrow="Боссы" title="Испытания — отдельно от рабочего стола" onBack={onBack}>
+        Здесь проверяется билд. Карьера, навыки и предметы определяют, чем выгоднее давить на босса
+        и сколько попыток понадобится.
+      </PageHeader>
+
+      <div className="office-v65-boss-layout">
+        <section className={'office-v65-boss-hero ' + (completed ? 'is-complete' : '')}>
+          <div className="office-v65-boss-portrait">
+            <img src="/games/office/boss.svg" alt="" />
+            <span>{completed ? 'ПРОЙДЕН' : unlocked ? 'ДОСТУПЕН' : 'ЗАКРЫТ'}</span>
+          </div>
+          <div className="office-v65-boss-copy">
+            <small>Первый офисный босс</small>
+            <h3>{boss.name}</h3>
+            <b>{boss.title}</b>
+            <blockquote>{boss.quote}</blockquote>
+
+            <div className="office-v65-boss-health">
+              <div><span>Терпение</span><strong>{completed ? 0 : state.bossHp} / {boss.maxHp}</strong></div>
+              <i><b style={{ width: String(completed ? 0 : Math.max(0, state.bossHp / boss.maxHp * 100)) + '%' }} /></i>
+            </div>
+
+            <button type="button" disabled={!unlocked || completed} onClick={onFight}>
+              {completed ? 'Испытание пройдено' : unlocked ? 'Начать испытание' : 'Нужно 3 задачи или ур. 3'}
+            </button>
+          </div>
+        </section>
+
+        <aside className="office-v65-boss-build">
+          <header>
+            <small>Твой билд</small>
+            <strong>{branchLabel(state.careerBranch)}</strong>
+            <span>Лучший ожидаемый удар: −{best}</span>
+          </header>
+
+          <div className="office-v65-boss-damage">
+            <div><V6Icon name="competence" /><span>Логика</span><b>−{logic}</b></div>
+            <div><V6Icon name="communication" /><span>Переговоры</span><b>−{social}</b></div>
+            <div><V6Icon name="drive" /><span>Напор</span><b>−{pressure}</b></div>
+          </div>
+
+          <div className="office-v65-boss-reward">
+            <small>Награда</small>
+            <strong>+{formatMoney(boss.rewardMoney)} ₽</strong>
+            <span>+{boss.rewardXp} XP · +{boss.rewardReputation} репутации</span>
+          </div>
+
+          <div className="office-v65-boss-future">
+            <div><span>02</span><strong>Следующий босс</strong><small>Откроется после повышения</small></div>
+            <div><span>03</span><strong>Следующее испытание</strong><small>Откроется с новой компанией</small></div>
+          </div>
+        </aside>
+      </div>
+    </section>
   );
 }
 
