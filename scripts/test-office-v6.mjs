@@ -133,7 +133,7 @@ try {
 
   await page.getByRole('button', { name: /Подробнее: Младший специалист/ }).click();
   assert.match(await page.locator('.office-v6-career-detail').textContent(), /Младший специалист/i);
-  assert.match(await page.locator('.office-v6-career-detail').textContent(), /50 000/i);
+  assert.match(await page.locator('.office-v6-career-detail').textContent(), /50[\s\u00a0]000/i);
 
   await page.getByRole('button', { name: /Эксперт/ }).click();
 
