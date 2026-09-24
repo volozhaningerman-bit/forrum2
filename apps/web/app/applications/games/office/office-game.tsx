@@ -59,7 +59,7 @@ type ActionFeedback = {
   tone: FeedbackTone;
 };
 
-type OfficeView = 'home' | 'career' | 'company' | 'character';
+type OfficeView = 'home' | 'tasks' | 'career' | 'company' | 'bosses' | 'character';
 type OfficeModal =
   | { type: 'event'; event: OfficeStoryEvent }
   | { type: 'boss'; event: OfficeStoryEvent }
@@ -235,6 +235,7 @@ export function OfficeGame() {
 
   useEffect(() => {
     const hadNoScroll = document.body.classList.contains('office-no-scroll');
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 
     const syncViewport = () => {
       const page = pageRef.current;
@@ -245,6 +246,7 @@ export function OfficeGame() {
 
     document.body.classList.add('office-no-scroll');
     syncViewport();
+    window.requestAnimationFrame(syncViewport);
     window.addEventListener('resize', syncViewport);
 
     return () => {
@@ -422,6 +424,10 @@ export function OfficeGame() {
       setActiveView('home');
       return;
     }
+    if (label === 'Задачи') {
+      setActiveView('tasks');
+      return;
+    }
     if (label === 'Карьера') {
       setActiveView('career');
       return;
@@ -430,14 +436,18 @@ export function OfficeGame() {
       setActiveView('company');
       return;
     }
+    if (label === 'Боссы') {
+      setActiveView('bosses');
+      return;
+    }
     if (label === 'Персонаж') {
       setActiveView('character');
       return;
     }
-    if (label === 'Инвентарь' || label === 'Магазин') {
+    if (label === 'Магазин') {
       setActiveView('home');
       setDrawerCategory(null);
-      setNotice('Выбери предмет прямо в комнате: наведи на объект и нажми по нему.');
+      setNotice('Магазин встроен в офис: нажми на нужный предмет в комнате, чтобы открыть его каталог.');
       showFeedback('Выбери объект в комнате', 'xp');
       return;
     }
@@ -779,8 +789,10 @@ export function OfficeGame() {
             {officeNavigation.map((item) => {
               const isActive =
                 (activeView === 'home' && item.label === 'Главная') ||
+                (activeView === 'tasks' && item.label === 'Задачи') ||
                 (activeView === 'career' && item.label === 'Карьера') ||
                 (activeView === 'company' && item.label === 'Компания') ||
+                (activeView === 'bosses' && item.label === 'Боссы') ||
                 (activeView === 'character' && item.label === 'Персонаж');
               return (
               <button
@@ -827,11 +839,7 @@ export function OfficeGame() {
             <Skill label="Коммуникация" value={snapshot.skills.communication} icon="communication" />
             <Skill label="Напор" value={snapshot.skills.drive} icon="drive" />
 
-            <div className="office-quick-links">
-              <button type="button" onClick={() => handleNavigation('Инвентарь')}>Инвентарь <span>›</span></button>
-              <button type="button" onClick={() => handleNavigation('Достижения')}>Достижения <span>›</span></button>
-              <button type="button" onClick={() => setActiveView('character')}>Персонаж <span>›</span></button>
-            </div>
+
           </aside>
 
           <main className="office-center">
@@ -981,29 +989,38 @@ export function OfficeGame() {
               <div className="office-scene-note">{notice}</div>
             </section>
 
-            <div className="office-actions">
-              {officeActions.map((item) => (
-                <button
-                  type="button"
-                  key={item.id}
-                  onClick={() => triggerAction(item.id)}
-                  disabled={activeAction !== null}
-                  aria-busy={activeAction === item.id}
-                  className={`office-action office-action-${item.tone} ${activeAction === item.id ? 'is-active' : ''}`}
-                >
-                  <OfficeIcon name={item.icon} />
-                  <div>
-                    <b>{item.title}</b>
-                    <small>{item.id === 'work' && !firstDayDone ? `Первый день · ${story.completedEvents.length}/3` : item.text}</small>
-                  </div>
-                </button>
-              ))}
+            <nav className="office-location-strip" aria-label="Переходы по офису">
+              <button type="button" className="is-primary" onClick={() => setActiveView('tasks')}>
+                <OfficeIcon name="task" />
+                <span><b>Задачи</b><small>Рабочий стол</small></span>
+              </button>
+              <button type="button" onClick={() => setActiveView('career')}>
+                <OfficeIcon name="career" />
+                <span><b>Карьера</b><small>Личный путь</small></span>
+              </button>
+              <button type="button" onClick={() => setActiveView('company')}>
+                <OfficeIcon name="company" />
+                <span><b>Компания</b><small>Офисы</small></span>
+              </button>
+              <button type="button" onClick={() => setActiveView('bosses')}>
+                <OfficeIcon name="achievement" />
+                <span><b>Боссы</b><small>Испытания</small></span>
+              </button>
+              <button type="button" onClick={() => setActiveView('character')}>
+                <OfficeIcon name="character" />
+                <span><b>Персонаж</b><small>Билд</small></span>
+              </button>
+              <button type="button" onClick={() => handleNavigation('Магазин')}>
+                <OfficeIcon name="shop" />
+                <span><b>Магазин</b><small>Через офис</small></span>
+              </button>
               {feedback ? (
-                <div key={feedback.id} className={`office-action-feedback office-feedback-${feedback.tone}`}>
+                <div key={feedback.id} className={`office-location-feedback office-feedback-${feedback.tone}`}>
                   {feedback.text}
                 </div>
               ) : null}
-            </div>
+            </nav>
+
           </main>
 
           <aside className="office-right">
@@ -1053,26 +1070,18 @@ export function OfficeGame() {
               </div>
             </section>
 
-            <section className={`office-boss ${firstAssignmentDone ? 'is-complete' : ''}`}>
+
+
+            <section className="office-promotion-compact">
               <div className="office-card-head">
-                <h3>Следующий босс</h3>
-                {firstAssignmentDone ? <b className="office-boss-done">Пройден</b> : null}
+                <h3>Следующее повышение</h3>
+                <button type="button" onClick={() => setActiveView('career')}>К карьере »</button>
               </div>
-              <div className="office-boss-row">
-                <img src="/games/office/boss.svg" alt="Сергей Петрович" />
-                <div>
-                  <strong>Сергей Петрович</strong>
-                  <span>Руководитель отдела</span>
-                  <blockquote>«Посмотрим, на что ты способен»</blockquote>
-                </div>
+              <strong>{promotionCompleted ? snapshot.role : nextPromotion.role}</strong>
+              <div className="office-promotion-mini-bars">
+                <Requirement label="Компетентность" value={`${snapshot.skills.competence}/${nextPromotion.competence}`} progress={snapshot.skills.competence / nextPromotion.competence * 100} />
+                <Requirement label="Репутация" value={`${snapshot.reputation}/${nextPromotion.reputation}`} progress={snapshot.reputation / nextPromotion.reputation * 100} />
               </div>
-              <div className="office-boss-requirement">
-                <OfficeIcon name="task" />
-                Первое поручение · {firstAssignmentDone ? 'выполнено' : bossUnlocked ? 'доступно' : '3 задачи или ур. 3'}
-              </div>
-              <button type="button" onClick={handleBoss}>
-                {firstAssignmentDone ? 'Поручение выполнено' : bossUnlocked ? 'Начать поручение »' : 'К испытанию »'}
-              </button>
             </section>
 
             <section className="office-news">
@@ -1086,6 +1095,15 @@ export function OfficeGame() {
             </section>
           </aside>
             </>
+          ) : activeView === 'tasks' ? (
+            <OfficeTasksView
+              snapshot={snapshot}
+              story={story}
+              buildBonuses={buildBonuses}
+              activeAction={activeAction}
+              onAction={triggerAction}
+              onBack={() => setActiveView('home')}
+            />
           ) : activeView === 'career' ? (
             <V6CareerView
               state={v6}
@@ -1100,6 +1118,15 @@ export function OfficeGame() {
               onSwitch={switchCompany}
               onBack={() => setActiveView('home')}
             />
+          ) : activeView === 'bosses' ? (
+            <OfficeBossesView
+              snapshot={snapshot}
+              v6={v6}
+              bossUnlocked={bossUnlocked}
+              firstAssignmentDone={firstAssignmentDone}
+              onFight={handleBoss}
+              onBack={() => setActiveView('home')}
+            />
           ) : (
             <V6CharacterView
               state={v6}
@@ -1112,70 +1139,45 @@ export function OfficeGame() {
         </div>
 
         {activeView === 'home' ? (
-        <>
-        <footer className="office-bottom office-v6-bottom">
-          <section className="office-v6-workplace-stack">
-            <div className="office-v6-workplace-header">
-              <div className="office-bottom-title">
-                Рабочее место и персонаж
-                <span>{drawerCategory ? `${v6CategoryMeta[drawerCategory].label} · листай варианты →` : 'Кликни по объекту в комнате'}</span>
+          <footer className="office-bottom office-v6-bottom office-v65-equipment-bottom">
+            <section className="office-v6-workplace-stack">
+              <div className="office-v6-workplace-header">
+                <div className="office-bottom-title">
+                  Рабочее место и персонаж
+                  <span>{drawerCategory ? `${v6CategoryMeta[drawerCategory].label} · колесо мыши листает предметы` : 'Кликни по предмету в комнате'}</span>
+                </div>
+                {drawerCategory ? (
+                  <button
+                    type="button"
+                    className="office-v6-workplace-close"
+                    onClick={() => setDrawerCategory(null)}
+                  >
+                    Закрыть
+                  </button>
+                ) : null}
               </div>
+
               {drawerCategory ? (
-                <button
-                  type="button"
-                  className="office-v6-workplace-close"
-                  onClick={() => setDrawerCategory(null)}
-                >
-                  Закрыть
-                </button>
-              ) : null}
-            </div>
-
-            {drawerCategory ? (
-              <div className="office-v6-inline-drawer">
-                <EquipmentDrawer
-                  category={drawerCategory}
-                  state={v6}
-                  level={snapshot.level}
-                  reputation={snapshot.reputation}
-                  money={snapshot.money}
-                  onClose={() => setDrawerCategory(null)}
-                  onBuy={buyV6Item}
-                  onEquip={equipV6Item}
-                />
-              </div>
-            ) : (
-              <div className="office-v6-workplace-empty">
-                <strong>Выбери объект прямо в комнате</strong>
-                <span>Наведи на персонажа, стол, стул, ПК, монитор, аксессуары, декор или свет — объект аккуратно подсветится. После клика здесь появятся доступные варианты.</span>
-              </div>
-            )}
-          </section>
-
-          <section className="office-promotion">
-            <div className="office-bottom-title">Следующее повышение <span>?</span></div>
-            <div className="office-promotion-head">
-              <OfficeIcon name="briefcase" />
-              <div>
-                <strong>{promotionCompleted ? 'Повышение получено' : nextPromotion.role}</strong>
-                <small>{promotionCompleted ? `${formatMoney(snapshot.salary)} ₽` : `${formatMoney(snapshot.salary)} ₽ → ${formatMoney(nextPromotion.salary)} ₽`}</small>
-              </div>
-            </div>
-            <Requirement label="Компетентность" value={`${snapshot.skills.competence} / ${nextPromotion.competence}`} progress={snapshot.skills.competence / nextPromotion.competence * 100} />
-            <Requirement label="Репутация" value={`${snapshot.reputation} / ${nextPromotion.reputation}`} progress={snapshot.reputation / nextPromotion.reputation * 100} />
-            <Requirement label="Первое поручение" value={firstAssignmentDone ? '1 / 1' : '0 / 1'} progress={firstAssignmentDone ? 100 : 0} />
-            <div className="office-promotion-actions">
-              <button type="button" className="primary" onClick={() => setModal({ type: 'promotion-help' })}>Подготовиться</button>
-              <button type="button" disabled={!promotionReady} onClick={requestPromotion}>
-                {promotionCompleted ? 'Получено' : 'Просить повышение'}
-              </button>
-            </div>
-            <small className="office-unlocks">Ветка карьеры и экипировка влияют на дальнейшие повышения</small>
-          </section>
-
-        </footer>
-
-        </>
+                <div className="office-v6-inline-drawer">
+                  <EquipmentDrawer
+                    category={drawerCategory}
+                    state={v6}
+                    level={snapshot.level}
+                    reputation={snapshot.reputation}
+                    money={snapshot.money}
+                    onClose={() => setDrawerCategory(null)}
+                    onBuy={buyV6Item}
+                    onEquip={equipV6Item}
+                  />
+                </div>
+              ) : (
+                <div className="office-v6-workplace-empty">
+                  <strong>Рабочее место — это твой магазин</strong>
+                  <span>Нажми на стол, кресло, ПК, монитор, персонажа, декор или свет. Снизу сразу появятся варианты покупки и установки.</span>
+                </div>
+              )}
+            </section>
+          </footer>
         ) : null}
 
         {bossBattleOpen ? (
