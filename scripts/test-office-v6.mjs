@@ -76,6 +76,20 @@ try {
   const pageErrors = [];
   page.on('pageerror', (error) => pageErrors.push(error.message));
 
+  const assertWorldNav = async (activeLabel = null) => {
+    const nav = page.locator('.office-world-nav');
+    await nav.waitFor();
+    assert.equal(await nav.getByRole('button').count(), 5);
+    if (activeLabel) {
+      const active = nav.getByRole('button', { name: new RegExp(activeLabel, 'i') });
+      assert.equal(await active.getAttribute('aria-current'), 'page');
+    }
+    const navBox = await nav.boundingBox();
+    const pageBox = await page.locator('.office-page').boundingBox();
+    assert(navBox && pageBox);
+    assert(navBox.y + navBox.height <= pageBox.y + pageBox.height + 1);
+  };
+
   await page.goto('http://127.0.0.1:' + port + '/applications/games/office', {
     waitUntil: 'networkidle',
   });
@@ -84,7 +98,8 @@ try {
 
   await page.locator('.office-game').waitFor();
   assert.equal(await page.locator('.office-action').count(), 0);
-  assert.equal(await page.locator('.office-location-strip>button').count(), 5);
+  assert.equal(await page.locator('.office-world-nav>button').count(), 5);
+  await assertWorldNav();
   assert.equal(await page.locator('.office-side-nav>button').count(), 6);
   assert.equal(await page.locator('.office-profile-compact').count(), 1);
   assert.equal(await page.locator('.office-v68-scene-status').count(), 1);
@@ -145,6 +160,7 @@ try {
   await page.getByRole('heading', { name: 'Задачи' }).waitFor();
   assert.equal(await page.locator('.office-v65-task-card').count(), 4);
   assert.equal(await page.locator('.office-v65-task-grid').count(), 1);
+  await assertWorldNav('Задачи');
   await page.getByRole('button', { name: '← Вернуться в офис' }).click();
 
   // Player progression lives in the left rail; Profile is no longer duplicated in the world strip.
@@ -153,6 +169,7 @@ try {
   await page.locator('.office-v64-character-avatar').waitFor();
   assert((await page.locator('.office-v64-loadout-slot').count()) >= 4);
   assert.equal(await page.locator('.office-v64-archetype-grid>button').count(), 5);
+  await assertWorldNav();
   await page.getByRole('button', { name: /Женщина/ }).click();
   await page.getByRole('button', { name: /Коммуникатор/ }).click();
   assert.match(await page.locator('.office-v64-build-head').textContent(), /Коммуникатор/i);
@@ -165,6 +182,7 @@ try {
   assert.equal(await page.locator('.office-v67-primary-grid>article').count(), 3);
   assert.equal(await page.locator('.office-v67-derived-grid>article').count(), 8);
   assert.equal(await page.locator('.office-v68-build-direction').count(), 1);
+  await assertWorldNav();
   assert.match(await page.locator('.office-v67-point-bank').textContent(), /3/);
   await page.getByRole('button', { name: /^\+1/ }).first().click();
   assert.match(await page.locator('.office-v67-point-bank').textContent(), /2/);
@@ -173,20 +191,25 @@ try {
   await page.getByRole('heading', { name: 'Навыки' }).waitFor();
   assert.equal(await page.locator('.office-v67-skill-board>article').count(), 6);
   assert.equal(await page.locator('.office-v68-skill-focus').count(), 1);
+  await assertWorldNav();
 
   await page.getByRole('button', { name: /Таланты/ }).first().click();
   await page.getByRole('heading', { name: 'Таланты' }).waitFor();
   assert.equal(await page.locator('.office-v67-talent-columns>article').count(), 3);
+  assert.equal(await page.locator('.office-v69-talent-summary').count(), 1);
+  await assertWorldNav();
 
   await page.getByRole('button', { name: /Инвентарь/ }).first().click();
   await page.getByRole('heading', { name: 'Инвентарь' }).waitFor();
   assert.equal(await page.locator('.office-v67-inventory-grid>article').count(), 8);
   assert.equal(await page.locator('.office-v68-inventory-summary').count(), 1);
+  await assertWorldNav();
 
   await page.getByRole('button', { name: /Достижения/ }).first().click();
   await page.getByRole('heading', { name: 'Достижения' }).waitFor();
   assert.equal(await page.locator('.office-v67-achievement-grid>article').count(), 6);
   assert.equal(await page.locator('.office-v68-achievement-progress').count(), 1);
+  await assertWorldNav();
   await page.getByRole('button', { name: '← В офис' }).click();
 
   // Events replace the old bottom Store duplicate.
@@ -194,6 +217,8 @@ try {
   await page.getByRole('heading', { name: 'События' }).waitFor();
   assert.equal(await page.locator('.office-v67-event-feed>article').count(), 3);
   assert.equal(await page.locator('.office-v67-event-feed article em').count(), 3);
+  assert.equal(await page.locator('.office-v69-event-next').count(), 1);
+  await assertWorldNav('События');
   await page.getByRole('button', { name: '← В офис' }).click();
 
   // Expanded career tree.
@@ -217,6 +242,7 @@ try {
   const transformAfterZoom = await canvas.getAttribute('style');
   assert.notEqual(transformAfterZoom, transformBeforeZoom);
   assert.equal(await page.locator('.office-v68-career-summary').count(), 1);
+  await assertWorldNav('Карьера');
   await page.screenshot({ path: output + '/career-v68-1600.png', fullPage: false });
   await page.getByRole('button', { name: /Вернуться в офис/ }).click();
 
@@ -228,6 +254,7 @@ try {
   assert.equal(await page.locator('.office-v64-company-progress>div').count(), 6);
   assert.match(await page.locator('.office-v6-company-grid>article').first().textContent(), /Пассивный бонус/i);
   assert((await page.locator('.office-v64-company-metrics em').count()) >= 6);
+  await assertWorldNav('Компания');
   await page.screenshot({ path: output + '/companies-v68-1600.png', fullPage: false });
   await page.getByRole('button', { name: /Вернуться в офис/ }).click();
 
@@ -249,6 +276,7 @@ try {
   assert.equal(await page.locator('.office-v65-current-boss').count(), 1);
   assert((await page.locator('.office-v65-boss-road-item').count()) >= 4);
   assert.equal(await page.locator('.office-v68-boss-advice').count(), 1);
+  await assertWorldNav('Боссы');
   await page.getByRole('button', { name: /Начать переговоры/ }).click();
   await page.getByRole('dialog', { name: /Босс: Сергей Петрович/ }).waitFor();
   assert.equal(await page.locator('.office-v6-boss-actions>button').count(), 3);
@@ -256,6 +284,21 @@ try {
   assert.match(await page.locator('.office-v6-boss-health').textContent(), /Терпение босса/);
 
   await page.screenshot({ path: output + '/boss-1600.png', fullPage: true });
+
+  await page.getByRole('button', { name: '×' }).click().catch(() => {});
+  const worldScreens = [
+    ['Задачи', 'Задачи'],
+    ['Карьера', 'Большое дерево развития'],
+    ['Компания', 'Меняй офис вместе с карьерой'],
+    ['Боссы', 'Боссы'],
+    ['События', 'События'],
+  ];
+  for (const [label, heading] of worldScreens) {
+    await page.locator('.office-world-nav').getByRole('button', { name: new RegExp(label, 'i') }).click();
+    await page.getByRole('heading', { name: heading }).waitFor();
+    await assertWorldNav(label);
+  }
+  await page.getByRole('button', { name: '← В офис' }).click();
 
   for (const width of [1600, 1200, 1024]) {
     await page.getByRole('button', { name: '×' }).click().catch(() => {});
@@ -291,7 +334,7 @@ try {
   assert(persisted && persisted.includes('"v6"'));
   assert(persisted && persisted.includes('"gender":"female"'));
   assert.deepEqual(pageErrors, []);
-  console.log('Office v6.8: UI/UX audit pass, readability, density, goal clarity and all progression/world screens passed');
+  console.log('Office v6.9 alpha: persistent world nav, one-screen shell and every major UI/UX screen passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
