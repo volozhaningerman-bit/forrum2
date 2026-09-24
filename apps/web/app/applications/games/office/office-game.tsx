@@ -8,7 +8,6 @@ import {
   initialWorkspaceItems,
   isOfficePersistedState,
   nextPromotion,
-  officeActions,
   officeNavigation,
   officeNews,
   OFFICE_ACTION_COOLDOWN_MS,
@@ -31,10 +30,11 @@ import {
 } from './office-v5-content';
 import {
   EquipmentDrawer,
-  V6BossBattle,
+  V6BossesView,
   V6CareerView,
   V6CharacterView,
   V6CompanyView,
+  V6TasksView,
 } from './office-v6-ui';
 import {
   getV6BuildBonuses,
@@ -59,7 +59,7 @@ type ActionFeedback = {
   tone: FeedbackTone;
 };
 
-type OfficeView = 'home' | 'career' | 'company' | 'character';
+type OfficeView = 'home' | 'tasks' | 'career' | 'company' | 'bosses' | 'character';
 type OfficeModal =
   | { type: 'event'; event: OfficeStoryEvent }
   | { type: 'boss'; event: OfficeStoryEvent }
@@ -72,7 +72,6 @@ export function OfficeGame() {
   const [workspace, setWorkspace] = useState<OfficeWorkspaceItem[]>(initialWorkspaceItems);
   const [v6, setV6] = useState<V6State>(initialV6State);
   const [drawerCategory, setDrawerCategory] = useState<V6ItemCategory | null>(null);
-  const [bossBattleOpen, setBossBattleOpen] = useState(false);
   const [notice, setNotice] = useState('Первый рабочий день. Начни с простого поручения.');
   const [energyCountdown, setEnergyCountdown] = useState(OFFICE_ENERGY_REGEN_SECONDS);
   const [energyNextAt, setEnergyNextAt] = useState<number | null>(null);
@@ -243,8 +242,10 @@ export function OfficeGame() {
       page.style.setProperty('--office-viewport-height', `${Math.max(0, window.innerHeight - top - 8)}px`);
     };
 
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     document.body.classList.add('office-no-scroll');
     syncViewport();
+    window.requestAnimationFrame(syncViewport);
     window.addEventListener('resize', syncViewport);
 
     return () => {
@@ -422,12 +423,20 @@ export function OfficeGame() {
       setActiveView('home');
       return;
     }
+    if (label === 'Задачи') {
+      setActiveView('tasks');
+      return;
+    }
     if (label === 'Карьера') {
       setActiveView('career');
       return;
     }
     if (label === 'Компания') {
       setActiveView('company');
+      return;
+    }
+    if (label === 'Боссы') {
+      setActiveView('bosses');
       return;
     }
     if (label === 'Персонаж') {
@@ -446,7 +455,7 @@ export function OfficeGame() {
     showFeedback(`${label}: в разработке`, 'xp');
   };
 
-  const triggerAction = (id: (typeof officeActions)[number]['id']) => {
+  const triggerAction = (id: 'work' | 'approve' | 'learn' | 'prank') => {
     if (activeAction) return;
 
     if (id === 'work') {
@@ -549,18 +558,11 @@ export function OfficeGame() {
   };
 
   const handleBoss = () => {
+    setActiveView('bosses');
     if (!bossUnlocked) {
-      setNotice('Сергей Петрович пока не зовёт: закончи три задачи первого дня или достигни 3 уровня.');
-      showFeedback('Закончи первый день', 'warning');
-      return;
+      setNotice('Босс пока закрыт: закончи три задачи первого дня или достигни 3 уровня.');
+      showFeedback('Босс пока закрыт', 'warning');
     }
-
-    if (firstAssignmentDone || v6.bossResolved) {
-      setNotice('Сергей Петрович уже пройден. Твой билд готовится к следующему боссу.');
-      return;
-    }
-
-    setBossBattleOpen(true);
   };
 
   const buyV6Item = (item: V6Item) => {
@@ -679,7 +681,6 @@ export function OfficeGame() {
     }));
     setStory((current) => ({ ...current, bossResolved: true, bossChoiceId: `v6-${kind}` }));
     gainXp(boss.rewardXp);
-    setBossBattleOpen(false);
     showFeedback('Босс пройден!', 'money');
     setNotice('Сергей Петрович сдался перед твоим билдом. Первое поручение выполнено.');
   };
@@ -712,7 +713,6 @@ export function OfficeGame() {
     setWorkspace(initialWorkspaceItems);
     setV6(initialV6State);
     setDrawerCategory(null);
-    setBossBattleOpen(false);
     setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
     setEnergyNextAt(null);
     setStory(initialOfficeStoryState);
@@ -779,8 +779,10 @@ export function OfficeGame() {
             {officeNavigation.map((item) => {
               const isActive =
                 (activeView === 'home' && item.label === 'Главная') ||
+                (activeView === 'tasks' && item.label === 'Задачи') ||
                 (activeView === 'career' && item.label === 'Карьера') ||
                 (activeView === 'company' && item.label === 'Компания') ||
+                (activeView === 'bosses' && item.label === 'Боссы') ||
                 (activeView === 'character' && item.label === 'Персонаж');
               return (
               <button
@@ -827,11 +829,7 @@ export function OfficeGame() {
             <Skill label="Коммуникация" value={snapshot.skills.communication} icon="communication" />
             <Skill label="Напор" value={snapshot.skills.drive} icon="drive" />
 
-            <div className="office-quick-links">
-              <button type="button" onClick={() => handleNavigation('Инвентарь')}>Инвентарь <span>›</span></button>
-              <button type="button" onClick={() => handleNavigation('Достижения')}>Достижения <span>›</span></button>
-              <button type="button" onClick={() => setActiveView('character')}>Персонаж <span>›</span></button>
-            </div>
+
           </aside>
 
           <main className="office-center">
@@ -981,21 +979,18 @@ export function OfficeGame() {
               <div className="office-scene-note">{notice}</div>
             </section>
 
-            <div className="office-actions">
-              {officeActions.map((item) => (
-                <button
-                  type="button"
-                  key={item.id}
-                  onClick={() => triggerAction(item.id)}
-                  disabled={activeAction !== null}
-                  aria-busy={activeAction === item.id}
-                  className={`office-action office-action-${item.tone} ${activeAction === item.id ? 'is-active' : ''}`}
-                >
-                  <OfficeIcon name={item.icon} />
-                  <div>
-                    <b>{item.title}</b>
-                    <small>{item.id === 'work' && !firstDayDone ? `Первый день · ${story.completedEvents.length}/3` : item.text}</small>
-                  </div>
+            <nav className="office-room-links" aria-label="Переходы по игре">
+              {[
+                ['tasks', 'task', 'Задачи', 'Рабочий день'],
+                ['career', 'career', 'Карьера', 'Путь развития'],
+                ['company', 'company', 'Компания', 'Сменить офис'],
+                ['bosses', 'achievement', 'Боссы', 'Испытания'],
+                ['character', 'character', 'Персонаж', 'Твой билд'],
+              ].map(([view, icon, title, hint]) => (
+                <button type="button" key={view} onClick={() => setActiveView(view as OfficeView)}>
+                  <OfficeIcon name={icon} />
+                  <span><b>{title}</b><small>{hint}</small></span>
+                  <i>→</i>
                 </button>
               ))}
               {feedback ? (
@@ -1003,6 +998,7 @@ export function OfficeGame() {
                   {feedback.text}
                 </div>
               ) : null}
+            </nav>
             </div>
           </main>
 
@@ -1053,27 +1049,7 @@ export function OfficeGame() {
               </div>
             </section>
 
-            <section className={`office-boss ${firstAssignmentDone ? 'is-complete' : ''}`}>
-              <div className="office-card-head">
-                <h3>Следующий босс</h3>
-                {firstAssignmentDone ? <b className="office-boss-done">Пройден</b> : null}
-              </div>
-              <div className="office-boss-row">
-                <img src="/games/office/boss.svg" alt="Сергей Петрович" />
-                <div>
-                  <strong>Сергей Петрович</strong>
-                  <span>Руководитель отдела</span>
-                  <blockquote>«Посмотрим, на что ты способен»</blockquote>
-                </div>
-              </div>
-              <div className="office-boss-requirement">
-                <OfficeIcon name="task" />
-                Первое поручение · {firstAssignmentDone ? 'выполнено' : bossUnlocked ? 'доступно' : '3 задачи или ур. 3'}
-              </div>
-              <button type="button" onClick={handleBoss}>
-                {firstAssignmentDone ? 'Поручение выполнено' : bossUnlocked ? 'Начать поручение »' : 'К испытанию »'}
-              </button>
-            </section>
+
 
             <section className="office-news">
               <div className="office-card-head"><h3>Новости офиса</h3><button type="button">Все »</button></div>
@@ -1086,6 +1062,14 @@ export function OfficeGame() {
             </section>
           </aside>
             </>
+          ) : activeView === 'tasks' ? (
+            <V6TasksView
+              state={v6}
+              snapshot={snapshot}
+              storyProgress={story.completedEvents.length}
+              onRun={triggerAction}
+              onBack={() => setActiveView('home')}
+            />
           ) : activeView === 'career' ? (
             <V6CareerView
               state={v6}
@@ -1098,6 +1082,14 @@ export function OfficeGame() {
               state={v6}
               snapshot={snapshot}
               onSwitch={switchCompany}
+              onBack={() => setActiveView('home')}
+            />
+          ) : activeView === 'bosses' ? (
+            <V6BossesView
+              state={v6}
+              snapshot={snapshot}
+              unlocked={bossUnlocked}
+              onAttack={attackBoss}
               onBack={() => setActiveView('home')}
             />
           ) : (
@@ -1178,14 +1170,7 @@ export function OfficeGame() {
         </>
         ) : null}
 
-        {bossBattleOpen ? (
-          <V6BossBattle
-            state={v6}
-            snapshot={snapshot}
-            onAttack={attackBoss}
-            onClose={() => setBossBattleOpen(false)}
-          />
-        ) : null}
+
 
         <OfficeOverlay
           modal={modal}
