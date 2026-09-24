@@ -435,7 +435,9 @@ export function OfficeGame() {
     }
     if (label === 'Инвентарь' || label === 'Магазин') {
       setActiveView('home');
-      setDrawerCategory('pc');
+      setDrawerCategory(null);
+      setNotice('Выбери предмет прямо в комнате: наведи на объект и нажми по нему.');
+      showFeedback('Выбери объект в комнате', 'xp');
       return;
     }
     setActiveView('home');
@@ -825,7 +827,7 @@ export function OfficeGame() {
             <Skill label="Напор" value={snapshot.skills.drive} icon="drive" />
 
             <div className="office-quick-links">
-              <button type="button" onClick={() => setDrawerCategory('pc')}>Инвентарь <span>›</span></button>
+              <button type="button" onClick={() => handleNavigation('Инвентарь')}>Инвентарь <span>›</span></button>
               <button type="button" onClick={() => handleNavigation('Достижения')}>Достижения <span>›</span></button>
               <button type="button" onClick={() => setActiveView('character')}>Персонаж <span>›</span></button>
             </div>
