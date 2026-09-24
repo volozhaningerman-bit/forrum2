@@ -91,6 +91,7 @@ try {
   await page.locator('.office-v6-drawer').waitFor();
   assert((await page.locator('.office-v6-item-card').count()) >= 6);
   await page.getByRole('button', { name: 'Купить' }).first().click();
+  await page.waitForFunction(() => /куплен|установлен/i.test(document.querySelector('.office-scene-note')?.textContent ?? ''));
   assert.match(await page.locator('.office-scene-note').textContent(), /куплен|установлен/i);
   await page.locator('.office-v6-drawer-close').click();
 
