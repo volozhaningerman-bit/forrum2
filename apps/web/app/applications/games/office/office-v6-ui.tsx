@@ -376,6 +376,22 @@ export function V6CharacterView({
             </div>
           </div>
 
+          <div className="office-v68-character-guidance">
+            <div>
+              <small>Сильная сторона</small>
+              <strong>{strongestBonuses[0] ? v6BonusLabels[strongestBonuses[0][0]] : 'Базовый билд'}</strong>
+            </div>
+            <div>
+              <small>Карьерная синергия</small>
+              <strong>{branchLabel(activeArchetype.preferredBranch)}</strong>
+            </div>
+            <div>
+              <small>Экипировано</small>
+              <strong>{equippedItems.length}/{equippedCategories.length}</strong>
+            </div>
+            <p>Профиль — это сводка. Покупка одежды, техники и мебели остаётся в офисе через клики по объектам комнаты.</p>
+          </div>
+
           <div className="office-v64-customize-note">
             <V6Icon name="clothes" />
             <div>
@@ -511,6 +527,22 @@ export function V6CareerView({
             </div>
           </button>
         ))}
+      </div>
+
+      <div className="office-v68-career-summary">
+        <div>
+          <small>Текущая должность</small>
+          <strong>{snapshot.role}</strong>
+        </div>
+        <div>
+          <small>Выбранная ветка</small>
+          <strong>{state.careerBranch === 'general' ? 'Ещё не выбрана' : branchLabel(state.careerBranch)}</strong>
+        </div>
+        <div>
+          <small>Эффективная репутация</small>
+          <strong>{effectiveReputation}</strong>
+        </div>
+        <p>Подсвеченный маршрут — реальный путь к следующей должности. Выбирай узлы, чтобы сразу видеть требования, награды и открытия.</p>
       </div>
 
       <div className="office-v6-career-toolbar">
@@ -770,6 +802,9 @@ export function V6CompanyView({
           const available = snapshot.level >= company.minLevel && snapshot.reputation >= company.minReputation;
           const active = state.companyId === company.id;
           const estimatedSalary = Math.round(35000 * company.salaryMultiplier / 1000) * 1000;
+          const currentCompany = v6Companies[activeIndex] ?? v6Companies[0];
+          const currentEstimatedSalary = Math.round(35000 * currentCompany.salaryMultiplier / 1000) * 1000;
+          const salaryDelta = estimatedSalary - currentEstimatedSalary;
           return (
             <article
               key={company.id}
@@ -803,8 +838,12 @@ export function V6CompanyView({
                 <p>{company.description}</p>
 
                 <div className="office-v64-company-metrics">
-                  <div><small>Зарплата</small><b>≈ {formatMoney(estimatedSalary)} ₽</b></div>
-                  <div><small>Офис</small><b>{company.officeStyle}</b></div>
+                  <div>
+                    <small>Зарплата</small>
+                    <b>≈ {formatMoney(estimatedSalary)} ₽</b>
+                    {!active ? <em className={salaryDelta >= 0 ? 'positive' : 'negative'}>{salaryDelta >= 0 ? '+' : ''}{formatMoney(salaryDelta)} ₽ к текущей</em> : <em>текущая база</em>}
+                  </div>
+                  <div><small>Офис</small><b>{company.officeStyle}</b><em>{company.perk}</em></div>
                 </div>
 
                 <div className="office-v64-company-perk">
@@ -813,9 +852,9 @@ export function V6CompanyView({
                 </div>
 
                 <div className="office-v64-company-requirements">
-                  <span>ур. {company.minLevel}</span>
-                  <span>реп. {company.minReputation}</span>
-                  <span>×{company.salaryMultiplier.toFixed(2)}</span>
+                  <span className={snapshot.level >= company.minLevel ? 'met' : ''}>ур. {snapshot.level}/{company.minLevel}</span>
+                  <span className={snapshot.reputation >= company.minReputation ? 'met' : ''}>реп. {snapshot.reputation}/{company.minReputation}</span>
+                  <span>доход ×{company.salaryMultiplier.toFixed(2)}</span>
                 </div>
               </div>
 
