@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { formatMoney, type OfficeSnapshot } from './office-data';
 import {
   branchLabel,
@@ -512,7 +512,7 @@ function PageHeader({
   eyebrow: string;
   title: string;
   onBack: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <header className="office-v6-page-header">
