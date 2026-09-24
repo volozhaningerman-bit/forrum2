@@ -2040,3 +2040,617 @@
 .office-hotspot-desk{left:43%;top:58%}
 .office-hotspot-monitor{left:68%;top:34%}
 .office-hotspot-character{left:53%;top:46%}
+
+
+/* office v6.1: fixed viewport, inline equipment, silent scene hotspots, career map polish */
+body.office-no-scroll{
+  overflow:hidden!important;
+}
+
+.office-page{
+  height:var(--office-viewport-height,calc(100dvh - 70px));
+  max-height:var(--office-viewport-height,calc(100dvh - 70px));
+  min-height:0;
+  overflow:hidden;
+}
+
+.office-game{
+  height:100%;
+  min-height:0;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+}
+
+.office-body{
+  min-height:0!important;
+  height:auto;
+  overflow:hidden;
+}
+
+.office-side-nav,
+.office-profile,
+.office-center,
+.office-right,
+.office-v6-page{
+  min-height:0;
+}
+
+.office-profile{
+  align-self:stretch;
+  overflow:auto;
+  scrollbar-width:thin;
+  scrollbar-color:#645038 #17191b;
+}
+
+.office-right{
+  overflow:auto;
+  scrollbar-width:thin;
+  scrollbar-color:#514333 #17191b;
+}
+
+.office-center{
+  overflow:hidden;
+}
+
+.office-scene{
+  min-height:0!important;
+  height:100%;
+}
+
+.office-scene>img{
+  min-height:0!important;
+  height:100%;
+}
+
+/* objects in the room: no labels, only a soft interaction highlight */
+.office-hotspot-zone{
+  position:absolute;
+  z-index:4;
+  display:block;
+  padding:0;
+  border:1px solid transparent;
+  border-radius:12px;
+  background:transparent;
+  color:transparent;
+  font-size:0;
+  line-height:0;
+  opacity:1;
+  cursor:pointer;
+  box-shadow:none;
+  transition:
+    background .16s ease,
+    border-color .16s ease,
+    box-shadow .16s ease,
+    transform .16s ease;
+}
+
+.office-hotspot-zone:hover,
+.office-hotspot-zone:focus-visible,
+.office-hotspot-zone.is-active{
+  outline:none;
+  background:rgba(224,165,86,.075);
+  border-color:rgba(224,165,86,.34);
+  box-shadow:
+    0 0 0 1px rgba(242,193,120,.09),
+    0 0 16px rgba(202,126,49,.10),
+    inset 0 0 22px rgba(236,180,98,.055);
+}
+
+.office-hotspot-zone:hover{
+  transform:scale(1.012);
+}
+
+.office-hotspot-zone-pc{
+  left:72%;
+  top:54%;
+  width:13%;
+  height:29%;
+  border-radius:8px;
+}
+
+.office-hotspot-zone-monitor{
+  left:61%;
+  top:28%;
+  width:21%;
+  height:22%;
+  border-radius:7px;
+}
+
+.office-hotspot-zone-desk{
+  z-index:2;
+  left:34%;
+  top:50%;
+  width:58%;
+  height:18%;
+  border-radius:9px;
+}
+
+.office-hotspot-zone-chair{
+  z-index:3;
+  left:45%;
+  top:62%;
+  width:30%;
+  height:30%;
+  border-radius:44% 44% 18% 18%;
+}
+
+.office-hotspot-zone-character{
+  z-index:5;
+  left:45%;
+  top:31%;
+  width:24%;
+  height:37%;
+  border-radius:44% 44% 30% 30%;
+}
+
+/* equipment list now lives inside "Рабочее место и персонаж" */
+.office-v6-bottom{
+  min-height:0;
+  align-items:stretch;
+}
+
+.office-v6-bottom.has-equipment-drawer{
+  height:min(318px,39vh);
+}
+
+.office-v6-workplace-stack{
+  min-width:0;
+  min-height:0;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  overflow:hidden;
+  border:1px solid #5a432d;
+  background:linear-gradient(#232526,#191b1c);
+  box-shadow:inset 0 0 0 1px #0e0f10,inset 0 1px #303233;
+}
+
+.office-v6-workplace-stack>.office-v6-equipment{
+  border:0;
+  box-shadow:none;
+  background:transparent;
+}
+
+.office-v6-equipment-slot.is-open{
+  border-color:#d17c31;
+  background:linear-gradient(#413429,#2d2925);
+  box-shadow:inset 0 -2px #d17c31;
+}
+
+.office-v6-inline-drawer{
+  min-height:0;
+  overflow:hidden;
+  border-top:1px solid #5a432d;
+}
+
+.office-v6-inline-drawer .office-v6-drawer{
+  height:100%;
+  min-height:0;
+  margin:0;
+  border:0;
+  box-shadow:none;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+}
+
+.office-v6-inline-drawer .office-v6-drawer>header{
+  min-height:48px;
+  padding:5px 8px;
+}
+
+.office-v6-inline-drawer .office-v6-drawer-title>.office-icon{
+  width:29px;
+  height:29px;
+  padding:5px;
+}
+
+.office-v6-inline-drawer .office-v6-drawer-title h3{
+  font-size:13px;
+}
+
+.office-v6-inline-drawer .office-v6-drawer-title p{
+  font-size:7px;
+}
+
+.office-v6-inline-drawer .office-v6-item-list{
+  min-height:0;
+  height:100%;
+  max-height:none;
+  overflow:auto;
+  overscroll-behavior:contain;
+  padding:5px;
+  scrollbar-width:thin;
+  scrollbar-color:#795432 #181a1b;
+}
+
+.office-v6-inline-drawer .office-v6-item-card{
+  min-height:78px;
+  grid-template-columns:68px minmax(0,1fr) 116px;
+  padding:5px;
+}
+
+.office-v6-inline-drawer .office-v6-item-visual>.office-icon{
+  width:30px;
+  height:30px;
+}
+
+.office-v6-inline-drawer .office-v6-item-copy>strong{
+  font-size:11px;
+}
+
+.office-v6-inline-drawer .office-v6-item-copy>p{
+  font-size:7px;
+}
+
+.office-v6-inline-drawer .office-v6-bonus-chips>span{
+  padding:2px 4px;
+  font-size:6.5px;
+}
+
+.office-v6-inline-drawer .office-v6-item-buy>button{
+  min-height:26px;
+}
+
+.office-v6-bottom.has-equipment-drawer .office-promotion{
+  overflow:hidden;
+}
+
+/* career: readable branches + zoom/pan viewport */
+.office-v6-career{
+  height:100%;
+  display:grid;
+  grid-template-rows:auto auto auto minmax(0,1fr);
+  overflow:hidden;
+}
+
+.office-v6-branch-pick{
+  margin:7px 0;
+}
+
+.office-v6-branch-pick button{
+  min-height:76px;
+}
+
+.office-v6-branch-rewards{
+  display:flex;
+  flex-wrap:wrap;
+  gap:3px;
+  margin-top:4px;
+}
+
+.office-v6-branch-rewards b{
+  padding:2px 5px;
+  border:1px solid #49483f;
+  background:#171a19;
+  color:#a9b79d;
+  font-size:7px;
+  font-weight:600;
+}
+
+.office-v6-career-toolbar{
+  min-height:38px;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:10px;
+  padding:5px 7px;
+  border:1px solid #473c31;
+  border-bottom:0;
+  background:linear-gradient(#202223,#191b1c);
+}
+
+.office-v6-career-zoom{
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+
+.office-v6-career-zoom button{
+  width:28px;
+  height:27px;
+  border:1px solid #62482f;
+  background:#29241f;
+  color:#e0b776;
+  cursor:pointer;
+  font-size:13px;
+}
+
+.office-v6-career-zoom button.reset{
+  width:52px;
+  color:#bfb3a0;
+  font-size:8px;
+}
+
+.office-v6-career-hint{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  color:#777168;
+  font-size:7px;
+}
+
+.office-v6-career-legend{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.office-v6-career-legend span{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  color:#8e877d;
+  font-size:7px;
+  white-space:nowrap;
+}
+
+.office-v6-career-legend i{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+}
+
+.office-v6-career-legend i.current{background:#d47b31}
+.office-v6-career-legend i.available{background:#688c5b}
+.office-v6-career-legend i.locked{background:#55575a}
+
+.office-v6-career-viewport{
+  position:relative;
+  min-height:0;
+  height:100%;
+  overflow:hidden;
+  touch-action:none;
+  cursor:grab;
+  border:1px solid #4b3e31;
+  background:
+    linear-gradient(#ffffff04 1px,transparent 1px),
+    linear-gradient(90deg,#ffffff04 1px,transparent 1px),
+    radial-gradient(circle at 47% 50%,#25231f,#131516 72%);
+  background-size:32px 32px,32px 32px,auto;
+  user-select:none;
+}
+
+.office-v6-career-viewport.is-dragging{
+  cursor:grabbing;
+}
+
+.office-v6-career-canvas{
+  position:absolute;
+  left:0;
+  top:0;
+  width:1480px;
+  height:650px;
+  transform-origin:0 0;
+  transition:transform .12s ease-out;
+  will-change:transform;
+}
+
+.office-v6-career-viewport.is-dragging .office-v6-career-canvas{
+  transition:none;
+}
+
+.office-v6-career-canvas>svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+
+.office-v6-career-canvas line{
+  stroke:#775b3c;
+  stroke-width:.62;
+  stroke-dasharray:1.2 1.15;
+  vector-effect:non-scaling-stroke;
+  opacity:.72;
+}
+
+.office-v6-career-node{
+  width:176px;
+  min-height:132px;
+  gap:4px;
+  padding:9px;
+  border-radius:5px;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.025),transparent 42%),
+    linear-gradient(#292b2c,#1d1f20);
+  box-shadow:0 8px 22px #0008,inset 0 1px rgba(255,255,255,.035);
+  cursor:default;
+}
+
+.office-v6-career-node.current{
+  border-color:#dd8235;
+  background:
+    linear-gradient(145deg,rgba(225,137,59,.12),transparent 45%),
+    linear-gradient(#342b24,#211f1d);
+  box-shadow:0 0 0 1px #754823,0 8px 24px #0009;
+}
+
+.office-v6-career-node.available{
+  border-color:#5f8057;
+  box-shadow:0 0 0 1px rgba(91,125,78,.16),0 8px 22px #0008;
+}
+
+.office-v6-career-node.locked{
+  opacity:.44;
+  filter:saturate(.55);
+}
+
+.office-v6-career-node-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:7px;
+}
+
+.office-v6-career-node-top>small{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#8d8579;
+  font-size:7px;
+}
+
+.office-v6-career-node-top .status{
+  flex:0 0 auto;
+  padding:2px 4px;
+  border-radius:2px;
+  background:#151718;
+  font-size:6px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.office-v6-career-node-top .status-current{color:#efb261}
+.office-v6-career-node-top .status-available{color:#91bd82}
+.office-v6-career-node-top .status-locked{color:#777b7f}
+
+.office-v6-career-node>strong{
+  color:#ede0ca;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:14px;
+  line-height:1.04;
+}
+
+.office-v6-career-node.branch-expert>strong{color:#b7cedd}
+.office-v6-career-node.branch-management>strong{color:#e0c28b}
+.office-v6-career-node.branch-sales>strong{color:#c7b0d9}
+
+.office-v6-career-node-meta{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:6px;
+}
+
+.office-v6-career-node-meta span{
+  color:#d3a15b;
+  font-size:9px;
+  font-weight:800;
+}
+
+.office-v6-career-node-meta em{
+  color:#817a71;
+  font-size:6.5px;
+  font-style:normal;
+}
+
+.office-v6-career-requirement{
+  padding:3px 5px;
+  border:1px solid #37342f;
+  background:#171819;
+  color:#777168;
+  font-size:6.5px;
+}
+
+.office-v6-career-requirement b{
+  color:#a9a095;
+}
+
+.office-v6-career-benefits,
+.office-v6-career-unlocks{
+  display:flex;
+  flex-wrap:wrap;
+  gap:3px;
+}
+
+.office-v6-career-benefits>span,
+.office-v6-career-unlocks>span{
+  width:100%;
+  color:#69655f;
+  font-size:6px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+
+.office-v6-career-benefits>b,
+.office-v6-career-unlocks>b{
+  padding:2px 4px;
+  border:1px solid #374239;
+  background:#182019;
+  color:#9daf97;
+  font-size:6px;
+  font-weight:600;
+}
+
+.office-v6-career-unlocks>b{
+  border-color:#4b4135;
+  background:#211d18;
+  color:#c3aa84;
+}
+
+@media(max-height:820px){
+  .office-topbar{
+    min-height:56px;
+    padding-top:4px;
+    padding-bottom:4px;
+  }
+  .office-logo,
+  .office-player-chip,
+  .office-resource{
+    height:44px;
+  }
+  .office-v6-bottom.has-equipment-drawer{
+    height:min(282px,39vh);
+  }
+  .office-v6-equipment-slot{
+    min-height:68px;
+    grid-template-rows:auto 27px auto auto;
+  }
+  .office-v6-equipment-slot>.office-icon{
+    width:25px;
+    height:25px;
+  }
+  .office-actions{
+    padding-top:5px;
+    padding-bottom:5px;
+  }
+  .office-action{
+    min-height:58px;
+  }
+}
+
+@media(max-width:980px){
+  .office-v6-bottom.has-equipment-drawer{
+    height:min(300px,42vh);
+  }
+  .office-v6-career-hint{
+    display:none;
+  }
+  .office-v6-career-toolbar{
+    grid-template-columns:auto 1fr;
+  }
+  .office-v6-career-legend{
+    justify-content:flex-end;
+  }
+}
+
+@media(max-width:720px){
+  body.office-no-scroll{
+    overflow:auto!important;
+  }
+  .office-page{
+    height:auto;
+    max-height:none;
+    overflow:visible;
+  }
+  .office-game{
+    height:auto;
+    display:block;
+  }
+  .office-v6-career{
+    height:auto;
+  }
+  .office-v6-career-viewport{
+    height:560px;
+  }
+}
+
+
+/* v6.1 hotspot overlap fix: clothing only covers the torso, not the desk */
+.office-hotspot-zone-character{
+  left:46%;
+  top:34%;
+  width:22%;
+  height:21%;
+  border-radius:42% 42% 26% 26%;
+}

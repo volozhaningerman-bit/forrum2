@@ -85,10 +85,26 @@ try {
   await page.locator('.office-game').waitFor();
   assert.equal(await page.locator('.office-action').count(), 4);
   assert.equal(await page.locator('.office-v6-equipment-slot').count(), 8);
+  assert.equal(await page.locator('.office-hotspot-zone').count(), 5);
+  assert.equal(
+    await page.locator('.office-hotspot-zone').evaluateAll((nodes) =>
+      nodes.every((node) => !(node.textContent ?? '').trim()),
+    ),
+    true,
+  );
+  assert.equal(await page.evaluate(() => document.body.classList.contains('office-no-scroll')), true);
+  const initialGameRect = await page.locator('.office-page').boundingBox();
+  assert(initialGameRect && initialGameRect.y + initialGameRect.height <= 1001);
+
+  // Scene interaction opens the catalog inside "Рабочее место и персонаж".
+  await page.getByRole('button', { name: 'Выбрать стол' }).click();
+  await page.locator('.office-v6-workplace-stack .office-v6-drawer').waitFor();
+  assert.equal(await page.locator('.office-v6-equipment-slot[data-category="desk"]').getAttribute('class').then((value) => value?.includes('is-open')), true);
+  await page.locator('.office-v6-drawer-close').click();
 
   // Equipment drawer: PC catalog has progression locks; an affordable accessory can be purchased and equipped.
   await page.locator('.office-v6-equipment-slot[data-category="pc"]').click();
-  await page.locator('.office-v6-drawer').waitFor();
+  await page.locator('.office-v6-workplace-stack .office-v6-drawer').waitFor();
   assert((await page.locator('.office-v6-item-card').count()) >= 6);
   assert((await page.locator('.office-v6-item-card.is-locked').count()) >= 1);
   await page.locator('.office-v6-drawer-close').click();
@@ -111,7 +127,16 @@ try {
   await page.getByRole('button', { name: /Карьера/ }).first().click();
   await page.getByRole('heading', { name: 'Большое дерево развития' }).waitFor();
   assert((await page.locator('.office-v6-career-node').count()) >= 15);
+  assert((await page.locator('.office-v6-career-node .office-v6-career-benefits').count()) >= 15);
+  assert((await page.locator('.office-v6-career-node .office-v6-career-unlocks').count()) >= 15);
   await page.getByRole('button', { name: /Эксперт/ }).click();
+
+  const canvas = page.locator('.office-v6-career-canvas');
+  const transformBeforeZoom = await canvas.getAttribute('style');
+  await page.getByRole('button', { name: 'Увеличить дерево' }).click();
+  const transformAfterZoom = await canvas.getAttribute('style');
+  assert.notEqual(transformAfterZoom, transformBeforeZoom);
+  await page.screenshot({ path: output + '/career-v61-1600.png', fullPage: false });
 
   // Companies are now a real screen.
   await page.getByRole('button', { name: /Компания/ }).first().click();
@@ -139,14 +164,25 @@ try {
   for (const width of [1600, 1200, 1024]) {
     await page.getByRole('button', { name: '×' }).click().catch(() => {});
     await page.setViewportSize({ width, height: 900 });
-    await page.waitForTimeout(100);
-    const dimensions = await page.evaluate(() => ({
-      width: innerWidth,
-      scroll: document.documentElement.scrollWidth,
-    }));
+    await page.waitForTimeout(150);
+    const dimensions = await page.evaluate(() => {
+      const office = document.querySelector('.office-page')?.getBoundingClientRect();
+      return {
+        width: innerWidth,
+        height: innerHeight,
+        scroll: document.documentElement.scrollWidth,
+        bodyOverflow: getComputedStyle(document.body).overflowY,
+        officeBottom: office?.bottom ?? 0,
+      };
+    });
     assert(
       dimensions.scroll <= dimensions.width + 1,
-      `Office v6 must not overflow at ${width}px: ${dimensions.scroll}`,
+      `Office v6 must not overflow horizontally at ${width}px: ${dimensions.scroll}`,
+    );
+    assert.equal(dimensions.bodyOverflow, 'hidden');
+    assert(
+      dimensions.officeBottom <= dimensions.height + 1,
+      `Office v6 must fit the viewport at ${width}px: bottom=${dimensions.officeBottom}, height=${dimensions.height}`,
     );
   }
 
