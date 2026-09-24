@@ -3500,3 +3500,1226 @@ body.office-no-scroll{
     min-height:220px;
   }
 }
+
+
+/* ==========================================================================
+   OFFICE v6.4 — GAMEPLAY VISUAL PASS
+   More game, less dashboard: stronger hierarchy, readable rewards and offices.
+   ========================================================================== */
+
+/* Main scene: hover is visible, selection stays subtle instead of outlining
+   the whole character / furniture forever. */
+.office-scene-shape:hover path,
+.office-scene-shape:focus-visible path{
+  fill:rgba(224,166,90,.035);
+  stroke:rgba(238,188,113,.46);
+  filter:drop-shadow(0 0 3px rgba(218,139,55,.14));
+}
+
+.office-scene-shape.is-active path{
+  fill:rgba(223,167,91,.035);
+  stroke:rgba(238,188,113,.13);
+  filter:drop-shadow(0 0 2px rgba(218,139,55,.08));
+}
+
+/* The item shelf should look like loot / equipment cards, not a spreadsheet. */
+.office-v6-bottom,
+.office-v6-bottom.has-equipment-drawer{
+  height:164px;
+  min-height:164px;
+}
+
+.office-v6-workplace-stack{
+  grid-template-rows:34px minmax(0,1fr);
+}
+
+.office-v6-inline-drawer .office-v6-drawer{
+  grid-template-rows:30px minmax(0,1fr);
+}
+
+.office-v6-inline-drawer .office-v6-drawer>header{
+  min-height:30px;
+  height:30px;
+  padding:3px 7px;
+  background:linear-gradient(#211f1d,#181a1b);
+}
+
+.office-v6-inline-drawer .office-v6-item-list{
+  align-items:stretch;
+  gap:8px;
+  padding:7px 8px 8px;
+}
+
+.office-v6-inline-drawer .office-v6-item-card{
+  position:relative;
+  flex:0 0 302px;
+  width:302px;
+  height:100%;
+  min-height:0;
+  grid-template-columns:72px minmax(0,1fr) 88px;
+  gap:7px;
+  padding:7px;
+  border-color:#4d463e;
+  background:
+    linear-gradient(115deg,rgba(255,255,255,.025),transparent 32%),
+    linear-gradient(#2c2e2f,#202223);
+  box-shadow:inset 0 1px rgba(255,255,255,.03),0 4px 12px #0005;
+}
+
+.office-v6-inline-drawer .office-v6-item-card::before{
+  content:"";
+  position:absolute;
+  left:-1px;
+  top:-1px;
+  bottom:-1px;
+  width:3px;
+  background:#736252;
+}
+
+.office-v6-inline-drawer .office-v6-item-card[data-rarity="Хороший"]::before{background:#698266}
+.office-v6-inline-drawer .office-v6-item-card[data-rarity="Редкий"]::before{background:#5b83a0}
+.office-v6-inline-drawer .office-v6-item-card[data-rarity="Премиум"]::before{background:#8262a0}
+.office-v6-inline-drawer .office-v6-item-card[data-rarity="Элитный"]::before{background:#c38232}
+
+.office-v6-inline-drawer .office-v6-item-card.is-equipped{
+  border-color:#d08034;
+  background:
+    linear-gradient(115deg,rgba(219,128,50,.10),transparent 36%),
+    linear-gradient(#352d27,#232323);
+}
+
+.office-v6-inline-drawer .office-v6-item-card.is-locked{
+  opacity:.52;
+}
+
+.office-v6-inline-drawer .office-v6-item-visual{
+  position:relative;
+  display:grid;
+  place-items:center;
+  align-content:center;
+  gap:5px;
+  border-color:#554b40;
+  background:
+    radial-gradient(circle at 50% 38%,rgba(205,164,103,.13),transparent 42%),
+    linear-gradient(#292a29,#1b1d1e);
+}
+
+.office-v6-inline-drawer .office-v6-item-visual>.office-icon{
+  width:38px;
+  height:38px;
+  color:#d0ae75;
+}
+
+.office-v6-inline-drawer .office-v6-item-visual>span{
+  max-width:66px;
+  font-size:7px;
+  color:#a99c89;
+}
+
+.office-v6-inline-drawer .office-v6-item-copy{
+  align-content:center;
+  gap:4px;
+}
+
+.office-v6-inline-drawer .office-v6-item-head small,
+.office-v6-inline-drawer .office-v6-item-head b{
+  font-size:6.5px;
+}
+
+.office-v6-inline-drawer .office-v6-item-copy>strong{
+  font-size:11.5px;
+  line-height:1.05;
+}
+
+.office-v6-inline-drawer .office-v6-item-copy>p{
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+  color:#90877b;
+  font-size:6.7px;
+  line-height:1.25;
+}
+
+.office-v6-inline-drawer .office-v6-bonus-chips{
+  gap:3px;
+}
+
+.office-v6-inline-drawer .office-v6-bonus-chips>span{
+  padding:2px 4px;
+  border-color:#405041;
+  background:#182019;
+  font-size:6px;
+}
+
+.office-v6-inline-drawer .office-v6-bonus-chips>span:nth-child(n+4){
+  display:none;
+}
+
+.office-v6-inline-drawer .office-v6-item-buy{
+  align-content:center;
+  border-left-color:#454039;
+}
+
+.office-v6-inline-drawer .office-v6-item-buy small{
+  font-size:6.5px;
+}
+
+.office-v6-inline-drawer .office-v6-item-buy>b{
+  color:#dda764;
+  font-size:8px;
+}
+
+.office-v6-inline-drawer .office-v6-item-buy>button{
+  min-height:28px;
+  border-color:#8c552b;
+  background:linear-gradient(#734321,#4f2d1c);
+  font-size:7px;
+}
+
+.office-v6-inline-drawer .office-v6-item-buy>button:not(:disabled):hover{
+  border-color:#c77a37;
+  background:linear-gradient(#865128,#5e351f);
+}
+
+/* ---------------- Character: character first, controls second ---------------- */
+.office-v64-character{
+  height:100%;
+  overflow:hidden;
+}
+
+.office-v64-character-layout{
+  min-height:0;
+  height:calc(100% - 74px);
+  display:grid;
+  grid-template-columns:minmax(330px,.72fr) minmax(0,1.55fr);
+  gap:9px;
+  margin-top:9px;
+}
+
+.office-v64-character-stage,
+.office-v64-character-build{
+  min-width:0;
+  min-height:0;
+  border:1px solid #504233;
+  background:#1a1c1d;
+  box-shadow:inset 0 0 0 1px #101112;
+}
+
+.office-v64-character-stage{
+  position:relative;
+  overflow:hidden;
+  display:grid;
+  grid-template-rows:minmax(0,1fr) auto auto;
+  align-items:end;
+  padding:14px;
+  background:
+    radial-gradient(circle at 50% 28%,rgba(205,157,89,.10),transparent 33%),
+    linear-gradient(#6e665b 0 56%,#463b31 56% 100%);
+}
+
+.office-v64-character-room{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+}
+
+.office-v64-character-room .wall-line{
+  position:absolute;
+  top:0;
+  bottom:44%;
+  width:1px;
+  background:#3f3b36;
+  opacity:.45;
+}
+
+.office-v64-character-room .wall-line-a{left:28%}
+.office-v64-character-room .wall-line-b{left:68%}
+
+.office-v64-character-room .room-window{
+  position:absolute;
+  right:7%;
+  top:7%;
+  width:31%;
+  height:26%;
+  border:8px solid #252525;
+  background:
+    linear-gradient(90deg,transparent 46%,#71858a 46% 53%,transparent 53%),
+    linear-gradient(#aebec0 0 18%,#778c90 18% 24%,#9cabad 24% 43%,#6b7f83 43% 49%,#9fb0b2 49%);
+  box-shadow:inset 0 0 0 2px #111;
+}
+
+.office-v64-character-room .room-desk{
+  position:absolute;
+  left:10%;
+  right:8%;
+  bottom:28%;
+  height:12px;
+  border:3px solid #382a21;
+  background:#79573c;
+}
+
+.office-v64-character-room .room-desk::before,
+.office-v64-character-room .room-desk::after{
+  content:"";
+  position:absolute;
+  top:9px;
+  width:20px;
+  height:150px;
+  background:#66462f;
+}
+
+.office-v64-character-room .room-desk::before{left:8%}
+.office-v64-character-room .room-desk::after{right:8%}
+
+.office-v64-character-room .room-monitor{
+  position:absolute;
+  left:18%;
+  bottom:31%;
+  width:112px;
+  height:76px;
+  border:7px solid #37332d;
+  background:#71888e;
+  box-shadow:inset 0 0 0 2px #99aaab;
+}
+
+.office-v64-character-room .room-mug{
+  position:absolute;
+  right:18%;
+  bottom:31%;
+  width:33px;
+  height:30px;
+  border:4px solid #665945;
+  border-radius:2px 2px 8px 8px;
+  background:#c2b69c;
+}
+
+.office-v64-character-room .room-mug::after{
+  content:"";
+  position:absolute;
+  right:-13px;
+  top:5px;
+  width:10px;
+  height:13px;
+  border:3px solid #665945;
+  border-left:0;
+  border-radius:0 8px 8px 0;
+}
+
+.office-v64-character-avatar{
+  position:relative;
+  z-index:2;
+  align-self:center;
+  justify-self:center;
+  width:min(78%,300px);
+  aspect-ratio:1 / 1.08;
+  margin-top:12px;
+}
+
+.office-v64-character-avatar::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:4%;
+  width:74%;
+  height:12%;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:#17131155;
+  filter:blur(4px);
+}
+
+.office-v64-character-avatar img{
+  position:relative;
+  z-index:1;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  image-rendering:auto;
+  filter:drop-shadow(0 8px 10px #0006);
+}
+
+.office-v64-character-level{
+  position:absolute;
+  z-index:3;
+  right:5%;
+  top:7%;
+  padding:4px 7px;
+  border:1px solid #bb7835;
+  border-radius:3px;
+  background:#2a211a;
+  color:#edbf7a;
+  font-size:8px;
+  font-weight:800;
+}
+
+.office-v64-character-identity{
+  position:relative;
+  z-index:2;
+  display:grid;
+  justify-items:center;
+  gap:2px;
+  padding:7px 10px;
+  border-top:1px solid #594531;
+  border-bottom:1px solid #594531;
+  background:#171819d9;
+  text-align:center;
+}
+
+.office-v64-character-identity small{
+  color:#bc8952;
+  font-size:7px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.office-v64-character-identity h3{
+  margin:0;
+  color:#f0d7ae;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:19px;
+}
+
+.office-v64-character-identity span{
+  color:#978e81;
+  font-size:8px;
+}
+
+.office-v64-character-loadout{
+  position:relative;
+  z-index:2;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4px;
+  padding-top:8px;
+}
+
+.office-v64-loadout-slot{
+  min-width:0;
+  display:grid;
+  grid-template-columns:25px minmax(0,1fr);
+  align-items:center;
+  gap:5px;
+  padding:5px;
+  border:1px solid #4a4137;
+  background:#202223e8;
+}
+
+.office-v64-loadout-slot>.office-icon{
+  width:22px;
+  height:22px;
+  color:#c9a46e;
+}
+
+.office-v64-loadout-slot small{
+  display:block;
+  color:#766f66;
+  font-size:5.8px;
+  text-transform:uppercase;
+}
+
+.office-v64-loadout-slot strong{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#cfc2ae;
+  font-size:7px;
+}
+
+.office-v64-character-build{
+  display:grid;
+  grid-template-rows:auto auto auto minmax(0,1fr) auto;
+  gap:8px;
+  padding:10px;
+  overflow:hidden;
+}
+
+.office-v64-build-head{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 92px;
+  gap:10px;
+  align-items:stretch;
+}
+
+.office-v64-build-head>div:first-child{
+  padding:9px;
+  border:1px solid #4a4035;
+  background:linear-gradient(#272828,#1e2021);
+}
+
+.office-v64-build-head small,
+.office-v64-character-choice header small,
+.office-v64-archetypes header small{
+  color:#ad7c48;
+  font-size:6.5px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.office-v64-build-head h3{
+  margin:2px 0;
+  color:#efc77f;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:20px;
+}
+
+.office-v64-build-head p{
+  margin:0;
+  color:#90887e;
+  font-size:8px;
+  line-height:1.35;
+}
+
+.office-v64-build-score{
+  display:grid;
+  place-items:center;
+  align-content:center;
+  border:1px solid #6d4b2f;
+  background:
+    radial-gradient(circle,#503723,#241f1b 67%);
+  text-align:center;
+}
+
+.office-v64-build-score span{
+  color:#977650;
+  font-size:6px;
+  text-transform:uppercase;
+}
+
+.office-v64-build-score strong{
+  color:#f0b963;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:29px;
+}
+
+.office-v64-build-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:4px;
+}
+
+.office-v64-build-stats>div{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:5px;
+  padding:5px 6px;
+  border:1px solid #3f443b;
+  background:#19201a;
+}
+
+.office-v64-build-stats span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#8d9987;
+  font-size:6.5px;
+}
+
+.office-v64-build-stats b{
+  color:#b9cfae;
+  font-size:7px;
+}
+
+.office-v64-character-choice,
+.office-v64-archetypes{
+  min-height:0;
+  display:grid;
+  gap:6px;
+  padding:8px;
+  border:1px solid #463d34;
+  background:#1b1d1e;
+}
+
+.office-v64-character-choice header,
+.office-v64-archetypes header{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.office-v64-character-choice header strong,
+.office-v64-archetypes header strong{
+  display:block;
+  color:#e1bd81;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:12px;
+}
+
+.office-v64-character-choice header>span,
+.office-v64-archetypes header>span{
+  color:#756f67;
+  font-size:6px;
+}
+
+.office-v64-gender-pills{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5px;
+}
+
+.office-v64-gender-pills button{
+  min-width:0;
+  min-height:62px;
+  display:grid;
+  grid-template-columns:34px minmax(0,1fr) auto;
+  align-items:center;
+  gap:7px;
+  padding:7px;
+  border:1px solid #4a443c;
+  background:linear-gradient(#292b2c,#222324);
+  color:#d5c8b5;
+  text-align:left;
+  cursor:pointer;
+}
+
+.office-v64-gender-pills button.active{
+  border-color:#d07a31;
+  background:linear-gradient(#3a3028,#292521);
+  box-shadow:inset 3px 0 #dd8436;
+}
+
+.office-v64-gender-pills .office-icon{
+  width:28px;
+  height:28px;
+  color:#c7a36d;
+}
+
+.office-v64-gender-pills strong{
+  display:block;
+  color:#e2d1b9;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:11px;
+}
+
+.office-v64-gender-pills small{
+  display:block;
+  margin-top:2px;
+  color:#817970;
+  font-size:6px;
+}
+
+.office-v64-gender-pills i{
+  color:#9d8e79;
+  font-size:6px;
+  font-style:normal;
+}
+
+.office-v64-gender-pills button.active i{
+  color:#e0a55d;
+}
+
+.office-v64-archetypes{
+  grid-template-rows:auto minmax(0,1fr);
+}
+
+.office-v64-archetype-grid{
+  min-height:0;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:5px;
+}
+
+.office-v64-archetype-grid button{
+  min-width:0;
+  display:grid;
+  align-content:start;
+  gap:3px;
+  padding:7px;
+  border:1px solid #44413c;
+  background:linear-gradient(#282a2b,#202223);
+  color:#d5c9b8;
+  text-align:left;
+  cursor:pointer;
+  overflow:hidden;
+}
+
+.office-v64-archetype-grid button.active{
+  border-color:#ce7832;
+  background:linear-gradient(#392e26,#262321);
+  box-shadow:inset 0 -3px #d27d33;
+}
+
+.office-v64-archetype-grid button[data-branch="expert"].active{border-top-color:#6c91a7}
+.office-v64-archetype-grid button[data-branch="management"].active{border-top-color:#c59755}
+.office-v64-archetype-grid button[data-branch="sales"].active{border-top-color:#9271a6}
+
+.office-v64-archetype-grid small{
+  color:#9b7650;
+  font-size:5.5px;
+  text-transform:uppercase;
+}
+
+.office-v64-archetype-grid strong{
+  color:#e2d1b9;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:10px;
+}
+
+.office-v64-archetype-grid em{
+  color:#777168;
+  font-size:5.8px;
+  font-style:normal;
+}
+
+.office-v64-archetype-grid .office-v6-bonus-chips{
+  margin-top:2px;
+}
+
+.office-v64-archetype-grid .office-v6-bonus-chips>span{
+  padding:2px 3px;
+  font-size:5px;
+}
+
+.office-v64-customize-note{
+  display:grid;
+  grid-template-columns:30px 1fr;
+  align-items:center;
+  gap:7px;
+  padding:7px 8px;
+  border:1px solid #4d4033;
+  background:#211c18;
+}
+
+.office-v64-customize-note>.office-icon{
+  width:25px;
+  height:25px;
+  color:#c8985a;
+}
+
+.office-v64-customize-note strong{
+  display:block;
+  color:#d7b683;
+  font-size:8px;
+}
+
+.office-v64-customize-note span{
+  display:block;
+  margin-top:1px;
+  color:#81786d;
+  font-size:6.5px;
+}
+
+/* ---------------- Career: selected path should visually wake up ---------------- */
+.office-v6-branch-pick button[data-branch="expert"].active{
+  border-top-color:#6b8fa5;
+  box-shadow:inset 0 3px #6b8fa5;
+}
+.office-v6-branch-pick button[data-branch="management"].active{
+  border-top-color:#c49551;
+  box-shadow:inset 0 3px #c49551;
+}
+.office-v6-branch-pick button[data-branch="sales"].active{
+  border-top-color:#9271a5;
+  box-shadow:inset 0 3px #9271a5;
+}
+
+.office-v6-career-canvas line{
+  stroke:#514537;
+  opacity:.48;
+  transition:stroke .16s ease,opacity .16s ease,filter .16s ease;
+}
+
+.office-v6-career-canvas line.is-path{
+  opacity:.72;
+}
+
+.office-v6-career-canvas line.is-reached{
+  opacity:1;
+}
+
+.office-v6-career-canvas line.is-other-path{
+  opacity:.19;
+}
+
+.office-v6-career-canvas line.branch-expert.is-path{stroke:#607f91}
+.office-v6-career-canvas line.branch-management.is-path{stroke:#a87943}
+.office-v6-career-canvas line.branch-sales.is-path{stroke:#775c88}
+
+.office-v6-career-canvas line.is-reached{
+  filter:drop-shadow(0 0 2px rgba(214,149,73,.18));
+}
+
+.office-v6-career-node.locked:not(.is-alternate){
+  opacity:.82;
+}
+
+.office-v6-career-node.is-alternate{
+  opacity:.32;
+}
+
+.office-v6-career-detail{
+  border-left-width:2px;
+}
+
+/* ---------------- Companies: visible office progression instead of disabled cards ---------------- */
+.office-v64-companies{
+  height:100%;
+  display:grid;
+  grid-template-rows:auto auto minmax(0,1fr);
+  overflow:hidden;
+}
+
+.office-v64-company-progress{
+  min-height:34px;
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  align-items:center;
+  gap:0;
+  padding:5px 10px 7px;
+  margin-top:7px;
+  border:1px solid #42382e;
+  background:#181a1b;
+}
+
+.office-v64-company-progress>div{
+  position:relative;
+  min-width:0;
+  display:flex;
+  align-items:center;
+}
+
+.office-v64-company-progress i{
+  width:8px;
+  height:8px;
+  border:2px solid #54514c;
+  border-radius:50%;
+  background:#212324;
+}
+
+.office-v64-company-progress span{
+  margin-left:5px;
+  color:#75716b;
+  font-size:6px;
+}
+
+.office-v64-company-progress b{
+  flex:1;
+  height:1px;
+  margin:0 5px;
+  background:#393a38;
+}
+
+.office-v64-company-progress .passed i,
+.office-v64-company-progress .current i{
+  border-color:#c17a38;
+  background:#c17a38;
+}
+
+.office-v64-company-progress .passed b{
+  background:#86542f;
+}
+
+.office-v64-company-progress .current span{
+  color:#d59a58;
+  font-weight:800;
+}
+
+.office-v64-company-grid{
+  min-height:0;
+  height:100%;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  margin-top:8px;
+  overflow:auto;
+  padding-right:2px;
+  scrollbar-width:thin;
+  scrollbar-color:#5a4631 #17191a;
+}
+
+.office-v64-company-grid>article{
+  position:relative;
+  min-height:0;
+  height:278px;
+  display:grid;
+  grid-template-rows:104px minmax(0,1fr) 32px;
+  gap:0;
+  padding:0;
+  overflow:hidden;
+  border:1px solid #4a4137;
+  background:linear-gradient(#272829,#1b1d1e);
+  box-shadow:0 7px 18px #0005,inset 0 1px rgba(255,255,255,.03);
+}
+
+.office-v64-company-grid>article.locked{
+  opacity:.62;
+  filter:saturate(.62);
+}
+
+.office-v64-company-grid>article.active{
+  border-color:#cf7a32;
+  box-shadow:0 0 0 1px #754722,0 8px 20px #0007;
+}
+
+.office-v64-company-grid>article.available:not(.active):hover{
+  border-color:#8e693f;
+  transform:translateY(-1px);
+}
+
+.office-v64-company-scene{
+  position:relative;
+  overflow:hidden;
+  border-bottom:1px solid #3e3730;
+  background:#4e4943;
+}
+
+.office-v64-company-scene .scene-wall{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg,transparent 32%,rgba(0,0,0,.12) 32% 32.4%,transparent 32.4% 66%,rgba(0,0,0,.12) 66% 66.4%,transparent 66.4%),
+    linear-gradient(#6e6961,#565149);
+}
+
+.office-v64-company-scene .scene-window{
+  position:absolute;
+  right:8%;
+  top:10%;
+  width:29%;
+  height:48%;
+  border:5px solid #292a28;
+  background:
+    linear-gradient(90deg,transparent 47%,#718488 47% 53%,transparent 53%),
+    linear-gradient(#b4c3c2 0 22%,#6d8184 22% 28%,#9bacad 28%);
+}
+
+.office-v64-company-scene .scene-desk{
+  position:absolute;
+  left:15%;
+  right:11%;
+  bottom:21%;
+  height:8px;
+  background:#77543b;
+  border:2px solid #423024;
+}
+
+.office-v64-company-scene .scene-desk::before,
+.office-v64-company-scene .scene-desk::after{
+  content:"";
+  position:absolute;
+  top:7px;
+  width:10px;
+  height:34px;
+  background:#65462f;
+}
+
+.office-v64-company-scene .scene-desk::before{left:8%}
+.office-v64-company-scene .scene-desk::after{right:8%}
+
+.office-v64-company-scene .scene-monitor{
+  position:absolute;
+  left:42%;
+  bottom:29%;
+  width:52px;
+  height:33px;
+  border:4px solid #333;
+  background:#71898e;
+}
+
+.office-v64-company-scene .scene-chair{
+  position:absolute;
+  left:29%;
+  bottom:6%;
+  width:35px;
+  height:34px;
+  border-radius:10px 10px 5px 5px;
+  background:#5d4b40;
+}
+
+.office-v64-company-scene .scene-plant{
+  position:absolute;
+  right:15%;
+  bottom:29%;
+  width:12px;
+  height:30px;
+  border-bottom:9px solid #5f4931;
+}
+
+.office-v64-company-scene .scene-plant::before{
+  content:"";
+  position:absolute;
+  left:-10px;
+  top:0;
+  width:30px;
+  height:20px;
+  border-radius:50% 50% 42% 42%;
+  background:#4f6747;
+}
+
+.office-v64-company-scene .scene-brand{
+  position:absolute;
+  left:9px;
+  top:9px;
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border:1px solid #624a34;
+  background:#1b1c1bdd;
+}
+
+.office-v64-company-scene .scene-brand>.office-icon{
+  width:20px;
+  height:20px;
+  color:#b3b9b2;
+}
+
+.office-v64-company-scene .scene-brand b{
+  position:absolute;
+  right:-6px;
+  bottom:-6px;
+  min-width:17px;
+  height:17px;
+  display:grid;
+  place-items:center;
+  border:1px solid #a4662f;
+  border-radius:50%;
+  background:#2c2119;
+  color:#e4a55e;
+  font-size:6px;
+}
+
+/* Office gets visibly richer with company tier. */
+.office-v64-company-grid>article[data-company="pixelsoft"] .office-v64-company-scene .scene-wall{
+  background:linear-gradient(#8b8a83,#676b68);
+}
+.office-v64-company-grid>article[data-company="pixelsoft"] .scene-desk{background:#9a7754}
+.office-v64-company-grid>article[data-company="novasystems"] .office-v64-company-scene .scene-wall{
+  background:linear-gradient(135deg,#3f5054,#252d31);
+}
+.office-v64-company-grid>article[data-company="novasystems"] .scene-window{
+  width:38%;
+  background:linear-gradient(90deg,#80a1a6 0 16%,#496267 16% 20%,#80a1a6 20% 36%,#496267 36% 40%,#80a1a6 40%);
+}
+.office-v64-company-grid>article[data-company="northagency"] .office-v64-company-scene .scene-wall{
+  background:linear-gradient(135deg,#67574e,#403b39);
+}
+.office-v64-company-grid>article[data-company="northagency"] .scene-plant{
+  transform:scale(1.35);
+}
+.office-v64-company-grid>article[data-company="megacorp"] .office-v64-company-scene .scene-wall{
+  background:linear-gradient(135deg,#4a4540,#272a2c);
+}
+.office-v64-company-grid>article[data-company="megacorp"] .scene-desk{
+  background:#3d3028;
+  border-color:#b08a55;
+}
+.office-v64-company-grid>article[data-company="own"] .office-v64-company-scene .scene-wall{
+  background:linear-gradient(135deg,#67513a,#2f2922);
+}
+.office-v64-company-grid>article[data-company="own"] .scene-window{
+  width:46%;
+  height:58%;
+}
+.office-v64-company-grid>article[data-company="own"] .scene-desk{
+  left:10%;
+  right:7%;
+  background:#80583b;
+}
+
+.office-v64-company-copy{
+  min-height:0;
+  display:grid;
+  grid-template-rows:auto auto auto auto auto;
+  gap:5px;
+  padding:8px;
+}
+
+.office-v64-company-title{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:7px;
+}
+
+.office-v64-company-title small{
+  display:block;
+  color:#9a7348;
+  font-size:5.7px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+
+.office-v64-company-title strong{
+  display:block;
+  margin-top:1px;
+  color:#e8d4b6;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:13px;
+}
+
+.office-v64-company-title>span{
+  flex:0 0 auto;
+  padding:3px 5px;
+  border:1px solid #4b4237;
+  background:#181a1b;
+  color:#8d867c;
+  font-size:5.7px;
+  text-transform:uppercase;
+}
+
+.office-v64-company-grid>article.active .office-v64-company-title>span{
+  border-color:#8b572c;
+  color:#df9c53;
+}
+
+.office-v64-company-copy>p{
+  margin:0;
+  min-height:20px;
+  color:#8a8379;
+  font-size:6.8px;
+  line-height:1.35;
+}
+
+.office-v64-company-metrics{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4px;
+}
+
+.office-v64-company-metrics>div{
+  min-width:0;
+  padding:5px;
+  border:1px solid #3e3b36;
+  background:#191b1c;
+}
+
+.office-v64-company-metrics small,
+.office-v64-company-perk small{
+  display:block;
+  color:#716c65;
+  font-size:5.4px;
+  text-transform:uppercase;
+}
+
+.office-v64-company-metrics b{
+  display:block;
+  margin-top:1px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#c8b79f;
+  font-size:7px;
+}
+
+.office-v64-company-perk{
+  display:grid;
+  grid-template-columns:22px 1fr;
+  align-items:center;
+  gap:5px;
+  padding:5px;
+  border:1px solid #3e493c;
+  background:#192019;
+}
+
+.office-v64-company-perk>.office-icon{
+  width:19px;
+  height:19px;
+  color:#b9a66d;
+}
+
+.office-v64-company-perk strong{
+  display:block;
+  margin-top:1px;
+  color:#b9c8ae;
+  font-size:7px;
+}
+
+.office-v64-company-requirements{
+  display:flex;
+  flex-wrap:wrap;
+  gap:3px;
+}
+
+.office-v64-company-requirements span{
+  padding:2px 4px;
+  border:1px solid #454039;
+  background:#181a1b;
+  color:#8f877c;
+  font-size:5.8px;
+}
+
+.office-v64-company-grid>article>button{
+  width:auto;
+  min-height:32px;
+  margin:0 8px 8px;
+  border:1px solid #80502e;
+  background:linear-gradient(#6d4024,#4d2c1d);
+  color:#e8c18f;
+  font-size:7px;
+  cursor:pointer;
+}
+
+.office-v64-company-grid>article>button:disabled{
+  cursor:not-allowed;
+  opacity:.5;
+  background:#2a2420;
+}
+
+/* Responsive safeguards for fixed game viewport. */
+@media(max-width:1250px){
+  .office-v64-character-layout{
+    grid-template-columns:300px minmax(0,1fr);
+  }
+
+  .office-v64-archetype-grid{
+    grid-template-columns:repeat(3,1fr);
+    overflow:auto;
+  }
+
+  .office-v64-company-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:980px){
+  .office-v6-bottom,
+  .office-v6-bottom.has-equipment-drawer{
+    height:150px;
+    min-height:150px;
+  }
+
+  .office-v64-character-layout{
+    grid-template-columns:260px minmax(0,1fr);
+  }
+
+  .office-v64-build-stats{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .office-v64-company-grid>article{
+    height:258px;
+  }
+}
+
+@media(max-width:720px){
+  .office-v64-character-layout{
+    height:auto;
+    grid-template-columns:1fr;
+  }
+
+  .office-v64-character-stage{
+    min-height:520px;
+  }
+
+  .office-v64-character-build{
+    overflow:visible;
+  }
+
+  .office-v64-company-grid{
+    grid-template-columns:1fr;
+  }
+
+  .office-v64-company-grid>article{
+    height:auto;
+    min-height:280px;
+  }
+
+  .office-v64-company-progress{
+    display:none;
+  }
+}

@@ -167,6 +167,8 @@ export function EquipmentDrawer({
                 equipped ? 'is-equipped' : '',
                 lockReason ? 'is-locked' : '',
               ].filter(Boolean).join(' ')}
+              data-rarity={item.rarity}
+              data-category={item.category}
             >
               <div className="office-v6-item-visual" data-rarity={item.rarity}>
                 <V6Icon name={item.icon} />
@@ -246,63 +248,135 @@ export function V6CharacterView({
   onBack: () => void;
 }) {
   const build = getV6BuildBonuses(state);
+  const activeArchetype =
+    v6Archetypes.find((item) => item.id === state.archetypeId) ?? v6Archetypes[0];
+  const equippedCategories: V6ItemCategory[] = ['clothes', 'accessory', 'pc', 'desk', 'chair', 'monitor'];
+  const equippedItems = equippedCategories
+    .map((category) => ({ category, item: getV6Item(state.equipped[category]) }))
+    .filter((entry): entry is { category: V6ItemCategory; item: V6Item } => Boolean(entry.item));
+  const strongestBonuses = (Object.entries(build) as Array<[V6BonusKey, number]>)
+    .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))
+    .slice(0, 6);
+
   return (
-    <section className="office-v6-page office-v6-character">
+    <section className="office-v6-page office-v6-character office-v64-character">
       <PageHeader eyebrow="Персонаж" title="Собери свой офисный билд" onBack={onBack}>
-        Пол влияет на набор синергий и доступный гардероб, а архетип определяет стартовый стиль развития. Оба пути сбалансированы по общей силе.
+        Здесь должен читаться сам герой, а не меню настроек. Выбирай основу персонажа и архетип,
+        а одежда, аксессуары и рабочее место дальше усиливают выбранный стиль.
       </PageHeader>
 
-      <div className="office-v6-profile-summary">
-        <div className="office-v6-character-preview">
-          <img src="/games/office/avatar.svg" alt="" />
-          <strong>{snapshot.playerName}</strong>
-          <span>{snapshot.role} · ур. {snapshot.level}</span>
-        </div>
-        <div className="office-v6-build-panel">
-          <small>Текущий билд</small>
-          <h3>{v6Archetypes.find((item) => item.id === state.archetypeId)?.name}</h3>
-          <BonusChips bonuses={build} />
-        </div>
-      </div>
+      <div className="office-v64-character-layout">
+        <section className="office-v64-character-stage">
+          <div className="office-v64-character-room" aria-hidden="true">
+            <span className="wall-line wall-line-a" />
+            <span className="wall-line wall-line-b" />
+            <span className="room-window" />
+            <span className="room-desk" />
+            <span className="room-monitor" />
+            <span className="room-mug" />
+          </div>
 
-      <div className="office-v6-section">
-        <header><h3>Персонаж</h3><p>Разные синергии, одинаковый потолок силы.</p></header>
-        <div className="office-v6-choice-grid office-v6-gender-grid">
-          {v6GenderProfiles.map((profile) => (
-            <button
-              type="button"
-              key={profile.id}
-              className={state.gender === profile.id ? 'active' : ''}
-              onClick={() => onGender(profile.id)}
-            >
-              <V6Icon name={profile.id === 'female' ? 'character-female' : 'character'} />
-              <small>{profile.affinity}</small>
-              <strong>{profile.name}</strong>
-              <p>{profile.description}</p>
-              <BonusChips bonuses={profile.bonuses} />
-            </button>
-          ))}
-        </div>
-      </div>
+          <div className="office-v64-character-avatar">
+            <img src="/games/office/avatar.svg" alt="" />
+            <span className="office-v64-character-level">ур. {snapshot.level}</span>
+          </div>
 
-      <div className="office-v6-section">
-        <header><h3>Архетип старта</h3><p>Позже ветка карьеры сможет усилить или изменить этот стиль.</p></header>
-        <div className="office-v6-choice-grid office-v6-archetype-grid">
-          {v6Archetypes.map((archetype) => (
-            <button
-              type="button"
-              key={archetype.id}
-              className={state.archetypeId === archetype.id ? 'active' : ''}
-              onClick={() => onArchetype(archetype.id)}
-            >
-              <small>{branchLabel(archetype.preferredBranch)}</small>
-              <strong>{archetype.name}</strong>
-              <em>{archetype.subtitle}</em>
-              <p>{archetype.description}</p>
-              <BonusChips bonuses={archetype.bonuses} />
-            </button>
-          ))}
-        </div>
+          <div className="office-v64-character-identity">
+            <small>{snapshot.role}</small>
+            <h3>{snapshot.playerName}</h3>
+            <span>{activeArchetype.name} · {branchLabel(activeArchetype.preferredBranch)}</span>
+          </div>
+
+          <div className="office-v64-character-loadout">
+            {equippedItems.map(({ category, item }) => (
+              <div className="office-v64-loadout-slot" key={category}>
+                <V6Icon name={v6CategoryMeta[category].icon} />
+                <div>
+                  <small>{v6CategoryMeta[category].label}</small>
+                  <strong>{item.name}</strong>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="office-v64-character-build">
+          <div className="office-v64-build-head">
+            <div>
+              <small>Текущий стиль</small>
+              <h3>{activeArchetype.name}</h3>
+              <p>{activeArchetype.description}</p>
+            </div>
+            <div className="office-v64-build-score">
+              <span>Сила билда</span>
+              <strong>{strongestBonuses.reduce((sum, [, value]) => sum + Math.max(0, value), 0)}</strong>
+            </div>
+          </div>
+
+          <div className="office-v64-build-stats">
+            {strongestBonuses.map(([key, value]) => (
+              <div key={key}>
+                <span>{v6BonusLabels[key]}</span>
+                <b>{value > 0 ? '+' : ''}{value}{key === 'incomeBonus' || key === 'workSuccess' ? '%' : ''}</b>
+              </div>
+            ))}
+          </div>
+
+          <div className="office-v64-character-choice">
+            <header>
+              <div><small>Основа персонажа</small><strong>Синергии</strong></div>
+              <span>Общая сила сбалансирована</span>
+            </header>
+            <div className="office-v64-gender-pills">
+              {v6GenderProfiles.map((profile) => (
+                <button
+                  type="button"
+                  key={profile.id}
+                  className={state.gender === profile.id ? 'active' : ''}
+                  onClick={() => onGender(profile.id)}
+                >
+                  <V6Icon name={profile.id === 'female' ? 'character-female' : 'character'} />
+                  <span>
+                    <strong>{profile.name}</strong>
+                    <small>{profile.affinity}</small>
+                  </span>
+                  <i>{state.gender === profile.id ? 'Выбрано' : 'Выбрать'}</i>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="office-v64-archetypes">
+            <header>
+              <div><small>Архетип старта</small><strong>Как ты проходишь офис</strong></div>
+              <span>Позже усиливается карьерной веткой</span>
+            </header>
+            <div className="office-v64-archetype-grid">
+              {v6Archetypes.map((archetype) => (
+                <button
+                  type="button"
+                  key={archetype.id}
+                  className={state.archetypeId === archetype.id ? 'active' : ''}
+                  data-branch={archetype.preferredBranch}
+                  onClick={() => onArchetype(archetype.id)}
+                >
+                  <small>{branchLabel(archetype.preferredBranch)}</small>
+                  <strong>{archetype.name}</strong>
+                  <em>{archetype.subtitle}</em>
+                  <BonusChips bonuses={archetype.bonuses} />
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="office-v64-customize-note">
+            <V6Icon name="clothes" />
+            <div>
+              <strong>Редактор внешности — следующий слой</strong>
+              <span>Волосы, лицо, одежда и аксессуары уже заложены в структуру персонажа.</span>
+            </div>
+          </div>
+        </section>
       </div>
     </section>
   );
@@ -419,6 +493,7 @@ export function V6CareerView({
             type="button"
             key={branch.id}
             className={state.careerBranch === branch.id ? 'active' : ''}
+            data-branch={branch.id}
             onClick={() => onSelectBranch(branch.id)}
           >
             <small>{branch.damage}</small>
@@ -498,7 +573,25 @@ export function V6CareerView({
               {v6CareerNodes.filter((node) => node.parent).map((node) => {
                 const parent = v6CareerNodes.find((candidate) => candidate.id === node.parent);
                 if (!parent) return null;
-                return <line key={node.id} x1={parent.x} y1={parent.y} x2={node.x} y2={node.y} />;
+                const nodeState = getNodeState(node);
+                const lineActive =
+                  node.branch === 'general' ||
+                  state.careerBranch === 'general' ||
+                  state.careerBranch === node.branch;
+                return (
+                  <line
+                    key={node.id}
+                    className={[
+                      'branch-' + node.branch,
+                      lineActive ? 'is-path' : 'is-other-path',
+                      nodeState.available || nodeState.current ? 'is-reached' : 'is-future',
+                    ].join(' ')}
+                    x1={parent.x}
+                    y1={parent.y}
+                    x2={node.x}
+                    y2={node.y}
+                  />
+                );
               })}
             </svg>
 
@@ -640,28 +733,91 @@ export function V6CompanyView({
   onSwitch: (companyId: string) => void;
   onBack: () => void;
 }) {
+  const activeIndex = Math.max(0, v6Companies.findIndex((company) => company.id === state.companyId));
+
   return (
-    <section className="office-v6-page office-v6-companies">
+    <section className="office-v6-page office-v6-companies office-v64-companies">
       <PageHeader eyebrow="Компании" title="Меняй офис вместе с карьерой" onBack={onBack}>
-        Новая компания меняет зарплатный множитель, стиль офиса и пассивные бонусы. Требования растут вместе со статусом.
+        Новая компания — это не просто множитель зарплаты. Меняются атмосфера офиса, доступные
+        предметы, пассивный бонус и ощущение того, насколько далеко ты ушёл от первого стола.
       </PageHeader>
-      <div className="office-v6-company-grid">
-        {v6Companies.map((company) => {
+
+      <div className="office-v64-company-progress" aria-label="Прогресс по компаниям">
+        {v6Companies.map((company, index) => (
+          <div
+            key={company.id}
+            className={[
+              index < activeIndex ? 'passed' : '',
+              index === activeIndex ? 'current' : '',
+            ].filter(Boolean).join(' ')}
+          >
+            <i />
+            <span>{index + 1}</span>
+            {index < v6Companies.length - 1 ? <b /> : null}
+          </div>
+        ))}
+      </div>
+
+      <div className="office-v6-company-grid office-v64-company-grid">
+        {v6Companies.map((company, index) => {
           const available = snapshot.level >= company.minLevel && snapshot.reputation >= company.minReputation;
           const active = state.companyId === company.id;
+          const estimatedSalary = Math.round(35000 * company.salaryMultiplier / 1000) * 1000;
           return (
-            <article key={company.id} className={active ? 'active' : available ? 'available' : 'locked'}>
-              <div className="office-v6-company-art"><V6Icon name="company" /></div>
-              <small>{company.industry}</small>
-              <strong>{company.name}</strong>
-              <p>{company.description}</p>
-              <dl>
-                <div><dt>Офис</dt><dd>{company.officeStyle}</dd></div>
-                <div><dt>Зарплата</dt><dd>×{company.salaryMultiplier.toFixed(2)}</dd></div>
-                <div><dt>Перк</dt><dd>{company.perk}</dd></div>
-              </dl>
+            <article
+              key={company.id}
+              data-company={company.id}
+              className={[
+                active ? 'active' : available ? 'available' : 'locked',
+                index <= activeIndex ? 'reached' : '',
+              ].filter(Boolean).join(' ')}
+            >
+              <div className="office-v64-company-scene" aria-hidden="true">
+                <span className="scene-wall" />
+                <span className="scene-window" />
+                <span className="scene-desk" />
+                <span className="scene-monitor" />
+                <span className="scene-chair" />
+                <span className="scene-plant" />
+                <div className="scene-brand">
+                  <V6Icon name="company" />
+                  <b>{index + 1}</b>
+                </div>
+              </div>
+
+              <div className="office-v64-company-copy">
+                <div className="office-v64-company-title">
+                  <div>
+                    <small>{company.industry}</small>
+                    <strong>{company.name}</strong>
+                  </div>
+                  <span>{active ? 'Текущая' : available ? 'Доступна' : 'Закрыта'}</span>
+                </div>
+                <p>{company.description}</p>
+
+                <div className="office-v64-company-metrics">
+                  <div><small>Зарплата</small><b>≈ {formatMoney(estimatedSalary)} ₽</b></div>
+                  <div><small>Офис</small><b>{company.officeStyle}</b></div>
+                </div>
+
+                <div className="office-v64-company-perk">
+                  <V6Icon name="star" />
+                  <div><small>Пассивный бонус</small><strong>{company.perk}</strong></div>
+                </div>
+
+                <div className="office-v64-company-requirements">
+                  <span>ур. {company.minLevel}</span>
+                  <span>реп. {company.minReputation}</span>
+                  <span>×{company.salaryMultiplier.toFixed(2)}</span>
+                </div>
+              </div>
+
               <button type="button" disabled={!available || active} onClick={() => onSwitch(company.id)}>
-                {active ? 'Текущая компания' : available ? 'Перейти' : `ур. ${company.minLevel} · реп. ${company.minReputation}`}
+                {active
+                  ? 'Ты работаешь здесь'
+                  : available
+                    ? 'Перейти в компанию'
+                    : <>Откроется: ур. {company.minLevel} · реп. {company.minReputation}</>}
               </button>
             </article>
           );
@@ -670,6 +826,7 @@ export function V6CompanyView({
     </section>
   );
 }
+
 
 export function V6BossBattle({
   state,
