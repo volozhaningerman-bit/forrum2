@@ -231,6 +231,8 @@ try {
     await dialog.waitFor({ state: 'detached' });
   }
 
+  await page.getByRole('button', { name: '← Вернуться в офис' }).click();
+
   // Bosses have their own navigation screen.
   await page.getByRole('button', { name: /Боссы/ }).first().click();
   await page.getByRole('heading', { name: 'Боссы' }).waitFor();
