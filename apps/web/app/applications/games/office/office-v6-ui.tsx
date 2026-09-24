@@ -417,8 +417,8 @@ export function V6CareerView({
   onBack: () => void;
 }) {
   const build = getV6BuildBonuses(state);
-  const [zoom, setZoom] = useState(0.96);
-  const [pan, setPan] = useState({ x: 10, y: 0 });
+  const [zoom, setZoom] = useState(0.82);
+  const [pan, setPan] = useState({ x: 16, y: 4 });
   const [dragging, setDragging] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState('intern');
   const dragRef = useRef<{
@@ -437,12 +437,12 @@ export function V6CareerView({
   const effectiveReputation = snapshot.reputation + (build.reputation ?? 0);
 
   const setClampedZoom = (value: number) => {
-    setZoom(Math.min(1.55, Math.max(0.72, Math.round(value * 100) / 100)));
+    setZoom(Math.min(1.55, Math.max(0.68, Math.round(value * 100) / 100)));
   };
 
   const resetView = () => {
-    setZoom(0.96);
-    setPan({ x: 10, y: 0 });
+    setZoom(0.82);
+    setPan({ x: 16, y: 4 });
   };
 
   const branchCards: Array<{
@@ -554,7 +554,7 @@ export function V6CareerView({
         <div className="office-v6-career-hint">
           <span>Колесо — масштаб</span>
           <span>Потяни фон — перемещение</span>
-          <span>Клик по карточке — подробности</span>
+          <span>82% — подогнать дерево</span>
         </div>
         <div className="office-v6-career-legend">
           <span><i className="current" /> Сейчас</span>
