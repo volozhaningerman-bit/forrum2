@@ -814,6 +814,30 @@ export function OfficeGame() {
               >
                 <span>＋</span> Стул
               </button>
+              <button
+                className="office-hotspot office-hotspot-desk"
+                type="button"
+                onClick={() => setDrawerCategory('desk')}
+                aria-label="Рабочий стол"
+              >
+                <span>＋</span> Стол
+              </button>
+              <button
+                className="office-hotspot office-hotspot-monitor"
+                type="button"
+                onClick={() => setDrawerCategory('monitor')}
+                aria-label="Монитор"
+              >
+                <span>＋</span> Монитор
+              </button>
+              <button
+                className="office-hotspot office-hotspot-character"
+                type="button"
+                onClick={() => setDrawerCategory('clothes')}
+                aria-label="Одежда персонажа"
+              >
+                <span>＋</span> Одежда
+              </button>
               <div className="office-scene-note">{notice}</div>
             </section>
 
