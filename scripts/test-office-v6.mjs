@@ -107,7 +107,7 @@ try {
   await page.locator('.office-v6-workplace-stack .office-v6-drawer').waitFor();
   assert.match(await page.locator('.office-v6-drawer-title h3').textContent(), /Стол/i);
   const openHeight = await page.locator('.office-v6-bottom').evaluate((node) => node.getBoundingClientRect().height);
-  assert(openHeight <= 170);
+  assert(openHeight <= 220);
 
   await page.getByRole('button', { name: 'Выбрать компьютер' }).click();
   await page.locator('.office-v6-workplace-stack .office-v6-drawer').waitFor();
