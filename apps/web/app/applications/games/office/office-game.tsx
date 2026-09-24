@@ -1058,25 +1058,6 @@ export function OfficeGame() {
               </div>
             </section>
 
-            <nav className="office-location-strip" aria-label="Локации офиса">
-              {officeLocationNavigation.map((item, index) => (
-                <button
-                  type="button"
-                  className={index === 0 ? 'is-primary' : ''}
-                  key={item.label}
-                  onClick={() => handleNavigation(item.label)}
-                >
-                  <OfficeIcon name={item.icon} />
-                  <span><b>{item.label}</b><small>{item.hint.split(':')[0]}</small></span>
-                </button>
-              ))}
-              {feedback ? (
-                <div key={feedback.id} className={`office-location-feedback office-feedback-${feedback.tone}`}>
-                  {feedback.text}
-                </div>
-              ) : null}
-            </nav>
-
           </main>
 
           <aside className="office-right">
@@ -1231,6 +1212,12 @@ export function OfficeGame() {
               onBack={() => setActiveView('home')}
             />
           )}
+
+          <OfficeWorldNavigation
+            activeView={activeView}
+            feedback={feedback}
+            onNavigate={handleNavigation}
+          />
         </div>
 
         {activeView === 'home' && drawerCategory ? (
@@ -1286,6 +1273,53 @@ export function OfficeGame() {
 }
 
 
+
+function OfficeWorldNavigation({
+  activeView,
+  feedback,
+  onNavigate,
+}: {
+  activeView: OfficeView;
+  feedback: ActionFeedback | null;
+  onNavigate: (label: string) => void;
+}) {
+  const viewByLabel: Record<string, OfficeView> = {
+    Задачи: 'tasks',
+    Карьера: 'career',
+    Компания: 'company',
+    Боссы: 'bosses',
+    События: 'events',
+  };
+
+  return (
+    <nav className="office-location-strip office-world-nav" aria-label="Игровые разделы">
+      {officeLocationNavigation.map((item) => {
+        const targetView = viewByLabel[item.label];
+        const isActive = targetView === activeView;
+        return (
+          <button
+            type="button"
+            className={isActive ? 'is-active' : ''}
+            aria-current={isActive ? 'page' : undefined}
+            key={item.label}
+            onClick={() => onNavigate(item.label)}
+          >
+            <OfficeIcon name={item.icon} />
+            <span>
+              <b>{item.label}</b>
+              <small>{item.hint.split(':')[0]}</small>
+            </span>
+          </button>
+        );
+      })}
+      {feedback ? (
+        <div key={feedback.id} className={`office-location-feedback office-feedback-${feedback.tone}`}>
+          {feedback.text}
+        </div>
+      ) : null}
+    </nav>
+  );
+}
 
 function OfficeDevelopmentHeader({
   eyebrow,
@@ -1567,6 +1601,18 @@ function OfficeTalentsView({
           );
         })}
       </div>
+
+      <div className="office-v69-talent-summary">
+        <div>
+          <small>Текущая ветка</small>
+          <strong>{v6.careerBranch === 'general' ? 'Ещё не выбрана' : v6.careerBranch === 'expert' ? 'Эксперт' : v6.careerBranch === 'management' ? 'Управление' : 'Продажи'}</strong>
+        </div>
+        <div>
+          <small>Следующая цель</small>
+          <strong>{snapshot.level < 3 ? 'Достичь 3 уровня' : snapshot.level < 6 ? 'Открыть талант II' : snapshot.level < 10 ? 'Открыть талант III' : 'Усиливать синергии'}</strong>
+        </div>
+        <p>Таланты не покупаются отдельно: они открываются уровнем внутри выбранной карьерной ветки и усиливают предметы, задачи и босс-файты.</p>
+      </div>
     </section>
   );
 }
@@ -1713,6 +1759,14 @@ function OfficeEventsView({
               <span>{index === 0 ? 'Компания' : index === 1 ? 'Коллеги' : 'Офис'}</span>
             </article>
           ))}
+          <footer className="office-v69-event-next">
+            <OfficeIcon name="mail" />
+            <div>
+              <small>Что важно сейчас</small>
+              <strong>{snapshot.daily.claimed ? 'Ежедневная цель закрыта' : `До ежедневной цели: ${Math.max(0, snapshot.daily.target - snapshot.daily.progress)}`}</strong>
+            </div>
+            <button type="button" onClick={onTasks}>К задачам →</button>
+          </footer>
         </section>
 
         <aside className="office-v67-event-goals">
