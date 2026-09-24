@@ -5587,3 +5587,18 @@ body.office-no-scroll{
     grid-template-columns:1fr;
   }
 }
+
+
+/* The game is a full application inside 4rrum: keep the forum header, remove page chrome below it. */
+body:has(.office-page) .main{
+  padding-top:8px!important;
+  padding-bottom:0!important;
+}
+
+body:has(.office-page) .site-footer{
+  display:none!important;
+}
+
+body:has(.office-page) .app-page-frame{
+  min-height:0!important;
+}
