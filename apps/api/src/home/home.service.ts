@@ -390,7 +390,7 @@ export class HomeService {
     const [recentReplies, activeTopics] = await Promise.all([
       this.prisma.comment.findMany({
         where: { hiddenAt: null, publication: { status: PublicationStatus.PUBLISHED, format: PublicationFormat.TOPIC, community: { status: 'ACTIVE' } } },
-        orderBy: { createdAt: 'desc' }, take: 3,
+        orderBy: { createdAt: 'desc' }, take: 12,
         select: { id: true, body: true, createdAt: true, author: { select: { username: true, displayName: true, avatarUrl: true } }, publication: { select: { slug: true, title: true, community: { select: { slug: true, name: true } } } } },
       }),
       this.prisma.publication.findMany({
