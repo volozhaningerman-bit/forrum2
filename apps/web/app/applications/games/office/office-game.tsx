@@ -102,6 +102,10 @@ export function OfficeGame() {
   const bossUnlocked = snapshot.level >= 3 || firstDayDone;
   const buildBonuses = getV6BuildBonuses(v6);
   const effectiveMaxEnergy = snapshot.maxEnergy + (buildBonuses.energyMax ?? 0);
+  const effectiveEnergyRegenSeconds = Math.max(
+    60,
+    OFFICE_ENERGY_REGEN_SECONDS - (buildBonuses.energyRecovery ?? 0) * 10,
+  );
 
   useEffect(() => {
     try {
@@ -180,15 +184,15 @@ export function OfficeGame() {
     if (!hydrated) return;
 
     if (snapshot.energy >= effectiveMaxEnergy) {
-      setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
+      setEnergyCountdown(effectiveEnergyRegenSeconds);
       if (energyNextAt !== null) setEnergyNextAt(null);
       return;
     }
 
     if (energyNextAt === null) {
-      const target = Date.now() + OFFICE_ENERGY_REGEN_SECONDS * 1000;
+      const target = Date.now() + effectiveEnergyRegenSeconds * 1000;
       setEnergyNextAt(target);
-      setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
+      setEnergyCountdown(effectiveEnergyRegenSeconds);
       return;
     }
 
@@ -201,7 +205,7 @@ export function OfficeGame() {
         return;
       }
 
-      const intervalMs = OFFICE_ENERGY_REGEN_SECONDS * 1000;
+      const intervalMs = effectiveEnergyRegenSeconds * 1000;
       const elapsedIntervals = Math.floor(Math.abs(remainingMs) / intervalMs) + 1;
       const missingEnergy = effectiveMaxEnergy - snapshot.energy;
       const restored = Math.min(missingEnergy, elapsedIntervals);
@@ -215,7 +219,7 @@ export function OfficeGame() {
 
       if (restored >= missingEnergy) {
         setEnergyNextAt(null);
-        setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
+        setEnergyCountdown(effectiveEnergyRegenSeconds);
       } else {
         const nextTarget = energyNextAt + elapsedIntervals * intervalMs;
         setEnergyNextAt(nextTarget);
@@ -226,7 +230,7 @@ export function OfficeGame() {
     tick();
     const timer = window.setInterval(tick, 1000);
     return () => window.clearInterval(timer);
-  }, [energyNextAt, hydrated, snapshot.energy, effectiveMaxEnergy]);
+  }, [effectiveEnergyRegenSeconds, effectiveMaxEnergy, energyNextAt, hydrated, snapshot.energy]);
 
   useEffect(
     () => () => {
@@ -278,13 +282,19 @@ export function OfficeGame() {
   };
 
   const applyOutcome = (outcome: OfficeOutcome) => {
+    const rawStress = outcome.stress ?? 0;
+    const adjustedStress =
+      rawStress > 0
+        ? Math.max(0, rawStress - Math.floor((buildBonuses.stressResist ?? 0) / 2))
+        : rawStress;
+
     setSnapshot((current) => ({
       ...current,
-      energy: Math.max(0, Math.min(current.maxEnergy, current.energy + (outcome.energy ?? 0))),
+      energy: Math.max(0, Math.min(effectiveMaxEnergy, current.energy + (outcome.energy ?? 0))),
       money: Math.max(0, current.money + (outcome.money ?? 0)),
       reputation: Math.max(0, Math.min(100, current.reputation + (outcome.reputation ?? 0))),
       motivation: Math.max(0, Math.min(100, current.motivation + (outcome.motivation ?? 0))),
-      stress: Math.max(0, Math.min(100, current.stress + (outcome.stress ?? 0))),
+      stress: Math.max(0, Math.min(100, current.stress + adjustedStress)),
       skills: {
         competence: current.skills.competence + (outcome.skills?.competence ?? 0),
         communication: current.skills.communication + (outcome.skills?.communication ?? 0),
