@@ -86,6 +86,8 @@ try {
   assert.equal(await page.locator('.office-action').count(), 0);
   assert.equal(await page.locator('.office-location-strip>button').count(), 6);
   assert.equal(await page.locator('.office-v6-equipment-slot').count(), 0);
+  assert.equal(await page.locator('.office-v6-bottom').count(), 0);
+  assert.equal(await page.locator('.office-equipment-modal').count(), 0);
   assert.equal(await page.locator('.office-hotspot-zone').count(), 0);
   assert.equal(await page.locator('.office-scene-shape').count(), 8);
   assert.equal(
@@ -98,32 +100,41 @@ try {
   const initialGameRect = await page.locator('.office-page').boundingBox();
   assert(initialGameRect && initialGameRect.y + initialGameRect.height <= 1001);
 
-  // Scene-only interaction: the category strip is gone and object clicks replace the content in-place.
+  // The permanent shelf is gone: the room uses the freed space and object clicks open a popup.
+  const sceneRect = await page.locator('.office-scene').boundingBox();
+  assert(sceneRect && sceneRect.height >= 500);
+
   await page.getByRole('button', { name: 'Выбрать стол' }).click({ position: { x: 42, y: 18 } });
-  await page.locator('.office-v6-workplace-stack .office-v6-drawer').waitFor();
-  assert.match(await page.locator('.office-v6-drawer-title h3').textContent(), /Стол/i);
-  const openHeight = await page.locator('.office-v6-bottom').evaluate((node) => node.getBoundingClientRect().height);
-  assert(openHeight <= 210);
+  await page.locator('.office-equipment-modal .office-v6-drawer').waitFor();
+  assert.match(await page.locator('.office-equipment-modal .office-v6-drawer-title h3').textContent(), /Стол/i);
+  assert.equal(await page.locator('.office-v6-bottom').count(), 0);
+
+  // Escape closes the popup without changing the room layout.
+  await page.keyboard.press('Escape');
+  await page.locator('.office-equipment-modal').waitFor({ state: 'detached' });
 
   await page.getByRole('button', { name: 'Выбрать компьютер' }).click();
-  await page.locator('.office-v6-workplace-stack .office-v6-drawer').waitFor();
-  assert((await page.locator('.office-v6-item-card').count()) >= 6);
-  assert((await page.locator('.office-v6-item-card.is-locked').count()) >= 1);
-  const shelf = page.locator('.office-v6-item-list');
+  await page.locator('.office-equipment-modal .office-v6-drawer').waitFor();
+  assert((await page.locator('.office-equipment-modal .office-v6-item-card').count()) >= 6);
+  assert((await page.locator('.office-equipment-modal .office-v6-item-card.is-locked').count()) >= 1);
+  const shelf = page.locator('.office-equipment-modal .office-v6-item-list');
   const scrollBefore = await shelf.evaluate((node) => node.scrollLeft);
   await shelf.hover();
   await page.mouse.wheel(0, 480);
   await page.waitForTimeout(100);
   const scrollAfter = await shelf.evaluate((node) => node.scrollLeft);
   assert(scrollAfter > scrollBefore);
+  await page.locator('.office-equipment-modal .office-v6-drawer-close').click();
+  await page.locator('.office-equipment-modal').waitFor({ state: 'detached' });
 
   await page.getByRole('button', { name: 'Выбрать аксессуары' }).click();
-  await page.locator('.office-v6-drawer').waitFor();
-  const mug = page.locator('.office-v6-item-card').filter({ hasText: 'Своя кружка' });
+  await page.locator('.office-equipment-modal .office-v6-drawer').waitFor();
+  const mug = page.locator('.office-equipment-modal .office-v6-item-card').filter({ hasText: 'Своя кружка' });
   await mug.getByRole('button', { name: /^Купить$/ }).click();
   await page.waitForFunction(() => /куплен|установлен/i.test(document.querySelector('.office-scene-note')?.textContent ?? ''));
   assert.match(await page.locator('.office-scene-note').textContent(), /куплен|установлен/i);
-  await page.locator('.office-v6-workplace-close').click();
+  await page.locator('.office-equipment-modal .office-v6-drawer-close').click();
+  await page.locator('.office-equipment-modal').waitFor({ state: 'detached' });
 
   // Energy actions live only in the dedicated Tasks screen.
   await page.getByRole('button', { name: /Задачи/ }).first().click();
@@ -231,7 +242,7 @@ try {
   assert(persisted && persisted.includes('"v6"'));
   assert(persisted && persisted.includes('"gender":"female"'));
   assert.deepEqual(pageErrors, []);
-  console.log('Office v6.5: single-screen office, wheel equipment, tasks, career, companies, bosses and persistence passed');
+  console.log('Office v6.6: full-height room, popup equipment, tasks, career, companies, bosses and persistence passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
