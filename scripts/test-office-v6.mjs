@@ -120,13 +120,19 @@ try {
   // Character build screen.
   await page.getByRole('button', { name: /Персонаж/ }).first().click();
   await page.getByRole('heading', { name: 'Собери свой офисный билд' }).waitFor();
+  await page.locator('.office-v64-character-avatar').waitFor();
+  assert((await page.locator('.office-v64-loadout-slot').count()) >= 4);
+  assert.equal(await page.locator('.office-v64-archetype-grid>button').count(), 5);
   await page.getByRole('button', { name: /Женщина/ }).click();
   await page.getByRole('button', { name: /Коммуникатор/ }).click();
+  assert.match(await page.locator('.office-v64-build-head').textContent(), /Коммуникатор/i);
+  await page.screenshot({ path: output + '/character-v64-1600.png', fullPage: false });
 
   // Expanded career tree.
   await page.getByRole('button', { name: /Карьера/ }).first().click();
   await page.getByRole('heading', { name: 'Большое дерево развития' }).waitFor();
   assert((await page.locator('.office-v6-career-node').count()) >= 15);
+  assert((await page.locator('.office-v6-career-canvas line.is-path').count()) >= 1);
   await page.locator('.office-v6-career-detail').waitFor();
   assert.match(await page.locator('.office-v6-career-detail').textContent(), /Что получишь/i);
   assert.match(await page.locator('.office-v6-career-detail').textContent(), /Что откроется/i);
@@ -148,6 +154,10 @@ try {
   await page.getByRole('button', { name: /Компания/ }).first().click();
   await page.getByRole('heading', { name: 'Меняй офис вместе с карьерой' }).waitFor();
   assert.equal(await page.locator('.office-v6-company-grid>article').count(), 6);
+  assert.equal(await page.locator('.office-v64-company-scene').count(), 6);
+  assert.equal(await page.locator('.office-v64-company-progress>div').count(), 6);
+  assert.match(await page.locator('.office-v6-company-grid>article').first().textContent(), /Пассивный бонус/i);
+  await page.screenshot({ path: output + '/companies-v64-1600.png', fullPage: false });
 
   // Return home and complete first-day story to unlock the new boss battle.
   await page.getByRole('button', { name: /Главная/ }).first().click();
