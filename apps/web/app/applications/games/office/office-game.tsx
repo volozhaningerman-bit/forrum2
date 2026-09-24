@@ -83,6 +83,7 @@ export function OfficeGame() {
   const [activeView, setActiveView] = useState<OfficeView>('home');
   const [modal, setModal] = useState<OfficeModal>(null);
 
+  const pageRef = useRef<HTMLDivElement | null>(null);
   const feedbackTimerRef = useRef<number | null>(null);
   const cooldownTimerRef = useRef<number | null>(null);
   const feedbackIdRef = useRef(0);
@@ -231,6 +232,26 @@ export function OfficeGame() {
     const timer = window.setInterval(tick, 1000);
     return () => window.clearInterval(timer);
   }, [effectiveEnergyRegenSeconds, effectiveMaxEnergy, energyNextAt, hydrated, snapshot.energy]);
+
+  useEffect(() => {
+    const hadNoScroll = document.body.classList.contains('office-no-scroll');
+
+    const syncViewport = () => {
+      const page = pageRef.current;
+      if (!page) return;
+      const top = Math.max(0, page.getBoundingClientRect().top);
+      page.style.setProperty('--office-viewport-height', `${Math.max(0, window.innerHeight - top - 8)}px`);
+    };
+
+    document.body.classList.add('office-no-scroll');
+    syncViewport();
+    window.addEventListener('resize', syncViewport);
+
+    return () => {
+      window.removeEventListener('resize', syncViewport);
+      if (!hadNoScroll) document.body.classList.remove('office-no-scroll');
+    };
+  }, []);
 
   useEffect(
     () => () => {
@@ -700,7 +721,7 @@ export function OfficeGame() {
   };
 
   return (
-    <div className="office-page">
+    <div className="office-page" ref={pageRef}>
       <div className="office-game">
         <header className="office-topbar">
           <div className="office-logo">
@@ -815,45 +836,35 @@ export function OfficeGame() {
             <section className="office-scene">
               <img src="/games/office/office-start.svg" alt="Первое рабочее место стажёра" />
               <button
-                className="office-hotspot office-hotspot-pc"
+                className={`office-hotspot-zone office-hotspot-zone-pc ${drawerCategory === 'pc' ? 'is-active' : ''}`}
                 type="button"
                 onClick={() => setDrawerCategory('pc')}
-                aria-label="Старый компьютер"
-              >
-                <span>＋</span> Старый ПК
-              </button>
+                aria-label="Выбрать компьютер"
+              />
               <button
-                className="office-hotspot office-hotspot-chair"
+                className={`office-hotspot-zone office-hotspot-zone-chair ${drawerCategory === 'chair' ? 'is-active' : ''}`}
                 type="button"
                 onClick={() => setDrawerCategory('chair')}
-                aria-label="Старый офисный стул"
-              >
-                <span>＋</span> Стул
-              </button>
+                aria-label="Выбрать кресло"
+              />
               <button
-                className="office-hotspot office-hotspot-desk"
+                className={`office-hotspot-zone office-hotspot-zone-desk ${drawerCategory === 'desk' ? 'is-active' : ''}`}
                 type="button"
                 onClick={() => setDrawerCategory('desk')}
-                aria-label="Рабочий стол"
-              >
-                <span>＋</span> Стол
-              </button>
+                aria-label="Выбрать стол"
+              />
               <button
-                className="office-hotspot office-hotspot-monitor"
+                className={`office-hotspot-zone office-hotspot-zone-monitor ${drawerCategory === 'monitor' ? 'is-active' : ''}`}
                 type="button"
                 onClick={() => setDrawerCategory('monitor')}
-                aria-label="Монитор"
-              >
-                <span>＋</span> Монитор
-              </button>
+                aria-label="Выбрать монитор"
+              />
               <button
-                className="office-hotspot office-hotspot-character"
+                className={`office-hotspot-zone office-hotspot-zone-character ${drawerCategory === 'clothes' ? 'is-active' : ''}`}
                 type="button"
                 onClick={() => setDrawerCategory('clothes')}
-                aria-label="Одежда персонажа"
-              >
-                <span>＋</span> Одежда
-              </button>
+                aria-label="Выбрать одежду персонажа"
+              />
               <div className="office-scene-note">{notice}</div>
             </section>
 
@@ -989,8 +1000,29 @@ export function OfficeGame() {
 
         {activeView === 'home' ? (
         <>
-        <footer className="office-bottom office-v6-bottom">
-          <EquipmentDock state={v6} onOpen={setDrawerCategory} />
+        <footer className={`office-bottom office-v6-bottom ${drawerCategory ? 'has-equipment-drawer' : ''}`}>
+          <section className="office-v6-workplace-stack">
+            <EquipmentDock
+              state={v6}
+              activeCategory={drawerCategory}
+              onOpen={(category) => setDrawerCategory((current) => current === category ? null : category)}
+            />
+
+            {drawerCategory ? (
+              <div className="office-v6-inline-drawer">
+                <EquipmentDrawer
+                  category={drawerCategory}
+                  state={v6}
+                  level={snapshot.level}
+                  reputation={snapshot.reputation}
+                  money={snapshot.money}
+                  onClose={() => setDrawerCategory(null)}
+                  onBuy={buyV6Item}
+                  onEquip={equipV6Item}
+                />
+              </div>
+            ) : null}
+          </section>
 
           <section className="office-promotion">
             <div className="office-bottom-title">Следующее повышение <span>?</span></div>
@@ -1014,16 +1046,6 @@ export function OfficeGame() {
           </section>
         </footer>
 
-        <EquipmentDrawer
-          category={drawerCategory}
-          state={v6}
-          level={snapshot.level}
-          reputation={snapshot.reputation}
-          money={snapshot.money}
-          onClose={() => setDrawerCategory(null)}
-          onBuy={buyV6Item}
-          onEquip={equipV6Item}
-        />
         </>
         ) : null}
 
