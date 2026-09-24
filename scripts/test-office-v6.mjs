@@ -86,11 +86,17 @@ try {
   assert.equal(await page.locator('.office-action').count(), 4);
   assert.equal(await page.locator('.office-v6-equipment-slot').count(), 8);
 
-  // Equipment drawer: real catalog, purchase and equip.
+  // Equipment drawer: PC catalog has progression locks; an affordable accessory can be purchased and equipped.
   await page.locator('.office-v6-equipment-slot[data-category="pc"]').click();
   await page.locator('.office-v6-drawer').waitFor();
   assert((await page.locator('.office-v6-item-card').count()) >= 6);
-  await page.getByRole('button', { name: 'Купить' }).first().click();
+  assert((await page.locator('.office-v6-item-card.is-locked').count()) >= 1);
+  await page.locator('.office-v6-drawer-close').click();
+
+  await page.locator('.office-v6-equipment-slot[data-category="accessory"]').click();
+  await page.locator('.office-v6-drawer').waitFor();
+  const mug = page.locator('.office-v6-item-card').filter({ hasText: 'Своя кружка' });
+  await mug.getByRole('button', { name: /^Купить$/ }).click();
   await page.waitForFunction(() => /куплен|установлен/i.test(document.querySelector('.office-scene-note')?.textContent ?? ''));
   assert.match(await page.locator('.office-scene-note').textContent(), /куплен|установлен/i);
   await page.locator('.office-v6-drawer-close').click();
