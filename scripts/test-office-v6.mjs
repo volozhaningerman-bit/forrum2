@@ -83,7 +83,8 @@ try {
   await page.reload({ waitUntil: 'networkidle' });
 
   await page.locator('.office-game').waitFor();
-  assert.equal(await page.locator('.office-action').count(), 4);
+  assert.equal(await page.locator('.office-action').count(), 0);
+  assert.equal(await page.locator('.office-location-strip>button').count(), 6);
   assert.equal(await page.locator('.office-v6-equipment-slot').count(), 0);
   assert.equal(await page.locator('.office-hotspot-zone').count(), 0);
   assert.equal(await page.locator('.office-scene-shape').count(), 8);
@@ -102,12 +103,19 @@ try {
   await page.locator('.office-v6-workplace-stack .office-v6-drawer').waitFor();
   assert.match(await page.locator('.office-v6-drawer-title h3').textContent(), /Стол/i);
   const openHeight = await page.locator('.office-v6-bottom').evaluate((node) => node.getBoundingClientRect().height);
-  assert(openHeight <= 170);
+  assert(openHeight <= 210);
 
   await page.getByRole('button', { name: 'Выбрать компьютер' }).click();
   await page.locator('.office-v6-workplace-stack .office-v6-drawer').waitFor();
   assert((await page.locator('.office-v6-item-card').count()) >= 6);
   assert((await page.locator('.office-v6-item-card.is-locked').count()) >= 1);
+  const shelf = page.locator('.office-v6-item-list');
+  const scrollBefore = await shelf.evaluate((node) => node.scrollLeft);
+  await shelf.hover();
+  await page.mouse.wheel(0, 480);
+  await page.waitForTimeout(100);
+  const scrollAfter = await shelf.evaluate((node) => node.scrollLeft);
+  assert(scrollAfter > scrollBefore);
 
   await page.getByRole('button', { name: 'Выбрать аксессуары' }).click();
   await page.locator('.office-v6-drawer').waitFor();
@@ -116,6 +124,13 @@ try {
   await page.waitForFunction(() => /куплен|установлен/i.test(document.querySelector('.office-scene-note')?.textContent ?? ''));
   assert.match(await page.locator('.office-scene-note').textContent(), /куплен|установлен/i);
   await page.locator('.office-v6-workplace-close').click();
+
+  // Energy actions live only in the dedicated Tasks screen.
+  await page.getByRole('button', { name: /Задачи/ }).first().click();
+  await page.getByRole('heading', { name: 'Задачи' }).waitFor();
+  assert.equal(await page.locator('.office-v65-task-card').count(), 4);
+  assert.equal(await page.locator('.office-v65-task-grid').count(), 1);
+  await page.getByRole('button', { name: '← Вернуться в офис' }).click();
 
   // Character build screen.
   await page.getByRole('button', { name: /Персонаж/ }).first().click();
@@ -159,17 +174,22 @@ try {
   assert.match(await page.locator('.office-v6-company-grid>article').first().textContent(), /Пассивный бонус/i);
   await page.screenshot({ path: output + '/companies-v64-1600.png', fullPage: false });
 
-  // Return home and complete first-day story to unlock the new boss battle.
-  await page.getByRole('button', { name: /Главная/ }).first().click();
+  // Complete first-day story from the dedicated Tasks screen.
+  await page.getByRole('button', { name: /Задачи/ }).first().click();
   for (const choiceName of [/Разобрать по приоритетам/, /Попросить помощи/, /Согласиться переделать/]) {
-    await page.getByRole('button', { name: /Работать/ }).click();
+    await page.getByRole('button', { name: /^Выполнить$/ }).first().click();
     const dialog = page.getByRole('dialog');
     await dialog.waitFor();
     await dialog.getByRole('button', { name: choiceName }).click();
     await dialog.waitFor({ state: 'detached' });
   }
 
-  await page.getByRole('button', { name: /Начать поручение|К испытанию/ }).click();
+  // Bosses have their own navigation screen.
+  await page.getByRole('button', { name: /Боссы/ }).first().click();
+  await page.getByRole('heading', { name: 'Боссы' }).waitFor();
+  assert.equal(await page.locator('.office-v65-current-boss').count(), 1);
+  assert((await page.locator('.office-v65-boss-road-item').count()) >= 4);
+  await page.getByRole('button', { name: /Начать переговоры/ }).click();
   await page.getByRole('dialog', { name: /Босс: Сергей Петрович/ }).waitFor();
   assert.equal(await page.locator('.office-v6-boss-actions>button').count(), 3);
   await page.getByRole('button', { name: /Аргументировать/ }).click();
@@ -189,6 +209,7 @@ try {
         scroll: document.documentElement.scrollWidth,
         bodyOverflow: getComputedStyle(document.body).overflowY,
         officeBottom: office?.bottom ?? 0,
+        pageScrollHeight: document.documentElement.scrollHeight,
       };
     });
     assert(
@@ -196,6 +217,10 @@ try {
       `Office v6 must not overflow horizontally at ${width}px: ${dimensions.scroll}`,
     );
     assert.equal(dimensions.bodyOverflow, 'hidden');
+    assert(
+      dimensions.pageScrollHeight <= dimensions.height + 2,
+      `Office v6.5 must keep the document on one screen at ${width}px: scrollHeight=${dimensions.pageScrollHeight}`,
+    );
     assert(
       dimensions.officeBottom <= dimensions.height + 1,
       `Office v6 must fit the viewport at ${width}px: bottom=${dimensions.officeBottom}, height=${dimensions.height}`,
@@ -206,7 +231,7 @@ try {
   assert(persisted && persisted.includes('"v6"'));
   assert(persisted && persisted.includes('"gender":"female"'));
   assert.deepEqual(pageErrors, []);
-  console.log('Office v6: equipment, profile, career, companies, boss combat and persistence passed');
+  console.log('Office v6.5: single-screen office, wheel equipment, tasks, career, companies, bosses and persistence passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');

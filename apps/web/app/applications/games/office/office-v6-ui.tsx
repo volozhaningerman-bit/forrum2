@@ -153,7 +153,14 @@ export function EquipmentDrawer({
         </div>
       </header>
 
-      <div className="office-v6-item-list">
+      <div
+        className="office-v6-item-list"
+        onWheel={(event) => {
+          if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+          event.preventDefault();
+          event.currentTarget.scrollLeft += event.deltaY;
+        }}
+      >
         {items.map((item) => {
           const lockReason = v6ItemLockReason(item, { level, reputation, state });
           const owned = state.ownedItemIds.includes(item.id);
