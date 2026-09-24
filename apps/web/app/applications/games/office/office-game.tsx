@@ -988,6 +988,7 @@ export function OfficeGame() {
         </div>
 
         {activeView === 'home' ? (
+        <>
         <footer className="office-bottom office-v6-bottom">
           <EquipmentDock state={v6} onOpen={setDrawerCategory} />
 
@@ -1023,6 +1024,7 @@ export function OfficeGame() {
           onBuy={buyV6Item}
           onEquip={equipV6Item}
         />
+        </>
         ) : null}
 
         {bossBattleOpen ? (
