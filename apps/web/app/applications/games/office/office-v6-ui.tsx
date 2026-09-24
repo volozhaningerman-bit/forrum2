@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { formatMoney, type OfficeSnapshot } from './office-data';
 import {
   branchLabel,
@@ -37,9 +37,11 @@ export function V6Icon({ name }: { name: string }) {
 
 export function EquipmentDock({
   state,
+  activeCategory,
   onOpen,
 }: {
   state: V6State;
+  activeCategory?: V6ItemCategory | null;
   onOpen: (category: V6ItemCategory) => void;
 }) {
   const categories = Object.keys(v6CategoryMeta) as V6ItemCategory[];
@@ -60,7 +62,7 @@ export function EquipmentDock({
               key={category}
               data-category={category}
               onClick={() => onOpen(category)}
-              className="office-v6-equipment-slot"
+              className={`office-v6-equipment-slot ${activeCategory === category ? 'is-open' : ''}`}
             >
               <small>{meta.label}</small>
               <V6Icon name={meta.icon} />
@@ -318,6 +320,17 @@ export function V6CareerView({
   onBack: () => void;
 }) {
   const build = getV6BuildBonuses(state);
+  const [zoom, setZoom] = useState(0.88);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const dragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    panX: number;
+    panY: number;
+  } | null>(null);
+
   const effectiveSkills = {
     competence: snapshot.skills.competence + (build.competence ?? 0),
     communication: snapshot.skills.communication + (build.communication ?? 0),
@@ -325,66 +338,220 @@ export function V6CareerView({
   };
   const effectiveReputation = snapshot.reputation + (build.reputation ?? 0);
 
+  const setClampedZoom = (value: number) => {
+    setZoom(Math.min(1.55, Math.max(0.68, Math.round(value * 100) / 100)));
+  };
+
+  const resetView = () => {
+    setZoom(0.88);
+    setPan({ x: 0, y: 0 });
+  };
+
+  const branchCards: Array<{
+    id: V6CareerBranch;
+    damage: string;
+    title: string;
+    summary: string;
+    rewards: string[];
+  }> = [
+    {
+      id: 'expert',
+      damage: 'Логический урон',
+      title: 'Эксперт',
+      summary: 'Техника, рабочие станции, сложные задачи и аргументация.',
+      rewards: ['+18% урон логикой', 'ПК и мониторы ветки', 'Tech-офисы'],
+    },
+    {
+      id: 'management',
+      damage: 'Социальный урон',
+      title: 'Управление',
+      summary: 'Люди, авторитет, статусная мебель и руководящие кабинеты.',
+      rewards: ['+18% соц. урон', 'Мебель руководителя', 'Авторитет'],
+    },
+    {
+      id: 'sales',
+      damage: 'Напор и доход',
+      title: 'Продажи',
+      summary: 'Сделки, статусные аксессуары, давление и денежные бонусы.',
+      rewards: ['+18% урон напором', 'Имиджевые предметы', 'Доход'],
+    },
+  ];
+
   return (
     <section className="office-v6-page office-v6-career">
       <PageHeader eyebrow="Карьера" title="Большое дерево развития" onBack={onBack}>
-        Ветка меняет доступ к мебели и технике, усиливает определённый тип урона по боссам и открывает собственные компании и события.
+        Выбранное направление меняет стиль прохождения боссов, доступную технику, мебель,
+        компании и будущий офис. Карту можно приближать и перетаскивать.
       </PageHeader>
 
       <div className="office-v6-branch-pick">
-        {(['expert','management','sales'] as V6CareerBranch[]).map((branch) => (
+        {branchCards.map((branch) => (
           <button
             type="button"
-            key={branch}
-            className={state.careerBranch === branch ? 'active' : ''}
-            onClick={() => onSelectBranch(branch)}
+            key={branch.id}
+            className={state.careerBranch === branch.id ? 'active' : ''}
+            onClick={() => onSelectBranch(branch.id)}
           >
-            <small>{branch === 'expert' ? 'Логический урон' : branch === 'management' ? 'Социальный урон' : 'Напор и доход'}</small>
-            <strong>{branchLabel(branch)}</strong>
-            <span>{branch === 'expert' ? 'Техника и сложные задачи' : branch === 'management' ? 'Люди, авторитет и кабинет' : 'Сделки, аксессуары и давление'}</span>
+            <small>{branch.damage}</small>
+            <strong>{branch.title}</strong>
+            <span>{branch.summary}</span>
+            <div className="office-v6-branch-rewards">
+              {branch.rewards.map((reward) => <b key={reward}>{reward}</b>)}
+            </div>
           </button>
         ))}
       </div>
 
-      <div className="office-v6-career-map">
-        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          {v6CareerNodes.filter((node) => node.parent).map((node) => {
-            const parent = v6CareerNodes.find((candidate) => candidate.id === node.parent);
-            if (!parent) return null;
-            return <line key={node.id} x1={parent.x} y1={parent.y} x2={node.x} y2={node.y} />;
-          })}
-        </svg>
-        {v6CareerNodes.map((node) => {
-          const available = v6CareerAvailable(node, {
-            level: snapshot.level,
-            reputation: effectiveReputation,
-            skills: effectiveSkills,
-            branch: state.careerBranch,
+      <div className="office-v6-career-toolbar">
+        <div className="office-v6-career-zoom">
+          <button type="button" aria-label="Уменьшить дерево" onClick={() => setClampedZoom(zoom - 0.1)}>−</button>
+          <button type="button" className="reset" onClick={resetView}>{Math.round(zoom * 100)}%</button>
+          <button type="button" aria-label="Увеличить дерево" onClick={() => setClampedZoom(zoom + 0.1)}>+</button>
+        </div>
+        <div className="office-v6-career-hint">
+          <span>Колесо — масштаб</span>
+          <span>Потяни фон — перемещение</span>
+        </div>
+        <div className="office-v6-career-legend">
+          <span><i className="current" /> Сейчас</span>
+          <span><i className="available" /> Доступно</span>
+          <span><i className="locked" /> Закрыто</span>
+        </div>
+      </div>
+
+      <div
+        className={`office-v6-career-viewport ${dragging ? 'is-dragging' : ''}`}
+        onWheel={(event) => {
+          event.preventDefault();
+          setClampedZoom(zoom + (event.deltaY < 0 ? 0.08 : -0.08));
+        }}
+        onPointerDown={(event) => {
+          const target = event.target as HTMLElement;
+          if (target.closest('.office-v6-career-node') || target.closest('button')) return;
+          dragRef.current = {
+            pointerId: event.pointerId,
+            startX: event.clientX,
+            startY: event.clientY,
+            panX: pan.x,
+            panY: pan.y,
+          };
+          event.currentTarget.setPointerCapture(event.pointerId);
+          setDragging(true);
+        }}
+        onPointerMove={(event) => {
+          const drag = dragRef.current;
+          if (!drag || drag.pointerId !== event.pointerId) return;
+          setPan({
+            x: drag.panX + event.clientX - drag.startX,
+            y: drag.panY + event.clientY - drag.startY,
           });
-          const activeBranch = node.branch === 'general' || state.careerBranch === 'general' || state.careerBranch === node.branch;
-          const current = node.title === snapshot.role || (snapshot.role === 'Стажёр' && node.id === 'intern');
-          return (
-            <article
-              key={node.id}
-              className={[
-                'office-v6-career-node',
-                current ? 'current' : '',
-                available && activeBranch ? 'available' : 'locked',
-                `branch-${node.branch}`,
-              ].filter(Boolean).join(' ')}
-              style={{ left: `${node.x}%`, top: `${node.y}%` }}
-            >
-              <small>{node.subtitle}</small>
-              <strong>{node.title}</strong>
-              <span>{formatMoney(node.salary)} ₽</span>
-              <em>ур. {node.level} · реп. {node.reputation}{node.skill ? ` · ${skillShort(node.skill)} ${node.skillValue}` : ''}</em>
-              <div>{node.unlocks.slice(0,2).map((unlock) => <b key={unlock}>{unlock}</b>)}</div>
-            </article>
-          );
-        })}
+        }}
+        onPointerUp={(event) => {
+          if (dragRef.current?.pointerId !== event.pointerId) return;
+          dragRef.current = null;
+          setDragging(false);
+          if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId);
+          }
+        }}
+        onPointerCancel={() => {
+          dragRef.current = null;
+          setDragging(false);
+        }}
+      >
+        <div
+          className="office-v6-career-canvas"
+          style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})` }}
+        >
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            {v6CareerNodes.filter((node) => node.parent).map((node) => {
+              const parent = v6CareerNodes.find((candidate) => candidate.id === node.parent);
+              if (!parent) return null;
+              return <line key={node.id} x1={parent.x} y1={parent.y} x2={node.x} y2={node.y} />;
+            })}
+          </svg>
+
+          {v6CareerNodes.map((node) => {
+            const available = v6CareerAvailable(node, {
+              level: snapshot.level,
+              reputation: effectiveReputation,
+              skills: effectiveSkills,
+              branch: state.careerBranch,
+            });
+            const activeBranch =
+              node.branch === 'general' ||
+              state.careerBranch === 'general' ||
+              state.careerBranch === node.branch;
+            const current =
+              node.title === snapshot.role ||
+              (snapshot.role === 'Стажёр' && node.id === 'intern');
+            const status = current
+              ? 'current'
+              : available && activeBranch
+                ? 'available'
+                : 'locked';
+            const statusLabel = current
+              ? 'Сейчас'
+              : !activeBranch
+                ? 'Другая ветка'
+                : available
+                  ? 'Доступно'
+                  : 'Закрыто';
+
+            return (
+              <article
+                key={node.id}
+                className={`office-v6-career-node ${status} branch-${node.branch}`}
+                style={{ left: `${node.x}%`, top: `${node.y}%` }}
+              >
+                <div className="office-v6-career-node-top">
+                  <small>{node.subtitle}</small>
+                  <b className={`status status-${status}`}>{statusLabel}</b>
+                </div>
+                <strong>{node.title}</strong>
+
+                <div className="office-v6-career-node-meta">
+                  <span>{formatMoney(node.salary)} ₽</span>
+                  <em>ур. {node.level} · реп. {node.reputation}</em>
+                </div>
+
+                {node.skill ? (
+                  <div className="office-v6-career-requirement">
+                    Нужно: <b>{skillShort(node.skill)} {node.skillValue}</b>
+                  </div>
+                ) : (
+                  <div className="office-v6-career-requirement">
+                    Нужно: <b>{node.id === 'intern' ? 'Старт игры' : 'предыдущая должность'}</b>
+                  </div>
+                )}
+
+                <div className="office-v6-career-benefits">
+                  <span>Даёт</span>
+                  {careerBenefits(node.branch, node.id).map((benefit) => (
+                    <b key={benefit}>{benefit}</b>
+                  ))}
+                </div>
+
+                <div className="office-v6-career-unlocks">
+                  <span>Откроется</span>
+                  {node.unlocks.map((unlock) => <b key={unlock}>{unlock}</b>)}
+                </div>
+              </article>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
+}
+
+function careerBenefits(branch: V6CareerBranch, nodeId: string) {
+  if (branch === 'expert') return ['Логика против боссов', 'Синергия техники'];
+  if (branch === 'management') return ['Социальный урон', 'Авторитет и статус'];
+  if (branch === 'sales') return ['Напор против боссов', 'Доход и влияние'];
+  if (nodeId === 'specialist') return ['Выбор специализации', 'Новые варианты развития'];
+  if (nodeId === 'junior') return ['Больше зарплата', 'Доступ к новым предметам'];
+  return ['Базовая прогрессия', 'Рабочие возможности'];
 }
 
 function skillShort(skill: 'competence' | 'communication' | 'drive') {
