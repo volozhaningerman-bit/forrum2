@@ -2654,3 +2654,403 @@ body.office-no-scroll{
   height:21%;
   border-radius:42% 42% 26% 26%;
 }
+
+
+/* office v6.2: scene-only equipment selection and stable bottom layout */
+
+/* Do not grow the footer when the catalogue opens. Replacing the content must not squeeze the scene. */
+.office-v6-bottom,
+.office-v6-bottom.has-equipment-drawer{
+  height:148px;
+  min-height:148px;
+  grid-template-columns:minmax(0,1fr) 390px;
+  gap:6px;
+  align-items:stretch;
+}
+
+.office-v6-workplace-stack{
+  min-width:0;
+  min-height:0;
+  height:100%;
+  display:grid;
+  grid-template-rows:34px minmax(0,1fr);
+  overflow:hidden;
+  border:1px solid #5a432d;
+  background:linear-gradient(#232526,#191b1c);
+  box-shadow:inset 0 0 0 1px #0e0f10,inset 0 1px #303233;
+}
+
+.office-v6-workplace-header{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:0 8px;
+  border-bottom:1px solid #4a3b2d;
+  background:linear-gradient(#242627,#1d1f20);
+}
+
+.office-v6-workplace-header .office-bottom-title{
+  flex:1;
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:0;
+  border:0;
+}
+
+.office-v6-workplace-header .office-bottom-title>span{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#81786d;
+  font-family:Arial,sans-serif;
+  font-size:7px;
+  font-weight:500;
+}
+
+.office-v6-workplace-close{
+  flex:0 0 auto;
+  min-height:23px;
+  padding:0 8px;
+  border:1px solid #674529;
+  border-radius:2px;
+  background:#29231e;
+  color:#d5a66b;
+  font-size:7px;
+  cursor:pointer;
+}
+
+.office-v6-workplace-close:hover{
+  border-color:#a96a33;
+  color:#efc386;
+}
+
+.office-v6-workplace-empty{
+  min-height:0;
+  display:grid;
+  place-content:center;
+  gap:4px;
+  padding:10px 18px;
+  text-align:center;
+  background:
+    radial-gradient(circle at 50% 30%,rgba(207,153,82,.04),transparent 50%),
+    #191b1c;
+}
+
+.office-v6-workplace-empty strong{
+  color:#d5b37f;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:12px;
+}
+
+.office-v6-workplace-empty span{
+  max-width:610px;
+  color:#847d73;
+  font-size:8px;
+  line-height:1.35;
+}
+
+/* The catalogue occupies the exact area previously used by the category tiles. */
+.office-v6-inline-drawer{
+  min-height:0;
+  height:100%;
+  overflow:hidden;
+  border-top:0;
+}
+
+.office-v6-inline-drawer .office-v6-drawer{
+  height:100%;
+  min-height:0;
+  margin:0;
+  border:0;
+  box-shadow:none;
+  display:grid;
+  grid-template-rows:34px minmax(0,1fr);
+  background:transparent;
+}
+
+.office-v6-inline-drawer .office-v6-drawer>header{
+  min-height:34px;
+  height:34px;
+  padding:3px 6px;
+  gap:8px;
+  border-bottom:1px solid #3c342b;
+  background:#1b1d1e;
+}
+
+.office-v6-inline-drawer .office-v6-drawer-title{
+  min-width:160px;
+  gap:5px;
+}
+
+.office-v6-inline-drawer .office-v6-drawer-title>.office-icon{
+  width:23px;
+  height:23px;
+  padding:4px;
+}
+
+.office-v6-inline-drawer .office-v6-drawer-title small,
+.office-v6-inline-drawer .office-v6-drawer-title p{
+  display:none;
+}
+
+.office-v6-inline-drawer .office-v6-drawer-title h3{
+  margin:0;
+  font-size:11px;
+}
+
+.office-v6-inline-drawer .office-v6-drawer-controls{
+  min-width:0;
+  gap:4px;
+}
+
+.office-v6-inline-drawer .office-v6-filter{
+  min-width:0;
+}
+
+.office-v6-inline-drawer .office-v6-filter button{
+  min-height:23px;
+  padding:0 5px;
+  font-size:6.5px;
+}
+
+.office-v6-inline-drawer .office-v6-drawer-controls select{
+  min-height:23px;
+  height:23px;
+  padding:0 18px 0 5px;
+  font-size:6.5px;
+}
+
+.office-v6-inline-drawer .office-v6-drawer-close{
+  display:none;
+}
+
+/* Horizontal carousel: the catalogue no longer adds vertical blocks. */
+.office-v6-inline-drawer .office-v6-item-list{
+  min-height:0;
+  height:100%;
+  max-height:none;
+  display:flex;
+  align-items:stretch;
+  gap:5px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  overscroll-behavior-x:contain;
+  scroll-snap-type:x proximity;
+  padding:5px;
+  scrollbar-width:thin;
+  scrollbar-color:#795432 #181a1b;
+}
+
+.office-v6-inline-drawer .office-v6-item-card{
+  flex:0 0 278px;
+  width:278px;
+  min-height:0;
+  height:100%;
+  grid-template-columns:54px minmax(0,1fr) 82px;
+  gap:5px;
+  padding:4px;
+  scroll-snap-align:start;
+}
+
+.office-v6-inline-drawer .office-v6-item-visual>.office-icon{
+  width:25px;
+  height:25px;
+}
+
+.office-v6-inline-drawer .office-v6-item-visual>span{
+  max-width:50px;
+  font-size:6px;
+}
+
+.office-v6-inline-drawer .office-v6-item-head small,
+.office-v6-inline-drawer .office-v6-item-head b{
+  font-size:5.5px;
+}
+
+.office-v6-inline-drawer .office-v6-item-copy>strong{
+  font-size:9px;
+}
+
+.office-v6-inline-drawer .office-v6-item-copy>p{
+  display:-webkit-box;
+  overflow:hidden;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  font-size:6px;
+  line-height:1.25;
+}
+
+.office-v6-inline-drawer .office-v6-bonus-chips{
+  gap:2px;
+  margin-top:1px;
+}
+
+.office-v6-inline-drawer .office-v6-bonus-chips>span{
+  padding:1px 3px;
+  font-size:5.5px;
+}
+
+.office-v6-inline-drawer .office-v6-item-buy{
+  gap:2px;
+  padding:3px 4px;
+}
+
+.office-v6-inline-drawer .office-v6-item-buy small{
+  font-size:5.5px;
+}
+
+.office-v6-inline-drawer .office-v6-item-buy>b{
+  font-size:7px;
+}
+
+.office-v6-inline-drawer .office-v6-item-buy>button{
+  min-height:22px;
+  padding:2px 3px;
+  font-size:6px;
+}
+
+/* Promotion keeps the same width and height whether the catalogue is open or closed. */
+.office-v6-bottom .office-promotion{
+  min-width:0;
+  height:100%;
+  overflow:hidden;
+}
+
+/* Exact-shape SVG hit map. There are no labels or rectangular overlays anymore. */
+.office-hotspot-zone{
+  display:none!important;
+}
+
+.office-scene-hitmap{
+  position:absolute;
+  inset:0;
+  z-index:6;
+  overflow:hidden;
+  pointer-events:none;
+}
+
+.office-scene-hitmap-svg{
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  pointer-events:none;
+}
+
+.office-scene-shape{
+  outline:none;
+  cursor:pointer;
+  pointer-events:all;
+}
+
+.office-scene-shape path{
+  fill:rgba(223,166,88,.001);
+  stroke:rgba(240,187,111,0);
+  stroke-width:3.2;
+  stroke-linejoin:round;
+  stroke-linecap:round;
+  vector-effect:non-scaling-stroke;
+  filter:none;
+  transition:
+    fill .14s ease,
+    stroke .14s ease,
+    filter .14s ease,
+    opacity .14s ease;
+}
+
+.office-scene-shape:hover path,
+.office-scene-shape:focus-visible path,
+.office-scene-shape.is-active path{
+  fill:rgba(222,162,83,.055);
+  stroke:rgba(241,190,116,.55);
+  filter:drop-shadow(0 0 4px rgba(218,139,55,.20));
+}
+
+.office-scene-shape.is-active path{
+  fill:rgba(222,162,83,.07);
+  stroke:rgba(244,190,111,.66);
+}
+
+.office-scene-shape-character:hover path,
+.office-scene-shape-character.is-active path{
+  fill:rgba(225,169,95,.035);
+}
+
+/* Thin objects need a slightly wider interaction stroke without becoming glowy. */
+.office-scene-shape-lighting path{
+  stroke-width:5;
+}
+
+@media(max-height:820px){
+  .office-v6-bottom,
+  .office-v6-bottom.has-equipment-drawer{
+    height:132px;
+    min-height:132px;
+  }
+
+  .office-v6-workplace-stack{
+    grid-template-rows:30px minmax(0,1fr);
+  }
+
+  .office-v6-inline-drawer .office-v6-drawer{
+    grid-template-rows:30px minmax(0,1fr);
+  }
+
+  .office-v6-inline-drawer .office-v6-drawer>header{
+    height:30px;
+    min-height:30px;
+  }
+
+  .office-v6-inline-drawer .office-v6-item-card{
+    flex-basis:250px;
+    width:250px;
+  }
+}
+
+@media(max-width:1250px){
+  .office-v6-bottom,
+  .office-v6-bottom.has-equipment-drawer{
+    grid-template-columns:minmax(0,1fr) 340px;
+  }
+
+  .office-v6-inline-drawer .office-v6-item-card{
+    flex-basis:250px;
+    width:250px;
+  }
+}
+
+@media(max-width:980px){
+  .office-v6-bottom,
+  .office-v6-bottom.has-equipment-drawer{
+    height:142px;
+    min-height:142px;
+    grid-template-columns:minmax(0,1fr) 310px;
+  }
+
+  .office-v6-inline-drawer .office-v6-filter button:nth-child(3),
+  .office-v6-inline-drawer .office-v6-filter button:nth-child(4){
+    display:none;
+  }
+}
+
+@media(max-width:720px){
+  .office-v6-bottom,
+  .office-v6-bottom.has-equipment-drawer{
+    height:auto;
+    min-height:0;
+    grid-template-columns:1fr;
+  }
+
+  .office-v6-workplace-stack{
+    min-height:180px;
+  }
+
+  .office-v6-inline-drawer .office-v6-drawer{
+    min-height:180px;
+  }
+}

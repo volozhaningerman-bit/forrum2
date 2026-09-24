@@ -84,10 +84,11 @@ try {
 
   await page.locator('.office-game').waitFor();
   assert.equal(await page.locator('.office-action').count(), 4);
-  assert.equal(await page.locator('.office-v6-equipment-slot').count(), 8);
-  assert.equal(await page.locator('.office-hotspot-zone').count(), 5);
+  assert.equal(await page.locator('.office-v6-equipment-slot').count(), 0);
+  assert.equal(await page.locator('.office-hotspot-zone').count(), 0);
+  assert.equal(await page.locator('.office-scene-shape').count(), 8);
   assert.equal(
-    await page.locator('.office-hotspot-zone').evaluateAll((nodes) =>
+    await page.locator('.office-scene-shape').evaluateAll((nodes) =>
       nodes.every((node) => !(node.textContent ?? '').trim()),
     ),
     true,
@@ -96,26 +97,25 @@ try {
   const initialGameRect = await page.locator('.office-page').boundingBox();
   assert(initialGameRect && initialGameRect.y + initialGameRect.height <= 1001);
 
-  // Scene interaction opens the catalog inside "Рабочее место и персонаж".
-  await page.getByRole('button', { name: 'Выбрать стол' }).click();
+  // Scene-only interaction: the category strip is gone and object clicks replace the content in-place.
+  await page.getByRole('button', { name: 'Выбрать стол' }).click({ position: { x: 42, y: 18 } });
   await page.locator('.office-v6-workplace-stack .office-v6-drawer').waitFor();
-  assert.equal(await page.locator('.office-v6-equipment-slot[data-category="desk"]').getAttribute('class').then((value) => value?.includes('is-open')), true);
-  await page.locator('.office-v6-drawer-close').click();
+  assert.match(await page.locator('.office-v6-drawer-title h3').textContent(), /Стол/i);
+  const openHeight = await page.locator('.office-v6-bottom').evaluate((node) => node.getBoundingClientRect().height);
+  assert(openHeight <= 150);
 
-  // Equipment drawer: PC catalog has progression locks; an affordable accessory can be purchased and equipped.
-  await page.locator('.office-v6-equipment-slot[data-category="pc"]').click();
+  await page.getByRole('button', { name: 'Выбрать компьютер' }).click();
   await page.locator('.office-v6-workplace-stack .office-v6-drawer').waitFor();
   assert((await page.locator('.office-v6-item-card').count()) >= 6);
   assert((await page.locator('.office-v6-item-card.is-locked').count()) >= 1);
-  await page.locator('.office-v6-drawer-close').click();
 
-  await page.locator('.office-v6-equipment-slot[data-category="accessory"]').click();
+  await page.getByRole('button', { name: 'Выбрать аксессуары' }).click();
   await page.locator('.office-v6-drawer').waitFor();
   const mug = page.locator('.office-v6-item-card').filter({ hasText: 'Своя кружка' });
   await mug.getByRole('button', { name: /^Купить$/ }).click();
   await page.waitForFunction(() => /куплен|установлен/i.test(document.querySelector('.office-scene-note')?.textContent ?? ''));
   assert.match(await page.locator('.office-scene-note').textContent(), /куплен|установлен/i);
-  await page.locator('.office-v6-drawer-close').click();
+  await page.locator('.office-v6-workplace-close').click();
 
   // Character build screen.
   await page.getByRole('button', { name: /Персонаж/ }).first().click();
