@@ -186,13 +186,13 @@ export const initialWorkspaceItems: OfficeWorkspaceItem[] = [
 ];
 
 export const officeNavigation: OfficeNavigationItem[] = [
-  { icon: 'home', label: 'Главная', hint: 'Текущий офис, задачи и основные действия.' },
+  { icon: 'home', label: 'Главная', hint: 'Текущий офис и интерактивное рабочее место.' },
+  { icon: 'task', label: 'Задачи', hint: 'Все действия, которые тратят энергию и используют твой билд.' },
   { icon: 'career', label: 'Карьера', hint: 'Путь развития, должности и будущие профессии.' },
-  { icon: 'company', label: 'Компания', hint: 'Коллеги, отделы, зарплата и переходы между компаниями.' },
-  { icon: 'inventory', label: 'Инвентарь', hint: 'Одежда, техника и предметы рабочего места.' },
-  { icon: 'achievement', label: 'Достижения', hint: 'Редкие события, награды и карьерные отметки.' },
-  { icon: 'character', label: 'Персонаж', hint: 'Внешность, стиль и будущий редактор персонажа.' },
-  { icon: 'shop', label: 'Магазин', hint: 'Покупка предметов и улучшений за игровую валюту.' },
+  { icon: 'company', label: 'Компания', hint: 'Работодатели, офисы, зарплата и переходы между компаниями.' },
+  { icon: 'achievement', label: 'Боссы', hint: 'Отдельные испытания, где билд определяет тип и силу урона.' },
+  { icon: 'character', label: 'Персонаж', hint: 'Архетип, экипировка и будущий редактор внешности.' },
+  { icon: 'shop', label: 'Магазин', hint: 'Вернуться в офис и выбрать предмет прямо на сцене.' },
 ];
 
 export const officeActions: OfficeActionCard[] = [
