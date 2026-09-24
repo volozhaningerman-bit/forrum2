@@ -557,13 +557,6 @@ export function OfficeGame() {
     setModal({ type: 'pranks' });
   };
 
-  const handleBoss = () => {
-    setActiveView('bosses');
-    if (!bossUnlocked) {
-      setNotice('Босс пока закрыт: закончи три задачи первого дня или достигни 3 уровня.');
-      showFeedback('Босс пока закрыт', 'warning');
-    }
-  };
 
   const buyV6Item = (item: V6Item) => {
     const lockReason = v6ItemLockReason(item, {
@@ -999,7 +992,6 @@ export function OfficeGame() {
                 </div>
               ) : null}
             </nav>
-            </div>
           </main>
 
           <aside className="office-right">
@@ -1049,7 +1041,27 @@ export function OfficeGame() {
               </div>
             </section>
 
-
+            <section className="office-promotion-compact">
+              <div className="office-card-head">
+                <h3>Следующее повышение</h3>
+                <b>{promotionCompleted ? 'Получено' : nextPromotion.role}</b>
+              </div>
+              <div className="office-promotion-compact-salary">
+                <OfficeIcon name="briefcase" />
+                <span>{promotionCompleted ? formatMoney(snapshot.salary) + ' ₽' : formatMoney(snapshot.salary) + ' → ' + formatMoney(nextPromotion.salary) + ' ₽'}</span>
+              </div>
+              <div className="office-promotion-compact-bars">
+                <Requirement label="Компетентность" value={snapshot.skills.competence + ' / ' + nextPromotion.competence} progress={snapshot.skills.competence / nextPromotion.competence * 100} />
+                <Requirement label="Репутация" value={snapshot.reputation + ' / ' + nextPromotion.reputation} progress={snapshot.reputation / nextPromotion.reputation * 100} />
+              </div>
+              <button
+                type="button"
+                disabled={promotionCompleted}
+                onClick={() => promotionReady ? requestPromotion() : setModal({ type: 'promotion-help' })}
+              >
+                {promotionCompleted ? 'Повышение получено' : promotionReady ? 'Просить повышение →' : 'Что нужно для повышения →'}
+              </button>
+            </section>
 
             <section className="office-news">
               <div className="office-card-head"><h3>Новости офиса</h3><button type="button">Все »</button></div>
@@ -1142,27 +1154,6 @@ export function OfficeGame() {
                 <span>Наведи на персонажа, стол, стул, ПК, монитор, аксессуары, декор или свет — объект аккуратно подсветится. После клика здесь появятся доступные варианты.</span>
               </div>
             )}
-          </section>
-
-          <section className="office-promotion">
-            <div className="office-bottom-title">Следующее повышение <span>?</span></div>
-            <div className="office-promotion-head">
-              <OfficeIcon name="briefcase" />
-              <div>
-                <strong>{promotionCompleted ? 'Повышение получено' : nextPromotion.role}</strong>
-                <small>{promotionCompleted ? `${formatMoney(snapshot.salary)} ₽` : `${formatMoney(snapshot.salary)} ₽ → ${formatMoney(nextPromotion.salary)} ₽`}</small>
-              </div>
-            </div>
-            <Requirement label="Компетентность" value={`${snapshot.skills.competence} / ${nextPromotion.competence}`} progress={snapshot.skills.competence / nextPromotion.competence * 100} />
-            <Requirement label="Репутация" value={`${snapshot.reputation} / ${nextPromotion.reputation}`} progress={snapshot.reputation / nextPromotion.reputation * 100} />
-            <Requirement label="Первое поручение" value={firstAssignmentDone ? '1 / 1' : '0 / 1'} progress={firstAssignmentDone ? 100 : 0} />
-            <div className="office-promotion-actions">
-              <button type="button" className="primary" onClick={() => setModal({ type: 'promotion-help' })}>Подготовиться</button>
-              <button type="button" disabled={!promotionReady} onClick={requestPromotion}>
-                {promotionCompleted ? 'Получено' : 'Просить повышение'}
-              </button>
-            </div>
-            <small className="office-unlocks">Ветка карьеры и экипировка влияют на дальнейшие повышения</small>
           </section>
 
         </footer>
