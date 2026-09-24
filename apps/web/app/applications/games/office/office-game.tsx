@@ -42,7 +42,6 @@ import {
   v6Bosses,
   v6Companies,
   v6ItemLockReason,
-  v6CategoryMeta,
   type V6ArchetypeId,
   type V6CareerBranch,
   type V6Gender,
@@ -254,6 +253,23 @@ export function OfficeGame() {
       if (!hadNoScroll) document.body.classList.remove('office-no-scroll');
     };
   }, []);
+
+  useEffect(() => {
+    if (activeView !== 'home' && drawerCategory !== null) {
+      setDrawerCategory(null);
+    }
+  }, [activeView, drawerCategory]);
+
+  useEffect(() => {
+    if (!drawerCategory) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setDrawerCategory(null);
+    };
+
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [drawerCategory]);
 
   useEffect(
     () => () => {
@@ -1138,46 +1154,31 @@ export function OfficeGame() {
           )}
         </div>
 
-        {activeView === 'home' ? (
-          <footer className="office-bottom office-v6-bottom office-v65-equipment-bottom">
-            <section className="office-v6-workplace-stack">
-              <div className="office-v6-workplace-header">
-                <div className="office-bottom-title">
-                  Рабочее место и персонаж
-                  <span>{drawerCategory ? `${v6CategoryMeta[drawerCategory].label} · колесо мыши листает предметы` : 'Кликни по предмету в комнате'}</span>
-                </div>
-                {drawerCategory ? (
-                  <button
-                    type="button"
-                    className="office-v6-workplace-close"
-                    onClick={() => setDrawerCategory(null)}
-                  >
-                    Закрыть
-                  </button>
-                ) : null}
-              </div>
-
-              {drawerCategory ? (
-                <div className="office-v6-inline-drawer">
-                  <EquipmentDrawer
-                    category={drawerCategory}
-                    state={v6}
-                    level={snapshot.level}
-                    reputation={snapshot.reputation}
-                    money={snapshot.money}
-                    onClose={() => setDrawerCategory(null)}
-                    onBuy={buyV6Item}
-                    onEquip={equipV6Item}
-                  />
-                </div>
-              ) : (
-                <div className="office-v6-workplace-empty">
-                  <strong>Рабочее место — это твой магазин</strong>
-                  <span>Нажми на стол, кресло, ПК, монитор, персонажа, декор или свет. Снизу сразу появятся варианты покупки и установки.</span>
-                </div>
-              )}
+        {activeView === 'home' && drawerCategory ? (
+          <div
+            className="office-equipment-backdrop"
+            role="presentation"
+            onMouseDown={() => setDrawerCategory(null)}
+          >
+            <section
+              className="office-equipment-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Каталог предметов рабочего места"
+              onMouseDown={(event) => event.stopPropagation()}
+            >
+              <EquipmentDrawer
+                category={drawerCategory}
+                state={v6}
+                level={snapshot.level}
+                reputation={snapshot.reputation}
+                money={snapshot.money}
+                onClose={() => setDrawerCategory(null)}
+                onBuy={buyV6Item}
+                onEquip={equipV6Item}
+              />
             </section>
-          </footer>
+          </div>
         ) : null}
 
         {bossBattleOpen ? (
