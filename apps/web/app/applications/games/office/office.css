@@ -2036,3 +2036,7 @@
   .office-v6-equipment-grid{grid-template-columns:repeat(2,1fr)}
   .office-v6-boss-actions{grid-template-columns:1fr}
 }
+
+.office-hotspot-desk{left:43%;top:58%}
+.office-hotspot-monitor{left:68%;top:34%}
+.office-hotspot-character{left:53%;top:46%}
