@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   formatMoney,
   getCompanyStars,
@@ -15,14 +15,11 @@ import {
   OFFICE_ENERGY_REGEN_SECONDS,
   OFFICE_STORAGE_KEY,
   OFFICE_STORAGE_VERSION,
-  upgradeWorkspaceItem,
-  type OfficeSnapshot,
+   type OfficeSnapshot,
   type OfficeWorkspaceItem,
 } from './office-data';
 import {
-  bossEvent,
-  careerNodes,
-  getNextFirstDayEvent,
+   getNextFirstDayEvent,
   getSkillLabel,
   initialOfficeStoryState,
   officePranks,
@@ -32,6 +29,28 @@ import {
   type OfficeStoryEvent,
   type OfficeStoryState,
 } from './office-v5-content';
+import {
+  EquipmentDock,
+  EquipmentDrawer,
+  V6BossBattle,
+  V6CareerView,
+  V6CharacterView,
+  V6CompanyView,
+} from './office-v6-ui';
+import {
+  getV6BuildBonuses,
+  getV6Item,
+  initialV6State,
+  v6Bosses,
+  v6Companies,
+  v6ItemLockReason,
+  type V6ArchetypeId,
+  type V6CareerBranch,
+  type V6Gender,
+  type V6Item,
+  type V6ItemCategory,
+  type V6State,
+} from './office-v6-system';
 
 type FeedbackTone = 'money' | 'xp' | 'social' | 'warning';
 
@@ -41,7 +60,7 @@ type ActionFeedback = {
   tone: FeedbackTone;
 };
 
-type OfficeView = 'home' | 'career';
+type OfficeView = 'home' | 'career' | 'company' | 'character';
 type OfficeModal =
   | { type: 'event'; event: OfficeStoryEvent }
   | { type: 'boss'; event: OfficeStoryEvent }
@@ -52,7 +71,9 @@ type OfficeModal =
 export function OfficeGame() {
   const [snapshot, setSnapshot] = useState(initialOfficeSnapshot);
   const [workspace, setWorkspace] = useState<OfficeWorkspaceItem[]>(initialWorkspaceItems);
-  const [selectedSlot, setSelectedSlot] = useState<OfficeWorkspaceItem['key']>('pc');
+  const [v6, setV6] = useState<V6State>(initialV6State);
+  const [drawerCategory, setDrawerCategory] = useState<V6ItemCategory | null>(null);
+  const [bossBattleOpen, setBossBattleOpen] = useState(false);
   const [notice, setNotice] = useState('Первый рабочий день. Начни с простого поручения.');
   const [energyCountdown, setEnergyCountdown] = useState(OFFICE_ENERGY_REGEN_SECONDS);
   const [energyNextAt, setEnergyNextAt] = useState<number | null>(null);
@@ -67,11 +88,6 @@ export function OfficeGame() {
   const cooldownTimerRef = useRef<number | null>(null);
   const feedbackIdRef = useRef(0);
 
-  const selectedItem = useMemo(
-    () => workspace.find((item) => item.key === selectedSlot) ?? workspace[0],
-    [selectedSlot, workspace],
-  );
-
   const firstAssignmentDone =
     snapshot.firstAssignment.progress >= snapshot.firstAssignment.target;
   const promotionCompleted = snapshot.role === nextPromotion.role;
@@ -85,6 +101,8 @@ export function OfficeGame() {
   const dailyDone = snapshot.daily.progress >= snapshot.daily.target;
   const firstDayDone = story.completedEvents.length >= 3;
   const bossUnlocked = snapshot.level >= 3 || firstDayDone;
+  const buildBonuses = getV6BuildBonuses(v6);
+  const effectiveMaxEnergy = effectiveMaxEnergy + (buildBonuses.energyMax ?? 0);
 
   useEffect(() => {
     try {
@@ -108,6 +126,17 @@ export function OfficeGame() {
           }
           setEnergyNextAt(parsed.energyNextAt);
           const persistedStory = (parsed as typeof parsed & { story?: OfficeStoryState }).story;
+          const persistedV6 = (parsed as typeof parsed & { v6?: V6State }).v6;
+          if (persistedV6) {
+            setV6({
+              ...initialV6State,
+              ...persistedV6,
+              ownedItemIds: Array.isArray(persistedV6.ownedItemIds)
+                ? persistedV6.ownedItemIds
+                : initialV6State.ownedItemIds,
+              equipped: { ...initialV6State.equipped, ...persistedV6.equipped },
+            });
+          }
           if (persistedStory) {
             setStory({
               ...initialOfficeStoryState,
@@ -140,17 +169,18 @@ export function OfficeGame() {
           workspace,
           energyNextAt,
           story,
+          v6,
         }),
       );
     } catch {
       // Prototype remains playable even when storage is unavailable.
     }
-  }, [energyNextAt, hydrated, snapshot, story, workspace]);
+  }, [energyNextAt, hydrated, snapshot, story, v6, workspace]);
 
   useEffect(() => {
     if (!hydrated) return;
 
-    if (snapshot.energy >= snapshot.maxEnergy) {
+    if (snapshot.energy >= effectiveMaxEnergy) {
       setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
       if (energyNextAt !== null) setEnergyNextAt(null);
       return;
@@ -174,7 +204,7 @@ export function OfficeGame() {
 
       const intervalMs = OFFICE_ENERGY_REGEN_SECONDS * 1000;
       const elapsedIntervals = Math.floor(Math.abs(remainingMs) / intervalMs) + 1;
-      const missingEnergy = snapshot.maxEnergy - snapshot.energy;
+      const missingEnergy = effectiveMaxEnergy - snapshot.energy;
       const restored = Math.min(missingEnergy, elapsedIntervals);
 
       if (restored > 0) {
@@ -197,7 +227,7 @@ export function OfficeGame() {
     tick();
     const timer = window.setInterval(tick, 1000);
     return () => window.clearInterval(timer);
-  }, [energyNextAt, hydrated, snapshot.energy, snapshot.maxEnergy]);
+  }, [energyNextAt, hydrated, snapshot.energy, effectiveMaxEnergy]);
 
   useEffect(
     () => () => {
@@ -571,7 +601,7 @@ export function OfficeGame() {
             icon="energy"
             value={`${snapshot.energy} (+1)`}
             detail={
-              snapshot.energy >= snapshot.maxEnergy
+              snapshot.energy >= effectiveMaxEnergy
                 ? 'полная'
                 : formatCountdown(energyCountdown)
             }
@@ -638,7 +668,7 @@ export function OfficeGame() {
               <b>Уровень {snapshot.level}</b>
             </div>
 
-            <Stat label="Энергия" value={snapshot.energy} max={snapshot.maxEnergy} icon="energy" tone="yellow" />
+            <Stat label="Энергия" value={snapshot.energy} max={effectiveMaxEnergy} icon="energy" tone="yellow" />
             <Stat label="Репутация" value={snapshot.reputation} max={100} icon="reputation" tone="green" />
             <Stat label="Стресс" value={snapshot.stress} max={100} icon="stress" tone="red" />
 
