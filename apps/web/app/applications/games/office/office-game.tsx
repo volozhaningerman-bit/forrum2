@@ -42,6 +42,7 @@ import {
   v6Bosses,
   v6Companies,
   v6ItemLockReason,
+  v6CategoryMeta,
   type V6ArchetypeId,
   type V6CareerBranch,
   type V6Gender,
@@ -1117,7 +1118,7 @@ export function OfficeGame() {
             <div className="office-v6-workplace-header">
               <div className="office-bottom-title">
                 Рабочее место и персонаж
-                <span>Кликни по объекту в комнате</span>
+                <span>{drawerCategory ? `${v6CategoryMeta[drawerCategory].label} · листай варианты →` : 'Кликни по объекту в комнате'}</span>
               </div>
               {drawerCategory ? (
                 <button
