@@ -1405,3 +1405,638 @@
   margin-right:auto;
   transform:none;
 }
+
+
+/* office v6: equipment economy, profiles, expanded career and boss battle */
+.office-v6-bottom{
+  grid-template-columns:minmax(0,1.65fr) minmax(360px,.72fr);
+  gap:6px;
+}
+.office-v6-equipment{
+  min-width:0;
+  border:1px solid #5a432d;
+  background:linear-gradient(#232526,#191b1c);
+  box-shadow:inset 0 0 0 1px #0e0f10,inset 0 1px #303233;
+}
+.office-v6-equipment .office-bottom-title{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+}
+.office-v6-equipment .office-bottom-title>span{
+  color:#8c8273;
+  font-family:Arial,sans-serif;
+  font-size:8px;
+  font-weight:500;
+}
+.office-v6-equipment-grid{
+  display:grid;
+  grid-template-columns:repeat(8,minmax(74px,1fr));
+  gap:4px;
+  padding:5px;
+}
+.office-v6-equipment-slot{
+  min-width:0;
+  min-height:82px;
+  display:grid;
+  grid-template-rows:auto 34px auto auto;
+  place-items:center;
+  gap:1px;
+  padding:5px 3px;
+  border:1px solid #574b3c;
+  border-radius:2px;
+  background:linear-gradient(#303234,#26282a);
+  color:#e4d8c7;
+  cursor:pointer;
+}
+.office-v6-equipment-slot:hover{
+  border-color:#b06932;
+  background:linear-gradient(#3b3229,#2b2927);
+}
+.office-v6-equipment-slot small{
+  font-size:8px;
+  color:#a79984;
+}
+.office-v6-equipment-slot>.office-icon{
+  width:31px;
+  height:31px;
+  color:#c7aa79;
+}
+.office-v6-equipment-slot strong{
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:8px;
+  color:#eee2cf;
+}
+.office-v6-equipment-slot em{
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:7px;
+  font-style:normal;
+  color:#8e867a;
+}
+
+.office-v6-drawer{
+  position:relative;
+  z-index:25;
+  margin:0 7px 7px;
+  border:1px solid #8a582f;
+  background:linear-gradient(180deg,#232526,#151718);
+  box-shadow:0 -10px 28px #0008,inset 0 1px #343638;
+}
+.office-v6-drawer>header{
+  min-height:62px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:8px 10px;
+  border-bottom:1px solid #45392d;
+}
+.office-v6-drawer-title{
+  min-width:240px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+.office-v6-drawer-title>.office-icon{
+  width:34px;
+  height:34px;
+  padding:6px;
+  color:#d6a35f;
+  border:1px solid #664a30;
+  background:#181512;
+}
+.office-v6-drawer-title small{
+  display:block;
+  color:#8d8375;
+  font-size:7px;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+.office-v6-drawer-title h3{
+  margin:1px 0;
+  color:#efc77f;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:15px;
+}
+.office-v6-drawer-title p{
+  margin:0;
+  color:#8f887f;
+  font-size:8px;
+}
+.office-v6-drawer-controls{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.office-v6-filter{
+  display:flex;
+  border:1px solid #3f3933;
+}
+.office-v6-filter button,
+.office-v6-drawer-controls select,
+.office-v6-drawer-close{
+  min-height:28px;
+  border:0;
+  border-right:1px solid #3f3933;
+  background:#1a1c1d;
+  color:#a89f92;
+  font-size:8px;
+}
+.office-v6-filter button{
+  padding:0 8px;
+  cursor:pointer;
+}
+.office-v6-filter button.active{
+  background:#4a3322;
+  color:#efc37c;
+}
+.office-v6-drawer-controls select{
+  padding:0 22px 0 8px;
+  border:1px solid #4a4036;
+}
+.office-v6-drawer-close{
+  width:29px;
+  border:1px solid #594637;
+  font-size:18px;
+  cursor:pointer;
+}
+.office-v6-item-list{
+  max-height:350px;
+  overflow:auto;
+  display:grid;
+  gap:5px;
+  padding:7px;
+}
+.office-v6-item-card{
+  min-height:96px;
+  display:grid;
+  grid-template-columns:80px minmax(0,1fr) 128px;
+  gap:9px;
+  align-items:stretch;
+  padding:6px;
+  border:1px solid #45413a;
+  background:linear-gradient(100deg,#2a2c2d,#202223);
+}
+.office-v6-item-card.is-equipped{
+  border-color:#d07b32;
+  box-shadow:inset 3px 0 #e18a38;
+}
+.office-v6-item-card.is-locked{
+  opacity:.58;
+  filter:saturate(.65);
+}
+.office-v6-item-visual{
+  display:grid;
+  place-items:center;
+  align-content:center;
+  gap:4px;
+  border:1px solid #4b443b;
+  background:radial-gradient(circle at 50% 35%,#3b3934,#232526 70%);
+}
+.office-v6-item-visual>.office-icon{
+  width:36px;
+  height:36px;
+  color:#c4aa7c;
+}
+.office-v6-item-visual>span{
+  max-width:72px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#978d80;
+  font-size:7px;
+}
+.office-v6-item-visual[data-rarity="Редкий"]{box-shadow:inset 0 0 0 1px #50738a}
+.office-v6-item-visual[data-rarity="Премиум"]{box-shadow:inset 0 0 0 1px #74558d}
+.office-v6-item-visual[data-rarity="Элитный"]{box-shadow:inset 0 0 0 1px #b27a2f}
+.office-v6-item-copy{
+  min-width:0;
+  display:grid;
+  align-content:start;
+  gap:3px;
+}
+.office-v6-item-head{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+}
+.office-v6-item-head small{color:#8e867b;font-size:7px}
+.office-v6-item-head b{
+  color:#e3a75c;
+  font-size:7px;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.office-v6-item-copy>strong{
+  color:#ede1cf;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:13px;
+}
+.office-v6-item-copy>p{
+  margin:0;
+  color:#918b83;
+  font-size:8px;
+  line-height:1.35;
+}
+.office-v6-bonus-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:3px;
+  margin-top:3px;
+}
+.office-v6-bonus-chips>span{
+  padding:3px 5px;
+  border:1px solid #3f463f;
+  background:#182019;
+  color:#92a18e;
+  font-size:7px;
+}
+.office-v6-bonus-chips b{color:#b9cfad}
+.office-v6-item-buy{
+  display:grid;
+  grid-template-rows:auto auto 1fr;
+  align-content:start;
+  gap:4px;
+  padding:5px 6px;
+  border-left:1px solid #3c3934;
+}
+.office-v6-item-buy small{color:#857d72;font-size:7px}
+.office-v6-item-buy>b{color:#d3a55e;font-size:10px}
+.office-v6-item-buy>button{
+  align-self:end;
+  min-height:30px;
+  border:1px solid #865027;
+  background:linear-gradient(#70401f,#4e2c1b);
+  color:#f0d0a0;
+  font-size:8px;
+  cursor:pointer;
+}
+.office-v6-item-buy>button:disabled{
+  cursor:not-allowed;
+  opacity:.45;
+}
+.office-v6-empty{
+  padding:20px;
+  color:#8d867c;
+  text-align:center;
+  font-size:10px;
+}
+
+/* shared v6 interior pages */
+.office-v6-page{
+  grid-column:2/-1;
+  min-width:0;
+  padding:13px;
+  background:radial-gradient(circle at 55% 35%,#24231f,#151718 66%);
+  border-left:1px solid #342719;
+}
+.office-v6-page-header{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:flex-start;
+  padding:2px 1px 11px;
+  border-bottom:1px solid #46392d;
+}
+.office-v6-page-header small{
+  color:#c98646;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.office-v6-page-header h2{
+  margin:2px 0 3px;
+  color:#f0d6aa;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:23px;
+}
+.office-v6-page-header p{
+  max-width:720px;
+  margin:0;
+  color:#918a80;
+  font-size:9px;
+  line-height:1.4;
+}
+.office-v6-page-header>button{
+  min-width:132px;
+  padding:7px 10px;
+  border:1px solid #5a4633;
+  background:#202223;
+  color:#d8c6aa;
+  font-size:9px;
+  cursor:pointer;
+}
+
+/* character */
+.office-v6-profile-summary{
+  display:grid;
+  grid-template-columns:210px 1fr;
+  gap:8px;
+  margin:9px 0;
+}
+.office-v6-character-preview,
+.office-v6-build-panel{
+  border:1px solid #4b4034;
+  background:#1a1c1d;
+}
+.office-v6-character-preview{
+  display:grid;
+  grid-template-columns:64px 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:0 8px;
+  align-items:center;
+  padding:7px;
+}
+.office-v6-character-preview img{
+  grid-row:1/3;
+  width:64px;
+  height:72px;
+  object-fit:cover;
+  border:1px solid #725239;
+}
+.office-v6-character-preview strong{align-self:end;color:#e6d6bc;font-family:Georgia,"Times New Roman",serif}
+.office-v6-character-preview span{align-self:start;color:#8e8679;font-size:8px}
+.office-v6-build-panel{padding:9px}
+.office-v6-build-panel>small{color:#8d8374;font-size:8px}
+.office-v6-build-panel>h3{margin:2px 0 5px;color:#e6b76c;font-family:Georgia,"Times New Roman",serif}
+.office-v6-section{
+  margin-top:8px;
+  padding:9px;
+  border:1px solid #433a31;
+  background:#181a1b;
+}
+.office-v6-section>header{margin-bottom:7px}
+.office-v6-section h3{margin:0;color:#e7c07e;font-family:Georgia,"Times New Roman",serif;font-size:15px}
+.office-v6-section header p{margin:2px 0 0;color:#7f7970;font-size:8px}
+.office-v6-choice-grid{display:grid;gap:6px}
+.office-v6-gender-grid{grid-template-columns:1fr 1fr}
+.office-v6-archetype-grid{grid-template-columns:repeat(5,1fr)}
+.office-v6-choice-grid>button{
+  min-width:0;
+  min-height:128px;
+  display:grid;
+  align-content:start;
+  gap:3px;
+  padding:9px;
+  border:1px solid #474139;
+  background:linear-gradient(#292b2c,#202223);
+  color:#ded1bd;
+  text-align:left;
+  cursor:pointer;
+}
+.office-v6-choice-grid>button.active{
+  border-color:#cf7b34;
+  box-shadow:inset 3px 0 #e48a39;
+  background:linear-gradient(#393027,#272421);
+}
+.office-v6-choice-grid>button>.office-icon{width:31px;height:31px;color:#c7aa77}
+.office-v6-choice-grid small{color:#b88a53;font-size:7px;text-transform:uppercase}
+.office-v6-choice-grid strong{font-family:Georgia,"Times New Roman",serif;font-size:13px}
+.office-v6-choice-grid em{color:#9b9287;font-size:8px;font-style:normal}
+.office-v6-choice-grid p{margin:2px 0;color:#888179;font-size:8px;line-height:1.3}
+
+/* career */
+.office-v6-branch-pick{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  margin:8px 0;
+}
+.office-v6-branch-pick button{
+  min-height:64px;
+  display:grid;
+  gap:2px;
+  padding:7px 9px;
+  border:1px solid #484139;
+  background:#1a1c1d;
+  color:#d4c8b6;
+  text-align:left;
+  cursor:pointer;
+}
+.office-v6-branch-pick button.active{
+  border-color:#c27432;
+  background:#35291f;
+}
+.office-v6-branch-pick small{color:#887f75;font-size:7px}
+.office-v6-branch-pick strong{color:#e5bb79;font-family:Georgia,"Times New Roman",serif;font-size:13px}
+.office-v6-branch-pick span{color:#9b9287;font-size:8px}
+.office-v6-career-map{
+  position:relative;
+  height:520px;
+  overflow:hidden;
+  border:1px solid #4b3e31;
+  background:
+    linear-gradient(#ffffff04 1px,transparent 1px),
+    linear-gradient(90deg,#ffffff04 1px,transparent 1px),
+    radial-gradient(circle at 47% 50%,#25231f,#131516 72%);
+  background-size:32px 32px,32px 32px,auto;
+}
+.office-v6-career-map>svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+.office-v6-career-map line{
+  stroke:#74563a;
+  stroke-width:.55;
+  stroke-dasharray:1.1 1.1;
+  vector-effect:non-scaling-stroke;
+}
+.office-v6-career-node{
+  position:absolute;
+  z-index:2;
+  width:122px;
+  min-height:89px;
+  transform:translate(-50%,-50%);
+  display:grid;
+  align-content:start;
+  gap:2px;
+  padding:7px;
+  border:1px solid #4a443c;
+  border-radius:3px;
+  background:linear-gradient(#292b2c,#1e2021);
+  box-shadow:0 7px 16px #0007;
+}
+.office-v6-career-node.current{
+  border-color:#de8237;
+  box-shadow:0 0 0 1px #784723,0 8px 18px #0008;
+}
+.office-v6-career-node.available{border-color:#59734f}
+.office-v6-career-node.locked{opacity:.52;filter:saturate(.5)}
+.office-v6-career-node small{color:#847d74;font-size:7px}
+.office-v6-career-node strong{color:#ded2bf;font-family:Georgia,"Times New Roman",serif;font-size:11px}
+.office-v6-career-node span{color:#cc9855;font-size:8px}
+.office-v6-career-node em{color:#817a71;font-size:7px;font-style:normal}
+.office-v6-career-node>div{display:grid;gap:1px;margin-top:2px}
+.office-v6-career-node>div b{font-size:6.5px;color:#909d83;font-weight:500}
+.office-v6-career-node.branch-expert strong{color:#a9c1d1}
+.office-v6-career-node.branch-management strong{color:#d8bb84}
+.office-v6-career-node.branch-sales strong{color:#bea6d0}
+
+/* company */
+.office-v6-company-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+  margin-top:9px;
+}
+.office-v6-company-grid>article{
+  min-height:230px;
+  display:grid;
+  grid-template-rows:58px auto auto 1fr auto auto;
+  gap:4px;
+  padding:9px;
+  border:1px solid #474039;
+  background:linear-gradient(#27292a,#1c1e1f);
+}
+.office-v6-company-grid>article.active{
+  border-color:#cf7c34;
+  box-shadow:inset 3px 0 #e28738;
+}
+.office-v6-company-grid>article.locked{opacity:.55}
+.office-v6-company-art{
+  display:grid;
+  place-items:center;
+  background:#1b1e1f;
+  border:1px solid #3e3e39;
+}
+.office-v6-company-art>.office-icon{width:34px;height:34px;color:#8ca0a1}
+.office-v6-company-grid small{color:#b18250;font-size:7px;text-transform:uppercase}
+.office-v6-company-grid strong{color:#e7d9c3;font-family:Georgia,"Times New Roman",serif;font-size:14px}
+.office-v6-company-grid p{margin:0;color:#8d867c;font-size:8px;line-height:1.35}
+.office-v6-company-grid dl{display:grid;gap:3px;margin:5px 0}
+.office-v6-company-grid dl>div{display:flex;justify-content:space-between;gap:8px;border-top:1px solid #37342f;padding-top:3px}
+.office-v6-company-grid dt{color:#777169;font-size:7px}
+.office-v6-company-grid dd{margin:0;color:#b8ab97;font-size:7px;text-align:right}
+.office-v6-company-grid button{
+  min-height:31px;
+  border:1px solid #82502e;
+  background:#57321e;
+  color:#eccb9c;
+  font-size:8px;
+  cursor:pointer;
+}
+.office-v6-company-grid button:disabled{opacity:.5;cursor:not-allowed}
+
+/* boss combat */
+.office-v6-boss-battle{
+  width:min(690px,calc(100vw - 32px));
+  padding:17px;
+  border-color:#9f5930;
+}
+.office-v6-boss-battle>header{
+  display:grid;
+  grid-template-columns:90px 1fr;
+  gap:12px;
+  padding-right:36px;
+}
+.office-v6-boss-battle>header img{
+  width:90px;
+  height:100px;
+  object-fit:cover;
+  border:1px solid #775031;
+  background:#5a5045;
+}
+.office-v6-boss-battle>header small{color:#bd7c48;font-size:8px;text-transform:uppercase}
+.office-v6-boss-battle>header h2{margin:2px 0;color:#efc27d;font-family:Georgia,"Times New Roman",serif;font-size:22px}
+.office-v6-boss-battle>header b{color:#a69d91;font-size:9px}
+.office-v6-boss-battle blockquote{
+  margin:7px 0 0;
+  padding:6px 8px;
+  border-left:2px solid #9b5a31;
+  background:#171819;
+  color:#d3c3aa;
+  font-size:10px;
+}
+.office-v6-boss-health{margin:12px 0}
+.office-v6-boss-health>div:first-child{display:flex;justify-content:space-between;font-size:9px}
+.office-v6-boss-health>div:last-child{height:11px;margin-top:4px;border:1px solid #38251c;background:#111}
+.office-v6-boss-health i{display:block;height:100%;background:linear-gradient(90deg,#a83d2d,#df733e);transition:width .25s ease}
+.office-v6-boss-build{
+  display:grid;
+  gap:5px;
+  margin-bottom:9px;
+  padding:7px;
+  border:1px solid #3c3832;
+  background:#161819;
+  color:#998f81;
+  font-size:8px;
+}
+.office-v6-boss-build>span b{color:#d4a35d}
+.office-v6-boss-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.office-v6-boss-actions>button{
+  min-height:112px;
+  display:grid;
+  grid-template-columns:34px 1fr;
+  grid-template-rows:auto auto;
+  gap:4px 7px;
+  align-content:center;
+  padding:8px;
+  border:1px solid #594435;
+  background:linear-gradient(#302b27,#222324);
+  color:#ddd1bf;
+  text-align:left;
+  cursor:pointer;
+}
+.office-v6-boss-actions>button:hover:not(:disabled){border-color:#b26d36}
+.office-v6-boss-actions>button:disabled{opacity:.4;cursor:not-allowed}
+.office-v6-boss-actions .office-icon{grid-row:1/3;width:30px;height:30px;color:#d1a05c}
+.office-v6-boss-actions strong{font-family:Georgia,"Times New Roman",serif;font-size:12px}
+.office-v6-boss-actions span{display:block;color:#8d8579;font-size:7px}
+.office-v6-boss-actions>b{grid-column:1/-1;color:#dc8752;font-size:15px;text-align:center}
+.office-v6-boss-actions>small{grid-column:1/-1;color:#847d72;font-size:7px;text-align:center}
+.office-v6-boss-battle>footer{
+  margin-top:9px;
+  padding:7px 8px;
+  border:1px solid #4c3d30;
+  background:#18191a;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:8px;
+}
+.office-v6-boss-battle>footer span{color:#817a70}
+.office-v6-boss-battle>footer b{color:#d9ad69}
+
+@media(max-width:1250px){
+  .office-v6-equipment-grid{grid-template-columns:repeat(4,1fr)}
+  .office-v6-bottom{grid-template-columns:1fr 360px}
+  .office-v6-archetype-grid{grid-template-columns:repeat(3,1fr)}
+  .office-v6-company-grid{grid-template-columns:1fr 1fr}
+  .office-v6-career-node{width:108px}
+}
+@media(max-width:980px){
+  .office-v6-page{grid-column:2/-1}
+  .office-v6-bottom{grid-template-columns:1fr}
+  .office-v6-drawer>header{align-items:flex-start}
+  .office-v6-drawer-controls{flex-wrap:wrap;justify-content:flex-end}
+  .office-v6-item-card{grid-template-columns:68px minmax(0,1fr) 112px}
+  .office-v6-career-map{overflow:auto}
+}
+@media(max-width:720px){
+  .office-v6-page{grid-column:1/-1;padding:8px}
+  .office-v6-page-header{display:grid}
+  .office-v6-profile-summary{grid-template-columns:1fr}
+  .office-v6-gender-grid,.office-v6-archetype-grid,.office-v6-company-grid{grid-template-columns:1fr}
+  .office-v6-branch-pick{grid-template-columns:1fr}
+  .office-v6-drawer{margin:0}
+  .office-v6-drawer>header{display:grid}
+  .office-v6-drawer-controls{justify-content:flex-start}
+  .office-v6-filter{max-width:100%;overflow:auto}
+  .office-v6-item-card{grid-template-columns:58px 1fr}
+  .office-v6-item-buy{grid-column:1/-1;border-left:0;border-top:1px solid #3c3934}
+  .office-v6-equipment-grid{grid-template-columns:repeat(2,1fr)}
+  .office-v6-boss-actions{grid-template-columns:1fr}
+}
+
+.office-hotspot-desk{left:43%;top:58%}
+.office-hotspot-monitor{left:68%;top:34%}
+.office-hotspot-character{left:53%;top:46%}

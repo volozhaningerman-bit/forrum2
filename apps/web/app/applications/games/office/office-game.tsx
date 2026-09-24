@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   formatMoney,
   getCompanyStars,
@@ -15,14 +15,11 @@ import {
   OFFICE_ENERGY_REGEN_SECONDS,
   OFFICE_STORAGE_KEY,
   OFFICE_STORAGE_VERSION,
-  upgradeWorkspaceItem,
-  type OfficeSnapshot,
+   type OfficeSnapshot,
   type OfficeWorkspaceItem,
 } from './office-data';
 import {
-  bossEvent,
-  careerNodes,
-  getNextFirstDayEvent,
+   getNextFirstDayEvent,
   getSkillLabel,
   initialOfficeStoryState,
   officePranks,
@@ -32,6 +29,27 @@ import {
   type OfficeStoryEvent,
   type OfficeStoryState,
 } from './office-v5-content';
+import {
+  EquipmentDock,
+  EquipmentDrawer,
+  V6BossBattle,
+  V6CareerView,
+  V6CharacterView,
+  V6CompanyView,
+} from './office-v6-ui';
+import {
+  getV6BuildBonuses,
+  initialV6State,
+  v6Bosses,
+  v6Companies,
+  v6ItemLockReason,
+  type V6ArchetypeId,
+  type V6CareerBranch,
+  type V6Gender,
+  type V6Item,
+  type V6ItemCategory,
+  type V6State,
+} from './office-v6-system';
 
 type FeedbackTone = 'money' | 'xp' | 'social' | 'warning';
 
@@ -41,7 +59,7 @@ type ActionFeedback = {
   tone: FeedbackTone;
 };
 
-type OfficeView = 'home' | 'career';
+type OfficeView = 'home' | 'career' | 'company' | 'character';
 type OfficeModal =
   | { type: 'event'; event: OfficeStoryEvent }
   | { type: 'boss'; event: OfficeStoryEvent }
@@ -52,7 +70,9 @@ type OfficeModal =
 export function OfficeGame() {
   const [snapshot, setSnapshot] = useState(initialOfficeSnapshot);
   const [workspace, setWorkspace] = useState<OfficeWorkspaceItem[]>(initialWorkspaceItems);
-  const [selectedSlot, setSelectedSlot] = useState<OfficeWorkspaceItem['key']>('pc');
+  const [v6, setV6] = useState<V6State>(initialV6State);
+  const [drawerCategory, setDrawerCategory] = useState<V6ItemCategory | null>(null);
+  const [bossBattleOpen, setBossBattleOpen] = useState(false);
   const [notice, setNotice] = useState('Первый рабочий день. Начни с простого поручения.');
   const [energyCountdown, setEnergyCountdown] = useState(OFFICE_ENERGY_REGEN_SECONDS);
   const [energyNextAt, setEnergyNextAt] = useState<number | null>(null);
@@ -67,11 +87,6 @@ export function OfficeGame() {
   const cooldownTimerRef = useRef<number | null>(null);
   const feedbackIdRef = useRef(0);
 
-  const selectedItem = useMemo(
-    () => workspace.find((item) => item.key === selectedSlot) ?? workspace[0],
-    [selectedSlot, workspace],
-  );
-
   const firstAssignmentDone =
     snapshot.firstAssignment.progress >= snapshot.firstAssignment.target;
   const promotionCompleted = snapshot.role === nextPromotion.role;
@@ -85,6 +100,12 @@ export function OfficeGame() {
   const dailyDone = snapshot.daily.progress >= snapshot.daily.target;
   const firstDayDone = story.completedEvents.length >= 3;
   const bossUnlocked = snapshot.level >= 3 || firstDayDone;
+  const buildBonuses = getV6BuildBonuses(v6);
+  const effectiveMaxEnergy = snapshot.maxEnergy + (buildBonuses.energyMax ?? 0);
+  const effectiveEnergyRegenSeconds = Math.max(
+    60,
+    OFFICE_ENERGY_REGEN_SECONDS - (buildBonuses.energyRecovery ?? 0) * 10,
+  );
 
   useEffect(() => {
     try {
@@ -108,6 +129,17 @@ export function OfficeGame() {
           }
           setEnergyNextAt(parsed.energyNextAt);
           const persistedStory = (parsed as typeof parsed & { story?: OfficeStoryState }).story;
+          const persistedV6 = (parsed as typeof parsed & { v6?: V6State }).v6;
+          if (persistedV6) {
+            setV6({
+              ...initialV6State,
+              ...persistedV6,
+              ownedItemIds: Array.isArray(persistedV6.ownedItemIds)
+                ? persistedV6.ownedItemIds
+                : initialV6State.ownedItemIds,
+              equipped: { ...initialV6State.equipped, ...persistedV6.equipped },
+            });
+          }
           if (persistedStory) {
             setStory({
               ...initialOfficeStoryState,
@@ -140,26 +172,27 @@ export function OfficeGame() {
           workspace,
           energyNextAt,
           story,
+          v6,
         }),
       );
     } catch {
       // Prototype remains playable even when storage is unavailable.
     }
-  }, [energyNextAt, hydrated, snapshot, story, workspace]);
+  }, [energyNextAt, hydrated, snapshot, story, v6, workspace]);
 
   useEffect(() => {
     if (!hydrated) return;
 
-    if (snapshot.energy >= snapshot.maxEnergy) {
-      setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
+    if (snapshot.energy >= effectiveMaxEnergy) {
+      setEnergyCountdown(effectiveEnergyRegenSeconds);
       if (energyNextAt !== null) setEnergyNextAt(null);
       return;
     }
 
     if (energyNextAt === null) {
-      const target = Date.now() + OFFICE_ENERGY_REGEN_SECONDS * 1000;
+      const target = Date.now() + effectiveEnergyRegenSeconds * 1000;
       setEnergyNextAt(target);
-      setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
+      setEnergyCountdown(effectiveEnergyRegenSeconds);
       return;
     }
 
@@ -172,21 +205,21 @@ export function OfficeGame() {
         return;
       }
 
-      const intervalMs = OFFICE_ENERGY_REGEN_SECONDS * 1000;
+      const intervalMs = effectiveEnergyRegenSeconds * 1000;
       const elapsedIntervals = Math.floor(Math.abs(remainingMs) / intervalMs) + 1;
-      const missingEnergy = snapshot.maxEnergy - snapshot.energy;
+      const missingEnergy = effectiveMaxEnergy - snapshot.energy;
       const restored = Math.min(missingEnergy, elapsedIntervals);
 
       if (restored > 0) {
         setSnapshot((state) => ({
           ...state,
-          energy: Math.min(state.maxEnergy, state.energy + restored),
+          energy: Math.min(effectiveMaxEnergy, state.energy + restored),
         }));
       }
 
       if (restored >= missingEnergy) {
         setEnergyNextAt(null);
-        setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
+        setEnergyCountdown(effectiveEnergyRegenSeconds);
       } else {
         const nextTarget = energyNextAt + elapsedIntervals * intervalMs;
         setEnergyNextAt(nextTarget);
@@ -197,7 +230,7 @@ export function OfficeGame() {
     tick();
     const timer = window.setInterval(tick, 1000);
     return () => window.clearInterval(timer);
-  }, [energyNextAt, hydrated, snapshot.energy, snapshot.maxEnergy]);
+  }, [effectiveEnergyRegenSeconds, effectiveMaxEnergy, energyNextAt, hydrated, snapshot.energy]);
 
   useEffect(
     () => () => {
@@ -249,13 +282,19 @@ export function OfficeGame() {
   };
 
   const applyOutcome = (outcome: OfficeOutcome) => {
+    const rawStress = outcome.stress ?? 0;
+    const adjustedStress =
+      rawStress > 0
+        ? Math.max(0, rawStress - Math.floor((buildBonuses.stressResist ?? 0) / 2))
+        : rawStress;
+
     setSnapshot((current) => ({
       ...current,
-      energy: Math.max(0, Math.min(current.maxEnergy, current.energy + (outcome.energy ?? 0))),
+      energy: Math.max(0, Math.min(effectiveMaxEnergy, current.energy + (outcome.energy ?? 0))),
       money: Math.max(0, current.money + (outcome.money ?? 0)),
       reputation: Math.max(0, Math.min(100, current.reputation + (outcome.reputation ?? 0))),
       motivation: Math.max(0, Math.min(100, current.motivation + (outcome.motivation ?? 0))),
-      stress: Math.max(0, Math.min(100, current.stress + (outcome.stress ?? 0))),
+      stress: Math.max(0, Math.min(100, current.stress + adjustedStress)),
       skills: {
         competence: current.skills.competence + (outcome.skills?.competence ?? 0),
         communication: current.skills.communication + (outcome.skills?.communication ?? 0),
@@ -357,6 +396,7 @@ export function OfficeGame() {
   };
 
   const handleNavigation = (label: string) => {
+    setDrawerCategory(null);
     if (label === 'Главная') {
       setActiveView('home');
       return;
@@ -365,9 +405,22 @@ export function OfficeGame() {
       setActiveView('career');
       return;
     }
+    if (label === 'Компания') {
+      setActiveView('company');
+      return;
+    }
+    if (label === 'Персонаж') {
+      setActiveView('character');
+      return;
+    }
+    if (label === 'Инвентарь' || label === 'Магазин') {
+      setActiveView('home');
+      setDrawerCategory('pc');
+      return;
+    }
     setActiveView('home');
-    setNotice(`Раздел «${label}» уже заложен в структуру и будет следующим контентным экраном.`);
-    showFeedback(`${label}: скоро`, 'xp');
+    setNotice(`Раздел «${label}» будет добавлен после базовых RPG-систем.`);
+    showFeedback(`${label}: в разработке`, 'xp');
   };
 
   const triggerAction = (id: (typeof officeActions)[number]['id']) => {
@@ -397,7 +450,13 @@ export function OfficeGame() {
         return {
           ...current,
           energy: Math.max(0, current.energy - 1),
-          money: current.money + 75 + (completesNow ? current.daily.moneyReward : 0),
+          money:
+            current.money +
+            Math.round(
+              (75 + (buildBonuses.productivity ?? 0) * 3) *
+                (1 + (buildBonuses.incomeBonus ?? 0) / 100),
+            ) +
+            (completesNow ? current.daily.moneyReward : 0),
           motivation: Math.min(
             100,
             current.motivation + (completesNow ? current.daily.motivationReward : 0),
@@ -473,39 +532,133 @@ export function OfficeGame() {
       return;
     }
 
-    if (firstAssignmentDone || story.bossResolved) {
-      setNotice('Первое поручение уже выполнено. Теперь готовь требования к повышению.');
+    if (firstAssignmentDone || v6.bossResolved) {
+      setNotice('Сергей Петрович уже пройден. Твой билд готовится к следующему боссу.');
       return;
     }
 
-    setModal({ type: 'boss', event: bossEvent });
+    setBossBattleOpen(true);
   };
 
-  const upgradeSelectedItem = () => {
-    const item = selectedItem;
-    if (!item) return;
-
-    if (snapshot.money < item.upgradePrice) {
-      setNotice(`Не хватает денег. Нужно ещё ${formatMoney(item.upgradePrice - snapshot.money)} ₽.`);
+  const buyV6Item = (item: V6Item) => {
+    const lockReason = v6ItemLockReason(item, {
+      level: snapshot.level,
+      reputation: snapshot.reputation,
+      state: v6,
+    });
+    if (lockReason) {
+      showFeedback(lockReason, 'warning');
+      return;
+    }
+    if (v6.ownedItemIds.includes(item.id)) {
+      equipV6Item(item);
+      return;
+    }
+    if (snapshot.money < item.price) {
       showFeedback('Не хватает денег', 'warning');
+      setNotice(`Для покупки «${item.name}» не хватает ${formatMoney(item.price - snapshot.money)} ₽.`);
       return;
     }
 
+    setSnapshot((current) => ({ ...current, money: current.money - item.price }));
+    setV6((current) => ({
+      ...current,
+      ownedItemIds: [...current.ownedItemIds, item.id],
+      equipped: { ...current.equipped, [item.category]: item.id },
+    }));
+    showFeedback(`Куплено: ${item.name}`, 'money');
+    setNotice(`${item.name} куплен и сразу установлен.`);
+  };
+
+  const equipV6Item = (item: V6Item) => {
+    if (!v6.ownedItemIds.includes(item.id)) return;
+    setV6((current) => ({
+      ...current,
+      equipped: { ...current.equipped, [item.category]: item.id },
+    }));
+    showFeedback(`Установлено: ${item.name}`, 'xp');
+    setNotice(`${item.name} теперь влияет на твой билд.`);
+  };
+
+  const selectGender = (gender: V6Gender) => {
+    setV6((current) => ({ ...current, gender }));
+    setNotice('Профиль персонажа обновлён. Общая сила остаётся сбалансированной, меняются синергии.');
+  };
+
+  const selectArchetype = (archetypeId: V6ArchetypeId) => {
+    setV6((current) => ({ ...current, archetypeId }));
+    setNotice('Архетип изменён. Новый стиль уже влияет на экипировку и боссов.');
+  };
+
+  const selectCareerBranch = (careerBranch: V6CareerBranch) => {
+    if (v6.careerBranch !== 'general' && v6.careerBranch !== careerBranch) {
+      showFeedback('Ветка уже выбрана', 'warning');
+      setNotice('Карьерная специализация уже выбрана. Смена ветки позже будет отдельной механикой переподготовки.');
+      return;
+    }
+    setV6((current) => ({ ...current, careerBranch }));
+    showFeedback(`Ветка: ${careerBranch === 'expert' ? 'Эксперт' : careerBranch === 'management' ? 'Управление' : 'Продажи'}`, 'xp');
+    setNotice('Карьерная ветка зафиксирована и теперь влияет на предметы и урон по боссам.');
+  };
+
+  const switchCompany = (companyId: string) => {
+    const company = v6Companies.find((candidate) => candidate.id === companyId);
+    if (!company) return;
+    if (snapshot.level < company.minLevel || snapshot.reputation < company.minReputation) {
+      showFeedback('Компания пока недоступна', 'warning');
+      return;
+    }
+
+    const baseSalary = snapshot.role === 'Младший специалист' ? 50000 : snapshot.role === 'Стажёр' ? 35000 : snapshot.salary;
+    const salary = Math.round(baseSalary * company.salaryMultiplier / 1000) * 1000;
+    setV6((current) => ({ ...current, companyId }));
     setSnapshot((current) => ({
       ...current,
-      money: current.money - item.upgradePrice,
+      salary,
+      company: {
+        ...current.company,
+        name: company.name,
+        industry: company.industry,
+        description: company.description,
+        level: Math.min(5, v6Companies.findIndex((candidate) => candidate.id === companyId) + 1),
+      },
     }));
-    setWorkspace((items) =>
-      items.map((candidate) =>
-        candidate.key === item.key ? upgradeWorkspaceItem(candidate) : candidate,
-      ),
-    );
-    showFeedback(`−${formatMoney(item.upgradePrice)} ₽ · предмет улучшен`, 'xp');
-    setNotice(
-      item.level === 0
-        ? 'Первый аксессуар появился на столе. Рабочее место начинает становиться твоим.'
-        : `${item.item}: улучшение куплено. Рабочее место стало немного менее печальным.`,
-    );
+    showFeedback(`Новая компания: ${company.name}`, 'money');
+    setNotice(`Ты перешёл в ${company.name}. Офис и доступные предметы начинают меняться вместе с компанией.`);
+  };
+
+  const attackBoss = (kind: 'logic' | 'social' | 'pressure', expectedDamage: number) => {
+    if (snapshot.energy <= 0 || v6.bossResolved) {
+      showFeedback('Нет энергии', 'warning');
+      return;
+    }
+
+    const boss = v6Bosses[0];
+    const nextHp = Math.max(0, v6.bossHp - expectedDamage);
+    setSnapshot((current) => ({ ...current, energy: Math.max(0, current.energy - 1) }));
+    setV6((current) => ({ ...current, bossHp: nextHp }));
+    showFeedback(`${kind === 'logic' ? 'Логика' : kind === 'social' ? 'Переговоры' : 'Напор'} −${expectedDamage}`, 'social');
+
+    if (nextHp > 0) {
+      setNotice(`Сергей Петрович теряет терпение: осталось ${nextHp}.`);
+      return;
+    }
+
+    setV6((current) => ({ ...current, bossHp: 0, bossResolved: true }));
+    setSnapshot((current) => ({
+      ...current,
+      money: current.money + boss.rewardMoney,
+      reputation: Math.min(100, current.reputation + boss.rewardReputation),
+      firstAssignment: {
+        ...current.firstAssignment,
+        progress: current.firstAssignment.target,
+      },
+    }));
+    setStory((current) => ({ ...current, bossResolved: true, bossChoiceId: `v6-${kind}` }));
+    gainXp(boss.rewardXp);
+    setBossBattleOpen(false);
+    showFeedback('Босс пройден!', 'money');
+    setNotice('Сергей Петрович сдался перед твоим билдом. Первое поручение выполнено.');
   };
 
   const requestPromotion = () => {
@@ -534,7 +687,9 @@ export function OfficeGame() {
   const resetPrototype = () => {
     setSnapshot(initialOfficeSnapshot);
     setWorkspace(initialWorkspaceItems);
-    setSelectedSlot('pc');
+    setV6(initialV6State);
+    setDrawerCategory(null);
+    setBossBattleOpen(false);
     setEnergyCountdown(OFFICE_ENERGY_REGEN_SECONDS);
     setEnergyNextAt(null);
     setStory(initialOfficeStoryState);
@@ -571,7 +726,7 @@ export function OfficeGame() {
             icon="energy"
             value={`${snapshot.energy} (+1)`}
             detail={
-              snapshot.energy >= snapshot.maxEnergy
+              snapshot.energy >= effectiveMaxEnergy
                 ? 'полная'
                 : formatCountdown(energyCountdown)
             }
@@ -601,7 +756,9 @@ export function OfficeGame() {
             {officeNavigation.map((item) => {
               const isActive =
                 (activeView === 'home' && item.label === 'Главная') ||
-                (activeView === 'career' && item.label === 'Карьера');
+                (activeView === 'career' && item.label === 'Карьера') ||
+                (activeView === 'company' && item.label === 'Компания') ||
+                (activeView === 'character' && item.label === 'Персонаж');
               return (
               <button
                 className={isActive ? 'active' : ''}
@@ -638,7 +795,7 @@ export function OfficeGame() {
               <b>Уровень {snapshot.level}</b>
             </div>
 
-            <Stat label="Энергия" value={snapshot.energy} max={snapshot.maxEnergy} icon="energy" tone="yellow" />
+            <Stat label="Энергия" value={snapshot.energy} max={effectiveMaxEnergy} icon="energy" tone="yellow" />
             <Stat label="Репутация" value={snapshot.reputation} max={100} icon="reputation" tone="green" />
             <Stat label="Стресс" value={snapshot.stress} max={100} icon="stress" tone="red" />
 
@@ -648,9 +805,9 @@ export function OfficeGame() {
             <Skill label="Напор" value={snapshot.skills.drive} icon="drive" />
 
             <div className="office-quick-links">
-              <button type="button">Инвентарь <span>›</span></button>
-              <button type="button">Достижения <span>›</span></button>
-              <button type="button">Персонаж <span>›</span></button>
+              <button type="button" onClick={() => setDrawerCategory('pc')}>Инвентарь <span>›</span></button>
+              <button type="button" onClick={() => handleNavigation('Достижения')}>Достижения <span>›</span></button>
+              <button type="button" onClick={() => setActiveView('character')}>Персонаж <span>›</span></button>
             </div>
           </aside>
 
@@ -660,7 +817,7 @@ export function OfficeGame() {
               <button
                 className="office-hotspot office-hotspot-pc"
                 type="button"
-                onClick={() => setSelectedSlot('pc')}
+                onClick={() => setDrawerCategory('pc')}
                 aria-label="Старый компьютер"
               >
                 <span>＋</span> Старый ПК
@@ -668,10 +825,34 @@ export function OfficeGame() {
               <button
                 className="office-hotspot office-hotspot-chair"
                 type="button"
-                onClick={() => setSelectedSlot('chair')}
+                onClick={() => setDrawerCategory('chair')}
                 aria-label="Старый офисный стул"
               >
                 <span>＋</span> Стул
+              </button>
+              <button
+                className="office-hotspot office-hotspot-desk"
+                type="button"
+                onClick={() => setDrawerCategory('desk')}
+                aria-label="Рабочий стол"
+              >
+                <span>＋</span> Стол
+              </button>
+              <button
+                className="office-hotspot office-hotspot-monitor"
+                type="button"
+                onClick={() => setDrawerCategory('monitor')}
+                aria-label="Монитор"
+              >
+                <span>＋</span> Монитор
+              </button>
+              <button
+                className="office-hotspot office-hotspot-character"
+                type="button"
+                onClick={() => setDrawerCategory('clothes')}
+                aria-label="Одежда персонажа"
+              >
+                <span>＋</span> Одежда
               </button>
               <div className="office-scene-note">{notice}</div>
             </section>
@@ -726,7 +907,7 @@ export function OfficeGame() {
                   <b>{formatMoney(snapshot.salary)} ₽</b>
                 </span>
               </div>
-              <button type="button">О компании →</button>
+              <button type="button" onClick={() => setActiveView('company')}>О компании →</button>
             </section>
 
             <section className={`office-daily ${dailyDone ? 'is-complete' : ''}`}>
@@ -781,40 +962,35 @@ export function OfficeGame() {
             </section>
           </aside>
             </>
+          ) : activeView === 'career' ? (
+            <V6CareerView
+              state={v6}
+              snapshot={snapshot}
+              onSelectBranch={selectCareerBranch}
+              onBack={() => setActiveView('home')}
+            />
+          ) : activeView === 'company' ? (
+            <V6CompanyView
+              state={v6}
+              snapshot={snapshot}
+              onSwitch={switchCompany}
+              onBack={() => setActiveView('home')}
+            />
           ) : (
-            <CareerView
-              role={snapshot.role}
-              level={snapshot.level}
-              salary={snapshot.salary}
-              reputation={snapshot.reputation}
-              competence={snapshot.skills.competence}
-              communication={snapshot.skills.communication}
-              drive={snapshot.skills.drive}
+            <V6CharacterView
+              state={v6}
+              snapshot={snapshot}
+              onGender={selectGender}
+              onArchetype={selectArchetype}
               onBack={() => setActiveView('home')}
             />
           )}
         </div>
 
         {activeView === 'home' ? (
-        <footer className="office-bottom">
-          <section className="office-workspace">
-            <div className="office-bottom-title">Моё рабочее место <span>?</span></div>
-            <div className="office-slots">
-              {workspace.map((item) => (
-                <button
-                  type="button"
-                  key={item.key}
-                  onClick={() => setSelectedSlot(item.key)}
-                  className={selectedSlot === item.key ? 'selected' : ''}
-                >
-                  <small>{item.label}</small>
-                  <OfficeIcon name={item.icon} />
-                  <b>{item.item}</b>
-                  <em>{item.level ? `${item.rarity} · ${item.level} ур.` : 'Пусто'}</em>
-                </button>
-              ))}
-            </div>
-          </section>
+        <>
+        <footer className="office-bottom office-v6-bottom">
+          <EquipmentDock state={v6} onOpen={setDrawerCategory} />
 
           <section className="office-promotion">
             <div className="office-bottom-title">Следующее повышение <span>?</span></div>
@@ -834,29 +1010,30 @@ export function OfficeGame() {
                 {promotionCompleted ? 'Получено' : 'Просить повышение'}
               </button>
             </div>
-            <small className="office-unlocks">Откроется: новая компания · новое кресло · новые задания</small>
+            <small className="office-unlocks">Ветка карьеры и экипировка влияют на дальнейшие повышения</small>
           </section>
-
-          <aside className="office-item-details">
-            <OfficeIcon name={selectedItem.icon} />
-            <div className="office-item-copy">
-              <small>Выбрано · {selectedItem.rarity}</small>
-              <strong>{selectedItem.item}</strong>
-              <p>{selectedItem.description}</p>
-            </div>
-            <div className="office-item-effect">
-              <span>{selectedItem.effectLabel}</span>
-              <b>+{selectedItem.effectValue} → +{selectedItem.nextEffectValue}</b>
-            </div>
-            <div className="office-item-price">
-              <span>Улучшение</span>
-              <b>{formatMoney(selectedItem.upgradePrice)} ₽</b>
-            </div>
-            <button type="button" onClick={upgradeSelectedItem}>
-              {selectedItem.level === 0 ? 'Найти предмет' : 'Улучшить'}
-            </button>
-          </aside>
         </footer>
+
+        <EquipmentDrawer
+          category={drawerCategory}
+          state={v6}
+          level={snapshot.level}
+          reputation={snapshot.reputation}
+          money={snapshot.money}
+          onClose={() => setDrawerCategory(null)}
+          onBuy={buyV6Item}
+          onEquip={equipV6Item}
+        />
+        </>
+        ) : null}
+
+        {bossBattleOpen ? (
+          <V6BossBattle
+            state={v6}
+            snapshot={snapshot}
+            onAttack={attackBoss}
+            onClose={() => setBossBattleOpen(false)}
+          />
         ) : null}
 
         <OfficeOverlay
@@ -917,90 +1094,6 @@ function Requirement({ label, value, progress }: { label: string; value: string;
       <div><span>{label}</span><b>{value}</b></div>
       <div><i style={{ width: `${Math.min(100, progress)}%` }} /></div>
     </div>
-  );
-}
-
-function CareerView({
-  role,
-  level,
-  salary,
-  reputation,
-  competence,
-  communication,
-  drive,
-  onBack,
-}: {
-  role: string;
-  level: number;
-  salary: number;
-  reputation: number;
-  competence: number;
-  communication: number;
-  drive: number;
-  onBack: () => void;
-}) {
-  const getStatus = (id: string) => {
-    if (id === 'intern') return role === 'Стажёр' ? 'current' : 'done';
-    if (id === 'junior') {
-      if (role === 'Младший специалист') return 'current';
-      return competence >= 5 && reputation >= 30 ? 'ready' : 'locked';
-    }
-    if (id === 'specialist') return level >= 8 && reputation >= 50 ? 'ready' : 'locked';
-    if (id === 'expert') return competence >= 18 ? 'ready' : 'locked';
-    if (id === 'teamlead') return communication >= 14 && drive >= 10 ? 'ready' : 'locked';
-    if (id === 'sales') return communication >= 16 ? 'ready' : 'locked';
-    return 'locked';
-  };
-
-  return (
-    <section className="office-career-view">
-      <header className="office-career-header">
-        <div>
-          <small>Карьера</small>
-          <h2>Куда приведёт этот офис?</h2>
-          <p>После уровня специалиста путь расходится. Можно стать экспертом, руководителем или уйти в продажи.</p>
-        </div>
-        <button type="button" onClick={onBack}>← Вернуться в офис</button>
-      </header>
-
-      <div className="office-career-summary">
-        <div><small>Сейчас</small><b>{role}</b></div>
-        <div><small>Уровень</small><b>{level}</b></div>
-        <div><small>Зарплата</small><b>{formatMoney(salary)} ₽</b></div>
-        <div><small>Репутация</small><b>{reputation}</b></div>
-      </div>
-
-      <div className="office-career-map">
-        <svg className="office-career-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M12 50 H24 M32 50 H45 M53 50 H64" />
-          <path d="M53 48 C60 48 60 20 66 20 H84" />
-          <path d="M53 52 H84" />
-          <path d="M53 52 C60 52 60 80 66 80 H84" />
-        </svg>
-        {careerNodes.map((node) => {
-          const status = getStatus(node.id);
-          return (
-            <article
-              className={`office-career-node office-career-${status} office-career-branch-${node.branch}`}
-              key={node.id}
-              style={{ left: `${node.x}%`, top: `${node.y}%` }}
-            >
-              <small>{node.subtitle}</small>
-              <strong>{node.title}</strong>
-              <span>{formatMoney(node.salary)} ₽</span>
-              <em>{node.requirement}</em>
-              <b>{status === 'current' ? 'Сейчас' : status === 'done' ? 'Пройдено' : status === 'ready' ? 'Доступно' : 'Закрыто'}</b>
-            </article>
-          );
-        })}
-      </div>
-
-      <div className="office-career-legend">
-        <div><i className="expert" /><span>Экспертная ветка</span><b>Компетентность {competence}</b></div>
-        <div><i className="management" /><span>Управление</span><b>Коммуникация {communication} · Напор {drive}</b></div>
-        <div><i className="sales" /><span>Продажи</span><b>Коммуникация {communication}</b></div>
-      </div>
-    </section>
   );
 }
 
