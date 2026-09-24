@@ -216,7 +216,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
    {!loading && !error && !hasMore && visible.length > 0 && <footer className="forum-feed-end"><span>Вы просмотрели все загруженные обсуждения</span><a href="#top">Наверх ↑</a></footer>}
    {moreError && <p className="forum-action-error" role="alert">{moreError}</p>}
   </div>
-  <CommunityPanels overview={overview} unavailable={activityError || !overview} news={news} projects={initialData.projects} events={initialData.events}/>
+  <CommunityPanels overview={overview} unavailable={activityError || !overview} news={news} events={initialData.events}/>
 
  </div>;
 }

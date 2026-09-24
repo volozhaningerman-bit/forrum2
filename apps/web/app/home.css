@@ -1478,3 +1478,54 @@ html.dark .forum-home[data-home-reference="v40"] .forum-topic-important {
  html.dark .forum-home[data-home-reference="v40"] .forum-topic h2,
  html.dark .forum-home[data-home-reference="v40"] .forum-topic.is-read h2 {font-size:13px;}
 }
+
+/* V48: keep the forum feed central; let real replies carry the community signal. */
+html.dark .forum-home[data-home-reference="v40"] {
+ grid-template-columns:235px minmax(0,1fr) 275px;
+ gap:14px;
+}
+html.dark .forum-home[data-home-reference="v40"] .forum-topbar .forum-brand {width:219px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-search-hero {min-height:168px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-hero-copy {padding:20px 24px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-hero-copy h1 {margin-bottom:13px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-hero-stats {margin-top:10px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-topic {
+ min-height:58px;
+ background:#202929;
+ border-color:#34413f;
+}
+html.dark .forum-home[data-home-reference="v40"] .forum-topic:is(.is-unread,.is-updated)::before {box-shadow:none;}
+html.dark .forum-home[data-home-reference="v40"] .forum-topic h2,
+html.dark .forum-home[data-home-reference="v40"] .forum-topic.is-unread h2,
+html.dark .forum-home[data-home-reference="v40"] .forum-topic.is-updated h2,
+html.dark .forum-home[data-home-reference="v40"] .forum-topic.is-read h2 {font-size:14px;line-height:1.35;}
+html.dark .forum-home[data-home-reference="v40"] .forum-topic-context {font-size:11px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-topic-author {font-size:11px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-category-chip {font-size:11px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-category-heading>a {font-size:13px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-category-children a {font-size:12px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-panel {padding:13px 14px;}
+html.dark .forum-home[data-home-reference="v40"] .forum-panel>header {margin-bottom:9px;}
+.forum-activity>header small {font-size:11px;color:var(--f-muted);}
+.forum-recent-reply {display:flex;align-items:flex-start;gap:9px;padding:9px 0;border-bottom:1px solid var(--f-line);}
+.forum-recent-reply:last-of-type {border-bottom:0;}
+.forum-recent-reply>span:last-child {min-width:0;display:grid;gap:2px;}
+.forum-recent-reply strong {font-size:12px;line-height:1.35;font-weight:500;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;}
+.forum-recent-reply small {font-size:11px;color:var(--f-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.forum-activity-empty {font-size:12px;color:var(--f-muted);padding:5px 0 9px;}
+.forum-activity-empty a {display:inline-block;margin-top:8px;color:var(--f-accent);}
+@media(max-width:1350px) and (min-width:1101px) {
+ html.dark .forum-home[data-home-reference="v40"] {grid-template-columns:215px minmax(0,1fr) 250px;gap:12px;}
+ html.dark .forum-home[data-home-reference="v40"] .forum-topbar .forum-brand {width:199px;}
+}
+@media(max-width:1100px) and (min-width:761px) {
+ html.dark .forum-home[data-home-reference="v40"] {grid-template-columns:215px minmax(0,1fr);gap:12px;}
+ html.dark .forum-home[data-home-reference="v40"] .forum-topbar .forum-brand {width:199px;}
+}
+@media(max-width:760px) {
+ html.dark .forum-home[data-home-reference="v40"] {grid-template-columns:minmax(0,1fr);}
+ html.dark .forum-home[data-home-reference="v40"] .forum-search-hero {min-height:170px;}
+ html.dark .forum-home[data-home-reference="v40"] .forum-hero-copy {padding:17px 15px;}
+ html.dark .forum-home[data-home-reference="v40"] .forum-topic h2,
+ html.dark .forum-home[data-home-reference="v40"] .forum-topic.is-read h2 {font-size:14px;}
+}
