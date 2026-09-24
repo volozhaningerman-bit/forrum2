@@ -39,7 +39,6 @@ import {
 } from './office-v6-ui';
 import {
   getV6BuildBonuses,
-  getV6Item,
   initialV6State,
   v6Bosses,
   v6Companies,
