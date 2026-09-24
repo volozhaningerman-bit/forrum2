@@ -30,7 +30,6 @@ import {
   type OfficeStoryState,
 } from './office-v5-content';
 import {
-  EquipmentDock,
   EquipmentDrawer,
   V6BossBattle,
   V6CareerView,
@@ -835,36 +834,147 @@ export function OfficeGame() {
           <main className="office-center">
             <section className="office-scene">
               <img src="/games/office/office-start.svg" alt="Первое рабочее место стажёра" />
-              <button
-                className={`office-hotspot-zone office-hotspot-zone-pc ${drawerCategory === 'pc' ? 'is-active' : ''}`}
-                type="button"
-                onClick={() => setDrawerCategory('pc')}
-                aria-label="Выбрать компьютер"
-              />
-              <button
-                className={`office-hotspot-zone office-hotspot-zone-chair ${drawerCategory === 'chair' ? 'is-active' : ''}`}
-                type="button"
-                onClick={() => setDrawerCategory('chair')}
-                aria-label="Выбрать кресло"
-              />
-              <button
-                className={`office-hotspot-zone office-hotspot-zone-desk ${drawerCategory === 'desk' ? 'is-active' : ''}`}
-                type="button"
-                onClick={() => setDrawerCategory('desk')}
-                aria-label="Выбрать стол"
-              />
-              <button
-                className={`office-hotspot-zone office-hotspot-zone-monitor ${drawerCategory === 'monitor' ? 'is-active' : ''}`}
-                type="button"
-                onClick={() => setDrawerCategory('monitor')}
-                aria-label="Выбрать монитор"
-              />
-              <button
-                className={`office-hotspot-zone office-hotspot-zone-character ${drawerCategory === 'clothes' ? 'is-active' : ''}`}
-                type="button"
-                onClick={() => setDrawerCategory('clothes')}
-                aria-label="Выбрать одежду персонажа"
-              />
+              <div className="office-scene-hitmap">
+                <svg
+                  className="office-scene-hitmap-svg"
+                  viewBox="0 0 960 640"
+                  preserveAspectRatio="xMidYMid slice"
+                  aria-label="Интерактивные объекты рабочего места"
+                >
+                  <g
+                    className={`office-scene-shape office-scene-shape-chair ${drawerCategory === 'chair' ? 'is-active' : ''}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Выбрать стул"
+                    onClick={() => setDrawerCategory('chair')}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        setDrawerCategory('chair');
+                      }
+                    }}
+                  >
+                    <path d="M465 314H600V512H465Z M513 500H552V584H513Z M533 577L464 603 M533 577L601 604 M533 577L535 612" />
+                  </g>
+
+                  <g
+                    className={`office-scene-shape office-scene-shape-desk ${drawerCategory === 'desk' ? 'is-active' : ''}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Выбрать стол"
+                    onClick={() => setDrawerCategory('desk')}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        setDrawerCategory('desk');
+                      }
+                    }}
+                  >
+                    <path d="M288 344H886V386H288Z M314 383H356V557H314Z M827 383H869V557H827Z" />
+                  </g>
+
+                  <g
+                    className={`office-scene-shape office-scene-shape-pc ${drawerCategory === 'pc' ? 'is-active' : ''}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Выбрать компьютер"
+                    onClick={() => setDrawerCategory('pc')}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        setDrawerCategory('pc');
+                      }
+                    }}
+                  >
+                    <path d="M737 389H821V542H737Z" />
+                  </g>
+
+                  <g
+                    className={`office-scene-shape office-scene-shape-monitor ${drawerCategory === 'monitor' ? 'is-active' : ''}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Выбрать монитор"
+                    onClick={() => setDrawerCategory('monitor')}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        setDrawerCategory('monitor');
+                      }
+                    }}
+                  >
+                    <path d="M586 220H762V345H586Z M584 345H767V363H584Z" />
+                  </g>
+
+                  <g
+                    className={`office-scene-shape office-scene-shape-accessory ${drawerCategory === 'accessory' ? 'is-active' : ''}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Выбрать аксессуары"
+                    onClick={() => setDrawerCategory('accessory')}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        setDrawerCategory('accessory');
+                      }
+                    }}
+                  >
+                    <path d="M790 301H836V347H790Z M675 298H753V326H675Z M754 273H801V318H754Z" />
+                  </g>
+
+                  <g
+                    className={`office-scene-shape office-scene-shape-decor ${drawerCategory === 'decor' ? 'is-active' : ''}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Выбрать декор"
+                    onClick={() => setDrawerCategory('decor')}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        setDrawerCategory('decor');
+                      }
+                    }}
+                  >
+                    <path d="M64 472H212V578H64Z" />
+                  </g>
+
+                  <g
+                    className={`office-scene-shape office-scene-shape-lighting ${drawerCategory === 'lighting' ? 'is-active' : ''}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Выбрать освещение"
+                    onClick={() => setDrawerCategory('lighting')}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        setDrawerCategory('lighting');
+                      }
+                    }}
+                  >
+                    <path d="M325 22H647V42H325Z M350 27H622V35H350Z" />
+                  </g>
+
+                  <g
+                    className={`office-scene-shape office-scene-shape-character ${drawerCategory === 'clothes' ? 'is-active' : ''}`}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Выбрать одежду персонажа"
+                    onClick={() => setDrawerCategory('clothes')}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        setDrawerCategory('clothes');
+                      }
+                    }}
+                  >
+                    <path d="M474 211Q483 150 533 146Q588 142 604 200Q611 225 601 253Q591 284 569 299Q549 312 526 309Q497 305 481 279Q465 254 474 211Z" />
+                    <path d="M461 319Q500 293 526 301Q544 318 565 301Q608 309 638 349L614 493Q545 527 443 493L426 357Q438 333 461 319Z" />
+                    <path d="M460 330Q426 369 407 434Q400 458 421 469Q438 477 450 457L508 360Q492 338 460 330Z" />
+                    <path d="M620 336Q658 377 681 428Q692 453 672 466Q654 476 639 455L569 363Q586 341 620 336Z" />
+                    <path d="M455 475Q497 457 539 471Q555 478 562 501L532 620H465Q441 544 455 475Z" />
+                    <path d="M556 473Q607 464 634 502Q665 550 707 603L650 632Q581 573 526 513Q523 489 556 473Z" />
+                  </g>
+                </svg>
+              </div>
               <div className="office-scene-note">{notice}</div>
             </section>
 
@@ -1000,13 +1110,23 @@ export function OfficeGame() {
 
         {activeView === 'home' ? (
         <>
-        <footer className={`office-bottom office-v6-bottom ${drawerCategory ? 'has-equipment-drawer' : ''}`}>
+        <footer className="office-bottom office-v6-bottom">
           <section className="office-v6-workplace-stack">
-            <EquipmentDock
-              state={v6}
-              activeCategory={drawerCategory}
-              onOpen={(category) => setDrawerCategory((current) => current === category ? null : category)}
-            />
+            <div className="office-v6-workplace-header">
+              <div className="office-bottom-title">
+                Рабочее место и персонаж
+                <span>Кликни по объекту в комнате</span>
+              </div>
+              {drawerCategory ? (
+                <button
+                  type="button"
+                  className="office-v6-workplace-close"
+                  onClick={() => setDrawerCategory(null)}
+                >
+                  Закрыть
+                </button>
+              ) : null}
+            </div>
 
             {drawerCategory ? (
               <div className="office-v6-inline-drawer">
@@ -1021,7 +1141,12 @@ export function OfficeGame() {
                   onEquip={equipV6Item}
                 />
               </div>
-            ) : null}
+            ) : (
+              <div className="office-v6-workplace-empty">
+                <strong>Выбери объект прямо в комнате</strong>
+                <span>Наведи на персонажа, стол, стул, ПК, монитор, аксессуары, декор или свет — объект аккуратно подсветится. После клика здесь появятся доступные варианты.</span>
+              </div>
+            )}
           </section>
 
           <section className="office-promotion">
@@ -1044,6 +1169,7 @@ export function OfficeGame() {
             </div>
             <small className="office-unlocks">Ветка карьеры и экипировка влияют на дальнейшие повышения</small>
           </section>
+
         </footer>
 
         </>
