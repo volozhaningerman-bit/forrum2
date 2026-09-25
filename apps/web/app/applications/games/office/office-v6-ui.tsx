@@ -372,7 +372,7 @@ export function V6CharacterView({
           <div className="office-v64-archetypes">
             <header>
               <div><small>Архетип старта</small><strong>Как ты проходишь офис</strong></div>
-              <span>Позже усиливается карьерной веткой</span>
+              <span>Синергия усиливается выбранной карьерной веткой</span>
             </header>
             <div className="office-v64-archetype-grid">
               {v6Archetypes.map((archetype) => (
@@ -418,8 +418,8 @@ export function V6CharacterView({
           <div className="office-v64-customize-note">
             <V6Icon name="clothes" />
             <div>
-              <strong>Редактор внешности — следующий слой</strong>
-              <span>Волосы, лицо, одежда и аксессуары уже заложены в структуру персонажа.</span>
+              <strong>Внешность развивается через экипировку</strong>
+              <span>На текущем альфа-этапе одежда и аксессуары меняют билд; отдельный редактор лица не влияет на прогрессию.</span>
             </div>
           </div>
         </section>
