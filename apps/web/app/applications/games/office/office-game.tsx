@@ -137,6 +137,7 @@ export function OfficeGame() {
   const alphaChapterComplete = promotionCompleted && v6.bossResolved;
 
   const companyStars = getCompanyStars(snapshot.company.level, snapshot.company.maxLevel);
+  const activeCompany = v6Companies.find((company) => company.id === v6.companyId) ?? v6Companies[0];
   const dailyDone = snapshot.daily.progress >= snapshot.daily.target;
   const firstDayDone = story.completedEvents.length >= 3;
   const bossUnlocked = snapshot.level >= 3 || firstDayDone;
@@ -789,7 +790,8 @@ export function OfficeGame() {
     }
 
     if (!promotionReady) {
-      setNotice('Повышение пока рано просить: закрой все требования.');
+      setModal({ type: 'promotion-help' });
+      setNotice('До повышения остались требования. Карьерный помощник показывает, что закрыть дальше.');
       showFeedback('Не все требования закрыты', 'warning');
       return;
     }
@@ -975,8 +977,16 @@ export function OfficeGame() {
           </aside>
 
           <main className="office-center">
-            <section className="office-scene">
-              <img src="/games/office/office-start.svg" alt="Первое рабочее место стажёра" />
+            <section className="office-scene office-v615-scene" data-company={v6.companyId}>
+              <img
+                src="/games/office/office-start.svg"
+                alt={`Рабочее место в компании ${snapshot.company.name}`}
+              />
+              <div className="office-v615-office-badge" aria-label={`Текущий офис: ${snapshot.company.name}`}>
+                <small>Текущий офис</small>
+                <strong>{snapshot.company.name}</strong>
+                <span>{activeCompany.officeStyle}</span>
+              </div>
               <div className="office-scene-hitmap">
                 <svg
                   className="office-scene-hitmap-svg"
@@ -1186,11 +1196,16 @@ export function OfficeGame() {
 
 
 
-            <section className={`office-promotion-compact ${alphaChapterComplete ? 'is-alpha-complete' : ''}`}>
+            <section
+              className={`office-promotion-compact ${alphaChapterComplete ? 'is-alpha-complete' : promotionReady ? 'is-ready' : promotionCompleted ? 'is-complete' : ''}`}
+            >
               <div className="office-card-head">
                 <h3>{alphaChapterComplete ? 'Альфа · Глава 1' : 'Первое повышение'}</h3>
-                <button type="button" onClick={() => setActiveView(alphaChapterComplete ? 'achievements' : 'career')}>
-                  {alphaChapterComplete ? 'Итоги »' : 'К карьере »'}
+                <button
+                  type="button"
+                  onClick={() => setActiveView(alphaChapterComplete ? 'achievements' : promotionCompleted ? 'bosses' : 'career')}
+                >
+                  {alphaChapterComplete ? 'Итоги »' : promotionCompleted ? 'К боссу »' : 'К карьере »'}
                 </button>
               </div>
               <strong>{alphaChapterComplete ? 'Глава завершена' : promotionCompleted ? snapshot.role : nextPromotion.role}</strong>
@@ -1201,10 +1216,29 @@ export function OfficeGame() {
                   <span className="done"><OfficeIcon name="career" /> Повышение</span>
                 </div>
               ) : (
-                <div className="office-promotion-mini-bars">
-                  <Requirement label="Компетентность" value={`${snapshot.skills.competence}/${nextPromotion.competence}`} progress={snapshot.skills.competence / nextPromotion.competence * 100} />
-                  <Requirement label="Репутация" value={`${snapshot.reputation}/${nextPromotion.reputation}`} progress={snapshot.reputation / nextPromotion.reputation * 100} />
-                </div>
+                <>
+                  <div className="office-promotion-mini-bars">
+                    <Requirement label="Компетентность" value={`${snapshot.skills.competence}/${nextPromotion.competence}`} progress={snapshot.skills.competence / nextPromotion.competence * 100} />
+                    <Requirement label="Репутация" value={`${snapshot.reputation}/${nextPromotion.reputation}`} progress={snapshot.reputation / nextPromotion.reputation * 100} />
+                  </div>
+                  <button
+                    type="button"
+                    className="office-v615-promotion-action"
+                    onClick={() => {
+                      if (promotionCompleted) {
+                        setActiveView('bosses');
+                        return;
+                      }
+                      requestPromotion();
+                    }}
+                  >
+                    {promotionCompleted
+                      ? 'Пройти первое испытание →'
+                      : promotionReady
+                        ? 'Попросить повышение'
+                        : 'Что осталось до повышения?'}
+                  </button>
+                </>
               )}
             </section>
 
