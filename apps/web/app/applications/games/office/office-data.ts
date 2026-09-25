@@ -71,7 +71,7 @@ export const initialOfficeSnapshot: OfficeSnapshot = {
   level: 1,
   xp: 0,
   xpToNext: 100,
-  energy: 8,
+  energy: 12,
   maxEnergy: 100,
   money: 1250,
   motivation: 25,
@@ -223,7 +223,7 @@ export const nextPromotion = {
   role: 'Младший специалист',
   salary: 50000,
   competence: 5,
-  reputation: 30,
+  reputation: 25,
   firstAssignment: 1,
 };
 

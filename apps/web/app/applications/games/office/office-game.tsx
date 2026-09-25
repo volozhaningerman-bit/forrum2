@@ -2338,9 +2338,21 @@ function OfficeOverlay({
         <small>Карьерный помощник</small>
         <h2>До повышения осталось</h2>
         <div className="office-promotion-todo">
-          <div className={competenceLeft === 0 ? 'done' : ''}><OfficeIcon name="competence" /><span>Компетентность</span><b>{competenceLeft === 0 ? 'Готово' : `ещё ${competenceLeft}`}</b></div>
-          <div className={reputationLeft === 0 ? 'done' : ''}><OfficeIcon name="reputation" /><span>Репутация</span><b>{reputationLeft === 0 ? 'Готово' : `ещё ${reputationLeft}`}</b></div>
-          <div className={assignmentLeft === 0 ? 'done' : ''}><OfficeIcon name="task" /><span>Первое поручение</span><b>{assignmentLeft === 0 ? 'Готово' : 'не выполнено'}</b></div>
+          <div className={competenceLeft === 0 ? 'done' : ''}>
+            <OfficeIcon name="competence" />
+            <span>Компетентность<em>{competenceLeft === 0 ? 'требование закрыто' : 'Характеристики или Обучение'}</em></span>
+            <b>{competenceLeft === 0 ? 'Готово' : `ещё ${competenceLeft}`}</b>
+          </div>
+          <div className={reputationLeft === 0 ? 'done' : ''}>
+            <OfficeIcon name="reputation" />
+            <span>Репутация<em>{reputationLeft === 0 ? 'требование закрыто' : 'Задачи → Согласовать'}</em></span>
+            <b>{reputationLeft === 0 ? 'Готово' : `ещё ${reputationLeft}`}</b>
+          </div>
+          <div className={assignmentLeft === 0 ? 'done' : ''}>
+            <OfficeIcon name="task" />
+            <span>Первое поручение<em>{assignmentLeft === 0 ? 'испытание пройдено' : 'Боссы → Сергей Петрович'}</em></span>
+            <b>{assignmentLeft === 0 ? 'Готово' : 'не выполнено'}</b>
+          </div>
         </div>
         <div className="office-promotion-help-actions">
           <button type="button" onClick={onClose}>Продолжить подготовку</button>
