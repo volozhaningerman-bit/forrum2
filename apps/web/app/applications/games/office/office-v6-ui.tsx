@@ -527,13 +527,6 @@ export function V6CareerView({
   const selectedNode =
     v6CareerNodes.find((node) => node.id === selectedNodeId) ?? v6CareerNodes[0];
   const selectedState = getNodeState(selectedNode);
-  const careerTarget =
-    state.careerBranch === 'general'
-      ? null
-      : [...v6CareerNodes]
-          .filter((node) => node.branch === 'general' || node.branch === state.careerBranch)
-          .sort((a, b) => a.level - b.level || a.reputation - b.reputation)
-          .find((node) => node.title !== snapshot.role && !getNodeState(node).current && (node.level > snapshot.level || node.reputation > effectiveReputation || !getNodeState(node).available));
 
   return (
     <section className="office-v6-page office-v6-career">
