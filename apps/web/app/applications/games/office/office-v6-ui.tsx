@@ -418,8 +418,8 @@ export function V6CharacterView({
           <div className="office-v64-customize-note">
             <V6Icon name="clothes" />
             <div>
-              <strong>Редактор внешности — следующий слой</strong>
-              <span>Волосы, лицо, одежда и аксессуары уже заложены в структуру персонажа.</span>
+              <strong>Внешний вид меняется через экипировку</strong>
+              <span>Одежда и аксессуары уже влияют на билд, репутацию и социальные бонусы персонажа.</span>
             </div>
           </div>
         </section>
@@ -458,6 +458,8 @@ export function V6CareerView({
     drive: snapshot.skills.drive + (build.drive ?? 0),
   };
   const effectiveReputation = snapshot.reputation + (build.reputation ?? 0);
+  const alphaChapterComplete = snapshot.role === 'Младший специалист' && state.bossResolved;
+  const branchChoiceAvailable = false;
 
   const setClampedZoom = (value: number) => {
     setZoom(Math.min(1.55, Math.max(0.68, Math.round(value * 100) / 100)));
@@ -525,37 +527,34 @@ export function V6CareerView({
   const selectedNode =
     v6CareerNodes.find((node) => node.id === selectedNodeId) ?? v6CareerNodes[0];
   const selectedState = getNodeState(selectedNode);
-  const careerTarget =
-    state.careerBranch === 'general'
-      ? null
-      : [...v6CareerNodes]
-          .filter((node) => node.branch === 'general' || node.branch === state.careerBranch)
-          .sort((a, b) => a.level - b.level || a.reputation - b.reputation)
-          .find((node) => node.title !== snapshot.role && !getNodeState(node).current && (node.level > snapshot.level || node.reputation > effectiveReputation || !getNodeState(node).available));
 
   return (
     <section className="office-v6-page office-v6-career">
       <PageHeader eyebrow="Карьера" title="Большое дерево развития" onBack={onBack}>
-        Выбранное направление меняет стиль прохождения боссов, доступную технику, мебель,
-        компании и будущий офис. Нажми на должность, чтобы увидеть подробности.
+        Первая альфа-глава заканчивается должностью «Младший специалист». Дальнейшие узлы показывают
+        направление развития игры и требования будущих карьерных глав.
       </PageHeader>
 
-      <div className="office-v610-next-goal tone-gold">
+      <div className={`office-v610-next-goal ${alphaChapterComplete ? 'tone-green' : 'tone-gold'}`}>
         <V6Icon name="career" />
         <div>
-          <small>Следующая карьерная цель</small>
-          <strong>{state.careerBranch === 'general' ? 'Выбери направление развития' : careerTarget ? careerTarget.title : 'Продолжай усиливать выбранную ветку'}</strong>
+          <small>{alphaChapterComplete ? 'Альфа · Глава 1' : 'Цель первой главы'}</small>
+          <strong>{alphaChapterComplete ? 'Первое повышение получено' : 'Дойди до «Младшего специалиста»'}</strong>
         </div>
-        <span>{state.careerBranch === 'general' ? 'Эксперт · Управление · Продажи' : careerTarget ? `ур. ${careerTarget.level} · реп. ${careerTarget.reputation}` : branchLabel(state.careerBranch)}</span>
+        <span>{alphaChapterComplete ? 'Следующие ветки — roadmap следующих глав' : 'Босс · компетентность 5 · репутация 30'}</span>
       </div>
 
-      <div className="office-v6-branch-pick">
+      <div className="office-v6-branch-pick" aria-label="Карьерные ветки следующих глав">
         {branchCards.map((branch) => (
           <button
             type="button"
             key={branch.id}
-            className={state.careerBranch === branch.id ? 'active' : ''}
+            className={[
+              state.careerBranch === branch.id ? 'active' : '',
+              !branchChoiceAvailable ? 'alpha-future' : '',
+            ].filter(Boolean).join(' ')}
             data-branch={branch.id}
+            disabled={!branchChoiceAvailable}
             onClick={() => onSelectBranch(branch.id)}
           >
             <small>{branch.damage}</small>
@@ -564,6 +563,7 @@ export function V6CareerView({
             <div className="office-v6-branch-rewards">
               {branch.rewards.map((reward) => <b key={reward}>{reward}</b>)}
             </div>
+            {!branchChoiceAvailable ? <em className="office-alpha-roadmap-label">Следующая глава</em> : null}
           </button>
         ))}
       </div>
@@ -575,13 +575,13 @@ export function V6CareerView({
         </div>
         <div>
           <small>Выбранная ветка</small>
-          <strong>{state.careerBranch === 'general' ? 'Ещё не выбрана' : branchLabel(state.careerBranch)}</strong>
+          <strong>{state.careerBranch === 'general' ? 'Откроется в следующей главе' : branchLabel(state.careerBranch)}</strong>
         </div>
         <div>
           <small>Эффективная репутация</small>
           <strong>{effectiveReputation}</strong>
         </div>
-        <p>Подсвеченный маршрут — реальный путь к следующей должности. Выбирай узлы, чтобы сразу видеть требования, награды и открытия.</p>
+        <p>В альфе активен первый карьерный отрезок. Остальные узлы можно изучать как roadmap: требования, награды и будущие открытия уже видны.</p>
       </div>
 
       <div className="office-v6-career-toolbar">

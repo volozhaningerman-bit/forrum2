@@ -83,6 +83,28 @@ type OfficeModal =
   | { type: 'promotion-help' }
   | null;
 
+function getOfficeProgressNotice(snapshot: OfficeSnapshot, story: OfficeStoryState, v6: V6State) {
+  const promotionCompleted = snapshot.role === nextPromotion.role;
+  const firstDayDone = story.completedEvents.length >= 3;
+
+  if (promotionCompleted && v6.bossResolved) {
+    return 'Первая альфа-глава завершена. Можно продолжать развивать персонажа и рабочее место.';
+  }
+  if (promotionCompleted) {
+    return 'Повышение получено. Осталось пройти первое испытание руководителя.';
+  }
+  if (v6.bossResolved) {
+    return 'Первый босс пройден. Закрой требования и получи первое повышение.';
+  }
+  if (firstDayDone) {
+    return 'Первый день завершён. Готовься к первому испытанию руководителя.';
+  }
+  if (story.completedEvents.length > 0) {
+    return `Первый рабочий день: выполнено ${story.completedEvents.length}/3 событий.`;
+  }
+  return 'Первый рабочий день. Начни с простого поручения.';
+}
+
 export function OfficeGame() {
   const [snapshot, setSnapshot] = useState(initialOfficeSnapshot);
   const [workspace, setWorkspace] = useState<OfficeWorkspaceItem[]>(initialWorkspaceItems);
@@ -112,6 +134,7 @@ export function OfficeGame() {
     snapshot.skills.competence >= nextPromotion.competence &&
     snapshot.reputation >= nextPromotion.reputation &&
     firstAssignmentDone;
+  const alphaChapterComplete = promotionCompleted && v6.bossResolved;
 
   const companyStars = getCompanyStars(snapshot.company.level, snapshot.company.maxLevel);
   const dailyDone = snapshot.daily.progress >= snapshot.daily.target;
@@ -130,7 +153,7 @@ export function OfficeGame() {
       if (raw) {
         const parsed: unknown = JSON.parse(raw);
         if (isOfficePersistedState(parsed)) {
-          setSnapshot({
+          const hydratedSnapshot: OfficeSnapshot = {
             ...initialOfficeSnapshot,
             ...parsed.snapshot,
             skills: { ...initialOfficeSnapshot.skills, ...parsed.snapshot.skills },
@@ -140,35 +163,40 @@ export function OfficeGame() {
               ...parsed.snapshot.firstAssignment,
             },
             company: { ...initialOfficeSnapshot.company, ...parsed.snapshot.company },
-          });
+          };
+          const persistedStory = (parsed as typeof parsed & { story?: OfficeStoryState }).story;
+          const persistedV6 = (parsed as typeof parsed & { v6?: V6State }).v6;
+          const hydratedV6: V6State = persistedV6
+            ? {
+                ...initialV6State,
+                ...persistedV6,
+                ownedItemIds: Array.isArray(persistedV6.ownedItemIds)
+                  ? persistedV6.ownedItemIds
+                  : initialV6State.ownedItemIds,
+                equipped: { ...initialV6State.equipped, ...persistedV6.equipped },
+              }
+            : initialV6State;
+          const hydratedStory: OfficeStoryState = persistedStory
+            ? {
+                ...initialOfficeStoryState,
+                ...persistedStory,
+                completedEvents: Array.isArray(persistedStory.completedEvents)
+                  ? persistedStory.completedEvents
+                  : [],
+                completedPranks: Array.isArray(persistedStory.completedPranks)
+                  ? persistedStory.completedPranks
+                  : [],
+              }
+            : initialOfficeStoryState;
+
+          setSnapshot(hydratedSnapshot);
           if (parsed.workspace.length === initialWorkspaceItems.length) {
             setWorkspace(parsed.workspace);
           }
           setEnergyNextAt(parsed.energyNextAt);
-          const persistedStory = (parsed as typeof parsed & { story?: OfficeStoryState }).story;
-          const persistedV6 = (parsed as typeof parsed & { v6?: V6State }).v6;
-          if (persistedV6) {
-            setV6({
-              ...initialV6State,
-              ...persistedV6,
-              ownedItemIds: Array.isArray(persistedV6.ownedItemIds)
-                ? persistedV6.ownedItemIds
-                : initialV6State.ownedItemIds,
-              equipped: { ...initialV6State.equipped, ...persistedV6.equipped },
-            });
-          }
-          if (persistedStory) {
-            setStory({
-              ...initialOfficeStoryState,
-              ...persistedStory,
-              completedEvents: Array.isArray(persistedStory.completedEvents)
-                ? persistedStory.completedEvents
-                : [],
-              completedPranks: Array.isArray(persistedStory.completedPranks)
-                ? persistedStory.completedPranks
-                : [],
-            });
-          }
+          setV6(hydratedV6);
+          setStory(hydratedStory);
+          setNotice(getOfficeProgressNotice(hydratedSnapshot, hydratedStory, hydratedV6));
         }
       }
     } catch {
@@ -752,7 +780,11 @@ export function OfficeGame() {
 
   const requestPromotion = () => {
     if (promotionCompleted) {
-      setNotice('Это повышение уже получено. Следующая карьерная ступень появится позже.');
+      setNotice(
+        v6.bossResolved
+          ? 'Первая альфа-глава завершена: босс пройден, повышение получено.'
+          : 'Повышение уже получено. Заверши первое испытание руководителя, чтобы закрыть альфа-главу.',
+      );
       return;
     }
 
@@ -770,7 +802,11 @@ export function OfficeGame() {
       motivation: Math.min(100, current.motivation + 10),
     }));
     showFeedback('Повышение! Зарплата 50 000 ₽', 'money');
-    setNotice('Повышение получено. В резюме появилась новая строчка, а зарплата наконец выросла.');
+    setNotice(
+      v6.bossResolved
+        ? 'Повышение получено. Первая альфа-глава завершена.'
+        : 'Повышение получено. Осталось закрыть первое испытание руководителя.',
+    );
   };
 
   const resetPrototype = () => {
@@ -818,11 +854,15 @@ export function OfficeGame() {
                 <span>ур. {snapshot.level} · {snapshot.role}</span>
               </div>
               <small className="office-player-goal">
-                Цель: {promotionCompleted
-                  ? `закрепиться в роли «${snapshot.role}»`
-                  : promotionReady
-                    ? `можно просить повышение «${nextPromotion.role}»`
-                    : `${nextPromotion.role} · комп. ${snapshot.skills.competence}/${nextPromotion.competence} · реп. ${snapshot.reputation}/${nextPromotion.reputation}`}
+                Цель: {alphaChapterComplete
+                  ? 'альфа-глава 1 завершена'
+                  : promotionCompleted
+                    ? 'пройти первое испытание руководителя'
+                    : v6.bossResolved
+                      ? `получить повышение «${nextPromotion.role}»`
+                      : promotionReady
+                        ? `можно просить повышение «${nextPromotion.role}»`
+                        : `${nextPromotion.role} · комп. ${snapshot.skills.competence}/${nextPromotion.competence} · реп. ${snapshot.reputation}/${nextPromotion.reputation}`}
               </small>
             </div>
             <div className="office-player-xp-row">
@@ -1083,8 +1123,14 @@ export function OfficeGame() {
                 <span className={dailyDone ? 'is-done' : ''}>
                   День: {snapshot.daily.progress}/{snapshot.daily.target}
                 </span>
-                <span className={promotionReady || promotionCompleted ? 'is-done' : ''}>
-                  Далее: {promotionCompleted ? snapshot.role : nextPromotion.role}
+                <span className={alphaChapterComplete || promotionReady || promotionCompleted || v6.bossResolved ? 'is-done' : ''}>
+                  Далее: {alphaChapterComplete
+                    ? 'Глава 1 завершена'
+                    : promotionCompleted
+                      ? 'Первый босс'
+                      : v6.bossResolved
+                        ? 'Повышение'
+                        : nextPromotion.role}
                 </span>
               </div>
             </section>
@@ -1140,16 +1186,26 @@ export function OfficeGame() {
 
 
 
-            <section className="office-promotion-compact">
+            <section className={`office-promotion-compact ${alphaChapterComplete ? 'is-alpha-complete' : ''}`}>
               <div className="office-card-head">
-                <h3>Следующее повышение</h3>
-                <button type="button" onClick={() => setActiveView('career')}>К карьере »</button>
+                <h3>{alphaChapterComplete ? 'Альфа · Глава 1' : 'Первое повышение'}</h3>
+                <button type="button" onClick={() => setActiveView(alphaChapterComplete ? 'achievements' : 'career')}>
+                  {alphaChapterComplete ? 'Итоги »' : 'К карьере »'}
+                </button>
               </div>
-              <strong>{promotionCompleted ? snapshot.role : nextPromotion.role}</strong>
-              <div className="office-promotion-mini-bars">
-                <Requirement label="Компетентность" value={`${snapshot.skills.competence}/${nextPromotion.competence}`} progress={snapshot.skills.competence / nextPromotion.competence * 100} />
-                <Requirement label="Репутация" value={`${snapshot.reputation}/${nextPromotion.reputation}`} progress={snapshot.reputation / nextPromotion.reputation * 100} />
-              </div>
+              <strong>{alphaChapterComplete ? 'Глава завершена' : promotionCompleted ? snapshot.role : nextPromotion.role}</strong>
+              {alphaChapterComplete ? (
+                <div className="office-alpha-chapter-checks" aria-label="Прогресс первой альфа-главы">
+                  <span className="done"><OfficeIcon name="task" /> Первый день</span>
+                  <span className="done"><OfficeIcon name="achievement" /> Первый босс</span>
+                  <span className="done"><OfficeIcon name="career" /> Повышение</span>
+                </div>
+              ) : (
+                <div className="office-promotion-mini-bars">
+                  <Requirement label="Компетентность" value={`${snapshot.skills.competence}/${nextPromotion.competence}`} progress={snapshot.skills.competence / nextPromotion.competence * 100} />
+                  <Requirement label="Репутация" value={`${snapshot.reputation}/${nextPromotion.reputation}`} progress={snapshot.reputation / nextPromotion.reputation * 100} />
+                </div>
+              )}
             </section>
 
             <section className="office-news">
@@ -2032,9 +2088,9 @@ function OfficeBossesView(props: {
         ? 'Переговоры'
         : 'Напор';
   const futureBosses = [
-    ['HR-партнёр', 'Испытание коммуникации', 'ур. 8'],
-    ['Директор направления', 'Испытание авторитета', 'ур. 15'],
-    ['Генеральный директор', 'Финальная защита результата', 'ур. 25'],
+    ['HR-партнёр', 'Испытание коммуникации', 'после альфы'],
+    ['Директор направления', 'Испытание авторитета', 'после альфы'],
+    ['Генеральный директор', 'Финальная защита результата', 'после альфы'],
   ] as const;
 
   return (
@@ -2096,7 +2152,10 @@ function OfficeBossesView(props: {
         </article>
 
         <aside className="office-v65-boss-road">
-          <h3>Карьерные испытания</h3>
+          <div className="office-alpha-roadmap-head">
+            <h3>Карьерные испытания</h3>
+            <span>Roadmap после главы 1</span>
+          </div>
           <div className="office-v65-boss-road-item current"><span>01</span><div><b>{boss.name}</b><small>Руководитель отдела</small></div><em>{snapshot.level >= 3 ? 'сейчас' : 'ур. 3'}</em></div>
           {futureBosses.map(([name, description, requirement], index) => (
             <div className="office-v65-boss-road-item locked" key={name}>
