@@ -685,6 +685,67 @@ try {
   await page.waitForTimeout(50);
   assert.match(await page.locator('.office-profile-name').textContent(), /Стажёр/i);
 
+  // A completely fresh player must be able to finish chapter 1 in one intentional session
+  // without editing storage, waiting for energy regeneration, or using hidden actions.
+  await page.waitForTimeout(120);
+  assert.match(await page.locator('.office-energy').textContent(), /12 \(\+1\)/);
+
+  await page.locator('.office-side-nav').getByRole('button', { name: /Характеристики/i }).click();
+  await page.getByRole('heading', { name: 'Характеристики' }).waitFor();
+  const competenceCard = page.locator('.office-v67-primary-grid>article').filter({ hasText: 'Компетентность' });
+  const competenceUpgrade = competenceCard.getByRole('button');
+  await competenceUpgrade.click();
+  await competenceUpgrade.click();
+  await competenceUpgrade.click();
+  assert.match(await competenceCard.textContent(), /4/);
+  await page.getByRole('button', { name: '← В офис' }).click();
+
+  await page.locator('.office-world-nav').getByRole('button', { name: /Задачи/i }).click();
+  await page.getByRole('heading', { name: 'Задачи' }).waitFor();
+  for (const choiceName of [/Разобрать по приоритетам/, /Исправить самому/, /Показать переписку/]) {
+    await page.getByRole('button', { name: /^Выполнить$/ }).first().click();
+    const dialog = page.getByRole('dialog');
+    await dialog.waitFor();
+    await dialog.getByRole('button', { name: choiceName }).click();
+    await dialog.waitFor({ state: 'detached' });
+  }
+
+  await page.locator('.office-world-nav').getByRole('button', { name: /Боссы/i }).click();
+  await page.getByRole('heading', { name: 'Боссы' }).waitFor();
+  await page.getByRole('button', { name: /Начать переговоры/ }).click();
+  const cleanBossDialog = page.getByRole('dialog', { name: /Босс: Сергей Петрович/ });
+  await cleanBossDialog.waitFor();
+  for (let hit = 0; hit < 6 && await cleanBossDialog.count(); hit += 1) {
+    await cleanBossDialog.getByRole('button', { name: /Аргументировать/ }).click();
+    await page.waitForTimeout(70);
+    if (await cleanBossDialog.count() === 0) break;
+  }
+  await cleanBossDialog.waitFor({ state: 'detached' });
+
+  await page.locator('.office-world-nav').getByRole('button', { name: /Задачи/i }).click();
+  await page.getByRole('heading', { name: 'Задачи' }).waitFor();
+  const approveAction = page.locator('.office-v65-task-card').filter({ hasText: 'Согласовать' }).getByRole('button');
+  for (let i = 0; i < 3; i += 1) {
+    await approveAction.click();
+    await page.waitForTimeout(650);
+  }
+  await page.getByRole('button', { name: '← Вернуться в офис' }).click();
+
+  const cleanPromotion = page.getByRole('button', { name: 'Попросить повышение' });
+  await cleanPromotion.waitFor();
+  await cleanPromotion.click();
+  await page.waitForTimeout(80);
+  assert.equal(await page.locator('.office-promotion-compact.is-alpha-complete').count(), 1);
+  assert.match(await page.locator('.office-player-main').textContent(), /Младший специалист/i);
+  assert.match(await page.locator('.office-energy').textContent(), /1 \(\+1\)/);
+  assert.match(await page.locator('.office-company-card').textContent(), /50[\s\u00a0]000 ₽/);
+  await page.screenshot({ path: output + '/home-v616-clean-alpha-complete-1366x768.png', fullPage: false });
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.locator('.office-game').waitFor();
+  assert.equal(await page.locator('.office-promotion-compact.is-alpha-complete').count(), 1);
+  assert.match(await page.locator('.office-player-main').textContent(), /Младший специалист/i);
+
   // Corrupted local storage must recover to a playable initial state instead of crashing hydration.
   await page.evaluate(() => localStorage.setItem('4rrum.office.v4_1', '{broken'));
   await page.reload({ waitUntil: 'networkidle' });
@@ -694,7 +755,7 @@ try {
   assert(recoveredState && recoveredState.includes('"version":1'));
 
   assert.deepEqual(pageErrors, []);
-  console.log('Office v6.15 alpha interactions: promotion helper/action, company office feedback, chapter completion, persistence and full desktop regression passed');
+  console.log('Office v6.16 first session: clean chapter completion without waiting, promotion guidance, persistence and full desktop regression passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
