@@ -185,11 +185,22 @@ try {
   assert.match(await page.locator('.office-player-goal').textContent(), /Цель:/);
   assert.equal(await page.locator('.office-v68-scene-status').count(), 1);
   assert.equal(await page.locator('.office-v68-scene-status>span').count(), 3);
+  assert.equal(await page.locator('.office-v614-office-badge').count(), 1);
+  assert.equal(await page.locator('.office-scene').getAttribute('data-company'), 'potential');
+  assert.match(await page.locator('.office-v614-office-badge').textContent(), /Потенциал\+/i);
   assert.equal(await page.locator('.office-v6-equipment-slot').count(), 0);
   assert.equal(await page.locator('.office-v6-bottom').count(), 0);
   assert.equal(await page.locator('.office-equipment-modal').count(), 0);
   assert.equal(await page.locator('.office-hotspot-zone').count(), 0);
   assert.equal(await page.locator('.office-scene-shape').count(), 8);
+
+  // The promotion card must be actionable even before requirements are complete.
+  assert.match(await page.locator('.office-v614-promotion-action').textContent(), /Что осталось/i);
+  await page.locator('.office-v614-promotion-action').click();
+  await page.getByRole('dialog', { name: 'Подготовка к повышению' }).waitFor();
+  assert.equal(await page.locator('.office-promotion-todo>div').count(), 3);
+  await page.keyboard.press('Escape');
+  await page.getByRole('dialog', { name: 'Подготовка к повышению' }).waitFor({ state: 'detached' });
   assert.equal(
     await page.locator('.office-scene-shape').evaluateAll((nodes) =>
       nodes.every((node) => !(node.textContent ?? '').trim()),
@@ -581,6 +592,48 @@ try {
 
   await page.getByRole('button', { name: '← В офис' }).click();
 
+  // Complete the first alpha career loop through the actual UI.
+  await page.evaluate(() => {
+    const raw = localStorage.getItem('4rrum.office.v4_1');
+    if (!raw) throw new Error('Missing Office save before alpha-loop seed');
+    const state = JSON.parse(raw);
+    state.snapshot.level = Math.max(5, state.snapshot.level ?? 1);
+    state.snapshot.skills.competence = Math.max(5, state.snapshot.skills?.competence ?? 0);
+    state.snapshot.reputation = Math.max(30, state.snapshot.reputation ?? 0);
+    state.snapshot.firstAssignment.progress = state.snapshot.firstAssignment.target;
+    state.v6.bossResolved = true;
+    state.story.bossResolved = true;
+    localStorage.setItem('4rrum.office.v4_1', JSON.stringify(state));
+  });
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.locator('.office-game').waitFor();
+
+  assert.match(await page.locator('.office-v614-promotion-action').textContent(), /Попросить повышение/i);
+  await page.locator('.office-v614-promotion-action').click();
+  await page.waitForTimeout(80);
+  assert.match(await page.locator('.office-profile-name').textContent(), /Младший специалист/i);
+  assert.equal(await page.locator('.office-v614-alpha-complete').count(), 1);
+  assert.match(await page.locator('.office-player-goal').textContent(), /альфа-цикл завершён/i);
+  assert.match(await page.locator('.office-v68-scene-status').textContent(), /Альфа: карьерный этап пройден/i);
+
+  // Changing company must visibly change the home office and persist after reload.
+  await page.locator('.office-world-nav').getByRole('button', { name: /Компания/i }).click();
+  await page.getByRole('heading', { name: 'Меняй офис вместе с карьерой' }).waitFor();
+  const pixelSoft = page.locator('.office-v64-company-grid>article[data-company="pixelsoft"]');
+  await pixelSoft.getByRole('button', { name: 'Перейти в компанию' }).click();
+  await page.getByRole('button', { name: '← В офис' }).click();
+  assert.equal(await page.locator('.office-scene').getAttribute('data-company'), 'pixelsoft');
+  assert.match(await page.locator('.office-v614-office-badge').textContent(), /PixelSoft/i);
+  assert.match(await page.locator('.office-v614-office-badge').textContent(), /Светлый open space/i);
+  assert.match(await page.locator('.office-company-card').textContent(), /PixelSoft/i);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.locator('.office-game').waitFor();
+  assert.equal(await page.locator('.office-scene').getAttribute('data-company'), 'pixelsoft');
+  assert.match(await page.locator('.office-v614-office-badge').textContent(), /PixelSoft/i);
+  assert.equal(await page.locator('.office-v614-alpha-complete').count(), 1);
+  await page.screenshot({ path: output + '/home-v614-alpha-complete-pixelsoft-1366x768.png', fullPage: false });
+
   // Reset is a real destructive action and must clear the hydrated progression safely.
   page.once('dialog', (dialog) => dialog.accept());
   await page.getByRole('button', { name: 'Сбросить прогресс' }).click();
@@ -596,7 +649,7 @@ try {
   assert(recoveredState && recoveredState.includes('"version":1'));
 
   assert.deepEqual(pageErrors, []);
-  console.log('Office v6.13 visual QA: readability floors, internal clipping checks, interaction hardening and full desktop viewport matrix passed');
+  console.log('Office v6.14 alpha loop: promotion helper, first career milestone, company-aware office, persistence and full desktop regression passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
