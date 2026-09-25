@@ -746,7 +746,53 @@ try {
   assert.equal(await page.locator('.office-promotion-compact.is-alpha-complete').count(), 1);
   assert.match(await page.locator('.office-player-main').textContent(), /Младший специалист/i);
 
-  // Corrupted local storage must recover to a playable initial state instead of crashing hydration.
+  // Structurally valid but hostile/stale save values must be normalized instead of poisoning the UI.
+  await page.evaluate(() => {
+    const key = '4rrum.office.v4_1';
+    const state = JSON.parse(localStorage.getItem(key));
+    state.snapshot.energy = -999;
+    state.snapshot.money = -50;
+    state.snapshot.reputation = 999;
+    state.snapshot.skills.competence = -10;
+    state.snapshot.daily.target = 0;
+    state.snapshot.daily.progress = 999;
+    state.snapshot.company.level = -5;
+    state.energyNextAt = -123;
+    state.v6.gender = 'robot';
+    state.v6.archetypeId = 'unknown';
+    state.v6.careerBranch = 'chaos';
+    state.v6.companyId = 'missing-company';
+    state.v6.bossHp = 9999;
+    state.v6.ownedItemIds = ['not-a-real-item'];
+    state.v6.equipped = { pc: 'not-a-real-item' };
+    localStorage.setItem(key, JSON.stringify(state));
+  });
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.locator('.office-game').waitFor();
+  await assertOneScreen('home after structured save normalization 1366x768');
+  await page.waitForTimeout(100);
+
+  const normalizedStateRaw = await page.evaluate(() => localStorage.getItem('4rrum.office.v4_1'));
+  assert(normalizedStateRaw);
+  const normalizedState = JSON.parse(normalizedStateRaw);
+  assert.equal(normalizedState.snapshot.energy, 0);
+  assert.equal(normalizedState.snapshot.money, 0);
+  assert.equal(normalizedState.snapshot.reputation, 100);
+  assert.equal(normalizedState.snapshot.skills.competence, 0);
+  assert.equal(normalizedState.snapshot.daily.target, 1);
+  assert.equal(normalizedState.snapshot.daily.progress, 1);
+  assert.equal(normalizedState.snapshot.company.level, 1);
+  assert.equal(normalizedState.energyNextAt === null || normalizedState.energyNextAt > 0, true);
+  assert.equal(normalizedState.v6.gender, 'male');
+  assert.equal(normalizedState.v6.archetypeId, 'tech');
+  assert.equal(normalizedState.v6.careerBranch, 'general');
+  assert.equal(normalizedState.v6.companyId, 'potential');
+  assert.equal(normalizedState.v6.bossHp, 100);
+  assert(normalizedState.v6.ownedItemIds.includes('pc-old'));
+  assert.equal(normalizedState.v6.ownedItemIds.includes('not-a-real-item'), false);
+  assert.notEqual(normalizedState.v6.equipped.pc, 'not-a-real-item');
+
+  // Malformed JSON must still recover to a playable initial state.
   await page.evaluate(() => localStorage.setItem('4rrum.office.v4_1', '{broken'));
   await page.reload({ waitUntil: 'networkidle' });
   await page.locator('.office-game').waitFor();
@@ -755,7 +801,7 @@ try {
   assert(recoveredState && recoveredState.includes('"version":1'));
 
   assert.deepEqual(pageErrors, []);
-  console.log('Office v6.16 first session: clean chapter completion without waiting, promotion guidance, persistence and full desktop regression passed');
+  console.log('Office v6.17 alpha resilience: clean first session, normalized saves, single boss system, persistence and full desktop regression passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
