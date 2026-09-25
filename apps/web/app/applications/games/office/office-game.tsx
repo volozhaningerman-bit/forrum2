@@ -683,7 +683,7 @@ export function OfficeGame() {
   const selectCareerBranch = (careerBranch: V6CareerBranch) => {
     if (v6.careerBranch !== 'general' && v6.careerBranch !== careerBranch) {
       showFeedback('Ветка уже выбрана', 'warning');
-      setNotice('Карьерная специализация уже выбрана. Смена ветки позже будет отдельной механикой переподготовки.');
+      setNotice('Карьерная специализация уже выбрана. В текущем альфа-цикле выбранная ветка фиксируется.');
       return;
     }
     setV6((current) => ({ ...current, careerBranch }));
@@ -1844,7 +1844,7 @@ function OfficeAchievementsView({
         icon="achievement"
         label="Ближайшее достижение"
         title={nextAchievement ? nextAchievement[0] : 'Все текущие достижения собраны'}
-        meta={nextAchievement ? nextAchievement[4] : 'Ждём следующий набор целей'}
+        meta={nextAchievement ? nextAchievement[4] : 'Текущий альфа-набор целей полностью закрыт'}
         tone={nextAchievement ? 'gold' : 'green'}
       />
 
@@ -2062,9 +2062,9 @@ function OfficeBossesView(props: {
         ? 'Переговоры'
         : 'Напор';
   const futureBosses = [
-    ['HR-партнёр', 'Испытание коммуникации', 'ур. 8'],
-    ['Директор направления', 'Испытание авторитета', 'ур. 15'],
-    ['Генеральный директор', 'Финальная защита результата', 'ур. 25'],
+    ['HR-партнёр', 'Следующее испытание коммуникации', 'альфа+'],
+    ['Директор направления', 'Следующее испытание авторитета', 'альфа+'],
+    ['Генеральный директор', 'Финальная защита результата', 'альфа+'],
   ] as const;
 
   return (
