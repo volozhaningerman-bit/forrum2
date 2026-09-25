@@ -9596,3 +9596,1141 @@ body:has(.office-page) .app-page-frame{
     min-height:82px!important;
   }
 }
+
+
+/* ==========================================================================
+   OFFICE v6.10 — ALPHA POLISH
+   Final readability / hierarchy pass before external alpha testing.
+   ========================================================================== */
+
+/* --- Clear split: character progression on the left, game world below --- */
+.office-side-nav{
+  background:linear-gradient(#111314,#0d0f10)!important;
+  border-right-color:#2e3231!important;
+}
+
+.office-side-nav>button{
+  min-height:56px!important;
+  border-color:#323534!important;
+  background:#1c1f20!important;
+  box-shadow:none!important;
+}
+
+.office-side-nav>button:hover{
+  background:#242526!important;
+  border-color:#4a443b!important;
+}
+
+.office-side-nav>button.active{
+  background:linear-gradient(90deg,#4b301e,#28221d)!important;
+  border-color:#9c602f!important;
+  box-shadow:inset 3px 0 #df8336!important;
+}
+
+.office-side-nav>button>small{
+  max-width:64px!important;
+  font-size:8.5px!important;
+  line-height:1.12!important;
+  color:#bbb4a8!important;
+}
+
+.office-side-nav>button.active>small{
+  color:#f0c990!important;
+}
+
+.office-world-nav{
+  border-top:2px solid #6b482c!important;
+  background:
+    radial-gradient(circle at 50% 0%,rgba(207,126,52,.08),transparent 42%),
+    linear-gradient(#151718,#0d0f10)!important;
+}
+
+.office-world-nav>button{
+  min-height:44px!important;
+  border-color:#41423f!important;
+  background:linear-gradient(#292b2b,#1d1f20)!important;
+}
+
+.office-world-nav>button:hover{
+  background:linear-gradient(#34302b,#222323)!important;
+}
+
+.office-world-nav>button.is-active{
+  border-color:#c07333!important;
+  background:
+    linear-gradient(180deg,rgba(213,128,53,.20),transparent 72%),
+    #2d251f!important;
+}
+
+.office-world-nav b{
+  font-size:11.5px!important;
+  line-height:1!important;
+}
+
+.office-world-nav small{
+  margin-top:3px!important;
+  font-size:7.4px!important;
+  line-height:1.08!important;
+  color:#8f8980!important;
+}
+
+.office-world-nav .office-icon{
+  width:27px!important;
+  height:27px!important;
+}
+
+/* --- Shared next-step bar: every screen answers "what now?" -------------- */
+.office-v610-next-goal{
+  min-width:0;
+  height:42px;
+  display:grid;
+  grid-template-columns:29px minmax(0,1fr) auto;
+  align-items:center;
+  gap:8px;
+  padding:5px 9px;
+  border:1px solid #5a4938;
+  background:linear-gradient(90deg,#28231e,#1b1e1f);
+  overflow:hidden;
+}
+
+.office-v610-next-goal>.office-icon,
+.office-v610-next-goal>.v6-icon{
+  width:25px;
+  height:25px;
+  color:#d3a264;
+}
+
+.office-v610-next-goal>div{
+  min-width:0;
+}
+
+.office-v610-next-goal small{
+  display:block;
+  color:#9b7a57;
+  font-size:7px!important;
+  line-height:1;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+.office-v610-next-goal strong{
+  display:block;
+  margin-top:3px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#e4c494;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:11px!important;
+  line-height:1;
+}
+
+.office-v610-next-goal>span{
+  max-width:500px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#aaa195;
+  font-size:8px!important;
+  line-height:1.15;
+  text-align:right;
+}
+
+.office-v610-next-goal.tone-green{
+  border-color:#465843;
+  background:linear-gradient(90deg,#1d281d,#1a1e1c);
+}
+
+.office-v610-next-goal.tone-green>.office-icon,
+.office-v610-next-goal.tone-green>.v6-icon,
+.office-v610-next-goal.tone-green strong{
+  color:#a7c49a!important;
+}
+
+.office-v610-next-goal.tone-blue{
+  border-color:#3c515d;
+  background:linear-gradient(90deg,#1c272d,#1a1e20);
+}
+
+.office-v610-next-goal.tone-blue>.office-icon,
+.office-v610-next-goal.tone-blue>.v6-icon,
+.office-v610-next-goal.tone-blue strong{
+  color:#9fc2d3!important;
+}
+
+.office-v610-next-goal.tone-red{
+  border-color:#68473a;
+  background:linear-gradient(90deg,#2c211d,#1c1d1d);
+}
+
+.office-v610-next-goal.tone-red>.office-icon,
+.office-v610-next-goal.tone-red>.v6-icon,
+.office-v610-next-goal.tone-red strong{
+  color:#d89176!important;
+}
+
+/* --- Readability floor inside game screens ------------------------------- */
+.office-v67-dev-head small,
+.office-v65-screen-head small,
+.office-v6-page-header small{
+  font-size:8px!important;
+}
+
+.office-v67-dev-head p,
+.office-v65-screen-head p,
+.office-v6-page-header p{
+  font-size:9px!important;
+  line-height:1.35!important;
+  color:#a79f94!important;
+}
+
+.office-v67-dev-head h2,
+.office-v65-screen-head h2,
+.office-v6-page-header h2{
+  font-size:23px!important;
+}
+
+.office-v67-dev-head-actions button,
+.office-v65-screen-head>button,
+.office-v6-page-header>button{
+  font-size:8px!important;
+}
+
+.office-v67-owned-counter span,
+.office-v67-point-bank span{
+  font-size:7px!important;
+}
+
+.office-v67-owned-counter b,
+.office-v67-point-bank b{
+  font-size:14px!important;
+}
+
+/* --- Characteristics ----------------------------------------------------- */
+.office-v67-characteristics{
+  grid-template-rows:auto 42px 124px 44px minmax(0,1fr)!important;
+  gap:7px!important;
+}
+
+.office-v67-primary-grid>article{
+  grid-template-columns:48px minmax(0,1fr) 58px!important;
+}
+
+.office-v67-primary-copy small{
+  font-size:7px!important;
+}
+
+.office-v67-primary-copy h3{
+  font-size:14px!important;
+}
+
+.office-v67-primary-copy p{
+  font-size:8px!important;
+  color:#9f978c!important;
+}
+
+.office-v67-stat-value strong{
+  font-size:22px!important;
+}
+
+.office-v67-stat-value em{
+  font-size:7px!important;
+}
+
+.office-v67-primary-grid>article>button{
+  font-size:12px!important;
+}
+
+.office-v67-primary-grid>article>button span{
+  font-size:6.5px!important;
+}
+
+.office-v68-build-direction{
+  height:44px!important;
+  min-height:44px!important;
+}
+
+.office-v68-build-direction small{
+  font-size:6.8px!important;
+}
+
+.office-v68-build-direction strong{
+  font-size:12px!important;
+}
+
+.office-v68-build-direction>span,
+.office-v68-build-direction>em{
+  font-size:7.5px!important;
+}
+
+.office-v67-derived-wrap>header small{
+  font-size:6.8px!important;
+}
+
+.office-v67-derived-wrap>header h3{
+  font-size:13px!important;
+}
+
+.office-v67-derived-wrap>header>span{
+  font-size:7.3px!important;
+}
+
+.office-v67-derived-grid span{
+  font-size:8.3px!important;
+}
+
+.office-v67-derived-grid b{
+  font-size:12px!important;
+}
+
+.office-v67-derived-grid p{
+  font-size:7.5px!important;
+  color:#918a81!important;
+}
+
+/* --- Skills -------------------------------------------------------------- */
+.office-v67-skills{
+  grid-template-rows:auto 42px minmax(0,1fr) 40px!important;
+}
+
+.office-v67-skill-board h3{
+  font-size:13px!important;
+}
+
+.office-v67-skill-board small{
+  font-size:7px!important;
+}
+
+.office-v67-skill-board p{
+  font-size:8px!important;
+  color:#9b948a!important;
+}
+
+.office-v67-skill-source span{
+  font-size:7px!important;
+}
+
+.office-v67-skill-badge span{
+  font-size:8px!important;
+}
+
+.office-v68-skill-focus>small{
+  font-size:7px!important;
+}
+
+.office-v68-skill-focus>h3{
+  font-size:15px!important;
+}
+
+.office-v68-skill-focus b{
+  font-size:9px!important;
+}
+
+.office-v68-skill-focus em,
+.office-v68-skill-focus footer span{
+  font-size:7.3px!important;
+}
+
+.office-v68-skill-focus footer strong{
+  font-size:8px!important;
+}
+
+.office-v67-skill-note strong{
+  font-size:9px!important;
+}
+
+.office-v67-skill-note span{
+  font-size:7.5px!important;
+}
+
+/* --- Talents ------------------------------------------------------------- */
+.office-v67-talents{
+  grid-template-rows:auto 42px minmax(0,1fr) 48px!important;
+  gap:7px!important;
+}
+
+.office-v67-talent-columns>article{
+  border-color:#41423f!important;
+}
+
+.office-v67-talent-columns>article.active{
+  border-color:#b36a31!important;
+  box-shadow:inset 0 2px #d98236!important;
+}
+
+.office-v67-talent-columns h3{
+  font-size:15px!important;
+}
+
+.office-v67-talent-columns p{
+  font-size:8px!important;
+  color:#999188!important;
+}
+
+.office-v67-talent-columns header small{
+  font-size:7px!important;
+}
+
+.office-v67-talent-list b{
+  font-size:9.5px!important;
+}
+
+.office-v67-talent-list small{
+  font-size:7.2px!important;
+}
+
+.office-v67-talent-list em{
+  font-size:7px!important;
+}
+
+.office-v67-talent-columns>article>footer{
+  font-size:7.5px!important;
+}
+
+.office-v69-talent-summary{
+  height:48px!important;
+}
+
+.office-v69-talent-summary small{
+  font-size:6.5px!important;
+}
+
+.office-v69-talent-summary strong{
+  font-size:9px!important;
+}
+
+.office-v69-talent-summary p{
+  font-size:7.2px!important;
+}
+
+/* --- Inventory ----------------------------------------------------------- */
+.office-v67-inventory{
+  grid-template-rows:auto 42px 42px minmax(0,1fr)!important;
+}
+
+.office-v68-inventory-summary span{
+  font-size:7.3px!important;
+}
+
+.office-v68-inventory-summary b{
+  font-size:12px!important;
+}
+
+.office-v68-inventory-summary p{
+  font-size:7.5px!important;
+}
+
+.office-v67-inventory-grid header small{
+  font-size:6.8px!important;
+}
+
+.office-v67-inventory-grid header strong{
+  font-size:9px!important;
+}
+
+.office-v67-inventory-grid>article>p{
+  font-size:7.3px!important;
+  color:#928a80!important;
+}
+
+.office-v67-inventory-items>span{
+  font-size:7.2px!important;
+}
+
+.office-v67-inventory-items>span small,
+.office-v67-inventory-items em{
+  font-size:6.5px!important;
+}
+
+/* --- Achievements -------------------------------------------------------- */
+.office-v67-achievements{
+  grid-template-rows:auto 42px 44px minmax(0,1fr)!important;
+}
+
+.office-v68-achievement-progress span{
+  font-size:7.5px!important;
+}
+
+.office-v68-achievement-progress b{
+  font-size:13px!important;
+}
+
+.office-v68-achievement-progress p{
+  font-size:7.5px!important;
+}
+
+.office-v67-achievement-grid>article{
+  grid-template-columns:52px minmax(0,1fr)!important;
+}
+
+.office-v67-achievement-grid>article.done{
+  border-color:#52654d!important;
+}
+
+.office-v67-achievement-grid>article>small{
+  font-size:7px!important;
+}
+
+.office-v67-achievement-grid h3{
+  font-size:13px!important;
+}
+
+.office-v67-achievement-grid p{
+  font-size:7.8px!important;
+  color:#9b948a!important;
+}
+
+.office-v67-achievement-grid footer span{
+  font-size:8px!important;
+}
+
+/* --- Events -------------------------------------------------------------- */
+.office-v67-events{
+  grid-template-rows:auto 42px minmax(0,1fr)!important;
+}
+
+.office-v67-event-feed article small{
+  font-size:7px!important;
+}
+
+.office-v67-event-feed article strong{
+  font-size:11px!important;
+}
+
+.office-v67-event-feed article p{
+  font-size:7.8px!important;
+  color:#9e978d!important;
+}
+
+.office-v67-event-feed article em{
+  font-size:6.8px!important;
+}
+
+.office-v67-event-feed article>span{
+  font-size:7px!important;
+}
+
+.office-v67-event-goals>article small{
+  font-size:7px!important;
+}
+
+.office-v67-event-goals>article h3{
+  font-size:14px!important;
+}
+
+.office-v67-event-goals>article p{
+  font-size:7.5px!important;
+}
+
+.office-v69-event-next small{
+  font-size:6.5px!important;
+}
+
+.office-v69-event-next strong{
+  font-size:8.5px!important;
+}
+
+.office-v69-event-next button{
+  font-size:7.5px!important;
+}
+
+/* --- Tasks --------------------------------------------------------------- */
+.office-v65-tasks{
+  grid-template-rows:auto 42px 44px minmax(0,1fr) 42px!important;
+  gap:7px!important;
+}
+
+.office-v65-task-summary span{
+  font-size:7.5px!important;
+}
+
+.office-v65-task-summary b{
+  font-size:11px!important;
+}
+
+.office-v65-task-copy small{
+  font-size:7px!important;
+}
+
+.office-v65-task-copy h3{
+  font-size:15px!important;
+}
+
+.office-v65-task-copy p{
+  font-size:8px!important;
+  color:#9f978c!important;
+}
+
+.office-v65-task-tags span{
+  font-size:7px!important;
+}
+
+.office-v65-task-action span{
+  font-size:7px!important;
+}
+
+.office-v65-task-action b{
+  font-size:10px!important;
+}
+
+.office-v65-task-action button{
+  font-size:8px!important;
+}
+
+.office-v65-task-foot strong{
+  font-size:9px!important;
+}
+
+.office-v65-task-foot span{
+  font-size:7.3px!important;
+}
+
+/* --- Bosses: decisions must scan in one second --------------------------- */
+.office-v65-bosses{
+  grid-template-rows:auto 42px minmax(0,1fr)!important;
+}
+
+.office-v65-boss-copy>small{
+  font-size:7px!important;
+}
+
+.office-v65-boss-copy h3{
+  font-size:27px!important;
+}
+
+.office-v65-boss-copy>p{
+  font-size:8.5px!important;
+}
+
+.office-v65-boss-hp span,
+.office-v65-boss-reward span{
+  font-size:7px!important;
+}
+
+.office-v65-boss-hp b,
+.office-v65-boss-reward b{
+  font-size:9px!important;
+}
+
+.office-v65-boss-styles>div{
+  position:relative;
+  min-height:58px!important;
+  border-color:#41423f!important;
+}
+
+.office-v65-boss-styles>div.best{
+  border-color:#b56a31!important;
+  background:linear-gradient(#35291f,#23201d)!important;
+  box-shadow:inset 0 2px #da8338!important;
+}
+
+.office-v65-boss-styles>div.best::after{
+  content:"лучший";
+  position:absolute;
+  right:5px;
+  top:4px;
+  padding:2px 4px;
+  border:1px solid #91602f;
+  color:#e6b979;
+  font-size:6px;
+  text-transform:uppercase;
+}
+
+.office-v65-boss-styles span{
+  font-size:7px!important;
+}
+
+.office-v65-boss-styles b{
+  font-size:10px!important;
+  color:#d8b27d!important;
+}
+
+.office-v68-boss-advice span,
+.office-v68-boss-advice em{
+  font-size:7px!important;
+}
+
+.office-v68-boss-advice strong{
+  font-size:12px!important;
+}
+
+.office-v65-boss-copy>button{
+  font-size:9px!important;
+}
+
+.office-v65-boss-road h3{
+  font-size:15px!important;
+}
+
+.office-v65-boss-road-item b{
+  font-size:9.5px!important;
+}
+
+.office-v65-boss-road-item small{
+  font-size:7px!important;
+}
+
+/* --- Career: overview on map, details in the inspector ------------------- */
+.office-v6-career{
+  grid-template-rows:auto 42px 68px 40px 34px minmax(0,1fr)!important;
+  gap:6px!important;
+}
+
+.office-v6-branch-pick button{
+  min-height:68px!important;
+}
+
+.office-v6-branch-pick small{
+  font-size:6.8px!important;
+}
+
+.office-v6-branch-pick strong{
+  font-size:13px!important;
+}
+
+.office-v6-branch-pick span{
+  font-size:7.4px!important;
+  color:#9c948a!important;
+}
+
+.office-v6-branch-rewards b{
+  font-size:6.5px!important;
+}
+
+.office-v68-career-summary small{
+  font-size:6.5px!important;
+}
+
+.office-v68-career-summary strong{
+  font-size:9px!important;
+}
+
+.office-v68-career-summary p{
+  font-size:7px!important;
+}
+
+.office-v6-career-toolbar,
+.office-v6-career-toolbar button{
+  font-size:7px!important;
+}
+
+.office-v6-career-node{
+  width:164px!important;
+  min-height:76px!important;
+  padding:7px 8px!important;
+  display:grid!important;
+  grid-template-rows:auto auto auto auto!important;
+  gap:4px!important;
+  align-content:center!important;
+}
+
+.office-v6-career-node-top small{
+  max-width:92px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:6.8px!important;
+}
+
+.office-v6-career-node-top .status{
+  font-size:6px!important;
+}
+
+.office-v6-career-node>strong{
+  font-size:13px!important;
+  line-height:1.05!important;
+}
+
+.office-v6-career-node-meta span{
+  font-size:9px!important;
+  color:#e0b370!important;
+}
+
+.office-v6-career-node-meta em{
+  font-size:6.8px!important;
+}
+
+.office-v610-career-node-foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:5px;
+  padding-top:4px;
+  border-top:1px solid #363631;
+}
+
+.office-v610-career-node-foot span{
+  color:#817a70;
+  font-size:6.5px;
+}
+
+.office-v610-career-node-foot b{
+  color:#a98b66;
+  font-size:6.5px;
+  font-weight:500;
+}
+
+.office-v6-career-node.is-selected .office-v610-career-node-foot b,
+.office-v6-career-node.available .office-v610-career-node-foot b{
+  color:#dcab6c;
+}
+
+.office-v6-career-detail small{
+  font-size:7px!important;
+}
+
+.office-v6-career-detail h3{
+  font-size:20px!important;
+}
+
+.office-v6-career-detail p{
+  font-size:7.5px!important;
+}
+
+.office-v6-career-detail-salary span,
+.office-v6-career-detail-section>span{
+  font-size:7px!important;
+}
+
+.office-v6-career-detail-salary strong{
+  font-size:15px!important;
+}
+
+.office-v6-career-detail-chips b,
+.office-v6-career-detail-section li,
+.office-v6-career-detail-tip{
+  font-size:7.3px!important;
+}
+
+/* --- Companies: make progression visually desirable ---------------------- */
+.office-v64-companies{
+  grid-template-rows:auto 42px 28px minmax(0,1fr)!important;
+}
+
+.office-v64-company-grid>article.locked{
+  opacity:.68!important;
+  filter:saturate(.72)!important;
+}
+
+.office-v64-company-grid>article.available{
+  border-color:#65765e!important;
+}
+
+.office-v64-company-grid>article.active{
+  border-color:#ba6d32!important;
+  box-shadow:inset 0 2px #de8336!important;
+}
+
+.office-v64-company-title small{
+  font-size:7px!important;
+}
+
+.office-v64-company-title strong{
+  font-size:12px!important;
+}
+
+.office-v64-company-title>span{
+  font-size:6.5px!important;
+}
+
+.office-v64-company-title>span.state-ready{
+  color:#9ebd93!important;
+  border-color:#52694d!important;
+}
+
+.office-v64-company-title>span.state-current{
+  color:#e0b275!important;
+  border-color:#926030!important;
+}
+
+.office-v64-company-copy>p{
+  font-size:7.5px!important;
+  color:#a0988d!important;
+}
+
+.office-v64-company-metrics small{
+  font-size:6.7px!important;
+}
+
+.office-v64-company-metrics b{
+  font-size:8.8px!important;
+}
+
+.office-v64-company-metrics em{
+  font-size:6.5px!important;
+}
+
+.office-v64-company-perk small{
+  font-size:6.5px!important;
+}
+
+.office-v64-company-perk strong{
+  font-size:8.5px!important;
+}
+
+.office-v64-company-requirements span{
+  font-size:6.7px!important;
+}
+
+.office-v64-company-grid>article>button{
+  font-size:7.5px!important;
+}
+
+/* Distinct visual progression between companies without introducing noise. */
+.office-v64-company-grid>article[data-company="potential"] .office-v64-company-scene{
+  background:linear-gradient(#756c5f 0 70%,#574838 70%)!important;
+}
+
+.office-v64-company-grid>article[data-company="pixelsoft"] .office-v64-company-scene{
+  background:linear-gradient(#7f8581 0 70%,#5d615d 70%)!important;
+}
+
+.office-v64-company-grid>article[data-company="novasystems"] .office-v64-company-scene{
+  background:linear-gradient(#59676b 0 70%,#39474c 70%)!important;
+}
+
+.office-v64-company-grid>article[data-company="northagency"] .office-v64-company-scene{
+  background:linear-gradient(#74675e 0 70%,#4f4039 70%)!important;
+}
+
+.office-v64-company-grid>article[data-company="megacorp"] .office-v64-company-scene{
+  background:linear-gradient(#555a5d 0 70%,#353b3f 70%)!important;
+}
+
+.office-v64-company-grid>article[data-company="own"] .office-v64-company-scene{
+  background:linear-gradient(#665748 0 70%,#392d24 70%)!important;
+}
+
+.office-v64-company-grid>article[data-company="potential"] .scene-desk{
+  width:58%!important;
+}
+
+.office-v64-company-grid>article[data-company="pixelsoft"] .scene-window,
+.office-v64-company-grid>article[data-company="novasystems"] .scene-window,
+.office-v64-company-grid>article[data-company="megacorp"] .scene-window{
+  width:31%!important;
+}
+
+.office-v64-company-grid>article[data-company="novasystems"] .scene-monitor,
+.office-v64-company-grid>article[data-company="megacorp"] .scene-monitor,
+.office-v64-company-grid>article[data-company="own"] .scene-monitor{
+  transform:scale(1.12)!important;
+}
+
+.office-v64-company-grid>article[data-company="northagency"] .scene-plant,
+.office-v64-company-grid>article[data-company="own"] .scene-plant{
+  transform:scale(1.28)!important;
+}
+
+.office-v64-company-grid>article[data-company="own"] .scene-desk{
+  width:72%!important;
+}
+
+/* --- Character: make archetype choice explain actual gameplay ------------ */
+.office-v64-character{
+  grid-template-rows:auto 42px minmax(0,1fr)!important;
+}
+
+.office-v64-character-layout{
+  height:auto!important;
+  min-height:0!important;
+  margin-top:0!important;
+}
+
+.office-v64-build-head small,
+.office-v64-character-choice small,
+.office-v64-archetypes small{
+  font-size:7px!important;
+}
+
+.office-v64-build-head h3{
+  font-size:19px!important;
+}
+
+.office-v64-build-head p{
+  font-size:8px!important;
+}
+
+.office-v64-build-score span{
+  font-size:7px!important;
+}
+
+.office-v64-build-score strong{
+  font-size:22px!important;
+}
+
+.office-v64-build-stats span{
+  font-size:7px!important;
+}
+
+.office-v64-build-stats b{
+  font-size:9px!important;
+}
+
+.office-v64-character-choice strong,
+.office-v64-archetypes strong{
+  font-size:10px!important;
+}
+
+.office-v64-character-choice>header>span,
+.office-v64-archetypes>header>span{
+  font-size:7px!important;
+}
+
+.office-v64-gender-pills strong{
+  font-size:10px!important;
+}
+
+.office-v64-gender-pills small{
+  font-size:7px!important;
+}
+
+.office-v64-gender-pills i{
+  font-size:6.5px!important;
+}
+
+.office-v64-archetype-grid button{
+  min-height:91px!important;
+}
+
+.office-v64-archetype-grid button>small{
+  font-size:6.4px!important;
+}
+
+.office-v64-archetype-grid button>strong{
+  font-size:10px!important;
+}
+
+.office-v64-archetype-grid button>em{
+  font-size:6.8px!important;
+  color:#958d83!important;
+}
+
+.office-v610-archetype-effect{
+  display:block;
+  margin:4px 0;
+  color:#c8a875;
+  font-size:6.8px;
+  line-height:1.15;
+}
+
+.office-v68-character-guidance small{
+  font-size:6.5px!important;
+}
+
+.office-v68-character-guidance strong{
+  font-size:8.5px!important;
+}
+
+.office-v68-character-guidance p{
+  font-size:7px!important;
+}
+
+.office-v64-customize-note strong{
+  font-size:8px!important;
+}
+
+.office-v64-customize-note span{
+  font-size:7px!important;
+}
+
+/* --- Lower-height alpha viewport: preserve readability, trim decoration --- */
+@media(max-height:860px){
+  .office-v610-next-goal{
+    height:38px!important;
+    grid-template-columns:25px minmax(0,1fr) auto!important;
+    padding:4px 7px!important;
+  }
+
+  .office-v610-next-goal>.office-icon,
+  .office-v610-next-goal>.v6-icon{
+    width:21px!important;
+    height:21px!important;
+  }
+
+  .office-v610-next-goal strong{
+    font-size:10px!important;
+  }
+
+  .office-v610-next-goal>span{
+    font-size:7px!important;
+  }
+
+  .office-v67-characteristics{
+    grid-template-rows:auto 38px 108px 40px minmax(0,1fr)!important;
+  }
+
+  .office-v67-skills{
+    grid-template-rows:auto 38px minmax(0,1fr) 36px!important;
+  }
+
+  .office-v67-talents{
+    grid-template-rows:auto 38px minmax(0,1fr) 42px!important;
+  }
+
+  .office-v67-inventory{
+    grid-template-rows:auto 38px 38px minmax(0,1fr)!important;
+  }
+
+  .office-v67-achievements{
+    grid-template-rows:auto 38px 40px minmax(0,1fr)!important;
+  }
+
+  .office-v67-events{
+    grid-template-rows:auto 38px minmax(0,1fr)!important;
+  }
+
+  .office-v65-tasks{
+    grid-template-rows:auto 38px 40px minmax(0,1fr) 38px!important;
+  }
+
+  .office-v65-bosses{
+    grid-template-rows:auto 38px minmax(0,1fr)!important;
+  }
+
+  .office-v6-career{
+    grid-template-rows:auto 38px 60px 36px 30px minmax(0,1fr)!important;
+  }
+
+  .office-v64-companies{
+    grid-template-rows:auto 38px 24px minmax(0,1fr)!important;
+  }
+
+  .office-v6-character{
+    grid-template-rows:auto 38px minmax(0,1fr)!important;
+  }
+
+  .office-v67-dev-head,
+  .office-v65-screen-head,
+  .office-v6-page-header{
+    min-height:48px!important;
+  }
+
+  .office-v67-dev-head p,
+  .office-v65-screen-head p,
+  .office-v6-page-header p{
+    font-size:8px!important;
+  }
+
+  .office-v64-archetype-grid button{
+    min-height:78px!important;
+  }
+}
+
+@media(max-width:1200px){
+  .office-v610-next-goal>span{
+    max-width:310px;
+  }
+
+  .office-v68-build-direction{
+    grid-template-columns:150px 210px minmax(0,1fr)!important;
+  }
+
+  .office-v6-career-stage{
+    grid-template-columns:minmax(0,1fr) 250px!important;
+  }
+
+  .office-v65-boss-layout{
+    grid-template-columns:minmax(0,1fr) 265px!important;
+  }
+}
