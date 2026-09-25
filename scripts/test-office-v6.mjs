@@ -621,7 +621,7 @@ try {
   await page.getByRole('heading', { name: 'Меняй офис вместе с карьерой' }).waitFor();
   const pixelSoft = page.locator('.office-v64-company-grid>article[data-company="pixelsoft"]');
   await pixelSoft.getByRole('button', { name: 'Перейти в компанию' }).click();
-  await page.getByRole('button', { name: '← В офис' }).click();
+  await page.getByRole('button', { name: /Вернуться в офис/ }).click();
   assert.equal(await page.locator('.office-scene').getAttribute('data-company'), 'pixelsoft');
   assert.match(await page.locator('.office-v614-office-badge').textContent(), /PixelSoft/i);
   assert.match(await page.locator('.office-v614-office-badge').textContent(), /Светлый open space/i);
