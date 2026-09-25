@@ -90,6 +90,24 @@ try {
     assert(navBox.y + navBox.height <= pageBox.y + pageBox.height + 1);
   };
 
+  const assertOneScreen = async (label) => {
+    const dimensions = await page.evaluate(() => {
+      const office = document.querySelector('.office-page')?.getBoundingClientRect();
+      return {
+        width: innerWidth,
+        height: innerHeight,
+        scrollWidth: document.documentElement.scrollWidth,
+        scrollHeight: document.documentElement.scrollHeight,
+        bodyOverflow: getComputedStyle(document.body).overflowY,
+        officeBottom: office?.bottom ?? 0,
+      };
+    });
+    assert(dimensions.scrollWidth <= dimensions.width + 1, `${label}: horizontal overflow ${dimensions.scrollWidth}/${dimensions.width}`);
+    assert(dimensions.scrollHeight <= dimensions.height + 2, `${label}: vertical document scroll ${dimensions.scrollHeight}/${dimensions.height}`);
+    assert.equal(dimensions.bodyOverflow, 'hidden');
+    assert(dimensions.officeBottom <= dimensions.height + 1, `${label}: office bottom ${dimensions.officeBottom}/${dimensions.height}`);
+  };
+
   await page.goto('http://127.0.0.1:' + port + '/applications/games/office', {
     waitUntil: 'networkidle',
   });
@@ -102,6 +120,12 @@ try {
   await assertWorldNav();
   assert.equal(await page.locator('.office-side-nav>button').count(), 6);
   assert.equal(await page.locator('.office-profile-compact').count(), 1);
+  assert.equal(await page.locator('.office-profile-identity').count(), 1);
+  assert.equal(await page.locator('.office-profile-open>span').count(), 0);
+  assert.equal(await page.locator('.office-top-status').count(), 1);
+  assert.equal(await page.locator('.office-top-status .office-resource').count(), 3);
+  assert.equal(await page.locator('.office-player-goal').count(), 1);
+  assert.match(await page.locator('.office-player-goal').textContent(), /Цель:/);
   assert.equal(await page.locator('.office-v68-scene-status').count(), 1);
   assert.equal(await page.locator('.office-v68-scene-status>span').count(), 3);
   assert.equal(await page.locator('.office-v6-equipment-slot').count(), 0);
@@ -115,6 +139,11 @@ try {
     ),
     true,
   );
+  const deskPath = page.locator('.office-scene-shape-desk path');
+  const deskStrokeBefore = await deskPath.evaluate((node) => getComputedStyle(node).stroke);
+  await page.getByRole('button', { name: 'Выбрать стол' }).hover({ position: { x: 42, y: 18 } });
+  const deskStrokeAfter = await deskPath.evaluate((node) => getComputedStyle(node).stroke);
+  assert.notEqual(deskStrokeAfter, deskStrokeBefore);
   assert.equal(await page.evaluate(() => document.body.classList.contains('office-no-scroll')), true);
   const initialGameRect = await page.locator('.office-page').boundingBox();
   assert(initialGameRect && initialGameRect.y + initialGameRect.height <= 1001);
@@ -122,6 +151,29 @@ try {
   // The permanent shelf is gone: the room uses the freed space and object clicks open a popup.
   const sceneRect = await page.locator('.office-scene').boundingBox();
   assert(sceneRect && sceneRect.height >= 500);
+
+  await page.setViewportSize({ width: 1720, height: 864 });
+  await page.waitForTimeout(120);
+  await assertOneScreen('home 1720x864');
+  const homeReadability = await page.evaluate(() => {
+    const px = (selector) => parseFloat(getComputedStyle(document.querySelector(selector)).fontSize);
+    return {
+      worldLabel: px('.office-world-nav b'),
+      rightTitle: px('.office-card-head h3'),
+      playerName: px('.office-player-main strong'),
+      playerGoal: px('.office-player-goal'),
+    };
+  });
+  assert(homeReadability.worldLabel >= 10);
+  assert(homeReadability.rightTitle >= 13);
+  assert(homeReadability.playerName >= 15);
+  assert(homeReadability.playerGoal >= 7);
+  assert.equal(
+    await page.locator('.office-world-nav small').evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).display === 'none')),
+    true,
+  );
+  await page.screenshot({ path: output + '/home-v611-1720x864.png', fullPage: false });
+  await page.setViewportSize({ width: 1600, height: 1000 });
 
   await page.getByRole('button', { name: 'Выбрать стол' }).click({ position: { x: 42, y: 18 } });
   await page.locator('.office-equipment-modal .office-v6-drawer').waitFor();
@@ -308,12 +360,16 @@ try {
     ['Боссы', 'Боссы'],
     ['События', 'События'],
   ];
+  await page.setViewportSize({ width: 1720, height: 864 });
   for (const [label, heading] of worldScreens) {
     await page.locator('.office-world-nav').getByRole('button', { name: new RegExp(label, 'i') }).click();
     await page.getByRole('heading', { name: heading }).waitFor();
     await assertWorldNav(label);
+    await assertOneScreen(`world screen ${label} 1720x864`);
+    await page.screenshot({ path: output + '/world-' + label.toLowerCase() + '-v611-1720x864.png', fullPage: false });
   }
   await page.getByRole('button', { name: '← В офис' }).click();
+  await page.setViewportSize({ width: 1600, height: 1000 });
 
   for (const width of [1600, 1200, 1024]) {
     await page.getByRole('button', { name: '×' }).click().catch(() => {});
@@ -349,7 +405,7 @@ try {
   assert(persisted && persisted.includes('"v6"'));
   assert(persisted && persisted.includes('"gender":"female"'));
   assert.deepEqual(pageErrors, []);
-  console.log('Office v6.10 alpha polish: readable typography, next-goal guidance, career/company/boss decisions and one-screen shell passed');
+  console.log('Office v6.11 alpha patch: production-size home HUD, profile cleanup, location navigation, hover affordances and every world screen passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');

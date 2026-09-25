@@ -791,42 +791,55 @@ export function OfficeGame() {
           </div>
 
           <div className="office-player-chip">
-            <div>
-              <strong>{snapshot.playerName}</strong>
-              <span>ур. {snapshot.level} · {snapshot.role}</span>
+            <div className="office-player-main">
+              <div>
+                <strong>{snapshot.playerName}</strong>
+                <span>ур. {snapshot.level} · {snapshot.role}</span>
+              </div>
+              <small className="office-player-goal">
+                Цель: {promotionCompleted
+                  ? `закрепиться в роли «${snapshot.role}»`
+                  : promotionReady
+                    ? `можно просить повышение «${nextPromotion.role}»`
+                    : `${nextPromotion.role} · комп. ${snapshot.skills.competence}/${nextPromotion.competence} · реп. ${snapshot.reputation}/${nextPromotion.reputation}`}
+              </small>
             </div>
-            <div className="office-xp">
-              <i style={{ width: `${Math.min(100, snapshot.xp / snapshot.xpToNext * 100)}%` }} />
+            <div className="office-player-xp-row">
+              <div className="office-xp">
+                <i style={{ width: `${Math.min(100, snapshot.xp / snapshot.xpToNext * 100)}%` }} />
+              </div>
+              <em>{snapshot.xp} / {snapshot.xpToNext}</em>
             </div>
-            <em>{snapshot.xp} / {snapshot.xpToNext}</em>
           </div>
 
-          <Resource
-            icon="energy"
-            value={`${snapshot.energy} (+1)`}
-            detail={
-              snapshot.energy >= effectiveMaxEnergy
-                ? 'полная'
-                : formatCountdown(energyCountdown)
-            }
-            className="office-energy"
-          />
-          <Resource icon="cash" value={formatMoney(snapshot.money)} className="office-money" />
-          <Resource icon="morale" value={String(snapshot.motivation)} className="office-motivation" />
+          <div className="office-top-status" aria-label="Ресурсы и системные действия">
+            <Resource
+              icon="energy"
+              value={`${snapshot.energy} (+1)`}
+              detail={
+                snapshot.energy >= effectiveMaxEnergy
+                  ? 'полная'
+                  : formatCountdown(energyCountdown)
+              }
+              className="office-energy"
+            />
+            <Resource icon="cash" value={formatMoney(snapshot.money)} className="office-money" />
+            <Resource icon="morale" value={String(snapshot.motivation)} className="office-motivation" />
 
-          <div className="office-top-icons">
-            <button type="button" title="Рейтинг"><OfficeIcon name="rating" /></button>
-            <button type="button" title="Сообщения" className="office-mail"><OfficeIcon name="mail" /><sup>3</sup></button>
-            <button type="button" title="Ночной режим"><OfficeIcon name="moon" /></button>
-            <button
-              type="button"
-              title="Сбросить прототип"
-              onClick={() => {
-                if (window.confirm('Сбросить локальный прогресс «В Офисе»?')) resetPrototype();
-              }}
-            >
-              <OfficeIcon name="settings" />
-            </button>
+            <div className="office-top-icons">
+              <button type="button" title="Рейтинг"><OfficeIcon name="rating" /></button>
+              <button type="button" title="Сообщения" className="office-mail"><OfficeIcon name="mail" /><sup>3</sup></button>
+              <button type="button" title="Ночной режим"><OfficeIcon name="moon" /></button>
+              <button
+                type="button"
+                title="Сбросить прототип"
+                onClick={() => {
+                  if (window.confirm('Сбросить локальный прогресс «В Офисе»?')) resetPrototype();
+                }}
+              >
+                <OfficeIcon name="settings" />
+              </button>
+            </div>
           </div>
         </header>
 
@@ -866,25 +879,27 @@ export function OfficeGame() {
           {activeView === 'home' ? (
             <>
           <aside className="office-profile office-profile-compact">
-            <button
-              type="button"
-              className="office-portrait office-profile-open"
-              onClick={() => setActiveView('character')}
-              title="Открыть профиль персонажа"
-            >
-              <img src="/games/office/avatar.svg" alt="Персонаж Бродяга" />
-              <span>Профиль</span>
-            </button>
+            <div className="office-profile-identity">
+              <button
+                type="button"
+                className="office-portrait office-profile-open"
+                onClick={() => setActiveView('character')}
+                title="Открыть профиль персонажа"
+                aria-label="Открыть профиль персонажа"
+              >
+                <img src="/games/office/avatar.svg" alt="Персонаж Бродяга" />
+              </button>
 
-            <div className="office-profile-name">
-              <strong>{snapshot.playerName}</strong>
-              <span>{snapshot.role}</span>
-              <b>ур. {snapshot.level}</b>
-            </div>
+              <div className="office-profile-name">
+                <strong>{snapshot.playerName}</strong>
+                <span>{snapshot.role}</span>
+                <b>ур. {snapshot.level}</b>
+              </div>
 
-            <div className="office-profile-xp">
-              <div><span>Опыт</span><b>{snapshot.xp}/{snapshot.xpToNext}</b></div>
-              <i><em style={{ width: `${Math.min(100, snapshot.xp / snapshot.xpToNext * 100)}%` }} /></i>
+              <div className="office-profile-xp">
+                <div><span>Опыт</span><b>{snapshot.xp}/{snapshot.xpToNext}</b></div>
+                <i><em style={{ width: `${Math.min(100, snapshot.xp / snapshot.xpToNext * 100)}%` }} /></i>
+              </div>
             </div>
 
             <div className="office-profile-mini-stats">
