@@ -10734,3 +10734,604 @@ body:has(.office-page) .app-page-frame{
     grid-template-columns:minmax(0,1fr) 265px!important;
   }
 }
+
+
+/* ==========================================================================
+   OFFICE v6.11 — ALPHA HOME POLISH
+   Production screenshot pass: cleaner shell, readable home HUD, intentional
+   side columns and game-like location navigation without changing mechanics.
+   ========================================================================== */
+
+/* ---------- top HUD: one system, not seven unrelated boxes ------------- */
+.office-topbar{
+  grid-template-columns:270px minmax(330px,1fr) auto!important;
+  align-items:center!important;
+  gap:7px!important;
+  padding:5px 7px!important;
+}
+
+.office-logo{
+  height:46px!important;
+}
+
+.office-logo b{
+  font-size:25px!important;
+}
+
+.office-logo small{
+  font-size:7.5px!important;
+}
+
+.office-player-chip{
+  height:46px!important;
+  min-width:0!important;
+  display:grid!important;
+  grid-template-rows:minmax(0,1fr) 9px!important;
+  gap:3px!important;
+  padding:5px 9px 4px!important;
+}
+
+.office-player-main{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.office-player-main>div{
+  min-width:0;
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+}
+
+.office-player-main strong{
+  flex:0 0 auto;
+  font-size:16px!important;
+}
+
+.office-player-main span{
+  color:#33261b!important;
+  font-size:8.5px!important;
+  white-space:nowrap;
+}
+
+.office-player-goal{
+  min-width:0;
+  max-width:60%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  color:#5c4935!important;
+  font-size:7.5px!important;
+  line-height:1;
+  text-align:right;
+}
+
+.office-player-xp-row{
+  min-width:0;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:7px;
+}
+
+.office-player-xp-row .office-xp{
+  height:6px!important;
+  min-height:6px!important;
+}
+
+.office-player-xp-row>em{
+  color:#514331!important;
+  font-size:6.8px!important;
+  font-style:normal;
+  white-space:nowrap;
+}
+
+.office-top-status{
+  min-width:0;
+  height:46px;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(100px,auto)) auto;
+  align-items:stretch;
+  border:1px solid #4c463e;
+  border-radius:5px;
+  background:linear-gradient(#202223,#17191a);
+  box-shadow:inset 0 1px #3b3c3a,0 0 0 1px #0d0f10;
+}
+
+.office-top-status .office-resource{
+  min-width:100px!important;
+  height:44px!important;
+  margin:0!important;
+  border:0!important;
+  border-right:1px solid #3d3d39!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+
+.office-top-status .office-resource:hover{
+  background:#242625!important;
+}
+
+.office-top-status .office-resource b{
+  font-size:15px!important;
+}
+
+.office-top-status .office-resource small{
+  font-size:7px!important;
+}
+
+.office-top-status .office-top-icons{
+  height:44px!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,40px)!important;
+  gap:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+}
+
+.office-top-status .office-top-icons>button{
+  width:40px!important;
+  height:44px!important;
+  min-width:40px!important;
+  border:0!important;
+  border-left:1px solid #3d3d39!important;
+  border-radius:0!important;
+  background:transparent!important;
+}
+
+.office-top-status .office-top-icons>button:hover{
+  background:#2a2c2b!important;
+}
+
+.office-top-status .office-top-icons .office-icon{
+  width:19px!important;
+  height:19px!important;
+}
+
+/* ---------- home layout: remove the "empty beige slab" feeling ---------- */
+.office-body{
+  grid-template-columns:76px 116px minmax(0,1fr) 236px!important;
+}
+
+.office-profile.office-profile-compact{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:7px!important;
+  padding:6px!important;
+  background:
+    linear-gradient(#ffffff05 1px,transparent 1px),
+    linear-gradient(90deg,#ffffff03 1px,transparent 1px),
+    #17191a!important;
+  background-size:100% 26px,26px 100%,auto!important;
+  border-right:1px solid #302a23!important;
+}
+
+.office-profile-identity{
+  flex:0 0 auto;
+  padding:5px;
+  border:1px solid #725233;
+  background:linear-gradient(#bea071,#a98b60);
+  box-shadow:inset 0 0 0 1px #d1b58733;
+}
+
+.office-profile-compact .office-profile-open{
+  height:102px!important;
+  min-height:102px!important;
+  width:100%!important;
+  border:1px solid #4f3927!important;
+  background:#716656!important;
+  overflow:hidden;
+}
+
+.office-profile-compact .office-profile-open img{
+  width:100%!important;
+  height:100%!important;
+  object-fit:cover!important;
+}
+
+.office-profile-compact .office-profile-open>span{
+  display:none!important;
+}
+
+.office-profile-compact .office-profile-open:hover,
+.office-profile-compact .office-profile-open:focus-visible{
+  border-color:#d29a55!important;
+  box-shadow:0 0 0 2px rgba(211,154,81,.18),inset 0 0 16px rgba(242,184,105,.08)!important;
+}
+
+.office-profile-identity .office-profile-name{
+  margin-top:5px!important;
+  padding:0 1px!important;
+}
+
+.office-profile-identity .office-profile-name strong{
+  display:block;
+  font-size:17px!important;
+  line-height:1.05!important;
+}
+
+.office-profile-identity .office-profile-name span,
+.office-profile-identity .office-profile-name b{
+  font-size:8.5px!important;
+}
+
+.office-profile-identity .office-profile-xp{
+  margin-top:5px!important;
+}
+
+.office-profile-identity .office-profile-xp>div{
+  font-size:7px!important;
+}
+
+.office-profile-identity .office-profile-xp>i{
+  height:6px!important;
+}
+
+.office-profile-mini-stats{
+  flex:0 0 auto;
+  gap:5px!important;
+}
+
+.office-profile-mini-stats>button{
+  min-height:47px!important;
+  grid-template-columns:21px minmax(0,1fr)!important;
+  padding:5px 7px!important;
+  border:1px solid #49423a!important;
+  background:linear-gradient(#262827,#1d1f20)!important;
+  color:#cbbda9!important;
+}
+
+.office-profile-mini-stats>button:hover{
+  border-color:#7c5937!important;
+  background:linear-gradient(#302a25,#222322)!important;
+}
+
+.office-profile-mini-stats .office-icon{
+  width:18px!important;
+  height:18px!important;
+  color:#c99c61!important;
+}
+
+.office-profile-mini-stats b{
+  font-size:13px!important;
+  color:#e1c291!important;
+}
+
+.office-profile-mini-stats small{
+  font-size:7.2px!important;
+  color:#8e867c!important;
+}
+
+.office-profile-points{
+  margin-top:auto!important;
+  min-height:48px!important;
+  border:1px solid #6b482c!important;
+  background:linear-gradient(#3d2a1f,#2a211b)!important;
+}
+
+.office-profile-points span{
+  font-size:7.5px!important;
+  color:#bba07c!important;
+}
+
+.office-profile-points b{
+  font-size:15px!important;
+  color:#e1a657!important;
+}
+
+/* ---------- right rail: use the available height intentionally ---------- */
+.office-right{
+  grid-template-rows:auto auto auto minmax(0,1fr)!important;
+  gap:7px!important;
+  padding:7px!important;
+  background:#121415!important;
+}
+
+.office-right section{
+  border-color:#4b3c2f!important;
+}
+
+.office-company-card,
+.office-daily,
+.office-promotion-compact,
+.office-news{
+  padding:9px!important;
+}
+
+.office-card-head h3,
+.office-daily h3,
+.office-promotion-compact h3,
+.office-news h3{
+  font-size:14.5px!important;
+  line-height:1.05!important;
+}
+
+.office-company-row b{
+  font-size:10.5px!important;
+}
+
+.office-company-row small{
+  margin-top:2px!important;
+  font-size:7.8px!important;
+  line-height:1.25!important;
+}
+
+.office-company-meta small{
+  font-size:7px!important;
+}
+
+.office-company-meta b{
+  font-size:8.5px!important;
+}
+
+.office-company-card>button,
+.office-promotion-compact button{
+  min-height:30px!important;
+  font-size:8px!important;
+}
+
+.office-daily label{
+  font-size:8.5px!important;
+}
+
+.office-reward,
+.office-reward span,
+.office-reward b{
+  font-size:7.4px!important;
+}
+
+.office-promotion-compact>strong{
+  font-size:12.5px!important;
+}
+
+.office-promotion-compact .office-requirement span,
+.office-promotion-compact .office-requirement b{
+  font-size:7.4px!important;
+}
+
+.office-news{
+  display:grid!important;
+  grid-template-rows:auto repeat(3,minmax(0,1fr))!important;
+  align-items:stretch!important;
+}
+
+.office-news-row{
+  min-height:0!important;
+  display:grid!important;
+  grid-template-columns:8px minmax(0,1fr)!important;
+  align-items:center!important;
+  padding:7px 0!important;
+}
+
+.office-news-row b{
+  font-size:8.3px!important;
+}
+
+.office-news-row small{
+  margin-top:2px!important;
+  font-size:7px!important;
+}
+
+/* ---------- world nav: read as locations, not admin tabs ---------------- */
+.office-world-nav{
+  height:54px!important;
+  min-height:54px!important;
+  gap:5px!important;
+  padding:5px!important;
+}
+
+.office-world-nav>button{
+  min-height:42px!important;
+  grid-template-columns:32px minmax(0,1fr)!important;
+  gap:8px!important;
+  padding:5px 10px!important;
+}
+
+.office-world-nav .office-icon{
+  width:28px!important;
+  height:28px!important;
+}
+
+.office-world-nav>button>span{
+  min-width:0;
+  display:flex!important;
+  align-items:center!important;
+}
+
+.office-world-nav b{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:12px!important;
+  line-height:1!important;
+}
+
+.office-world-nav small{
+  display:none!important;
+}
+
+.office-world-nav>button.is-active{
+  background:
+    radial-gradient(circle at 20% 50%,rgba(219,137,59,.18),transparent 30%),
+    linear-gradient(#49311f,#2b221c)!important;
+}
+
+/* ---------- central office: subtle discoverability, no labels ----------- */
+.office-scene-shape path{
+  fill:rgba(223,166,88,.001)!important;
+  stroke:rgba(240,187,111,0)!important;
+  stroke-width:2.2!important;
+  transition:fill .12s ease,stroke .12s ease,filter .12s ease!important;
+}
+
+.office-scene-shape:hover path,
+.office-scene-shape:focus-visible path{
+  fill:rgba(222,162,83,.045)!important;
+  stroke:rgba(244,194,121,.68)!important;
+  filter:drop-shadow(0 0 3px rgba(224,150,68,.24))!important;
+}
+
+.office-scene-shape.is-active path{
+  fill:rgba(222,162,83,.065)!important;
+  stroke:rgba(247,197,125,.78)!important;
+  filter:drop-shadow(0 0 4px rgba(224,150,68,.28))!important;
+}
+
+.office-scene-shape:focus-visible{
+  outline:none!important;
+}
+
+.office-v68-scene-status{
+  font-size:8.3px!important;
+}
+
+.office-v68-scene-status>span:not(.office-v68-scene-message){
+  font-size:7.3px!important;
+}
+
+/* ---------- focus visibility -------------------------------------------- */
+.office-page button:focus-visible,
+.office-page [role="button"]:focus-visible{
+  outline:2px solid rgba(229,170,93,.75)!important;
+  outline-offset:1px!important;
+}
+
+/* ---------- production-size adaptations -------------------------------- */
+@media(max-width:1500px){
+  .office-topbar{
+    grid-template-columns:245px minmax(300px,1fr) auto!important;
+  }
+
+  .office-logo b{
+    font-size:23px!important;
+  }
+
+  .office-top-status{
+    grid-template-columns:repeat(3,minmax(92px,auto)) auto!important;
+  }
+
+  .office-top-status .office-resource{
+    min-width:92px!important;
+  }
+
+  .office-body{
+    grid-template-columns:70px 110px minmax(0,1fr) 224px!important;
+  }
+
+  .office-player-goal{
+    max-width:55%;
+    font-size:7px!important;
+  }
+
+  .office-world-nav b{
+    font-size:11px!important;
+  }
+}
+
+@media(max-width:1250px){
+  .office-topbar{
+    grid-template-columns:220px minmax(250px,1fr) auto!important;
+    gap:5px!important;
+  }
+
+  .office-logo{
+    height:42px!important;
+  }
+
+  .office-player-chip{
+    height:42px!important;
+  }
+
+  .office-player-goal{
+    display:none!important;
+  }
+
+  .office-top-status{
+    height:42px!important;
+    grid-template-columns:repeat(3,82px) auto!important;
+  }
+
+  .office-top-status .office-resource{
+    min-width:82px!important;
+    height:40px!important;
+  }
+
+  .office-top-status .office-resource small{
+    display:none!important;
+  }
+
+  .office-top-status .office-top-icons{
+    height:40px!important;
+    grid-template-columns:repeat(4,34px)!important;
+  }
+
+  .office-top-status .office-top-icons>button{
+    width:34px!important;
+    min-width:34px!important;
+    height:40px!important;
+  }
+
+  .office-body{
+    grid-template-columns:66px 104px minmax(0,1fr) 210px!important;
+  }
+
+  .office-profile-compact .office-profile-open{
+    height:88px!important;
+    min-height:88px!important;
+  }
+
+  .office-right{
+    padding:5px!important;
+    gap:5px!important;
+  }
+
+  .office-company-card,
+  .office-daily,
+  .office-promotion-compact,
+  .office-news{
+    padding:7px!important;
+  }
+}
+
+@media(max-height:860px){
+  .office-topbar{
+    padding-top:4px!important;
+    padding-bottom:4px!important;
+  }
+
+  .office-profile-compact .office-profile-open{
+    height:88px!important;
+    min-height:88px!important;
+  }
+
+  .office-profile-mini-stats>button{
+    min-height:40px!important;
+  }
+
+  .office-world-nav{
+    height:50px!important;
+    min-height:50px!important;
+  }
+
+  .office-world-nav>button{
+    min-height:38px!important;
+  }
+
+  .office-world-nav .office-icon{
+    width:24px!important;
+    height:24px!important;
+  }
+
+  .office-world-nav b{
+    font-size:10.5px!important;
+  }
+
+  .office-news-row{
+    padding:5px 0!important;
+  }
+}
