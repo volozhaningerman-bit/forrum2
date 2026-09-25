@@ -39,6 +39,7 @@ import {
   V6CompanyView,
 } from './office-v6-ui';
 import {
+  getBossDamage,
   getV6BuildBonuses,
   initialV6State,
   v6Bosses,
@@ -1349,6 +1350,31 @@ function OfficeDevelopmentHeader({
   );
 }
 
+function OfficeAlphaGoal({
+  icon,
+  label,
+  title,
+  meta,
+  tone = 'gold',
+}: {
+  icon: string;
+  label: string;
+  title: string;
+  meta?: string;
+  tone?: 'gold' | 'green' | 'blue' | 'red';
+}) {
+  return (
+    <div className={`office-v610-next-goal tone-${tone}`}>
+      <OfficeIcon name={icon} />
+      <div>
+        <small>{label}</small>
+        <strong>{title}</strong>
+      </div>
+      {meta ? <span>{meta}</span> : null}
+    </div>
+  );
+}
+
 function OfficeCharacteristicsView({
   snapshot,
   buildBonuses,
@@ -1385,6 +1411,14 @@ function OfficeCharacteristicsView({
         description="База прокачивается очками развития, зелёные значения приходят от одежды, техники, архетипа и рабочего места."
         onBack={onBack}
         aside={<div className="office-v67-point-bank"><span>Свободные очки</span><b>{snapshot.skillPoints}</b></div>}
+      />
+
+      <OfficeAlphaGoal
+        icon="rating"
+        label="Следующий шаг"
+        title={snapshot.skillPoints > 0 ? `Распредели свободные очки: ${snapshot.skillPoints}` : 'Заработай новые очки развитием уровня'}
+        meta={snapshot.skillPoints > 0 ? 'Выбор сразу меняет билд и урон по боссам' : `Текущий уровень: ${snapshot.level}`}
+        tone={snapshot.skillPoints > 0 ? 'gold' : 'blue'}
       />
 
       <div className="office-v67-primary-grid">
@@ -1465,6 +1499,20 @@ function OfficeSkillsView({
         title="Навыки"
         description="Навыки — это не ещё одна валюта. Они показывают, во что превращаются твои характеристики и предметы в реальных офисных ситуациях."
         onBack={onBack}
+      />
+
+      <OfficeAlphaGoal
+        icon="training"
+        label="Фокус развития"
+        title={
+          snapshot.skills.competence >= snapshot.skills.communication && snapshot.skills.competence >= snapshot.skills.drive
+            ? 'Сильная сторона: технические задачи'
+            : snapshot.skills.communication >= snapshot.skills.drive
+              ? 'Сильная сторона: переговоры и коллеги'
+              : 'Сильная сторона: давление и продажи'
+        }
+        meta="Навыки растут через задачи, предметы и основные характеристики"
+        tone="blue"
       />
 
       <div className="office-v68-skills-layout">
@@ -1575,6 +1623,24 @@ function OfficeTalentsView({
         aside={<button className="office-v67-head-link" type="button" onClick={onCareer}>Открыть дерево карьеры →</button>}
       />
 
+      <OfficeAlphaGoal
+        icon="career"
+        label="Карьерный фокус"
+        title={
+          v6.careerBranch === 'general'
+            ? 'Выбери карьерную ветку'
+            : snapshot.level < 3
+              ? 'Следующий талант откроется на 3 уровне'
+              : snapshot.level < 6
+                ? 'Следующий талант откроется на 6 уровне'
+                : snapshot.level < 10
+                  ? 'Следующий талант откроется на 10 уровне'
+                  : 'Основные таланты ветки открыты'
+        }
+        meta={v6.careerBranch === 'general' ? 'Эксперт · Управление · Продажи' : `Текущая ветка: ${v6.careerBranch === 'expert' ? 'Эксперт' : v6.careerBranch === 'management' ? 'Управление' : 'Продажи'}`}
+        tone={v6.careerBranch === 'general' ? 'gold' : 'green'}
+      />
+
       <div className="office-v67-talent-columns">
         {branches.map((branch) => {
           const active = v6.careerBranch === branch.id;
@@ -1636,6 +1702,14 @@ function OfficeInventoryView({
         aside={<div className="office-v67-owned-counter"><span>Куплено</span><b>{v6.ownedItemIds.length}</b></div>}
       />
 
+      <OfficeAlphaGoal
+        icon="inventory"
+        label="Коллекция"
+        title={v6.ownedItemIds.length < 8 ? 'Улучшай рабочее место прямо из офиса' : 'Собирай предметы под свой билд'}
+        meta={`Куплено ${v6.ownedItemIds.length} · установлено ${Object.values(v6.equipped).filter(Boolean).length}`}
+        tone="green"
+      />
+
       <div className="office-v68-inventory-summary">
         <div><OfficeIcon name="inventory" /><span>В коллекции</span><b>{v6.ownedItemIds.length}</b></div>
         <div><OfficeIcon name="star" /><span>Установлено</span><b>{Object.values(v6.equipped).filter(Boolean).length}</b></div>
@@ -1689,6 +1763,7 @@ function OfficeAchievementsView({
   ] as const;
 
   const completed = achievements.filter(([, , done]) => done).length;
+  const nextAchievement = achievements.find(([, , done]) => !done);
 
   return (
     <section className="office-v67-dev-page office-v67-achievements">
@@ -1698,6 +1773,14 @@ function OfficeAchievementsView({
         description="Не отдельная работа, а след твоего прогресса: задачи, карьера, компании, боссы и коллекция."
         onBack={onBack}
         aside={<div className="office-v67-owned-counter"><span>Получено</span><b>{completed}/{achievements.length}</b></div>}
+      />
+
+      <OfficeAlphaGoal
+        icon="achievement"
+        label="Ближайшее достижение"
+        title={nextAchievement ? nextAchievement[0] : 'Все текущие достижения собраны'}
+        meta={nextAchievement ? nextAchievement[4] : 'Ждём следующий набор целей'}
+        tone={nextAchievement ? 'gold' : 'green'}
       />
 
       <div className="office-v68-achievement-progress">
@@ -1742,6 +1825,14 @@ function OfficeEventsView({
         description="Здесь собирается то, что происходит вокруг работы: новости, ежедневные цели и короткие офисные истории."
         onBack={onBack}
         aside={<button className="office-v67-head-link" type="button" onClick={onTasks}>Перейти к задачам →</button>}
+      />
+
+      <OfficeAlphaGoal
+        icon="mail"
+        label="Сейчас в офисе"
+        title={snapshot.daily.claimed ? 'Ежедневная цель выполнена' : `До ежедневной цели: ${Math.max(0, snapshot.daily.target - snapshot.daily.progress)}`}
+        meta={firstDayProgress < 3 ? `История первого дня: ${firstDayProgress}/3` : 'История первого дня завершена'}
+        tone={snapshot.daily.claimed ? 'green' : 'gold'}
       />
 
       <div className="office-v67-events-layout">
@@ -1836,6 +1927,14 @@ function OfficeTasksView(props: {
         <button type="button" onClick={onBack}>← Вернуться в офис</button>
       </header>
 
+      <OfficeAlphaGoal
+        icon="task"
+        label="Что делать сейчас"
+        title={snapshot.daily.claimed ? 'Дневная цель закрыта — работай на карьеру' : `Закрой ещё ${Math.max(0, snapshot.daily.target - snapshot.daily.progress)} задач для дневной цели`}
+        meta={snapshot.energy > 0 ? `Доступно энергии: ${snapshot.energy}` : 'Энергия закончилась — можно открыть события'}
+        tone={snapshot.energy > 0 ? 'green' : 'red'}
+      />
+
       <div className="office-v65-task-summary">
         <div><OfficeIcon name="energy" /><span>Энергия</span><b>{snapshot.energy}/{snapshot.maxEnergy}</b></div>
         <div><OfficeIcon name="task" /><span>Первый день</span><b>{story.completedEvents.length}/3</b></div>
@@ -1885,6 +1984,18 @@ function OfficeBossesView(props: {
 }) {
   const { snapshot, v6, bossUnlocked, firstAssignmentDone, onFight, onBack } = props;
   const boss = v6Bosses[0];
+  const bossBonuses = getV6BuildBonuses(v6);
+  const bossDamage = {
+    logic: getBossDamage('logic', { skills: snapshot.skills, bonuses: bossBonuses, branch: v6.careerBranch, boss }),
+    social: getBossDamage('social', { skills: snapshot.skills, bonuses: bossBonuses, branch: v6.careerBranch, boss }),
+    pressure: getBossDamage('pressure', { skills: snapshot.skills, bonuses: bossBonuses, branch: v6.careerBranch, boss }),
+  };
+  const bestBossApproach =
+    bossDamage.logic >= bossDamage.social && bossDamage.logic >= bossDamage.pressure
+      ? 'Логика'
+      : bossDamage.social >= bossDamage.pressure
+        ? 'Переговоры'
+        : 'Напор';
   const futureBosses = [
     ['HR-партнёр', 'Испытание коммуникации', 'ур. 8'],
     ['Директор направления', 'Испытание авторитета', 'ур. 15'],
@@ -1901,6 +2012,14 @@ function OfficeBossesView(props: {
         </div>
         <button type="button" onClick={onBack}>← Вернуться в офис</button>
       </header>
+
+      <OfficeAlphaGoal
+        icon="achievement"
+        label="Испытание"
+        title={v6.bossResolved || firstAssignmentDone ? 'Сергей Петрович пройден' : bossUnlocked ? `Лучший подход сейчас: ${bestBossApproach}` : 'Подготовься к первому боссу'}
+        meta={bossUnlocked ? `Прогноз урона: логика ${bossDamage.logic} · переговоры ${bossDamage.social} · напор ${bossDamage.pressure}` : 'Откроется после 3 задач или на 3 уровне'}
+        tone={v6.bossResolved || firstAssignmentDone ? 'green' : bossUnlocked ? 'red' : 'gold'}
+      />
 
       <div className="office-v65-boss-layout">
         <article className={'office-v65-current-boss ' + (firstAssignmentDone || v6.bossResolved ? 'is-complete' : '')}>
@@ -1920,20 +2039,14 @@ function OfficeBossesView(props: {
             </div>
 
             <div className="office-v65-boss-styles">
-              <div><OfficeIcon name="competence" /><span>Логика</span><b>Компетентность</b></div>
-              <div><OfficeIcon name="communication" /><span>Переговоры</span><b>Коммуникация</b></div>
-              <div><OfficeIcon name="drive" /><span>Напор</span><b>Авторитет</b></div>
+              <div className={bestBossApproach === 'Логика' ? 'best' : ''}><OfficeIcon name="competence" /><span>Логика</span><b>{bossDamage.logic} урона</b></div>
+              <div className={bestBossApproach === 'Переговоры' ? 'best' : ''}><OfficeIcon name="communication" /><span>Переговоры</span><b>{bossDamage.social} урона</b></div>
+              <div className={bestBossApproach === 'Напор' ? 'best' : ''}><OfficeIcon name="drive" /><span>Напор</span><b>{bossDamage.pressure} урона</b></div>
             </div>
 
             <div className="office-v68-boss-advice">
               <span>Твой лучший подход сейчас</span>
-              <strong>{
-                snapshot.skills.competence >= snapshot.skills.communication && snapshot.skills.competence >= snapshot.skills.drive
-                  ? 'Логика'
-                  : snapshot.skills.communication >= snapshot.skills.drive
-                    ? 'Переговоры'
-                    : 'Напор'
-              }</strong>
+              <strong>{bestBossApproach}</strong>
               <em>Комп. {snapshot.skills.competence + (getV6BuildBonuses(v6).competence ?? 0)} · Комм. {snapshot.skills.communication + (getV6BuildBonuses(v6).communication ?? 0)} · Напор {snapshot.skills.drive + (getV6BuildBonuses(v6).drive ?? 0)}</em>
             </div>
 
