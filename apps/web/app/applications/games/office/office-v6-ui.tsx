@@ -264,6 +264,13 @@ export function V6CharacterView({
   const strongestBonuses = (Object.entries(build) as Array<[V6BonusKey, number]>)
     .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))
     .slice(0, 6);
+  const missingEquipment = Math.max(0, equippedCategories.length - equippedItems.length);
+  const playstyleHint =
+    activeArchetype.preferredBranch === 'expert'
+      ? 'Техника, сложные задачи и логика против боссов'
+      : activeArchetype.preferredBranch === 'management'
+        ? 'Переговоры, репутация и социальные решения'
+        : 'Доход, напор и агрессивные карьерные сделки';
 
   return (
     <section className="office-v6-page office-v6-character office-v64-character">
@@ -271,6 +278,15 @@ export function V6CharacterView({
         Здесь должен читаться сам герой, а не меню настроек. Выбирай основу персонажа и архетип,
         а одежда, аксессуары и рабочее место дальше усиливают выбранный стиль.
       </PageHeader>
+
+      <div className="office-v610-next-goal tone-blue">
+        <V6Icon name="character" />
+        <div>
+          <small>Твой билд</small>
+          <strong>{activeArchetype.name} · {branchLabel(activeArchetype.preferredBranch)}</strong>
+        </div>
+        <span>{missingEquipment > 0 ? `Свободных ключевых слотов: ${missingEquipment}` : playstyleHint}</span>
+      </div>
 
       <div className="office-v64-character-layout">
         <section className="office-v64-character-stage">
@@ -370,6 +386,13 @@ export function V6CharacterView({
                   <small>{branchLabel(archetype.preferredBranch)}</small>
                   <strong>{archetype.name}</strong>
                   <em>{archetype.subtitle}</em>
+                  <span className="office-v610-archetype-effect">{
+                    archetype.preferredBranch === 'expert'
+                      ? 'Техника + логический урон'
+                      : archetype.preferredBranch === 'management'
+                        ? 'Репутация + переговоры'
+                        : 'Доход + напор'
+                  }</span>
                   <BonusChips bonuses={archetype.bonuses} />
                 </button>
               ))}
@@ -502,6 +525,13 @@ export function V6CareerView({
   const selectedNode =
     v6CareerNodes.find((node) => node.id === selectedNodeId) ?? v6CareerNodes[0];
   const selectedState = getNodeState(selectedNode);
+  const careerTarget =
+    state.careerBranch === 'general'
+      ? null
+      : [...v6CareerNodes]
+          .filter((node) => node.branch === 'general' || node.branch === state.careerBranch)
+          .sort((a, b) => a.level - b.level || a.reputation - b.reputation)
+          .find((node) => node.title !== snapshot.role && !getNodeState(node).current && (node.level > snapshot.level || node.reputation > effectiveReputation || !getNodeState(node).available));
 
   return (
     <section className="office-v6-page office-v6-career">
@@ -509,6 +539,15 @@ export function V6CareerView({
         Выбранное направление меняет стиль прохождения боссов, доступную технику, мебель,
         компании и будущий офис. Нажми на должность, чтобы увидеть подробности.
       </PageHeader>
+
+      <div className="office-v610-next-goal tone-gold">
+        <V6Icon name="career" />
+        <div>
+          <small>Следующая карьерная цель</small>
+          <strong>{state.careerBranch === 'general' ? 'Выбери направление развития' : careerTarget ? careerTarget.title : 'Продолжай усиливать выбранную ветку'}</strong>
+        </div>
+        <span>{state.careerBranch === 'general' ? 'Эксперт · Управление · Продажи' : careerTarget ? `ур. ${careerTarget.level} · реп. ${careerTarget.reputation}` : branchLabel(state.careerBranch)}</span>
+      </div>
 
       <div className="office-v6-branch-pick">
         {branchCards.map((branch) => (
@@ -669,19 +708,9 @@ export function V6CareerView({
                     <em>ур. {node.level} · реп. {node.reputation}</em>
                   </div>
 
-                  {node.skill ? (
-                    <div className="office-v6-career-requirement">
-                      Нужно: <b>{skillShort(node.skill)} {node.skillValue}</b>
-                    </div>
-                  ) : (
-                    <div className="office-v6-career-requirement">
-                      Нужно: <b>{node.id === 'intern' ? 'Старт игры' : 'предыдущая должность'}</b>
-                    </div>
-                  )}
-
-                  <div className="office-v6-career-node-preview">
-                    <span>{careerBenefits(node.branch, node.id)[0]}</span>
-                    <span>{node.unlocks[0]}</span>
+                  <div className="office-v610-career-node-foot">
+                    <span>{node.branch === 'general' ? 'Общий путь' : branchLabel(node.branch)}</span>
+                    <b>Подробнее →</b>
                   </div>
                 </article>
               );
@@ -773,6 +802,13 @@ export function V6CompanyView({
   onBack: () => void;
 }) {
   const activeIndex = Math.max(0, v6Companies.findIndex((company) => company.id === state.companyId));
+  const nextCompany = v6Companies[activeIndex + 1];
+  const nextCompanyMissing = nextCompany
+    ? [
+        snapshot.level < nextCompany.minLevel ? `уровень ${snapshot.level}/${nextCompany.minLevel}` : null,
+        snapshot.reputation < nextCompany.minReputation ? `репутация ${snapshot.reputation}/${nextCompany.minReputation}` : null,
+      ].filter(Boolean).join(' · ')
+    : '';
 
   return (
     <section className="office-v6-page office-v6-companies office-v64-companies">
@@ -780,6 +816,15 @@ export function V6CompanyView({
         Новая компания — это не просто множитель зарплаты. Меняются атмосфера офиса, доступные
         предметы, пассивный бонус и ощущение того, насколько далеко ты ушёл от первого стола.
       </PageHeader>
+
+      <div className={`office-v610-next-goal ${nextCompany ? 'tone-blue' : 'tone-green'}`}>
+        <V6Icon name="company" />
+        <div>
+          <small>Следующий офис</small>
+          <strong>{nextCompany ? nextCompany.name : 'Ты дошёл до верхней ступени компаний'}</strong>
+        </div>
+        <span>{nextCompany ? (nextCompanyMissing || 'Можно переходить прямо сейчас') : 'Собственная компания открыта'}</span>
+      </div>
 
       <div className="office-v64-company-progress" aria-label="Прогресс по компаниям">
         {v6Companies.map((company, index) => (
@@ -833,7 +878,7 @@ export function V6CompanyView({
                     <small>{company.industry}</small>
                     <strong>{company.name}</strong>
                   </div>
-                  <span>{active ? 'Текущая' : available ? 'Доступна' : 'Закрыта'}</span>
+                  <span className={active ? 'state-current' : available ? 'state-ready' : 'state-locked'}>{active ? 'Текущая' : available ? 'Можно перейти' : 'Пока закрыта'}</span>
                 </div>
                 <p>{company.description}</p>
 
