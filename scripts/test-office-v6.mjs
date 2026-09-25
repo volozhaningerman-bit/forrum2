@@ -183,6 +183,19 @@ try {
   assert.equal(await page.locator('.office-bonus').count(), 0);
   assert.equal(await page.locator('.office-player-goal').count(), 1);
   assert.match(await page.locator('.office-player-goal').textContent(), /Цель:/);
+
+  // Promotion must be reachable from the actual home UI, not only from dead internal code.
+  const promotionAction = page.locator('.office-v615-promotion-action');
+  assert.equal(await promotionAction.count(), 1);
+  assert.match(await promotionAction.textContent(), /Что осталось до повышения/i);
+  await promotionAction.click();
+  const promotionDialog = page.getByRole('dialog', { name: 'Подготовка к повышению' });
+  await promotionDialog.waitFor();
+  assert.match(await promotionDialog.textContent(), /Компетентность/i);
+  assert.match(await promotionDialog.textContent(), /Репутация/i);
+  assert.match(await promotionDialog.textContent(), /Первое поручение/i);
+  await promotionDialog.getByRole('button', { name: /Продолжить подготовку/i }).click();
+  await promotionDialog.waitFor({ state: 'detached' });
   assert.equal(await page.locator('.office-v68-scene-status').count(), 1);
   assert.equal(await page.locator('.office-v68-scene-status>span').count(), 3);
   assert.equal(await page.locator('.office-v6-equipment-slot').count(), 0);
@@ -566,23 +579,35 @@ try {
     );
   }
 
-  // The playable alpha has a real chapter ending instead of a "coming later" dead end.
+  // The playable alpha must finish through a real promotion button, not by writing the role directly.
   await page.evaluate(() => {
     const key = '4rrum.office.v4_1';
     const raw = localStorage.getItem(key);
     if (!raw) throw new Error('Missing Office persisted state');
     const state = JSON.parse(raw);
-    state.snapshot.role = 'Младший специалист';
-    state.snapshot.salary = 50000;
+    state.snapshot.role = 'Стажёр';
+    state.snapshot.salary = 35000;
+    state.snapshot.skills.competence = Math.max(5, state.snapshot.skills.competence);
+    state.snapshot.reputation = Math.max(30, state.snapshot.reputation);
     state.snapshot.firstAssignment.progress = state.snapshot.firstAssignment.target;
     state.v6.bossResolved = true;
     state.v6.bossHp = 0;
     state.story.bossResolved = true;
+    state.story.completedEvents = state.story.completedEvents.length >= 3
+      ? state.story.completedEvents
+      : ['mailbox', 'colleague-help', 'revision'];
     localStorage.setItem(key, JSON.stringify(state));
   });
   await page.setViewportSize({ width: 1366, height: 768 });
   await page.reload({ waitUntil: 'networkidle' });
   await page.locator('.office-game').waitFor();
+  await assertOneScreen('promotion ready home 1366x768');
+  assert.equal(await page.locator('.office-promotion-compact.is-ready').count(), 1);
+  const readyPromotion = page.getByRole('button', { name: 'Попросить повышение' });
+  await readyPromotion.waitFor();
+  await readyPromotion.click();
+  await page.waitForTimeout(80);
+
   await assertOneScreen('alpha chapter complete home 1366x768');
   assert.equal(await page.locator('.office-promotion-compact.is-alpha-complete').count(), 1);
   assert.equal(await page.locator('.office-alpha-chapter-checks>span.done').count(), 3);
@@ -590,7 +615,8 @@ try {
   assert.match(await page.locator('.office-player-goal').textContent(), /альфа-глава 1 завершена/i);
   assert.match(await page.locator('.office-v68-scene-message').textContent(), /альфа-глава завершена/i);
   assert.match(await page.locator('.office-v68-scene-status').textContent(), /Далее:\s*Глава 1 завершена/i);
-  await page.screenshot({ path: output + '/home-v614-alpha-complete-1366x768.png', fullPage: false });
+  assert.match(await page.locator('.office-player-main').textContent(), /Младший специалист/i);
+  await page.screenshot({ path: output + '/home-v615-alpha-complete-1366x768.png', fullPage: false });
 
   await page.locator('.office-world-nav').getByRole('button', { name: /Карьера/i }).click();
   await page.getByRole('heading', { name: 'Большое дерево развития' }).waitFor();
@@ -600,6 +626,29 @@ try {
     true,
   );
   await page.getByRole('button', { name: /Вернуться в офис/ }).click();
+
+  // Company choice must visibly change the actual home office and survive reload.
+  await page.evaluate(() => {
+    const key = '4rrum.office.v4_1';
+    const state = JSON.parse(localStorage.getItem(key));
+    state.snapshot.level = Math.max(10, state.snapshot.level);
+    state.snapshot.reputation = Math.max(100, state.snapshot.reputation);
+    localStorage.setItem(key, JSON.stringify(state));
+  });
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.locator('.office-game').waitFor();
+  await page.locator('.office-world-nav').getByRole('button', { name: /Компания/i }).click();
+  await page.getByRole('heading', { name: 'Меняй офис вместе с карьерой' }).waitFor();
+  const pixelsoftCard = page.locator('.office-v6-company-grid>article[data-company="pixelsoft"]');
+  await pixelsoftCard.getByRole('button', { name: 'Перейти в компанию' }).click();
+  await page.getByRole('button', { name: /Вернуться в офис/ }).click();
+  await page.locator('.office-v615-scene[data-company="pixelsoft"]').waitFor();
+  assert.match(await page.locator('.office-v615-office-badge').textContent(), /PixelSoft/i);
+  assert.match(await page.locator('.office-company-card').textContent(), /PixelSoft/i);
+
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.locator('.office-v615-scene[data-company="pixelsoft"]').waitFor();
+  assert.match(await page.locator('.office-v615-office-badge').textContent(), /PixelSoft/i);
 
   // Persisted progression must hydrate back into the actual UI after a full reload.
   const persistedBeforeReload = await page.evaluate(() => localStorage.getItem('4rrum.office.v4_1'));
@@ -645,7 +694,7 @@ try {
   assert(recoveredState && recoveredState.includes('"version":1'));
 
   assert.deepEqual(pageErrors, []);
-  console.log('Office v6.14 alpha chapter: complete first chapter state, explicit roadmap boundaries, persistence and full desktop regression passed');
+  console.log('Office v6.15 alpha interactions: promotion helper/action, company office feedback, chapter completion, persistence and full desktop regression passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
