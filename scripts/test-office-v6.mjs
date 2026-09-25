@@ -108,6 +108,60 @@ try {
     assert(dimensions.officeBottom <= dimensions.height + 1, `${label}: office bottom ${dimensions.officeBottom}/${dimensions.height}`);
   };
 
+  const assertNoInternalClipping = async (label, selectors) => {
+    const checks = await page.evaluate((targets) => targets.map((selector) => {
+      const node = document.querySelector(selector);
+      if (!node) return { selector, missing: true };
+      const style = getComputedStyle(node);
+      const rect = node.getBoundingClientRect();
+      return {
+        selector,
+        missing: false,
+        clientWidth: node.clientWidth,
+        clientHeight: node.clientHeight,
+        scrollWidth: node.scrollWidth,
+        scrollHeight: node.scrollHeight,
+        overflowX: style.overflowX,
+        overflowY: style.overflowY,
+        width: rect.width,
+        height: rect.height,
+      };
+    }), selectors);
+
+    for (const check of checks) {
+      assert.equal(check.missing, false, `${label}: missing ${check.selector}`);
+      if (!['auto', 'scroll'].includes(check.overflowX)) {
+        assert(
+          check.scrollWidth <= check.clientWidth + 2,
+          `${label}: hidden horizontal clipping in ${check.selector}: ${check.scrollWidth}/${check.clientWidth}`,
+        );
+      }
+      if (!['auto', 'scroll'].includes(check.overflowY)) {
+        assert(
+          check.scrollHeight <= check.clientHeight + 2,
+          `${label}: hidden vertical clipping in ${check.selector}: ${check.scrollHeight}/${check.clientHeight}`,
+        );
+      }
+    }
+  };
+
+  const assertFontFloor = async (label, selector, minimum) => {
+    const sizes = await page.locator(selector).evaluateAll((nodes) =>
+      nodes
+        .filter((node) => {
+          const style = getComputedStyle(node);
+          const rect = node.getBoundingClientRect();
+          return style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0;
+        })
+        .map((node) => parseFloat(getComputedStyle(node).fontSize)),
+    );
+    assert(sizes.length > 0, `${label}: no visible nodes for ${selector}`);
+    assert(
+      sizes.every((size) => size >= minimum),
+      `${label}: ${selector} below ${minimum}px => ${sizes.join(', ')}`,
+    );
+  };
+
   await page.goto('http://127.0.0.1:' + port + '/applications/games/office', {
     waitUntil: 'networkidle',
   });
@@ -391,7 +445,28 @@ try {
     await page.getByRole('heading', { name: heading }).waitFor();
     await assertWorldNav(label);
     await assertOneScreen(`world screen ${label} 1720x864`);
-    await page.screenshot({ path: output + '/world-' + label.toLowerCase() + '-v612-1720x864.png', fullPage: false });
+
+    if (label === 'Задачи') {
+      await assertNoInternalClipping('tasks 1720x864', ['.office-v65-task-grid', '.office-v65-task-foot']);
+      await assertFontFloor('tasks copy 1720x864', '.office-v65-task-copy p', 9);
+    } else if (label === 'Карьера') {
+      await assertNoInternalClipping('career 1720x864', ['.office-v6-career-stage']);
+      await assertFontFloor('career node labels 1720x864', '.office-v6-career-node-top small', 8);
+      await assertFontFloor('career detail 1720x864', '.office-v6-career-detail p', 8);
+    } else if (label === 'Компания') {
+      await assertNoInternalClipping('companies 1720x864', ['.office-v64-company-grid']);
+      await assertFontFloor('company secondary copy 1720x864', '.office-v64-company-copy>p', 8);
+      await assertFontFloor('company requirements 1720x864', '.office-v64-company-requirements span', 8);
+    } else if (label === 'Боссы') {
+      await assertNoInternalClipping('bosses 1720x864', ['.office-v65-boss-layout']);
+      await assertFontFloor('boss description 1720x864', '.office-v65-boss-copy>p', 9);
+      await assertFontFloor('boss roadmap 1720x864', '.office-v65-boss-road-item small', 8);
+    } else if (label === 'События') {
+      await assertNoInternalClipping('events 1720x864', ['.office-v67-events-layout']);
+      await assertFontFloor('event copy 1720x864', '.office-v67-event-feed article p', 8.5);
+    }
+
+    await page.screenshot({ path: output + '/world-' + label.toLowerCase() + '-v613-1720x864.png', fullPage: false });
   }
   await page.getByRole('button', { name: '← В офис' }).click();
 
@@ -402,6 +477,23 @@ try {
     await page.getByRole('heading', { name: heading }).waitFor();
     await assertWorldNav(label);
     await assertOneScreen(`world screen ${label} 1366x768`);
+
+    if (label === 'Задачи') {
+      await assertNoInternalClipping('tasks 1366x768', ['.office-v65-task-grid', '.office-v65-task-foot']);
+      await assertFontFloor('tasks copy 1366x768', '.office-v65-task-copy p', 7.5);
+    } else if (label === 'Карьера') {
+      await assertNoInternalClipping('career 1366x768', ['.office-v6-career-stage']);
+      await assertFontFloor('career node labels 1366x768', '.office-v6-career-node-top small', 7.5);
+    } else if (label === 'Компания') {
+      await assertNoInternalClipping('companies 1366x768', ['.office-v64-company-grid']);
+      await assertFontFloor('company copy 1366x768', '.office-v64-company-copy>p', 7.5);
+    } else if (label === 'Боссы') {
+      await assertNoInternalClipping('bosses 1366x768', ['.office-v65-boss-layout']);
+      await assertFontFloor('boss copy 1366x768', '.office-v65-boss-copy>p', 8);
+    } else if (label === 'События') {
+      await assertNoInternalClipping('events 1366x768', ['.office-v67-events-layout']);
+      await assertFontFloor('event copy 1366x768', '.office-v67-event-feed article p', 8);
+    }
   }
   await page.getByRole('button', { name: '← В офис' }).click();
 
@@ -504,7 +596,7 @@ try {
   assert(recoveredState && recoveredState.includes('"version":1'));
 
   assert.deepEqual(pageErrors, []);
-  console.log('Office v6.12 alpha hardening: real controls, keyboard/Escape flows, persistence recovery and full desktop viewport matrix passed');
+  console.log('Office v6.13 visual QA: readability floors, internal clipping checks, interaction hardening and full desktop viewport matrix passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');

@@ -11498,3 +11498,459 @@ body:has(.office-page) .app-page-frame{
     padding-bottom:3px!important;
   }
 }
+
+
+/* ==========================================================================
+   OFFICE v6.13 — VISUAL QA
+   Readability and density pass after production screenshot review.
+   Keep the one-screen desktop shell; spend available space on useful content.
+   ========================================================================== */
+
+/* --- Global content readability floor ----------------------------------- */
+.office-v65-screen-head p,
+.office-v67-dev-head p,
+.office-v6-page-header p{
+  font-size:9px!important;
+  line-height:1.3!important;
+  color:#b8b0a4!important;
+}
+
+.office-v610-next-goal small{
+  font-size:8px!important;
+}
+
+.office-v610-next-goal strong{
+  font-size:11px!important;
+}
+
+.office-v610-next-goal>span{
+  font-size:8px!important;
+  color:#b9b0a4!important;
+}
+
+/* --- Tasks: larger useful content instead of stretched empty cards ------ */
+.office-v65-task-grid{
+  gap:8px!important;
+}
+
+.office-v65-task-card{
+  align-items:center!important;
+  grid-template-columns:84px minmax(0,1fr) 132px!important;
+  min-height:0!important;
+  padding:12px!important;
+}
+
+.office-v65-task-icon{
+  align-self:stretch!important;
+  min-height:112px!important;
+  display:grid!important;
+  place-items:center!important;
+}
+
+.office-v65-task-icon .office-icon{
+  width:34px!important;
+  height:34px!important;
+}
+
+.office-v65-task-copy{
+  align-self:center!important;
+}
+
+.office-v65-task-copy small{
+  font-size:8px!important;
+  letter-spacing:.04em!important;
+}
+
+.office-v65-task-copy h3{
+  margin:4px 0!important;
+  font-size:17px!important;
+}
+
+.office-v65-task-copy p{
+  max-width:620px!important;
+  font-size:9.5px!important;
+  line-height:1.35!important;
+  color:#bbb2a6!important;
+}
+
+.office-v65-task-tags{
+  margin-top:7px!important;
+  gap:5px!important;
+}
+
+.office-v65-task-tags span{
+  font-size:8px!important;
+  padding:3px 6px!important;
+}
+
+.office-v65-task-action{
+  align-self:stretch!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+}
+
+.office-v65-task-action span{
+  font-size:8px!important;
+}
+
+.office-v65-task-action b{
+  font-size:12px!important;
+}
+
+.office-v65-task-action button{
+  min-height:36px!important;
+  font-size:9px!important;
+}
+
+.office-v65-task-foot strong{
+  font-size:10px!important;
+}
+
+.office-v65-task-foot span{
+  font-size:8px!important;
+  line-height:1.25!important;
+}
+
+/* --- Career: map remains overview, but labels can actually be read ------- */
+.office-v6-branch-pick small,
+.office-v68-career-summary small,
+.office-v6-career-toolbar,
+.office-v6-career-toolbar button,
+.office-v6-career-node-top small,
+.office-v6-career-node-top .status,
+.office-v610-career-node-foot span,
+.office-v610-career-node-foot b,
+.office-v6-career-detail small,
+.office-v6-career-detail-salary span,
+.office-v6-career-detail-section>span{
+  font-size:8px!important;
+}
+
+.office-v6-branch-pick span,
+.office-v68-career-summary p,
+.office-v6-career-node-meta em,
+.office-v6-career-detail p,
+.office-v6-career-detail-chips b,
+.office-v6-career-detail-section li,
+.office-v6-career-detail-tip{
+  font-size:8.5px!important;
+  line-height:1.25!important;
+}
+
+.office-v6-branch-rewards b{
+  font-size:7.5px!important;
+}
+
+.office-v6-career-node{
+  width:174px!important;
+  min-height:82px!important;
+  padding:8px 9px!important;
+}
+
+.office-v6-career-node-top small{
+  max-width:106px!important;
+}
+
+.office-v6-career-node>strong{
+  font-size:14px!important;
+}
+
+.office-v6-career-node-meta span{
+  font-size:10px!important;
+}
+
+.office-v6-career-detail h3{
+  font-size:22px!important;
+}
+
+.office-v6-career-detail-salary strong{
+  font-size:17px!important;
+}
+
+/* --- Companies: six cards stay visible, secondary copy is no longer 6px - */
+.office-v64-company-title small,
+.office-v64-company-title>span,
+.office-v64-company-metrics small,
+.office-v64-company-metrics em,
+.office-v64-company-perk small,
+.office-v64-company-requirements span{
+  font-size:8px!important;
+}
+
+.office-v64-company-title strong{
+  font-size:13px!important;
+}
+
+.office-v64-company-copy>p{
+  font-size:8.5px!important;
+  line-height:1.25!important;
+  color:#b1a99e!important;
+}
+
+.office-v64-company-metrics b{
+  font-size:10px!important;
+}
+
+.office-v64-company-perk strong{
+  font-size:9.5px!important;
+}
+
+.office-v64-company-grid>article>button{
+  min-height:27px!important;
+  font-size:8.5px!important;
+}
+
+.office-v64-company-grid>article.locked{
+  opacity:.78!important;
+}
+
+.office-v64-company-grid>article.locked .office-v64-company-copy>p,
+.office-v64-company-grid>article.locked .office-v64-company-title strong{
+  color:#958f86!important;
+}
+
+/* --- Bosses: use the vertical space for the encounter and boss roadmap --- */
+.office-v65-boss-layout{
+  align-items:start!important;
+}
+
+.office-v65-current-boss{
+  align-self:start!important;
+  min-height:390px!important;
+}
+
+.office-v65-boss-portrait{
+  min-height:390px!important;
+}
+
+.office-v65-boss-copy{
+  align-content:center!important;
+  padding-top:14px!important;
+  padding-bottom:14px!important;
+}
+
+.office-v65-boss-copy>small,
+.office-v65-boss-hp span,
+.office-v65-boss-reward span,
+.office-v65-boss-styles span,
+.office-v68-boss-advice span,
+.office-v68-boss-advice em{
+  font-size:8px!important;
+}
+
+.office-v65-boss-copy>p{
+  font-size:9.5px!important;
+  line-height:1.35!important;
+  color:#b9b0a4!important;
+}
+
+.office-v65-boss-hp b,
+.office-v65-boss-reward b{
+  font-size:10px!important;
+}
+
+.office-v65-boss-styles>div{
+  min-height:64px!important;
+  padding:8px!important;
+}
+
+.office-v65-boss-styles>div.best::after{
+  font-size:7px!important;
+}
+
+.office-v65-boss-styles b{
+  font-size:11px!important;
+}
+
+.office-v68-boss-advice strong{
+  font-size:14px!important;
+}
+
+.office-v65-boss-copy>button{
+  min-height:40px!important;
+  font-size:10px!important;
+}
+
+.office-v65-boss-road{
+  align-self:start!important;
+  display:grid!important;
+  grid-template-rows:auto repeat(4,minmax(58px,auto))!important;
+  gap:7px!important;
+}
+
+.office-v65-boss-road h3{
+  font-size:16px!important;
+}
+
+.office-v65-boss-road-item{
+  min-height:58px!important;
+}
+
+.office-v65-boss-road-item b{
+  font-size:10px!important;
+}
+
+.office-v65-boss-road-item small,
+.office-v65-boss-road-item em{
+  font-size:8px!important;
+}
+
+/* --- Events: compact the rows and spend that space on readable copy ------ */
+.office-v67-event-feed{
+  align-content:start!important;
+}
+
+.office-v67-event-feed article{
+  min-height:0!important;
+  padding-top:8px!important;
+  padding-bottom:8px!important;
+}
+
+.office-v67-event-feed article small,
+.office-v67-event-feed article em,
+.office-v67-event-feed article>span,
+.office-v67-event-goals>article small{
+  font-size:8px!important;
+}
+
+.office-v67-event-feed article strong{
+  font-size:12px!important;
+}
+
+.office-v67-event-feed article p{
+  font-size:9px!important;
+  line-height:1.3!important;
+  color:#b4aca1!important;
+}
+
+.office-v67-event-goals>article p{
+  font-size:8.5px!important;
+  line-height:1.25!important;
+}
+
+.office-v69-event-next small,
+.office-v69-event-next button{
+  font-size:8px!important;
+}
+
+.office-v69-event-next strong{
+  font-size:9.5px!important;
+}
+
+/* --- Low-height desktop: preserve gains without reintroducing clipping --- */
+@media(min-width:721px) and (max-height:780px){
+  .office-v65-screen-head p,
+  .office-v67-dev-head p,
+  .office-v6-page-header p{
+    font-size:8px!important;
+  }
+
+  .office-v610-next-goal small,
+  .office-v610-next-goal>span{
+    font-size:7.5px!important;
+  }
+
+  .office-v610-next-goal strong{
+    font-size:10px!important;
+  }
+
+  .office-v65-task-card{
+    grid-template-columns:66px minmax(0,1fr) 118px!important;
+    padding:7px!important;
+  }
+
+  .office-v65-task-icon{
+    min-height:78px!important;
+  }
+
+  .office-v65-task-copy h3{
+    font-size:14px!important;
+  }
+
+  .office-v65-task-copy p{
+    font-size:8px!important;
+    line-height:1.2!important;
+  }
+
+  .office-v65-task-copy small,
+  .office-v65-task-tags span,
+  .office-v65-task-action span,
+  .office-v65-task-action button,
+  .office-v65-task-foot span{
+    font-size:7.5px!important;
+  }
+
+  .office-v6-career-node{
+    width:154px!important;
+    min-height:72px!important;
+    padding:6px 7px!important;
+  }
+
+  .office-v6-career-node>strong{
+    font-size:12px!important;
+  }
+
+  .office-v6-career-node-top small,
+  .office-v6-career-node-top .status,
+  .office-v610-career-node-foot span,
+  .office-v610-career-node-foot b,
+  .office-v6-career-detail small,
+  .office-v6-career-detail p,
+  .office-v6-career-detail-chips b,
+  .office-v6-career-detail-section li,
+  .office-v6-career-detail-tip{
+    font-size:7.5px!important;
+  }
+
+  .office-v64-company-title small,
+  .office-v64-company-title>span,
+  .office-v64-company-copy>p,
+  .office-v64-company-metrics small,
+  .office-v64-company-metrics em,
+  .office-v64-company-perk small,
+  .office-v64-company-requirements span,
+  .office-v64-company-grid>article>button{
+    font-size:7.5px!important;
+  }
+
+  .office-v65-current-boss,
+  .office-v65-boss-portrait{
+    min-height:330px!important;
+  }
+
+  .office-v65-boss-copy{
+    padding-top:8px!important;
+    padding-bottom:8px!important;
+  }
+
+  .office-v65-boss-copy>p{
+    font-size:8px!important;
+  }
+
+  .office-v65-boss-styles>div{
+    min-height:52px!important;
+    padding:6px!important;
+  }
+
+  .office-v65-boss-copy>small,
+  .office-v65-boss-hp span,
+  .office-v65-boss-reward span,
+  .office-v65-boss-styles span,
+  .office-v68-boss-advice span,
+  .office-v68-boss-advice em,
+  .office-v65-boss-road-item small,
+  .office-v65-boss-road-item em{
+    font-size:7.5px!important;
+  }
+
+  .office-v67-event-feed article{
+    padding-top:5px!important;
+    padding-bottom:5px!important;
+  }
+
+  .office-v67-event-feed article p,
+  .office-v67-event-goals>article p{
+    font-size:8px!important;
+  }
+}
