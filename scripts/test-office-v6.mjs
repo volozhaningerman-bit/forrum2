@@ -588,6 +588,8 @@ try {
   assert.equal(await page.locator('.office-alpha-chapter-checks>span.done').count(), 3);
   assert.match(await page.locator('.office-promotion-compact').textContent(), /Глава завершена/i);
   assert.match(await page.locator('.office-player-goal').textContent(), /альфа-глава 1 завершена/i);
+  assert.match(await page.locator('.office-v68-scene-message').textContent(), /альфа-глава завершена/i);
+  assert.match(await page.locator('.office-v68-scene-status').textContent(), /Далее:\s*Глава 1 завершена/i);
   await page.screenshot({ path: output + '/home-v614-alpha-complete-1366x768.png', fullPage: false });
 
   await page.locator('.office-world-nav').getByRole('button', { name: /Карьера/i }).click();
