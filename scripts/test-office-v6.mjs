@@ -124,6 +124,9 @@ try {
   assert.equal(await page.locator('.office-profile-open>span').count(), 0);
   assert.equal(await page.locator('.office-top-status').count(), 1);
   assert.equal(await page.locator('.office-top-status .office-resource').count(), 3);
+  assert.equal(await page.locator('.office-top-status .office-resource button').count(), 0);
+  assert.equal(await page.locator('.office-top-icons>button').count(), 1);
+  assert.equal(await page.locator('.office-bonus').count(), 0);
   assert.equal(await page.locator('.office-player-goal').count(), 1);
   assert.match(await page.locator('.office-player-goal').textContent(), /Цель:/);
   assert.equal(await page.locator('.office-v68-scene-status').count(), 1);
@@ -144,6 +147,15 @@ try {
   await page.getByRole('button', { name: 'Выбрать стол' }).hover({ position: { x: 42, y: 18 } });
   const deskStrokeAfter = await deskPath.evaluate((node) => getComputedStyle(node).stroke);
   assert.notEqual(deskStrokeAfter, deskStrokeBefore);
+
+  // The office scene is fully keyboard-accessible: focus + Enter opens the real equipment dialog.
+  await page.locator('.office-scene-shape-desk').focus();
+  await page.keyboard.press('Enter');
+  await page.locator('.office-equipment-modal .office-v6-drawer').waitFor();
+  assert.match(await page.locator('.office-equipment-modal .office-v6-drawer-title h3').textContent(), /Стол/i);
+  await page.keyboard.press('Escape');
+  await page.locator('.office-equipment-modal').waitFor({ state: 'detached' });
+
   assert.equal(await page.evaluate(() => document.body.classList.contains('office-no-scroll')), true);
   const initialGameRect = await page.locator('.office-page').boundingBox();
   assert(initialGameRect && initialGameRect.y + initialGameRect.height <= 1001);
@@ -172,8 +184,14 @@ try {
     await page.locator('.office-world-nav small').evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).display === 'none')),
     true,
   );
-  await page.screenshot({ path: output + '/home-v611-1720x864.png', fullPage: false });
+  await page.screenshot({ path: output + '/home-v612-1720x864.png', fullPage: false });
   await page.setViewportSize({ width: 1600, height: 1000 });
+
+  // The "Все" affordance in office news must lead somewhere real.
+  await page.locator('.office-news').getByRole('button', { name: /Все/ }).click();
+  await page.getByRole('heading', { name: 'События' }).waitFor();
+  await assertWorldNav('События');
+  await page.getByRole('button', { name: '← В офис' }).click();
 
   await page.getByRole('button', { name: 'Выбрать стол' }).click({ position: { x: 42, y: 18 } });
   await page.locator('.office-equipment-modal .office-v6-drawer').waitFor();
@@ -214,6 +232,13 @@ try {
   assert.equal(await page.locator('.office-v65-task-grid').count(), 1);
   assert.equal(await page.locator('.office-v610-next-goal').count(), 1);
   await assertWorldNav('Задачи');
+
+  // Story dialogs must never trap the user: Escape closes them without spending the choice.
+  await page.getByRole('button', { name: /^Выполнить$/ }).first().click();
+  await page.getByRole('dialog').waitFor();
+  await page.keyboard.press('Escape');
+  await page.getByRole('dialog').waitFor({ state: 'detached' });
+
   await page.getByRole('button', { name: '← Вернуться в офис' }).click();
 
   // Player progression lives in the left rail; Profile is no longer duplicated in the world strip.
@@ -366,14 +391,48 @@ try {
     await page.getByRole('heading', { name: heading }).waitFor();
     await assertWorldNav(label);
     await assertOneScreen(`world screen ${label} 1720x864`);
-    await page.screenshot({ path: output + '/world-' + label.toLowerCase() + '-v611-1720x864.png', fullPage: false });
+    await page.screenshot({ path: output + '/world-' + label.toLowerCase() + '-v612-1720x864.png', fullPage: false });
   }
   await page.getByRole('button', { name: '← В офис' }).click();
+
+  // Production laptop viewport: every world screen and every development screen must remain one-screen.
+  await page.setViewportSize({ width: 1366, height: 768 });
+  for (const [label, heading] of worldScreens) {
+    await page.locator('.office-world-nav').getByRole('button', { name: new RegExp(label, 'i') }).click();
+    await page.getByRole('heading', { name: heading }).waitFor();
+    await assertWorldNav(label);
+    await assertOneScreen(`world screen ${label} 1366x768`);
+  }
+  await page.getByRole('button', { name: '← В офис' }).click();
+
+  const developmentScreens = [
+    ['Профиль', 'Собери свой офисный билд'],
+    ['Характеристики', 'Характеристики'],
+    ['Навыки', 'Навыки'],
+    ['Таланты', 'Таланты'],
+    ['Инвентарь', 'Инвентарь'],
+    ['Достижения', 'Достижения'],
+  ];
+  for (const [label, heading] of developmentScreens) {
+    await page.locator('.office-side-nav').getByRole('button', { name: new RegExp(label, 'i') }).click();
+    await page.getByRole('heading', { name: heading }).waitFor();
+    await assertOneScreen(`development screen ${label} 1366x768`);
+  }
+  await page.getByRole('button', { name: '← В офис' }).click();
+
   await page.setViewportSize({ width: 1600, height: 1000 });
 
-  for (const width of [1600, 1200, 1024]) {
+  const desktopViewports = [
+    [1720, 864],
+    [1600, 900],
+    [1366, 768],
+    [1280, 800],
+    [1200, 800],
+    [1024, 768],
+  ];
+  for (const [width, height] of desktopViewports) {
     await page.getByRole('button', { name: '×' }).click().catch(() => {});
-    await page.setViewportSize({ width, height: 900 });
+    await page.setViewportSize({ width, height });
     await page.waitForTimeout(150);
     const dimensions = await page.evaluate(() => {
       const office = document.querySelector('.office-page')?.getBoundingClientRect();
@@ -388,24 +447,64 @@ try {
     });
     assert(
       dimensions.scroll <= dimensions.width + 1,
-      `Office v6 must not overflow horizontally at ${width}px: ${dimensions.scroll}`,
+      `Office v6 must not overflow horizontally at ${width}x${height}: ${dimensions.scroll}`,
     );
     assert.equal(dimensions.bodyOverflow, 'hidden');
     assert(
       dimensions.pageScrollHeight <= dimensions.height + 2,
-      `Office v6.5 must keep the document on one screen at ${width}px: scrollHeight=${dimensions.pageScrollHeight}`,
+      `Office v6.12 must keep the document on one screen at ${width}x${height}: scrollHeight=${dimensions.pageScrollHeight}`,
     );
     assert(
       dimensions.officeBottom <= dimensions.height + 1,
-      `Office v6 must fit the viewport at ${width}px: bottom=${dimensions.officeBottom}, height=${dimensions.height}`,
+      `Office v6 must fit the viewport at ${width}x${height}: bottom=${dimensions.officeBottom}, height=${dimensions.height}`,
     );
   }
 
-  const persisted = await page.evaluate(() => localStorage.getItem('4rrum.office.v4_1'));
-  assert(persisted && persisted.includes('"v6"'));
-  assert(persisted && persisted.includes('"gender":"female"'));
+  // Persisted progression must hydrate back into the actual UI after a full reload.
+  const persistedBeforeReload = await page.evaluate(() => localStorage.getItem('4rrum.office.v4_1'));
+  assert(persistedBeforeReload);
+  const savedState = JSON.parse(persistedBeforeReload);
+  assert.equal(savedState.v6.gender, 'female');
+  assert(savedState.v6.ownedItemIds.length >= 8);
+  const savedSkillPoints = savedState.snapshot.skillPoints;
+
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.locator('.office-game').waitFor();
+  await assertOneScreen('home after reload 1366x768');
+
+  await page.locator('.office-side-nav').getByRole('button', { name: /Профиль/i }).click();
+  await page.getByRole('heading', { name: 'Собери свой офисный билд' }).waitFor();
+  assert.equal(
+    await page.getByRole('button', { name: /Женщина/ }).evaluate((node) => node.classList.contains('active')),
+    true,
+  );
+
+  await page.locator('.office-side-nav').getByRole('button', { name: /Характеристики/i }).click();
+  await page.getByRole('heading', { name: 'Характеристики' }).waitFor();
+  assert.match(
+    await page.locator('.office-v67-point-bank').textContent(),
+    new RegExp(String(savedSkillPoints)),
+  );
+
+  await page.getByRole('button', { name: '← В офис' }).click();
+
+  // Reset is a real destructive action and must clear the hydrated progression safely.
+  page.once('dialog', (dialog) => dialog.accept());
+  await page.getByRole('button', { name: 'Сбросить прогресс' }).click();
+  await page.waitForTimeout(50);
+  assert.match(await page.locator('.office-profile-name').textContent(), /Стажёр/i);
+
+  // Corrupted local storage must recover to a playable initial state instead of crashing hydration.
+  await page.evaluate(() => localStorage.setItem('4rrum.office.v4_1', '{broken'));
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.locator('.office-game').waitFor();
+  await assertOneScreen('home after corrupted storage recovery 1366x768');
+  const recoveredState = await page.evaluate(() => localStorage.getItem('4rrum.office.v4_1'));
+  assert(recoveredState && recoveredState.includes('"version":1'));
+
   assert.deepEqual(pageErrors, []);
-  console.log('Office v6.11 alpha patch: production-size home HUD, profile cleanup, location navigation, hover affordances and every world screen passed');
+  console.log('Office v6.12 alpha hardening: real controls, keyboard/Escape flows, persistence recovery and full desktop viewport matrix passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
