@@ -278,15 +278,25 @@ export function OfficeGame() {
   }, [activeView, drawerCategory]);
 
   useEffect(() => {
-    if (!drawerCategory) return;
-
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setDrawerCategory(null);
+      if (event.key !== 'Escape') return;
+
+      if (drawerCategory !== null) {
+        setDrawerCategory(null);
+        return;
+      }
+
+      if (bossBattleOpen) {
+        setBossBattleOpen(false);
+        return;
+      }
+
+      if (modal) setModal(null);
     };
 
     window.addEventListener('keydown', closeOnEscape);
     return () => window.removeEventListener('keydown', closeOnEscape);
-  }, [drawerCategory]);
+  }, [bossBattleOpen, drawerCategory, modal]);
 
   useEffect(
     () => () => {
@@ -764,6 +774,15 @@ export function OfficeGame() {
   };
 
   const resetPrototype = () => {
+    if (feedbackTimerRef.current !== null) {
+      window.clearTimeout(feedbackTimerRef.current);
+      feedbackTimerRef.current = null;
+    }
+    if (cooldownTimerRef.current !== null) {
+      window.clearTimeout(cooldownTimerRef.current);
+      cooldownTimerRef.current = null;
+    }
+
     setSnapshot(initialOfficeSnapshot);
     setWorkspace(initialWorkspaceItems);
     setV6(initialV6State);
@@ -774,7 +793,9 @@ export function OfficeGame() {
     setStory(initialOfficeStoryState);
     setActiveView('home');
     setModal(null);
-    setNotice('Прототип сброшен. Снова первый рабочий день.');
+    setActiveAction(null);
+    setFeedback(null);
+    setNotice('Прогресс сброшен. Снова первый рабочий день.');
     window.localStorage.removeItem(OFFICE_STORAGE_KEY);
   };
 
@@ -827,12 +848,10 @@ export function OfficeGame() {
             <Resource icon="morale" value={String(snapshot.motivation)} className="office-motivation" />
 
             <div className="office-top-icons">
-              <button type="button" title="Рейтинг"><OfficeIcon name="rating" /></button>
-              <button type="button" title="Сообщения" className="office-mail"><OfficeIcon name="mail" /><sup>3</sup></button>
-              <button type="button" title="Ночной режим"><OfficeIcon name="moon" /></button>
               <button
                 type="button"
-                title="Сбросить прототип"
+                title="Сбросить прогресс"
+                aria-label="Сбросить прогресс"
                 onClick={() => {
                   if (window.confirm('Сбросить локальный прогресс «В Офисе»?')) resetPrototype();
                 }}
@@ -869,11 +888,7 @@ export function OfficeGame() {
                 </button>
               );
             })}
-            <div className="office-bonus">
-              <OfficeIcon name="gift" />
-              <span>Бонус</span>
-              <small>03:12:45</small>
-            </div>
+
           </nav>
 
           {activeView === 'home' ? (
@@ -1138,7 +1153,7 @@ export function OfficeGame() {
             </section>
 
             <section className="office-news">
-              <div className="office-card-head"><h3>Новости офиса</h3><button type="button">Все »</button></div>
+              <div className="office-card-head"><h3>Новости офиса</h3><button type="button" onClick={() => setActiveView('events')}>Все »</button></div>
               {officeNews.map(([title, time, color]) => (
                 <div className="office-news-row" key={title}>
                   <span className={'dot dot-' + color} />
@@ -1329,7 +1344,12 @@ function OfficeWorldNavigation({
         );
       })}
       {feedback ? (
-        <div key={feedback.id} className={`office-location-feedback office-feedback-${feedback.tone}`}>
+        <div
+          key={feedback.id}
+          className={`office-location-feedback office-feedback-${feedback.tone}`}
+          role="status"
+          aria-live="polite"
+        >
           {feedback.text}
         </div>
       ) : null}
@@ -2103,24 +2123,6 @@ function Resource({ icon, value, detail, className = '' }: { icon: string; value
       <OfficeIcon name={icon} />
       <b>{value}</b>
       {detail ? <small>{detail}</small> : null}
-      <button type="button">+</button>
-    </div>
-  );
-}
-
-function Stat({ label, value, max, icon, tone }: { label: string; value: number; max: number; icon: string; tone: string }) {
-  return (
-    <div className="office-stat">
-      <div><span><OfficeIcon name={icon} /> {label}</span><b>{value} / {max}</b><button type="button">+</button></div>
-      <div className="office-statbar"><i className={tone} style={{ width: `${Math.min(100, value / max * 100)}%` }} /></div>
-    </div>
-  );
-}
-
-function Skill({ label, value, icon }: { label: string; value: number; icon: string }) {
-  return (
-    <div className="office-skill">
-      <OfficeIcon name={icon} /><b>{label}</b><em>{value}</em><button type="button">+</button>
     </div>
   );
 }
