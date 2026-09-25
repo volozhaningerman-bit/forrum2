@@ -11267,7 +11267,7 @@ body:has(.office-page) .app-page-frame{
 
   .office-top-status .office-top-icons{
     height:40px!important;
-    grid-template-columns:repeat(4,34px)!important;
+    grid-template-columns:34px!important;
   }
 
   .office-top-status .office-top-icons>button{
@@ -11333,5 +11333,168 @@ body:has(.office-page) .app-page-frame{
 
   .office-news-row{
     padding:5px 0!important;
+  }
+}
+
+
+/* OFFICE v6.12 — alpha hardening */
+.office-top-status .office-resource{
+  cursor:default;
+}
+
+.office-top-status .office-top-icons{
+  flex:0 0 auto;
+}
+
+.office-top-status .office-top-icons>button{
+  transition:border-color .14s ease,background .14s ease,transform .14s ease;
+}
+
+.office-top-status .office-top-icons>button:hover{
+  border-color:#8a6841!important;
+  background:#2b2722!important;
+}
+
+.office-top-status .office-top-icons>button:active{
+  transform:translateY(1px);
+}
+
+.office-news .office-card-head button:focus-visible,
+.office-world-nav>button:focus-visible,
+.office-side-nav>button:focus-visible,
+.office-profile button:focus-visible,
+.office-equipment-modal button:focus-visible,
+.office-modal button:focus-visible{
+  outline:2px solid #e6ad65!important;
+  outline-offset:2px!important;
+}
+
+@media(min-width:721px) and (max-height:780px){
+  .office-topbar{
+    min-height:48px!important;
+    padding-top:3px!important;
+    padding-bottom:3px!important;
+  }
+
+  .office-logo,
+  .office-player-chip,
+  .office-top-status{
+    height:40px!important;
+    min-height:40px!important;
+  }
+
+  .office-logo b{
+    font-size:21px!important;
+  }
+
+  .office-logo small{
+    margin-top:2px!important;
+  }
+
+  .office-resource{
+    height:38px!important;
+  }
+
+  .office-body{
+    grid-template-rows:minmax(0,1fr) 46px!important;
+  }
+
+  .office-side-nav{
+    gap:3px!important;
+    padding-top:4px!important;
+    padding-bottom:4px!important;
+  }
+
+  .office-side-nav>button{
+    min-height:42px!important;
+    padding-top:3px!important;
+    padding-bottom:3px!important;
+  }
+
+  .office-side-nav>button .office-icon{
+    width:22px!important;
+    height:22px!important;
+  }
+
+  .office-profile.office-profile-compact{
+    gap:4px!important;
+    padding:4px!important;
+  }
+
+  .office-profile-identity{
+    padding:4px!important;
+  }
+
+  .office-profile-compact .office-profile-open{
+    height:74px!important;
+    min-height:74px!important;
+  }
+
+  .office-profile-mini-stats{
+    gap:3px!important;
+  }
+
+  .office-profile-mini-stats>button{
+    min-height:34px!important;
+    padding:3px!important;
+  }
+
+  .office-profile-points{
+    min-height:32px!important;
+  }
+
+  .office-right{
+    padding:4px!important;
+    gap:4px!important;
+  }
+
+  .office-company-card,
+  .office-daily,
+  .office-promotion-compact,
+  .office-news{
+    padding:5px!important;
+  }
+
+  .office-company-row,
+  .office-boss-row{
+    margin-top:5px!important;
+    margin-bottom:5px!important;
+  }
+
+  .office-news-row{
+    padding:3px 0!important;
+  }
+
+  .office-world-nav{
+    height:46px!important;
+    min-height:46px!important;
+    padding:3px!important;
+  }
+
+  .office-world-nav>button{
+    min-height:36px!important;
+    padding:3px 6px!important;
+  }
+
+  .office-world-nav .office-icon{
+    width:20px!important;
+    height:20px!important;
+  }
+
+  .office-world-nav b{
+    font-size:10px!important;
+  }
+
+  .office-v67-dev-head,
+  .office-v65-screen-head,
+  .office-v6-page-header{
+    min-height:46px!important;
+  }
+
+  .office-v610-next-goal{
+    height:34px!important;
+    min-height:34px!important;
+    padding-top:3px!important;
+    padding-bottom:3px!important;
   }
 }
