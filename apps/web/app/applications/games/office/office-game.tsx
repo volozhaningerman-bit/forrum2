@@ -83,6 +83,28 @@ type OfficeModal =
   | { type: 'promotion-help' }
   | null;
 
+function getOfficeProgressNotice(snapshot: OfficeSnapshot, story: OfficeStoryState, v6: V6State) {
+  const promotionCompleted = snapshot.role === nextPromotion.role;
+  const firstDayDone = story.completedEvents.length >= 3;
+
+  if (promotionCompleted && v6.bossResolved) {
+    return 'Первая альфа-глава завершена. Можно продолжать развивать персонажа и рабочее место.';
+  }
+  if (promotionCompleted) {
+    return 'Повышение получено. Осталось пройти первое испытание руководителя.';
+  }
+  if (v6.bossResolved) {
+    return 'Первый босс пройден. Закрой требования и получи первое повышение.';
+  }
+  if (firstDayDone) {
+    return 'Первый день завершён. Готовься к первому испытанию руководителя.';
+  }
+  if (story.completedEvents.length > 0) {
+    return `Первый рабочий день: выполнено ${story.completedEvents.length}/3 событий.`;
+  }
+  return 'Первый рабочий день. Начни с простого поручения.';
+}
+
 export function OfficeGame() {
   const [snapshot, setSnapshot] = useState(initialOfficeSnapshot);
   const [workspace, setWorkspace] = useState<OfficeWorkspaceItem[]>(initialWorkspaceItems);
@@ -131,7 +153,7 @@ export function OfficeGame() {
       if (raw) {
         const parsed: unknown = JSON.parse(raw);
         if (isOfficePersistedState(parsed)) {
-          setSnapshot({
+          const hydratedSnapshot: OfficeSnapshot = {
             ...initialOfficeSnapshot,
             ...parsed.snapshot,
             skills: { ...initialOfficeSnapshot.skills, ...parsed.snapshot.skills },
@@ -141,35 +163,40 @@ export function OfficeGame() {
               ...parsed.snapshot.firstAssignment,
             },
             company: { ...initialOfficeSnapshot.company, ...parsed.snapshot.company },
-          });
+          };
+          const persistedStory = (parsed as typeof parsed & { story?: OfficeStoryState }).story;
+          const persistedV6 = (parsed as typeof parsed & { v6?: V6State }).v6;
+          const hydratedV6: V6State = persistedV6
+            ? {
+                ...initialV6State,
+                ...persistedV6,
+                ownedItemIds: Array.isArray(persistedV6.ownedItemIds)
+                  ? persistedV6.ownedItemIds
+                  : initialV6State.ownedItemIds,
+                equipped: { ...initialV6State.equipped, ...persistedV6.equipped },
+              }
+            : initialV6State;
+          const hydratedStory: OfficeStoryState = persistedStory
+            ? {
+                ...initialOfficeStoryState,
+                ...persistedStory,
+                completedEvents: Array.isArray(persistedStory.completedEvents)
+                  ? persistedStory.completedEvents
+                  : [],
+                completedPranks: Array.isArray(persistedStory.completedPranks)
+                  ? persistedStory.completedPranks
+                  : [],
+              }
+            : initialOfficeStoryState;
+
+          setSnapshot(hydratedSnapshot);
           if (parsed.workspace.length === initialWorkspaceItems.length) {
             setWorkspace(parsed.workspace);
           }
           setEnergyNextAt(parsed.energyNextAt);
-          const persistedStory = (parsed as typeof parsed & { story?: OfficeStoryState }).story;
-          const persistedV6 = (parsed as typeof parsed & { v6?: V6State }).v6;
-          if (persistedV6) {
-            setV6({
-              ...initialV6State,
-              ...persistedV6,
-              ownedItemIds: Array.isArray(persistedV6.ownedItemIds)
-                ? persistedV6.ownedItemIds
-                : initialV6State.ownedItemIds,
-              equipped: { ...initialV6State.equipped, ...persistedV6.equipped },
-            });
-          }
-          if (persistedStory) {
-            setStory({
-              ...initialOfficeStoryState,
-              ...persistedStory,
-              completedEvents: Array.isArray(persistedStory.completedEvents)
-                ? persistedStory.completedEvents
-                : [],
-              completedPranks: Array.isArray(persistedStory.completedPranks)
-                ? persistedStory.completedPranks
-                : [],
-            });
-          }
+          setV6(hydratedV6);
+          setStory(hydratedStory);
+          setNotice(getOfficeProgressNotice(hydratedSnapshot, hydratedStory, hydratedV6));
         }
       }
     } catch {
@@ -1096,8 +1123,14 @@ export function OfficeGame() {
                 <span className={dailyDone ? 'is-done' : ''}>
                   День: {snapshot.daily.progress}/{snapshot.daily.target}
                 </span>
-                <span className={promotionReady || promotionCompleted ? 'is-done' : ''}>
-                  Далее: {promotionCompleted ? snapshot.role : nextPromotion.role}
+                <span className={alphaChapterComplete || promotionReady || promotionCompleted || v6.bossResolved ? 'is-done' : ''}>
+                  Далее: {alphaChapterComplete
+                    ? 'Глава 1 завершена'
+                    : promotionCompleted
+                      ? 'Первый босс'
+                      : v6.bossResolved
+                        ? 'Повышение'
+                        : nextPromotion.role}
                 </span>
               </div>
             </section>
