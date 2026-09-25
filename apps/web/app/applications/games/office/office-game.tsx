@@ -114,6 +114,7 @@ export function OfficeGame() {
     firstAssignmentDone;
 
   const companyStars = getCompanyStars(snapshot.company.level, snapshot.company.maxLevel);
+  const activeCompany = v6Companies.find((company) => company.id === v6.companyId) ?? v6Companies[0];
   const dailyDone = snapshot.daily.progress >= snapshot.daily.target;
   const firstDayDone = story.completedEvents.length >= 3;
   const bossUnlocked = snapshot.level >= 3 || firstDayDone;
@@ -622,7 +623,7 @@ export function OfficeGame() {
     }
 
     if (firstAssignmentDone || v6.bossResolved) {
-      setNotice('Сергей Петрович уже пройден. Твой билд готовится к следующему боссу.');
+      setNotice('Первое карьерное испытание уже завершено. Для текущего альфа-цикла босс пройден.');
       return;
     }
 
@@ -752,12 +753,13 @@ export function OfficeGame() {
 
   const requestPromotion = () => {
     if (promotionCompleted) {
-      setNotice('Это повышение уже получено. Следующая карьерная ступень появится позже.');
+      setNotice('Первый карьерный этап уже завершён. Продолжай развивать билд, коллекцию и компанию.');
       return;
     }
 
     if (!promotionReady) {
-      setNotice('Повышение пока рано просить: закрой все требования.');
+      setModal({ type: 'promotion-help' });
+      setNotice('До повышения остались требования. Карьерный помощник покажет, что именно закрыть.');
       showFeedback('Не все требования закрыты', 'warning');
       return;
     }
@@ -769,8 +771,9 @@ export function OfficeGame() {
       reputation: Math.min(100, current.reputation + 5),
       motivation: Math.min(100, current.motivation + 10),
     }));
+    setModal(null);
     showFeedback('Повышение! Зарплата 50 000 ₽', 'money');
-    setNotice('Повышение получено. В резюме появилась новая строчка, а зарплата наконец выросла.');
+    setNotice('Первый карьерный этап завершён: ты стал младшим специалистом. Альфа-цикл пройден.');
   };
 
   const resetPrototype = () => {
@@ -819,7 +822,7 @@ export function OfficeGame() {
               </div>
               <small className="office-player-goal">
                 Цель: {promotionCompleted
-                  ? `закрепиться в роли «${snapshot.role}»`
+                  ? 'альфа-цикл завершён · развивай билд и компанию'
                   : promotionReady
                     ? `можно просить повышение «${nextPromotion.role}»`
                     : `${nextPromotion.role} · комп. ${snapshot.skills.competence}/${nextPromotion.competence} · реп. ${snapshot.reputation}/${nextPromotion.reputation}`}
@@ -935,8 +938,16 @@ export function OfficeGame() {
           </aside>
 
           <main className="office-center">
-            <section className="office-scene">
-              <img src="/games/office/office-start.svg" alt="Первое рабочее место стажёра" />
+            <section className="office-scene office-v614-scene" data-company={v6.companyId}>
+              <img
+                src="/games/office/office-start.svg"
+                alt={`Рабочее место в компании ${snapshot.company.name}`}
+              />
+              <div className="office-v614-office-badge">
+                <small>Текущий офис</small>
+                <strong>{snapshot.company.name}</strong>
+                <span>{activeCompany.officeStyle}</span>
+              </div>
               <div className="office-scene-hitmap">
                 <svg
                   className="office-scene-hitmap-svg"
@@ -1084,7 +1095,7 @@ export function OfficeGame() {
                   День: {snapshot.daily.progress}/{snapshot.daily.target}
                 </span>
                 <span className={promotionReady || promotionCompleted ? 'is-done' : ''}>
-                  Далее: {promotionCompleted ? snapshot.role : nextPromotion.role}
+                  {promotionCompleted ? 'Альфа: карьерный этап пройден' : `Далее: ${nextPromotion.role}`}
                 </span>
               </div>
             </section>
@@ -1095,7 +1106,7 @@ export function OfficeGame() {
             <section className="office-company-card">
               <div className="office-card-head">
                 <h3>{snapshot.company.name}</h3>
-                <span>?</span>
+                <span className="office-company-status">{activeCompany.officeStyle}</span>
               </div>
               <div className="office-company-row">
                 <img src="/games/office/company.svg" alt="" />
@@ -1140,16 +1151,35 @@ export function OfficeGame() {
 
 
 
-            <section className="office-promotion-compact">
+            <section className={`office-promotion-compact ${promotionReady ? 'is-ready' : ''} ${promotionCompleted ? 'is-complete' : ''}`}>
               <div className="office-card-head">
-                <h3>Следующее повышение</h3>
+                <h3>{promotionCompleted ? 'Карьерный этап' : 'Следующее повышение'}</h3>
                 <button type="button" onClick={() => setActiveView('career')}>К карьере »</button>
               </div>
               <strong>{promotionCompleted ? snapshot.role : nextPromotion.role}</strong>
-              <div className="office-promotion-mini-bars">
-                <Requirement label="Компетентность" value={`${snapshot.skills.competence}/${nextPromotion.competence}`} progress={snapshot.skills.competence / nextPromotion.competence * 100} />
-                <Requirement label="Репутация" value={`${snapshot.reputation}/${nextPromotion.reputation}`} progress={snapshot.reputation / nextPromotion.reputation * 100} />
-              </div>
+              {promotionCompleted ? (
+                <div className="office-v614-alpha-complete">
+                  <OfficeIcon name="achievement" />
+                  <div>
+                    <b>Первый этап пройден</b>
+                    <small>Босс, требования и повышение закрыты. Можно дальше собирать билд и менять компанию.</small>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div className="office-promotion-mini-bars">
+                    <Requirement label="Компетентность" value={`${snapshot.skills.competence}/${nextPromotion.competence}`} progress={snapshot.skills.competence / nextPromotion.competence * 100} />
+                    <Requirement label="Репутация" value={`${snapshot.reputation}/${nextPromotion.reputation}`} progress={snapshot.reputation / nextPromotion.reputation * 100} />
+                  </div>
+                  <button
+                    type="button"
+                    className="office-v614-promotion-action"
+                    onClick={requestPromotion}
+                  >
+                    {promotionReady ? 'Попросить повышение' : 'Что осталось до повышения?'}
+                  </button>
+                </>
+              )}
             </section>
 
             <section className="office-news">
