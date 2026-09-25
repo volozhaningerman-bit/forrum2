@@ -141,7 +141,7 @@ try {
   );
   const deskPath = page.locator('.office-scene-shape-desk path');
   const deskStrokeBefore = await deskPath.evaluate((node) => getComputedStyle(node).stroke);
-  await page.getByRole('button', { name: 'Выбрать стол' }).hover();
+  await page.getByRole('button', { name: 'Выбрать стол' }).hover({ position: { x: 42, y: 18 } });
   const deskStrokeAfter = await deskPath.evaluate((node) => getComputedStyle(node).stroke);
   assert.notEqual(deskStrokeAfter, deskStrokeBefore);
   assert.equal(await page.evaluate(() => document.body.classList.contains('office-no-scroll')), true);
