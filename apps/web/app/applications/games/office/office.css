@@ -11954,3 +11954,113 @@ body:has(.office-page) .app-page-frame{
     font-size:8px!important;
   }
 }
+
+
+/* ==========================================================================
+   OFFICE v6.14 — ALPHA CHAPTER
+   Make the playable alpha boundary explicit and remove prototype promises.
+   ========================================================================== */
+
+.office-promotion-compact.is-alpha-complete{
+  border-color:#4f6a4d!important;
+  background:
+    radial-gradient(circle at 15% 0,rgba(93,137,83,.14),transparent 40%),
+    linear-gradient(#20251f,#171a17)!important;
+  box-shadow:inset 0 1px #4e654a!important;
+}
+
+.office-promotion-compact.is-alpha-complete>strong{
+  color:#b8d2aa!important;
+}
+
+.office-alpha-chapter-checks{
+  display:grid;
+  gap:4px;
+  margin-top:7px;
+}
+
+.office-alpha-chapter-checks>span{
+  min-height:24px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 6px;
+  border:1px solid #3e5140;
+  background:#182019;
+  color:#aebfa6;
+  font-size:8px;
+  font-weight:700;
+}
+
+.office-alpha-chapter-checks .office-icon{
+  width:15px;
+  height:15px;
+  color:#8fb182;
+}
+
+.office-v6-branch-pick button.alpha-future{
+  position:relative;
+  cursor:default!important;
+  opacity:.76!important;
+  filter:saturate(.72);
+}
+
+.office-v6-branch-pick button.alpha-future:hover{
+  transform:none!important;
+  border-color:#4a443c!important;
+}
+
+.office-alpha-roadmap-label{
+  position:absolute;
+  right:7px;
+  top:7px;
+  padding:2px 5px;
+  border:1px solid #5b5145;
+  border-radius:2px;
+  background:#1b1c1d;
+  color:#aa9b87;
+  font-size:7px;
+  font-style:normal;
+  font-weight:800;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+
+.office-alpha-roadmap-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin:0 0 2px;
+}
+
+.office-alpha-roadmap-head h3{
+  margin:0!important;
+}
+
+.office-alpha-roadmap-head>span{
+  padding:2px 5px;
+  border:1px solid #4d463e;
+  background:#17191a;
+  color:#8f8679;
+  font-size:7px;
+  white-space:nowrap;
+}
+
+@media(min-width:721px) and (max-height:780px){
+  .office-alpha-chapter-checks{
+    gap:3px;
+    margin-top:4px;
+  }
+
+  .office-alpha-chapter-checks>span{
+    min-height:20px;
+    padding:3px 5px;
+    font-size:7.5px;
+  }
+
+  .office-alpha-roadmap-label,
+  .office-alpha-roadmap-head>span{
+    font-size:6.5px;
+  }
+}
