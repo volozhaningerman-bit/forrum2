@@ -374,7 +374,14 @@ try {
   assert.match(await page.locator('.office-v6-career-detail').textContent(), /Младший специалист/i);
   assert.match(await page.locator('.office-v6-career-detail').textContent(), /50[\s\u00a0]000/i);
 
-  await page.getByRole('button', { name: /Эксперт/ }).click();
+  const branchButtons = page.locator('.office-v6-branch-pick>button');
+  assert.equal(await branchButtons.count(), 3);
+  assert.equal(
+    await branchButtons.evaluateAll((nodes) => nodes.every((node) => node.disabled)),
+    true,
+  );
+  assert.equal(await page.locator('.office-alpha-roadmap-label').count(), 3);
+  assert.match(await page.locator('.office-v68-career-summary').textContent(), /следующей главе/i);
 
   const canvas = page.locator('.office-v6-career-canvas');
   const transformBeforeZoom = await canvas.getAttribute('style');
@@ -422,6 +429,13 @@ try {
   assert.equal(await page.locator('.office-v68-boss-advice').count(), 1);
   assert.equal(await page.locator('.office-v610-next-goal').count(), 1);
   assert.equal(await page.locator('.office-v65-boss-styles>div.best').count(), 1);
+  assert.equal(await page.locator('.office-alpha-roadmap-head').count(), 1);
+  assert.equal(
+    await page.locator('.office-v65-boss-road-item.locked').evaluateAll((nodes) =>
+      nodes.filter((node) => /после альфы/i.test(node.textContent ?? '')).length,
+    ),
+    3,
+  );
   await assertWorldNav('Боссы');
   await page.getByRole('button', { name: /Начать переговоры/ }).click();
   await page.getByRole('dialog', { name: /Босс: Сергей Петрович/ }).waitFor();
@@ -552,6 +566,39 @@ try {
     );
   }
 
+  // The playable alpha has a real chapter ending instead of a "coming later" dead end.
+  await page.evaluate(() => {
+    const key = '4rrum.office.v4_1';
+    const raw = localStorage.getItem(key);
+    if (!raw) throw new Error('Missing Office persisted state');
+    const state = JSON.parse(raw);
+    state.snapshot.role = 'Младший специалист';
+    state.snapshot.salary = 50000;
+    state.snapshot.firstAssignment.progress = state.snapshot.firstAssignment.target;
+    state.v6.bossResolved = true;
+    state.v6.bossHp = 0;
+    state.story.bossResolved = true;
+    localStorage.setItem(key, JSON.stringify(state));
+  });
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.locator('.office-game').waitFor();
+  await assertOneScreen('alpha chapter complete home 1366x768');
+  assert.equal(await page.locator('.office-promotion-compact.is-alpha-complete').count(), 1);
+  assert.equal(await page.locator('.office-alpha-chapter-checks>span.done').count(), 3);
+  assert.match(await page.locator('.office-promotion-compact').textContent(), /Глава завершена/i);
+  assert.match(await page.locator('.office-player-goal').textContent(), /альфа-глава 1 завершена/i);
+  await page.screenshot({ path: output + '/home-v614-alpha-complete-1366x768.png', fullPage: false });
+
+  await page.locator('.office-world-nav').getByRole('button', { name: /Карьера/i }).click();
+  await page.getByRole('heading', { name: 'Большое дерево развития' }).waitFor();
+  assert.match(await page.locator('.office-v610-next-goal').textContent(), /Первое повышение получено/i);
+  assert.equal(
+    await page.locator('.office-v6-branch-pick>button').evaluateAll((nodes) => nodes.every((node) => node.disabled)),
+    true,
+  );
+  await page.getByRole('button', { name: /Вернуться в офис/ }).click();
+
   // Persisted progression must hydrate back into the actual UI after a full reload.
   const persistedBeforeReload = await page.evaluate(() => localStorage.getItem('4rrum.office.v4_1'));
   assert(persistedBeforeReload);
@@ -596,7 +643,7 @@ try {
   assert(recoveredState && recoveredState.includes('"version":1'));
 
   assert.deepEqual(pageErrors, []);
-  console.log('Office v6.13 visual QA: readability floors, internal clipping checks, interaction hardening and full desktop viewport matrix passed');
+  console.log('Office v6.14 alpha chapter: complete first chapter state, explicit roadmap boundaries, persistence and full desktop regression passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
