@@ -798,7 +798,7 @@ const RESOURCE_ART_BY_NAME: Record<string, string> = {
   'Клык саблезуба': 'fang',
   'Бивень мамонта': 'tusk',
   'Тотем вожака': 'totem',
-  'Редкий камень': 'totem',
+  'Редкий камень': 'rare',
 };
 
 function ResourceArt({ name }: { name: string }) {
