@@ -168,7 +168,9 @@ try {
   await page.locator('.civ-resource').filter({ hasText: 'Ресурсы' }).click();
   assert.match(await page.locator('.civ-resource-popover.resources').textContent(), /Камень/);
   assert.match(await page.locator('.civ-resource-popover.resources').textContent(), /Кости/);
-  await page.locator('.civ-resource').filter({ hasText: 'Ресурсы' }).click();
+  assert.equal(await page.locator('.civ-resource').filter({ hasText: 'Ресурсы' }).getAttribute('aria-expanded'), 'true');
+  await page.keyboard.press('Escape');
+  await page.locator('.civ-resource-popover.resources').waitFor({ state: 'detached' });
 
   // Right side contains only period-scoped tasks; expanding follows selected period.
   const taskRail = page.locator('.civ-task-rail');
@@ -203,9 +205,12 @@ try {
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
   await page.locator('.civ-full-panel').waitFor({ state: 'detached' });
 
-  // Collapse arrow is the second close affordance.
+  // Collapse arrow and Escape are secondary close affordances.
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
+  await page.locator('.civ-full-panel').waitFor({ state: 'detached' });
+  await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
+  await page.keyboard.press('Escape');
   await page.locator('.civ-full-panel').waitFor({ state: 'detached' });
 
   // Every main section uses the same overlay architecture.
