@@ -743,3 +743,74 @@ button{font:inherit}
     bottom:4%;
   }
 }
+
+
+/* CIVILIZATION ALPHA — HUD DISTRIBUTION */
+.civ-game-hud{
+  gap:8px;
+}
+
+.civ-location{
+  flex:0 0 176px;
+  width:176px;
+}
+
+.civ-location small{
+  display:none;
+}
+
+.civ-location strong{
+  font-size:14px;
+}
+
+.civ-resource-strip{
+  flex:1 1 auto;
+  margin-left:0;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  min-width:0;
+}
+
+.civ-resource-wrap{
+  min-width:0;
+}
+
+.civ-resource{
+  width:100%;
+  min-width:0;
+  grid-template-columns:32px minmax(0,1fr) 28px;
+  padding:0 10px;
+}
+
+.civ-resource strong{
+  font-size:15px;
+}
+
+.civ-resource small{
+  font-size:8.5px;
+}
+
+@media(max-width:1250px){
+  .civ-location{
+    flex-basis:150px;
+    width:150px;
+  }
+
+  .civ-resource{
+    grid-template-columns:26px minmax(0,1fr) 22px;
+    padding:0 6px;
+  }
+
+  .civ-resource .civ-icon{
+    font-size:18px;
+  }
+
+  .civ-resource strong{
+    font-size:12px;
+  }
+
+  .civ-resource small{
+    font-size:7.5px;
+  }
+}
