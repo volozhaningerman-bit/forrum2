@@ -318,6 +318,17 @@ try {
   await page.screenshot({ path: output + '/civilization-bosses-1720x864.png', fullPage: false });
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
 
+  for (const [label, file] of [
+    ['Карта', 'civilization-map-1720x864.png'],
+    ['Крафт', 'civilization-craft-1720x864.png'],
+    ['Племя', 'civilization-tribe-1720x864.png'],
+  ]) {
+    await bottomNav.getByRole('button', { name: new RegExp(label, 'i') }).click();
+    await page.locator('.civ-full-panel').waitFor();
+    await page.screenshot({ path: output + '/' + file, fullPage: false });
+    await page.getByRole('button', { name: 'Свернуть раздел' }).click();
+  }
+
   await page.getByRole('button', { name: 'Открыть меню персонажа' }).click();
   await page.locator('.civ-player-menu').getByRole('button', { name: /Профиль/ }).click();
   await page.screenshot({ path: output + '/civilization-profile-1720x864.png', fullPage: false });
