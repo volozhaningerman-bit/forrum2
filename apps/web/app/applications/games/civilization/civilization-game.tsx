@@ -730,7 +730,7 @@ function InventoryPanel({ loot }: { loot: Record<string, number> }) {
       <div className="civ-inventory-groups">
         {groups.map((group) => (
           <section key={group.title}><h3>{group.title}</h3>
-            <div>{group.items.map(([name,value]) => <article key={name}><span className="civ-inventory-glyph">{group.title === 'Пища' ? '●' : group.title === 'Трофеи' ? '◆' : '■'}</span><b>{name}</b><strong>{value}</strong></article>)}</div>
+            <div>{group.items.map(([name,value]) => <article key={name}><ResourceArt name={name} /><b>{name}</b><strong>{value}</strong></article>)}</div>
           </section>
         ))}
       </div>
@@ -780,6 +780,30 @@ function Hotspot({ className, icon, title, text, onClick }: { className: string;
 
 function ResourceRow({ icon, label, value }: { icon: string; label: string; value: string }) {
   return <div className="civ-resource-row"><span className={`civ-resource-art resource-${icon}`} aria-hidden="true" /><b>{label}</b><em>{value}</em></div>;
+}
+
+const RESOURCE_ART_BY_NAME: Record<string, string> = {
+  'Ягоды': 'berries',
+  'Мясо': 'meat',
+  'Грибы': 'mushrooms',
+  'Рыба': 'fish',
+  'Дерево': 'wood',
+  'Камень': 'stone',
+  'Кремень': 'flint',
+  'Шкуры': 'hide',
+  'Шкура мамонта': 'hide',
+  'Тигриная шкура': 'hide',
+  'Кости': 'bones',
+  'Кость': 'bones',
+  'Клык саблезуба': 'fang',
+  'Бивень мамонта': 'tusk',
+  'Тотем вожака': 'totem',
+  'Редкий камень': 'totem',
+};
+
+function ResourceArt({ name }: { name: string }) {
+  const art = RESOURCE_ART_BY_NAME[name] ?? 'stone';
+  return <span className={`civ-resource-art resource-${art}`} aria-hidden="true" />;
 }
 
 function TaskRow({ task, compact = false }: { task: { label: string; progress: number; total: number; reward: string }; compact?: boolean }) {
@@ -880,7 +904,7 @@ function BossesPanel({ bosses, selected, selectedBoss, setSelectedBoss, hp, atta
             <h3>{selected.name}</h3>
             <p>Сила босса: {selected.power}. Подготовь оружие и запас энергии перед охотой.</p>
             <div className="civ-boss-hp"><span>Здоровье</span><b>{hp}/{selected.hp}</b><div><i style={{ width: `${Math.min(100, hp / selected.hp * 100)}%` }} /></div></div>
-            <div className="civ-drops"><small>Возможные трофеи</small>{selected.drops.map(drop => <span key={drop}>{drop}</span>)}</div>
+            <div className="civ-drops"><small>Возможные трофеи</small>{selected.drops.map(drop => { const name = dropName(drop); return <span key={drop}><ResourceArt name={name} />{name}</span>; })}</div>
             <button type="button" className="civ-primary" onClick={attackBoss}>{hp <= 0 ? 'Охота завершена — начать заново' : 'Атаковать · −22 HP'}</button>
           </div>
         </article>
