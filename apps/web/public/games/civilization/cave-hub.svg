@@ -1,0 +1,149 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+<title id="title">Пещера — стартовый лагерь</title>
+<desc id="desc">Тёплая детализированная первобытная пещера с костром, верстаком, тайником и выходом к дикой долине.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#090706"/><stop offset=".28" stop-color="#24130c"/><stop offset=".62" stop-color="#3d2417"/><stop offset="1" stop-color="#061117"/>
+  </linearGradient>
+  <radialGradient id="fireAura" cx=".31" cy=".63" r=".42">
+    <stop stop-color="#ffd76b" stop-opacity=".94"/><stop offset=".18" stop-color="#ff8a24" stop-opacity=".88"/>
+    <stop offset=".45" stop-color="#8f2d12" stop-opacity=".42"/><stop offset="1" stop-color="#090807" stop-opacity="0"/>
+  </radialGradient>
+  <radialGradient id="torchAura" cx=".5" cy=".5" r=".5"><stop stop-color="#ffbe57" stop-opacity=".6"/><stop offset="1" stop-color="#ff7b1e" stop-opacity="0"/></radialGradient>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#d8e9ef"/><stop offset=".45" stop-color="#89b7c3"/><stop offset="1" stop-color="#315a67"/></linearGradient>
+  <linearGradient id="rock" x1="0" y1="0" x2="1" y2=".35"><stop stop-color="#21130d"/><stop offset=".45" stop-color="#5c3320"/><stop offset=".72" stop-color="#2b1a12"/><stop offset="1" stop-color="#120d0a"/></linearGradient>
+  <linearGradient id="wood" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#2c1b12"/><stop offset=".45" stop-color="#84522d"/><stop offset=".75" stop-color="#4b2f1d"/><stop offset="1" stop-color="#1d140f"/></linearGradient>
+  <linearGradient id="hide" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#9d6136"/><stop offset=".5" stop-color="#5a3826"/><stop offset="1" stop-color="#251914"/></linearGradient>
+  <linearGradient id="water" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d8f1f6"/><stop offset=".42" stop-color="#76b5c5"/><stop offset="1" stop-color="#2f6475"/></linearGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="15" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="smallGlow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="shadow"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity=".5"/></filter>
+  <pattern id="grain" width="74" height="74" patternUnits="userSpaceOnUse">
+    <circle cx="9" cy="13" r="1.8" fill="#fff" opacity=".028"/><circle cx="55" cy="11" r="1.3" fill="#fff" opacity=".022"/>
+    <circle cx="33" cy="57" r="2.2" fill="#000" opacity=".12"/><path d="M8 47l20-8m17 21l19-7" stroke="#fff" stroke-width="1" opacity=".016"/>
+  </pattern>
+  <pattern id="rockLines" width="130" height="95" patternUnits="userSpaceOnUse">
+    <path d="M4 72C28 44 50 60 69 40s35-22 57-7M17 18c19 10 33 7 51-7" fill="none" stroke="#d28a4c" stroke-width="2" opacity=".05"/>
+  </pattern>
+</defs>
+
+<rect width="1600" height="900" fill="url(#bg)"/>
+<rect width="1600" height="900" fill="url(#grain)"/>
+<ellipse cx="455" cy="610" rx="370" ry="300" fill="url(#fireAura)" opacity=".62"/>
+<ellipse cx="1320" cy="310" rx="220" ry="210" fill="#8fd2e7" opacity=".07"/>
+
+<!-- distant exterior -->
+<path d="M1170 56c188 34 337 162 392 377v467h-492c71-148 101-304 73-465-18-101-10-249 27-379z" fill="#030608"/>
+<path d="M1240 108c142 50 243 155 284 312v293c-59-34-112-44-165-31-86 21-166 91-271 153 59-110 85-220 77-329-9-128 18-274 75-398z" fill="url(#sky)"/>
+<path d="M1214 533l87-122 63 78 72-134 50 97 42-68 18 36v240h-345z" fill="#385b62" opacity=".86"/>
+<path d="M1190 664c103-43 206-35 354 8v83c-130-15-249 10-389 90z" fill="#a6d7df" opacity=".66"/>
+<path d="M1292 439c34 18 66 16 97-7 13 40 10 80-12 116-28 46-49 97-62 153-30-49-37-99-18-150 16-42 14-79-5-112z" fill="url(#water)" opacity=".9"/>
+<path d="M1205 700c77-39 152-44 235-27M1226 731c74-27 139-29 218-8" stroke="#d9f4f7" stroke-width="5" opacity=".28" fill="none"/>
+<g opacity=".58" fill="#173d35">
+  <path d="M1270 591l-18 70h36z"/><path d="M1300 574l-21 86h44z"/><path d="M1465 570l-22 88h46z"/><path d="M1502 594l-18 67h36z"/>
+</g>
+
+<!-- cave shell -->
+<path d="M0 0h1600v114c-192 25-334 63-449 119-122 60-246 77-409 39-223-52-453-7-742 88z" fill="#120b08"/>
+<path d="M0 0h1160c-81 59-133 132-159 220-182-55-366-52-533-15-160 36-321 63-468 52z" fill="#452719"/>
+<path d="M0 95c184 18 352 72 498 96-105 83-151 190-151 331 0 127-22 252-79 378H0z" fill="url(#rock)"/>
+<path d="M0 95c184 18 352 72 498 96-105 83-151 190-151 331 0 127-22 252-79 378H0z" fill="url(#rockLines)"/>
+<path d="M1070 93c-50 98-63 204-35 317 27 110 17 267-38 490h250c-40-164-39-337 4-520 23-98 26-188 2-270z" fill="#1b110d"/>
+<path d="M1054 113c-24 78-25 144-2 210 20 60 16 156-13 289" fill="none" stroke="#75452b" stroke-width="12" opacity=".28"/>
+<path d="M24 310c104-54 199-77 297-72M28 406c82-37 160-47 234-32M92 554c74-19 139-17 195 5" stroke="#8b4c2d" stroke-width="8" opacity=".13" fill="none"/>
+
+<!-- cave paintings / hand marks -->
+<g opacity=".67" fill="none" stroke="#b25330" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M292 150c27-34 66-32 90-7 22 23 29 58 17 85-22 12-47 13-70 4-22-9-42-32-37-82z"/>
+  <path d="M332 232v61m-29-42-25 52m82-51 28 50"/>
+  <path d="M504 136c18 27 43 42 74 44 28 2 52 22 72 58-41-11-79-5-113 17-17-29-28-69-33-119z"/>
+  <path d="M559 179l-16 72m50-67 9 60"/>
+  <path d="M201 203l40-45 47 43-18 52-52-3z"/>
+  <path d="M642 154c23 0 41 13 51 37l-19 24-50-7-10-32z"/>
+</g>
+<g fill="#bd6840" opacity=".58">
+  <circle cx="166" cy="145" r="15"/><path d="M164 160l-9 65m9-44 34 23m-37-5-32 26m31 3-23 51m27-51 23 52" stroke="#bd6840" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <circle cx="712" cy="146" r="13"/><path d="M711 160v57m0-36 30 20m-30-20-29 22m31 15 21 45m-24-45-21 45" stroke="#bd6840" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <circle cx="390" cy="111" r="6"/><circle cx="409" cy="102" r="5"/><circle cx="424" cy="112" r="6"/><circle cx="408" cy="120" r="6"/>
+</g>
+
+<!-- left timber supports -->
+<g filter="url(#shadow)">
+  <path d="M100 264l34 497" stroke="url(#wood)" stroke-width="26" stroke-linecap="round"/>
+  <path d="M244 233l23 504" stroke="url(#wood)" stroke-width="28" stroke-linecap="round"/>
+  <path d="M88 293l194-30" stroke="#5f3c25" stroke-width="22" stroke-linecap="round"/>
+  <path d="M98 421l179-30" stroke="#3d281c" stroke-width="12" opacity=".8"/>
+</g>
+<g fill="none" stroke="#b17b49" stroke-width="5" opacity=".5">
+  <path d="M115 334l130-22M121 343l129-23M133 519l119-18M139 528l113-17"/>
+</g>
+
+<!-- workbench and shelves -->
+<g filter="url(#shadow)">
+  <rect x="806" y="292" width="330" height="25" rx="8" fill="#704426"/>
+  <rect x="832" y="317" width="26" height="210" rx="7" fill="url(#wood)"/>
+  <rect x="1087" y="317" width="27" height="210" rx="7" fill="url(#wood)"/>
+  <rect x="832" y="342" width="282" height="136" rx="10" fill="#241914"/>
+  <rect x="851" y="362" width="66" height="51" rx="6" fill="#83512e"/>
+  <rect x="930" y="358" width="92" height="58" rx="5" fill="#3a271c"/>
+  <path d="M1035 389l42-59 21 14-43 60z" fill="#b1884d"/>
+  <circle cx="892" cy="447" r="19" fill="#8d673f"/>
+  <circle cx="963" cy="444" r="13" fill="#6f5c48"/>
+  <path d="M1017 433l52-30 6 10-50 32z" fill="#c2b49b"/>
+</g>
+
+<!-- storage shelves -->
+<g opacity=".95">
+  <path d="M657 285v256M760 262v287M645 321h132M646 395h132M646 471h132" stroke="#6a4027" stroke-width="14" stroke-linecap="round"/>
+  <rect x="669" y="339" width="62" height="42" rx="6" fill="#5f3922"/><rect x="682" y="407" width="67" height="48" rx="7" fill="#38271c"/>
+  <circle cx="713" cy="497" r="25" fill="#7e5839"/>
+</g>
+
+<!-- hanging bones -->
+<g stroke="#7a5734" stroke-width="10" stroke-linecap="round">
+  <path d="M792 170v337m326-316v298m-326-244h326"/>
+</g>
+<g fill="#d8c9a8" opacity=".9">
+  <path d="M910 197c20-40 47-44 67-3-19 33-41 38-67 3z"/>
+  <path d="M997 185c18-34 38-36 54-4-16 29-34 33-54 4z"/>
+  <path d="M1076 194c17-29 35-30 50-2-15 26-31 28-50 2z"/>
+  <path d="M1143 228c13-25 29-26 41-2-12 23-25 25-41 2z"/>
+</g>
+
+<!-- campfire area -->
+<ellipse cx="449" cy="657" rx="254" ry="145" fill="url(#fireAura)" opacity=".72"/>
+<g fill="#49382f">
+  <ellipse cx="385" cy="669" rx="50" ry="23"/><ellipse cx="443" cy="691" rx="58" ry="26"/><ellipse cx="511" cy="669" rx="48" ry="23"/><ellipse cx="343" cy="700" rx="39" ry="18"/><ellipse cx="556" cy="698" rx="44" ry="20"/>
+</g>
+<g stroke="#4d2d1e" stroke-width="18" stroke-linecap="round">
+  <path d="M392 675l115-59M394 618l111 66"/>
+</g>
+<g filter="url(#glow)">
+  <path d="M421 655c-28-54-7-101 20-136 11 35 30 61 20 99 30-42 38-82 28-126 50 54 62 115 30 163-25 35-71 51-98 23z" fill="#ff7420"/>
+  <path d="M450 661c-16-38-2-68 15-93 7 22 19 40 12 62 18-24 23-49 18-72 29 34 35 71 17 100-14 22-44 31-62 14z" fill="#ffd25f"/>
+</g>
+
+<!-- torches -->
+<g filter="url(#smallGlow)">
+  <ellipse cx="174" cy="356" rx="80" ry="93" fill="url(#torchAura)"/><path d="M167 365l12 168" stroke="#71492c" stroke-width="18"/><path d="M142 363c19-58 64-54 74 5-21 28-51 31-74-5z" fill="#ff8421"/>
+  <ellipse cx="1175" cy="342" rx="82" ry="96" fill="url(#torchAura)"/><path d="M1179 348l-12 171" stroke="#71492c" stroke-width="18"/><path d="M1147 350c17-55 60-51 70 4-18 28-47 31-70-4z" fill="#ff8421"/>
+</g>
+
+<!-- floor props -->
+<g filter="url(#shadow)">
+  <rect x="181" y="710" width="252" height="110" rx="12" fill="#271b13" stroke="#76502e" stroke-width="4"/>
+  <rect x="203" y="735" width="208" height="62" rx="8" fill="#55351f"/>
+  <rect x="290" y="721" width="39" height="83" rx="8" fill="#9a6b37"/>
+  <circle cx="309" cy="762" r="8" fill="#d9a84f"/>
+  <ellipse cx="590" cy="751" rx="73" ry="28" fill="#2c1c14"/><circle cx="569" cy="741" r="18" fill="#a3291f"/><circle cx="600" cy="746" r="16" fill="#be3c29"/><circle cx="628" cy="738" r="15" fill="#9e2b22"/>
+  <path d="M942 686l58 22 16 93-88-16z" fill="url(#hide)" opacity=".84"/>
+  <path d="M1037 702l41 78-69 10z" fill="#6a4c33"/>
+</g>
+
+<!-- foreground vignette rocks -->
+<path d="M0 778c212-61 401-56 584-5 214 59 426 55 646-10 144-42 268-36 370 1v136H0z" fill="#130e0b"/>
+<path d="M0 824c274-60 513-43 733 18 231 64 509 59 867-11v69H0z" fill="#070606"/>
+<g fill="#261812" opacity=".88">
+  <ellipse cx="96" cy="799" rx="87" ry="38"/><ellipse cx="1485" cy="805" rx="99" ry="42"/><ellipse cx="1285" cy="820" rx="71" ry="27"/>
+</g>
+</svg>
