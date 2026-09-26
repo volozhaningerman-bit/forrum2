@@ -2015,3 +2015,158 @@ button{font:inherit}
 .civ-player-menu button:hover .civ-vector-icon{
   color:#f0bd68;
 }
+
+
+/* CIVILIZATION ALPHA — CHARACTER CREATION FINISH */
+.civ-create-backdrop{
+  background:
+    radial-gradient(circle at 50% 44%,rgba(153,85,31,.16),transparent 34%),
+    rgba(2,6,8,.93);
+  backdrop-filter:blur(14px) saturate(.86);
+}
+
+.civ-create-card{
+  width:min(980px,92vw);
+  min-height:560px;
+  grid-template-columns:.9fr 1.1fr;
+  border:1px solid #76522a;
+  border-radius:16px;
+  background:
+    radial-gradient(circle at 20% 0,rgba(173,97,33,.16),transparent 30%),
+    linear-gradient(145deg,#17140f,#0a1115 53%);
+  box-shadow:
+    0 38px 96px rgba(0,0,0,.72),
+    inset 0 1px rgba(255,224,174,.035);
+}
+
+.civ-create-preview{
+  position:relative;
+  min-height:560px;
+  overflow:hidden;
+  border-right:1px solid #463621;
+  background:
+    radial-gradient(circle at 50% 57%,rgba(255,140,41,.28),transparent 31%),
+    linear-gradient(180deg,rgba(5,8,9,.10),rgba(5,8,9,.36)),
+    url("/games/civilization/cave-hub.svg") center/cover;
+}
+
+.civ-create-preview::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg,rgba(0,0,0,.14),transparent 36%,rgba(0,0,0,.12)),
+    linear-gradient(0deg,rgba(0,0,0,.34),transparent 38%);
+}
+
+.civ-create-preview .civ-mascot{
+  position:relative;
+  z-index:2;
+  transform:scale(1.12);
+  filter:drop-shadow(0 30px 24px rgba(0,0,0,.62));
+}
+
+.civ-create-copy{
+  padding:40px 42px 34px;
+}
+
+.civ-create-copy>small{
+  color:#d89b42;
+  font-size:9px;
+  letter-spacing:.14em;
+}
+
+.civ-create-copy h1{
+  margin:7px 0 10px;
+  color:#f2eee8;
+  font-size:34px;
+  letter-spacing:-.025em;
+}
+
+.civ-create-copy>p{
+  max-width:500px;
+  margin-bottom:24px;
+  color:#9da8ad;
+  font-size:10.5px;
+  line-height:1.55;
+}
+
+.civ-create-section{
+  margin-bottom:18px;
+}
+
+.civ-create-section>label{
+  margin-bottom:8px;
+  color:#d9dfe1;
+  font-size:9px;
+  letter-spacing:.08em;
+}
+
+.civ-choice-grid button{
+  min-height:39px;
+  border:1px solid #324149;
+  border-radius:7px;
+  background:linear-gradient(180deg,#111b20,#0c1418);
+  color:#aeb8bd;
+}
+
+.civ-choice-grid button:hover{
+  border-color:#58666d;
+  color:#e7ebed;
+}
+
+.civ-choice-grid button.active{
+  border-color:#ac7430;
+  background:linear-gradient(180deg,#4a311c,#231a12);
+  color:#ffd278;
+  box-shadow:0 0 0 1px rgba(255,189,86,.04),0 0 16px rgba(215,137,44,.07);
+}
+
+.civ-color-row{
+  gap:12px;
+}
+
+.civ-color-row button{
+  width:38px;
+  height:38px;
+  border:2px solid transparent;
+  box-shadow:
+    inset 0 0 0 1px rgba(0,0,0,.48),
+    inset 0 6px 9px rgba(255,255,255,.10),
+    0 5px 10px rgba(0,0,0,.20);
+}
+
+.civ-color-row button.active{
+  border-color:#ffc86c;
+  box-shadow:
+    0 0 0 3px rgba(255,190,79,.11),
+    inset 0 0 0 1px rgba(0,0,0,.42),
+    inset 0 6px 9px rgba(255,255,255,.10);
+}
+
+.civ-locked-note{
+  padding:11px 12px;
+  border:1px solid #3d4a50;
+  border-left-color:#8d6131;
+  border-radius:7px;
+  background:#0b1317;
+  color:#9ba7ad;
+  line-height:1.45;
+}
+
+.civ-create-submit{
+  min-height:48px;
+  border:1px solid #bd7d31;
+  border-radius:7px;
+  background:
+    radial-gradient(circle at 28% 0,rgba(255,196,102,.14),transparent 34%),
+    linear-gradient(180deg,#67431e,#352316);
+  color:#ffe1a4;
+  box-shadow:0 9px 24px rgba(0,0,0,.24),inset 0 1px rgba(255,219,151,.08);
+}
+
+.civ-create-submit:hover{
+  filter:brightness(1.09);
+  box-shadow:0 10px 28px rgba(0,0,0,.28),0 0 18px rgba(226,145,47,.09),inset 0 1px rgba(255,219,151,.09);
+}
