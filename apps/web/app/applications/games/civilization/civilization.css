@@ -1,5 +1,8 @@
+body:has(.civilization-app) .main{width:100%!important;max-width:none!important;padding:8px 0 0!important}
+body:has(.civilization-app) .site-footer{display:none!important}
+body:has(.civilization-app) .app-page-frame{min-height:0!important}
 body.civilization-no-scroll{overflow:hidden!important;background:#090c0f}
-.civilization-app{--civ-gold:#e8a83b;--civ-gold-2:#ffca68;--civ-ink:#081015;--civ-panel:#0d151b;--civ-panel-2:#111b22;--civ-line:#26333d;--civ-muted:#94a0aa;--civ-green:#58c77a;--civ-red:#d45f51;position:relative;height:calc(100vh - 72px);min-height:650px;padding:8px 10px 10px;background:radial-gradient(circle at 52% 35%,#2b180e 0,#10151a 44%,#071016 100%);color:#f3f0e8;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}
+.civilization-app{--civ-gold:#e8a83b;--civ-gold-2:#ffca68;--civ-ink:#081015;--civ-panel:#0d151b;--civ-panel-2:#111b22;--civ-line:#26333d;--civ-muted:#94a0aa;--civ-green:#58c77a;--civ-red:#d45f51;position:relative;height:calc(100dvh - 64px);min-height:650px;padding:8px 10px 10px;background:radial-gradient(circle at 52% 35%,#2b180e 0,#10151a 44%,#071016 100%);color:#f3f0e8;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow:hidden}
 .civilization-app *{box-sizing:border-box}
 button{font:inherit}
 .civilization-hub{position:relative;height:100%;display:grid;grid-template-columns:180px minmax(0,1fr) 328px;grid-template-rows:58px minmax(0,1fr) 64px;gap:7px;border:1px solid #17242c;border-radius:12px;background:linear-gradient(180deg,rgba(9,14,18,.96),rgba(6,9,11,.98));box-shadow:0 22px 60px rgba(0,0,0,.42);overflow:hidden}
@@ -79,7 +82,7 @@ button{font:inherit}
 .civ-color-row{display:flex;gap:10px}.civ-color-row button{width:34px;height:34px;border:2px solid transparent;border-radius:50%;cursor:pointer;box-shadow:inset 0 0 0 1px #0008}.civ-color-row button.active{border-color:#ffc45d;box-shadow:0 0 0 3px rgba(255,189,78,.13)}
 .civ-locked-note{padding:10px;border:1px dashed #45515a;border-radius:6px;color:#9ca7ad;font-size:9px}.civ-create-submit{margin-top:auto;height:44px;border:1px solid #c17f27;border-radius:7px;background:linear-gradient(180deg,#69451e,#352316);color:#ffe0a2;font-weight:800;cursor:pointer}.civ-create-submit:hover{filter:brightness(1.08)}
 @media(max-width:1380px){
-  .civilization-app{padding:5px;height:calc(100vh - 66px)}
+  .civilization-app{padding:5px;height:calc(100dvh - 64px)}
   .civilization-hub{grid-template-columns:158px minmax(0,1fr) 292px;grid-template-rows:52px minmax(0,1fr) 58px;gap:5px}
   .civ-game-hud{padding:4px 6px}.civ-location{width:155px;height:40px}.civ-resource{min-width:115px;height:40px}.civ-resource .civ-icon{font-size:18px}.civ-resource strong{font-size:12px}
   .civ-bottom-nav{padding:0 5px 5px;gap:5px}.civ-bottom-nav button span{font-size:18px}.civ-bottom-nav button b{font-size:11px}
@@ -88,7 +91,7 @@ button{font:inherit}
   .civ-item-card{min-height:120px}.civ-item-card>span{font-size:44px}.civ-item-detail{grid-template-columns:.7fr 1fr}.civ-item-hero{min-height:210px}.civ-item-hero span{font-size:90px}
 }
 @media(max-height:800px) and (min-width:901px){
-  .civilization-app{height:calc(100vh - 58px);min-height:0;padding:4px}
+  .civilization-app{height:calc(100dvh - 64px);min-height:0;padding:4px}
   .civilization-hub{grid-template-rows:48px minmax(0,1fr) 54px}
   .civ-game-hud{padding:3px 5px}.civ-location,.civ-resource{height:38px}
   .civ-avatar-card{padding:5px 6px 7px}.civ-avatar-card .civ-mascot.compact{transform:scale(.63);margin-bottom:-36px}.civ-player-name{font-size:12px}.civ-xp{margin-top:5px}
