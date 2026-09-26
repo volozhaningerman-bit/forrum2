@@ -158,6 +158,25 @@ try {
   }
   await page.getByRole('button', { name: 'Открыть меню персонажа' }).click();
 
+  // Every destination behind the compact player disclosure is a real screen, not a placeholder notice.
+  for (const [label, marker] of [
+    ['Профиль', 'Созданный персонаж'],
+    ['Достижения', 'Первый огонь'],
+    ['Инвентарь', 'Трофеи'],
+    ['Эволюция', 'Следующий заметный unlock'],
+  ]) {
+    await page.getByRole('button', { name: 'Открыть меню персонажа' }).click();
+    const menu = page.locator('.civ-player-menu');
+    await menu.waitFor();
+    await menu.getByRole('button', { name: new RegExp(label, 'i') }).click();
+    await page.locator('.civ-full-panel').waitFor();
+    await assertOverlayGeometry(`player menu ${label}`);
+    assert.match(await page.locator('.civ-full-panel').textContent(), new RegExp(marker, 'i'));
+    assert.equal(await page.locator('.civ-player-menu').count(), 0);
+    await page.getByRole('button', { name: 'Свернуть раздел' }).click();
+    await page.locator('.civ-full-panel').waitFor({ state: 'detached' });
+  }
+
   // Top HUD has one location and four resource controls.
   assert.equal(await page.locator('.civ-game-hud .civ-location').count(), 1);
   assert.equal(await page.locator('.civ-resource-strip .civ-resource').count(), 4);
