@@ -100,18 +100,18 @@ const weeklyTasks = [
 ];
 
 const mapStages = [
-  ['Пещера', 'Открыто', '🔥'],
-  ['Каменный век', 'Ур. 5 · 500 камня · 100 власти', '🪨'],
-  ['Бронзовый век', 'После Каменного века', '⚒️'],
-  ['Железный век', 'После Бронзового века', '🛡️'],
-  ['Средневековье', 'Позже', '🏰'],
-];
+  ['Пещера', 'Открыто', 'cave'],
+  ['Каменный век', 'Ур. 5 · 500 камня · 100 власти', 'stone'],
+  ['Бронзовый век', 'После Каменного века', 'bronze'],
+  ['Железный век', 'После Бронзового века', 'iron'],
+  ['Средневековье', 'Позже', 'medieval'],
+] as const;
 
 const craftRecipes = [
-  { name: 'Каменный топор', icon: '🪓', needs: '40 камня · 20 дерева', ready: true },
-  { name: 'Факел', icon: '🔥', needs: '15 дерева · 5 смолы', ready: true },
-  { name: 'Каменная кирка', icon: '⛏️', needs: '60 камня · 30 дерева', ready: false },
-  { name: 'Шкура охотника', icon: '🥋', needs: '3 шкуры · 10 костей', ready: false },
+  { name: 'Каменный топор', itemId: 'axe', needs: '40 камня · 20 дерева', ready: true },
+  { name: 'Факел', itemId: 'torch', needs: '15 дерева · 5 смолы', ready: true },
+  { name: 'Каменная кирка', itemId: 'pick', needs: '60 камня · 30 дерева', ready: false },
+  { name: 'Шкура охотника', itemId: 'fur', needs: '3 шкуры · 10 костей', ready: false },
 ];
 
 function loadState(): AvatarState {
@@ -738,19 +738,128 @@ function EvolutionPanel() {
 
 function Mascot({ avatar, compact = false }: { avatar: AvatarState; compact?: boolean }) {
   const hair = avatar.gender === 'female' && avatar.hair !== 'Лысый';
+  const hairMode = avatar.hair === 'Пучок' ? 'bun' : avatar.hair === 'Косы' ? 'braids' : avatar.hair === 'Длинные' ? 'long' : 'short';
+
   return (
-    <div className={`civ-mascot ${compact ? 'compact' : ''}`} style={{ '--civ-skin': avatar.color } as CSSProperties}>
-      <div className="civ-hair">{hair ? <span>{avatar.hair === 'Пучок' ? '●' : avatar.hair === 'Косы' ? '⌁' : avatar.hair === 'Длинные' ? '◒' : '⌒'}</span> : null}</div>
-      <div className="civ-head">
-        <i className="eye left" /><i className="eye right" />
-        <i className="brow left" /><i className="brow right" />
-        <i className="cheek left" /><i className="cheek right" />
-        <i className="mouth" />
-      </div>
-      <div className="civ-necklace">◆ ◆ ◆</div>
-      <div className="civ-body"><i className="fur" /></div>
-      {!compact ? <><div className="civ-arm left" /><div className="civ-arm right" /><div className="civ-leg left" /><div className="civ-leg right" /><div className="civ-club"><i /></div></> : null}
-    </div>
+    <svg
+      className={`civ-mascot-svg ${compact ? 'compact' : ''} ${avatar.gender}`}
+      viewBox="0 0 240 340"
+      role="img"
+      aria-label={avatar.gender === 'female' ? 'Персонаж: первобытная девушка' : 'Персонаж: первобытный мужчина'}
+      style={{ '--civ-skin': avatar.color } as CSSProperties}
+    >
+      <defs>
+        <linearGradient id="mascot-fur" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#9a6039" />
+          <stop offset=".45" stopColor="#5a3424" />
+          <stop offset="1" stopColor="#2f201a" />
+        </linearGradient>
+        <linearGradient id="mascot-fur-light" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#dcc09a" />
+          <stop offset="1" stopColor="#8f6b4d" />
+        </linearGradient>
+        <linearGradient id="mascot-wood" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#a96934" />
+          <stop offset=".5" stopColor="#704225" />
+          <stop offset="1" stopColor="#3c2418" />
+        </linearGradient>
+        <linearGradient id="mascot-stone" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#98948b" />
+          <stop offset=".45" stopColor="#5f6362" />
+          <stop offset="1" stopColor="#2f3436" />
+        </linearGradient>
+        <radialGradient id="mascot-head-glow" cx=".36" cy=".25" r=".78">
+          <stop offset="0" stopColor="#fff" stopOpacity=".28" />
+          <stop offset=".6" stopColor="#fff" stopOpacity=".04" />
+          <stop offset="1" stopColor="#3b1207" stopOpacity=".18" />
+        </radialGradient>
+        <filter id="mascot-shadow" x="-35%" y="-35%" width="170%" height="190%">
+          <feDropShadow dx="0" dy="13" stdDeviation="8" floodColor="#000" floodOpacity=".52" />
+        </filter>
+        <filter id="mascot-soft" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="5" />
+        </filter>
+      </defs>
+
+      <ellipse cx="119" cy="316" rx="73" ry="15" fill="#020304" opacity=".58" filter="url(#mascot-soft)" />
+
+      {!compact ? (
+        <g className="civ-mascot-weapon" filter="url(#mascot-shadow)">
+          <path d="M189 300 161 173" stroke="url(#mascot-wood)" strokeWidth="17" strokeLinecap="round" />
+          <path d="M155 181 176 171M159 194 180 184" stroke="#d0a46c" strokeWidth="4" strokeLinecap="round" />
+          <path d="M148 156c6-21 18-36 37-45 15 7 24 18 28 32-7 17-20 28-38 35-14-3-23-10-27-22Z" fill="url(#mascot-stone)" stroke="#d4a55c" strokeWidth="2.4" />
+          <path d="m163 130 20-7 13 17-18 13-21-5Z" fill="#b0afa6" opacity=".32" />
+          <path d="M154 163c11 2 24 8 33 17M151 172c12 2 23 7 33 15" fill="none" stroke="#5d3a25" strokeWidth="5" strokeLinecap="round" />
+        </g>
+      ) : null}
+
+      <g filter="url(#mascot-shadow)">
+        <path d="M75 267c-7 20-9 39-5 56h39l3-58Z" fill="#5b3b2d" stroke="#2b1c17" strokeWidth="2.4" />
+        <path d="M128 265l4 58h39c5-18 3-37-6-56Z" fill="#4a3027" stroke="#261a16" strokeWidth="2.4" />
+        <path d="M69 306h42v17H65c-4-6-3-12 4-17Zm62 0h42c7 5 8 11 4 17h-46Z" fill="#3b2c26" />
+        <path d="M68 293h44M131 293h42" stroke="#9b6b49" strokeWidth="5" strokeDasharray="7 5" opacity=".85" />
+
+        <path d="M70 151c15-15 32-22 50-22 20 0 38 8 52 23l5 103c-13 21-31 31-56 31-24 0-43-10-57-31Z" fill="var(--civ-skin)" stroke="#9c5e39" strokeWidth="2.8" />
+        <path d="M63 171c-18 23-24 48-18 76 5 10 14 14 26 11l16-60Z" fill="var(--civ-skin)" stroke="#985936" strokeWidth="2.4" />
+        <path d="M178 171c18 23 24 48 18 76-5 10-14 14-26 11l-16-60Z" fill="var(--civ-skin)" stroke="#985936" strokeWidth="2.4" />
+        <path d="M48 238c2 17 11 25 26 23 8-6 11-14 8-24Z" fill="var(--civ-skin)" />
+        <path d="M193 238c-2 17-11 25-26 23-8-6-11-14-8-24Z" fill="var(--civ-skin)" />
+
+        <path d="M66 169c17 7 34 9 52 6 20 3 40 1 59-6l-3 93c-16 15-34 23-54 23-21 0-39-8-55-23Z" fill="url(#mascot-fur)" />
+        <path d="m67 169 12 9 11-11 13 12 12-13 14 12 14-12 12 12 12-9v34c-11-4-22-5-32-2-17 5-31 3-42-4-10-6-19-7-26-4Z" fill="#b77a48" opacity=".36" />
+        <path d="M65 257c15 4 28 2 39-6 11 12 23 13 36 3 11 8 22 8 33 2l1 20c-14 15-32 22-54 22-23 0-41-7-55-22Z" fill="url(#mascot-fur-light)" opacity=".96" />
+        <path d="M63 198c36 9 76 9 115 0" stroke="#302019" strokeWidth="8" />
+        <path d="M64 197c36 8 75 8 113 0" stroke="#aa754a" strokeWidth="3.3" strokeDasharray="5 5" />
+
+        <path d="M77 151c14-15 29-22 44-22s30 7 45 22l-9 15c-11-12-23-18-36-18-14 0-26 6-36 18Z" fill="#f0e3c6" opacity=".86" />
+        <g fill="#efe5cc" stroke="#9e8155" strokeWidth="1">
+          <path d="m92 149 8 16 9-15-8-9Z"/><path d="m108 149 10 18 10-18-10-8Z"/><path d="m128 149 9 16 9-16-9-8Z"/>
+        </g>
+      </g>
+
+      <g filter="url(#mascot-shadow)">
+        <ellipse cx="121" cy="94" rx="72" ry="68" fill="var(--civ-skin)" stroke="#a3623c" strokeWidth="3" />
+        <ellipse cx="120" cy="89" rx="68" ry="64" fill="url(#mascot-head-glow)" />
+        <ellipse cx="51" cy="101" rx="15" ry="21" fill="var(--civ-skin)" stroke="#9b5936" strokeWidth="2" />
+        <ellipse cx="190" cy="101" rx="15" ry="21" fill="var(--civ-skin)" stroke="#9b5936" strokeWidth="2" />
+        <path d="M77 77c10-7 20-9 29-5" stroke="#201914" strokeWidth="7" strokeLinecap="round" />
+        <path d="M134 73c10-4 20-2 29 5" stroke="#201914" strokeWidth="7" strokeLinecap="round" />
+        <ellipse cx="91" cy="96" rx="7.5" ry="12" fill="#171514" />
+        <ellipse cx="150" cy="96" rx="7.5" ry="12" fill="#171514" />
+        <ellipse cx="89" cy="91" rx="2.2" ry="3.8" fill="#fff" opacity=".78" />
+        <ellipse cx="148" cy="91" rx="2.2" ry="3.8" fill="#fff" opacity=".78" />
+        <path d="M111 108c5 3 11 3 17 0" fill="none" stroke="#a25f3b" strokeWidth="3" strokeLinecap="round" opacity=".55" />
+        <path d="M101 120c12 10 26 10 39 0" fill="none" stroke="#2a1814" strokeWidth="4" strokeLinecap="round" />
+        <path d="M78 111h-19m18 8H60m104-8h18m-19 8h17" stroke="#f5e9d9" strokeWidth="5" strokeLinecap="round" opacity=".82" />
+        <path d="M72 48c15-22 33-31 55-29 22 2 40 12 54 31-8-37-30-55-62-55-30 0-53 18-67 52Z" fill="#2b1a14" opacity=".2" />
+      </g>
+
+      {hair ? (
+        <g className={`civ-svg-hair hair-${hairMode}`} filter="url(#mascot-shadow)">
+          {hairMode === 'bun' ? (
+            <>
+              <circle cx="118" cy="28" r="27" fill="#3b2118" />
+              <path d="M61 84c0-44 25-67 62-67 34 0 57 20 62 58-17-15-32-22-46-24-25-4-48 6-78 33Z" fill="#4c291d" />
+              <path d="M105 17c10-14 23-18 39-12-5 4-8 9-8 14" fill="none" stroke="#74432d" strokeWidth="8" strokeLinecap="round" />
+              <path d="M65 79c5-14 13-25 25-34M173 76c-6-16-15-27-28-35" stroke="#6f3e2b" strokeWidth="8" strokeLinecap="round" />
+            </>
+          ) : hairMode === 'braids' ? (
+            <>
+              <path d="M59 83c2-43 26-65 63-65 36 0 58 21 61 59-22-19-42-27-61-25-22 2-42 12-63 31Z" fill="#46261b" />
+              <path d="M65 71c-17 27-18 55-4 84M178 71c16 28 17 56 3 84" fill="none" stroke="#4c2a1e" strokeWidth="12" strokeLinecap="round" strokeDasharray="12 7" />
+            </>
+          ) : hairMode === 'long' ? (
+            <>
+              <path d="M55 86c-2-46 23-70 65-70 40 0 64 23 64 68l-8 77c-16 8-29 3-38-13 7-31 5-59-5-84-20-7-38-4-55 10-4 30-1 57 8 82-11 11-23 13-37 5Z" fill="#43241b" />
+              <path d="M66 74c18-19 39-29 64-30 19 1 35 8 49 22" fill="none" stroke="#70402c" strokeWidth="8" strokeLinecap="round" />
+            </>
+          ) : (
+            <path d="M58 84c2-44 26-66 64-66 35 0 58 20 62 59-18-16-36-24-53-24-24 0-47 10-73 31Z" fill="#45261c" />
+          )}
+          <path d="M126 18 141 5l11 14-12 10" fill="#e9dfc6" stroke="#8c724d" strokeWidth="2" />
+        </g>
+      ) : null}
+    </svg>
   );
 }
 
@@ -835,50 +944,67 @@ function EquipmentPanel({
 
 
 function BossArt({ boss, large = false }: { boss: Boss; large?: boolean }) {
+  const id = boss.id;
   return (
-    <span className={`civ-boss-illustration boss-${boss.id} ${large ? 'large' : ''}`} aria-hidden="true">
-      <svg viewBox="0 0 220 180" role="presentation">
+    <span className={`civ-boss-illustration boss-${id} ${large ? 'large' : ''}`} aria-hidden="true">
+      <svg viewBox="0 0 260 220" role="presentation">
         <defs>
-          <radialGradient id={`boss-bg-${boss.id}`} cx=".5" cy=".42" r=".62">
-            <stop offset="0" stopColor={boss.id === 'tiger' ? '#c96e27' : boss.id === 'mammoth' ? '#7a716b' : '#73523b'} stopOpacity=".74" />
-            <stop offset="1" stopColor="#12110f" stopOpacity="0" />
+          <radialGradient id={`boss-aura-${id}`} cx=".5" cy=".46" r=".58">
+            <stop offset="0" stopColor={id === 'tiger' ? '#e48331' : id === 'mammoth' ? '#97877b' : '#9c6540'} stopOpacity=".48" />
+            <stop offset=".72" stopColor={id === 'tiger' ? '#6c2914' : id === 'mammoth' ? '#342f2d' : '#3a2419'} stopOpacity=".16" />
+            <stop offset="1" stopColor="#050607" stopOpacity="0" />
           </radialGradient>
-          <linearGradient id={`boss-fur-${boss.id}`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor={boss.id === 'tiger' ? '#d98a39' : boss.id === 'mammoth' ? '#786b61' : '#806048'} />
-            <stop offset=".55" stopColor={boss.id === 'tiger' ? '#a84f21' : boss.id === 'mammoth' ? '#4d4947' : '#513a2c'} />
-            <stop offset="1" stopColor="#241914" />
+          <linearGradient id={`boss-fur-${id}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor={id === 'tiger' ? '#f0a13f' : id === 'mammoth' ? '#7e6e63' : '#7d5139'} />
+            <stop offset=".45" stopColor={id === 'tiger' ? '#cf6726' : id === 'mammoth' ? '#5a4d46' : '#573726'} />
+            <stop offset="1" stopColor={id === 'tiger' ? '#6c2d18' : id === 'mammoth' ? '#2d2928' : '#261914'} />
           </linearGradient>
+          <linearGradient id={`boss-bone-${id}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#fff0c5" /><stop offset=".55" stopColor="#d7bc83" /><stop offset="1" stopColor="#8e744f" />
+          </linearGradient>
+          <filter id={`boss-shadow-${id}`} x="-35%" y="-35%" width="170%" height="190%">
+            <feDropShadow dx="0" dy="12" stdDeviation="8" floodColor="#000" floodOpacity=".58" />
+          </filter>
         </defs>
-        <ellipse cx="110" cy="100" rx="100" ry="76" fill={`url(#boss-bg-${boss.id})`} />
-        {boss.id === 'tiger' ? (
-          <>
-            <path d="M51 70 L31 24 L75 47 Q110 27 145 47 L188 24 L169 71 Q184 93 174 127 Q153 160 110 163 Q65 161 45 127 Q35 94 51 70 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#e1a34e" strokeWidth="3" />
-            <path d="M44 45 L72 67 M176 45 L148 67 M77 48 L88 72 M143 48 L132 72 M63 88 L84 95 M157 88 L136 95" stroke="#311b14" strokeWidth="8" strokeLinecap="round" opacity=".85"/>
-            <path d="M75 109 Q90 93 109 103 Q129 93 145 109 Q137 145 110 151 Q82 145 75 109 Z" fill="#eee0c3" opacity=".93"/>
-            <ellipse cx="81" cy="88" rx="10" ry="8" fill="#0a0807"/><ellipse cx="139" cy="88" rx="10" ry="8" fill="#0a0807"/>
-            <circle cx="84" cy="86" r="2.5" fill="#f6d266"/><circle cx="142" cy="86" r="2.5" fill="#f6d266"/>
-            <path d="M104 111 L116 111 L110 120 Z" fill="#2a1915"/>
-            <path d="M91 124 L97 153 L105 128 M129 124 L123 153 L115 128" fill="#f5e4bd" stroke="#d5bd91" strokeWidth="1.5"/>
-          </>
-        ) : boss.id === 'mammoth' ? (
-          <>
-            <path d="M46 87 Q47 36 95 27 Q148 19 178 58 Q195 88 176 127 Q158 159 112 161 Q62 161 43 125 Q34 105 46 87 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#9e8d7f" strokeWidth="3"/>
-            <path d="M45 85 Q22 83 18 109 Q18 133 46 139" fill="#514944" stroke="#887a70" strokeWidth="3"/>
-            <path d="M175 84 Q203 83 207 108 Q207 132 177 139" fill="#514944" stroke="#887a70" strokeWidth="3"/>
-            <path d="M103 99 Q119 96 127 113 L124 149 Q121 170 104 170 Q91 168 92 151 L94 113 Q95 103 103 99 Z" fill="#5c514b"/>
-            <path d="M85 119 Q66 128 62 154 Q77 144 94 141 M139 119 Q158 128 163 154 Q148 144 130 141" fill="none" stroke="#ead9ac" strokeWidth="8" strokeLinecap="round"/>
-            <ellipse cx="83" cy="86" rx="8" ry="6" fill="#0c0908"/><ellipse cx="142" cy="86" rx="8" ry="6" fill="#0c0908"/>
-            <path d="M65 54 Q80 39 95 33 M158 54 Q143 39 129 33" stroke="#2d2927" strokeWidth="7" strokeLinecap="round" opacity=".65"/>
-          </>
+        <ellipse cx="130" cy="115" rx="116" ry="92" fill={`url(#boss-aura-${id})`} />
+        <ellipse cx="130" cy="195" rx="82" ry="16" fill="#020304" opacity=".52" />
+
+        {id === 'tiger' ? (
+          <g filter={`url(#boss-shadow-${id})`}>
+            <path d="M54 94 38 37l47 28c27-24 65-27 93-2l45-27-15 58c15 18 19 42 10 68-13 37-47 55-87 55-42 0-77-18-90-55-9-25-4-49 13-68Z" fill={`url(#boss-fur-${id})`} stroke="#efb05e" strokeWidth="2.8" />
+            <path d="M71 54 86 83m20-34 5 31m43-31-6 31m38-27-17 31M58 111l37 12m106-12-37 12" stroke="#4c2418" strokeWidth="10" strokeLinecap="round" opacity=".9" />
+            <path d="M82 135c12-19 29-28 49-28s38 9 49 28c-8 28-25 42-50 42s-42-14-48-42Z" fill="#f1d6ad" />
+            <path d="m108 132 22-9 22 9-22 17Z" fill="#682f29" />
+            <ellipse cx="94" cy="111" rx="9" ry="11" fill="#17120f" /><ellipse cx="166" cy="111" rx="9" ry="11" fill="#17120f" />
+            <circle cx="91" cy="108" r="2.6" fill="#ffd86a" /><circle cx="163" cy="108" r="2.6" fill="#ffd86a" />
+            <path d="M88 96c11-10 22-12 34-6M172 96c-11-10-22-12-34-6" fill="none" stroke="#281813" strokeWidth="7" strokeLinecap="round" />
+            <path d="M108 150c2 18 7 32 15 42l7-27 7 27c8-10 13-24 15-42" fill="url(#boss-bone-tiger)" stroke="#b38e57" strokeWidth="1.5" />
+            <path d="M75 144c-13 8-22 21-27 38m137-38c13 8 22 21 27 38" fill="none" stroke="#efe2c5" strokeWidth="3" strokeLinecap="round" opacity=".65" />
+          </g>
+        ) : id === 'mammoth' ? (
+          <g filter={`url(#boss-shadow-${id})`}>
+            <path d="M69 83c10-34 33-52 61-52 29 0 52 18 62 52 17 10 27 28 27 51 0 29-13 54-35 68-18 12-38 17-58 17-24 0-46-6-64-20-19-15-29-37-29-65 0-24 12-42 36-51Z" fill={`url(#boss-fur-${id})`} stroke="#9c887b" strokeWidth="2.8" />
+            <path d="M79 73c11-17 28-27 51-29 24 1 43 11 54 29-12-4-24-2-36 6-13-11-26-12-39-3-10-8-20-9-30-3Z" fill="#8f7a6c" opacity=".75" />
+            <path d="M60 108c-19 2-30 15-31 38 1 22 12 35 34 39m137-77c19 2 30 15 31 38-1 22-12 35-34 39" fill="#6b5b53" stroke="#8f7e73" strokeWidth="3" />
+            <ellipse cx="101" cy="110" rx="7" ry="8.5" fill="#151211" /><ellipse cx="160" cy="110" rx="7" ry="8.5" fill="#151211" />
+            <path d="M89 96c9-7 18-9 27-4m56 4c-9-7-18-9-27-4" fill="none" stroke="#2d2421" strokeWidth="7" strokeLinecap="round" />
+            <path d="M116 119c1 48 4 74 10 79 7 6 18 5 25-3 6-7 7-32 2-76-8-10-29-10-37 0Z" fill="#5a4a43" />
+            <path d="M100 137c-24 11-40 31-48 61 22-8 42-22 59-42m50-19c24 11 40 31 48 61-22-8-42-22-59-42" fill="none" stroke={`url(#boss-bone-${id})`} strokeWidth="13" strokeLinecap="round" />
+            <path d="M52 197c10 0 18-4 24-11m132 11c-10 0-18-4-24-11" fill="none" stroke="#735e4f" strokeWidth="5" />
+          </g>
         ) : (
-          <>
-            <path d="M48 80 Q54 37 92 27 Q133 14 169 48 Q190 76 177 119 Q163 158 111 164 Q61 158 42 121 Q32 97 48 80 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#9d7550" strokeWidth="3"/>
-            <path d="M62 80 Q75 52 105 50 Q140 46 160 78 Q162 120 139 142 Q109 157 79 141 Q57 120 62 80 Z" fill="#a67b59"/>
-            <path d="M72 52 Q52 38 42 61 M149 51 Q171 36 181 60" fill="none" stroke="#503729" strokeWidth="15" strokeLinecap="round"/>
-            <ellipse cx="83" cy="91" rx="9" ry="7" fill="#090706"/><ellipse cx="139" cy="91" rx="9" ry="7" fill="#090706"/>
-            <path d="M92 119 Q110 132 130 118" fill="none" stroke="#3b251d" strokeWidth="6" strokeLinecap="round"/>
-            <path d="M110 24 L123 6 L135 29 L154 17 L150 46 L70 46 L68 18 L88 30 L98 7 Z" fill="#d99b39" stroke="#f2c36d" strokeWidth="2"/>
-          </>
+          <g filter={`url(#boss-shadow-${id})`}>
+            <path d="M66 96c7-42 31-64 65-64 34 0 58 22 65 64 18 13 26 34 24 60-4 38-35 60-89 60-54 0-85-22-89-60-2-26 6-47 24-60Z" fill={`url(#boss-fur-${id})`} stroke="#a96d43" strokeWidth="2.8" />
+            <path d="M85 90c10-22 25-33 45-33 21 0 37 11 47 33-6 13-12 24-18 33-15-10-28-14-39-13-13 1-25 6-36 15-5-11-5-23 1-35Z" fill="#b78a64" />
+            <path d="M75 116c-15-6-27 2-35 23 3 19 14 30 33 34m116-57c15-6 27 2 35 23-3 19-14 30-33 34" fill="#5a3b2c" stroke="#896149" strokeWidth="3" />
+            <ellipse cx="102" cy="108" rx="8" ry="9.5" fill="#17120f" /><ellipse cx="157" cy="108" rx="8" ry="9.5" fill="#17120f" />
+            <path d="M88 92c10-8 20-10 31-4m54 4c-10-8-20-10-31-4" fill="none" stroke="#251713" strokeWidth="7" strokeLinecap="round" />
+            <path d="M100 139c18 14 41 14 60 0-5 28-15 43-30 43s-25-15-30-43Z" fill="#211411" />
+            <path d="M107 144 115 158l7-15 8 17 8-17 8 15 7-14" fill="#f0e4cb" />
+            <path d="M63 58 82 22l20 27 27-38 22 38 26-28 19 38-17 18c-34-15-67-15-100 0Z" fill={`url(#boss-bone-${id})`} stroke="#9a7446" strokeWidth="2" />
+            <path d="M77 51 92 69m26-33 9 31m31-29-10 31m33-17-16 22" stroke="#7d3325" strokeWidth="5" strokeLinecap="round" />
+            <path d="M102 183c10 8 19 12 28 12 9 0 18-4 28-12" fill="none" stroke="#d6b36f" strokeWidth="5" strokeLinecap="round" />
+          </g>
         )}
       </svg>
     </span>
@@ -909,15 +1035,55 @@ function BossesPanel({ bosses, selected, selectedBoss, setSelectedBoss, hp, atta
   );
 }
 
+function EraArt({ era, large = false }: { era: 'cave' | 'stone' | 'bronze' | 'iron' | 'medieval'; large?: boolean }) {
+  return (
+    <span className={`civ-era-art era-${era} ${large ? 'large' : ''}`} aria-hidden="true">
+      <svg viewBox="0 0 120 100" role="presentation">
+        <defs>
+          <linearGradient id={`era-metal-${era}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor={era === 'bronze' ? '#e1a35d' : era === 'iron' ? '#8ca6b5' : '#c9c4b8'} />
+            <stop offset="1" stopColor={era === 'bronze' ? '#7c3d23' : era === 'iron' ? '#304755' : '#54565b'} />
+          </linearGradient>
+        </defs>
+        {era === 'cave' ? <>
+          <path d="M23 82C31 52 43 29 60 13c18 16 31 39 38 69Z" fill="#33251e" stroke="#a06b38" strokeWidth="3"/>
+          <path d="M45 82c3-19 8-31 15-40 8 9 13 22 16 40Z" fill="#0a0e10"/>
+          <path d="M55 74c-10-18-3-34 4-44 4 10 9 17 7 27 8-10 10-20 7-31 14 15 17 32 8 46-7 10-20 14-26 2Z" fill="#ff8b25"/>
+          <path d="M62 76c-5-10-1-19 4-26 2 7 5 11 3 17 5-6 6-12 4-18 8 9 9 19 4 27-4 5-11 8-15 0Z" fill="#ffd365"/>
+        </> : null}
+        {era === 'stone' ? <>
+          <path d="M25 75 48 34l26 8 18 33-20 15H42Z" fill="#6d7072" stroke="#b5b1a5" strokeWidth="3"/>
+          <path d="m41 51 10-17 15 5-7 20Zm28 3 15-10 8 18-19 8Z" fill="#9a9a95" opacity=".7"/>
+          <path d="M33 83h56" stroke="#342a24" strokeWidth="8" strokeLinecap="round"/>
+        </> : null}
+        {era === 'bronze' ? <>
+          <path d="M33 78 80 31m-37 5 46 43" stroke="url(#era-metal-bronze)" strokeWidth="10" strokeLinecap="round"/>
+          <path d="m24 31 24 8-11 17-22-10Zm72 0-24 8 11 17 22-10Z" fill="#bd7a45" stroke="#e1a35d" strokeWidth="2"/>
+          <circle cx="60" cy="58" r="10" fill="#c98a4e"/>
+        </> : null}
+        {era === 'iron' ? <>
+          <path d="M60 14 93 29v25c0 24-14 35-33 43-19-8-33-19-33-43V29Z" fill="url(#era-metal-iron)" stroke="#b6cad4" strokeWidth="3"/>
+          <path d="M60 23v62M35 39h50" stroke="#dce6ea" strokeWidth="3" opacity=".5"/>
+        </> : null}
+        {era === 'medieval' ? <>
+          <path d="M23 89V45h15V28h14v17h16V28h14v17h15v44Z" fill="#5e5963" stroke="#aaa0ad" strokeWidth="3"/>
+          <path d="M19 45h82l-8-20-12 12-12-18-10 18-13-13-10 13-12-12Z" fill="#7c3348"/>
+          <path d="M49 89V64h22v25" fill="#17171a"/>
+        </> : null}
+      </svg>
+    </span>
+  );
+}
+
 function MapPanel({ setNotice }: { setNotice: (value: string) => void }) {
   return (
     <div className="civ-panel-body map">
       <header className="civ-panel-head"><div><small>Путь цивилизации</small><h2>Карта эпох</h2><p>От первой пещеры до собственной империи. Новые эпохи меняют мир, ресурсы, боссов и технологии.</p></div></header>
       <div className="civ-map-path">
-        {mapStages.map(([name, req, icon], index) => <button type="button" key={name} className={index === 0 ? 'active' : 'locked'} onClick={() => setNotice(index === 0 ? 'Ты уже находишься в Пещере.' : `${name}: ${req}`)}><span>{icon}</span><b>{name}</b><small>{req}</small><em>{index === 0 ? 'Текущая' : '🔒'}</em></button>)}
+        {mapStages.map(([name, req, era], index) => <button type="button" key={name} className={index === 0 ? 'active' : 'locked'} onClick={() => setNotice(index === 0 ? 'Ты уже находишься в Пещере.' : `${name}: ${req}`)}><EraArt era={era} /><b>{name}</b><small>{req}</small><em>{index === 0 ? 'Текущая' : 'Закрыто'}</em></button>)}
       </div>
       <div className="civ-map-detail">
-        <div className="civ-map-visual"><span>🔥</span><b>Пещера</b><small>Стартовая территория</small></div>
+        <div className="civ-map-visual"><EraArt era="cave" large /><b>Пещера</b><small>Стартовая территория</small></div>
         <div><h3>Что нужно для Каменного века</h3><TaskRow task={{ label: 'Достичь 5 уровня', progress: 1, total: 5, reward: '' }} /><TaskRow task={{ label: 'Собрать камень', progress: 210, total: 500, reward: '' }} /><TaskRow task={{ label: 'Набрать власть', progress: 37, total: 100, reward: '' }} /></div>
       </div>
     </div>
@@ -929,7 +1095,10 @@ function CraftPanel({ setNotice }: { setNotice: (value: string) => void }) {
     <div className="civ-panel-body craft">
       <header className="civ-panel-head"><div><small>Верстак</small><h2>Крафт</h2><p>Создавай оружие, инструменты и одежду из найденных материалов.</p></div></header>
       <div className="civ-craft-grid">
-        {craftRecipes.map(recipe => <article key={recipe.name} className={recipe.ready ? 'ready' : 'locked'}><span>{recipe.icon}</span><h3>{recipe.name}</h3><p>{recipe.needs}</p><button type="button" disabled={!recipe.ready} onClick={() => setNotice(`${recipe.name}: создано и отправлено в инвентарь.`)}>{recipe.ready ? 'Создать' : 'Не хватает ресурсов'}</button></article>)}
+        {craftRecipes.map(recipe => {
+          const item = equipment.find(candidate => candidate.id === recipe.itemId) ?? equipment[0];
+          return <article key={recipe.name} className={recipe.ready ? 'ready' : 'locked'}><div className="civ-craft-art"><ItemArt item={item} large /></div><h3>{recipe.name}</h3><p>{recipe.needs}</p><button type="button" disabled={!recipe.ready} onClick={() => setNotice(`${recipe.name}: создано и отправлено в инвентарь.`)}>{recipe.ready ? 'Создать' : 'Не хватает ресурсов'}</button></article>;
+        })}
       </div>
     </div>
   );
