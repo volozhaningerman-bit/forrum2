@@ -306,15 +306,34 @@ try {
   }
 
   await page.setViewportSize({ width: 1720, height: 864 });
+  const premiumCave = page.locator('.civ-cave-background');
+  assert.match(await premiumCave.getAttribute('src'), /cave-hub-premium\.webp$/);
+  assert(
+    await premiumCave.evaluate((img) => img instanceof HTMLImageElement && img.complete && img.naturalWidth > 0),
+    'premium cave asset must load',
+  );
   await page.screenshot({ path: output + '/civilization-hub-1720x864.png', fullPage: false });
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
   await page.getByRole('button', { name: /Оружие/ }).click();
   await assertOverlayGeometry('equipment screenshot');
+  assert(
+    await page.locator('.civ-generated-item').count() >= 8,
+    'generated equipment art should cover the early weapon catalog',
+  );
+  assert.match(
+    await page.locator('.civ-generated-item').first().evaluate((node) => getComputedStyle(node).backgroundImage),
+    /equipment-sheet\.webp/,
+  );
   await page.screenshot({ path: output + '/civilization-equipment-1720x864.png', fullPage: false });
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
 
   await bottomNav.getByRole('button', { name: /Боссы/ }).click();
   await page.getByRole('button', { name: /Саблезубый тигр/ }).click();
+  assert.equal(await page.locator('.civ-generated-boss').count(), 4);
+  assert.match(
+    await page.locator('.civ-generated-boss').first().evaluate((node) => getComputedStyle(node).backgroundImage),
+    /boss-sheet\.webp/,
+  );
   await page.screenshot({ path: output + '/civilization-bosses-1720x864.png', fullPage: false });
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
 
