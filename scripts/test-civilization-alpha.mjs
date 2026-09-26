@@ -221,7 +221,13 @@ try {
   assert.match(await page.locator('.civ-full-panel').textContent(), /Управление персонажем/);
   assert.equal(await page.locator('.civ-equipment-tabs>button').count(), 5);
   assert((await page.locator('.civ-item-card').count()) >= 8, 'weapon catalog should show progression and locked goals');
-  assert.equal(await page.locator('.civ-item-art svg').count(), await page.locator('.civ-item-card').count() + 1);
+  const renderedItemArt = await page.locator('.civ-item-art').count();
+  const renderedCards = await page.locator('.civ-item-card').count();
+  assert.equal(renderedItemArt, renderedCards + 1, 'every item card and selected detail must render art');
+  assert(
+    (await page.locator('.civ-item-art-generated').count()) >= Math.min(8, renderedCards),
+    'generated sprite art should replace the old placeholder SVGs for the primary catalog',
+  );
   // Equip a real unlocked weapon through the UI. This must survive reload later.
   await page.getByRole('button', { name: /Оружие/ }).click();
   const axeCard = page.locator('.civ-item-card').filter({ hasText: 'Каменный топор' }).first();
@@ -266,8 +272,8 @@ try {
   await bottomNav.getByRole('button', { name: /Боссы/ }).click();
   await page.getByRole('button', { name: /Вожак обезьян/ }).click();
   assert.match(await page.locator('.civ-boss-detail').textContent(), /Тотем вожака/);
-  assert.equal(await page.locator('.civ-boss-list .civ-boss-illustration svg').count(), 3);
-  assert.equal(await page.locator('.civ-boss-art .civ-boss-illustration.large svg').count(), 1);
+  assert.equal(await page.locator('.civ-boss-list .civ-boss-art-generated').count(), 3);
+  assert.equal(await page.locator('.civ-boss-art .civ-boss-art-generated.large').count(), 1);
   const apeHpBefore = await page.locator('.civ-boss-hp').textContent();
   for (let hit = 0; hit < 4; hit += 1) {
     await page.getByRole('button', { name: /Атаковать/ }).click();

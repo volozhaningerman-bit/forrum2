@@ -2491,3 +2491,310 @@ button{font:inherit}
 .civ-profile-identity .civ-xp{
   border-color:#29363c;
 }
+
+
+/* ==========================================================================
+   CIVILIZATION VISUAL ALPHA V2 — GENERATED GAME ART
+   Approved cave / character / bosses / equipment / resources.
+   ========================================================================== */
+
+.civ-cave-background{
+  content:url("/games/civilization/art/cave.webp");
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  filter:saturate(1.03) contrast(1.03) brightness(.9);
+  transform:scale(1.003);
+}
+
+.civ-scene::before{
+  z-index:1;
+  background:
+    radial-gradient(circle at 33% 60%,rgba(255,132,37,.12),transparent 25%),
+    radial-gradient(circle at 85% 34%,rgba(114,181,219,.08),transparent 27%);
+  mix-blend-mode:screen;
+}
+
+.civ-scene::after{
+  z-index:2;
+  background:
+    linear-gradient(90deg,rgba(0,0,0,.12),transparent 24%,transparent 77%,rgba(0,0,0,.10)),
+    linear-gradient(0deg,rgba(0,0,0,.28),transparent 32%);
+}
+
+.civ-mascot-stage{
+  z-index:5;
+  left:55.5%;
+  bottom:1.5%;
+  width:200px;
+  height:460px;
+  transform:translateX(-50%);
+  filter:drop-shadow(0 30px 28px rgba(0,0,0,.56));
+}
+
+.civ-mascot-stage::before{
+  display:none!important;
+}
+
+.civ-character-art{
+  position:relative!important;
+  display:block!important;
+  width:200px!important;
+  height:460px!important;
+  background:none!important;
+  border:0!important;
+  overflow:hidden;
+  filter:none;
+}
+
+.civ-character-art>span{
+  position:absolute;
+  inset:0;
+  display:block;
+  background-image:url("/games/civilization/art/characters.webp");
+  background-repeat:no-repeat;
+  background-size:500% auto;
+  background-position-y:0;
+  border:0!important;
+  filter:drop-shadow(0 18px 20px rgba(0,0,0,.36));
+  -webkit-mask-image:radial-gradient(ellipse 62% 88% at 50% 48%,#000 76%,transparent 100%);
+  mask-image:radial-gradient(ellipse 62% 88% at 50% 48%,#000 76%,transparent 100%);
+}
+
+.civ-character-art.male>span{background-position-x:0%}
+.civ-character-art.female>span{background-position-x:25%}
+
+.civ-character-art.tone-1>span{filter:saturate(.95) brightness(.94) sepia(.06) drop-shadow(0 18px 20px rgba(0,0,0,.36))}
+.civ-character-art.tone-2>span{filter:saturate(1.04) brightness(.86) sepia(.15) drop-shadow(0 18px 20px rgba(0,0,0,.36))}
+.civ-character-art.tone-3>span{filter:saturate(.9) brightness(.73) sepia(.23) drop-shadow(0 18px 20px rgba(0,0,0,.36))}
+
+.civ-character-art.compact{
+  width:126px!important;
+  height:145px!important;
+  margin:-6px auto -2px!important;
+}
+
+.civ-character-art.compact>span{
+  background-size:500% auto;
+  -webkit-mask-image:linear-gradient(#000 84%,transparent 100%);
+  mask-image:linear-gradient(#000 84%,transparent 100%);
+}
+
+.civ-create-preview{
+  background:
+    linear-gradient(90deg,rgba(5,8,9,.15),rgba(5,8,9,.08)),
+    url("/games/civilization/art/cave.webp") center/cover!important;
+}
+
+.civ-create-preview .civ-character-art{
+  width:230px!important;
+  height:500px!important;
+  margin:auto;
+}
+
+.civ-profile-mascot .civ-character-art{
+  width:190px!important;
+  height:420px!important;
+  margin:auto;
+}
+
+.civ-hotspot{
+  z-index:7;
+}
+
+.civ-hotspot.fire{left:21%;top:55%}
+.civ-hotspot.bench{left:58%;top:42%}
+.civ-hotspot.stash{left:8%;bottom:17%}
+.civ-hotspot.exit{right:5%;top:18%}
+
+.civ-scene-notice{
+  z-index:8;
+  background:linear-gradient(180deg,rgba(8,12,14,.78),rgba(5,8,10,.9));
+  border-color:rgba(220,160,72,.25);
+  backdrop-filter:blur(10px);
+}
+
+/* Generated equipment sheet: 4 columns × 3 rows. */
+.civ-item-art-generated{
+  display:block!important;
+  width:92px!important;
+  height:82px!important;
+  margin:0 auto 3px;
+  background-image:url("/games/civilization/art/equipment.webp")!important;
+  background-repeat:no-repeat!important;
+  background-size:400% 300%!important;
+  background-position:
+    calc(var(--item-col) * 33.333333%)
+    calc(var(--item-row) * 50%)!important;
+  border-radius:9px;
+  filter:drop-shadow(0 10px 14px rgba(0,0,0,.48))!important;
+}
+
+.civ-item-art-generated.large{
+  width:min(92%,310px)!important;
+  height:min(86%,300px)!important;
+  margin:auto;
+  background-size:400% 300%!important;
+  filter:drop-shadow(0 18px 22px rgba(0,0,0,.54))!important;
+}
+
+.civ-item-card.active .civ-item-art-generated{
+  filter:drop-shadow(0 0 14px rgba(235,153,48,.2)) drop-shadow(0 11px 15px rgba(0,0,0,.5))!important;
+}
+
+.civ-item-card.locked .civ-item-art-generated{
+  filter:grayscale(.62) brightness(.54) drop-shadow(0 8px 12px rgba(0,0,0,.48))!important;
+}
+
+/* Generated resource sheet: 4 columns × 3 rows. */
+.civ-resource-art{
+  --resource-col:0;
+  --resource-row:0;
+  display:block!important;
+  width:31px!important;
+  height:31px!important;
+  flex:0 0 31px;
+  border-radius:6px;
+  background-image:url("/games/civilization/art/resources.webp")!important;
+  background-repeat:no-repeat!important;
+  background-size:400% 300%!important;
+  background-position:
+    calc(var(--resource-col) * 33.333333%)
+    calc(var(--resource-row) * 50%)!important;
+  box-shadow:0 4px 10px rgba(0,0,0,.25);
+}
+
+.resource-berries{--resource-col:0;--resource-row:0}
+.resource-meat{--resource-col:1;--resource-row:0}
+.resource-mushrooms{--resource-col:2;--resource-row:0}
+.resource-fish{--resource-col:3;--resource-row:0}
+.resource-wood{--resource-col:0;--resource-row:1}
+.resource-stone{--resource-col:1;--resource-row:1}
+.resource-flint{--resource-col:2;--resource-row:1}
+.resource-hide{--resource-col:3;--resource-row:1}
+.resource-bones{--resource-col:0;--resource-row:2}
+.resource-fang{--resource-col:0;--resource-row:2}
+.resource-tusk{--resource-col:1;--resource-row:2}
+.resource-totem{--resource-col:2;--resource-row:2}
+.resource-rare{--resource-col:3;--resource-row:2}
+
+.civ-resource-row{
+  grid-template-columns:34px minmax(0,1fr) auto!important;
+  gap:8px!important;
+  min-height:38px!important;
+}
+
+/* Generated boss sheet: three cinematic boss zones. */
+.civ-boss-art-generated{
+  --boss-pos:0%;
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:70px;
+  background-image:url("/games/civilization/art/bosses.webp")!important;
+  background-repeat:no-repeat!important;
+  background-size:300% auto!important;
+  background-position:var(--boss-pos) 49%!important;
+  border-radius:7px;
+  filter:saturate(1.05) contrast(1.03);
+}
+
+.civ-boss-art-generated.boss-ape{--boss-pos:0%}
+.civ-boss-art-generated.boss-tiger{--boss-pos:50%}
+.civ-boss-art-generated.boss-mammoth{--boss-pos:100%}
+
+.civ-boss-list button>.civ-boss-art-generated{
+  width:88px!important;
+  height:72px!important;
+  min-height:72px;
+  box-shadow:inset 0 0 0 1px rgba(230,163,72,.18);
+}
+
+.civ-boss-art .civ-boss-art-generated.large{
+  width:100%!important;
+  height:100%!important;
+  min-height:360px;
+  border-radius:8px;
+  box-shadow:inset 0 0 0 1px rgba(255,194,94,.08);
+}
+
+.civ-boss-art{
+  overflow:hidden;
+  background:#0b0e0f!important;
+}
+
+@media(max-width:1450px){
+  .civ-mascot-stage{
+    left:55%;
+    width:180px;
+    height:410px;
+    transform:translateX(-50%)!important;
+  }
+  .civ-character-art{
+    width:180px!important;
+    height:410px!important;
+  }
+  .civ-character-art.compact{
+    width:112px!important;
+    height:132px!important;
+  }
+  .civ-item-art-generated{
+    width:78px!important;
+    height:69px!important;
+  }
+  .civ-boss-art .civ-boss-art-generated.large{
+    min-height:300px;
+  }
+}
+
+@media(min-width:721px) and (max-height:800px){
+  .civ-mascot-stage{
+    left:55%;
+    bottom:-1%;
+    width:155px;
+    height:350px;
+    transform:translateX(-50%)!important;
+  }
+  .civ-character-art{
+    width:155px!important;
+    height:350px!important;
+  }
+  .civ-character-art.compact{
+    width:96px!important;
+    height:113px!important;
+  }
+  .civ-hotspot.fire{left:18%;top:53%}
+  .civ-hotspot.bench{left:56%;top:40%}
+  .civ-hotspot.stash{left:7%;bottom:16%}
+  .civ-hotspot.exit{right:4%;top:16%}
+  .civ-item-art-generated{
+    width:68px!important;
+    height:58px!important;
+  }
+  .civ-boss-art .civ-boss-art-generated.large{
+    min-height:250px;
+  }
+}
+
+
+/* CIVILIZATION VISUAL ALPHA V2 — RESOURCE REUSE */
+.civ-inventory-groups article{
+  grid-template-columns:36px minmax(0,1fr) auto!important;
+  align-items:center;
+  gap:8px!important;
+}
+.civ-inventory-groups article>.civ-resource-art{
+  width:32px!important;
+  height:32px!important;
+}
+.civ-drops span{
+  display:inline-flex!important;
+  align-items:center;
+  gap:6px;
+}
+.civ-drops span>.civ-resource-art{
+  width:25px!important;
+  height:25px!important;
+  flex:0 0 25px;
+}

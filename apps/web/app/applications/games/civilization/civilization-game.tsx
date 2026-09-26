@@ -350,10 +350,10 @@ export function CivilizationGame() {
               {resourceOpen === 'food' ? (
                 <div className="civ-resource-popover">
                   <div className="civ-popover-title"><b>Еда</b><small>340 всего</small></div>
-                  <ResourceRow icon="🍓" label="Ягоды" value="120" />
-                  <ResourceRow icon="🍖" label="Мясо" value="85" />
-                  <ResourceRow icon="🍄" label="Грибы" value="45" />
-                  <ResourceRow icon="🐟" label="Рыба" value="90" />
+                  <ResourceRow icon="berries" label="Ягоды" value="120" />
+                  <ResourceRow icon="meat" label="Мясо" value="85" />
+                  <ResourceRow icon="mushrooms" label="Грибы" value="45" />
+                  <ResourceRow icon="fish" label="Рыба" value="90" />
                 </div>
               ) : null}
             </div>
@@ -364,11 +364,11 @@ export function CivilizationGame() {
               {resourceOpen === 'materials' ? (
                 <div className="civ-resource-popover resources">
                   <div className="civ-popover-title"><b>Ресурсы</b><small>Материалы лагеря</small></div>
-                  <ResourceRow icon="🪵" label="Дерево" value="120" />
-                  <ResourceRow icon="🪨" label="Камень" value="210" />
-                  <ResourceRow icon="🔪" label="Кремень" value="37" />
-                  <ResourceRow icon="🥋" label="Шкуры" value="28" />
-                  <ResourceRow icon="🦴" label="Кости" value="16" />
+                  <ResourceRow icon="wood" label="Дерево" value="120" />
+                  <ResourceRow icon="stone" label="Камень" value="210" />
+                  <ResourceRow icon="flint" label="Кремень" value="37" />
+                  <ResourceRow icon="hide" label="Шкуры" value="28" />
+                  <ResourceRow icon="bones" label="Кости" value="16" />
                 </div>
               ) : null}
             </div>
@@ -404,7 +404,7 @@ export function CivilizationGame() {
         </aside>
 
         <main className="civ-scene">
-          <img className="civ-cave-background" src="/games/civilization/cave-hub.svg" alt="Пещера первобытного лагеря" />
+          <img className="civ-cave-background" src="/games/civilization/art/cave.webp" alt="Пещера первобытного лагеря" />
           <div className="civ-mascot-stage"><Mascot avatar={avatar} /></div>
           <Hotspot className="fire" icon="fire" title="Костёр" text="Восстановить энергию" onClick={() => setNotice('Костёр восстановит энергию после короткого отдыха.')} />
           <Hotspot className="bench" icon="craft" title="Верстак" text="Создание предметов" onClick={() => setPanel('craft')} />
@@ -540,8 +540,33 @@ export function CivilizationGame() {
 }
 
 
+const ITEM_ART_CELLS: Record<string, [number, number]> = {
+  club: [0, 0],
+  axe: [1, 0],
+  knife: [2, 0],
+  spear: [3, 0],
+  'bone-club': [0, 1],
+  'flint-shard': [1, 1],
+  bow: [2, 1],
+  'obsidian-axe': [3, 1],
+  'hunter-spear': [0, 2],
+  'mammoth-maul': [1, 2],
+  fur: [2, 2],
+  fang: [3, 2],
+};
+
 function ItemArt({ item, large = false }: { item: Item; large?: boolean }) {
   const id = item.id;
+  const sprite = ITEM_ART_CELLS[id];
+  if (sprite) {
+    return (
+      <span
+        className={`civ-item-art civ-item-art-generated ${large ? 'large' : ''} art-${item.category} art-${id}`}
+        style={{ '--item-col': sprite[0], '--item-row': sprite[1] } as CSSProperties}
+        aria-hidden="true"
+      />
+    );
+  }
   const weapon = item.category === 'weapon';
   const clothes = item.category === 'clothes';
   const accessory = item.category === 'accessory';
@@ -705,7 +730,7 @@ function InventoryPanel({ loot }: { loot: Record<string, number> }) {
       <div className="civ-inventory-groups">
         {groups.map((group) => (
           <section key={group.title}><h3>{group.title}</h3>
-            <div>{group.items.map(([name,value]) => <article key={name}><span className="civ-inventory-glyph">{group.title === 'Пища' ? '●' : group.title === 'Трофеи' ? '◆' : '■'}</span><b>{name}</b><strong>{value}</strong></article>)}</div>
+            <div>{group.items.map(([name,value]) => <article key={name}><ResourceArt name={name} /><b>{name}</b><strong>{value}</strong></article>)}</div>
           </section>
         ))}
       </div>
@@ -737,19 +762,14 @@ function EvolutionPanel() {
 }
 
 function Mascot({ avatar, compact = false }: { avatar: AvatarState; compact?: boolean }) {
-  const hair = avatar.gender === 'female' && avatar.hair !== 'Лысый';
+  const tone = Math.max(0, colors.indexOf(avatar.color));
   return (
-    <div className={`civ-mascot ${compact ? 'compact' : ''}`} style={{ '--civ-skin': avatar.color } as CSSProperties}>
-      <div className="civ-hair">{hair ? <span>{avatar.hair === 'Пучок' ? '●' : avatar.hair === 'Косы' ? '⌁' : avatar.hair === 'Длинные' ? '◒' : '⌒'}</span> : null}</div>
-      <div className="civ-head">
-        <i className="eye left" /><i className="eye right" />
-        <i className="brow left" /><i className="brow right" />
-        <i className="cheek left" /><i className="cheek right" />
-        <i className="mouth" />
-      </div>
-      <div className="civ-necklace">◆ ◆ ◆</div>
-      <div className="civ-body"><i className="fur" /></div>
-      {!compact ? <><div className="civ-arm left" /><div className="civ-arm right" /><div className="civ-leg left" /><div className="civ-leg right" /><div className="civ-club"><i /></div></> : null}
+    <div
+      className={`civ-mascot civ-character-art ${compact ? 'compact' : ''} ${avatar.gender} tone-${tone}`}
+      data-hair={avatar.gender === 'female' ? avatar.hair : 'Лысый'}
+      aria-hidden="true"
+    >
+      <span />
     </div>
   );
 }
@@ -759,7 +779,31 @@ function Hotspot({ className, icon, title, text, onClick }: { className: string;
 }
 
 function ResourceRow({ icon, label, value }: { icon: string; label: string; value: string }) {
-  return <div className="civ-resource-row"><span>{icon}</span><b>{label}</b><em>{value}</em></div>;
+  return <div className="civ-resource-row"><span className={`civ-resource-art resource-${icon}`} aria-hidden="true" /><b>{label}</b><em>{value}</em></div>;
+}
+
+const RESOURCE_ART_BY_NAME: Record<string, string> = {
+  'Ягоды': 'berries',
+  'Мясо': 'meat',
+  'Грибы': 'mushrooms',
+  'Рыба': 'fish',
+  'Дерево': 'wood',
+  'Камень': 'stone',
+  'Кремень': 'flint',
+  'Шкуры': 'hide',
+  'Шкура мамонта': 'hide',
+  'Тигриная шкура': 'hide',
+  'Кости': 'bones',
+  'Кость': 'bones',
+  'Клык саблезуба': 'fang',
+  'Бивень мамонта': 'tusk',
+  'Тотем вожака': 'totem',
+  'Редкий камень': 'rare',
+};
+
+function ResourceArt({ name }: { name: string }) {
+  const art = RESOURCE_ART_BY_NAME[name] ?? 'stone';
+  return <span className={`civ-resource-art resource-${art}`} aria-hidden="true" />;
 }
 
 function TaskRow({ task, compact = false }: { task: { label: string; progress: number; total: number; reward: string }; compact?: boolean }) {
@@ -835,53 +879,13 @@ function EquipmentPanel({
 
 
 function BossArt({ boss, large = false }: { boss: Boss; large?: boolean }) {
+  const index = boss.id === 'ape' ? 0 : boss.id === 'tiger' ? 1 : 2;
   return (
-    <span className={`civ-boss-illustration boss-${boss.id} ${large ? 'large' : ''}`} aria-hidden="true">
-      <svg viewBox="0 0 220 180" role="presentation">
-        <defs>
-          <radialGradient id={`boss-bg-${boss.id}`} cx=".5" cy=".42" r=".62">
-            <stop offset="0" stopColor={boss.id === 'tiger' ? '#c96e27' : boss.id === 'mammoth' ? '#7a716b' : '#73523b'} stopOpacity=".74" />
-            <stop offset="1" stopColor="#12110f" stopOpacity="0" />
-          </radialGradient>
-          <linearGradient id={`boss-fur-${boss.id}`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor={boss.id === 'tiger' ? '#d98a39' : boss.id === 'mammoth' ? '#786b61' : '#806048'} />
-            <stop offset=".55" stopColor={boss.id === 'tiger' ? '#a84f21' : boss.id === 'mammoth' ? '#4d4947' : '#513a2c'} />
-            <stop offset="1" stopColor="#241914" />
-          </linearGradient>
-        </defs>
-        <ellipse cx="110" cy="100" rx="100" ry="76" fill={`url(#boss-bg-${boss.id})`} />
-        {boss.id === 'tiger' ? (
-          <>
-            <path d="M51 70 L31 24 L75 47 Q110 27 145 47 L188 24 L169 71 Q184 93 174 127 Q153 160 110 163 Q65 161 45 127 Q35 94 51 70 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#e1a34e" strokeWidth="3" />
-            <path d="M44 45 L72 67 M176 45 L148 67 M77 48 L88 72 M143 48 L132 72 M63 88 L84 95 M157 88 L136 95" stroke="#311b14" strokeWidth="8" strokeLinecap="round" opacity=".85"/>
-            <path d="M75 109 Q90 93 109 103 Q129 93 145 109 Q137 145 110 151 Q82 145 75 109 Z" fill="#eee0c3" opacity=".93"/>
-            <ellipse cx="81" cy="88" rx="10" ry="8" fill="#0a0807"/><ellipse cx="139" cy="88" rx="10" ry="8" fill="#0a0807"/>
-            <circle cx="84" cy="86" r="2.5" fill="#f6d266"/><circle cx="142" cy="86" r="2.5" fill="#f6d266"/>
-            <path d="M104 111 L116 111 L110 120 Z" fill="#2a1915"/>
-            <path d="M91 124 L97 153 L105 128 M129 124 L123 153 L115 128" fill="#f5e4bd" stroke="#d5bd91" strokeWidth="1.5"/>
-          </>
-        ) : boss.id === 'mammoth' ? (
-          <>
-            <path d="M46 87 Q47 36 95 27 Q148 19 178 58 Q195 88 176 127 Q158 159 112 161 Q62 161 43 125 Q34 105 46 87 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#9e8d7f" strokeWidth="3"/>
-            <path d="M45 85 Q22 83 18 109 Q18 133 46 139" fill="#514944" stroke="#887a70" strokeWidth="3"/>
-            <path d="M175 84 Q203 83 207 108 Q207 132 177 139" fill="#514944" stroke="#887a70" strokeWidth="3"/>
-            <path d="M103 99 Q119 96 127 113 L124 149 Q121 170 104 170 Q91 168 92 151 L94 113 Q95 103 103 99 Z" fill="#5c514b"/>
-            <path d="M85 119 Q66 128 62 154 Q77 144 94 141 M139 119 Q158 128 163 154 Q148 144 130 141" fill="none" stroke="#ead9ac" strokeWidth="8" strokeLinecap="round"/>
-            <ellipse cx="83" cy="86" rx="8" ry="6" fill="#0c0908"/><ellipse cx="142" cy="86" rx="8" ry="6" fill="#0c0908"/>
-            <path d="M65 54 Q80 39 95 33 M158 54 Q143 39 129 33" stroke="#2d2927" strokeWidth="7" strokeLinecap="round" opacity=".65"/>
-          </>
-        ) : (
-          <>
-            <path d="M48 80 Q54 37 92 27 Q133 14 169 48 Q190 76 177 119 Q163 158 111 164 Q61 158 42 121 Q32 97 48 80 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#9d7550" strokeWidth="3"/>
-            <path d="M62 80 Q75 52 105 50 Q140 46 160 78 Q162 120 139 142 Q109 157 79 141 Q57 120 62 80 Z" fill="#a67b59"/>
-            <path d="M72 52 Q52 38 42 61 M149 51 Q171 36 181 60" fill="none" stroke="#503729" strokeWidth="15" strokeLinecap="round"/>
-            <ellipse cx="83" cy="91" rx="9" ry="7" fill="#090706"/><ellipse cx="139" cy="91" rx="9" ry="7" fill="#090706"/>
-            <path d="M92 119 Q110 132 130 118" fill="none" stroke="#3b251d" strokeWidth="6" strokeLinecap="round"/>
-            <path d="M110 24 L123 6 L135 29 L154 17 L150 46 L70 46 L68 18 L88 30 L98 7 Z" fill="#d99b39" stroke="#f2c36d" strokeWidth="2"/>
-          </>
-        )}
-      </svg>
-    </span>
+    <span
+      className={`civ-boss-illustration civ-boss-art-generated boss-${boss.id} ${large ? 'large' : ''}`}
+      style={{ '--boss-index': index } as CSSProperties}
+      aria-hidden="true"
+    />
   );
 }
 
@@ -900,7 +904,7 @@ function BossesPanel({ bosses, selected, selectedBoss, setSelectedBoss, hp, atta
             <h3>{selected.name}</h3>
             <p>Сила босса: {selected.power}. Подготовь оружие и запас энергии перед охотой.</p>
             <div className="civ-boss-hp"><span>Здоровье</span><b>{hp}/{selected.hp}</b><div><i style={{ width: `${Math.min(100, hp / selected.hp * 100)}%` }} /></div></div>
-            <div className="civ-drops"><small>Возможные трофеи</small>{selected.drops.map(drop => <span key={drop}>{drop}</span>)}</div>
+            <div className="civ-drops"><small>Возможные трофеи</small>{selected.drops.map(drop => { const name = dropName(drop); return <span key={drop}><ResourceArt name={name} />{name}</span>; })}</div>
             <button type="button" className="civ-primary" onClick={attackBoss}>{hp <= 0 ? 'Охота завершена — начать заново' : 'Атаковать · −22 HP'}</button>
           </div>
         </article>
