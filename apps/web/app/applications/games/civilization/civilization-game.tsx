@@ -52,6 +52,8 @@ const bosses = [
   { id: 'mammoth', name: 'Мамонт', level: 5, emoji: '🦣', hp: 180, drops: ['🦴 Бивень', '🥋 Густая шкура', '💎 Редкий камень'], power: 16 },
 ];
 
+type Boss = (typeof bosses)[number];
+
 const dailyTasks = [
   { label: 'Собрать ягоды', progress: 7, total: 10, reward: '+5 власти' },
   { label: 'Собрать камень', progress: 120, total: 200, reward: '+10 власти' },
@@ -468,7 +470,7 @@ function EquipmentPanel({
   );
 }
 
-function BossesPanel({ bosses, selected, selectedBoss, setSelectedBoss, hp, attackBoss }: { bosses: typeof bosses; selected: typeof bosses[number]; selectedBoss: string; setSelectedBoss: (id: string) => void; hp: number; attackBoss: () => void }) {
+function BossesPanel({ bosses, selected, selectedBoss, setSelectedBoss, hp, attackBoss }: { bosses: Boss[]; selected: Boss; selectedBoss: string; setSelectedBoss: (id: string) => void; hp: number; attackBoss: () => void }) {
   return (
     <div className="civ-panel-body bosses">
       <header className="civ-panel-head"><div><small>Охота и трофеи</small><h2>Боссы</h2><p>Побеждай существ эпохи, получай уникальные материалы и кастомизацию.</p></div></header>
