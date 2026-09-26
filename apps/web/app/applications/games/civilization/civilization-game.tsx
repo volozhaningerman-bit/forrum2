@@ -350,10 +350,10 @@ export function CivilizationGame() {
               {resourceOpen === 'food' ? (
                 <div className="civ-resource-popover">
                   <div className="civ-popover-title"><b>Еда</b><small>340 всего</small></div>
-                  <ResourceRow icon="🍓" label="Ягоды" value="120" />
-                  <ResourceRow icon="🍖" label="Мясо" value="85" />
-                  <ResourceRow icon="🍄" label="Грибы" value="45" />
-                  <ResourceRow icon="🐟" label="Рыба" value="90" />
+                  <ResourceRow kind="berries" label="Ягоды" value="120" />
+                  <ResourceRow kind="meat" label="Мясо" value="85" />
+                  <ResourceRow kind="mushrooms" label="Грибы" value="45" />
+                  <ResourceRow kind="fish" label="Рыба" value="90" />
                 </div>
               ) : null}
             </div>
@@ -364,11 +364,11 @@ export function CivilizationGame() {
               {resourceOpen === 'materials' ? (
                 <div className="civ-resource-popover resources">
                   <div className="civ-popover-title"><b>Ресурсы</b><small>Материалы лагеря</small></div>
-                  <ResourceRow icon="🪵" label="Дерево" value="120" />
-                  <ResourceRow icon="🪨" label="Камень" value="210" />
-                  <ResourceRow icon="🔪" label="Кремень" value="37" />
-                  <ResourceRow icon="🥋" label="Шкуры" value="28" />
-                  <ResourceRow icon="🦴" label="Кости" value="16" />
+                  <ResourceRow kind="wood" label="Дерево" value="120" />
+                  <ResourceRow kind="stone" label="Камень" value="210" />
+                  <ResourceRow kind="flint" label="Кремень" value="37" />
+                  <ResourceRow kind="hide" label="Шкуры" value="28" />
+                  <ResourceRow kind="bone" label="Кости" value="16" />
                 </div>
               ) : null}
             </div>
@@ -867,8 +867,68 @@ function Hotspot({ className, icon, title, text, onClick }: { className: string;
   return <button type="button" className={`civ-hotspot ${className}`} onClick={onClick}><CivSymbol kind={icon} /><div><b>{title}</b><small>{text}</small></div><em>›</em></button>;
 }
 
-function ResourceRow({ icon, label, value }: { icon: string; label: string; value: string }) {
-  return <div className="civ-resource-row"><span>{icon}</span><b>{label}</b><em>{value}</em></div>;
+type ResourceArtKind = 'berries' | 'meat' | 'mushrooms' | 'fish' | 'wood' | 'stone' | 'flint' | 'hide' | 'bone';
+
+function ResourceArt({ kind }: { kind: ResourceArtKind }) {
+  return (
+    <span className={`civ-resource-art resource-${kind}`} aria-hidden="true">
+      <svg viewBox="0 0 48 48" role="presentation">
+        <defs>
+          <linearGradient id={`resource-red-${kind}`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#ff6152"/><stop offset="1" stopColor="#9b1f2b"/></linearGradient>
+          <linearGradient id={`resource-brown-${kind}`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#c98243"/><stop offset="1" stopColor="#56301d"/></linearGradient>
+          <linearGradient id={`resource-stone-${kind}`} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#b9bbb6"/><stop offset=".55" stopColor="#6b7072"/><stop offset="1" stopColor="#343a3d"/></linearGradient>
+        </defs>
+        {kind === 'berries' ? <>
+          <path d="M13 14c3-6 8-8 13-5-2 3-2 6-1 8-5 2-9 1-12-3Z" fill="#4f8d3f"/>
+          <path d="M25 10c5-4 10-2 12 3-4 0-7 2-9 5-2-2-3-5-3-8Z" fill="#6ea44e"/>
+          <circle cx="16" cy="27" r="9" fill="url(#resource-red-berries)" /><circle cx="28" cy="25" r="9" fill="#d52d45"/><circle cx="23" cy="35" r="8" fill="#ba2437"/>
+          <g fill="#ffd58a" opacity=".72"><circle cx="13" cy="25" r="1"/><circle cx="20" cy="31" r="1"/><circle cx="28" cy="22" r="1"/><circle cx="31" cy="29" r="1"/></g>
+        </> : null}
+        {kind === 'meat' ? <>
+          <path d="M12 17c7-8 18-9 25-1 6 7 4 16-4 22-8 5-17 3-22-3-5-6-4-13 1-18Z" fill="url(#resource-red-meat)" stroke="#ee8f7f" strokeWidth="1.5"/>
+          <path d="M31 34c5 2 8 1 10-2 2-4 0-7-4-8" fill="none" stroke="#ead7b9" strokeWidth="7" strokeLinecap="round"/>
+          <path d="M17 19c5-3 10-3 15 0M16 27c6-2 11-1 16 2" fill="none" stroke="#ffc2ad" strokeWidth="2" opacity=".65"/>
+        </> : null}
+        {kind === 'mushrooms' ? <>
+          <path d="M12 27c0-7 5-12 12-12s12 5 12 12Z" fill="#d94337" stroke="#ff8b72" strokeWidth="1.5"/>
+          <path d="M20 26h8l2 15H18Z" fill="#d6b88e"/>
+          <circle cx="18" cy="22" r="2" fill="#f9dec0"/><circle cx="28" cy="20" r="2.2" fill="#f9dec0"/><circle cx="32" cy="25" r="1.8" fill="#f9dec0"/>
+          <path d="M5 32c0-5 4-8 8-8 3 0 6 2 7 5l-3 4H7Z" fill="#b7352f"/><path d="M10 32h5l1 9H9Z" fill="#c7a77d"/>
+        </> : null}
+        {kind === 'fish' ? <>
+          <path d="M8 26c8-11 18-15 29-7l6-6-1 10 1 10-7-6c-10 7-20 4-28-1Z" fill="#4f9ed0" stroke="#9dd8f2" strokeWidth="1.5"/>
+          <path d="M19 20c5 3 8 7 8 12M29 18c3 4 4 8 4 12" fill="none" stroke="#2d6b92" strokeWidth="2" opacity=".75"/>
+          <circle cx="14" cy="23" r="2.2" fill="#11181c"/><circle cx="13.3" cy="22.3" r=".7" fill="#fff"/>
+        </> : null}
+        {kind === 'wood' ? <>
+          <path d="M8 13h26l5 7-5 15H8L3 28Z" fill="url(#resource-brown-wood)" stroke="#d39b5f" strokeWidth="1.5"/>
+          <path d="M11 14v21m8-21v21m8-21v21" stroke="#6f3f25" strokeWidth="2"/>
+          <circle cx="35" cy="24" r="6" fill="#af7442"/><circle cx="35" cy="24" r="3" fill="none" stroke="#734825" strokeWidth="1.4"/>
+        </> : null}
+        {kind === 'stone' ? <>
+          <path d="m7 34 6-18 13-9 15 13-4 17-17 5Z" fill="url(#resource-stone-stone)" stroke="#c9c8bf" strokeWidth="1.3"/>
+          <path d="m13 16 11 8 2-17M24 24l13-4m-17 22 4-18" fill="none" stroke="#4e5457" strokeWidth="1.7" opacity=".7"/>
+        </> : null}
+        {kind === 'flint' ? <>
+          <path d="m9 37 10-25 13-7 8 11-9 24-13 4Z" fill="#474d52" stroke="#c4beb1" strokeWidth="1.4"/>
+          <path d="m19 12 8 8 5-15m-5 15 13-4M18 44l9-24" fill="none" stroke="#929792" strokeWidth="1.6" opacity=".75"/>
+          <path d="M9 37 18 44" stroke="#f1b75d" strokeWidth="2" opacity=".55"/>
+        </> : null}
+        {kind === 'hide' ? <>
+          <path d="M10 9 21 6l6 5 9-3 3 10-5 6 4 9-9 3-5 7-8-6-9 1 2-10-5-7Z" fill="url(#resource-brown-hide)" stroke="#d59a5c" strokeWidth="1.3"/>
+          <path d="M16 14c5 3 9 2 13-1m-16 14c7-3 13-1 19 3" fill="none" stroke="#f0c38d" strokeWidth="2" opacity=".45"/>
+        </> : null}
+        {kind === 'bone' ? <>
+          <path d="M12 17c-5-2-8 1-8 5s4 6 8 4l22 10c-1 5 2 8 6 8s6-4 4-8l-24-11c2-5-1-8-5-8Z" fill="#e3d4b3" stroke="#9f875d" strokeWidth="1.4"/>
+          <path d="M10 31c-4-2-7 1-7 5s4 6 8 3l22-14c4 3 8 1 9-3 0-4-4-6-8-4Z" fill="#f0e3c5" stroke="#9f875d" strokeWidth="1.4"/>
+        </> : null}
+      </svg>
+    </span>
+  );
+}
+
+function ResourceRow({ kind, label, value }: { kind: ResourceArtKind; label: string; value: string }) {
+  return <div className="civ-resource-row"><ResourceArt kind={kind} /><b>{label}</b><em>{value}</em></div>;
 }
 
 function TaskRow({ task, compact = false }: { task: { label: string; progress: number; total: number; reward: string }; compact?: boolean }) {
