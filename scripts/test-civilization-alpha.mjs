@@ -221,7 +221,7 @@ try {
   assert.match(await page.locator('.civ-full-panel').textContent(), /Управление персонажем/);
   assert.equal(await page.locator('.civ-equipment-tabs>button').count(), 5);
   assert((await page.locator('.civ-item-card').count()) >= 8, 'weapon catalog should show progression and locked goals');
-  assert.equal(await page.locator('.civ-item-art svg').count(), await page.locator('.civ-item-card').count() + 1);
+  assert.equal(await page.locator('.civ-item-art').count(), await page.locator('.civ-item-card').count() + 1);
   // Equip a real unlocked weapon through the UI. This must survive reload later.
   await page.getByRole('button', { name: /Оружие/ }).click();
   const axeCard = page.locator('.civ-item-card').filter({ hasText: 'Каменный топор' }).first();
@@ -266,8 +266,8 @@ try {
   await bottomNav.getByRole('button', { name: /Боссы/ }).click();
   await page.getByRole('button', { name: /Вожак обезьян/ }).click();
   assert.match(await page.locator('.civ-boss-detail').textContent(), /Тотем вожака/);
-  assert.equal(await page.locator('.civ-boss-list .civ-boss-illustration svg').count(), 3);
-  assert.equal(await page.locator('.civ-boss-art .civ-boss-illustration.large svg').count(), 1);
+  assert.equal(await page.locator('.civ-boss-list .civ-generated-boss').count(), 3);
+  assert.equal(await page.locator('.civ-boss-art .civ-generated-boss.large').count(), 1);
   const apeHpBefore = await page.locator('.civ-boss-hp').textContent();
   for (let hit = 0; hit < 4; hit += 1) {
     await page.getByRole('button', { name: /Атаковать/ }).click();
@@ -306,15 +306,34 @@ try {
   }
 
   await page.setViewportSize({ width: 1720, height: 864 });
+  const premiumCave = page.locator('.civ-cave-background');
+  assert.match(await premiumCave.getAttribute('src'), /cave-hub-premium\.webp$/);
+  assert(
+    await premiumCave.evaluate((img) => img instanceof HTMLImageElement && img.complete && img.naturalWidth > 0),
+    'premium cave asset must load',
+  );
   await page.screenshot({ path: output + '/civilization-hub-1720x864.png', fullPage: false });
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
   await page.getByRole('button', { name: /Оружие/ }).click();
   await assertOverlayGeometry('equipment screenshot');
+  assert(
+    await page.locator('.civ-generated-item').count() >= 8,
+    'generated equipment art should cover the early weapon catalog',
+  );
+  assert.match(
+    await page.locator('.civ-generated-item').first().evaluate((node) => getComputedStyle(node).backgroundImage),
+    /equipment-sheet\.webp/,
+  );
   await page.screenshot({ path: output + '/civilization-equipment-1720x864.png', fullPage: false });
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
 
   await bottomNav.getByRole('button', { name: /Боссы/ }).click();
   await page.getByRole('button', { name: /Саблезубый тигр/ }).click();
+  assert.equal(await page.locator('.civ-generated-boss').count(), 4);
+  assert.match(
+    await page.locator('.civ-generated-boss').first().evaluate((node) => getComputedStyle(node).backgroundImage),
+    /boss-sheet\.webp/,
+  );
   await page.screenshot({ path: output + '/civilization-bosses-1720x864.png', fullPage: false });
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
 
