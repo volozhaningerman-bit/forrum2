@@ -175,8 +175,30 @@ function dropName(drop: string) {
   return parts.length > 1 ? parts.slice(1).join(' ') : drop;
 }
 
-function Icon({ children }: { children: ReactNode }) {
-  return <span className="civ-icon" aria-hidden="true">{children}</span>;
+type CivGlyph = 'cave' | 'energy' | 'food' | 'resources' | 'power' | 'equipment' | 'bosses' | 'map' | 'craft' | 'tribe' | 'profile' | 'achievements' | 'inventory' | 'evolution';
+
+function CivSymbol({ kind }: { kind: CivGlyph }) {
+  const common = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+  return (
+    <span className="civ-icon civ-vector-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" role="presentation">
+        {kind === 'cave' ? <><path {...common} d="M3 19c2.5-7.8 5.6-12 9-15 3.5 3 6.6 7.2 9 15"/><path {...common} d="M8.2 19c.7-4.6 2-7.3 3.8-9 1.9 1.7 3.2 4.4 3.8 9"/><path {...common} d="M3 19h18"/></> : null}
+        {kind === 'energy' ? <path d="M13.8 2.5 6.2 13h5.2L10.2 21.5 18 10.4h-5.1z" fill="currentColor"/> : null}
+        {kind === 'food' ? <><path {...common} d="M12 7.5c-4-4.1-8.6-1.4-8.6 3.2 0 5 4.1 8.8 8.6 10.3 4.5-1.5 8.6-5.3 8.6-10.3 0-4.6-4.6-7.3-8.6-3.2Z"/><path {...common} d="M12 7.5c.1-3.2 1.8-5 4.9-5"/><path {...common} d="M15.5 4.1c1.7-.4 3 .1 4 1.5"/></> : null}
+        {kind === 'resources' ? <><path {...common} d="m5 8 7-5 7 5-7 5z"/><path {...common} d="m5 8 1.2 8.1L12 21l5.8-4.9L19 8"/><path {...common} d="M12 13v8"/></> : null}
+        {kind === 'power' ? <><path {...common} d="M4 8h16l-2 11H6z"/><path {...common} d="m5 8-2-4 5 2 4-4 4 4 5-2-2 4"/></> : null}
+        {kind === 'equipment' ? <><path {...common} d="M4 4l16 16M20 4 4 20"/><path {...common} d="m3 3 4 1-3 3zM21 3l-4 1 3 3z"/></> : null}
+        {kind === 'bosses' ? <><path {...common} d="M5 10c0-4.2 3.1-7 7-7s7 2.8 7 7c0 3.2-1.7 5.2-4.2 6.2V21l-2.8-2-2.8 2v-4.8C6.7 15.2 5 13.2 5 10Z"/><circle cx="9.2" cy="10.2" r="1.4" fill="currentColor"/><circle cx="14.8" cy="10.2" r="1.4" fill="currentColor"/></> : null}
+        {kind === 'map' ? <><path {...common} d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path {...common} d="M9 3v15M15 6v15"/></> : null}
+        {kind === 'craft' ? <><path {...common} d="m14.5 4.5 5 5-2.8 2.8-5-5z"/><path {...common} d="M13 9 5.3 16.7a2.2 2.2 0 0 0 0 3.1 2.2 2.2 0 0 0 3.1 0L16 12.2"/></> : null}
+        {kind === 'tribe' ? <><path {...common} d="M4 20 12 4l8 16z"/><path {...common} d="M8.5 20 12 13l3.5 7"/></> : null}
+        {kind === 'profile' ? <><circle {...common} cx="12" cy="8" r="4"/><path {...common} d="M4.5 21c.8-5 3.2-7.4 7.5-7.4s6.7 2.4 7.5 7.4"/></> : null}
+        {kind === 'achievements' ? <><path {...common} d="M8 4h8v4c0 3-1.7 5-4 5s-4-2-4-5z"/><path {...common} d="M8 6H4c0 3 1.6 5 4.4 5M16 6h4c0 3-1.6 5-4.4 5M12 13v4M8 21h8M9 17h6"/></> : null}
+        {kind === 'inventory' ? <><path {...common} d="M5 8h14l1 13H4z"/><path {...common} d="M9 8V6a3 3 0 0 1 6 0v2"/></> : null}
+        {kind === 'evolution' ? <><path {...common} d="M12 21V9M12 15c-4 0-7-2-8-6 4 0 7 1 8 4M12 11c3.9 0 6.5-2 7.5-6-4 0-6.8 1.3-7.5 4"/></> : null}
+      </svg>
+    </span>
+  );
 }
 
 export function CivilizationGame() {
@@ -309,18 +331,18 @@ export function CivilizationGame() {
       <div className="civilization-hub">
         <header className="civ-game-hud">
           <button className="civ-location" type="button" onClick={() => togglePanel('map')}>
-            <Icon>🔥</Icon>
+            <CivSymbol kind="cave" />
             <span><small>Локация</small><strong>В пещере</strong></span>
             <b>⌄</b>
           </button>
 
           <div className="civ-resource-strip">
             <button type="button" className="civ-resource" onClick={() => setResourceOpen(null)}>
-              <Icon>⚡</Icon><span><strong>100/100</strong><small>Энергия</small></span><b>+</b>
+              <CivSymbol kind="energy" /><span><strong>100/100</strong><small>Энергия</small></span><b>+</b>
             </button>
             <div className="civ-resource-wrap">
               <button type="button" aria-expanded={resourceOpen === 'food'} className={`civ-resource ${resourceOpen === 'food' ? 'active' : ''}`} onClick={() => setResourceOpen(resourceOpen === 'food' ? null : 'food')}>
-                <Icon>🍓</Icon><span><strong>340</strong><small>Еда</small></span><b>{resourceOpen === 'food' ? '⌃' : '⌄'}</b>
+                <CivSymbol kind="food" /><span><strong>340</strong><small>Еда</small></span><b>{resourceOpen === 'food' ? '⌃' : '⌄'}</b>
               </button>
               {resourceOpen === 'food' ? (
                 <div className="civ-resource-popover">
@@ -334,7 +356,7 @@ export function CivilizationGame() {
             </div>
             <div className="civ-resource-wrap">
               <button type="button" aria-expanded={resourceOpen === 'materials'} className={`civ-resource ${resourceOpen === 'materials' ? 'active' : ''}`} onClick={() => setResourceOpen(resourceOpen === 'materials' ? null : 'materials')}>
-                <Icon>🪨</Icon><span><strong>120</strong><small>Ресурсы</small></span><b>{resourceOpen === 'materials' ? '⌃' : '⌄'}</b>
+                <CivSymbol kind="resources" /><span><strong>411</strong><small>Ресурсы</small></span><b>{resourceOpen === 'materials' ? '⌃' : '⌄'}</b>
               </button>
               {resourceOpen === 'materials' ? (
                 <div className="civ-resource-popover resources">
@@ -348,7 +370,7 @@ export function CivilizationGame() {
               ) : null}
             </div>
             <button type="button" className="civ-resource" onClick={() => setNotice('Власть растёт от боссов, заданий, племени и редких трофеев.')}>
-              <Icon>👑</Icon><span><strong>37</strong><small>Власть</small></span><b>+</b>
+              <CivSymbol kind="power" /><span><strong>37</strong><small>Власть</small></span><b>+</b>
             </button>
           </div>
         </header>
@@ -365,13 +387,13 @@ export function CivilizationGame() {
           {profileOpen ? (
             <nav className="civ-player-menu">
               {([
-                ['profile', '👤', 'Профиль'],
-                ['achievements', '🏆', 'Достижения'],
-                ['inventory', '🎒', 'Инвентарь'],
-                ['evolution', '🌿', 'Эволюция'],
+                ['profile', 'profile', 'Профиль'],
+                ['achievements', 'achievements', 'Достижения'],
+                ['inventory', 'inventory', 'Инвентарь'],
+                ['evolution', 'evolution', 'Эволюция'],
               ] as const).map(([id, icon, label]) => (
                 <button type="button" key={id} onClick={() => { setPanel(id); setProfileOpen(false); setResourceOpen(null); }}>
-                  <span>{icon}</span>{label}
+                  <CivSymbol kind={icon} />{label}
                 </button>
               ))}
             </nav>
@@ -457,14 +479,14 @@ export function CivilizationGame() {
 
         <nav className="civ-bottom-nav">
           {([
-            ['equipment', '⚔️', 'Снаряжение'],
-            ['bosses', '💀', 'Боссы'],
-            ['map', '🗺️', 'Карта'],
-            ['craft', '🔨', 'Крафт'],
-            ['tribe', '⛺', 'Племя'],
+            ['equipment', 'equipment', 'Снаряжение'],
+            ['bosses', 'bosses', 'Боссы'],
+            ['map', 'map', 'Карта'],
+            ['craft', 'craft', 'Крафт'],
+            ['tribe', 'tribe', 'Племя'],
           ] as const).map(([id, icon, label]) => (
             <button type="button" key={id} className={panel === id ? 'active' : ''} aria-pressed={panel === id} onClick={() => togglePanel(id)}>
-              <span>{icon}</span><b>{label}</b>
+              <CivSymbol kind={icon} /><b>{label}</b>
             </button>
           ))}
         </nav>
