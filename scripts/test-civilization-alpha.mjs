@@ -183,6 +183,7 @@ try {
   assert.match(await taskRail.textContent(), /Победить 3 боссов/);
   assert.equal(/Разжечь костёр/.test(await page.locator('.civ-task-scroll').textContent()), false);
   await taskRail.getByRole('button', { name: /Скрыть список/ }).click();
+  await taskRail.getByRole('button', { name: 'Ежедневные' }).click();
 
   // Exactly one five-item bottom navigation.
   const bottomNav = page.locator('.civ-bottom-nav');
