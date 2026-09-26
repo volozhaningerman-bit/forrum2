@@ -275,6 +275,7 @@ export function OfficeGame() {
   const feedbackTimerRef = useRef<number | null>(null);
   const cooldownTimerRef = useRef<number | null>(null);
   const feedbackIdRef = useRef(0);
+  const rapidActionRef = useRef(new Map<string, number>());
 
   const firstAssignmentDone =
     snapshot.firstAssignment.progress >= snapshot.firstAssignment.target;
@@ -472,6 +473,14 @@ export function OfficeGame() {
     [],
   );
 
+  const allowAction = (key: string, thresholdMs = 300) => {
+    const now = performance.now();
+    const previous = rapidActionRef.current.get(key) ?? Number.NEGATIVE_INFINITY;
+    if (now - previous < thresholdMs) return false;
+    rapidActionRef.current.set(key, now);
+    return true;
+  };
+
   const showFeedback = (text: string, tone: FeedbackTone) => {
     feedbackIdRef.current += 1;
     setFeedback({ id: feedbackIdRef.current, text, tone });
@@ -549,6 +558,8 @@ export function OfficeGame() {
   };
 
   const completeStoryChoice = (event: OfficeStoryEvent, choice: OfficeStoryChoice) => {
+    if (!allowAction(`story:${event.id}`, 500)) return;
+
     const blocked = choiceBlockedReason(choice);
     if (blocked) {
       showFeedback(blocked, 'warning');
@@ -597,6 +608,8 @@ export function OfficeGame() {
   };
 
   const handlePrank = (prank: OfficePrank) => {
+    if (!allowAction('prank', 500)) return;
+
     const succeeded = Math.random() <= prank.successChance;
     const outcome = succeeded ? prank.success : prank.fail;
     applyOutcome(outcome);
@@ -665,7 +678,7 @@ export function OfficeGame() {
   };
 
   const triggerAction = (id: (typeof officeActions)[number]['id']) => {
-    if (activeAction) return;
+    if (activeAction || !allowAction(`task:${id}`, 350)) return;
 
     if (id === 'work') {
       const nextEvent = getNextFirstDayEvent(story.completedEvents);
@@ -791,6 +804,7 @@ export function OfficeGame() {
       showFeedback(lockReason, 'warning');
       return;
     }
+    if (!allowAction(`buy:${item.id}`, 500)) return;
     if (v6.ownedItemIds.includes(item.id)) {
       equipV6Item(item);
       return;
@@ -869,7 +883,7 @@ export function OfficeGame() {
   };
 
   const attackBoss = (kind: 'logic' | 'social' | 'pressure', expectedDamage: number) => {
-    if (snapshot.energy <= 0 || v6.bossResolved) {
+    if (snapshot.energy <= 0 || v6.bossResolved || !allowAction('boss-attack', 250)) {
       showFeedback('Нет энергии', 'warning');
       return;
     }
@@ -903,6 +917,8 @@ export function OfficeGame() {
   };
 
   const requestPromotion = () => {
+    if (!allowAction('promotion', 500)) return;
+
     if (promotionCompleted) {
       setNotice(
         v6.bossResolved
@@ -2379,7 +2395,7 @@ function OfficeOverlay({
           aria-label={modal.event.title}
           onMouseDown={(event) => event.stopPropagation()}
         >
-          <button type="button" className="office-modal-close" onClick={onClose}>×</button>
+          <button type="button" className="office-modal-close" onClick={onClose} autoFocus aria-label="Закрыть">×</button>
           <div className="office-story-heading">
             <OfficeIcon name="work" />
             <div>
@@ -2428,7 +2444,7 @@ function OfficeOverlay({
     return (
       <div className="office-modal-backdrop" role="presentation" onMouseDown={onClose}>
         <section className="office-modal office-prank-modal" role="dialog" aria-modal="true" aria-label="Шалости" onMouseDown={(event) => event.stopPropagation()}>
-          <button type="button" className="office-modal-close" onClick={onClose}>×</button>
+          <button type="button" className="office-modal-close" onClick={onClose} autoFocus aria-label="Закрыть">×</button>
           <header>
             <small>Перерыв от продуктивности</small>
             <h2>Чем займёмся?</h2>
@@ -2456,7 +2472,7 @@ function OfficeOverlay({
   return (
     <div className="office-modal-backdrop" role="presentation" onMouseDown={onClose}>
       <section className="office-modal office-promotion-modal" role="dialog" aria-modal="true" aria-label="Подготовка к повышению" onMouseDown={(event) => event.stopPropagation()}>
-        <button type="button" className="office-modal-close" onClick={onClose}>×</button>
+        <button type="button" className="office-modal-close" onClick={onClose} autoFocus aria-label="Закрыть">×</button>
         <small>Карьерный помощник</small>
         <h2>До повышения осталось</h2>
         <div className="office-promotion-todo">
