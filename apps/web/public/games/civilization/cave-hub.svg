@@ -25,6 +25,26 @@
   <pattern id="rockLines" width="130" height="95" patternUnits="userSpaceOnUse">
     <path d="M4 72C28 44 50 60 69 40s35-22 57-7M17 18c19 10 33 7 51-7" fill="none" stroke="#d28a4c" stroke-width="2" opacity=".05"/>
   </pattern>
+
+  <filter id="caveTexture" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency=".013 .045" numOctaves="3" seed="11" result="n"/>
+    <feColorMatrix in="n" values="1 0 0 0 .08  0 .72 0 0 .03  0 0 .48 0 0  0 0 0 .42 0" result="grain2"/>
+    <feBlend in="SourceGraphic" in2="grain2" mode="soft-light"/>
+  </filter>
+  <filter id="deepShadow" x="-30%" y="-30%" width="160%" height="180%">
+    <feDropShadow dx="0" dy="22" stdDeviation="16" flood-color="#000" flood-opacity=".66"/>
+  </filter>
+  <radialGradient id="floorGlow" cx=".46" cy=".66" r=".55">
+    <stop offset="0" stop-color="#f58b31" stop-opacity=".18"/>
+    <stop offset=".48" stop-color="#8e4825" stop-opacity=".08"/>
+    <stop offset="1" stop-color="#000" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="bone" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#fff0c7"/><stop offset=".55" stop-color="#d2b77f"/><stop offset="1" stop-color="#80694a"/>
+  </linearGradient>
+  <linearGradient id="leather" x1="0" y1="0" x2="1" y2="1">
+    <stop stop-color="#aa6840"/><stop offset=".5" stop-color="#633823"/><stop offset="1" stop-color="#2c1b14"/>
+  </linearGradient>
 </defs>
 
 <rect width="1600" height="900" fill="url(#bg)"/>
@@ -145,5 +165,103 @@
 <path d="M0 824c274-60 513-43 733 18 231 64 509 59 867-11v69H0z" fill="#070606"/>
 <g fill="#261812" opacity=".88">
   <ellipse cx="96" cy="799" rx="87" ry="38"/><ellipse cx="1485" cy="805" rx="99" ry="42"/><ellipse cx="1285" cy="820" rx="71" ry="27"/>
+</g>
+
+<!-- visual-pass-2 overlays -->
+<g pointer-events="none">
+  <!-- deeper rock texture and cinematic floor light -->
+  <path d="M0 90c205 16 360 69 501 99-113 86-159 196-157 337 1 128-21 251-78 374H0Z" fill="#5b3321" opacity=".2" filter="url(#caveTexture)"/>
+  <path d="M1034 74c-43 104-53 216-24 333 27 111 13 277-41 493h318c-44-182-39-367 15-557 28-99 28-190 3-274Z" fill="#3c281d" opacity=".18" filter="url(#caveTexture)"/>
+  <ellipse cx="716" cy="712" rx="620" ry="270" fill="url(#floorGlow)"/>
+
+  <!-- stalactites and top framing -->
+  <g fill="#120c09" opacity=".98">
+    <path d="M32 0h84l-31 105-21-63-18 91Z"/>
+    <path d="M212 0h73l-26 76-18-42-17 84Z"/>
+    <path d="M408 0h92l-40 116-20-72-21 109Z"/>
+    <path d="M696 0h67l-19 87-17-46-12 96Z"/>
+    <path d="M905 0h86l-32 111-24-66-15 104Z"/>
+    <path d="M1180 0h71l-19 76-19-48-14 104Z"/>
+    <path d="M1441 0h91l-38 115-20-61-20 98Z"/>
+  </g>
+
+  <!-- rope garland across the exit -->
+  <path d="M1127 109c115 40 216 41 323 4" fill="none" stroke="#5f3b27" stroke-width="8" stroke-linecap="round"/>
+  <path d="M1164 119v38m59-27v48m61-45v41m58-49v42m57-54v43" stroke="#7f5634" stroke-width="5" stroke-linecap="round"/>
+  <g fill="url(#bone)">
+    <path d="m1154 156 10-17 10 17-10 19Z"/><path d="m1213 177 10-19 10 18-10 20Z"/>
+    <path d="m1274 172 10-18 10 18-10 21Z"/><path d="m1332 166 10-18 10 18-10 19Z"/>
+    <path d="m1389 154 10-18 10 18-10 20Z"/>
+  </g>
+
+  <!-- three mounted skulls over the workbench -->
+  <g filter="url(#deepShadow)">
+    <g transform="translate(850 206)">
+      <path d="M0 12c0-26 20-43 44-43s44 17 44 43c0 18-9 30-23 36l-2 25-18-13-18 13-2-25C10 42 0 30 0 12Z" fill="url(#bone)" stroke="#8f744f" stroke-width="3"/>
+      <ellipse cx="29" cy="11" rx="8" ry="11" fill="#251c16"/><ellipse cx="59" cy="11" rx="8" ry="11" fill="#251c16"/>
+      <path d="m44 18-7 12h14Z" fill="#47352a"/><path d="M19-9 8-31m61 22 13-24" stroke="#cdb57e" stroke-width="8" stroke-linecap="round"/>
+      <path d="M44-22v18m-9-9h18" stroke="#a33f2f" stroke-width="4" opacity=".8"/>
+    </g>
+    <g transform="translate(950 194) scale(.9)">
+      <path d="M0 12c0-26 20-43 44-43s44 17 44 43c0 18-9 30-23 36l-2 25-18-13-18 13-2-25C10 42 0 30 0 12Z" fill="url(#bone)" stroke="#8f744f" stroke-width="3"/>
+      <ellipse cx="29" cy="11" rx="8" ry="11" fill="#251c16"/><ellipse cx="59" cy="11" rx="8" ry="11" fill="#251c16"/>
+      <path d="m44 18-7 12h14Z" fill="#47352a"/><path d="M19-9 8-31m61 22 13-24" stroke="#cdb57e" stroke-width="8" stroke-linecap="round"/>
+      <path d="M31-12 57 10M57-12 31 10" stroke="#9e3d2e" stroke-width="4" opacity=".72"/>
+    </g>
+    <g transform="translate(1043 207) scale(.82)">
+      <path d="M0 12c0-26 20-43 44-43s44 17 44 43c0 18-9 30-23 36l-2 25-18-13-18 13-2-25C10 42 0 30 0 12Z" fill="url(#bone)" stroke="#8f744f" stroke-width="3"/>
+      <ellipse cx="29" cy="11" rx="8" ry="11" fill="#251c16"/><ellipse cx="59" cy="11" rx="8" ry="11" fill="#251c16"/>
+      <path d="m44 18-7 12h14Z" fill="#47352a"/><path d="M19-9 8-31m61 22 13-24" stroke="#cdb57e" stroke-width="8" stroke-linecap="round"/>
+      <path d="m44-17 10 12-10 12-10-12Z" fill="none" stroke="#a13e2f" stroke-width="4" opacity=".78"/>
+    </g>
+  </g>
+
+  <!-- hide canopy and tied beams -->
+  <path d="M795 232c92 22 190 24 294 5l-17 67c-94-14-178-13-260 4Z" fill="url(#leather)" opacity=".86" stroke="#44291d" stroke-width="4"/>
+  <path d="M802 232c79 13 167 15 280 2" fill="none" stroke="#b17a49" stroke-width="7" stroke-dasharray="13 8" opacity=".62"/>
+
+  <!-- richer workbench props -->
+  <g filter="url(#deepShadow)">
+    <path d="M866 379h197v22H866Z" fill="#83502d"/>
+    <path d="M882 403h28v116h-28Zm155 0h28v116h-28Z" fill="#53321f"/>
+    <rect x="905" y="416" width="60" height="48" rx="5" fill="#694127"/>
+    <rect x="976" y="413" width="45" height="53" rx="5" fill="#39241b"/>
+    <path d="m928 403 18-42 11 7-15 39Z" fill="#a8936f"/>
+    <path d="m1001 401 39-55 17 12-42 55Z" fill="#c0a56b"/>
+    <path d="M947 475c23-10 40-9 54 2-19 16-40 18-64 7Z" fill="#777169"/>
+  </g>
+
+  <!-- baskets, pottery and primitive storage -->
+  <g filter="url(#shadow)">
+    <path d="M107 692c42-22 83-22 123 0l-11 89H119Z" fill="#6b3f25" stroke="#9a6338" stroke-width="4"/>
+    <path d="M122 711h93m-88 18h84m-78 18h72" stroke="#b07747" stroke-width="5" opacity=".55"/>
+    <ellipse cx="171" cy="693" rx="61" ry="18" fill="#35221a" stroke="#9a6338" stroke-width="4"/>
+    <path d="M239 669c0-27 16-43 43-43 26 0 42 16 42 43v86h-85Z" fill="#6a4730" stroke="#a37750" stroke-width="4"/>
+    <path d="m252 687 27-20 28 20-27 25Z" fill="none" stroke="#ce8e48" stroke-width="6" opacity=".78"/>
+  </g>
+
+  <!-- spear rack -->
+  <g filter="url(#shadow)">
+    <path d="M1152 278v266m42-271v270m42-254v246" stroke="#6e452a" stroke-width="10" stroke-linecap="round"/>
+    <path d="m1138 281 14-38 14 38Zm42-8 14-38 14 38Zm42 16 14-38 14 38Z" fill="#b4afa2" stroke="#d7bc83" stroke-width="2"/>
+    <path d="M1134 338h118m-118 65h118" stroke="#4d2f20" stroke-width="9" stroke-linecap="round"/>
+  </g>
+
+  <!-- additional embers and airborne dust -->
+  <g fill="#ff9b32">
+    <circle cx="360" cy="582" r="4" opacity=".85"/><circle cx="394" cy="533" r="3" opacity=".7"/><circle cx="458" cy="503" r="5" opacity=".8"/>
+    <circle cx="509" cy="556" r="3" opacity=".72"/><circle cx="547" cy="611" r="4" opacity=".62"/><circle cx="322" cy="631" r="3" opacity=".66"/>
+  </g>
+  <g fill="#f7d4a2" opacity=".22">
+    <circle cx="743" cy="403" r="2"/><circle cx="818" cy="455" r="2"/><circle cx="1018" cy="553" r="2"/><circle cx="1266" cy="346" r="2"/><circle cx="1384" cy="298" r="2"/>
+  </g>
+
+  <!-- stronger foreground depth -->
+  <path d="M0 814c128-57 249-54 363-7 129 53 258 54 390 12 128-41 251-46 370-13 135 38 294 35 477-8v102H0Z" fill="#090706" opacity=".9"/>
+  <g fill="#17100d">
+    <path d="M0 790c31-44 68-59 111-47 35 10 56 38 62 84H0Z"/>
+    <path d="M1447 773c45-38 88-39 128-3 17 15 25 38 25 68h-194c6-28 20-50 41-65Z"/>
+    <path d="M741 830c35-31 70-34 103-7 18 15 28 35 30 61H698c6-22 20-40 43-54Z"/>
+  </g>
 </g>
 </svg>
