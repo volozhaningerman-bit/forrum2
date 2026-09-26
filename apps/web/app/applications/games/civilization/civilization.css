@@ -3255,3 +3255,228 @@ button{font:inherit}
     height:23px;
   }
 }
+
+
+/* ==========================================================================
+   CIVILIZATION VISUAL PASS 2 — ACHIEVEMENTS / EVOLUTION
+   ========================================================================== */
+
+.civ-achievement-grid{
+  gap:10px!important;
+}
+
+.civ-achievement-grid article{
+  min-height:112px!important;
+  position:relative;
+  overflow:hidden;
+  padding:12px 14px!important;
+  border-radius:8px!important;
+  background:
+    radial-gradient(circle at 9% 50%,rgba(185,112,42,.12),transparent 25%),
+    linear-gradient(180deg,#111a1f,#091115)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.022);
+}
+
+.civ-achievement-grid article::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(90deg,rgba(255,183,75,.025),transparent 24%);
+}
+
+.civ-achievement-grid article.done{
+  border-color:#4d8257!important;
+  background:
+    radial-gradient(circle at 9% 50%,rgba(85,164,102,.14),transparent 28%),
+    linear-gradient(180deg,#112017,#0b1410)!important;
+}
+
+.civ-achievement-grid article.locked{
+  opacity:.54;
+  filter:saturate(.5);
+}
+
+.civ-achievement-medal{
+  width:52px!important;
+  height:52px!important;
+  border:1px solid #815a2e!important;
+  border-radius:50%!important;
+  display:grid!important;
+  place-items:center!important;
+  background:
+    radial-gradient(circle at 35% 30%,rgba(255,217,136,.22),transparent 35%),
+    linear-gradient(145deg,#4d321b,#1c1813)!important;
+  color:#f4bf63!important;
+  font-size:20px!important;
+  box-shadow:
+    inset 0 1px rgba(255,221,159,.10),
+    0 8px 18px rgba(0,0,0,.24),
+    0 0 18px rgba(226,144,44,.05);
+}
+
+.civ-achievement-grid article.done .civ-achievement-medal{
+  border-color:#4a955f!important;
+  background:
+    radial-gradient(circle at 35% 30%,rgba(177,255,197,.18),transparent 35%),
+    linear-gradient(145deg,#255234,#102118)!important;
+  color:#b9edc7!important;
+}
+
+.civ-achievement-grid article h3{
+  margin:3px 0 4px!important;
+  color:#f0ece6!important;
+  font-size:14px!important;
+}
+
+.civ-achievement-grid article p{
+  color:#97a3a9!important;
+  font-size:8.5px!important;
+}
+
+.civ-achievement-grid article strong{
+  color:#efbd67!important;
+  font-size:11px!important;
+}
+
+.civ-evolution-track{
+  position:relative;
+  gap:8px!important;
+}
+
+.civ-evolution-track::before{
+  content:"";
+  position:absolute;
+  left:8%;
+  right:8%;
+  top:43px;
+  height:2px;
+  background:linear-gradient(90deg,#b97730 0 20%,#314048 20% 100%);
+  box-shadow:0 0 10px rgba(230,145,48,.08);
+  pointer-events:none;
+}
+
+.civ-evolution-track article{
+  position:relative;
+  min-height:176px!important;
+  padding:16px 11px 12px!important;
+  border-radius:8px!important;
+  text-align:center;
+  background:
+    radial-gradient(circle at 50% 19%,rgba(134,91,49,.08),transparent 28%),
+    linear-gradient(180deg,#11191e,#091115)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.018);
+}
+
+.civ-evolution-track article.active{
+  border-color:#a76f31!important;
+  background:
+    radial-gradient(circle at 50% 18%,rgba(226,143,47,.17),transparent 30%),
+    linear-gradient(180deg,#201914,#0c1316)!important;
+  box-shadow:0 0 18px rgba(217,136,42,.06),inset 0 1px rgba(255,210,135,.04);
+}
+
+.civ-evolution-track article>span{
+  position:relative;
+  z-index:2;
+  width:54px!important;
+  height:54px!important;
+  display:grid!important;
+  place-items:center!important;
+  margin:0 auto 10px!important;
+  border:1px solid #3b494f!important;
+  border-radius:50%!important;
+  background:#0b1216!important;
+  color:#8e9ba1!important;
+  font-size:17px!important;
+  font-weight:900!important;
+}
+
+.civ-evolution-track article.active>span{
+  border-color:#b27632!important;
+  background:
+    radial-gradient(circle at 35% 28%,rgba(255,215,136,.18),transparent 34%),
+    linear-gradient(145deg,#4b311c,#181612)!important;
+  color:#ffd173!important;
+}
+
+.civ-evolution-track article small{
+  color:#7f8c92!important;
+  font-size:7.5px!important;
+  text-transform:uppercase;
+  letter-spacing:.09em;
+}
+
+.civ-evolution-track article h3{
+  margin:5px 0 5px!important;
+  color:#e9edef!important;
+  font-size:13px!important;
+}
+
+.civ-evolution-track article p{
+  min-height:32px;
+  color:#8e9aa0!important;
+  font-size:8px!important;
+  line-height:1.4!important;
+}
+
+.civ-evolution-track article em{
+  color:#77858b!important;
+  font-size:7.5px!important;
+}
+
+.civ-evolution-track article.active em{
+  color:#77bd8a!important;
+}
+
+.civ-evolution-note{
+  margin-top:10px!important;
+  padding:12px 14px!important;
+  border-color:#6b4b29!important;
+  border-radius:8px!important;
+  background:
+    radial-gradient(circle at 8% 50%,rgba(222,138,45,.13),transparent 24%),
+    linear-gradient(180deg,#171815,#0c1316)!important;
+}
+
+.civ-evolution-note strong{
+  color:#f0bd66!important;
+  font-size:10px!important;
+}
+
+.civ-evolution-note p{
+  margin-top:4px!important;
+  color:#98a4aa!important;
+  font-size:8.5px!important;
+}
+
+@media(min-width:721px) and (max-height:800px){
+  .civ-achievement-grid article{
+    min-height:86px!important;
+    padding:8px 10px!important;
+  }
+  .civ-achievement-medal{
+    width:42px!important;
+    height:42px!important;
+    font-size:16px!important;
+  }
+  .civ-evolution-track article{
+    min-height:132px!important;
+    padding:10px 8px 8px!important;
+  }
+  .civ-evolution-track::before{
+    top:34px;
+  }
+  .civ-evolution-track article>span{
+    width:42px!important;
+    height:42px!important;
+    margin-bottom:6px!important;
+  }
+  .civ-evolution-track article h3{
+    font-size:11px!important;
+  }
+  .civ-evolution-track article p{
+    min-height:25px;
+    font-size:7.5px!important;
+  }
+}
