@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+<title id="title">Пещера — стартовый лагерь</title>
+<desc id="desc">Тёплая первобытная пещера с костром, верстаком, тайником и выходом к долине.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#120d0a"/><stop offset=".48" stop-color="#382117"/><stop offset="1" stop-color="#07131a"/></linearGradient>
+  <radialGradient id="fire" cx=".34" cy=".56" r=".48"><stop stop-color="#ffcf68"/><stop offset=".22" stop-color="#ff7a22"/><stop offset=".55" stop-color="#7d2411" stop-opacity=".75"/><stop offset="1" stop-color="#090807" stop-opacity="0"/></radialGradient>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#c6def1"/><stop offset=".58" stop-color="#6ea2b4"/><stop offset="1" stop-color="#1c4654"/></linearGradient>
+  <linearGradient id="rock" x1="0" y1="0" x2="1" y2=".2"><stop stop-color="#2d1b13"/><stop offset=".48" stop-color="#5a3320"/><stop offset="1" stop-color="#1a1310"/></linearGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="12" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="soft"><feGaussianBlur stdDeviation="2"/></filter>
+  <pattern id="grain" width="80" height="80" patternUnits="userSpaceOnUse"><circle cx="14" cy="21" r="2" fill="#fff" opacity=".03"/><circle cx="61" cy="12" r="1.5" fill="#fff" opacity=".025"/><circle cx="35" cy="65" r="2.2" fill="#000" opacity=".08"/></pattern>
+</defs>
+<rect width="1600" height="900" fill="url(#bg)"/>
+<rect width="1600" height="900" fill="url(#grain)"/>
+<!-- cave opening -->
+<path d="M1160 70c165 40 300 155 350 360v470h-430c60-125 88-270 70-420-13-104-10-243 10-410z" fill="#06090b"/>
+<path d="M1235 132c122 54 206 146 244 286v270c-58-42-109-58-163-48-75 13-145 66-228 116 53-93 79-190 76-286-3-120 24-235 71-338z" fill="url(#sky)"/>
+<path d="M1217 543l102-162 65 93 72-115 23 59v238h-276z" fill="#294c55" opacity=".83"/>
+<path d="M1184 654c92-33 181-21 295 9v55c-105-5-209 14-321 68z" fill="#92c4cf" opacity=".72"/>
+<path d="M1285 458c44 18 79 15 112-8 10 41 5 78-19 111-25 35-45 76-60 123-31-44-38-90-20-138 13-34 9-63-13-88z" fill="#e3f1f4" opacity=".78"/>
+<!-- cave ceiling / walls -->
+<path d="M0 0h1600v124c-188 16-317 44-420 91-117 53-206 67-363 42-223-36-417-8-817 76z" fill="#1b100c"/>
+<path d="M0 0h1120c-65 57-112 120-135 188-179-41-342-38-489-6-159 35-324 67-496 54z" fill="#3c2418"/>
+<path d="M0 118c182 13 340 58 493 74-102 75-141 171-146 291-5 130-25 260-74 417H0z" fill="url(#rock)"/>
+<path d="M1065 120c-43 93-52 189-28 291 22 98 14 241-35 489h217c-34-164-32-327 6-489 22-94 28-183 10-267z" fill="#21140f"/>
+<!-- wall paintings -->
+<g opacity=".52" fill="none" stroke="#a34e2f" stroke-width="9" stroke-linecap="round">
+  <path d="M312 164c26-31 59-29 82-7 22 21 28 52 18 77-20 9-41 11-61 4-21-7-43-29-39-74z"/>
+  <path d="M349 238v55m-27-42-22 48m77-48 25 45"/>
+  <path d="M511 144c17 24 39 37 66 40 25 3 45 20 61 51-35-8-67-4-96 14-14-25-25-60-31-105z"/>
+  <path d="M559 184l-15 62m47-58 8 51"/>
+  <path d="M214 218l38-44 44 42-18 46-48-2z"/>
+</g>
+<g fill="#b96b42" opacity=".48">
+  <circle cx="182" cy="158" r="15"/><path d="M180 172l-8 62m8-42 32 22m-35-5-31 24m28 0-22 48m25-48 21 49" stroke="#b96b42" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <circle cx="721" cy="161" r="13"/><path d="M720 174v54m0-34 29 18m-29-18-28 20m30 15 19 43m-22-43-19 43" stroke="#b96b42" stroke-width="8" fill="none" stroke-linecap="round"/>
+</g>
+<!-- workbench -->
+<g>
+  <rect x="822" y="295" width="307" height="24" rx="8" fill="#5d3a22"/>
+  <rect x="848" y="319" width="24" height="188" rx="6" fill="#3b281b"/>
+  <rect x="1082" y="319" width="24" height="188" rx="6" fill="#3b281b"/>
+  <rect x="846" y="342" width="252" height="126" rx="10" fill="#2b2018"/>
+  <rect x="872" y="365" width="58" height="48" rx="6" fill="#7b5230"/>
+  <rect x="945" y="362" width="78" height="54" rx="5" fill="#49311f"/>
+  <path d="M1041 389l38-54 19 13-39 55z" fill="#a37b47"/>
+  <circle cx="905" cy="441" r="18" fill="#88623d"/>
+  <circle cx="975" cy="439" r="12" fill="#6e5a44"/>
+</g>
+<!-- rack / bones -->
+<g stroke="#7a5734" stroke-width="10" stroke-linecap="round">
+  <path d="M780 176v330m315-318v292m-315-236h315"/>
+</g>
+<g fill="#d5c6a0" opacity=".88">
+  <path d="M902 206c20-38 45-42 64-3-18 31-38 36-64 3z"/>
+  <path d="M984 194c17-31 36-34 52-4-15 28-31 32-52 4z"/>
+  <path d="M1060 203c16-28 34-28 48-2-14 24-29 27-48 2z"/>
+</g>
+<!-- campfire stones -->
+<ellipse cx="463" cy="655" rx="222" ry="126" fill="url(#fire)" opacity=".88"/>
+<g fill="#4c3a2f">
+  <ellipse cx="405" cy="664" rx="47" ry="21"/><ellipse cx="454" cy="681" rx="53" ry="24"/><ellipse cx="515" cy="661" rx="45" ry="22"/><ellipse cx="365" cy="690" rx="38" ry="18"/><ellipse cx="554" cy="690" rx="41" ry="20"/>
+</g>
+<g filter="url(#glow)">
+  <path d="M435 651c-26-48-6-89 18-120 10 31 28 54 19 88 28-37 35-72 26-111 45 48 55 102 26 145-22 31-64 45-89 20z" fill="#ff7a21"/>
+  <path d="M461 656c-14-34-1-60 14-82 7 20 17 35 11 55 15-22 20-43 15-64 26 31 31 63 15 89-13 18-39 28-55 13z" fill="#ffd166"/>
+</g>
+<!-- torches -->
+<g filter="url(#glow)">
+  <path d="M177 360l12 161" stroke="#6a4429" stroke-width="18"/><path d="M151 361c18-55 62-51 71 4-20 27-49 30-71-4z" fill="#ff8b25"/>
+  <path d="M1172 342l-11 164" stroke="#6a4429" stroke-width="18"/><path d="M1140 345c16-52 57-48 67 3-17 26-45 29-67-3z" fill="#ff8b25"/>
+</g>
+<!-- stash -->
+<g>
+  <rect x="188" y="706" width="242" height="108" rx="12" fill="#271b13" stroke="#76502e" stroke-width="4"/>
+  <rect x="209" y="731" width="200" height="62" rx="8" fill="#55351f"/>
+  <rect x="293" y="716" width="36" height="84" rx="8" fill="#9a6b37"/>
+  <circle cx="310" cy="759" r="8" fill="#d9a84f"/>
+</g>
+<!-- foreground -->
+<path d="M0 788c225-49 387-48 563 0 193 54 415 52 634-7 148-40 274-33 403 9v110H0z" fill="#120e0b"/>
+<path d="M0 822c264-55 506-40 720 18 230 62 505 59 880-8v68H0z" fill="#080707"/>
+</svg>
