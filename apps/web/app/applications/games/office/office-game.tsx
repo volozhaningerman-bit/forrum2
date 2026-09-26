@@ -883,7 +883,12 @@ export function OfficeGame() {
   };
 
   const attackBoss = (kind: 'logic' | 'social' | 'pressure', expectedDamage: number) => {
-    if (snapshot.energy <= 0 || v6.bossResolved || !allowAction('boss-attack', 250)) {
+    if (!allowAction('boss-attack', 250)) return;
+    if (v6.bossResolved) {
+      showFeedback('Испытание уже пройдено', 'warning');
+      return;
+    }
+    if (snapshot.energy <= 0) {
       showFeedback('Нет энергии', 'warning');
       return;
     }
