@@ -2775,3 +2775,25 @@ button{font:inherit}
     min-height:250px;
   }
 }
+
+
+/* CIVILIZATION VISUAL ALPHA V2 — RESOURCE REUSE */
+.civ-inventory-groups article{
+  grid-template-columns:36px minmax(0,1fr) auto!important;
+  align-items:center;
+  gap:8px!important;
+}
+.civ-inventory-groups article>.civ-resource-art{
+  width:32px!important;
+  height:32px!important;
+}
+.civ-drops span{
+  display:inline-flex!important;
+  align-items:center;
+  gap:6px;
+}
+.civ-drops span>.civ-resource-art{
+  width:25px!important;
+  height:25px!important;
+  flex:0 0 25px;
+}
