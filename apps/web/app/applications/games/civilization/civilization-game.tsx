@@ -688,15 +688,57 @@ function AchievementsPanel() {
   );
 }
 
+type InventoryVisual = ResourceArtKind | 'fang' | 'tusk' | 'totem' | 'crystal';
+
+function TrophyArt({ kind }: { kind: 'fang' | 'tusk' | 'totem' | 'crystal' }) {
+  return (
+    <span className={`civ-trophy-art trophy-${kind}`} aria-hidden="true">
+      <svg viewBox="0 0 48 48" role="presentation">
+        <defs>
+          <linearGradient id={`trophy-bone-${kind}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#fff0c6"/><stop offset=".58" stopColor="#d4b77d"/><stop offset="1" stopColor="#81694a"/>
+          </linearGradient>
+          <linearGradient id={`trophy-crystal-${kind}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#ffbd71"/><stop offset=".5" stopColor="#e34e35"/><stop offset="1" stopColor="#7e1832"/>
+          </linearGradient>
+        </defs>
+        {kind === 'fang' ? <>
+          <path d="M10 7c14 5 23 16 27 34-12-8-18-17-18-27-4 1-7-1-9-7Z" fill={`url(#trophy-bone-${kind})`} stroke="#9f7f54" strokeWidth="1.5"/>
+          <path d="M18 15c4 8 9 14 15 19" stroke="#fff3cf" strokeWidth="2" opacity=".45"/>
+        </> : null}
+        {kind === 'tusk' ? <>
+          <path d="M7 35c12-23 23-33 34-31-4 20-14 33-31 40-5-1-6-4-3-9Z" fill={`url(#trophy-bone-${kind})`} stroke="#9f7f54" strokeWidth="1.5"/>
+          <path d="M13 34c8-15 16-23 24-25" fill="none" stroke="#fff1ca" strokeWidth="2" opacity=".5"/>
+        </> : null}
+        {kind === 'totem' ? <>
+          <path d="M12 42V12l12-8 12 8v30Z" fill="#7d4a2b" stroke="#d18c49" strokeWidth="1.6"/>
+          <path d="M17 16h14l-7 7Zm2 12h10l-5 7Z" fill="#1d1714"/>
+          <path d="M8 17h8m16 0h8M8 34h8m16 0h8" stroke="#b66f36" strokeWidth="3" strokeLinecap="round"/>
+        </> : null}
+        {kind === 'crystal' ? <>
+          <path d="m24 3 13 12-4 23-9 7-10-7-4-23Z" fill={`url(#trophy-crystal-${kind})`} stroke="#ffbf72" strokeWidth="1.5"/>
+          <path d="m24 3-3 24 12 11M24 3l7 15-21-3m11 12-7 11" fill="none" stroke="#ffd3a0" strokeWidth="1.3" opacity=".55"/>
+        </> : null}
+      </svg>
+    </span>
+  );
+}
+
+function InventoryVisualArt({ kind }: { kind: InventoryVisual }) {
+  return kind === 'fang' || kind === 'tusk' || kind === 'totem' || kind === 'crystal'
+    ? <TrophyArt kind={kind} />
+    : <ResourceArt kind={kind} />;
+}
+
 function InventoryPanel({ loot }: { loot: Record<string, number> }) {
-  const groups = [
-    { title: 'Пища', items: [['Ягоды','120'],['Мясо','85'],['Грибы','45'],['Рыба','90']] },
-    { title: 'Материалы', items: [['Дерево','120'],['Камень','210'],['Кремень','37'],['Шкуры','28'],['Кости','16']] },
+  const groups: Array<{ title: string; items: Array<[string,string,InventoryVisual]> }> = [
+    { title: 'Пища', items: [['Ягоды','120','berries'],['Мясо','85','meat'],['Грибы','45','mushrooms'],['Рыба','90','fish']] },
+    { title: 'Материалы', items: [['Дерево','120','wood'],['Камень','210','stone'],['Кремень','37','flint'],['Шкуры','28','hide'],['Кости','16','bone']] },
     { title: 'Трофеи', items: [
-      ['Клык саблезуба', String(loot['Клык саблезуба'] ?? 0)],
-      ['Бивень мамонта', String(loot['Бивень мамонта'] ?? 0)],
-      ['Тотем вожака', String(loot['Тотем вожака'] ?? 0)],
-      ['Редкий камень', String(loot['Редкий камень'] ?? 0)],
+      ['Клык саблезуба', String(loot['Клык саблезуба'] ?? 0), 'fang'],
+      ['Бивень мамонта', String(loot['Бивень мамонта'] ?? 0), 'tusk'],
+      ['Тотем вожака', String(loot['Тотем вожака'] ?? 0), 'totem'],
+      ['Редкий камень', String(loot['Редкий камень'] ?? 0), 'crystal'],
     ] },
   ];
   return (
@@ -705,7 +747,7 @@ function InventoryPanel({ loot }: { loot: Record<string, number> }) {
       <div className="civ-inventory-groups">
         {groups.map((group) => (
           <section key={group.title}><h3>{group.title}</h3>
-            <div>{group.items.map(([name,value]) => <article key={name}><span className="civ-inventory-glyph">{group.title === 'Пища' ? '●' : group.title === 'Трофеи' ? '◆' : '■'}</span><b>{name}</b><strong>{value}</strong></article>)}</div>
+            <div>{group.items.map(([name,value,kind]) => <article key={name}><InventoryVisualArt kind={kind} /><b>{name}</b><strong>{value}</strong></article>)}</div>
           </section>
         ))}
       </div>
