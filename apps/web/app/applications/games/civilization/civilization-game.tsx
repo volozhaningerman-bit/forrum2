@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 
-type MainPanel = 'equipment' | 'bosses' | 'map' | 'craft' | 'tribe';
+type MainPanel = 'equipment' | 'bosses' | 'map' | 'craft' | 'tribe' | 'profile' | 'achievements' | 'inventory' | 'evolution';
 type EquipmentCategory = 'weapon' | 'clothes' | 'accessory' | 'tool';
 type TaskPeriod = 'daily' | 'weekly';
 type AvatarGender = 'male' | 'female';
@@ -263,7 +263,7 @@ export function CivilizationGame() {
         </header>
 
         <aside className="civ-player-rail">
-          <button className="civ-avatar-card" type="button" onClick={() => setNotice('Профиль открыт через меню персонажа.')}>
+          <button className="civ-avatar-card" type="button" onClick={() => { setProfileOpen(false); setPanel('profile'); }}>
             <Mascot avatar={avatar} compact />
             <span className="civ-player-name">Первобытный</span>
             <small>Ур. 1 · Новичок</small>
@@ -273,13 +273,13 @@ export function CivilizationGame() {
           <button className={`civ-player-chevron ${profileOpen ? 'open' : ''}`} type="button" aria-label="Открыть меню персонажа" aria-expanded={profileOpen} onClick={() => setProfileOpen(!profileOpen)}>⌄</button>
           {profileOpen ? (
             <nav className="civ-player-menu">
-              {[
-                ['👤', 'Профиль'],
-                ['🏆', 'Достижения'],
-                ['🎒', 'Инвентарь'],
-                ['🌿', 'Эволюция'],
-              ].map(([icon, label]) => (
-                <button type="button" key={label} onClick={() => { setNotice(`${label}: раздел профиля будет развиваться вместе с прогрессом персонажа.`); setProfileOpen(false); }}>
+              {([
+                ['profile', '👤', 'Профиль'],
+                ['achievements', '🏆', 'Достижения'],
+                ['inventory', '🎒', 'Инвентарь'],
+                ['evolution', '🌿', 'Эволюция'],
+              ] as const).map(([id, icon, label]) => (
+                <button type="button" key={id} onClick={() => { setPanel(id); setProfileOpen(false); setResourceOpen(null); }}>
                   <span>{icon}</span>{label}
                 </button>
               ))}
@@ -357,6 +357,10 @@ export function CivilizationGame() {
             {panel === 'map' ? <MapPanel setNotice={setNotice} /> : null}
             {panel === 'craft' ? <CraftPanel setNotice={setNotice} /> : null}
             {panel === 'tribe' ? <TribePanel setNotice={setNotice} /> : null}
+            {panel === 'profile' ? <ProfilePanel avatar={avatar} equippedId={equippedId} /> : null}
+            {panel === 'achievements' ? <AchievementsPanel /> : null}
+            {panel === 'inventory' ? <InventoryPanel /> : null}
+            {panel === 'evolution' ? <EvolutionPanel /> : null}
           </section>
         ) : null}
 
@@ -506,6 +510,108 @@ function ItemArt({ item, large = false }: { item: Item; large?: boolean }) {
         )}
       </svg>
     </span>
+  );
+}
+
+
+function ProfilePanel({ avatar, equippedId }: { avatar: AvatarState; equippedId: string }) {
+  const equipped = equipment.find((item) => item.id === equippedId) ?? equipment[0];
+  return (
+    <div className="civ-panel-body civ-profile-panel">
+      <header className="civ-panel-head">
+        <div><small>Персонаж</small><h2>Профиль</h2><p>Стартовая внешность зафиксирована. Новые элементы образа открываются только через развитие и трофеи.</p></div>
+      </header>
+      <div className="civ-profile-layout">
+        <article className="civ-profile-hero-card">
+          <div className="civ-profile-mascot"><Mascot avatar={avatar} /></div>
+          <div className="civ-profile-identity"><small>Первобытный</small><h3>Новичок · уровень 1</h3><div className="civ-xp"><i style={{ width: '58%' }} /></div><span>58 / 100 XP</span></div>
+        </article>
+        <div className="civ-profile-stats">
+          <article><small>Базовая сила</small><strong>12</strong><span>урон и переносимый вес</span></article>
+          <article><small>Выносливость</small><strong>10</strong><span>запас энергии и защита</span></article>
+          <article><small>Ловкость</small><strong>8</strong><span>критический шанс и уклонение</span></article>
+          <article><small>Власть</small><strong>37</strong><span>влияние внутри племени</span></article>
+        </div>
+        <article className="civ-profile-loadout">
+          <div><small>Используется</small><h3>{equipped.name}</h3><p>{equipped.stat} +{equipped.value}</p></div>
+          <ItemArt item={equipped} large />
+        </article>
+        <article className="civ-profile-origin">
+          <small>Созданный персонаж</small>
+          <h3>{avatar.gender === 'female' ? 'Девочка' : 'Мальчик'} · стартовая форма</h3>
+          <p>Цвет и стартовая внешность больше не редактируются. Причёски, краски, маски и редкие элементы тела будут выпадать с боссов и открываться на уровнях.</p>
+          <div className="civ-profile-unlocks"><span>Ур. 3 · краски</span><span>Ур. 5 · аксессуары</span><span>Ур. 8 · редкие причёски</span></div>
+        </article>
+      </div>
+    </div>
+  );
+}
+
+function AchievementsPanel() {
+  const achievements = [
+    ['Первый огонь', 'Развести костёр впервые', '✓', 'Получено'],
+    ['Каменный мастер', 'Создать первый инструмент', '2/5', 'В процессе'],
+    ['Охотник', 'Победить первого босса', '0/1', 'В процессе'],
+    ['Собиратель', 'Собрать 500 единиц еды', '340/500', 'В процессе'],
+    ['Голос племени', 'Набрать 100 власти', '37/100', 'В процессе'],
+    ['Следующая эпоха', 'Перейти в Каменный век', '🔒', 'Скрыто'],
+  ];
+  return (
+    <div className="civ-panel-body civ-achievements-panel">
+      <header className="civ-panel-head"><div><small>Прогресс аккаунта</small><h2>Достижения</h2><p>Вехи показывают, что уже освоено и какие долгосрочные цели ждут впереди.</p></div></header>
+      <div className="civ-achievement-grid">
+        {achievements.map(([title, text, progress, state], index) => (
+          <article key={title} className={index === 0 ? 'done' : index === achievements.length - 1 ? 'locked' : ''}>
+            <span className="civ-achievement-medal">{index === 0 ? '★' : index === 5 ? '◆' : '◇'}</span>
+            <div><small>{state}</small><h3>{title}</h3><p>{text}</p></div>
+            <strong>{progress}</strong>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function InventoryPanel() {
+  const groups = [
+    { title: 'Пища', items: [['Ягоды','120'],['Мясо','85'],['Грибы','45'],['Рыба','90']] },
+    { title: 'Материалы', items: [['Дерево','120'],['Камень','210'],['Кремень','37'],['Шкуры','28'],['Кости','16']] },
+    { title: 'Трофеи', items: [['Клык саблезуба','0'],['Бивень мамонта','0'],['Тотем вожака','0'],['Редкий камень','0']] },
+  ];
+  return (
+    <div className="civ-panel-body civ-inventory-panel">
+      <header className="civ-panel-head"><div><small>Хранилище</small><h2>Инвентарь</h2><p>Все расходники, материалы и трофеи. Снаряжение управляется отдельно через нижнее меню.</p></div></header>
+      <div className="civ-inventory-groups">
+        {groups.map((group) => (
+          <section key={group.title}><h3>{group.title}</h3>
+            <div>{group.items.map(([name,value]) => <article key={name}><span className="civ-inventory-glyph">{group.title === 'Пища' ? '●' : group.title === 'Трофеи' ? '◆' : '■'}</span><b>{name}</b><strong>{value}</strong></article>)}</div>
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function EvolutionPanel() {
+  const steps = [
+    ['Ур. 1', 'Пещерный житель', 'Стартовая форма', true],
+    ['Ур. 3', 'Краски племени', 'Цветовые узоры и боевые метки', false],
+    ['Ур. 5', 'Охотник', 'Трофейные аксессуары и новые стойки', false],
+    ['Ур. 8', 'Вожак', 'Редкие причёски и украшения', false],
+    ['Ур. 12', 'Старейшина', 'Эпические элементы внешности', false],
+  ];
+  return (
+    <div className="civ-panel-body civ-evolution-panel">
+      <header className="civ-panel-head"><div><small>Развитие персонажа</small><h2>Эволюция</h2><p>Уровни открывают не только силу, но и новую кастомизацию. Стартовые параметры изменить нельзя.</p></div></header>
+      <div className="civ-evolution-track">
+        {steps.map(([level,title,text,open], index) => (
+          <article key={level as string} className={open ? 'active' : ''}>
+            <span>{open ? '✓' : index + 1}</span><small>{level}</small><h3>{title}</h3><p>{text}</p><em>{open ? 'Открыто' : 'Закрыто'}</em>
+          </article>
+        ))}
+      </div>
+      <div className="civ-evolution-note"><strong>Следующий заметный unlock — уровень 3</strong><p>Откроются боевые метки и первые цветовые узоры, которые можно получить через задания и ранних боссов.</p></div>
+    </div>
   );
 }
 
