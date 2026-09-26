@@ -1267,3 +1267,710 @@ button{font:inherit}
   .civ-boss-list button>.civ-boss-illustration{width:58px;height:50px}
   .civ-boss-list button>.civ-boss-illustration svg{width:72px;height:60px}
 }
+
+
+/* ==========================================================================
+   CIVILIZATION ALPHA — PREMIUM VISUAL PASS
+   Final visual direction: dark graphite + cave amber, senior game-UI polish.
+   ========================================================================== */
+
+.civilization-app{
+  --civ-panel:#091015;
+  --civ-panel-2:#0d151b;
+  --civ-panel-3:#111b22;
+  --civ-line:#25343d;
+  --civ-line-warm:#6f4a24;
+  --civ-amber:#e6a64b;
+  --civ-amber-2:#ffca68;
+  --civ-muted:#8f9aa1;
+  --civ-text:#eef1f2;
+  background:
+    radial-gradient(circle at 48% 0,rgba(108,65,28,.10),transparent 34%),
+    linear-gradient(180deg,#071015,#04080b);
+}
+
+.civilization-hub{
+  border-color:#26343c;
+  border-radius:12px;
+  background:#060c10;
+  box-shadow:0 22px 60px rgba(0,0,0,.42),inset 0 1px rgba(255,255,255,.025);
+}
+
+.civ-game-hud{
+  min-height:58px;
+  padding:6px 8px;
+  border-bottom:1px solid #26333a;
+  background:
+    radial-gradient(circle at 16% 0,rgba(157,94,34,.08),transparent 30%),
+    linear-gradient(180deg,#10181d,#091116);
+}
+
+.civ-location,
+.civ-resource{
+  min-height:44px;
+  border:1px solid #2b3940;
+  border-radius:7px;
+  background:linear-gradient(180deg,#101920,#0a1116);
+  box-shadow:inset 0 1px rgba(255,255,255,.025),0 4px 12px rgba(0,0,0,.12);
+}
+
+.civ-location{
+  border-color:#6e4c25;
+  background:
+    radial-gradient(circle at 18% 50%,rgba(242,153,48,.16),transparent 42%),
+    linear-gradient(180deg,#191812,#101316);
+}
+
+.civ-location:hover,
+.civ-resource:hover,
+.civ-resource.active{
+  border-color:#9a6b30;
+  background:linear-gradient(180deg,#171b1b,#0d1317);
+}
+
+.civ-location .civ-icon,
+.civ-resource .civ-icon{
+  filter:drop-shadow(0 0 8px rgba(255,172,61,.18));
+}
+
+.civ-resource-wrap{
+  position:relative;
+}
+
+.civ-resource-popover{
+  top:calc(100% + 8px);
+  min-width:235px;
+  padding:8px;
+  border:1px solid #6e4b25;
+  border-radius:8px;
+  background:
+    radial-gradient(circle at 12% 0,rgba(186,111,35,.15),transparent 38%),
+    linear-gradient(180deg,#12191c,#080e12);
+  box-shadow:0 20px 48px rgba(0,0,0,.58),inset 0 1px rgba(255,255,255,.035);
+  backdrop-filter:blur(12px);
+}
+
+.civ-popover-title{
+  padding:4px 4px 8px;
+  border-bottom:1px solid #2a373d;
+}
+
+.civ-resource-row{
+  min-height:31px;
+  padding:4px 5px;
+  border-radius:5px;
+}
+
+.civ-resource-row:hover{
+  background:#111b20;
+}
+
+.civ-player-rail,
+.civ-task-rail{
+  border-color:#26363e;
+  border-radius:9px;
+  background:
+    radial-gradient(circle at 50% 0,rgba(148,83,31,.08),transparent 35%),
+    linear-gradient(180deg,#0d161b,#081015);
+}
+
+.civ-player-rail{
+  box-shadow:0 16px 30px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.02);
+}
+
+.civ-avatar-card{
+  border:0;
+  border-radius:8px 8px 4px 4px;
+  background:
+    radial-gradient(circle at 50% 31%,rgba(216,129,45,.18),transparent 40%),
+    linear-gradient(180deg,#151714,#0b1115 68%);
+}
+
+.civ-avatar-card:hover{
+  background:
+    radial-gradient(circle at 50% 31%,rgba(236,146,48,.23),transparent 42%),
+    linear-gradient(180deg,#1a1914,#0c1317 68%);
+}
+
+.civ-player-name{
+  color:#f4eee6;
+  letter-spacing:.01em;
+}
+
+.civ-xp{
+  height:6px;
+  border:1px solid rgba(255,255,255,.04);
+  border-radius:999px;
+  background:#1f2a2f;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.7);
+}
+
+.civ-xp i{
+  border-radius:999px;
+  background:linear-gradient(90deg,#e7a443,#ffd36d);
+  box-shadow:0 0 10px rgba(255,178,67,.18);
+}
+
+.civ-player-chevron{
+  width:44px;
+  height:30px;
+  margin:-1px auto 8px;
+  border:1px solid #6f4d27;
+  border-radius:0 0 7px 7px;
+  background:linear-gradient(180deg,#171815,#0b1114);
+  color:#f0bd62;
+}
+
+.civ-player-chevron:hover,
+.civ-player-chevron.open{
+  border-color:#a06d31;
+  color:#ffd478;
+}
+
+.civ-player-menu{
+  width:100%;
+  padding:5px;
+  gap:4px;
+  border:1px solid #2d3a41;
+  border-radius:7px;
+  background:linear-gradient(180deg,#11191e,#081015);
+  box-shadow:0 16px 32px rgba(0,0,0,.42);
+}
+
+.civ-player-menu button{
+  min-height:38px;
+  border:1px solid transparent;
+  border-radius:5px;
+  background:transparent;
+}
+
+.civ-player-menu button:hover{
+  border-color:#3a464a;
+  background:#151e22;
+  color:#f5c16b;
+}
+
+.civ-scene{
+  border-color:#2b3435;
+  border-radius:10px;
+  overflow:hidden;
+  background:#130b07;
+  box-shadow:
+    inset 0 0 0 1px rgba(230,165,68,.025),
+    0 16px 34px rgba(0,0,0,.26);
+}
+
+.civ-cave-background{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  filter:saturate(1.23) contrast(1.11) brightness(.93);
+  transform:scale(1.006);
+}
+
+.civ-scene::before{
+  background:
+    radial-gradient(circle at 27% 67%,rgba(255,128,31,.24),transparent 24%),
+    radial-gradient(circle at 83% 34%,rgba(143,207,232,.12),transparent 26%),
+    radial-gradient(circle at 52% 54%,transparent 20%,rgba(0,0,0,.10) 71%),
+    linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.18));
+  mix-blend-mode:screen;
+}
+
+.civ-scene::after{
+  background:
+    radial-gradient(ellipse at 51% 72%,transparent 25%,rgba(0,0,0,.12) 58%,rgba(0,0,0,.38) 100%),
+    linear-gradient(90deg,rgba(0,0,0,.25),transparent 22%,transparent 78%,rgba(0,0,0,.2)),
+    linear-gradient(0deg,rgba(0,0,0,.35),transparent 33%);
+}
+
+.civ-mascot-stage{
+  left:55%;
+  bottom:4.5%;
+  width:240px;
+  height:340px;
+  transform:translateX(-50%) scale(1.04);
+  transform-origin:center bottom;
+  filter:drop-shadow(0 28px 28px rgba(0,0,0,.68));
+}
+
+.civ-mascot-stage::before{
+  top:18%;
+  width:260px;
+  height:285px;
+  background:radial-gradient(circle,rgba(255,169,74,.20),rgba(255,169,74,0) 68%);
+}
+
+.civ-head{
+  border:1px solid rgba(255,222,182,.13);
+  box-shadow:
+    inset -22px -18px 31px rgba(74,26,12,.19),
+    inset 14px 12px 24px rgba(255,255,255,.13),
+    0 13px 28px rgba(0,0,0,.5),
+    0 0 0 1px rgba(122,55,25,.18);
+}
+
+.civ-head::before{
+  content:"";
+  position:absolute;
+  left:17%;
+  top:12%;
+  width:30%;
+  height:19%;
+  border-radius:50%;
+  background:radial-gradient(ellipse,rgba(255,255,255,.2),transparent 68%);
+  transform:rotate(-18deg);
+}
+
+.civ-head .eye{
+  border-radius:46% 46% 50% 50%;
+}
+
+.civ-head .eye::after{
+  content:"";
+  position:absolute;
+  left:2px;
+  top:2px;
+  width:3px;
+  height:4px;
+  border-radius:50%;
+  background:rgba(255,255,255,.42);
+}
+
+.civ-head .cheek{
+  height:4px;
+  border-radius:4px;
+  box-shadow:0 7px 0 currentColor;
+  opacity:.82;
+}
+
+.civ-necklace{
+  z-index:12;
+  color:#e7d0a3;
+  text-shadow:0 2px 3px #000;
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.45));
+}
+
+.civ-body{
+  border:1px solid rgba(255,222,182,.08);
+  box-shadow:
+    inset -15px -12px 24px rgba(56,20,11,.22),
+    inset 9px 7px 15px rgba(255,255,255,.075),
+    0 11px 20px rgba(0,0,0,.34);
+}
+
+.civ-body .fur{
+  clip-path:polygon(0 10%,7% 0,14% 13%,22% 2%,31% 15%,39% 5%,48% 17%,58% 3%,67% 15%,78% 4%,88% 13%,100% 3%,96% 100%,4% 100%);
+  border-top:1px solid rgba(255,198,126,.12);
+}
+
+.civ-arm,
+.civ-leg{
+  border:1px solid rgba(255,220,178,.07);
+}
+
+.civ-club{
+  filter:drop-shadow(0 7px 8px rgba(0,0,0,.42));
+}
+
+.civ-club::before{
+  background:
+    radial-gradient(circle at 28% 24%,rgba(255,255,255,.18),transparent 23%),
+    linear-gradient(145deg,#7e7d74,#3c4245 55%,#262b2e);
+  box-shadow:inset -8px -7px 11px rgba(0,0,0,.32),0 0 0 2px #8d6135;
+}
+
+.civ-hotspot{
+  min-width:168px;
+  min-height:46px;
+  padding:7px 9px;
+  border:1px solid rgba(218,155,63,.55);
+  border-radius:7px;
+  background:linear-gradient(180deg,rgba(21,22,19,.91),rgba(7,11,13,.94));
+  box-shadow:0 10px 28px rgba(0,0,0,.32),inset 0 1px rgba(255,255,255,.035);
+}
+
+.civ-hotspot span{
+  display:grid;
+  place-items:center;
+  width:30px;
+  height:30px;
+  border-radius:6px;
+  background:rgba(220,142,49,.10);
+  filter:drop-shadow(0 0 7px rgba(244,163,57,.18));
+}
+
+.civ-hotspot b{
+  font-size:10px;
+}
+
+.civ-hotspot small{
+  color:#a6afb4;
+  font-size:7.5px;
+}
+
+.civ-scene-notice{
+  left:12px;
+  right:12px;
+  bottom:10px;
+  min-height:31px;
+  padding:7px 10px;
+  border:1px solid rgba(117,85,45,.5);
+  border-radius:6px;
+  background:rgba(6,10,12,.8);
+  color:#aeb6ba;
+  backdrop-filter:blur(9px);
+  box-shadow:0 8px 22px rgba(0,0,0,.24);
+}
+
+.civ-task-rail{
+  padding:9px;
+  box-shadow:0 16px 32px rgba(0,0,0,.26),inset 0 1px rgba(255,255,255,.02);
+}
+
+.civ-task-head{
+  padding:4px 3px 8px;
+}
+
+.civ-task-head strong{
+  font-size:16px;
+  letter-spacing:-.01em;
+}
+
+.civ-task-tabs{
+  padding:3px;
+  gap:3px;
+  border:1px solid #29373e;
+  border-radius:7px;
+  background:#081014;
+}
+
+.civ-task-tabs button{
+  min-height:33px;
+  border:1px solid transparent;
+  border-radius:5px;
+}
+
+.civ-task-tabs button.active{
+  border-color:#7d572a;
+  background:linear-gradient(180deg,#3a2918,#211912);
+  color:#ffd079;
+  box-shadow:inset 0 0 0 1px rgba(255,190,89,.04);
+}
+
+.civ-task-row{
+  padding:9px 2px;
+  border-bottom:1px solid #253138;
+}
+
+.civ-task-check{
+  width:22px;
+  height:22px;
+  border:1px solid #536169;
+  border-radius:50%;
+}
+
+.civ-task-check.done{
+  border-color:#4d9e68;
+  background:linear-gradient(180deg,#3f9b62,#23613d);
+  color:white;
+  box-shadow:0 0 12px rgba(67,169,105,.15);
+}
+
+.civ-task-progress{
+  height:5px;
+  border-radius:99px;
+  background:#253139;
+}
+
+.civ-task-progress i{
+  border-radius:99px;
+  background:linear-gradient(90deg,#e7a345,#ffd56c);
+}
+
+.civ-task-expand{
+  margin-top:7px;
+  min-height:36px;
+  border:1px solid #314047;
+  border-radius:6px;
+  background:#0b1318;
+}
+
+.civ-task-expand:hover,
+.civ-task-expand.open{
+  border-color:#765129;
+  color:#eab765;
+}
+
+.civ-task-scroll{
+  margin-top:6px;
+  padding:3px 7px;
+  border:1px solid #29373e;
+  border-radius:7px;
+  background:#081014;
+  box-shadow:inset 0 10px 20px rgba(0,0,0,.18);
+}
+
+.civ-bottom-nav{
+  gap:6px;
+  padding:6px 8px;
+  border-top:1px solid #29373a;
+  background:linear-gradient(180deg,#0d151a,#071015);
+}
+
+.civ-bottom-nav button{
+  min-height:50px;
+  border:1px solid #2b3941;
+  border-radius:7px;
+  background:linear-gradient(180deg,#111a20,#0b1217);
+  color:#d7dcde;
+  box-shadow:inset 0 1px rgba(255,255,255,.02);
+}
+
+.civ-bottom-nav button span{
+  font-size:21px;
+  filter:saturate(.7);
+}
+
+.civ-bottom-nav button:hover{
+  border-color:#526068;
+  background:linear-gradient(180deg,#162027,#0d151a);
+}
+
+.civ-bottom-nav button.active{
+  border-color:#a36d2f;
+  background:
+    radial-gradient(circle at 22% 0,rgba(231,154,55,.2),transparent 38%),
+    linear-gradient(180deg,#342419,#171512);
+  color:#ffd074;
+  box-shadow:0 0 18px rgba(219,140,45,.09),inset 0 1px rgba(255,213,135,.07);
+}
+
+.civ-full-panel{
+  padding:31px 16px 13px;
+  border-color:#51402d;
+  border-radius:10px;
+  background:
+    radial-gradient(circle at 44% 0,rgba(155,91,31,.16),transparent 31%),
+    linear-gradient(180deg,rgba(12,18,20,.998),rgba(5,9,11,.998));
+  box-shadow:0 22px 58px rgba(0,0,0,.56),inset 0 1px rgba(255,214,142,.04);
+}
+
+.civ-panel-collapse{
+  width:86px;
+  height:29px;
+  border:1px solid #8e6030;
+  border-top:0;
+  border-radius:0 0 13px 13px;
+  background:linear-gradient(180deg,#2b2016,#121618);
+  color:#ffd175;
+  font-size:18px;
+}
+
+.civ-panel-head{
+  border-bottom:1px solid #2b373c;
+}
+
+.civ-panel-head small{
+  color:#c88d3d;
+  letter-spacing:.1em;
+}
+
+.civ-panel-head h2{
+  color:#f1eee8;
+  letter-spacing:-.02em;
+}
+
+.civ-panel-head p{
+  color:#8f9aa0;
+}
+
+.civ-equipment-tabs{
+  gap:7px;
+  padding:9px 0;
+}
+
+.civ-equipment-tabs button{
+  height:39px;
+  border:1px solid #2d3b42;
+  border-radius:6px;
+  background:#0e171c;
+  color:#afb8bd;
+}
+
+.civ-equipment-tabs button:hover{
+  border-color:#536169;
+  color:#e7eaea;
+}
+
+.civ-equipment-tabs button.active{
+  border-color:#b47a33;
+  background:linear-gradient(180deg,#4b321c,#241b13);
+  color:#ffd279;
+  box-shadow:0 0 16px rgba(216,139,46,.08);
+}
+
+.civ-equipment-tabs button.back{
+  color:#d9e0e2;
+  font-size:18px;
+}
+
+.civ-equipment-layout{
+  gap:12px;
+}
+
+.civ-item-grid{
+  gap:8px;
+  padding:2px 5px 7px 1px;
+}
+
+.civ-item-card{
+  min-height:132px;
+  border:1px solid #2a373d;
+  border-radius:8px;
+  background:
+    radial-gradient(circle at 50% 28%,rgba(115,77,40,.12),transparent 42%),
+    linear-gradient(180deg,#121a1e,#0a1014);
+  box-shadow:inset 0 1px rgba(255,255,255,.018);
+}
+
+.civ-item-card:hover{
+  border-color:#556269;
+  background:
+    radial-gradient(circle at 50% 28%,rgba(150,93,39,.16),transparent 45%),
+    linear-gradient(180deg,#161e22,#0c1317);
+}
+
+.civ-item-card.active{
+  border-color:#c48735;
+  background:
+    radial-gradient(circle at 50% 25%,rgba(239,153,48,.18),transparent 46%),
+    linear-gradient(180deg,#211b14,#101416);
+  box-shadow:0 0 0 1px rgba(255,184,68,.07),0 0 18px rgba(212,132,37,.08);
+}
+
+.civ-item-card.locked{
+  opacity:.62;
+}
+
+.civ-item-art{
+  filter:drop-shadow(0 12px 13px rgba(0,0,0,.57));
+}
+
+.civ-item-card.active .civ-item-art{
+  filter:drop-shadow(0 0 11px rgba(238,157,49,.22)) drop-shadow(0 13px 12px rgba(0,0,0,.57));
+}
+
+.civ-item-detail{
+  border:1px solid #2d3b42;
+  border-radius:8px;
+  background:
+    radial-gradient(circle at 27% 40%,rgba(160,92,29,.13),transparent 34%),
+    linear-gradient(180deg,#11191d,#081014);
+  box-shadow:inset 0 1px rgba(255,255,255,.024);
+}
+
+.civ-item-hero{
+  border-right:1px solid #2a373c;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(212,128,38,.17),transparent 45%),
+    linear-gradient(180deg,#171914,#0b1114);
+}
+
+.civ-item-copy{
+  padding:4px 3px 4px 0;
+}
+
+.civ-detail-title h3{
+  color:#f1ece5;
+}
+
+.civ-item-copy dt{
+  color:#d79a44;
+}
+
+.civ-item-copy dd{
+  color:#b0b8bc;
+}
+
+.civ-item-copy>button{
+  border-radius:6px;
+}
+
+.civ-item-copy>button.equipped{
+  border-color:#3b9b5b;
+  background:linear-gradient(180deg,#174527,#0e2918);
+  color:#bdf0c9;
+}
+
+.civ-boss-list button,
+.civ-boss-detail,
+.civ-map-detail,
+.civ-craft-grid article,
+.civ-tribe-grid article,
+.civ-profile-hero-card,
+.civ-profile-loadout,
+.civ-profile-origin,
+.civ-profile-stats article,
+.civ-achievement-grid article,
+.civ-inventory-groups section,
+.civ-evolution-track article,
+.civ-evolution-note{
+  border-color:#2d3b42;
+  background:linear-gradient(180deg,#111a1f,#091115);
+}
+
+.civ-boss-list button.active{
+  border-color:#a86f31;
+  background:linear-gradient(180deg,#251c14,#101518);
+}
+
+@media(max-width:1450px){
+  .civ-mascot-stage{
+    left:55%;
+    transform:translateX(-50%) scale(.88);
+  }
+
+  .civ-item-card{
+    min-height:112px;
+  }
+}
+
+@media(min-width:721px) and (max-height:800px){
+  .civ-game-hud{
+    min-height:51px;
+    padding-top:4px;
+    padding-bottom:4px;
+  }
+
+  .civ-location,
+  .civ-resource{
+    min-height:39px;
+  }
+
+  .civ-mascot-stage{
+    left:55%;
+    bottom:2.5%;
+    transform:translateX(-50%) scale(.78);
+  }
+
+  .civ-hotspot{
+    min-width:145px;
+    min-height:39px;
+    padding:5px 7px;
+  }
+
+  .civ-hotspot span{
+    width:25px;
+    height:25px;
+  }
+
+  .civ-item-card{
+    min-height:96px;
+  }
+
+  .civ-task-row{
+    padding:6px 1px;
+  }
+}
