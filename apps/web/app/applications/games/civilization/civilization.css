@@ -1974,3 +1974,44 @@ button{font:inherit}
     padding:6px 1px;
   }
 }
+
+
+/* CIVILIZATION ALPHA — VECTOR ICON FINISH */
+.civ-vector-icon{
+  display:grid!important;
+  place-items:center;
+  color:#e8b156;
+  font-size:0!important;
+  line-height:1;
+}
+.civ-vector-icon svg{
+  width:23px;
+  height:23px;
+  display:block;
+}
+.civ-bottom-nav .civ-vector-icon{
+  width:31px;
+  height:31px;
+  margin:0 auto;
+  color:#c9d0d4;
+}
+.civ-bottom-nav .civ-vector-icon svg{
+  width:27px;
+  height:27px;
+}
+.civ-bottom-nav button.active .civ-vector-icon{
+  color:#ffd078;
+  filter:drop-shadow(0 0 7px rgba(237,159,58,.22));
+}
+.civ-player-menu .civ-vector-icon{
+  width:25px;
+  height:25px;
+  color:#aebbc2;
+}
+.civ-player-menu .civ-vector-icon svg{
+  width:20px;
+  height:20px;
+}
+.civ-player-menu button:hover .civ-vector-icon{
+  color:#f0bd68;
+}
