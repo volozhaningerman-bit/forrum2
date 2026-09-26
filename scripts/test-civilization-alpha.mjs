@@ -129,7 +129,10 @@ try {
   };
 
   await page.goto('http://127.0.0.1:' + port + '/applications/games/civilization', { waitUntil: 'networkidle' });
-  await page.evaluate(() => localStorage.removeItem('4rrum.civilization.alpha.v1'));
+  await page.evaluate(() => {
+    localStorage.removeItem('4rrum.civilization.alpha.v1');
+    localStorage.removeItem('4rrum.civilization.alpha.v1.progress');
+  });
   await page.reload({ waitUntil: 'networkidle' });
 
   // First launch is a one-time character creation flow.
@@ -219,6 +222,17 @@ try {
   assert.equal(await page.locator('.civ-equipment-tabs>button').count(), 5);
   assert((await page.locator('.civ-item-card').count()) >= 8, 'weapon catalog should show progression and locked goals');
   assert.equal(await page.locator('.civ-item-art svg').count(), await page.locator('.civ-item-card').count() + 1);
+  // Equip a real unlocked weapon through the UI. This must survive reload later.
+  await page.getByRole('button', { name: /Оружие/ }).click();
+  const axeCard = page.locator('.civ-item-card').filter({ hasText: 'Каменный топор' }).first();
+  await axeCard.click();
+  assert.match(await page.locator('.civ-item-detail').textContent(), /Каменный топор/);
+  await page.locator('.civ-item-detail').getByRole('button', { name: 'Использовать' }).click();
+  await page.waitForFunction(() => {
+    const raw = localStorage.getItem('4rrum.civilization.alpha.v1.progress');
+    return raw && JSON.parse(raw).equippedId === 'axe';
+  });
+
   await page.getByRole('button', { name: /Одежда/ }).click();
   assert.match(await page.locator('.civ-item-detail').textContent(), /Шкура охотника/);
   assert((await page.locator('.civ-item-card').count()) >= 5, 'clothes catalog should not look empty');
@@ -248,14 +262,34 @@ try {
     await page.locator('.civ-full-panel').waitFor({ state: 'detached' });
   }
 
-  // Boss and item interactions are functional.
+  // Boss combat is functional: defeat the first boss and verify a real persisted drop.
   await bottomNav.getByRole('button', { name: /Боссы/ }).click();
-  await page.getByRole('button', { name: /Мамонт/ }).click();
-  assert.match(await page.locator('.civ-boss-detail').textContent(), /Редкий камень/);
-  const hpBefore = await page.locator('.civ-boss-hp').textContent();
-  await page.getByRole('button', { name: /Атаковать/ }).click();
-  const hpAfter = await page.locator('.civ-boss-hp').textContent();
-  assert.notEqual(hpAfter, hpBefore);
+  await page.getByRole('button', { name: /Вожак обезьян/ }).click();
+  assert.match(await page.locator('.civ-boss-detail').textContent(), /Тотем вожака/);
+  const apeHpBefore = await page.locator('.civ-boss-hp').textContent();
+  for (let hit = 0; hit < 4; hit += 1) {
+    await page.getByRole('button', { name: /Атаковать/ }).click();
+    await page.waitForTimeout(25);
+  }
+  const apeHpAfter = await page.locator('.civ-boss-hp').textContent();
+  assert.notEqual(apeHpAfter, apeHpBefore);
+  assert.match(apeHpAfter, /0\/70/);
+
+  await page.waitForFunction(() => {
+    const raw = localStorage.getItem('4rrum.civilization.alpha.v1.progress');
+    if (!raw) return false;
+    const progress = JSON.parse(raw);
+    return progress.bossWins?.ape === 1 && progress.loot?.['Тотем вожака'] === 1;
+  });
+
+  await page.getByRole('button', { name: 'Свернуть раздел' }).click();
+
+  // The trophy is visible in the actual inventory screen.
+  await page.getByRole('button', { name: 'Открыть меню персонажа' }).click();
+  await page.locator('.civ-player-menu').getByRole('button', { name: /Инвентарь/ }).click();
+  await page.locator('.civ-full-panel').waitFor();
+  const totemInventoryRow = page.locator('.civ-inventory-groups article').filter({ hasText: 'Тотем вожака' });
+  assert.match(await totemInventoryRow.textContent(), /1/);
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
 
   // Desktop viewport matrix stays one-screen.
@@ -277,16 +311,31 @@ try {
   await page.screenshot({ path: output + '/civilization-equipment-1720x864.png', fullPage: false });
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
 
-  // Character creation never returns after reload.
+  // Character creation, equipped item and boss loot all survive reload.
   await page.reload({ waitUntil: 'networkidle' });
   assert.equal(await page.getByRole('dialog', { name: 'Создание персонажа' }).count(), 0);
+
+  await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
+  await page.getByRole('button', { name: /Оружие/ }).click();
+  await page.locator('.civ-item-card').filter({ hasText: 'Каменный топор' }).first().click();
+  assert.match(await page.locator('.civ-item-detail').getByRole('button').textContent(), /Используется/);
+  await page.getByRole('button', { name: 'Свернуть раздел' }).click();
+
+  await page.getByRole('button', { name: 'Открыть меню персонажа' }).click();
+  await page.locator('.civ-player-menu').getByRole('button', { name: /Инвентарь/ }).click();
+  await page.locator('.civ-full-panel').waitFor();
+  assert.match(
+    await page.locator('.civ-inventory-groups article').filter({ hasText: 'Тотем вожака' }).textContent(),
+    /1/,
+  );
+  await page.getByRole('button', { name: 'Свернуть раздел' }).click();
 
   // Legacy Office route must preserve old bookmarks by redirecting to Civilization.
   await page.goto('http://127.0.0.1:' + port + '/applications/games/office', { waitUntil: 'networkidle' });
   assert.match(page.url(), /\/applications\/games\/civilization/);
 
   assert.deepEqual(pageErrors, []);
-  console.log('Civilization alpha: creation, compact shell, scoped tasks, central full-height panels, dense equipment UI and desktop matrix passed');
+  console.log('Civilization alpha: creation, compact shell, scoped tasks, central panels, equipment persistence, real boss drops and desktop matrix passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
