@@ -30,6 +30,14 @@ type Item = {
 };
 
 const STORAGE_KEY = '4rrum.civilization.alpha.v1';
+const PROGRESS_KEY = '4rrum.civilization.alpha.v1.progress';
+
+type ProgressState = {
+  equippedId: string;
+  bossHp: Record<string, number>;
+  bossWins: Record<string, number>;
+  loot: Record<string, number>;
+};
 
 const colors = ['#f0bd84', '#d99562', '#b96f4a', '#8f513b'];
 const femaleHair = ['Короткие', 'Пучок', 'Косы', 'Длинные'];
@@ -72,9 +80,9 @@ const equipment: Item[] = [
 ];
 
 const bosses = [
-  { id: 'ape', name: 'Вожак обезьян', level: 2, emoji: '🦍', hp: 70, drops: ['🦴 Кость', '🍖 Мясо', '🪵 Древесина'], power: 7 },
-  { id: 'tiger', name: 'Саблезубый тигр', level: 3, emoji: '🐅', hp: 100, drops: ['🦷 Клык', '🥋 Шкура', '🍖 Мясо'], power: 10 },
-  { id: 'mammoth', name: 'Мамонт', level: 5, emoji: '🦣', hp: 180, drops: ['🦴 Бивень', '🥋 Густая шкура', '💎 Редкий камень'], power: 16 },
+  { id: 'ape', name: 'Вожак обезьян', level: 2, emoji: '🦍', hp: 70, drops: ['🗿 Тотем вожака', '🦴 Кость', '🍖 Мясо'], power: 7 },
+  { id: 'tiger', name: 'Саблезубый тигр', level: 3, emoji: '🐅', hp: 100, drops: ['🦷 Клык саблезуба', '🥋 Тигриная шкура', '🍖 Мясо'], power: 10 },
+  { id: 'mammoth', name: 'Мамонт', level: 5, emoji: '🦣', hp: 180, drops: ['🦴 Бивень мамонта', '🥋 Шкура мамонта', '💎 Редкий камень'], power: 16 },
 ];
 
 type Boss = (typeof bosses)[number];
@@ -123,6 +131,50 @@ function loadState(): AvatarState {
   }
 }
 
+
+function initialProgress(): ProgressState {
+  return {
+    equippedId: 'club',
+    bossHp: Object.fromEntries(bosses.map((boss) => [boss.id, boss.hp])),
+    bossWins: Object.fromEntries(bosses.map((boss) => [boss.id, 0])),
+    loot: {},
+  };
+}
+
+function loadProgress(): ProgressState {
+  const fallback = initialProgress();
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const raw = localStorage.getItem(PROGRESS_KEY);
+    if (!raw) return fallback;
+    const parsed = JSON.parse(raw) as Partial<ProgressState>;
+    const equippedId = equipment.some((item) => item.id === parsed.equippedId && !item.locked)
+      ? parsed.equippedId as string
+      : 'club';
+    const bossHp = Object.fromEntries(
+      bosses.map((boss) => {
+        const saved = Number(parsed.bossHp?.[boss.id]);
+        return [boss.id, Number.isFinite(saved) ? Math.max(0, Math.min(boss.hp, saved)) : boss.hp];
+      }),
+    );
+    const bossWins = Object.fromEntries(
+      bosses.map((boss) => [boss.id, Math.max(0, Math.floor(Number(parsed.bossWins?.[boss.id]) || 0))]),
+    );
+    const loot = Object.fromEntries(
+      Object.entries(parsed.loot ?? {}).filter(([name, value]) => name.length > 0 && Number.isFinite(Number(value)) && Number(value) >= 0)
+        .map(([name, value]) => [name, Math.floor(Number(value))]),
+    );
+    return { equippedId, bossHp, bossWins, loot };
+  } catch {
+    return fallback;
+  }
+}
+
+function dropName(drop: string) {
+  const parts = drop.trim().split(/\s+/);
+  return parts.length > 1 ? parts.slice(1).join(' ') : drop;
+}
+
 function Icon({ children }: { children: ReactNode }) {
   return <span className="civ-icon" aria-hidden="true">{children}</span>;
 }
@@ -141,16 +193,40 @@ export function CivilizationGame() {
   const [selectedItemId, setSelectedItemId] = useState('club');
   const [equippedId, setEquippedId] = useState('club');
   const [selectedBoss, setSelectedBoss] = useState('tiger');
-  const [bossHp, setBossHp] = useState(100);
+  const [bossHpById, setBossHpById] = useState<Record<string, number>>(() => initialProgress().bossHp);
+  const [bossWins, setBossWins] = useState<Record<string, number>>(() => initialProgress().bossWins);
+  const [loot, setLoot] = useState<Record<string, number>>({});
+  const [progressHydrated, setProgressHydrated] = useState(false);
   const [notice, setNotice] = useState('Пещера — твой первый дом. Собери ресурсы и подготовься к Каменному веку.');
 
   useEffect(() => {
     const saved = loadState();
+    const progress = loadProgress();
     setAvatar(saved);
     setDraftGender(saved.gender);
     setDraftColor(saved.color);
     setDraftHair(saved.hair);
+    setEquippedId(progress.equippedId);
+    setSelectedItemId(progress.equippedId);
+    setBossHpById(progress.bossHp);
+    setBossWins(progress.bossWins);
+    setLoot(progress.loot);
+    setProgressHydrated(true);
   }, []);
+
+  useEffect(() => {
+    if (!progressHydrated) return;
+    try {
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify({
+        equippedId,
+        bossHp: bossHpById,
+        bossWins,
+        loot,
+      } satisfies ProgressState));
+    } catch {
+      // The alpha remains playable if browser storage is unavailable.
+    }
+  }, [bossHpById, bossWins, equippedId, loot, progressHydrated]);
 
   useEffect(() => {
     document.body.classList.add('civilization-no-scroll');
@@ -202,16 +278,31 @@ export function CivilizationGame() {
   };
 
   const attackBoss = () => {
-    const maxHp = selectedBossData.hp;
-    setBossHp((hp) => {
-      const next = Math.max(0, hp - 22);
-      if (next === 0) setNotice(`${selectedBossData.name} побеждён. Трофеи отправлены в инвентарь.`);
-      return next;
-    });
-    if (bossHp <= 0) setBossHp(maxHp);
+    const currentHp = bossHpById[selectedBossData.id] ?? selectedBossData.hp;
+    if (currentHp <= 0) {
+      setBossHpById((state) => ({ ...state, [selectedBossData.id]: selectedBossData.hp }));
+      setNotice(`${selectedBossData.name}: новая охота началась.`);
+      return;
+    }
+
+    const nextHp = Math.max(0, currentHp - 22);
+    setBossHpById((state) => ({ ...state, [selectedBossData.id]: nextHp }));
+
+    if (nextHp === 0) {
+      const previousWins = bossWins[selectedBossData.id] ?? 0;
+      const guaranteed = dropName(selectedBossData.drops[0]);
+      const bonus = dropName(selectedBossData.drops[1 + (previousWins % Math.max(1, selectedBossData.drops.length - 1))]);
+      setBossWins((state) => ({ ...state, [selectedBossData.id]: previousWins + 1 }));
+      setLoot((state) => ({
+        ...state,
+        [guaranteed]: (state[guaranteed] ?? 0) + 1,
+        [bonus]: (state[bonus] ?? 0) + 1,
+      }));
+      setNotice(`${selectedBossData.name} побеждён. Добыто: ${guaranteed} и ${bonus}.`);
+    }
   };
 
-  const activeBossHp = Math.min(bossHp, selectedBossData.hp);
+  const activeBossHp = Math.min(bossHpById[selectedBossData.id] ?? selectedBossData.hp, selectedBossData.hp);
 
   return (
     <div className="civilization-app">
@@ -359,7 +450,7 @@ export function CivilizationGame() {
             {panel === 'tribe' ? <TribePanel setNotice={setNotice} /> : null}
             {panel === 'profile' ? <ProfilePanel avatar={avatar} equippedId={equippedId} /> : null}
             {panel === 'achievements' ? <AchievementsPanel /> : null}
-            {panel === 'inventory' ? <InventoryPanel /> : null}
+            {panel === 'inventory' ? <InventoryPanel loot={loot} /> : null}
             {panel === 'evolution' ? <EvolutionPanel /> : null}
           </section>
         ) : null}
@@ -572,11 +663,16 @@ function AchievementsPanel() {
   );
 }
 
-function InventoryPanel() {
+function InventoryPanel({ loot }: { loot: Record<string, number> }) {
   const groups = [
     { title: 'Пища', items: [['Ягоды','120'],['Мясо','85'],['Грибы','45'],['Рыба','90']] },
     { title: 'Материалы', items: [['Дерево','120'],['Камень','210'],['Кремень','37'],['Шкуры','28'],['Кости','16']] },
-    { title: 'Трофеи', items: [['Клык саблезуба','0'],['Бивень мамонта','0'],['Тотем вожака','0'],['Редкий камень','0']] },
+    { title: 'Трофеи', items: [
+      ['Клык саблезуба', String(loot['Клык саблезуба'] ?? 0)],
+      ['Бивень мамонта', String(loot['Бивень мамонта'] ?? 0)],
+      ['Тотем вожака', String(loot['Тотем вожака'] ?? 0)],
+      ['Редкий камень', String(loot['Редкий камень'] ?? 0)],
+    ] },
   ];
   return (
     <div className="civ-panel-body civ-inventory-panel">
