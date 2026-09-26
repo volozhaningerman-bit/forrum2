@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 type MainPanel = 'equipment' | 'bosses' | 'map' | 'craft' | 'tribe';
 type EquipmentCategory = 'weapon' | 'clothes' | 'accessory' | 'tool';
@@ -98,7 +99,7 @@ function loadState(): AvatarState {
   }
 }
 
-function Icon({ children }: { children: React.ReactNode }) {
+function Icon({ children }: { children: ReactNode }) {
   return <span className="civ-icon" aria-hidden="true">{children}</span>;
 }
 
@@ -376,7 +377,7 @@ export function CivilizationGame() {
 function Mascot({ avatar, compact = false }: { avatar: AvatarState; compact?: boolean }) {
   const hair = avatar.gender === 'female' && avatar.hair !== 'Лысый';
   return (
-    <div className={`civ-mascot ${compact ? 'compact' : ''}`} style={{ '--civ-skin': avatar.color } as React.CSSProperties}>
+    <div className={`civ-mascot ${compact ? 'compact' : ''}`} style={{ '--civ-skin': avatar.color } as CSSProperties}>
       <div className="civ-hair">{hair ? <span>{avatar.hair === 'Пучок' ? '●' : avatar.hair === 'Косы' ? '⌁' : avatar.hair === 'Длинные' ? '◒' : '⌒'}</span> : null}</div>
       <div className="civ-head">
         <i className="eye left" /><i className="eye right" />
