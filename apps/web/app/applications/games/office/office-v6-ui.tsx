@@ -149,7 +149,7 @@ export function EquipmentDrawer({
             <option value="price">По цене</option>
             <option value="power">По силе</option>
           </select>
-          <button type="button" className="office-v6-drawer-close" onClick={onClose}>×</button>
+          <button type="button" className="office-v6-drawer-close" onClick={onClose} autoFocus aria-label="Закрыть">×</button>
         </div>
       </header>
 
@@ -941,7 +941,7 @@ export function V6BossBattle({
   return (
     <div className="office-modal-backdrop">
       <section className="office-modal office-v6-boss-battle" role="dialog" aria-modal="true" aria-label="Босс: Сергей Петрович">
-        <button type="button" className="office-modal-close" onClick={onClose}>×</button>
+        <button type="button" className="office-modal-close" onClick={onClose} autoFocus aria-label="Закрыть">×</button>
         <header>
           <img src="/games/office/boss.svg" alt="" />
           <div>
