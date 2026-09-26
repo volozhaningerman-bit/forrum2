@@ -2674,9 +2674,10 @@ button{font:inherit}
 .resource-flint{--resource-col:2;--resource-row:1}
 .resource-hide{--resource-col:3;--resource-row:1}
 .resource-bones{--resource-col:0;--resource-row:2}
-.resource-fang{--resource-col:1;--resource-row:2}
-.resource-tusk{--resource-col:2;--resource-row:2}
-.resource-totem{--resource-col:3;--resource-row:2}
+.resource-fang{--resource-col:0;--resource-row:2}
+.resource-tusk{--resource-col:1;--resource-row:2}
+.resource-totem{--resource-col:2;--resource-row:2}
+.resource-rare{--resource-col:3;--resource-row:2}
 
 .civ-resource-row{
   grid-template-columns:34px minmax(0,1fr) auto!important;
