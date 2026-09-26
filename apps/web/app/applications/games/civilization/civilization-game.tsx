@@ -45,6 +45,30 @@ const equipment: Item[] = [
   { id: 'basket', name: 'Плетёная сумка', category: 'accessory', icon: '🧺', level: 1, stat: 'Сбор', value: 10, description: 'Позволяет унести больше еды и материалов за одну вылазку.', how: 'Получить за первое ежедневное задание', rarity: 'Обычный' },
   { id: 'pick', name: 'Каменная кирка', category: 'tool', icon: '⛏️', level: 3, stat: 'Добыча', value: 12, description: 'Ускоряет добычу камня и открывает редкие залежи.', how: 'Создать на верстаке', rarity: 'Обычный', locked: true },
   { id: 'torch', name: 'Факел', category: 'tool', icon: '🔥', level: 1, stat: 'Исследование', value: 5, description: 'Позволяет исследовать глубокие зоны пещеры.', how: 'Дерево + смола', rarity: 'Обычный' },
+
+  // В альфе закрытые предметы показываются заранее: игрок понимает,
+  // что выпадет с боссов и ради чего стоит развиваться.
+  { id: 'bone-club', name: 'Костяная палица', category: 'weapon', icon: '🦴', level: 4, stat: 'Атака', value: 7, description: 'Усиленная дубина из крупных костей. Хороша против лёгкой брони.', how: 'Кости ×12 · верстак', rarity: 'Необычный', locked: true },
+  { id: 'flint-shard', name: 'Острый кремень', category: 'weapon', icon: '◆', level: 2, stat: 'Атака', value: 4, description: 'Лёгкий режущий камень. Быстрый, но требует ближнего боя.', how: 'Найти залежь кремня на карте', rarity: 'Обычный', locked: true },
+  { id: 'bow', name: 'Деревянный лук', category: 'weapon', icon: '➶', level: 6, stat: 'Атака', value: 10, description: 'Первое дальнобойное оружие племени. Даёт бонус на охоте.', how: 'Эволюция охоты II · крафт', rarity: 'Необычный', locked: true },
+  { id: 'obsidian-axe', name: 'Обсидиановый топор', category: 'weapon', icon: '◈', level: 8, stat: 'Атака', value: 15, description: 'Тяжёлое оружие с острым вулканическим лезвием.', how: 'Редкий обсидиан · босс пещеры', rarity: 'Редкий', locked: true },
+  { id: 'hunter-spear', name: 'Копьё охотника', category: 'weapon', icon: '↑', level: 12, stat: 'Атака', value: 19, description: 'Длинное копьё для крупных зверей. Бонус против Мамонта.', how: 'Трофей племенной охоты', rarity: 'Редкий', locked: true },
+  { id: 'mammoth-maul', name: 'Мамонтовый молот', category: 'weapon', icon: '◆', level: 20, stat: 'Атака', value: 28, description: 'Трофейное оружие из бивня и тяжёлого камня.', how: 'Очень редкий дроп с Мамонта', rarity: 'Эпический', locked: true },
+
+  { id: 'wraps', name: 'Кожаные обмотки', category: 'clothes', icon: '▰', level: 1, stat: 'Защита', value: 2, description: 'Простая защита рук и ног от царапин.', how: 'Доступно после первого задания', rarity: 'Обычный' },
+  { id: 'bone-armor', name: 'Костяной нагрудник', category: 'clothes', icon: '◇', level: 5, stat: 'Защита', value: 10, description: 'Пластины из костей крупных зверей.', how: 'Кости ×20 · шкуры ×4', rarity: 'Необычный', locked: true },
+  { id: 'ape-hide', name: 'Шкура вожака', category: 'clothes', icon: '▥', level: 6, stat: 'Защита', value: 13, description: 'Плотная шкура, усиливающая сопротивление ударам.', how: 'Дроп с Вожака обезьян', rarity: 'Редкий', locked: true },
+  { id: 'mammoth-mantle', name: 'Мантия мамонта', category: 'clothes', icon: '▧', level: 12, stat: 'Защита', value: 22, description: 'Тёплая тяжёлая мантия для суровых регионов.', how: 'Дроп с Мамонта · редкий', rarity: 'Эпический', locked: true },
+
+  { id: 'stone-charm', name: 'Каменный оберег', category: 'accessory', icon: '◉', level: 2, stat: 'Власть', value: 3, description: 'Первый символ статуса внутри племени.', how: 'Камень ×25 · крафт', rarity: 'Обычный', locked: true },
+  { id: 'bone-ring', name: 'Костяное кольцо', category: 'accessory', icon: '○', level: 5, stat: 'Дроп', value: 5, description: 'Небольшой талисман охотника.', how: 'Кость ×8 · крафт', rarity: 'Необычный', locked: true },
+  { id: 'tiger-fang', name: 'Клык саблезуба', category: 'accessory', icon: '⌁', level: 8, stat: 'Власть', value: 12, description: 'Трофей, который замечают все в племени.', how: 'Редкий дроп с Саблезубого тигра', rarity: 'Редкий', locked: true },
+  { id: 'tribal-totem', name: 'Тотем племени', category: 'accessory', icon: '✦', level: 12, stat: 'Власть', value: 18, description: 'Ритуальный предмет, усиливающий племенные бонусы.', how: 'Награда за развитие племени', rarity: 'Эпический', locked: true },
+
+  { id: 'stone-hammer', name: 'Каменный молоток', category: 'tool', icon: '◆', level: 2, stat: 'Крафт', value: 8, description: 'Ускоряет создание простых предметов.', how: 'Камень ×30 · дерево ×15', rarity: 'Обычный', locked: true },
+  { id: 'bone-needle', name: 'Костяная игла', category: 'tool', icon: '╱', level: 4, stat: 'Крафт', value: 10, description: 'Нужна для сложной одежды и кожаных вещей.', how: 'Кость ×6 · верстак', rarity: 'Необычный', locked: true },
+  { id: 'flint-kit', name: 'Набор кремня', category: 'tool', icon: '◇', level: 5, stat: 'Огонь', value: 12, description: 'Позволяет быстрее разжигать костры в экспедициях.', how: 'Кремень ×20 · крафт', rarity: 'Необычный', locked: true },
+  { id: 'hunter-trap', name: 'Охотничья ловушка', category: 'tool', icon: '⌗', level: 7, stat: 'Охота', value: 15, description: 'Повышает шанс дополнительной добычи с вылазок.', how: 'Эволюция охоты II', rarity: 'Редкий', locked: true },
 ];
 
 const bosses = [
@@ -374,6 +398,96 @@ export function CivilizationGame() {
   );
 }
 
+
+function ItemArt({ item, large = false }: { item: Item; large?: boolean }) {
+  const id = item.id;
+  const weapon = item.category === 'weapon';
+  const clothes = item.category === 'clothes';
+  const accessory = item.category === 'accessory';
+  const bow = id === 'bow';
+  const spear = id.includes('spear') || id === 'knife' || id === 'flint-shard';
+  const axe = id.includes('axe');
+  const maul = id.includes('maul') || id.includes('club') || id === 'club';
+  const torch = id === 'torch';
+  const pick = id === 'pick';
+
+  return (
+    <span className={`civ-item-art ${large ? 'large' : ''} art-${item.category} art-${id}`} aria-hidden="true">
+      <svg viewBox="0 0 120 120" role="presentation">
+        <defs>
+          <linearGradient id={`wood-${id}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#c37b3b" />
+            <stop offset="1" stopColor="#58341f" />
+          </linearGradient>
+          <linearGradient id={`stone-${id}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#b8b6ac" />
+            <stop offset=".55" stopColor="#62676b" />
+            <stop offset="1" stopColor="#30363b" />
+          </linearGradient>
+          <linearGradient id={`hide-${id}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#9b6237" />
+            <stop offset="1" stopColor="#3d261b" />
+          </linearGradient>
+        </defs>
+
+        {weapon && bow ? (
+          <>
+            <path d="M78 13 Q31 58 75 108" fill="none" stroke="#b17a42" strokeWidth="8" strokeLinecap="round" />
+            <path d="M77 14 L76 108" fill="none" stroke="#d9d0ba" strokeWidth="1.8" />
+            <path d="M32 78 L92 42" stroke="#87603a" strokeWidth="4" strokeLinecap="round" />
+            <path d="M92 42 L82 42 L88 51 Z" fill="#bfc3bf" />
+          </>
+        ) : weapon && axe ? (
+          <>
+            <path d="M34 103 L74 25" stroke={`url(#wood-${id})`} strokeWidth="11" strokeLinecap="round" />
+            <path d="M65 25 Q82 15 104 27 L92 54 Q77 48 61 39 Z" fill={`url(#stone-${id})`} stroke="#d0a35c" strokeWidth="1.5" />
+            <path d="M56 39 L83 48" stroke="#3b261a" strokeWidth="5" />
+          </>
+        ) : weapon && spear ? (
+          <>
+            <path d="M28 104 L83 33" stroke={`url(#wood-${id})`} strokeWidth="7" strokeLinecap="round" />
+            <path d="M82 34 L96 10 L105 18 L88 39 Z" fill={`url(#stone-${id})`} stroke="#d4c8a9" strokeWidth="1.3" />
+            <path d="M72 46 L88 57" stroke="#745037" strokeWidth="3" />
+          </>
+        ) : weapon && maul ? (
+          <>
+            <path d="M42 108 L70 45" stroke={`url(#wood-${id})`} strokeWidth="12" strokeLinecap="round" />
+            <path d="M50 49 Q58 16 90 16 Q107 30 89 53 Q67 61 50 49 Z" fill={`url(#stone-${id})`} stroke="#d0984a" strokeWidth="2" />
+            <path d="M49 52 L82 64 M53 43 L86 55" stroke="#684127" strokeWidth="4" strokeLinecap="round" />
+          </>
+        ) : clothes ? (
+          <>
+            <path d="M34 26 L52 16 L68 16 L87 27 L101 50 L87 60 L82 104 L38 104 L33 60 L19 50 Z" fill={`url(#hide-${id})`} stroke="#c99558" strokeWidth="2" />
+            <path d="M52 17 Q60 35 68 17" fill="#181719" opacity=".55" />
+            <path d="M40 72 Q59 84 80 72" fill="none" stroke="#ddbd8d" strokeWidth="3" strokeDasharray="5 5" />
+          </>
+        ) : accessory ? (
+          <>
+            <circle cx="60" cy="57" r="31" fill="none" stroke="#c9a46d" strokeWidth="7" />
+            <path d="M60 15 L72 37 L60 52 L48 37 Z" fill="#d9b14f" stroke="#ffde82" strokeWidth="1.5" />
+            <circle cx="60" cy="58" r="8" fill="#6d4a2c" />
+          </>
+        ) : torch ? (
+          <>
+            <path d="M44 108 L68 49" stroke={`url(#wood-${id})`} strokeWidth="12" strokeLinecap="round" />
+            <path d="M56 49 Q39 31 56 10 Q62 26 73 13 Q88 34 67 51 Z" fill="#ff9d2d" stroke="#ffd568" strokeWidth="2" />
+          </>
+        ) : pick ? (
+          <>
+            <path d="M42 104 L72 40" stroke={`url(#wood-${id})`} strokeWidth="10" strokeLinecap="round" />
+            <path d="M28 36 Q62 15 101 33" fill="none" stroke={`url(#stone-${id})`} strokeWidth="10" strokeLinecap="round" />
+          </>
+        ) : (
+          <>
+            <path d="M39 105 L72 39" stroke={`url(#wood-${id})`} strokeWidth="10" strokeLinecap="round" />
+            <path d="M51 43 Q65 22 91 31 L78 55 Z" fill={`url(#stone-${id})`} stroke="#d1a05b" strokeWidth="2" />
+          </>
+        )}
+      </svg>
+    </span>
+  );
+}
+
 function Mascot({ avatar, compact = false }: { avatar: AvatarState; compact?: boolean }) {
   const hair = avatar.gender === 'female' && avatar.hair !== 'Лысый';
   return (
@@ -451,12 +565,12 @@ function EquipmentPanel({
         <div className="civ-item-grid">
           {items.map(item => (
             <button type="button" key={item.id} className={`civ-item-card ${selectedItem.id === item.id ? 'active' : ''} ${item.locked ? 'locked' : ''}`} onClick={() => setSelectedItemId(item.id)}>
-              <span>{item.icon}</span><b>{item.name}</b><small>{item.locked ? `Ур. ${item.level}` : `${item.stat} +${item.value}`}</small>{item.locked ? <em>🔒</em> : null}
+              <ItemArt item={item} /><b>{item.name}</b><small>{item.locked ? `Ур. ${item.level}` : `${item.stat} +${item.value}`}</small>{item.locked ? <em>🔒</em> : null}
             </button>
           ))}
         </div>
         <article className="civ-item-detail">
-          <div className="civ-item-hero"><span>{selectedItem.icon}</span></div>
+          <div className="civ-item-hero"><ItemArt item={selectedItem} large /></div>
           <div className="civ-item-copy">
             <div className="civ-detail-title"><div><small>{selectedItem.rarity}</small><h3>{selectedItem.name}</h3></div><span>Ур. {selectedItem.level}</span></div>
             <p>{selectedItem.description}</p>
