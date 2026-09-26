@@ -808,16 +808,68 @@ function EquipmentPanel({
   );
 }
 
+
+function BossArt({ boss, large = false }: { boss: Boss; large?: boolean }) {
+  return (
+    <span className={`civ-boss-illustration boss-${boss.id} ${large ? 'large' : ''}`} aria-hidden="true">
+      <svg viewBox="0 0 220 180" role="presentation">
+        <defs>
+          <radialGradient id={`boss-bg-${boss.id}`} cx=".5" cy=".42" r=".62">
+            <stop offset="0" stopColor={boss.id === 'tiger' ? '#c96e27' : boss.id === 'mammoth' ? '#7a716b' : '#73523b'} stopOpacity=".74" />
+            <stop offset="1" stopColor="#12110f" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id={`boss-fur-${boss.id}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor={boss.id === 'tiger' ? '#d98a39' : boss.id === 'mammoth' ? '#786b61' : '#806048'} />
+            <stop offset=".55" stopColor={boss.id === 'tiger' ? '#a84f21' : boss.id === 'mammoth' ? '#4d4947' : '#513a2c'} />
+            <stop offset="1" stopColor="#241914" />
+          </linearGradient>
+        </defs>
+        <ellipse cx="110" cy="100" rx="100" ry="76" fill={`url(#boss-bg-${boss.id})`} />
+        {boss.id === 'tiger' ? (
+          <>
+            <path d="M51 70 L31 24 L75 47 Q110 27 145 47 L188 24 L169 71 Q184 93 174 127 Q153 160 110 163 Q65 161 45 127 Q35 94 51 70 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#e1a34e" strokeWidth="3" />
+            <path d="M44 45 L72 67 M176 45 L148 67 M77 48 L88 72 M143 48 L132 72 M63 88 L84 95 M157 88 L136 95" stroke="#311b14" strokeWidth="8" strokeLinecap="round" opacity=".85"/>
+            <path d="M75 109 Q90 93 109 103 Q129 93 145 109 Q137 145 110 151 Q82 145 75 109 Z" fill="#eee0c3" opacity=".93"/>
+            <ellipse cx="81" cy="88" rx="10" ry="8" fill="#0a0807"/><ellipse cx="139" cy="88" rx="10" ry="8" fill="#0a0807"/>
+            <circle cx="84" cy="86" r="2.5" fill="#f6d266"/><circle cx="142" cy="86" r="2.5" fill="#f6d266"/>
+            <path d="M104 111 L116 111 L110 120 Z" fill="#2a1915"/>
+            <path d="M91 124 L97 153 L105 128 M129 124 L123 153 L115 128" fill="#f5e4bd" stroke="#d5bd91" strokeWidth="1.5"/>
+          </>
+        ) : boss.id === 'mammoth' ? (
+          <>
+            <path d="M46 87 Q47 36 95 27 Q148 19 178 58 Q195 88 176 127 Q158 159 112 161 Q62 161 43 125 Q34 105 46 87 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#9e8d7f" strokeWidth="3"/>
+            <path d="M45 85 Q22 83 18 109 Q18 133 46 139" fill="#514944" stroke="#887a70" strokeWidth="3"/>
+            <path d="M175 84 Q203 83 207 108 Q207 132 177 139" fill="#514944" stroke="#887a70" strokeWidth="3"/>
+            <path d="M103 99 Q119 96 127 113 L124 149 Q121 170 104 170 Q91 168 92 151 L94 113 Q95 103 103 99 Z" fill="#5c514b"/>
+            <path d="M85 119 Q66 128 62 154 Q77 144 94 141 M139 119 Q158 128 163 154 Q148 144 130 141" fill="none" stroke="#ead9ac" strokeWidth="8" strokeLinecap="round"/>
+            <ellipse cx="83" cy="86" rx="8" ry="6" fill="#0c0908"/><ellipse cx="142" cy="86" rx="8" ry="6" fill="#0c0908"/>
+            <path d="M65 54 Q80 39 95 33 M158 54 Q143 39 129 33" stroke="#2d2927" strokeWidth="7" strokeLinecap="round" opacity=".65"/>
+          </>
+        ) : (
+          <>
+            <path d="M48 80 Q54 37 92 27 Q133 14 169 48 Q190 76 177 119 Q163 158 111 164 Q61 158 42 121 Q32 97 48 80 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#9d7550" strokeWidth="3"/>
+            <path d="M62 80 Q75 52 105 50 Q140 46 160 78 Q162 120 139 142 Q109 157 79 141 Q57 120 62 80 Z" fill="#a67b59"/>
+            <path d="M72 52 Q52 38 42 61 M149 51 Q171 36 181 60" fill="none" stroke="#503729" strokeWidth="15" strokeLinecap="round"/>
+            <ellipse cx="83" cy="91" rx="9" ry="7" fill="#090706"/><ellipse cx="139" cy="91" rx="9" ry="7" fill="#090706"/>
+            <path d="M92 119 Q110 132 130 118" fill="none" stroke="#3b251d" strokeWidth="6" strokeLinecap="round"/>
+            <path d="M110 24 L123 6 L135 29 L154 17 L150 46 L70 46 L68 18 L88 30 L98 7 Z" fill="#d99b39" stroke="#f2c36d" strokeWidth="2"/>
+          </>
+        )}
+      </svg>
+    </span>
+  );
+}
+
 function BossesPanel({ bosses, selected, selectedBoss, setSelectedBoss, hp, attackBoss }: { bosses: Boss[]; selected: Boss; selectedBoss: string; setSelectedBoss: (id: string) => void; hp: number; attackBoss: () => void }) {
   return (
     <div className="civ-panel-body bosses">
       <header className="civ-panel-head"><div><small>Охота и трофеи</small><h2>Боссы</h2><p>Побеждай существ эпохи, получай уникальные материалы и кастомизацию.</p></div></header>
       <div className="civ-boss-layout">
         <div className="civ-boss-list">
-          {bosses.map(boss => <button key={boss.id} type="button" className={selectedBoss === boss.id ? 'active' : ''} onClick={() => setSelectedBoss(boss.id)}><span>{boss.emoji}</span><div><b>{boss.name}</b><small>Ур. {boss.level}</small></div><em>›</em></button>)}
+          {bosses.map(boss => <button key={boss.id} type="button" className={selectedBoss === boss.id ? 'active' : ''} onClick={() => setSelectedBoss(boss.id)}><BossArt boss={boss} /><div><b>{boss.name}</b><small>Ур. {boss.level}</small></div><em>›</em></button>)}
         </div>
         <article className="civ-boss-detail">
-          <div className="civ-boss-art">{selected.emoji}</div>
+          <div className="civ-boss-art"><BossArt boss={selected} large /></div>
           <div>
             <small>Босс пещеры · ур. {selected.level}</small>
             <h3>{selected.name}</h3>
