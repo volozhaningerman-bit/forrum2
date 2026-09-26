@@ -440,7 +440,7 @@ export function CivilizationGame() {
                 bosses={bosses}
                 selected={selectedBossData}
                 selectedBoss={selectedBoss}
-                setSelectedBoss={(id) => { setSelectedBoss(id); const boss = bosses.find(b => b.id === id); setBossHp(boss?.hp ?? 100); }}
+                setSelectedBoss={(id) => { setSelectedBoss(id); }}
                 hp={activeBossHp}
                 attackBoss={attackBoss}
               />
