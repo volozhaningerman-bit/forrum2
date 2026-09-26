@@ -191,6 +191,10 @@ try {
   await promotionAction.click();
   const promotionDialog = page.getByRole('dialog', { name: 'Подготовка к повышению' });
   await promotionDialog.waitFor();
+  assert.equal(
+    await page.evaluate(() => document.activeElement?.classList.contains('office-modal-close')),
+    true,
+  );
   assert.match(await promotionDialog.textContent(), /Компетентность/i);
   assert.match(await promotionDialog.textContent(), /Репутация/i);
   assert.match(await promotionDialog.textContent(), /Первое поручение/i);
@@ -219,6 +223,10 @@ try {
   await page.locator('.office-scene-shape-desk').focus();
   await page.keyboard.press('Enter');
   await page.locator('.office-equipment-modal .office-v6-drawer').waitFor();
+  assert.equal(
+    await page.evaluate(() => document.activeElement?.classList.contains('office-v6-drawer-close')),
+    true,
+  );
   assert.match(await page.locator('.office-equipment-modal .office-v6-drawer-title h3').textContent(), /Стол/i);
   await page.keyboard.press('Escape');
   await page.locator('.office-equipment-modal').waitFor({ state: 'detached' });
@@ -286,9 +294,20 @@ try {
   await page.getByRole('button', { name: 'Выбрать аксессуары' }).click();
   await page.locator('.office-equipment-modal .office-v6-drawer').waitFor();
   const mug = page.locator('.office-equipment-modal .office-v6-item-card').filter({ hasText: 'Своя кружка' });
-  await mug.getByRole('button', { name: /^Купить$/ }).click();
+  const mugBuy = mug.getByRole('button', { name: /^Купить$/ });
+  await mugBuy.evaluate((node) => {
+    node.click();
+    node.click();
+  });
   await page.waitForFunction(() => /куплен|установлен/i.test(document.querySelector('.office-scene-note')?.textContent ?? ''));
   assert.match(await page.locator('.office-scene-note').textContent(), /куплен|установлен/i);
+  await page.waitForTimeout(80);
+  const purchaseState = JSON.parse(await page.evaluate(() => localStorage.getItem('4rrum.office.v4_1')));
+  assert.equal(
+    new Set(purchaseState.v6.ownedItemIds).size,
+    purchaseState.v6.ownedItemIds.length,
+    'rapid buy must not duplicate an owned item',
+  );
   await page.locator('.office-equipment-modal .office-v6-drawer-close').click();
   await page.locator('.office-equipment-modal').waitFor({ state: 'detached' });
 
@@ -423,10 +442,25 @@ try {
   await page.getByRole('button', { name: /Вернуться в офис/ }).click();
 
   // Complete first-day story from the dedicated Tasks screen.
+  // The first choice is intentionally fired twice in the same frame: only one outcome may apply.
   await page.getByRole('button', { name: /Задачи/ }).first().click();
-  for (const choiceName of [/Разобрать по приоритетам/, /Попросить помощи/, /Согласиться переделать/]) {
+  await page.getByRole('button', { name: /^Выполнить$/ }).first().click();
+  let dialog = page.getByRole('dialog');
+  await dialog.waitFor();
+  const firstChoice = dialog.getByRole('button', { name: /Разобрать по приоритетам/ });
+  await firstChoice.evaluate((node) => {
+    node.click();
+    node.click();
+  });
+  await dialog.waitFor({ state: 'detached' });
+  await page.waitForTimeout(80);
+  const afterRapidStory = JSON.parse(await page.evaluate(() => localStorage.getItem('4rrum.office.v4_1')));
+  assert.equal(afterRapidStory.story.completedEvents.length, 1);
+  assert.equal(afterRapidStory.snapshot.daily.progress, 1);
+
+  for (const choiceName of [/Попросить помощи/, /Согласиться переделать/]) {
     await page.getByRole('button', { name: /^Выполнить$/ }).first().click();
-    const dialog = page.getByRole('dialog');
+    dialog = page.getByRole('dialog');
     await dialog.waitFor();
     await dialog.getByRole('button', { name: choiceName }).click();
     await dialog.waitFor({ state: 'detached' });
@@ -451,10 +485,26 @@ try {
   );
   await assertWorldNav('Боссы');
   await page.getByRole('button', { name: /Начать переговоры/ }).click();
-  await page.getByRole('dialog', { name: /Босс: Сергей Петрович/ }).waitFor();
+  const bossDialog = page.getByRole('dialog', { name: /Босс: Сергей Петрович/ });
+  await bossDialog.waitFor();
+  assert.equal(
+    await page.evaluate(() => document.activeElement?.classList.contains('office-modal-close')),
+    true,
+  );
   assert.equal(await page.locator('.office-v6-boss-actions>button').count(), 3);
-  await page.getByRole('button', { name: /Аргументировать/ }).click();
-  assert.match(await page.locator('.office-v6-boss-health').textContent(), /Терпение босса/);
+  const bossHealthBefore = await page.locator('.office-v6-boss-health').textContent();
+  const hpBefore = Number(bossHealthBefore.match(/(\d+)\s*\/\s*(\d+)/)?.[1]);
+  const logicButton = page.getByRole('button', { name: /Аргументировать/ });
+  const logicDamage = Number((await logicButton.locator('b').textContent()).replace(/\D/g, ''));
+  await logicButton.evaluate((node) => {
+    node.click();
+    node.click();
+  });
+  await page.waitForTimeout(100);
+  const bossHealthAfter = await page.locator('.office-v6-boss-health').textContent();
+  const hpAfter = Number(bossHealthAfter.match(/(\d+)\s*\/\s*(\d+)/)?.[1]);
+  assert.equal(hpAfter, Math.max(0, hpBefore - logicDamage));
+  assert.match(bossHealthAfter, /Терпение босса/);
 
   await page.screenshot({ path: output + '/boss-1600.png', fullPage: true });
 
@@ -605,8 +655,18 @@ try {
   assert.equal(await page.locator('.office-promotion-compact.is-ready').count(), 1);
   const readyPromotion = page.getByRole('button', { name: 'Попросить повышение' });
   await readyPromotion.waitFor();
-  await readyPromotion.click();
-  await page.waitForTimeout(80);
+  const reputationBeforePromotion = Number(
+    await page.evaluate(() => JSON.parse(localStorage.getItem('4rrum.office.v4_1')).snapshot.reputation),
+  );
+  await readyPromotion.evaluate((node) => {
+    node.click();
+    node.click();
+  });
+  await page.waitForTimeout(100);
+  const reputationAfterPromotion = Number(
+    await page.evaluate(() => JSON.parse(localStorage.getItem('4rrum.office.v4_1')).snapshot.reputation),
+  );
+  assert.equal(reputationAfterPromotion, Math.min(100, reputationBeforePromotion + 5));
 
   await assertOneScreen('alpha chapter complete home 1366x768');
   assert.equal(await page.locator('.office-promotion-compact.is-alpha-complete').count(), 1);
@@ -801,7 +861,7 @@ try {
   assert(recoveredState && recoveredState.includes('"version":1'));
 
   assert.deepEqual(pageErrors, []);
-  console.log('Office v6.17 alpha resilience: clean first session, normalized saves, single boss system, persistence and full desktop regression passed');
+  console.log('Office v6.18 interaction safety: rapid-action guards, dialog focus, clean first session, save resilience and full desktop regression passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
