@@ -2576,12 +2576,12 @@ button{font:inherit}
     0 28px 50px rgba(0,0,0,.40);
 }
 
-.civ-generated-boss{
+.civ-boss-illustration.civ-generated-boss{
   display:block;
-  background-image:url("/games/civilization/boss-sheet.webp");
-  background-size:300% 100%;
-  background-position:var(--civ-boss-x) 50%;
-  background-repeat:no-repeat;
+  background-image:url("/games/civilization/boss-sheet.webp")!important;
+  background-size:300% 100%!important;
+  background-position:var(--civ-boss-x) 50%!important;
+  background-repeat:no-repeat!important;
   border-radius:10px;
   overflow:hidden;
   box-shadow:
