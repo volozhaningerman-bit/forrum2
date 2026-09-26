@@ -108,3 +108,325 @@ button{font:inherit}
   .civ-full-panel{position:fixed;top:58px;bottom:60px;left:0;right:0;overflow:auto}
   .civ-equipment-layout,.civ-boss-layout,.civ-map-detail{grid-template-columns:1fr}.civ-item-grid{grid-template-columns:repeat(2,1fr)}.civ-map-path{grid-template-columns:1fr 1fr}.civ-craft-grid,.civ-tribe-grid{grid-template-columns:1fr 1fr}
 }
+
+/* ==========================================================================
+   CIVILIZATION ALPHA — APPROVED MOCKUP ALIGNMENT
+   Central panels preserve the compact player rail and scoped task rail.
+   ========================================================================== */
+
+.civ-player-rail{
+  align-self:start;
+  height:auto;
+  min-height:0;
+  overflow:visible;
+  background:linear-gradient(180deg,rgba(13,21,26,.98),rgba(8,13,17,.96));
+  box-shadow:0 12px 28px rgba(0,0,0,.22);
+}
+
+.civ-avatar-card{
+  padding:8px 8px 10px;
+}
+
+.civ-avatar-card .civ-mascot.compact{
+  margin-top:-4px;
+}
+
+.civ-full-panel{
+  position:relative;
+  inset:auto;
+  grid-column:2;
+  grid-row:2;
+  width:auto;
+  height:auto;
+  min-width:0;
+  min-height:0;
+  margin:0;
+  padding:30px 14px 12px;
+  align-self:stretch;
+  justify-self:stretch;
+  z-index:42;
+  border:1px solid #3a3328;
+  border-radius:10px;
+  background:
+    radial-gradient(circle at 48% 8%,rgba(124,72,27,.20),transparent 32%),
+    linear-gradient(180deg,rgba(11,17,20,.995),rgba(5,9,11,.995));
+  box-shadow:0 18px 46px rgba(0,0,0,.48),inset 0 1px rgba(255,209,118,.035);
+  overflow:hidden;
+}
+
+.civ-panel-collapse{
+  top:0;
+  width:74px;
+  height:26px;
+  border-color:#8b622e;
+  background:linear-gradient(180deg,#241d14,#121618);
+  box-shadow:0 5px 16px rgba(0,0,0,.32);
+}
+
+.civ-panel-body{
+  height:100%;
+  min-height:0;
+}
+
+.civ-panel-head{
+  min-height:64px;
+  padding:4px 4px 10px;
+}
+
+.civ-panel-head h2{
+  font-size:24px;
+  line-height:1;
+}
+
+.civ-panel-head p{
+  max-width:680px;
+  font-size:9px;
+  line-height:1.35;
+}
+
+.civ-equipment-tabs{
+  gap:6px;
+  padding:9px 2px;
+}
+
+.civ-equipment-tabs button{
+  min-width:0;
+  flex:1 1 0;
+  max-width:168px;
+  height:36px;
+}
+
+.civ-equipment-tabs button.back{
+  flex:0 0 44px;
+  min-width:44px;
+}
+
+.civ-equipment-layout{
+  grid-template-columns:minmax(0,1.42fr) minmax(300px,.86fr);
+  gap:10px;
+  overflow:hidden;
+}
+
+.civ-item-grid{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:7px;
+  padding:1px 3px 6px;
+  align-content:start;
+  scrollbar-width:thin;
+  scrollbar-color:#694b29 #0b1115;
+}
+
+.civ-item-card{
+  min-height:122px;
+  padding:8px 6px 7px;
+  border-radius:7px;
+  grid-template-rows:minmax(70px,1fr) auto auto;
+}
+
+.civ-item-card b{
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:10px;
+}
+
+.civ-item-card small{
+  font-size:8px;
+}
+
+.civ-item-card em{
+  right:6px;
+  top:6px;
+  width:23px;
+  height:23px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:50%;
+  background:#080c0f;
+  font-size:11px;
+}
+
+.civ-item-art{
+  width:78px;
+  height:78px;
+  display:grid;
+  place-items:center;
+  filter:drop-shadow(0 10px 10px rgba(0,0,0,.5));
+}
+
+.civ-item-art svg{
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+
+.civ-item-art.large{
+  width:min(92%,220px);
+  height:min(92%,290px);
+}
+
+.civ-item-card.locked .civ-item-art{
+  filter:grayscale(.7) brightness(.54) drop-shadow(0 8px 9px rgba(0,0,0,.55));
+}
+
+.civ-item-card.active .civ-item-art{
+  filter:drop-shadow(0 0 10px rgba(238,160,49,.24)) drop-shadow(0 10px 9px rgba(0,0,0,.52));
+}
+
+.civ-item-detail{
+  grid-template-columns:minmax(130px,.75fr) minmax(165px,1fr);
+  gap:10px;
+  padding:9px;
+  overflow:hidden;
+}
+
+.civ-item-hero{
+  min-height:0;
+  height:100%;
+  max-height:430px;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(140,75,28,.46),transparent 37%),
+    linear-gradient(180deg,#181510,#0b1013);
+}
+
+.civ-detail-title h3{
+  font-size:21px;
+  margin-bottom:6px;
+}
+
+.civ-item-copy>p{
+  font-size:9px;
+  line-height:1.4;
+  margin-bottom:6px;
+}
+
+.civ-item-copy dl>div{
+  padding:6px 0;
+}
+
+.civ-item-copy dt,
+.civ-item-copy dd{
+  font-size:8.5px;
+}
+
+.civ-item-copy>button{
+  height:34px;
+}
+
+.civ-scene{
+  box-shadow:inset 0 0 0 1px rgba(230,165,68,.035);
+}
+
+.civ-hotspot{
+  border-color:rgba(219,157,62,.52);
+  background:linear-gradient(180deg,rgba(16,19,18,.92),rgba(8,13,15,.94));
+  backdrop-filter:blur(4px);
+}
+
+.civ-hotspot:hover,
+.civ-hotspot:focus-visible{
+  border-color:#dc9d3d;
+  box-shadow:0 0 0 1px rgba(255,193,84,.12),0 7px 20px rgba(0,0,0,.34);
+}
+
+.civ-task-rail{
+  box-shadow:0 12px 30px rgba(0,0,0,.22);
+}
+
+.civ-task-scroll{
+  overscroll-behavior:contain;
+}
+
+@media(max-width:1450px){
+  .civilization-hub{
+    grid-template-columns:164px minmax(0,1fr) 292px;
+  }
+
+  .civ-location{
+    width:164px;
+  }
+
+  .civ-resource{
+    min-width:112px;
+  }
+
+  .civ-equipment-layout{
+    grid-template-columns:minmax(0,1.28fr) minmax(260px,.82fr);
+  }
+
+  .civ-item-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+
+  .civ-item-card{
+    min-height:105px;
+    grid-template-rows:minmax(58px,1fr) auto auto;
+  }
+
+  .civ-item-art{
+    width:64px;
+    height:64px;
+  }
+
+  .civ-panel-head{
+    min-height:54px;
+  }
+
+  .civ-panel-head h2{
+    font-size:20px;
+  }
+}
+
+@media(min-width:721px) and (max-height:800px){
+  .civ-full-panel{
+    padding:27px 10px 8px;
+  }
+
+  .civ-panel-head{
+    min-height:48px;
+    padding-bottom:7px;
+  }
+
+  .civ-panel-head h2{
+    font-size:18px;
+  }
+
+  .civ-panel-head p{
+    font-size:8px;
+  }
+
+  .civ-equipment-tabs{
+    padding:6px 2px;
+  }
+
+  .civ-equipment-tabs button{
+    height:31px;
+    font-size:8.5px;
+  }
+
+  .civ-item-card{
+    min-height:92px;
+    grid-template-rows:minmax(49px,1fr) auto auto;
+  }
+
+  .civ-item-art{
+    width:54px;
+    height:54px;
+  }
+
+  .civ-item-detail{
+    padding:7px;
+  }
+
+  .civ-detail-title h3{
+    font-size:18px;
+  }
+
+  .civ-item-copy>p,
+  .civ-item-copy dt,
+  .civ-item-copy dd{
+    font-size:7.5px;
+  }
+}
