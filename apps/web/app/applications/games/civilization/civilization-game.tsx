@@ -1135,6 +1135,54 @@ function EraArt({ era, large = false }: { era: 'cave' | 'stone' | 'bronze' | 'ir
   );
 }
 
+function MapPreviewArt() {
+  return (
+    <div className="civ-map-preview-art" aria-hidden="true">
+      <svg viewBox="0 0 620 330" role="presentation">
+        <defs>
+          <linearGradient id="map-preview-sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#29485c" />
+            <stop offset=".55" stopColor="#182a33" />
+            <stop offset="1" stopColor="#0a1013" />
+          </linearGradient>
+          <linearGradient id="map-preview-rock" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#6c3d24" />
+            <stop offset=".58" stopColor="#352219" />
+            <stop offset="1" stopColor="#17100d" />
+          </linearGradient>
+          <radialGradient id="map-preview-fire" cx=".5" cy=".5" r=".5">
+            <stop offset="0" stopColor="#ffd56a" stopOpacity=".95" />
+            <stop offset=".25" stopColor="#ff8b2b" stopOpacity=".8" />
+            <stop offset="1" stopColor="#ff5a18" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <rect width="620" height="330" rx="18" fill="url(#map-preview-sky)" />
+        <path d="M0 158 77 95l68 46 67-86 92 90 58-51 77 64 62-59 119 100v131H0Z" fill="#173039" />
+        <path d="M0 194 91 132l62 43 75-87 77 86 54-44 79 68 58-47 124 90v89H0Z" fill="#102127" />
+        <path d="M0 246c102-31 202-34 301-9 106 27 213 24 319-11v104H0Z" fill="#0a1418" />
+        <path d="M53 252c38-103 101-167 190-194 37 17 68 42 91 74-50-13-92-8-125 16-35 26-58 61-68 104Z" fill="url(#map-preview-rock)" />
+        <path d="M120 253c16-62 47-101 91-119 38 15 63 54 76 118Z" fill="#050708" />
+        <g fill="#163128">
+          <path d="m389 212 22-84 23 84Z"/><path d="m434 224 24-96 26 96Z"/><path d="m503 220 21-76 23 76Z"/>
+        </g>
+        <path d="M386 263c65-37 136-43 220-17" fill="none" stroke="#4c8592" strokeWidth="18" strokeLinecap="round" opacity=".7" />
+        <path d="M395 262c55-21 117-25 188-11" fill="none" stroke="#9ed5dc" strokeWidth="4" strokeLinecap="round" opacity=".45" />
+        <ellipse cx="183" cy="251" rx="82" ry="52" fill="url(#map-preview-fire)" />
+        <path d="M166 257c-16-31-4-58 12-79 7 20 18 35 11 56 18-23 23-46 17-69 31 31 39 65 20 93-13 20-42 29-60 11Z" fill="#ff7723" />
+        <path d="M180 261c-8-17-1-32 7-43 4 11 9 19 5 29 10-12 13-25 10-37 17 17 21 36 10 51-7 11-22 16-32 0Z" fill="#ffd35f" />
+        <path d="M97 270h155" stroke="#4c2b1c" strokeWidth="13" strokeLinecap="round" opacity=".8" />
+        <path d="M63 74c63 11 111 29 146 54" fill="none" stroke="#b65234" strokeWidth="7" strokeLinecap="round" opacity=".66" />
+        <circle cx="73" cy="68" r="10" fill="#b65234" opacity=".68" />
+      </svg>
+      <div className="civ-map-preview-copy">
+        <small>Текущая территория</small>
+        <strong>Пещера</strong>
+        <span>Здесь начинается путь племени</span>
+      </div>
+    </div>
+  );
+}
+
 function MapPanel({ setNotice }: { setNotice: (value: string) => void }) {
   return (
     <div className="civ-panel-body map">
@@ -1143,8 +1191,8 @@ function MapPanel({ setNotice }: { setNotice: (value: string) => void }) {
         {mapStages.map(([name, req, era], index) => <button type="button" key={name} className={index === 0 ? 'active' : 'locked'} onClick={() => setNotice(index === 0 ? 'Ты уже находишься в Пещере.' : `${name}: ${req}`)}><EraArt era={era} /><b>{name}</b><small>{req}</small><em>{index === 0 ? 'Текущая' : 'Закрыто'}</em></button>)}
       </div>
       <div className="civ-map-detail">
-        <div className="civ-map-visual"><EraArt era="cave" large /><b>Пещера</b><small>Стартовая территория</small></div>
-        <div><h3>Что нужно для Каменного века</h3><TaskRow task={{ label: 'Достичь 5 уровня', progress: 1, total: 5, reward: '' }} /><TaskRow task={{ label: 'Собрать камень', progress: 210, total: 500, reward: '' }} /><TaskRow task={{ label: 'Набрать власть', progress: 37, total: 100, reward: '' }} /></div>
+        <MapPreviewArt />
+        <div className="civ-map-requirements"><small>Следующая эпоха</small><h3>Что нужно для Каменного века</h3><TaskRow task={{ label: 'Достичь 5 уровня', progress: 1, total: 5, reward: '' }} /><TaskRow task={{ label: 'Собрать камень', progress: 210, total: 500, reward: '' }} /><TaskRow task={{ label: 'Набрать власть', progress: 37, total: 100, reward: '' }} /></div>
       </div>
     </div>
   );
