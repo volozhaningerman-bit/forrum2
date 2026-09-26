@@ -2527,8 +2527,8 @@ button{font:inherit}
   z-index:5;
   left:55.5%;
   bottom:1.5%;
-  width:245px;
-  height:370px;
+  width:200px;
+  height:460px;
   transform:translateX(-50%);
   filter:drop-shadow(0 30px 28px rgba(0,0,0,.56));
 }
@@ -2540,8 +2540,8 @@ button{font:inherit}
 .civ-character-art{
   position:relative!important;
   display:block!important;
-  width:245px!important;
-  height:370px!important;
+  width:200px!important;
+  height:460px!important;
   background:none!important;
   border:0!important;
   overflow:hidden;
@@ -2588,14 +2588,14 @@ button{font:inherit}
 }
 
 .civ-create-preview .civ-character-art{
-  width:310px!important;
-  height:520px!important;
+  width:230px!important;
+  height:500px!important;
   margin:auto;
 }
 
 .civ-profile-mascot .civ-character-art{
-  width:245px!important;
-  height:345px!important;
+  width:190px!important;
+  height:420px!important;
   margin:auto;
 }
 
@@ -2726,13 +2726,13 @@ button{font:inherit}
 @media(max-width:1450px){
   .civ-mascot-stage{
     left:55%;
-    width:215px;
-    height:330px;
+    width:180px;
+    height:410px;
     transform:translateX(-50%)!important;
   }
   .civ-character-art{
-    width:215px!important;
-    height:330px!important;
+    width:180px!important;
+    height:410px!important;
   }
   .civ-character-art.compact{
     width:112px!important;
@@ -2751,13 +2751,13 @@ button{font:inherit}
   .civ-mascot-stage{
     left:55%;
     bottom:-1%;
-    width:192px;
-    height:288px;
+    width:155px;
+    height:350px;
     transform:translateX(-50%)!important;
   }
   .civ-character-art{
-    width:192px!important;
-    height:288px!important;
+    width:155px!important;
+    height:350px!important;
   }
   .civ-character-art.compact{
     width:96px!important;
