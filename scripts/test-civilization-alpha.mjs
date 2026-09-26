@@ -138,6 +138,8 @@ try {
   // First launch is a one-time character creation flow.
   const createDialog = page.getByRole('dialog', { name: 'Создание персонажа' });
   await createDialog.waitFor();
+  await page.setViewportSize({ width: 1720, height: 864 });
+  await page.screenshot({ path: output + '/civilization-create-character-1720x864.png', fullPage: false });
   await createDialog.getByRole('button', { name: /Девочка/ }).click();
   await createDialog.locator('.civ-color-row button').nth(2).click();
   await createDialog.getByRole('button', { name: 'Пучок' }).click();
@@ -329,10 +331,18 @@ try {
     await page.getByRole('button', { name: 'Свернуть раздел' }).click();
   }
 
-  await page.getByRole('button', { name: 'Открыть меню персонажа' }).click();
-  await page.locator('.civ-player-menu').getByRole('button', { name: /Профиль/ }).click();
-  await page.screenshot({ path: output + '/civilization-profile-1720x864.png', fullPage: false });
-  await page.getByRole('button', { name: 'Свернуть раздел' }).click();
+  for (const [label, file] of [
+    ['Профиль', 'civilization-profile-1720x864.png'],
+    ['Достижения', 'civilization-achievements-1720x864.png'],
+    ['Инвентарь', 'civilization-inventory-1720x864.png'],
+    ['Эволюция', 'civilization-evolution-1720x864.png'],
+  ]) {
+    await page.getByRole('button', { name: 'Открыть меню персонажа' }).click();
+    await page.locator('.civ-player-menu').getByRole('button', { name: new RegExp(label, 'i') }).click();
+    await page.locator('.civ-full-panel').waitFor();
+    await page.screenshot({ path: output + '/' + file, fullPage: false });
+    await page.getByRole('button', { name: 'Свернуть раздел' }).click();
+  }
 
   // Character creation, equipped item and boss loot all survive reload.
   await page.reload({ waitUntil: 'networkidle' });
@@ -358,7 +368,7 @@ try {
   assert.match(page.url(), /\/applications\/games\/civilization/);
 
   assert.deepEqual(pageErrors, []);
-  console.log('Civilization alpha: creation, compact shell, scoped tasks, central panels, equipment persistence, real boss drops and desktop matrix passed');
+  console.log('Civilization visual pass 2: full shell, all primary/secondary screens, persistence and desktop visual QA passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
