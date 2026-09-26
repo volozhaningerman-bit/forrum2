@@ -96,22 +96,36 @@ try {
 
   const assertOverlayGeometry = async (label) => {
     const boxes = await page.evaluate(() => {
-      const hub = document.querySelector('.civilization-hub')?.getBoundingClientRect();
+      const scene = document.querySelector('.civ-scene')?.getBoundingClientRect();
+      const player = document.querySelector('.civ-player-rail')?.getBoundingClientRect();
+      const tasks = document.querySelector('.civ-task-rail')?.getBoundingClientRect();
+      const hud = document.querySelector('.civ-game-hud')?.getBoundingClientRect();
       const panel = document.querySelector('.civ-full-panel')?.getBoundingClientRect();
       const nav = document.querySelector('.civ-bottom-nav')?.getBoundingClientRect();
-      return hub && panel && nav ? {
-        hubTop: hub.top,
+      return scene && player && tasks && hud && panel && nav ? {
+        sceneTop: scene.top,
+        sceneLeft: scene.left,
+        sceneRight: scene.right,
+        sceneBottom: scene.bottom,
         panelTop: panel.top,
+        panelLeft: panel.left,
+        panelRight: panel.right,
         panelBottom: panel.bottom,
+        playerRight: player.right,
+        tasksLeft: tasks.left,
+        hudBottom: hud.bottom,
         navTop: nav.top,
-        panelWidth: panel.width,
-        hubWidth: hub.width,
       } : null;
     });
     assert(boxes, `${label}: missing panel geometry`);
-    assert(Math.abs(boxes.panelTop - boxes.hubTop) <= 2, `${label}: panel does not reach game top`);
+    assert(Math.abs(boxes.panelTop - boxes.sceneTop) <= 2, `${label}: panel must start at central scene top`);
+    assert(Math.abs(boxes.panelLeft - boxes.sceneLeft) <= 2, `${label}: panel must preserve player rail`);
+    assert(Math.abs(boxes.panelRight - boxes.sceneRight) <= 2, `${label}: panel must preserve task rail`);
+    assert(Math.abs(boxes.panelBottom - boxes.sceneBottom) <= 2, `${label}: panel must end with central scene`);
+    assert(boxes.panelLeft >= boxes.playerRight - 2, `${label}: panel overlaps player rail`);
+    assert(boxes.panelRight <= boxes.tasksLeft + 2, `${label}: panel overlaps task rail`);
+    assert(boxes.panelTop >= boxes.hudBottom - 2, `${label}: panel overlaps game HUD`);
     assert(boxes.panelBottom <= boxes.navTop + 2, `${label}: panel overlaps bottom navigation`);
-    assert(boxes.panelWidth >= boxes.hubWidth - 4, `${label}: panel must span the game width`);
   };
 
   await page.goto('http://127.0.0.1:' + port + '/applications/games/civilization', { waitUntil: 'networkidle' });
@@ -175,14 +189,17 @@ try {
     assert.equal(await bottomNav.getByRole('button', { name: new RegExp(label, 'i') }).count(), 1);
   }
 
-  // Equipment opens almost full-screen up to the game top and toggles closed on repeated click.
+  // Equipment occupies the full central game area while profile, tasks, HUD and bottom nav stay visible.
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
   await page.locator('.civ-full-panel').waitFor();
   await assertOverlayGeometry('equipment');
   assert.match(await page.locator('.civ-full-panel').textContent(), /Управление персонажем/);
   assert.equal(await page.locator('.civ-equipment-tabs>button').count(), 5);
+  assert((await page.locator('.civ-item-card').count()) >= 8, 'weapon catalog should show progression and locked goals');
+  assert.equal(await page.locator('.civ-item-art svg').count(), await page.locator('.civ-item-card').count() + 1);
   await page.getByRole('button', { name: /Одежда/ }).click();
   assert.match(await page.locator('.civ-item-detail').textContent(), /Шкура охотника/);
+  assert((await page.locator('.civ-item-card').count()) >= 5, 'clothes catalog should not look empty');
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
   await page.locator('.civ-full-panel').waitFor({ state: 'detached' });
 
@@ -230,6 +247,8 @@ try {
   await page.setViewportSize({ width: 1720, height: 864 });
   await page.screenshot({ path: output + '/civilization-hub-1720x864.png', fullPage: false });
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
+  await page.getByRole('button', { name: /Оружие/ }).click();
+  await assertOverlayGeometry('equipment screenshot');
   await page.screenshot({ path: output + '/civilization-equipment-1720x864.png', fullPage: false });
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
 
@@ -242,7 +261,7 @@ try {
   assert.match(page.url(), /\/applications\/games\/civilization/);
 
   assert.deepEqual(pageErrors, []);
-  console.log('Civilization alpha: creation, compact shell, scoped tasks, resource popovers, full-height navigation panels and desktop matrix passed');
+  console.log('Civilization alpha: creation, compact shell, scoped tasks, central full-height panels, dense equipment UI and desktop matrix passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
