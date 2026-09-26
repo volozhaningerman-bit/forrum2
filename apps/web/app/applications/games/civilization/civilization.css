@@ -2862,3 +2862,159 @@ button{font:inherit}
     height:82px!important;
   }
 }
+
+
+/* ==========================================================================
+   CIVILIZATION VISUAL PASS 2 — TRIBE ILLUSTRATION
+   ========================================================================== */
+
+.civ-tribe-grid{
+  align-items:stretch!important;
+  gap:12px!important;
+}
+
+.civ-tribe-card{
+  min-height:330px!important;
+  padding:0!important;
+  overflow:hidden;
+  display:grid!important;
+  grid-template-rows:150px minmax(0,1fr)!important;
+  border-radius:9px!important;
+  background:
+    radial-gradient(circle at 50% 0,rgba(160,93,36,.10),transparent 36%),
+    linear-gradient(180deg,#111a1e,#081014)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.025),0 12px 28px rgba(0,0,0,.16);
+}
+
+.civ-tribe-art{
+  position:relative;
+  min-height:150px;
+  overflow:hidden;
+  border-bottom:1px solid #2b373c;
+  background:#091014;
+}
+
+.civ-tribe-art svg{
+  width:100%;
+  height:100%;
+  display:block;
+  transform:scale(1.02);
+  filter:saturate(1.06) contrast(1.03);
+}
+
+.civ-tribe-art::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.16)),
+    radial-gradient(circle at 50% 72%,rgba(255,145,42,.14),transparent 38%);
+}
+
+.civ-tribe-card-copy{
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  padding:12px 14px 14px;
+}
+
+.civ-tribe-card-copy small{
+  color:#d69840!important;
+  font-size:8px!important;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+}
+
+.civ-tribe-card-copy h3{
+  margin:4px 0 7px!important;
+  color:#f2eee7!important;
+  font-size:20px!important;
+  letter-spacing:-.015em;
+}
+
+.civ-tribe-card-copy strong{
+  color:#e8ecee!important;
+  font-size:11px!important;
+}
+
+.civ-tribe-card-copy p{
+  margin:7px 0 12px!important;
+  color:#98a4aa!important;
+  font-size:8.5px!important;
+  line-height:1.45!important;
+}
+
+.civ-tribe-card-copy .civ-task-progress{
+  margin:10px 0 12px;
+}
+
+.civ-tribe-card-copy button{
+  width:100%;
+  min-height:36px;
+  margin-top:auto;
+  border:1px solid #8e6030!important;
+  border-radius:6px!important;
+  background:linear-gradient(180deg,#342419,#191512)!important;
+  color:#efbd68!important;
+  font-weight:800;
+}
+
+.civ-tribe-card-copy button:hover{
+  border-color:#b77b34!important;
+  background:linear-gradient(180deg,#46301d,#211813)!important;
+  color:#ffd27a!important;
+}
+
+.civ-tribe-card.hunt .civ-tribe-art{
+  background:
+    radial-gradient(circle at 75% 50%,rgba(123,101,78,.18),transparent 32%),
+    #091014;
+}
+
+.civ-tribe-card.fire .civ-tribe-art{
+  background:
+    radial-gradient(circle at 50% 72%,rgba(245,129,36,.16),transparent 36%),
+    #091014;
+}
+
+@media(max-width:1450px){
+  .civ-tribe-card{
+    min-height:292px!important;
+    grid-template-rows:126px minmax(0,1fr)!important;
+  }
+  .civ-tribe-art{
+    min-height:126px;
+  }
+  .civ-tribe-card-copy{
+    padding:10px 11px 11px;
+  }
+  .civ-tribe-card-copy h3{
+    font-size:17px!important;
+  }
+}
+
+@media(min-width:721px) and (max-height:800px){
+  .civ-tribe-card{
+    min-height:245px!important;
+    grid-template-rows:100px minmax(0,1fr)!important;
+  }
+  .civ-tribe-art{
+    min-height:100px;
+  }
+  .civ-tribe-card-copy{
+    padding:7px 9px 9px;
+  }
+  .civ-tribe-card-copy h3{
+    margin:2px 0 4px!important;
+    font-size:14px!important;
+  }
+  .civ-tribe-card-copy p{
+    margin:4px 0 7px!important;
+    font-size:7.5px!important;
+  }
+  .civ-tribe-card-copy button{
+    min-height:30px;
+    font-size:8px!important;
+  }
+}
