@@ -157,6 +157,27 @@ export function CivilizationGame() {
     return () => document.body.classList.remove('civilization-no-scroll');
   }, []);
 
+  useEffect(() => {
+    const closeTopLayer = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      if (resourceOpen) {
+        setResourceOpen(null);
+        return;
+      }
+      if (profileOpen) {
+        setProfileOpen(false);
+        return;
+      }
+      if (tasksExpanded) {
+        setTasksExpanded(false);
+        return;
+      }
+      if (panel) setPanel(null);
+    };
+    window.addEventListener('keydown', closeTopLayer);
+    return () => window.removeEventListener('keydown', closeTopLayer);
+  }, [panel, profileOpen, resourceOpen, tasksExpanded]);
+
   const items = useMemo(() => equipment.filter((item) => item.category === category), [category]);
   const selectedItem = equipment.find((item) => item.id === selectedItemId) ?? equipment[0];
   const selectedBossData = bosses.find((boss) => boss.id === selectedBoss) ?? bosses[1];
@@ -207,7 +228,7 @@ export function CivilizationGame() {
               <Icon>⚡</Icon><span><strong>100/100</strong><small>Энергия</small></span><b>+</b>
             </button>
             <div className="civ-resource-wrap">
-              <button type="button" className={`civ-resource ${resourceOpen === 'food' ? 'active' : ''}`} onClick={() => setResourceOpen(resourceOpen === 'food' ? null : 'food')}>
+              <button type="button" aria-expanded={resourceOpen === 'food'} className={`civ-resource ${resourceOpen === 'food' ? 'active' : ''}`} onClick={() => setResourceOpen(resourceOpen === 'food' ? null : 'food')}>
                 <Icon>🍓</Icon><span><strong>340</strong><small>Еда</small></span><b>{resourceOpen === 'food' ? '⌃' : '⌄'}</b>
               </button>
               {resourceOpen === 'food' ? (
@@ -221,7 +242,7 @@ export function CivilizationGame() {
               ) : null}
             </div>
             <div className="civ-resource-wrap">
-              <button type="button" className={`civ-resource ${resourceOpen === 'materials' ? 'active' : ''}`} onClick={() => setResourceOpen(resourceOpen === 'materials' ? null : 'materials')}>
+              <button type="button" aria-expanded={resourceOpen === 'materials'} className={`civ-resource ${resourceOpen === 'materials' ? 'active' : ''}`} onClick={() => setResourceOpen(resourceOpen === 'materials' ? null : 'materials')}>
                 <Icon>🪨</Icon><span><strong>120</strong><small>Ресурсы</small></span><b>{resourceOpen === 'materials' ? '⌃' : '⌄'}</b>
               </button>
               {resourceOpen === 'materials' ? (
@@ -249,7 +270,7 @@ export function CivilizationGame() {
             <div className="civ-xp"><i style={{ width: '58%' }} /></div>
             <em>58 / 100 XP</em>
           </button>
-          <button className={`civ-player-chevron ${profileOpen ? 'open' : ''}`} type="button" aria-label="Открыть меню персонажа" onClick={() => setProfileOpen(!profileOpen)}>⌄</button>
+          <button className={`civ-player-chevron ${profileOpen ? 'open' : ''}`} type="button" aria-label="Открыть меню персонажа" aria-expanded={profileOpen} onClick={() => setProfileOpen(!profileOpen)}>⌄</button>
           {profileOpen ? (
             <nav className="civ-player-menu">
               {[
@@ -291,7 +312,7 @@ export function CivilizationGame() {
           <div className="civ-task-current">
             {visibleTasks.slice(0, 3).map(task => <TaskRow key={task.label} task={task} />)}
           </div>
-          <button type="button" className={`civ-task-expand ${tasksExpanded ? 'open' : ''}`} onClick={() => setTasksExpanded(!tasksExpanded)}>
+          <button type="button" aria-expanded={tasksExpanded} className={`civ-task-expand ${tasksExpanded ? 'open' : ''}`} onClick={() => setTasksExpanded(!tasksExpanded)}>
             <span>{tasksExpanded ? 'Скрыть список' : `Все задания · ${taskPeriod === 'daily' ? 'день' : 'неделя'}`}</span><b>⌄</b>
           </button>
           {tasksExpanded ? (
@@ -347,7 +368,7 @@ export function CivilizationGame() {
             ['craft', '🔨', 'Крафт'],
             ['tribe', '⛺', 'Племя'],
           ] as const).map(([id, icon, label]) => (
-            <button type="button" key={id} className={panel === id ? 'active' : ''} onClick={() => togglePanel(id)}>
+            <button type="button" key={id} className={panel === id ? 'active' : ''} aria-pressed={panel === id} onClick={() => togglePanel(id)}>
               <span>{icon}</span><b>{label}</b>
             </button>
           ))}
@@ -558,7 +579,7 @@ function EquipmentPanel({
           ['accessory', '💍', 'Аксессуары'],
           ['tool', '🔨', 'Инструменты'],
         ] as const).map(([id, icon, label]) => (
-          <button key={id} type="button" className={category === id ? 'active' : ''} onClick={() => { setCategory(id); const first = equipment.find(item => item.category === id); if (first) setSelectedItemId(first.id); }}>{icon} {label}</button>
+          <button key={id} type="button" aria-pressed={category === id} className={category === id ? 'active' : ''} onClick={() => { setCategory(id); const first = equipment.find(item => item.category === id); if (first) setSelectedItemId(first.id); }}>{icon} {label}</button>
         ))}
       </div>
       <div className="civ-equipment-layout">
