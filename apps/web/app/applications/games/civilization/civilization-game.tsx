@@ -1164,14 +1164,62 @@ function CraftPanel({ setNotice }: { setNotice: (value: string) => void }) {
   );
 }
 
+function TribeArt({ variant }: { variant: 'camp' | 'fire' | 'hunt' }) {
+  return (
+    <div className={`civ-tribe-art ${variant}`} aria-hidden="true">
+      <svg viewBox="0 0 360 180" role="presentation">
+        <defs>
+          <linearGradient id={`tribe-sky-${variant}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#203243" />
+            <stop offset=".58" stopColor="#182129" />
+            <stop offset="1" stopColor="#0a0e11" />
+          </linearGradient>
+          <radialGradient id={`tribe-fire-${variant}`} cx=".5" cy=".72" r=".34">
+            <stop offset="0" stopColor="#ffd56f" stopOpacity=".95" />
+            <stop offset=".3" stopColor="#ff8b2e" stopOpacity=".82" />
+            <stop offset="1" stopColor="#ff5d20" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <rect width="360" height="180" rx="14" fill={`url(#tribe-sky-${variant})`} />
+        <path d="M0 116 54 77l37 26 48-53 48 47 40-30 52 46 42-29 39 32v64H0Z" fill="#152025" />
+        <path d="M0 132c65-17 124-20 177-9 58 12 118 10 183-7v64H0Z" fill="#0c1215" />
+        <path d="M30 123 63 72l31 51Z" fill="#553825" stroke="#9a6339" strokeWidth="3" />
+        <path d="M267 121 301 71l31 50Z" fill="#4c3324" stroke="#8d5b34" strokeWidth="3" />
+        <path d="M34 123h55M271 121h55" stroke="#c28443" strokeWidth="4" opacity=".6" />
+        <ellipse cx="180" cy="138" rx="84" ry="25" fill={`url(#tribe-fire-${variant})`} />
+        <path d="M168 143c-15-21-3-38 7-50 5 12 12 20 8 31 12-13 15-27 11-42 20 19 25 41 12 59-9 13-28 18-38 2Z" fill="#ff7824" />
+        <path d="M177 145c-8-12-1-22 5-29 3 7 7 11 5 18 7-8 9-16 6-24 11 11 14 23 7 34-5 8-16 11-23 1Z" fill="#ffd35f" />
+        <g fill="#b89573">
+          <circle cx="125" cy="127" r="8"/><circle cx="144" cy="122" r="8"/><circle cx="215" cy="123" r="8"/><circle cx="234" cy="128" r="8"/>
+        </g>
+        <g stroke="#7f5a3e" strokeWidth="5" strokeLinecap="round">
+          <path d="M125 137v21m19-26v24m71-24v24m19-19v21"/>
+        </g>
+        {variant === 'camp' ? <>
+          <path d="M14 45h120v28H14Z" fill="#7b3c2a" opacity=".88"/>
+          <path d="M22 50h104" stroke="#d07b46" strokeWidth="4" strokeDasharray="11 8"/>
+        </> : null}
+        {variant === 'fire' ? <>
+          <path d="M143 152h74" stroke="#8e5b34" strokeWidth="11" strokeLinecap="round"/>
+          <path d="M150 144h60" stroke="#d49c5f" strokeWidth="4" strokeLinecap="round"/>
+        </> : null}
+        {variant === 'hunt' ? <>
+          <path d="M278 109c14-26 28-41 43-47 10 9 16 20 18 35-11 17-28 28-51 33Z" fill="#71665f" opacity=".9"/>
+          <path d="M303 91c6 19 5 31-3 38" stroke="#d8c8a4" strokeWidth="7" strokeLinecap="round"/>
+        </> : null}
+      </svg>
+    </div>
+  );
+}
+
 function TribePanel({ setNotice }: { setNotice: (value: string) => void }) {
   return (
     <div className="civ-panel-body tribe">
       <header className="civ-panel-head"><div><small>Социальный прогресс</small><h2>Племя</h2><p>Общий лагерь игроков: развитие поселения, вклад ресурсов и совместные цели.</p></div></header>
       <div className="civ-tribe-grid">
-        <article><small>Твоё племя</small><h3>Каменный круг</h3><strong>7 / 20 участников</strong><p>Уровень лагеря 2 · +4% к сбору ресурсов</p><button type="button" onClick={() => setNotice('Открыт список участников племени.')}>Участники</button></article>
-        <article><small>Общая цель</small><h3>Большой костёр</h3><strong>1 420 / 2 000 дерева</strong><div className="civ-task-progress"><i style={{ width: '71%' }} /></div><button type="button" onClick={() => setNotice('Ты внёс 20 дерева в развитие племени.')}>Внести ресурсы</button></article>
-        <article><small>Бонус недели</small><h3>Охота на мамонта</h3><strong>Осталось 2 дня</strong><p>Победи Мамонта вместе с племенем и получи редкий трофей.</p><button type="button" onClick={() => setNotice('Племенная охота отмечена как текущая цель.')}>Сделать целью</button></article>
+        <article className="civ-tribe-card camp"><TribeArt variant="camp" /><div className="civ-tribe-card-copy"><small>Твоё племя</small><h3>Каменный круг</h3><strong>7 / 20 участников</strong><p>Уровень лагеря 2 · +4% к сбору ресурсов</p><button type="button" onClick={() => setNotice('Открыт список участников племени.')}>Участники</button></div></article>
+        <article className="civ-tribe-card fire"><TribeArt variant="fire" /><div className="civ-tribe-card-copy"><small>Общая цель</small><h3>Большой костёр</h3><strong>1 420 / 2 000 дерева</strong><div className="civ-task-progress"><i style={{ width: '71%' }} /></div><button type="button" onClick={() => setNotice('Ты внёс 20 дерева в развитие племени.')}>Внести ресурсы</button></div></article>
+        <article className="civ-tribe-card hunt"><TribeArt variant="hunt" /><div className="civ-tribe-card-copy"><small>Бонус недели</small><h3>Охота на мамонта</h3><strong>Осталось 2 дня</strong><p>Победи Мамонта вместе с племенем и получи редкий трофей.</p><button type="button" onClick={() => setNotice('Племенная охота отмечена как текущая цель.')}>Сделать целью</button></div></article>
       </div>
     </div>
   );
