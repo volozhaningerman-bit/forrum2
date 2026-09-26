@@ -266,6 +266,8 @@ try {
   await bottomNav.getByRole('button', { name: /Боссы/ }).click();
   await page.getByRole('button', { name: /Вожак обезьян/ }).click();
   assert.match(await page.locator('.civ-boss-detail').textContent(), /Тотем вожака/);
+  assert.equal(await page.locator('.civ-boss-list .civ-boss-illustration svg').count(), 3);
+  assert.equal(await page.locator('.civ-boss-art .civ-boss-illustration.large svg').count(), 1);
   const apeHpBefore = await page.locator('.civ-boss-hp').textContent();
   for (let hit = 0; hit < 4; hit += 1) {
     await page.getByRole('button', { name: /Атаковать/ }).click();
@@ -310,6 +312,16 @@ try {
   await assertOverlayGeometry('equipment screenshot');
   await page.screenshot({ path: output + '/civilization-equipment-1720x864.png', fullPage: false });
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
+
+  await bottomNav.getByRole('button', { name: /Боссы/ }).click();
+  await page.getByRole('button', { name: /Саблезубый тигр/ }).click();
+  await page.screenshot({ path: output + '/civilization-bosses-1720x864.png', fullPage: false });
+  await page.getByRole('button', { name: 'Свернуть раздел' }).click();
+
+  await page.getByRole('button', { name: 'Открыть меню персонажа' }).click();
+  await page.locator('.civ-player-menu').getByRole('button', { name: /Профиль/ }).click();
+  await page.screenshot({ path: output + '/civilization-profile-1720x864.png', fullPage: false });
+  await page.getByRole('button', { name: 'Свернуть раздел' }).click();
 
   // Character creation, equipped item and boss loot all survive reload.
   await page.reload({ waitUntil: 'networkidle' });
