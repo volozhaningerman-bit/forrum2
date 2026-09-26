@@ -2431,3 +2431,63 @@ button{font:inherit}
   width:20px;
   height:20px;
 }
+
+
+/* CIVILIZATION ALPHA — PROFILE CONTRAST FIX */
+.civ-profile-panel,
+.civ-profile-panel h2,
+.civ-profile-panel h3,
+.civ-profile-panel strong{
+  color:#edf1f2;
+}
+
+.civ-profile-identity small,
+.civ-profile-loadout small,
+.civ-profile-origin small{
+  color:#d99a43!important;
+}
+
+.civ-profile-identity h3,
+.civ-profile-loadout h3,
+.civ-profile-origin h3{
+  color:#f0ece5!important;
+}
+
+.civ-profile-identity span,
+.civ-profile-loadout p,
+.civ-profile-origin p{
+  color:#a3adb2!important;
+}
+
+.civ-profile-stats article small{
+  color:#a5afb4!important;
+}
+
+.civ-profile-stats article strong{
+  color:#ffd16d!important;
+}
+
+.civ-profile-stats article span{
+  color:#87949a!important;
+}
+
+.civ-profile-loadout{
+  background:
+    radial-gradient(circle at 85% 50%,rgba(181,106,37,.10),transparent 32%),
+    linear-gradient(180deg,#111a1f,#091115)!important;
+}
+
+.civ-profile-origin{
+  background:
+    linear-gradient(180deg,#111a1f,#091115)!important;
+}
+
+.civ-profile-unlocks span{
+  color:#bcc5c9!important;
+  border-color:#34434a!important;
+  background:#0b1418!important;
+}
+
+.civ-profile-identity .civ-xp{
+  border-color:#29363c;
+}
