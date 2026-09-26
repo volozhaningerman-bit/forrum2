@@ -78,7 +78,6 @@ type OfficeView =
   | 'achievements';
 type OfficeModal =
   | { type: 'event'; event: OfficeStoryEvent }
-  | { type: 'boss'; event: OfficeStoryEvent }
   | { type: 'pranks' }
   | { type: 'promotion-help' }
   | null;
@@ -103,6 +102,157 @@ function getOfficeProgressNotice(snapshot: OfficeSnapshot, story: OfficeStorySta
     return `Первый рабочий день: выполнено ${story.completedEvents.length}/3 событий.`;
   }
   return 'Первый рабочий день. Начни с простого поручения.';
+}
+
+function safeNumber(value: unknown, fallback: number, min: number, max: number) {
+  return typeof value === 'number' && Number.isFinite(value)
+    ? Math.min(max, Math.max(min, value))
+    : fallback;
+}
+
+function safeInteger(value: unknown, fallback: number, min: number, max: number) {
+  return Math.round(safeNumber(value, fallback, min, max));
+}
+
+function hydrateOfficeSnapshot(saved: OfficeSnapshot): OfficeSnapshot {
+  const skills =
+    saved.skills && typeof saved.skills === 'object'
+      ? saved.skills
+      : initialOfficeSnapshot.skills;
+  const daily =
+    saved.daily && typeof saved.daily === 'object'
+      ? saved.daily
+      : initialOfficeSnapshot.daily;
+  const assignment =
+    saved.firstAssignment && typeof saved.firstAssignment === 'object'
+      ? saved.firstAssignment
+      : initialOfficeSnapshot.firstAssignment;
+  const company =
+    saved.company && typeof saved.company === 'object'
+      ? saved.company
+      : initialOfficeSnapshot.company;
+
+  const dailyTarget = safeInteger(daily.target, initialOfficeSnapshot.daily.target, 1, 1000);
+  const assignmentTarget = safeInteger(
+    assignment.target,
+    initialOfficeSnapshot.firstAssignment.target,
+    1,
+    100,
+  );
+
+  return {
+    ...initialOfficeSnapshot,
+    ...saved,
+    playerName:
+      typeof saved.playerName === 'string' && saved.playerName.trim()
+        ? saved.playerName.slice(0, 40)
+        : initialOfficeSnapshot.playerName,
+    level: safeInteger(saved.level, initialOfficeSnapshot.level, 1, 1000),
+    xp: safeInteger(saved.xp, initialOfficeSnapshot.xp, 0, 1_000_000_000),
+    xpToNext: safeInteger(saved.xpToNext, initialOfficeSnapshot.xpToNext, 1, 1_000_000_000),
+    energy: safeInteger(saved.energy, initialOfficeSnapshot.energy, 0, 10_000),
+    maxEnergy: safeInteger(saved.maxEnergy, initialOfficeSnapshot.maxEnergy, 1, 10_000),
+    money: safeInteger(saved.money, initialOfficeSnapshot.money, 0, 1_000_000_000_000),
+    motivation: safeInteger(saved.motivation, initialOfficeSnapshot.motivation, 0, 100),
+    reputation: safeInteger(saved.reputation, initialOfficeSnapshot.reputation, 0, 100),
+    stress: safeInteger(saved.stress, initialOfficeSnapshot.stress, 0, 100),
+    salary: safeInteger(saved.salary, initialOfficeSnapshot.salary, 0, 1_000_000_000),
+    role:
+      typeof saved.role === 'string' && saved.role.trim()
+        ? saved.role.slice(0, 80)
+        : initialOfficeSnapshot.role,
+    skillPoints: safeInteger(saved.skillPoints, initialOfficeSnapshot.skillPoints, 0, 999),
+    skills: {
+      competence: safeInteger(skills.competence, initialOfficeSnapshot.skills.competence, 0, 999),
+      communication: safeInteger(skills.communication, initialOfficeSnapshot.skills.communication, 0, 999),
+      drive: safeInteger(skills.drive, initialOfficeSnapshot.skills.drive, 0, 999),
+    },
+    daily: {
+      ...initialOfficeSnapshot.daily,
+      ...daily,
+      title:
+        typeof daily.title === 'string' && daily.title.trim()
+          ? daily.title.slice(0, 120)
+          : initialOfficeSnapshot.daily.title,
+      progress: safeInteger(daily.progress, initialOfficeSnapshot.daily.progress, 0, dailyTarget),
+      target: dailyTarget,
+      moneyReward: safeInteger(daily.moneyReward, initialOfficeSnapshot.daily.moneyReward, 0, 1_000_000),
+      motivationReward: safeInteger(
+        daily.motivationReward,
+        initialOfficeSnapshot.daily.motivationReward,
+        0,
+        100,
+      ),
+      claimed: typeof daily.claimed === 'boolean' ? daily.claimed : initialOfficeSnapshot.daily.claimed,
+    },
+    firstAssignment: {
+      progress: safeInteger(
+        assignment.progress,
+        initialOfficeSnapshot.firstAssignment.progress,
+        0,
+        assignmentTarget,
+      ),
+      target: assignmentTarget,
+    },
+    company: {
+      ...initialOfficeSnapshot.company,
+      ...company,
+      name:
+        typeof company.name === 'string' && company.name.trim()
+          ? company.name.slice(0, 100)
+          : initialOfficeSnapshot.company.name,
+      industry:
+        typeof company.industry === 'string' && company.industry.trim()
+          ? company.industry.slice(0, 100)
+          : initialOfficeSnapshot.company.industry,
+      level: safeInteger(company.level, initialOfficeSnapshot.company.level, 1, 100),
+      maxLevel: safeInteger(company.maxLevel, initialOfficeSnapshot.company.maxLevel, 1, 100),
+      description:
+        typeof company.description === 'string'
+          ? company.description.slice(0, 300)
+          : initialOfficeSnapshot.company.description,
+    },
+  };
+}
+
+function hydrateV6State(saved: V6State | undefined): V6State {
+  if (!saved || typeof saved !== 'object') return initialV6State;
+
+  const knownItems = new Map(v6Items.map((item) => [item.id, item]));
+  const owned = Array.isArray(saved.ownedItemIds)
+    ? saved.ownedItemIds.filter(
+        (id): id is string => typeof id === 'string' && knownItems.has(id),
+      )
+    : [];
+  const ownedItemIds = Array.from(new Set([...initialV6State.ownedItemIds, ...owned]));
+  const equipped: V6State['equipped'] = { ...initialV6State.equipped };
+
+  if (saved.equipped && typeof saved.equipped === 'object') {
+    for (const [category, id] of Object.entries(saved.equipped)) {
+      if (typeof id !== 'string') continue;
+      const item = knownItems.get(id);
+      if (!item || item.category !== category || !ownedItemIds.includes(id)) continue;
+      equipped[category as V6ItemCategory] = id;
+    }
+  }
+
+  return {
+    ...initialV6State,
+    gender: saved.gender === 'female' ? 'female' : 'male',
+    archetypeId: ['tech', 'communicator', 'careerist', 'creative', 'survivor'].includes(saved.archetypeId)
+      ? saved.archetypeId
+      : initialV6State.archetypeId,
+    careerBranch: ['general', 'expert', 'management', 'sales'].includes(saved.careerBranch)
+      ? saved.careerBranch
+      : initialV6State.careerBranch,
+    ownedItemIds,
+    equipped,
+    companyId: v6Companies.some((company) => company.id === saved.companyId)
+      ? saved.companyId
+      : initialV6State.companyId,
+    bossHp: safeInteger(saved.bossHp, initialV6State.bossHp, 0, v6Bosses[0].maxHp),
+    bossResolved: typeof saved.bossResolved === 'boolean' ? saved.bossResolved : false,
+  };
 }
 
 export function OfficeGame() {
@@ -154,29 +304,10 @@ export function OfficeGame() {
       if (raw) {
         const parsed: unknown = JSON.parse(raw);
         if (isOfficePersistedState(parsed)) {
-          const hydratedSnapshot: OfficeSnapshot = {
-            ...initialOfficeSnapshot,
-            ...parsed.snapshot,
-            skills: { ...initialOfficeSnapshot.skills, ...parsed.snapshot.skills },
-            daily: { ...initialOfficeSnapshot.daily, ...parsed.snapshot.daily },
-            firstAssignment: {
-              ...initialOfficeSnapshot.firstAssignment,
-              ...parsed.snapshot.firstAssignment,
-            },
-            company: { ...initialOfficeSnapshot.company, ...parsed.snapshot.company },
-          };
+          const hydratedSnapshot = hydrateOfficeSnapshot(parsed.snapshot);
           const persistedStory = (parsed as typeof parsed & { story?: OfficeStoryState }).story;
           const persistedV6 = (parsed as typeof parsed & { v6?: V6State }).v6;
-          const hydratedV6: V6State = persistedV6
-            ? {
-                ...initialV6State,
-                ...persistedV6,
-                ownedItemIds: Array.isArray(persistedV6.ownedItemIds)
-                  ? persistedV6.ownedItemIds
-                  : initialV6State.ownedItemIds,
-                equipped: { ...initialV6State.equipped, ...persistedV6.equipped },
-              }
-            : initialV6State;
+          const hydratedV6 = hydrateV6State(persistedV6);
           const hydratedStory: OfficeStoryState = persistedStory
             ? {
                 ...initialOfficeStoryState,
@@ -194,7 +325,13 @@ export function OfficeGame() {
           if (parsed.workspace.length === initialWorkspaceItems.length) {
             setWorkspace(parsed.workspace);
           }
-          setEnergyNextAt(parsed.energyNextAt);
+          setEnergyNextAt(
+            typeof parsed.energyNextAt === 'number' &&
+              Number.isFinite(parsed.energyNextAt) &&
+              parsed.energyNextAt > 0
+              ? parsed.energyNextAt
+              : null,
+          );
           setV6(hydratedV6);
           setStory(hydratedStory);
           setNotice(getOfficeProgressNotice(hydratedSnapshot, hydratedStory, hydratedV6));
@@ -411,7 +548,7 @@ export function OfficeGame() {
     return null;
   };
 
-  const completeStoryChoice = (event: OfficeStoryEvent, choice: OfficeStoryChoice, boss = false) => {
+  const completeStoryChoice = (event: OfficeStoryEvent, choice: OfficeStoryChoice) => {
     const blocked = choiceBlockedReason(choice);
     if (blocked) {
       showFeedback(blocked, 'warning');
@@ -419,56 +556,42 @@ export function OfficeGame() {
     }
 
     applyOutcome(choice.outcome);
-
-    if (boss) {
-      setSnapshot((current) => ({
+    setStory((current) => ({
+      ...current,
+      completedEvents: current.completedEvents.includes(event.id)
+        ? current.completedEvents
+        : [...current.completedEvents, event.id],
+    }));
+    setSnapshot((current) => {
+      const nextProgress = Math.min(current.daily.target, current.daily.progress + 1);
+      const completesNow =
+        !current.daily.claimed &&
+        current.daily.progress < current.daily.target &&
+        nextProgress >= current.daily.target;
+      return {
         ...current,
-        firstAssignment: {
-          ...current.firstAssignment,
-          progress: current.firstAssignment.target,
+        money: current.money + (completesNow ? current.daily.moneyReward : 0),
+        motivation: Math.min(
+          100,
+          current.motivation + (completesNow ? current.daily.motivationReward : 0),
+        ),
+        daily: {
+          ...current.daily,
+          progress: nextProgress,
+          claimed: current.daily.claimed || completesNow,
         },
-      }));
-      setStory((current) => ({
-        ...current,
-        bossResolved: true,
-        bossChoiceId: choice.id,
-      }));
-    } else {
-      setStory((current) => ({
-        ...current,
-        completedEvents: current.completedEvents.includes(event.id)
-          ? current.completedEvents
-          : [...current.completedEvents, event.id],
-      }));
-      setSnapshot((current) => {
-        const nextProgress = Math.min(current.daily.target, current.daily.progress + 1);
-        const completesNow =
-          !current.daily.claimed &&
-          current.daily.progress < current.daily.target &&
-          nextProgress >= current.daily.target;
-        return {
-          ...current,
-          money: current.money + (completesNow ? current.daily.moneyReward : 0),
-          motivation: Math.min(
-            100,
-            current.motivation + (completesNow ? current.daily.motivationReward : 0),
-          ),
-          daily: {
-            ...current.daily,
-            progress: nextProgress,
-            claimed: current.daily.claimed || completesNow,
-          },
-        };
-      });
-    }
+      };
+    });
 
     const rewardBits = [
       choice.outcome.money ? `+${choice.outcome.money} ₽` : null,
       choice.outcome.xp ? `+${choice.outcome.xp} XP` : null,
-      choice.outcome.reputation ? `Репутация ${choice.outcome.reputation > 0 ? '+' : ''}${choice.outcome.reputation}` : null,
+      choice.outcome.reputation
+        ? `Репутация ${choice.outcome.reputation > 0 ? '+' : ''}${choice.outcome.reputation}`
+        : null,
     ].filter(Boolean);
 
-    showFeedback(rewardBits.join(' · ') || 'Событие завершено', boss ? 'money' : 'xp');
+    showFeedback(rewardBits.join(' · ') || 'Событие завершено', 'xp');
     setNotice(choice.result);
     setModal(null);
   };
@@ -2240,18 +2363,17 @@ function OfficeOverlay({
   modal: OfficeModal;
   snapshot: OfficeSnapshot;
   onClose: () => void;
-  onStoryChoice: (event: OfficeStoryEvent, choice: OfficeStoryChoice, boss?: boolean) => void;
+  onStoryChoice: (event: OfficeStoryEvent, choice: OfficeStoryChoice) => void;
   onPrank: (prank: OfficePrank) => void;
   onGoToCareer: () => void;
 }) {
   if (!modal) return null;
 
-  if (modal.type === 'event' || modal.type === 'boss') {
-    const isBoss = modal.type === 'boss';
+  if (modal.type === 'event') {
     return (
       <div className="office-modal-backdrop" role="presentation" onMouseDown={onClose}>
         <section
-          className={`office-modal office-story-modal ${isBoss ? 'office-boss-modal' : ''}`}
+          className="office-modal office-story-modal"
           role="dialog"
           aria-modal="true"
           aria-label={modal.event.title}
@@ -2259,7 +2381,7 @@ function OfficeOverlay({
         >
           <button type="button" className="office-modal-close" onClick={onClose}>×</button>
           <div className="office-story-heading">
-            {isBoss ? <img src="/games/office/boss.svg" alt="" /> : <OfficeIcon name="work" />}
+            <OfficeIcon name="work" />
             <div>
               <small>{modal.event.eyebrow}</small>
               <h2>{modal.event.title}</h2>
@@ -2286,7 +2408,7 @@ function OfficeOverlay({
                   type="button"
                   key={choice.id}
                   disabled={disabled}
-                  onClick={() => onStoryChoice(modal.event, choice, isBoss)}
+                  onClick={() => onStoryChoice(modal.event, choice)}
                 >
                   <div>
                     <strong>{choice.label}</strong>

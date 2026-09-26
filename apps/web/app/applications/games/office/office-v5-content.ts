@@ -165,48 +165,6 @@ export const firstDayEvents: OfficeStoryEvent[] = [
   },
 ];
 
-export const bossEvent: OfficeStoryEvent = {
-  id: 'sergey-first-assignment',
-  eyebrow: 'Испытание · Сергей Петрович',
-  title: '«Клиент прислал правки. Говорит, что всё не так»',
-  description:
-    'Сергей Петрович кладёт перед тобой распечатку. На ней красным отмечено почти всё. Это первое настоящее поручение.',
-  speaker: 'Сергей Петрович',
-  choices: [
-    {
-      id: 'boss-redo',
-      label: 'Переделать молча',
-      description: 'Надёжно. Больно. Работает.',
-      outcome: { energy: -3, money: 300, xp: 25, reputation: 5 },
-      result: 'Через два часа клиент написал «ну уже лучше». Сергей Петрович кивнул.',
-    },
-    {
-      id: 'boss-explain',
-      label: 'Объяснить клиенту',
-      description: 'Потребуется Коммуникация 3.',
-      requirement: { skill: 'communication', min: 3 },
-      outcome: { energy: -2, money: 350, xp: 30, reputation: 8, skills: { communication: 1 } },
-      result: 'Ты перевёл требования клиента с эмоционального на человеческий. Это впечатлило даже Сергея.',
-    },
-    {
-      id: 'boss-tz',
-      label: 'Сказать: «Это было в ТЗ»',
-      description: 'Потребуется Компетентность 4.',
-      requirement: { skill: 'competence', min: 4 },
-      outcome: { energy: -1, money: 400, xp: 35, reputation: 10 },
-      result: 'Ты открыл ТЗ на нужной странице. Сергей Петрович впервые назвал тебя по имени.',
-    },
-    {
-      id: 'boss-colleague',
-      label: 'Свалить на коллегу',
-      description: 'Потребуется Напор 3. Репутация среди коллег пострадает.',
-      requirement: { skill: 'drive', min: 3 },
-      outcome: { energy: -1, money: 300, xp: 22, reputation: 3, motivation: 4 },
-      result: 'Формально сработало. Коллега теперь очень внимательно следит за твоей кружкой.',
-    },
-  ],
-};
-
 export const officePranks: OfficePrank[] = [
   {
     id: 'stapler',
