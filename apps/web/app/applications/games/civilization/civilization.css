@@ -2398,3 +2398,36 @@ button{font:inherit}
     height:36px;
   }
 }
+
+
+/* CIVILIZATION ALPHA — CATEGORY ICON FINISH */
+.civ-equipment-tabs button{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+}
+.civ-equipment-tabs button .civ-vector-icon{
+  width:22px;
+  height:22px;
+  flex:0 0 22px;
+  color:#aebbc1;
+}
+.civ-equipment-tabs button .civ-vector-icon svg{
+  width:19px;
+  height:19px;
+}
+.civ-equipment-tabs button.active .civ-vector-icon{
+  color:#ffd077;
+  filter:drop-shadow(0 0 6px rgba(230,153,54,.18));
+}
+.civ-hotspot>.civ-vector-icon{
+  width:30px!important;
+  height:30px!important;
+  flex:0 0 30px;
+  color:#efb65b;
+}
+.civ-hotspot>.civ-vector-icon svg{
+  width:20px;
+  height:20px;
+}
