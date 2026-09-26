@@ -430,3 +430,127 @@ button{font:inherit}
     font-size:7.5px;
   }
 }
+
+
+/* CIVILIZATION ALPHA — VISUAL QA PASS 2 */
+.civ-avatar-card{
+  overflow:hidden;
+  min-height:166px;
+  align-content:start;
+}
+
+.civ-avatar-card .civ-mascot.compact{
+  width:220px;
+  height:280px;
+  transform:scale(.58);
+  transform-origin:top center;
+  margin:-6px -30px -112px;
+}
+
+.civ-player-name{
+  position:relative;
+  z-index:2;
+  margin-top:0;
+  font-size:13px;
+}
+
+.civ-item-card{
+  min-height:136px;
+  grid-template-rows:minmax(82px,1fr) auto auto;
+}
+
+.civ-item-art{
+  width:88px;
+  height:88px;
+}
+
+.civ-item-detail{
+  grid-template-columns:minmax(150px,.82fr) minmax(190px,1fr);
+  padding:11px;
+}
+
+.civ-detail-title h3{
+  font-size:24px;
+}
+
+.civ-detail-title>span{
+  font-size:9px;
+}
+
+.civ-item-copy>p{
+  font-size:10.5px;
+  line-height:1.46;
+}
+
+.civ-item-copy dt{
+  font-size:9.5px;
+}
+
+.civ-item-copy dd{
+  font-size:9.5px;
+  line-height:1.35;
+}
+
+.civ-item-copy>button{
+  height:38px;
+  font-size:10px;
+}
+
+.civ-item-hero .civ-item-art.large{
+  width:min(96%,240px);
+  height:min(96%,330px);
+}
+
+.civ-item-grid::after{
+  content:"";
+  grid-column:1/-1;
+  min-height:2px;
+}
+
+@media(max-width:1450px){
+  .civ-avatar-card{
+    min-height:150px;
+  }
+
+  .civ-avatar-card .civ-mascot.compact{
+    transform:scale(.52);
+    margin:-6px -36px -128px;
+  }
+
+  .civ-item-card{
+    min-height:116px;
+    grid-template-rows:minmax(66px,1fr) auto auto;
+  }
+
+  .civ-item-art{
+    width:70px;
+    height:70px;
+  }
+
+  .civ-item-copy>p,
+  .civ-item-copy dt,
+  .civ-item-copy dd{
+    font-size:8.5px;
+  }
+}
+
+@media(min-width:721px) and (max-height:800px){
+  .civ-avatar-card{
+    min-height:132px;
+  }
+
+  .civ-avatar-card .civ-mascot.compact{
+    transform:scale(.46);
+    margin:-9px -45px -150px;
+  }
+
+  .civ-item-card{
+    min-height:96px;
+    grid-template-rows:minmax(52px,1fr) auto auto;
+  }
+
+  .civ-item-art{
+    width:58px;
+    height:58px;
+  }
+}
