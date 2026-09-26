@@ -2491,3 +2491,374 @@ button{font:inherit}
 .civ-profile-identity .civ-xp{
   border-color:#29363c;
 }
+
+
+/* ==========================================================================
+   CIVILIZATION VISUAL PASS 2 — ILLUSTRATION LAYER
+   Redraw the hero, bosses and era/craft art to match the approved premium art.
+   ========================================================================== */
+
+.civ-mascot-stage{
+  width:270px!important;
+  height:380px!important;
+  left:56%!important;
+  bottom:2.5%!important;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  filter:none!important;
+  pointer-events:none;
+}
+
+.civ-mascot-stage::before{
+  width:310px!important;
+  height:330px!important;
+  top:8%!important;
+  background:
+    radial-gradient(circle at 50% 57%,rgba(255,157,56,.26),rgba(255,157,56,.08) 40%,transparent 72%)!important;
+  filter:blur(5px);
+}
+
+.civ-mascot-svg{
+  width:100%;
+  height:100%;
+  overflow:visible;
+  filter:
+    drop-shadow(0 22px 16px rgba(0,0,0,.45))
+    drop-shadow(0 0 12px rgba(255,146,48,.06));
+  transform-origin:center bottom;
+}
+
+.civ-mascot-svg.compact{
+  width:116px;
+  height:162px;
+  margin:0 auto;
+  overflow:visible;
+  filter:
+    drop-shadow(0 12px 10px rgba(0,0,0,.38))
+    drop-shadow(0 0 7px rgba(255,150,50,.05));
+}
+
+.civ-avatar-card .civ-mascot,
+.civ-avatar-card .civ-mascot.compact,
+.civ-create-preview .civ-mascot{
+  display:none!important;
+}
+
+.civ-avatar-card .civ-mascot-svg.compact{
+  transform:translateY(2px) scale(.95);
+}
+
+.civ-create-preview .civ-mascot-svg{
+  width:300px;
+  height:430px;
+  position:relative;
+  z-index:2;
+  transform:translateY(12px) scale(1.02);
+}
+
+.civ-profile-hero-card .civ-mascot-svg{
+  width:210px;
+  height:300px;
+  position:relative;
+  z-index:2;
+}
+
+.civ-create-preview{
+  background:
+    radial-gradient(circle at 50% 60%,rgba(255,141,42,.34),transparent 34%),
+    radial-gradient(circle at 74% 12%,rgba(80,139,167,.15),transparent 28%),
+    linear-gradient(180deg,#1d100a,#070d10)!important;
+}
+
+.civ-create-preview::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(0deg,rgba(4,7,8,.8),transparent 42%),
+    radial-gradient(circle at 32% 73%,rgba(255,117,23,.22),transparent 26%),
+    repeating-linear-gradient(115deg,transparent 0 76px,rgba(255,255,255,.015) 77px 78px);
+  pointer-events:none;
+}
+
+.civ-boss-illustration{
+  display:block;
+  position:relative;
+  overflow:visible;
+}
+
+.civ-boss-illustration svg{
+  width:100%!important;
+  height:100%!important;
+  overflow:visible;
+}
+
+.civ-boss-list button>.civ-boss-illustration{
+  width:100px!important;
+  height:82px!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  filter:
+    drop-shadow(0 9px 8px rgba(0,0,0,.38))
+    drop-shadow(0 0 8px rgba(219,135,43,.06));
+}
+
+.civ-boss-list button>.civ-boss-illustration svg{
+  width:100%!important;
+  height:100%!important;
+}
+
+.civ-boss-art{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 45%,rgba(229,134,47,.16),transparent 35%),
+    radial-gradient(circle at 78% 20%,rgba(66,115,139,.10),transparent 28%),
+    linear-gradient(155deg,#1b1510,#091014 65%)!important;
+}
+
+.civ-boss-art::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  opacity:.55;
+  background:
+    linear-gradient(118deg,transparent 0 44%,rgba(255,183,79,.045) 45% 46%,transparent 47%),
+    radial-gradient(circle at 18% 78%,rgba(255,110,25,.13),transparent 24%);
+}
+
+.civ-boss-illustration.large{
+  width:100%!important;
+  height:100%!important;
+  display:grid;
+  place-items:center;
+  padding:20px;
+}
+
+.civ-boss-illustration.large svg{
+  width:min(96%,560px)!important;
+  height:min(96%,520px)!important;
+}
+
+.civ-boss-list button.active>.civ-boss-illustration{
+  filter:
+    drop-shadow(0 10px 9px rgba(0,0,0,.4))
+    drop-shadow(0 0 14px rgba(235,153,55,.14));
+}
+
+.civ-era-art{
+  width:62px;
+  height:54px;
+  display:grid;
+  place-items:center;
+  margin:0 auto 8px;
+  filter:
+    drop-shadow(0 7px 7px rgba(0,0,0,.34))
+    drop-shadow(0 0 6px rgba(224,146,49,.07));
+}
+
+.civ-era-art svg{
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+
+.civ-era-art.large{
+  width:220px;
+  height:180px;
+  margin:0 auto 22px;
+}
+
+.civ-map-path button{
+  min-height:118px!important;
+  padding:12px 10px 10px!important;
+}
+
+.civ-map-path button>span:not(.civ-era-art){
+  display:none!important;
+}
+
+.civ-map-path button.active .civ-era-art{
+  filter:
+    drop-shadow(0 8px 8px rgba(0,0,0,.34))
+    drop-shadow(0 0 13px rgba(235,150,50,.18));
+}
+
+.civ-map-path button.locked .civ-era-art{
+  opacity:.48;
+  filter:grayscale(.28) drop-shadow(0 6px 6px rgba(0,0,0,.28));
+}
+
+.civ-map-visual{
+  background:
+    radial-gradient(circle at 50% 40%,rgba(255,142,42,.17),transparent 34%),
+    linear-gradient(155deg,#211712,#0b1216)!important;
+  border-color:#5b4329!important;
+}
+
+.civ-map-visual b{
+  color:#f2ede5!important;
+  font-size:27px!important;
+  letter-spacing:-.02em;
+}
+
+.civ-map-visual small{
+  color:#a5afb3!important;
+}
+
+.civ-craft-grid article{
+  position:relative;
+  overflow:hidden;
+  min-height:228px!important;
+  padding:12px!important;
+  display:grid!important;
+  grid-template-rows:minmax(118px,1fr) auto auto auto!important;
+  align-content:start!important;
+  background:
+    radial-gradient(circle at 50% 32%,rgba(173,102,38,.13),transparent 33%),
+    linear-gradient(180deg,#121a1f,#091115)!important;
+}
+
+.civ-craft-grid article.ready{
+  border-color:#6f4c29!important;
+}
+
+.civ-craft-grid article.locked{
+  opacity:.64;
+}
+
+.civ-craft-art{
+  min-height:118px;
+  display:grid;
+  place-items:center;
+  position:relative;
+  overflow:hidden;
+  border-bottom:1px solid rgba(255,255,255,.035);
+  margin:-2px -2px 8px;
+}
+
+.civ-craft-art::before{
+  content:"";
+  position:absolute;
+  width:135px;
+  height:135px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(230,142,49,.14),transparent 68%);
+}
+
+.civ-craft-art .civ-item-art.large{
+  width:118px!important;
+  height:118px!important;
+  position:relative;
+  z-index:1;
+  filter:
+    drop-shadow(0 12px 11px rgba(0,0,0,.45))
+    drop-shadow(0 0 8px rgba(236,155,54,.08));
+}
+
+.civ-craft-grid article h3{
+  color:#f1ece5!important;
+  font-size:14px!important;
+}
+
+.civ-craft-grid article p{
+  color:#9da8ad!important;
+  font-size:8.5px!important;
+}
+
+.civ-item-card .civ-item-art{
+  transform:scale(1.08);
+}
+
+.civ-item-hero .civ-item-art.large{
+  transform:scale(1.13);
+}
+
+@media(max-width:1450px){
+  .civ-mascot-stage{
+    width:230px!important;
+    height:330px!important;
+    left:56%!important;
+  }
+
+  .civ-boss-list button>.civ-boss-illustration{
+    width:82px!important;
+    height:68px!important;
+  }
+
+  .civ-era-art{
+    width:54px;
+    height:48px;
+  }
+
+  .civ-era-art.large{
+    width:180px;
+    height:150px;
+  }
+
+  .civ-craft-grid article{
+    min-height:200px!important;
+    grid-template-rows:minmax(96px,1fr) auto auto auto!important;
+  }
+
+  .civ-craft-art{
+    min-height:96px;
+  }
+
+  .civ-craft-art .civ-item-art.large{
+    width:96px!important;
+    height:96px!important;
+  }
+}
+
+@media(min-width:721px) and (max-height:800px){
+  .civ-mascot-stage{
+    width:205px!important;
+    height:292px!important;
+    bottom:1.5%!important;
+  }
+
+  .civ-avatar-card .civ-mascot-svg.compact{
+    transform:translateY(4px) scale(.84);
+  }
+
+  .civ-boss-illustration.large{
+    padding:10px;
+  }
+
+  .civ-era-art{
+    width:48px;
+    height:42px;
+    margin-bottom:4px;
+  }
+
+  .civ-era-art.large{
+    width:145px;
+    height:120px;
+    margin-bottom:10px;
+  }
+
+  .civ-map-path button{
+    min-height:92px!important;
+    padding-top:7px!important;
+  }
+
+  .civ-craft-grid article{
+    min-height:170px!important;
+    grid-template-rows:82px auto auto auto!important;
+  }
+
+  .civ-craft-art{
+    min-height:82px;
+    margin-bottom:5px;
+  }
+
+  .civ-craft-art .civ-item-art.large{
+    width:82px!important;
+    height:82px!important;
+  }
+}
