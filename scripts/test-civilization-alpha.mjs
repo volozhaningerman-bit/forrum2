@@ -272,8 +272,8 @@ try {
   await bottomNav.getByRole('button', { name: /Боссы/ }).click();
   await page.getByRole('button', { name: /Вожак обезьян/ }).click();
   assert.match(await page.locator('.civ-boss-detail').textContent(), /Тотем вожака/);
-  assert.equal(await page.locator('.civ-boss-list .civ-boss-illustration svg').count(), 3);
-  assert.equal(await page.locator('.civ-boss-art .civ-boss-illustration.large svg').count(), 1);
+  assert.equal(await page.locator('.civ-boss-list .civ-boss-art-generated').count(), 3);
+  assert.equal(await page.locator('.civ-boss-art .civ-boss-art-generated.large').count(), 1);
   const apeHpBefore = await page.locator('.civ-boss-hp').textContent();
   for (let hit = 0; hit < 4; hit += 1) {
     await page.getByRole('button', { name: /Атаковать/ }).click();
