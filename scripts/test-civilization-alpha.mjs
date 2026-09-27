@@ -149,8 +149,45 @@ try {
   assert.equal(savedAvatar.gender, 'female');
   assert.equal(savedAvatar.hair, 'Пучок');
 
-  // Approved generated art must be live, not merely committed.
+  // Approved generated art must be live, decodable, and large enough to be the real source files.
   assert.match(await page.locator('.civ-cave-background').getAttribute('src'), /\/games\/civilization\/art\/cave\.webp$/);
+  const artAssets = [
+    ['/games/civilization/art/cave.webp', 1600, 900],
+    ['/games/civilization/art/characters.webp', 1400, 1000],
+    ['/games/civilization/art/bosses.webp', 1400, 1000],
+    ['/games/civilization/art/equipment.webp', 1400, 1000],
+    ['/games/civilization/art/resources.webp', 1400, 1000],
+  ];
+  for (const [src, minWidth, minHeight] of artAssets) {
+    const asset = await page.evaluate(async ({ src }) => {
+      const response = await fetch(src, { cache: 'no-store' });
+      const blob = await response.blob();
+      let width = 0;
+      let height = 0;
+      try {
+        const bitmap = await createImageBitmap(blob);
+        width = bitmap.width;
+        height = bitmap.height;
+      } catch {}
+      return { ok: response.ok, status: response.status, type: blob.type, size: blob.size, width, height };
+    }, { src });
+    assert.equal(asset.ok, true, `${src}: HTTP ${asset.status}`);
+    assert(asset.size > 20_000, `${src}: suspicious asset size ${asset.size}`);
+    assert(asset.width >= minWidth, `${src}: decoded width ${asset.width}`);
+    assert(asset.height >= minHeight, `${src}: decoded height ${asset.height}`);
+  }
+  const caveImage = await page.locator('.civ-cave-background').evaluate((node) => ({
+    naturalWidth: node.naturalWidth,
+    naturalHeight: node.naturalHeight,
+    opacity: getComputedStyle(node).opacity,
+    display: getComputedStyle(node).display,
+    visibility: getComputedStyle(node).visibility,
+  }));
+  assert(caveImage.naturalWidth >= 1600);
+  assert(caveImage.naturalHeight >= 900);
+  assert.notEqual(caveImage.display, 'none');
+  assert.notEqual(caveImage.visibility, 'hidden');
+  assert(Number(caveImage.opacity) > 0.5);
   const characterBackground = await page.locator('.civ-character-art>span').first().evaluate((node) => getComputedStyle(node).backgroundImage);
   assert.match(characterBackground, /characters\.webp/);
 
