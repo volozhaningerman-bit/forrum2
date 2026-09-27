@@ -1053,51 +1053,80 @@ function EquipmentPanel({
 
 
 function BossArt({ boss, large = false }: { boss: Boss; large?: boolean }) {
+  const tiger = boss.id === 'tiger';
+  const mammoth = boss.id === 'mammoth';
+
   return (
     <span className={`civ-boss-illustration boss-${boss.id} ${large ? 'large' : ''}`} aria-hidden="true">
-      <svg viewBox="0 0 220 180" role="presentation">
+      <svg viewBox="0 0 280 230" role="presentation">
         <defs>
-          <radialGradient id={`boss-bg-${boss.id}`} cx=".5" cy=".42" r=".62">
-            <stop offset="0" stopColor={boss.id === 'tiger' ? '#c96e27' : boss.id === 'mammoth' ? '#7a716b' : '#73523b'} stopOpacity=".74" />
-            <stop offset="1" stopColor="#12110f" stopOpacity="0" />
+          <radialGradient id={`boss-aura-${boss.id}`} cx=".5" cy=".46" r=".58">
+            <stop offset="0" stopColor={tiger ? '#e78a2e' : mammoth ? '#8e8176' : '#9a5f37'} stopOpacity=".48" />
+            <stop offset=".72" stopColor="#22150e" stopOpacity=".14" />
+            <stop offset="1" stopColor="#0b0e10" stopOpacity="0" />
           </radialGradient>
-          <linearGradient id={`boss-fur-${boss.id}`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor={boss.id === 'tiger' ? '#d98a39' : boss.id === 'mammoth' ? '#786b61' : '#806048'} />
-            <stop offset=".55" stopColor={boss.id === 'tiger' ? '#a84f21' : boss.id === 'mammoth' ? '#4d4947' : '#513a2c'} />
+          <linearGradient id={`boss-main-${boss.id}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor={tiger ? '#ef9a3a' : mammoth ? '#80736a' : '#8e6549'} />
+            <stop offset=".55" stopColor={tiger ? '#be5b24' : mammoth ? '#514b48' : '#59402f'} />
             <stop offset="1" stopColor="#241914" />
           </linearGradient>
+          <linearGradient id={`boss-light-${boss.id}`} x1=".2" y1=".1" x2=".8" y2=".95">
+            <stop offset="0" stopColor="#fff0cf" stopOpacity=".30" />
+            <stop offset=".55" stopColor="#d89a5c" stopOpacity=".10" />
+            <stop offset="1" stopColor="#000" stopOpacity=".24" />
+          </linearGradient>
+          <filter id={`boss-shadow-${boss.id}`} x="-35%" y="-30%" width="170%" height="180%">
+            <feDropShadow dx="0" dy="11" stdDeviation="8" floodColor="#000" floodOpacity=".55" />
+          </filter>
         </defs>
-        <ellipse cx="110" cy="100" rx="100" ry="76" fill={`url(#boss-bg-${boss.id})`} />
-        {boss.id === 'tiger' ? (
-          <>
-            <path d="M51 70 L31 24 L75 47 Q110 27 145 47 L188 24 L169 71 Q184 93 174 127 Q153 160 110 163 Q65 161 45 127 Q35 94 51 70 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#e1a34e" strokeWidth="3" />
-            <path d="M44 45 L72 67 M176 45 L148 67 M77 48 L88 72 M143 48 L132 72 M63 88 L84 95 M157 88 L136 95" stroke="#311b14" strokeWidth="8" strokeLinecap="round" opacity=".85"/>
-            <path d="M75 109 Q90 93 109 103 Q129 93 145 109 Q137 145 110 151 Q82 145 75 109 Z" fill="#eee0c3" opacity=".93"/>
-            <ellipse cx="81" cy="88" rx="10" ry="8" fill="#0a0807"/><ellipse cx="139" cy="88" rx="10" ry="8" fill="#0a0807"/>
-            <circle cx="84" cy="86" r="2.5" fill="#f6d266"/><circle cx="142" cy="86" r="2.5" fill="#f6d266"/>
-            <path d="M104 111 L116 111 L110 120 Z" fill="#2a1915"/>
-            <path d="M91 124 L97 153 L105 128 M129 124 L123 153 L115 128" fill="#f5e4bd" stroke="#d5bd91" strokeWidth="1.5"/>
-          </>
-        ) : boss.id === 'mammoth' ? (
-          <>
-            <path d="M46 87 Q47 36 95 27 Q148 19 178 58 Q195 88 176 127 Q158 159 112 161 Q62 161 43 125 Q34 105 46 87 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#9e8d7f" strokeWidth="3"/>
-            <path d="M45 85 Q22 83 18 109 Q18 133 46 139" fill="#514944" stroke="#887a70" strokeWidth="3"/>
-            <path d="M175 84 Q203 83 207 108 Q207 132 177 139" fill="#514944" stroke="#887a70" strokeWidth="3"/>
-            <path d="M103 99 Q119 96 127 113 L124 149 Q121 170 104 170 Q91 168 92 151 L94 113 Q95 103 103 99 Z" fill="#5c514b"/>
-            <path d="M85 119 Q66 128 62 154 Q77 144 94 141 M139 119 Q158 128 163 154 Q148 144 130 141" fill="none" stroke="#ead9ac" strokeWidth="8" strokeLinecap="round"/>
-            <ellipse cx="83" cy="86" rx="8" ry="6" fill="#0c0908"/><ellipse cx="142" cy="86" rx="8" ry="6" fill="#0c0908"/>
-            <path d="M65 54 Q80 39 95 33 M158 54 Q143 39 129 33" stroke="#2d2927" strokeWidth="7" strokeLinecap="round" opacity=".65"/>
-          </>
+
+        <ellipse cx="140" cy="203" rx="105" ry="15" fill="#000" opacity=".30"/>
+        <ellipse cx="140" cy="112" rx="128" ry="102" fill={`url(#boss-aura-${boss.id})`} />
+
+        {tiger ? (
+          <g filter={`url(#boss-shadow-${boss.id})`}>
+            <path d="M55 171c8-33 21-58 45-74 30-20 73-19 102 2 24 18 37 44 42 73-27 15-54 22-83 22-38 0-73-8-106-23Z" fill={`url(#boss-main-${boss.id})`} />
+            <path d="M73 93 45 33l58 29c24-14 51-14 75 0l57-29-28 61c13 17 19 35 15 55-7 39-39 67-81 68-42-1-75-27-83-66-4-20 1-39 15-58Z" fill={`url(#boss-main-${boss.id})`} stroke="#d98635" strokeWidth="3"/>
+            <path d="m52 44 39 37m136-37-39 37M86 62l13 35m82-35-14 35M69 110l31 9m111-9-31 9M80 144l31-4m88 4-31-4" stroke="#2c1a13" strokeWidth="10" strokeLinecap="round" opacity=".84"/>
+            <path d="M94 136c13-18 28-25 46-17 18-8 34-1 47 17-5 27-22 43-47 47-26-4-42-20-46-47Z" fill="#ead6b1"/>
+            <ellipse cx="102" cy="112" rx="10" ry="8" fill="#100b08"/><ellipse cx="178" cy="112" rx="10" ry="8" fill="#100b08"/>
+            <circle cx="105" cy="109" r="3" fill="#f2ca55"/><circle cx="181" cy="109" r="3" fill="#f2ca55"/>
+            <path d="m134 135 12 0-6 9Z" fill="#3d211b"/>
+            <path d="M111 151 118 190 130 156M169 151 162 190 150 156" fill="#f0dfb4" stroke="#cdb88e" strokeWidth="2"/>
+            <path d="M54 173c-20 2-32 10-40 24 23 4 42 1 57-10m154-14c20 2 32 10 41 24-24 4-43 1-58-10" fill="#cc6a29" stroke="#80401f" strokeWidth="3"/>
+            <path d="M90 74c29-20 66-22 99 0" fill="none" stroke="#f0b062" strokeWidth="5" opacity=".36" strokeLinecap="round"/>
+          </g>
+        ) : mammoth ? (
+          <g filter={`url(#boss-shadow-${boss.id})`}>
+            <path d="M57 92c9-43 40-69 87-70 45 1 78 26 88 67 8 31 3 69-15 94-20 28-48 38-78 38-31 0-61-11-79-40-16-25-11-60-3-89Z" fill={`url(#boss-main-${boss.id})`} stroke="#8f8178" strokeWidth="3"/>
+            <path d="M61 91C31 85 19 100 21 124c2 28 18 41 49 36M223 90c31-5 45 10 43 35-3 27-19 40-49 35" fill="#4d4744" stroke="#87786f" strokeWidth="5"/>
+            <path d="M118 104c10-12 34-12 44 1 8 9 10 20 8 34l-5 54c-2 22-13 32-27 31-14-1-25-12-25-31l-3-55c-1-14 1-25 8-34Z" fill="#5b514c"/>
+            <path d="M113 142c-24 10-39 29-42 58 16-13 32-21 50-22m47-36c24 11 39 29 43 58-17-13-33-20-51-22" fill="none" stroke="#ead7a9" strokeWidth="12" strokeLinecap="round"/>
+            <ellipse cx="108" cy="91" rx="9" ry="7" fill="#0e0b09"/><ellipse cx="174" cy="91" rx="9" ry="7" fill="#0e0b09"/>
+            <path d="M85 53c14-12 29-18 44-19m68 20c-14-12-29-18-44-20" stroke="#302b29" strokeWidth="10" strokeLinecap="round" opacity=".58"/>
+            <path d="M78 64c-17 23-20 53-10 88m142-88c17 23 20 53 10 88" fill="none" stroke="#a39184" strokeWidth="6" opacity=".34"/>
+            <path d="M77 183c12 18 31 28 56 31m70-31c-12 18-31 28-56 31" fill="none" stroke="#2f2a28" strokeWidth="12" strokeLinecap="round"/>
+          </g>
         ) : (
-          <>
-            <path d="M48 80 Q54 37 92 27 Q133 14 169 48 Q190 76 177 119 Q163 158 111 164 Q61 158 42 121 Q32 97 48 80 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#9d7550" strokeWidth="3"/>
-            <path d="M62 80 Q75 52 105 50 Q140 46 160 78 Q162 120 139 142 Q109 157 79 141 Q57 120 62 80 Z" fill="#a67b59"/>
-            <path d="M72 52 Q52 38 42 61 M149 51 Q171 36 181 60" fill="none" stroke="#503729" strokeWidth="15" strokeLinecap="round"/>
-            <ellipse cx="83" cy="91" rx="9" ry="7" fill="#090706"/><ellipse cx="139" cy="91" rx="9" ry="7" fill="#090706"/>
-            <path d="M92 119 Q110 132 130 118" fill="none" stroke="#3b251d" strokeWidth="6" strokeLinecap="round"/>
-            <path d="M110 24 L123 6 L135 29 L154 17 L150 46 L70 46 L68 18 L88 30 L98 7 Z" fill="#d99b39" stroke="#f2c36d" strokeWidth="2"/>
-          </>
+          <g filter={`url(#boss-shadow-${boss.id})`}>
+            <path d="M77 97c9-38 34-61 67-62 36 1 60 24 68 62 8 38-6 82-33 103-20 14-53 14-74 0-26-21-39-65-28-103Z" fill={`url(#boss-main-${boss.id})`} stroke="#8f674a" strokeWidth="3"/>
+            <path d="M90 87c9-24 27-36 52-36 27 1 46 14 53 39 6 25-5 58-26 73-16 11-41 11-57 0-21-16-30-50-22-76Z" fill="#aa7a57"/>
+            <path d="M93 56c-24-17-42-8-45 15-2 18 8 31 28 34m117-49c24-17 42-8 45 15 2 18-8 31-28 34" fill="#563c2e" stroke="#7d5942" strokeWidth="5"/>
+            <ellipse cx="112" cy="98" rx="9" ry="7" fill="#0d0907"/><ellipse cx="170" cy="98" rx="9" ry="7" fill="#0d0907"/>
+            <path d="M123 133c12 9 26 9 38 0" fill="none" stroke="#42291f" strokeWidth="6" strokeLinecap="round"/>
+            <path d="M128 145c9 7 18 7 27 0" fill="none" stroke="#d8b494" strokeWidth="3" opacity=".65"/>
+            <path d="M142 36 155 11l15 27 24-14-6 31 24 7-31 14H103L73 62l23-8-5-31 26 15 12-27Z" fill="#d59636" stroke="#f0bf66" strokeWidth="3"/>
+            <path d="M83 132c-29 5-45 21-51 48 16 12 37 9 61-8m100-40c29 5 45 21 51 48-16 12-37 9-61-8" fill="#59402f" stroke="#8c684b" strokeWidth="5"/>
+            <path d="M43 181 21 214m28-28-7 36" stroke="#805331" strokeWidth="10" strokeLinecap="round"/>
+            <path d="M24 210 8 191m14 19 18 13" stroke="#c8bbb0" strokeWidth="8" strokeLinecap="round"/>
+            <path d="M34 188 65 72" stroke="#7b4a28" strokeWidth="9" strokeLinecap="round"/>
+            <path d="m51 72 22-39 15 10-22 41Z" fill="#aeb2ad" stroke="#d0c5aa" strokeWidth="2"/>
+            <path d="m87 81-22 4m85-37-6 25" stroke="#f2d9b5" strokeWidth="4" opacity=".28" strokeLinecap="round"/>
+          </g>
         )}
+
+        <path d="M43 38c22-25 50-34 83-28" fill="none" stroke="#fff3d6" strokeWidth="4" opacity=".10" strokeLinecap="round"/>
+        <path d="M30 187c31 17 68 25 110 25 43 0 81-9 112-27" fill="none" stroke="#e7a64b" strokeWidth="2" opacity=".12"/>
       </svg>
     </span>
   );
