@@ -2858,19 +2858,29 @@ button{font:inherit}
   box-shadow:0 4px 10px rgba(0,0,0,.25),inset 0 0 0 1px rgba(255,255,255,.04);
 }
 
-.resource-berries{--resource-col:0;--resource-row:0}
-.resource-meat{--resource-col:1;--resource-row:0}
-.resource-mushrooms{--resource-col:2;--resource-row:0}
-.resource-fish{--resource-col:3;--resource-row:0}
-.resource-wood{--resource-col:0;--resource-row:1}
-.resource-stone{--resource-col:1;--resource-row:1}
-.resource-flint{--resource-col:2;--resource-row:1}
-.resource-hide{--resource-col:3;--resource-row:1}
-.resource-bones{--resource-col:0;--resource-row:2}
-.resource-fang{--resource-col:0;--resource-row:2}
-.resource-tusk{--resource-col:1;--resource-row:2}
-.resource-totem{--resource-col:2;--resource-row:2}
-.resource-rare{--resource-col:3;--resource-row:2}
+/* Food and trophy rows use 4 columns; the material row contains 5 cells. */
+.resource-berries,.resource-meat,.resource-mushrooms,.resource-fish,
+.resource-fang,.resource-tusk,.resource-totem,.resource-rare{
+  background-size:400% 300%!important;
+}
+.resource-berries{background-position:0% 0%!important}
+.resource-meat{background-position:33.333333% 0%!important}
+.resource-mushrooms{background-position:66.666667% 0%!important}
+.resource-fish{background-position:100% 0%!important}
+
+.resource-wood,.resource-stone,.resource-flint,.resource-hide,.resource-bones{
+  background-size:500% 300%!important;
+}
+.resource-wood{background-position:0% 50%!important}
+.resource-stone{background-position:25% 50%!important}
+.resource-flint{background-position:50% 50%!important}
+.resource-hide{background-position:75% 50%!important}
+.resource-bones{background-position:100% 50%!important}
+
+.resource-fang{background-position:0% 100%!important}
+.resource-tusk{background-position:33.333333% 100%!important}
+.resource-totem{background-position:66.666667% 100%!important}
+.resource-rare{background-position:100% 100%!important}
 
 .civ-resource-row{
   grid-template-columns:34px minmax(0,1fr) auto!important;
