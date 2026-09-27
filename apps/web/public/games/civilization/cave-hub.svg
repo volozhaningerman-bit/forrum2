@@ -18,6 +18,12 @@
   <filter id="glow"><feGaussianBlur stdDeviation="15" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   <filter id="smallGlow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
   <filter id="shadow"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity=".5"/></filter>
+  <filter id="depthBlur"><feGaussianBlur stdDeviation="9"/></filter>
+  <filter id="softShadow"><feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#000" flood-opacity=".52"/></filter>
+  <filter id="emberGlow"><feGaussianBlur stdDeviation="3" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <radialGradient id="groundGlow" cx=".34" cy=".66" r=".42"><stop stop-color="#ff9b34" stop-opacity=".34"/><stop offset=".45" stop-color="#6f2d16" stop-opacity=".13"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+  <linearGradient id="foregroundRock" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#2d1a12"/><stop offset=".42" stop-color="#17100c"/><stop offset="1" stop-color="#050505"/></linearGradient>
+  <linearGradient id="hideCloth" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a36338"/><stop offset=".5" stop-color="#684129"/><stop offset="1" stop-color="#321f18"/></linearGradient>
   <pattern id="grain" width="74" height="74" patternUnits="userSpaceOnUse">
     <circle cx="9" cy="13" r="1.8" fill="#fff" opacity=".028"/><circle cx="55" cy="11" r="1.3" fill="#fff" opacity=".022"/>
     <circle cx="33" cy="57" r="2.2" fill="#000" opacity=".12"/><path d="M8 47l20-8m17 21l19-7" stroke="#fff" stroke-width="1" opacity=".016"/>
@@ -138,6 +144,79 @@
   <ellipse cx="590" cy="751" rx="73" ry="28" fill="#2c1c14"/><circle cx="569" cy="741" r="18" fill="#a3291f"/><circle cx="600" cy="746" r="16" fill="#be3c29"/><circle cx="628" cy="738" r="15" fill="#9e2b22"/>
   <path d="M942 686l58 22 16 93-88-16z" fill="url(#hide)" opacity=".84"/>
   <path d="M1037 702l41 78-69 10z" fill="#6a4c33"/>
+</g>
+
+
+<!-- CIV-V3-DEPTH: foreground, texture and premium scene dressing -->
+<g id="CIV-V3-DEPTH">
+  <!-- upper cave teeth -->
+  <g fill="url(#foregroundRock)" opacity=".98">
+    <path d="M0 0h130l-37 109-25-55-24 91L20 72 0 102z"/>
+    <path d="M205 0h166l-29 95-24-51-33 117-26-83-24 63-19-86z"/>
+    <path d="M521 0h205l-36 112-29-58-32 121-29-93-28 57-25-82z"/>
+    <path d="M873 0h167l-27 84-23-39-31 112-27-75-24 54-17-72z"/>
+    <path d="M1264 0h168l-34 98-25-55-31 122-31-92-22 53-21-69z"/>
+    <path d="M1510 0h90v136l-34-71-19 54-17-71z"/>
+  </g>
+
+  <!-- left foreground wall and shelves -->
+  <path d="M0 238c84-70 163-87 253-70-45 59-70 126-76 202-8 106 8 239-65 338L0 739Z" fill="#160d09" opacity=".9"/>
+  <path d="M18 286c50-42 96-59 148-50-25 54-37 111-35 174 2 85-14 173-73 236" fill="none" stroke="#5e3320" stroke-width="27" opacity=".34"/>
+  <path d="M11 332c58-33 111-44 160-33M18 444c49-22 91-28 129-17M31 565c39-11 71-10 99 1" fill="none" stroke="#a15d32" stroke-width="6" opacity=".12"/>
+
+  <!-- trophy canopy around workbench -->
+  <g filter="url(#softShadow)">
+    <path d="M782 205h366" stroke="#5d3a24" stroke-width="18" stroke-linecap="round"/>
+    <path d="M816 205v96M1118 205v96" stroke="#5d3a24" stroke-width="15" stroke-linecap="round"/>
+    <path d="M829 211c74 34 182 34 275 1l-21 84c-80 27-158 25-235-2Z" fill="url(#hideCloth)" stroke="#3f291d" stroke-width="3"/>
+    <path d="M842 218c50 20 100 27 150 22" fill="none" stroke="#d29a62" stroke-width="3" opacity=".23"/>
+    <g fill="#e5d6b7" stroke="#8b7252" stroke-width="2">
+      <path d="M842 183c9-21 27-25 39-6-3 25-12 38-20 45-8-7-16-20-19-39Z"/>
+      <path d="M926 176c9-22 27-26 40-6-3 25-12 38-20 46-9-8-17-21-20-40Z"/>
+      <path d="M1011 180c9-20 26-24 38-6-3 24-11 36-19 43-8-7-16-19-19-37Z"/>
+    </g>
+    <path d="M848 184 860 191m-8 9 17-3M932 178l13 8m-7 10 16-2M1017 182l12 7m-7 10 15-3" stroke="#5f4330" stroke-width="3"/>
+  </g>
+
+  <!-- spear rack and hanging tools -->
+  <g filter="url(#softShadow)">
+    <path d="M1175 228v296M1211 244v279" stroke="#714627" stroke-width="12" stroke-linecap="round"/>
+    <path d="m1164 258 20-46 18 10-21 45zM1201 277l21-48 17 11-23 47z" fill="#a9a9a0" stroke="#d3c4a4" stroke-width="2"/>
+    <path d="M1139 511h94" stroke="#3c2a20" stroke-width="13" stroke-linecap="round"/>
+  </g>
+
+  <!-- more floor material and hide -->
+  <path d="M791 689c65-21 126-18 184 10l-19 102c-67 14-127 8-183-18Z" fill="url(#hideCloth)" opacity=".78" filter="url(#softShadow)"/>
+  <path d="M807 711c43 15 84 17 123 7" fill="none" stroke="#cb8c51" stroke-width="4" opacity=".25"/>
+  <g fill="#655047" opacity=".96">
+    <ellipse cx="724" cy="753" rx="39" ry="24"/><ellipse cx="754" cy="728" rx="27" ry="18"/><ellipse cx="1048" cy="739" rx="44" ry="26"/>
+    <ellipse cx="1090" cy="766" rx="31" ry="19"/><ellipse cx="319" cy="784" rx="39" ry="23"/>
+  </g>
+
+  <!-- ground light and texture -->
+  <rect y="445" width="1230" height="420" fill="url(#groundGlow)" opacity=".78"/>
+  <g fill="none" stroke="#bd6f38" stroke-width="3" opacity=".11">
+    <path d="M241 794c205-63 405-48 608 1 106 26 212 26 318 1"/>
+    <path d="M227 827c211-44 413-31 610 10 118 24 232 21 345-5"/>
+    <path d="M349 733c97-26 192-24 285-5m-226 43c68-13 135-10 202 8"/>
+  </g>
+
+  <!-- cold fog at cave exit -->
+  <g opacity=".38" filter="url(#depthBlur)">
+    <ellipse cx="1364" cy="612" rx="205" ry="82" fill="#a9d4df"/>
+    <ellipse cx="1434" cy="535" rx="132" ry="52" fill="#d5edf1"/>
+  </g>
+
+  <!-- sparks -->
+  <g fill="#ff9b31" filter="url(#emberGlow)">
+    <circle cx="382" cy="551" r="4"/><circle cx="404" cy="518" r="3"/><circle cx="481" cy="489" r="4"/>
+    <circle cx="511" cy="535" r="2.5"/><circle cx="437" cy="467" r="2.7"/><circle cx="542" cy="580" r="3"/>
+    <circle cx="1127" cy="317" r="2.5"/><circle cx="1199" cy="304" r="2.2"/>
+  </g>
+
+  <!-- vignette side rocks for depth -->
+  <path d="M0 635c83-26 157-25 225 7l42 258H0Z" fill="url(#foregroundRock)" opacity=".88"/>
+  <path d="M1600 611c-77-24-142-17-201 19l-48 270h249Z" fill="url(#foregroundRock)" opacity=".92"/>
 </g>
 
 <!-- foreground vignette rocks -->
