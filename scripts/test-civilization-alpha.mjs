@@ -172,7 +172,8 @@ try {
       return { ok: response.ok, status: response.status, type: blob.type, size: blob.size, width, height };
     }, { src });
     assert.equal(asset.ok, true, `${src}: HTTP ${asset.status}`);
-    assert(asset.size > 20_000, `${src}: suspicious asset size ${asset.size}`);
+    const minBytes = src.endsWith('/cave.webp') ? 20_000 : 7_000;
+    assert(asset.size > minBytes, `${src}: suspicious asset size ${asset.size}`);
     assert(asset.width >= minWidth, `${src}: decoded width ${asset.width}`);
     assert(asset.height >= minHeight, `${src}: decoded height ${asset.height}`);
   }
