@@ -739,17 +739,122 @@ function EvolutionPanel() {
 function Mascot({ avatar, compact = false }: { avatar: AvatarState; compact?: boolean }) {
   const hair = avatar.gender === 'female' && avatar.hair !== 'Лысый';
   return (
-    <div className={`civ-mascot ${compact ? 'compact' : ''}`} style={{ '--civ-skin': avatar.color } as CSSProperties}>
-      <div className="civ-hair">{hair ? <span>{avatar.hair === 'Пучок' ? '●' : avatar.hair === 'Косы' ? '⌁' : avatar.hair === 'Длинные' ? '◒' : '⌒'}</span> : null}</div>
-      <div className="civ-head">
-        <i className="eye left" /><i className="eye right" />
-        <i className="brow left" /><i className="brow right" />
-        <i className="cheek left" /><i className="cheek right" />
-        <i className="mouth" />
-      </div>
-      <div className="civ-necklace">◆ ◆ ◆</div>
-      <div className="civ-body"><i className="fur" /></div>
-      {!compact ? <><div className="civ-arm left" /><div className="civ-arm right" /><div className="civ-leg left" /><div className="civ-leg right" /><div className="civ-club"><i /></div></> : null}
+    <div
+      className={`civ-mascot civ-mascot-v3 ${compact ? 'compact' : ''} ${avatar.gender}`}
+      style={{ '--civ-skin': avatar.color, color: avatar.color } as CSSProperties}
+      aria-hidden="true"
+    >
+      <svg viewBox="0 0 220 330" role="presentation">
+        <defs>
+          <linearGradient id="civ-v3-hide" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#9b6037" />
+            <stop offset=".45" stopColor="#68402a" />
+            <stop offset="1" stopColor="#2d2019" />
+          </linearGradient>
+          <linearGradient id="civ-v3-hide-light" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#d49a61" />
+            <stop offset="1" stopColor="#744529" />
+          </linearGradient>
+          <linearGradient id="civ-v3-wood" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#a56b39" />
+            <stop offset=".55" stopColor="#694124" />
+            <stop offset="1" stopColor="#2a1d15" />
+          </linearGradient>
+          <radialGradient id="civ-v3-stone" cx=".32" cy=".2" r=".86">
+            <stop offset="0" stopColor="#a6aaa7" />
+            <stop offset=".5" stopColor="#5e6667" />
+            <stop offset="1" stopColor="#252b2d" />
+          </radialGradient>
+          <filter id="civ-v3-shadow" x="-40%" y="-30%" width="180%" height="190%">
+            <feDropShadow dx="0" dy="9" stdDeviation="7" floodColor="#000" floodOpacity=".48" />
+          </filter>
+          <filter id="civ-v3-soft" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="5" />
+          </filter>
+        </defs>
+
+        <ellipse cx="112" cy="309" rx="66" ry="14" fill="#000" opacity=".36" filter="url(#civ-v3-soft)" />
+
+        <g className="civ-v3-character" filter="url(#civ-v3-shadow)">
+          <g className="civ-v3-club">
+            <path d="M35 292 69 117" stroke="url(#civ-v3-wood)" strokeWidth="19" strokeLinecap="round" />
+            <path d="M46 104c4-25 28-40 51-29 18 9 19 31 5 48-15 19-47 18-56-1-3-6-3-12 0-18Z" fill="url(#civ-v3-stone)" stroke="#b8945e" strokeWidth="2" />
+            <path d="m55 131 30 7m-27 7 24 6" stroke="#b98752" strokeWidth="5" strokeLinecap="round" opacity=".88" />
+          </g>
+
+          <g className="civ-v3-legs">
+            <path d="M82 232c-8 32-11 54-6 72 9 7 21 7 30 0l3-72Z" fill="#4c3024" />
+            <path d="M121 232c1 31 4 55 12 72 9 6 21 5 28-3-1-23-6-47-13-70Z" fill="#442b22" />
+            <path d="M73 293c11 7 23 7 35 1l-1 14c-11 6-22 6-34 0Z" fill="#241a16" />
+            <path d="M130 293c10 6 21 6 31 0l3 13c-10 7-22 7-33 1Z" fill="#241a16" />
+            <path d="M75 273h32m22 1h29" stroke="#99704a" strokeWidth="4" strokeDasharray="5 4" opacity=".8" />
+          </g>
+
+          <g className="civ-v3-body">
+            <path d="M72 130c18-18 58-19 79-2 15 12 19 34 15 67-3 28-8 46-16 55-22 11-58 10-81-1-8-20-13-42-14-66-1-26 4-43 17-53Z" fill="currentColor" />
+            <path d="M75 132c18-13 56-14 76-1 9 8 14 16 17 25-26 10-75 10-105 0 3-10 7-18 12-24Z" fill="#fff" opacity=".14" />
+            <path d="M61 176c24 15 73 17 108 2l-4 64c-33 17-70 18-104 3Z" fill="url(#civ-v3-hide)" />
+            <path d="m60 178 15-13 13 14 14-15 14 14 15-15 14 14 13-15 13 15-3 25H62Z" fill="#3a281f" opacity=".9" />
+            <path d="M72 214c25 9 57 9 86 0" stroke="#b57e46" strokeWidth="8" strokeLinecap="round" />
+            <path d="M76 214c26 7 51 7 77 0" stroke="#6d4326" strokeWidth="3" strokeDasharray="5 4" />
+          </g>
+
+          <g className="civ-v3-arms">
+            <path d="M67 151c-17 3-26 19-27 48-1 25 5 44 17 48 12 4 22-5 23-19l2-60c0-12-5-19-15-17Z" fill="currentColor" />
+            <path d="M155 149c16 2 27 17 29 45 3 25-2 45-14 50-12 5-23-4-24-18l-4-59c-1-11 4-18 13-18Z" fill="currentColor" />
+            <path d="M47 198c9 3 20 3 30-1m77-2c10 4 19 4 28 0" stroke="#7d5135" strokeWidth="5" opacity=".7" />
+            <path d="M48 203c9 4 19 4 29 0m78-3c9 4 18 4 27 0" stroke="#b08152" strokeWidth="3" strokeDasharray="4 3" />
+          </g>
+
+          <g className="civ-v3-necklace">
+            <path d="M86 127c14 14 35 14 50 0" fill="none" stroke="#6a452a" strokeWidth="4" />
+            <path d="m91 131 7 13 8-12 7 14 8-14 8 12 7-13" fill="#efe1b6" stroke="#a9885a" strokeWidth="1" />
+          </g>
+
+          <g className="civ-v3-head">
+            <ellipse cx="111" cy="82" rx="62" ry="62" fill="currentColor" />
+            <ellipse cx="91" cy="62" rx="31" ry="24" fill="#fff" opacity=".19" />
+            <path d="M56 93c5 24 24 45 55 50 33-3 54-24 61-50-11 17-31 27-59 29-27-1-46-11-57-29Z" fill="#70361f" opacity=".12" />
+            <ellipse cx="54" cy="88" rx="9" ry="14" fill="currentColor" />
+            <ellipse cx="168" cy="88" rx="9" ry="14" fill="currentColor" />
+
+            <path d="M79 69c8-6 17-6 24-2" stroke="#24150f" strokeWidth="6" strokeLinecap="round" />
+            <path d="M121 67c8-5 17-4 23 1" stroke="#24150f" strokeWidth="6" strokeLinecap="round" />
+            <ellipse cx="93" cy="84" rx="7" ry="10" fill="#18100d" />
+            <ellipse cx="132" cy="84" rx="7" ry="10" fill="#18100d" />
+            <circle cx="95" cy="81" r="2.2" fill="#fff" opacity=".9" />
+            <circle cx="134" cy="81" r="2.2" fill="#fff" opacity=".9" />
+            <path d="M104 103c5 4 11 4 16 0" fill="none" stroke="#66321f" strokeWidth="2.7" strokeLinecap="round" />
+            <path d="M91 113c13 11 29 11 42 0" fill="none" stroke="#321b15" strokeWidth="4" strokeLinecap="round" />
+            <path d="M67 101h17m-19 7h17m76-7h-17m19 7h-17" stroke="#f8e1cb" strokeWidth="3" strokeLinecap="round" opacity=".88" />
+          </g>
+
+          {hair ? (
+            <g className={`civ-v3-hair hair-${avatar.hair.toLowerCase().replaceAll(' ', '-')}`}>
+              {avatar.hair === 'Пучок' ? (
+                <>
+                  <circle cx="119" cy="22" r="24" fill="#3a2119" />
+                  <path d="M55 78c-3-41 21-68 58-68 37 0 60 27 56 69-11-22-31-35-58-35-26 0-45 12-56 34Z" fill="#43251b" />
+                  <path d="M68 55c24-21 55-28 87-4" fill="none" stroke="#6e3b25" strokeWidth="9" strokeLinecap="round" opacity=".6" />
+                </>
+              ) : avatar.hair === 'Косы' ? (
+                <>
+                  <path d="M55 78c-3-41 21-68 58-68 37 0 60 27 56 69-11-22-31-35-58-35-26 0-45 12-56 34Z" fill="#3b2119" />
+                  <path d="M60 69c-13 32-10 60 4 84m97-84c13 32 10 60-4 84" fill="none" stroke="#4a291d" strokeWidth="12" strokeLinecap="round" />
+                  <path d="M57 92h11m-9 17h12m88-17h-11m9 17h-12" stroke="#a57142" strokeWidth="3" />
+                </>
+              ) : avatar.hair === 'Длинные' ? (
+                <>
+                  <path d="M54 79c-5-42 21-70 59-70 39 0 62 28 57 73l-8 68c-10-18-16-42-13-70-20-27-57-31-78-5 4 30-2 56-15 77Z" fill="#40231b" />
+                  <path d="M68 52c25-18 58-21 87 2" fill="none" stroke="#70402a" strokeWidth="8" strokeLinecap="round" opacity=".55" />
+                </>
+              ) : (
+                <path d="M55 78c-2-41 22-68 58-68 37 0 59 26 56 68-12-20-31-31-57-31-25 0-44 10-57 31Z" fill="#42241b" />
+              )}
+            </g>
+          ) : null}
+        </g>
+      </svg>
     </div>
   );
 }
