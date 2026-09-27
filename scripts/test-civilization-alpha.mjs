@@ -149,6 +149,11 @@ try {
   assert.equal(savedAvatar.gender, 'female');
   assert.equal(savedAvatar.hair, 'Пучок');
 
+  // Approved generated art must be live, not merely committed.
+  assert.match(await page.locator('.civ-cave-background').getAttribute('src'), /\/games\/civilization\/art\/cave\.webp$/);
+  const characterBackground = await page.locator('.civ-character-art>span').first().evaluate((node) => getComputedStyle(node).backgroundImage);
+  assert.match(characterBackground, /characters\.webp/);
+
   // Left side is intentionally compact: avatar, XP and one disclosure menu.
   assert.equal(await page.locator('.civ-player-rail').count(), 1);
   assert.equal(await page.locator('.civ-player-menu').count(), 0);
@@ -186,6 +191,9 @@ try {
   await page.locator('.civ-resource').filter({ hasText: 'Еда' }).click();
   assert.match(await page.locator('.civ-resource-popover').textContent(), /Ягоды/);
   assert.match(await page.locator('.civ-resource-popover').textContent(), /Мясо/);
+  assert((await page.locator('.civ-resource-popover .civ-resource-art').count()) >= 4);
+  const foodArtBackground = await page.locator('.civ-resource-popover .civ-resource-art').first().evaluate((node) => getComputedStyle(node).backgroundImage);
+  assert.match(foodArtBackground, /resources\.webp/);
   await page.locator('.civ-resource').filter({ hasText: 'Еда' }).click();
   await page.locator('.civ-resource').filter({ hasText: 'Ресурсы' }).click();
   assert.match(await page.locator('.civ-resource-popover.resources').textContent(), /Камень/);
@@ -221,6 +229,9 @@ try {
   assert.match(await page.locator('.civ-full-panel').textContent(), /Управление персонажем/);
   assert.equal(await page.locator('.civ-equipment-tabs>button').count(), 5);
   assert((await page.locator('.civ-item-card').count()) >= 8, 'weapon catalog should show progression and locked goals');
+  assert((await page.locator('.civ-item-art-generated').count()) >= 8, 'generated equipment art should cover the starter weapon catalog');
+  const equipmentArtBackground = await page.locator('.civ-item-art-generated').first().evaluate((node) => getComputedStyle(node).backgroundImage);
+  assert.match(equipmentArtBackground, /equipment\.webp/);
   assert.equal(await page.locator('.civ-item-art svg').count(), await page.locator('.civ-item-card').count() + 1);
   // Equip a real unlocked weapon through the UI. This must survive reload later.
   await page.getByRole('button', { name: /Оружие/ }).click();
@@ -315,6 +326,9 @@ try {
 
   await bottomNav.getByRole('button', { name: /Боссы/ }).click();
   await page.getByRole('button', { name: /Саблезубый тигр/ }).click();
+  assert((await page.locator('.civ-boss-art-generated').count()) >= 4, 'generated boss art must be used in list and detail');
+  const bossArtBackground = await page.locator('.civ-boss-art-generated.large').evaluate((node) => getComputedStyle(node).backgroundImage);
+  assert.match(bossArtBackground, /bosses\.webp/);
   await page.screenshot({ path: output + '/civilization-bosses-1720x864.png', fullPage: false });
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
 
@@ -358,7 +372,7 @@ try {
   assert.match(page.url(), /\/applications\/games\/civilization/);
 
   assert.deepEqual(pageErrors, []);
-  console.log('Civilization alpha: creation, compact shell, scoped tasks, central panels, equipment persistence, real boss drops and desktop matrix passed');
+  console.log('Civilization visual v4: generated cave, mascot, equipment, resources and bosses plus full alpha regression passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
