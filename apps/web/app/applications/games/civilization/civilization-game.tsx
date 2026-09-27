@@ -404,7 +404,7 @@ export function CivilizationGame() {
         </aside>
 
         <main className="civ-scene">
-          <img className="civ-cave-background" src="/games/civilization/cave-hub.svg" alt="Пещера первобытного лагеря" />
+          <img className="civ-cave-background" src="/games/civilization/art/cave.webp" alt="Пещера первобытного лагеря" />
           <div className="civ-mascot-stage"><Mascot avatar={avatar} /></div>
           <Hotspot className="fire" icon="fire" title="Костёр" text="Восстановить энергию" onClick={() => setNotice('Костёр восстановит энергию после короткого отдыха.')} />
           <Hotspot className="bench" icon="craft" title="Верстак" text="Создание предметов" onClick={() => setPanel('craft')} />
@@ -540,8 +540,33 @@ export function CivilizationGame() {
 }
 
 
+const ITEM_ART_CELLS: Record<string, [number, number]> = {
+  club: [0, 0],
+  axe: [1, 0],
+  knife: [2, 0],
+  spear: [3, 0],
+  'bone-club': [0, 1],
+  'flint-shard': [1, 1],
+  bow: [2, 1],
+  'obsidian-axe': [3, 1],
+  'hunter-spear': [0, 2],
+  'mammoth-maul': [1, 2],
+  fur: [2, 2],
+  fang: [3, 2],
+};
+
 function ItemArt({ item, large = false }: { item: Item; large?: boolean }) {
   const id = item.id;
+  const sprite = ITEM_ART_CELLS[id];
+  if (sprite) {
+    return (
+      <span
+        className={`civ-item-art civ-item-art-generated ${large ? 'large' : ''} art-${item.category} art-${id}`}
+        style={{ '--item-col': sprite[0], '--item-row': sprite[1] } as CSSProperties}
+        aria-hidden="true"
+      />
+    );
+  }
   const weapon = item.category === 'weapon';
   const clothes = item.category === 'clothes';
   const accessory = item.category === 'accessory';
@@ -705,7 +730,7 @@ function InventoryPanel({ loot }: { loot: Record<string, number> }) {
       <div className="civ-inventory-groups">
         {groups.map((group) => (
           <section key={group.title}><h3>{group.title}</h3>
-            <div>{group.items.map(([name,value]) => <article key={name}><span className="civ-inventory-glyph">{group.title === 'Пища' ? '●' : group.title === 'Трофеи' ? '◆' : '■'}</span><b>{name}</b><strong>{value}</strong></article>)}</div>
+            <div>{group.items.map(([name,value]) => <article key={name}><ResourceArt name={name} /><b>{name}</b><strong>{value}</strong></article>)}</div>
           </section>
         ))}
       </div>
@@ -737,124 +762,14 @@ function EvolutionPanel() {
 }
 
 function Mascot({ avatar, compact = false }: { avatar: AvatarState; compact?: boolean }) {
-  const hair = avatar.gender === 'female' && avatar.hair !== 'Лысый';
+  const tone = Math.max(0, colors.indexOf(avatar.color));
   return (
     <div
-      className={`civ-mascot civ-mascot-v3 ${compact ? 'compact' : ''} ${avatar.gender}`}
-      style={{ '--civ-skin': avatar.color, color: avatar.color } as CSSProperties}
+      className={`civ-mascot civ-character-art ${compact ? 'compact' : ''} ${avatar.gender} tone-${tone}`}
+      data-hair={avatar.gender === 'female' ? avatar.hair : 'Лысый'}
       aria-hidden="true"
     >
-      <svg viewBox="0 0 220 330" role="presentation">
-        <defs>
-          <linearGradient id="civ-v3-hide" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#9b6037" />
-            <stop offset=".45" stopColor="#68402a" />
-            <stop offset="1" stopColor="#2d2019" />
-          </linearGradient>
-          <linearGradient id="civ-v3-hide-light" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#d49a61" />
-            <stop offset="1" stopColor="#744529" />
-          </linearGradient>
-          <linearGradient id="civ-v3-wood" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#a56b39" />
-            <stop offset=".55" stopColor="#694124" />
-            <stop offset="1" stopColor="#2a1d15" />
-          </linearGradient>
-          <radialGradient id="civ-v3-stone" cx=".32" cy=".2" r=".86">
-            <stop offset="0" stopColor="#a6aaa7" />
-            <stop offset=".5" stopColor="#5e6667" />
-            <stop offset="1" stopColor="#252b2d" />
-          </radialGradient>
-          <filter id="civ-v3-shadow" x="-40%" y="-30%" width="180%" height="190%">
-            <feDropShadow dx="0" dy="9" stdDeviation="7" floodColor="#000" floodOpacity=".48" />
-          </filter>
-          <filter id="civ-v3-soft" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="5" />
-          </filter>
-        </defs>
-
-        <ellipse cx="112" cy="309" rx="66" ry="14" fill="#000" opacity=".36" filter="url(#civ-v3-soft)" />
-
-        <g className="civ-v3-character" filter="url(#civ-v3-shadow)">
-          <g className="civ-v3-club">
-            <path d="M35 292 69 117" stroke="url(#civ-v3-wood)" strokeWidth="19" strokeLinecap="round" />
-            <path d="M46 104c4-25 28-40 51-29 18 9 19 31 5 48-15 19-47 18-56-1-3-6-3-12 0-18Z" fill="url(#civ-v3-stone)" stroke="#b8945e" strokeWidth="2" />
-            <path d="m55 131 30 7m-27 7 24 6" stroke="#b98752" strokeWidth="5" strokeLinecap="round" opacity=".88" />
-          </g>
-
-          <g className="civ-v3-legs">
-            <path d="M82 232c-8 32-11 54-6 72 9 7 21 7 30 0l3-72Z" fill="#4c3024" />
-            <path d="M121 232c1 31 4 55 12 72 9 6 21 5 28-3-1-23-6-47-13-70Z" fill="#442b22" />
-            <path d="M73 293c11 7 23 7 35 1l-1 14c-11 6-22 6-34 0Z" fill="#241a16" />
-            <path d="M130 293c10 6 21 6 31 0l3 13c-10 7-22 7-33 1Z" fill="#241a16" />
-            <path d="M75 273h32m22 1h29" stroke="#99704a" strokeWidth="4" strokeDasharray="5 4" opacity=".8" />
-          </g>
-
-          <g className="civ-v3-body">
-            <path d="M72 130c18-18 58-19 79-2 15 12 19 34 15 67-3 28-8 46-16 55-22 11-58 10-81-1-8-20-13-42-14-66-1-26 4-43 17-53Z" fill="currentColor" />
-            <path d="M75 132c18-13 56-14 76-1 9 8 14 16 17 25-26 10-75 10-105 0 3-10 7-18 12-24Z" fill="#fff" opacity=".14" />
-            <path d="M61 176c24 15 73 17 108 2l-4 64c-33 17-70 18-104 3Z" fill="url(#civ-v3-hide)" />
-            <path d="m60 178 15-13 13 14 14-15 14 14 15-15 14 14 13-15 13 15-3 25H62Z" fill="#3a281f" opacity=".9" />
-            <path d="M72 214c25 9 57 9 86 0" stroke="#b57e46" strokeWidth="8" strokeLinecap="round" />
-            <path d="M76 214c26 7 51 7 77 0" stroke="#6d4326" strokeWidth="3" strokeDasharray="5 4" />
-          </g>
-
-          <g className="civ-v3-arms">
-            <path d="M67 151c-17 3-26 19-27 48-1 25 5 44 17 48 12 4 22-5 23-19l2-60c0-12-5-19-15-17Z" fill="currentColor" />
-            <path d="M155 149c16 2 27 17 29 45 3 25-2 45-14 50-12 5-23-4-24-18l-4-59c-1-11 4-18 13-18Z" fill="currentColor" />
-            <path d="M47 198c9 3 20 3 30-1m77-2c10 4 19 4 28 0" stroke="#7d5135" strokeWidth="5" opacity=".7" />
-            <path d="M48 203c9 4 19 4 29 0m78-3c9 4 18 4 27 0" stroke="#b08152" strokeWidth="3" strokeDasharray="4 3" />
-          </g>
-
-          <g className="civ-v3-necklace">
-            <path d="M86 127c14 14 35 14 50 0" fill="none" stroke="#6a452a" strokeWidth="4" />
-            <path d="m91 131 7 13 8-12 7 14 8-14 8 12 7-13" fill="#efe1b6" stroke="#a9885a" strokeWidth="1" />
-          </g>
-
-          <g className="civ-v3-head">
-            <ellipse cx="111" cy="82" rx="62" ry="62" fill="currentColor" />
-            <ellipse cx="91" cy="62" rx="31" ry="24" fill="#fff" opacity=".19" />
-            <path d="M56 93c5 24 24 45 55 50 33-3 54-24 61-50-11 17-31 27-59 29-27-1-46-11-57-29Z" fill="#70361f" opacity=".12" />
-            <ellipse cx="54" cy="88" rx="9" ry="14" fill="currentColor" />
-            <ellipse cx="168" cy="88" rx="9" ry="14" fill="currentColor" />
-
-            <path d="M79 69c8-6 17-6 24-2" stroke="#24150f" strokeWidth="6" strokeLinecap="round" />
-            <path d="M121 67c8-5 17-4 23 1" stroke="#24150f" strokeWidth="6" strokeLinecap="round" />
-            <ellipse cx="93" cy="84" rx="7" ry="10" fill="#18100d" />
-            <ellipse cx="132" cy="84" rx="7" ry="10" fill="#18100d" />
-            <circle cx="95" cy="81" r="2.2" fill="#fff" opacity=".9" />
-            <circle cx="134" cy="81" r="2.2" fill="#fff" opacity=".9" />
-            <path d="M104 103c5 4 11 4 16 0" fill="none" stroke="#66321f" strokeWidth="2.7" strokeLinecap="round" />
-            <path d="M91 113c13 11 29 11 42 0" fill="none" stroke="#321b15" strokeWidth="4" strokeLinecap="round" />
-            <path d="M67 101h17m-19 7h17m76-7h-17m19 7h-17" stroke="#f8e1cb" strokeWidth="3" strokeLinecap="round" opacity=".88" />
-          </g>
-
-          {hair ? (
-            <g className={`civ-v3-hair hair-${avatar.hair.toLowerCase().replaceAll(' ', '-')}`}>
-              {avatar.hair === 'Пучок' ? (
-                <>
-                  <circle cx="119" cy="22" r="24" fill="#3a2119" />
-                  <path d="M55 78c-3-41 21-68 58-68 37 0 60 27 56 69-11-22-31-35-58-35-26 0-45 12-56 34Z" fill="#43251b" />
-                  <path d="M68 55c24-21 55-28 87-4" fill="none" stroke="#6e3b25" strokeWidth="9" strokeLinecap="round" opacity=".6" />
-                </>
-              ) : avatar.hair === 'Косы' ? (
-                <>
-                  <path d="M55 78c-3-41 21-68 58-68 37 0 60 27 56 69-11-22-31-35-58-35-26 0-45 12-56 34Z" fill="#3b2119" />
-                  <path d="M60 69c-13 32-10 60 4 84m97-84c13 32 10 60-4 84" fill="none" stroke="#4a291d" strokeWidth="12" strokeLinecap="round" />
-                  <path d="M57 92h11m-9 17h12m88-17h-11m9 17h-12" stroke="#a57142" strokeWidth="3" />
-                </>
-              ) : avatar.hair === 'Длинные' ? (
-                <>
-                  <path d="M54 79c-5-42 21-70 59-70 39 0 62 28 57 73l-8 68c-10-18-16-42-13-70-20-27-57-31-78-5 4 30-2 56-15 77Z" fill="#40231b" />
-                  <path d="M68 52c25-18 58-21 87 2" fill="none" stroke="#70402a" strokeWidth="8" strokeLinecap="round" opacity=".55" />
-                </>
-              ) : (
-                <path d="M55 78c-2-41 22-68 58-68 37 0 59 26 56 68-12-20-31-31-57-31-25 0-44 10-57 31Z" fill="#42241b" />
-              )}
-            </g>
-          ) : null}
-        </g>
-      </svg>
+      <span />
     </div>
   );
 }
@@ -976,8 +891,50 @@ function PrimitiveArt({ kind, className = '' }: { kind: PrimitiveArtKind; classN
   );
 }
 
+const RESOURCE_CLASS_BY_KIND: Partial<Record<PrimitiveArtKind, string>> = {
+  berry: 'berries',
+  meat: 'meat',
+  mushroom: 'mushrooms',
+  fish: 'fish',
+  wood: 'wood',
+  stone: 'stone',
+  flint: 'flint',
+  hide: 'hide',
+  bone: 'bones',
+};
+
+const RESOURCE_ART_BY_NAME: Record<string, string> = {
+  'Ягоды': 'berries',
+  'Мясо': 'meat',
+  'Грибы': 'mushrooms',
+  'Рыба': 'fish',
+  'Дерево': 'wood',
+  'Камень': 'stone',
+  'Кремень': 'flint',
+  'Шкуры': 'hide',
+  'Шкура мамонта': 'hide',
+  'Тигриная шкура': 'hide',
+  'Кости': 'bones',
+  'Кость': 'bones',
+  'Клык саблезуба': 'fang',
+  'Бивень мамонта': 'tusk',
+  'Тотем вожака': 'totem',
+  'Редкий камень': 'rare',
+};
+
+function ResourceArt({ name }: { name: string }) {
+  const art = RESOURCE_ART_BY_NAME[name] ?? 'stone';
+  return <span className={`civ-resource-art resource-${art}`} aria-hidden="true" />;
+}
+
 function ResourceRow({ art, label, value }: { art: PrimitiveArtKind; label: string; value: string }) {
-  return <div className="civ-resource-row"><PrimitiveArt kind={art} /><b>{label}</b><em>{value}</em></div>;
+  const generated = RESOURCE_CLASS_BY_KIND[art];
+  return (
+    <div className="civ-resource-row">
+      {generated ? <span className={`civ-resource-art resource-${generated}`} aria-hidden="true" /> : <PrimitiveArt kind={art} />}
+      <b>{label}</b><em>{value}</em>
+    </div>
+  );
 }
 
 function TaskRow({ task, compact = false }: { task: { label: string; progress: number; total: number; reward: string }; compact?: boolean }) {
@@ -1053,82 +1010,11 @@ function EquipmentPanel({
 
 
 function BossArt({ boss, large = false }: { boss: Boss; large?: boolean }) {
-  const tiger = boss.id === 'tiger';
-  const mammoth = boss.id === 'mammoth';
-
   return (
-    <span className={`civ-boss-illustration boss-${boss.id} ${large ? 'large' : ''}`} aria-hidden="true">
-      <svg viewBox="0 0 280 230" role="presentation">
-        <defs>
-          <radialGradient id={`boss-aura-${boss.id}`} cx=".5" cy=".46" r=".58">
-            <stop offset="0" stopColor={tiger ? '#e78a2e' : mammoth ? '#8e8176' : '#9a5f37'} stopOpacity=".48" />
-            <stop offset=".72" stopColor="#22150e" stopOpacity=".14" />
-            <stop offset="1" stopColor="#0b0e10" stopOpacity="0" />
-          </radialGradient>
-          <linearGradient id={`boss-main-${boss.id}`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor={tiger ? '#ef9a3a' : mammoth ? '#80736a' : '#8e6549'} />
-            <stop offset=".55" stopColor={tiger ? '#be5b24' : mammoth ? '#514b48' : '#59402f'} />
-            <stop offset="1" stopColor="#241914" />
-          </linearGradient>
-          <linearGradient id={`boss-light-${boss.id}`} x1=".2" y1=".1" x2=".8" y2=".95">
-            <stop offset="0" stopColor="#fff0cf" stopOpacity=".30" />
-            <stop offset=".55" stopColor="#d89a5c" stopOpacity=".10" />
-            <stop offset="1" stopColor="#000" stopOpacity=".24" />
-          </linearGradient>
-          <filter id={`boss-shadow-${boss.id}`} x="-35%" y="-30%" width="170%" height="180%">
-            <feDropShadow dx="0" dy="11" stdDeviation="8" floodColor="#000" floodOpacity=".55" />
-          </filter>
-        </defs>
-
-        <ellipse cx="140" cy="203" rx="105" ry="15" fill="#000" opacity=".30"/>
-        <ellipse cx="140" cy="112" rx="128" ry="102" fill={`url(#boss-aura-${boss.id})`} />
-
-        {tiger ? (
-          <g filter={`url(#boss-shadow-${boss.id})`}>
-            <path d="M55 171c8-33 21-58 45-74 30-20 73-19 102 2 24 18 37 44 42 73-27 15-54 22-83 22-38 0-73-8-106-23Z" fill={`url(#boss-main-${boss.id})`} />
-            <path d="M73 93 45 33l58 29c24-14 51-14 75 0l57-29-28 61c13 17 19 35 15 55-7 39-39 67-81 68-42-1-75-27-83-66-4-20 1-39 15-58Z" fill={`url(#boss-main-${boss.id})`} stroke="#d98635" strokeWidth="3"/>
-            <path d="m52 44 39 37m136-37-39 37M86 62l13 35m82-35-14 35M69 110l31 9m111-9-31 9M80 144l31-4m88 4-31-4" stroke="#2c1a13" strokeWidth="10" strokeLinecap="round" opacity=".84"/>
-            <path d="M94 136c13-18 28-25 46-17 18-8 34-1 47 17-5 27-22 43-47 47-26-4-42-20-46-47Z" fill="#ead6b1"/>
-            <ellipse cx="102" cy="112" rx="10" ry="8" fill="#100b08"/><ellipse cx="178" cy="112" rx="10" ry="8" fill="#100b08"/>
-            <circle cx="105" cy="109" r="3" fill="#f2ca55"/><circle cx="181" cy="109" r="3" fill="#f2ca55"/>
-            <path d="m134 135 12 0-6 9Z" fill="#3d211b"/>
-            <path d="M111 151 118 190 130 156M169 151 162 190 150 156" fill="#f0dfb4" stroke="#cdb88e" strokeWidth="2"/>
-            <path d="M54 173c-20 2-32 10-40 24 23 4 42 1 57-10m154-14c20 2 32 10 41 24-24 4-43 1-58-10" fill="#cc6a29" stroke="#80401f" strokeWidth="3"/>
-            <path d="M90 74c29-20 66-22 99 0" fill="none" stroke="#f0b062" strokeWidth="5" opacity=".36" strokeLinecap="round"/>
-          </g>
-        ) : mammoth ? (
-          <g filter={`url(#boss-shadow-${boss.id})`}>
-            <path d="M57 92c9-43 40-69 87-70 45 1 78 26 88 67 8 31 3 69-15 94-20 28-48 38-78 38-31 0-61-11-79-40-16-25-11-60-3-89Z" fill={`url(#boss-main-${boss.id})`} stroke="#8f8178" strokeWidth="3"/>
-            <path d="M61 91C31 85 19 100 21 124c2 28 18 41 49 36M223 90c31-5 45 10 43 35-3 27-19 40-49 35" fill="#4d4744" stroke="#87786f" strokeWidth="5"/>
-            <path d="M118 104c10-12 34-12 44 1 8 9 10 20 8 34l-5 54c-2 22-13 32-27 31-14-1-25-12-25-31l-3-55c-1-14 1-25 8-34Z" fill="#5b514c"/>
-            <path d="M113 142c-24 10-39 29-42 58 16-13 32-21 50-22m47-36c24 11 39 29 43 58-17-13-33-20-51-22" fill="none" stroke="#ead7a9" strokeWidth="12" strokeLinecap="round"/>
-            <ellipse cx="108" cy="91" rx="9" ry="7" fill="#0e0b09"/><ellipse cx="174" cy="91" rx="9" ry="7" fill="#0e0b09"/>
-            <path d="M85 53c14-12 29-18 44-19m68 20c-14-12-29-18-44-20" stroke="#302b29" strokeWidth="10" strokeLinecap="round" opacity=".58"/>
-            <path d="M78 64c-17 23-20 53-10 88m142-88c17 23 20 53 10 88" fill="none" stroke="#a39184" strokeWidth="6" opacity=".34"/>
-            <path d="M77 183c12 18 31 28 56 31m70-31c-12 18-31 28-56 31" fill="none" stroke="#2f2a28" strokeWidth="12" strokeLinecap="round"/>
-          </g>
-        ) : (
-          <g filter={`url(#boss-shadow-${boss.id})`}>
-            <path d="M77 97c9-38 34-61 67-62 36 1 60 24 68 62 8 38-6 82-33 103-20 14-53 14-74 0-26-21-39-65-28-103Z" fill={`url(#boss-main-${boss.id})`} stroke="#8f674a" strokeWidth="3"/>
-            <path d="M90 87c9-24 27-36 52-36 27 1 46 14 53 39 6 25-5 58-26 73-16 11-41 11-57 0-21-16-30-50-22-76Z" fill="#aa7a57"/>
-            <path d="M93 56c-24-17-42-8-45 15-2 18 8 31 28 34m117-49c24-17 42-8 45 15 2 18-8 31-28 34" fill="#563c2e" stroke="#7d5942" strokeWidth="5"/>
-            <ellipse cx="112" cy="98" rx="9" ry="7" fill="#0d0907"/><ellipse cx="170" cy="98" rx="9" ry="7" fill="#0d0907"/>
-            <path d="M123 133c12 9 26 9 38 0" fill="none" stroke="#42291f" strokeWidth="6" strokeLinecap="round"/>
-            <path d="M128 145c9 7 18 7 27 0" fill="none" stroke="#d8b494" strokeWidth="3" opacity=".65"/>
-            <path d="M142 36 155 11l15 27 24-14-6 31 24 7-31 14H103L73 62l23-8-5-31 26 15 12-27Z" fill="#d59636" stroke="#f0bf66" strokeWidth="3"/>
-            <path d="M83 132c-29 5-45 21-51 48 16 12 37 9 61-8m100-40c29 5 45 21 51 48-16 12-37 9-61-8" fill="#59402f" stroke="#8c684b" strokeWidth="5"/>
-            <path d="M43 181 21 214m28-28-7 36" stroke="#805331" strokeWidth="10" strokeLinecap="round"/>
-            <path d="M24 210 8 191m14 19 18 13" stroke="#c8bbb0" strokeWidth="8" strokeLinecap="round"/>
-            <path d="M34 188 65 72" stroke="#7b4a28" strokeWidth="9" strokeLinecap="round"/>
-            <path d="m51 72 22-39 15 10-22 41Z" fill="#aeb2ad" stroke="#d0c5aa" strokeWidth="2"/>
-            <path d="m87 81-22 4m85-37-6 25" stroke="#f2d9b5" strokeWidth="4" opacity=".28" strokeLinecap="round"/>
-          </g>
-        )}
-
-        <path d="M43 38c22-25 50-34 83-28" fill="none" stroke="#fff3d6" strokeWidth="4" opacity=".10" strokeLinecap="round"/>
-        <path d="M30 187c31 17 68 25 110 25 43 0 81-9 112-27" fill="none" stroke="#e7a64b" strokeWidth="2" opacity=".12"/>
-      </svg>
-    </span>
+    <span
+      className={`civ-boss-illustration civ-boss-art-generated boss-${boss.id} ${large ? 'large' : ''}`}
+      aria-hidden="true"
+    />
   );
 }
 
@@ -1147,7 +1033,7 @@ function BossesPanel({ bosses, selected, selectedBoss, setSelectedBoss, hp, atta
             <h3>{selected.name}</h3>
             <p>Сила босса: {selected.power}. Подготовь оружие и запас энергии перед охотой.</p>
             <div className="civ-boss-hp"><span>Здоровье</span><b>{hp}/{selected.hp}</b><div><i style={{ width: `${Math.min(100, hp / selected.hp * 100)}%` }} /></div></div>
-            <div className="civ-drops"><small>Возможные трофеи</small>{selected.drops.map(drop => <span key={drop}>{drop}</span>)}</div>
+            <div className="civ-drops"><small>Возможные трофеи</small>{selected.drops.map(drop => { const name = dropName(drop); return <span key={drop}><ResourceArt name={name} />{name}</span>; })}</div>
             <button type="button" className="civ-primary" onClick={attackBoss}>{hp <= 0 ? 'Охота завершена — начать заново' : 'Атаковать · −22 HP'}</button>
           </div>
         </article>
