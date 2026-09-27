@@ -100,19 +100,19 @@ const weeklyTasks = [
 ];
 
 const mapStages = [
-  ['Пещера', 'Открыто', '🔥'],
-  ['Каменный век', 'Ур. 5 · 500 камня · 100 власти', '🪨'],
-  ['Бронзовый век', 'После Каменного века', '⚒️'],
-  ['Железный век', 'После Бронзового века', '🛡️'],
-  ['Средневековье', 'Позже', '🏰'],
-];
+  ['Пещера', 'Открыто', 'cave'],
+  ['Каменный век', 'Ур. 5 · 500 камня · 100 власти', 'stone-age'],
+  ['Бронзовый век', 'После Каменного века', 'bronze-age'],
+  ['Железный век', 'После Бронзового века', 'iron-age'],
+  ['Средневековье', 'Позже', 'medieval'],
+] as const;
 
 const craftRecipes = [
-  { name: 'Каменный топор', icon: '🪓', needs: '40 камня · 20 дерева', ready: true },
-  { name: 'Факел', icon: '🔥', needs: '15 дерева · 5 смолы', ready: true },
-  { name: 'Каменная кирка', icon: '⛏️', needs: '60 камня · 30 дерева', ready: false },
-  { name: 'Шкура охотника', icon: '🥋', needs: '3 шкуры · 10 костей', ready: false },
-];
+  { name: 'Каменный топор', art: 'axe', needs: '40 камня · 20 дерева', ready: true },
+  { name: 'Факел', art: 'torch', needs: '15 дерева · 5 смолы', ready: true },
+  { name: 'Каменная кирка', art: 'pick', needs: '60 камня · 30 дерева', ready: false },
+  { name: 'Шкура охотника', art: 'hide', needs: '3 шкуры · 10 костей', ready: false },
+] as const;
 
 function loadState(): AvatarState {
   if (typeof window === 'undefined') return { created: false, gender: 'male', color: colors[0], hair: 'Лысый' };
@@ -350,10 +350,10 @@ export function CivilizationGame() {
               {resourceOpen === 'food' ? (
                 <div className="civ-resource-popover">
                   <div className="civ-popover-title"><b>Еда</b><small>340 всего</small></div>
-                  <ResourceRow icon="🍓" label="Ягоды" value="120" />
-                  <ResourceRow icon="🍖" label="Мясо" value="85" />
-                  <ResourceRow icon="🍄" label="Грибы" value="45" />
-                  <ResourceRow icon="🐟" label="Рыба" value="90" />
+                  <ResourceRow art="berry" label="Ягоды" value="120" />
+                  <ResourceRow art="meat" label="Мясо" value="85" />
+                  <ResourceRow art="mushroom" label="Грибы" value="45" />
+                  <ResourceRow art="fish" label="Рыба" value="90" />
                 </div>
               ) : null}
             </div>
@@ -364,11 +364,11 @@ export function CivilizationGame() {
               {resourceOpen === 'materials' ? (
                 <div className="civ-resource-popover resources">
                   <div className="civ-popover-title"><b>Ресурсы</b><small>Материалы лагеря</small></div>
-                  <ResourceRow icon="🪵" label="Дерево" value="120" />
-                  <ResourceRow icon="🪨" label="Камень" value="210" />
-                  <ResourceRow icon="🔪" label="Кремень" value="37" />
-                  <ResourceRow icon="🥋" label="Шкуры" value="28" />
-                  <ResourceRow icon="🦴" label="Кости" value="16" />
+                  <ResourceRow art="wood" label="Дерево" value="120" />
+                  <ResourceRow art="stone" label="Камень" value="210" />
+                  <ResourceRow art="flint" label="Кремень" value="37" />
+                  <ResourceRow art="hide" label="Шкуры" value="28" />
+                  <ResourceRow art="bone" label="Кости" value="16" />
                 </div>
               ) : null}
             </div>
@@ -863,8 +863,121 @@ function Hotspot({ className, icon, title, text, onClick }: { className: string;
   return <button type="button" className={`civ-hotspot ${className}`} onClick={onClick}><CivSymbol kind={icon} /><div><b>{title}</b><small>{text}</small></div><em>›</em></button>;
 }
 
-function ResourceRow({ icon, label, value }: { icon: string; label: string; value: string }) {
-  return <div className="civ-resource-row"><span>{icon}</span><b>{label}</b><em>{value}</em></div>;
+type PrimitiveArtKind =
+  | 'berry' | 'meat' | 'mushroom' | 'fish'
+  | 'wood' | 'stone' | 'flint' | 'hide' | 'bone'
+  | 'cave' | 'stone-age' | 'bronze-age' | 'iron-age' | 'medieval'
+  | 'axe' | 'torch' | 'pick';
+
+function PrimitiveArt({ kind, className = '' }: { kind: PrimitiveArtKind; className?: string }) {
+  const common = { strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
+  return (
+    <span className={`civ-primitive-art art-${kind} ${className}`.trim()} aria-hidden="true">
+      <svg viewBox="0 0 96 96" role="presentation">
+        <defs>
+          <linearGradient id={`pa-wood-${kind}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#b9793c"/><stop offset=".55" stopColor="#6f4327"/><stop offset="1" stopColor="#2b1f18"/>
+          </linearGradient>
+          <linearGradient id={`pa-stone-${kind}`} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#c1c2bb"/><stop offset=".5" stopColor="#777b7b"/><stop offset="1" stopColor="#363b3e"/>
+          </linearGradient>
+          <linearGradient id={`pa-fire-${kind}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#fff0a0"/><stop offset=".45" stopColor="#ffad32"/><stop offset="1" stopColor="#e24920"/>
+          </linearGradient>
+          <radialGradient id={`pa-glow-${kind}`} cx=".5" cy=".5" r=".5">
+            <stop offset="0" stopColor="#ffb43f" stopOpacity=".48"/><stop offset="1" stopColor="#ff8a27" stopOpacity="0"/>
+          </radialGradient>
+        </defs>
+
+        {kind === 'berry' ? <>
+          <path d="M32 34c4-15 15-24 29-25-5 7-5 13-2 19 9-5 17-5 24-2-8 4-13 10-15 18" fill="#467b38"/>
+          <g fill="#d9344d" stroke="#7d2130" strokeWidth="2"><circle cx="31" cy="53" r="13"/><circle cx="48" cy="43" r="14"/><circle cx="64" cy="55" r="13"/><circle cx="47" cy="64" r="14"/></g>
+          <g fill="#ffd7aa" opacity=".72"><circle cx="28" cy="49" r="2"/><circle cx="46" cy="39" r="2"/><circle cx="62" cy="50" r="2"/><circle cx="44" cy="60" r="2"/></g>
+        </> : null}
+        {kind === 'meat' ? <>
+          <path d="M33 24c15-12 37-8 45 8 7 15-2 31-18 39-16 8-35 4-42-9-7-14 0-27 15-38Z" fill="#b9362f" stroke="#6f211f" strokeWidth="3"/>
+          <path d="M36 31c12-8 28-5 34 6 5 10-1 21-13 27-12 6-25 3-30-5-5-10-1-19 9-28Z" fill="#e96554"/>
+          <path d="M65 66 79 80m-20-8 11 12" stroke="#ead6b1" strokeWidth="9" {...common}/>
+          <circle cx="81" cy="82" r="6" fill="#f0e2c6"/>
+        </> : null}
+        {kind === 'mushroom' ? <>
+          <path d="M42 51h15l7 32H35Z" fill="#d7b17b" stroke="#8e6744" strokeWidth="2"/>
+          <path d="M17 51c4-24 17-37 38-37 19 0 31 12 36 36-20 9-52 10-74 1Z" fill="#c43c35" stroke="#7f2825" strokeWidth="3"/>
+          <g fill="#f3ddba"><circle cx="39" cy="31" r="6"/><circle cx="62" cy="24" r="5"/><circle cx="72" cy="42" r="5"/></g>
+        </> : null}
+        {kind === 'fish' ? <>
+          <path d="M20 49c16-25 44-30 63-4-17 28-48 28-63 4Z" fill="#4286b7" stroke="#23516f" strokeWidth="3"/>
+          <path d="m20 49-15-15v30Z" fill="#32759e" stroke="#23516f" strokeWidth="3"/>
+          <path d="M53 30c10 8 15 19 14 33" fill="none" stroke="#87bde0" strokeWidth="3" opacity=".7"/>
+          <circle cx="72" cy="43" r="3.5" fill="#0d1720"/>
+        </> : null}
+        {kind === 'wood' ? <>
+          <g transform="translate(4 11)"><rect x="13" y="42" width="67" height="18" rx="9" fill="url(#pa-wood-wood)" transform="rotate(-10 46 51)"/><rect x="7" y="25" width="69" height="18" rx="9" fill="url(#pa-wood-wood)" transform="rotate(8 42 34)"/><rect x="19" y="8" width="64" height="18" rx="9" fill="url(#pa-wood-wood)" transform="rotate(-4 51 17)"/></g>
+          <g fill="#c98b4a"><circle cx="22" cy="65" r="6"/><circle cx="20" cy="43" r="6"/><circle cx="28" cy="24" r="6"/></g>
+        </> : null}
+        {kind === 'stone' ? <>
+          <path d="M17 67 28 31l25-17 25 20 3 34-26 14Z" fill="url(#pa-stone-stone)" stroke="#555e62" strokeWidth="3"/>
+          <path d="m29 32 24 15 24-12M53 47l2 34" fill="none" stroke="#d9d9cf" strokeWidth="2" opacity=".45"/>
+        </> : null}
+        {kind === 'flint' ? <>
+          <path d="M15 71 42 13l39 15-20 55Z" fill="#444a50" stroke="#a8a79c" strokeWidth="2.5"/>
+          <path d="M43 16 31 57l29-19 15-8M31 57l30 24" fill="none" stroke="#d5d2c5" strokeWidth="2" opacity=".55"/>
+        </> : null}
+        {kind === 'hide' ? <>
+          <path d="M20 16c9 5 16 3 25-4 8 7 17 8 26 2 1 12 7 20 15 27-8 11-9 21-2 32-13 1-22 5-28 12-10-7-20-9-31-4 1-11-3-20-13-28 8-12 10-24 8-37Z" fill="#8a5935" stroke="#4a301f" strokeWidth="3"/>
+          <path d="M31 29c12 9 23 10 34 1m-35 34c13-8 25-8 37 1" fill="none" stroke="#c99157" strokeWidth="3" opacity=".55"/>
+        </> : null}
+        {kind === 'bone' ? <>
+          <path d="M22 64c-8 7-12 4-15-1-3-6 0-11 8-13L65 23c-2-8 1-13 7-14 6-1 11 3 10 10 8-3 13 0 14 6 1 6-3 11-11 10L34 62c1 8-3 13-9 13-6 0-10-4-9-11Z" fill="#eadab5" stroke="#a88e62" strokeWidth="3"/>
+        </> : null}
+
+        {kind === 'cave' ? <>
+          <ellipse cx="48" cy="53" rx="42" ry="40" fill="url(#pa-glow-cave)"/>
+          <path d="M14 78c5-29 15-50 34-66 19 16 30 37 35 66H14Z" fill="#39271e" stroke="#976338" strokeWidth="3"/>
+          <path d="M33 79c2-20 7-34 15-43 9 10 14 24 16 43H33Z" fill="#101518"/>
+          <path d="M46 80c-10-15-7-27 0-37 2 7 6 11 5 18 6-8 7-16 5-24 12 14 14 29 6 41-5 7-12 10-16 2Z" fill="url(#pa-fire-cave)"/>
+        </> : null}
+        {kind === 'stone-age' ? <>
+          <path d="M26 78 51 20l25 58Z" fill="#5f676a" stroke="#a3a7a4" strokeWidth="3"/>
+          <path d="M37 54 55 39 66 58 51 74Z" fill="#899093"/>
+          <path d="M18 80h62" stroke="#735036" strokeWidth="7" strokeLinecap="round"/>
+        </> : null}
+        {kind === 'bronze-age' ? <>
+          <path d="M22 72 63 25" stroke="#a36832" strokeWidth="9" strokeLinecap="round"/>
+          <path d="m53 20 28 8-7 24-31-8Z" fill="#b77b42" stroke="#e0ad62" strokeWidth="3"/>
+          <circle cx="30" cy="63" r="14" fill="#8d5a30" stroke="#c9904b" strokeWidth="3"/>
+        </> : null}
+        {kind === 'iron-age' ? <>
+          <path d="M48 11c14 9 26 13 36 14-2 31-13 50-36 61C25 75 14 56 12 25c11-2 23-6 36-14Z" fill="#3f5f79" stroke="#7aa5c2" strokeWidth="3"/>
+          <path d="M48 20v56" stroke="#a9c5d5" strokeWidth="3" opacity=".6"/>
+        </> : null}
+        {kind === 'medieval' ? <>
+          <path d="M20 79V39l13-5v-14h12v12h8V17h13v16l12 5v41Z" fill="#5b536e" stroke="#9489ad" strokeWidth="3"/>
+          <path d="M36 79V59h24v20M15 39h68" stroke="#2b2635" strokeWidth="4"/>
+          <path d="M30 20h16m5-3h16" stroke="#d0566f" strokeWidth="5"/>
+        </> : null}
+
+        {kind === 'axe' ? <>
+          <path d="M30 82 63 23" stroke="url(#pa-wood-axe)" strokeWidth="10" {...common}/>
+          <path d="M55 22c14-9 27-9 36-3L79 49c-11-1-21-5-30-11Z" fill="url(#pa-stone-axe)" stroke="#d1b077" strokeWidth="2"/>
+          <path d="M48 38 72 47" stroke="#7c5130" strokeWidth="4"/>
+        </> : null}
+        {kind === 'torch' ? <>
+          <path d="M43 87 55 38" stroke="url(#pa-wood-torch)" strokeWidth="10" strokeLinecap="round"/>
+          <path d="M37 39h25" stroke="#9c6b3c" strokeWidth="8"/>
+          <path d="M48 42c-14-16-4-28 4-37 2 9 7 14 5 22 7-8 9-15 7-23 13 14 13 29 4 39-6 7-14 7-20-1Z" fill="url(#pa-fire-torch)"/>
+        </> : null}
+        {kind === 'pick' ? <>
+          <path d="M40 86 57 32" stroke="url(#pa-wood-pick)" strokeWidth="9" strokeLinecap="round"/>
+          <path d="M18 34c21-16 42-19 62-8l-5 9c-19-5-36-2-53 10Z" fill="url(#pa-stone-pick)" stroke="#b6bab5" strokeWidth="2"/>
+        </> : null}
+      </svg>
+    </span>
+  );
+}
+
+function ResourceRow({ art, label, value }: { art: PrimitiveArtKind; label: string; value: string }) {
+  return <div className="civ-resource-row"><PrimitiveArt kind={art} /><b>{label}</b><em>{value}</em></div>;
 }
 
 function TaskRow({ task, compact = false }: { task: { label: string; progress: number; total: number; reward: string }; compact?: boolean }) {
@@ -1019,10 +1132,10 @@ function MapPanel({ setNotice }: { setNotice: (value: string) => void }) {
     <div className="civ-panel-body map">
       <header className="civ-panel-head"><div><small>Путь цивилизации</small><h2>Карта эпох</h2><p>От первой пещеры до собственной империи. Новые эпохи меняют мир, ресурсы, боссов и технологии.</p></div></header>
       <div className="civ-map-path">
-        {mapStages.map(([name, req, icon], index) => <button type="button" key={name} className={index === 0 ? 'active' : 'locked'} onClick={() => setNotice(index === 0 ? 'Ты уже находишься в Пещере.' : `${name}: ${req}`)}><span>{icon}</span><b>{name}</b><small>{req}</small><em>{index === 0 ? 'Текущая' : '🔒'}</em></button>)}
+        {mapStages.map(([name, req, art], index) => <button type="button" key={name} className={index === 0 ? 'active' : 'locked'} onClick={() => setNotice(index === 0 ? 'Ты уже находишься в Пещере.' : `${name}: ${req}`)}><PrimitiveArt kind={art} className="era" /><b>{name}</b><small>{req}</small><em>{index === 0 ? 'Текущая' : 'Закрыто'}</em></button>)}
       </div>
       <div className="civ-map-detail">
-        <div className="civ-map-visual"><span>🔥</span><b>Пещера</b><small>Стартовая территория</small></div>
+        <div className="civ-map-visual"><PrimitiveArt kind="cave" className="map-hero" /><b>Пещера</b><small>Стартовая территория</small></div>
         <div><h3>Что нужно для Каменного века</h3><TaskRow task={{ label: 'Достичь 5 уровня', progress: 1, total: 5, reward: '' }} /><TaskRow task={{ label: 'Собрать камень', progress: 210, total: 500, reward: '' }} /><TaskRow task={{ label: 'Набрать власть', progress: 37, total: 100, reward: '' }} /></div>
       </div>
     </div>
@@ -1034,7 +1147,7 @@ function CraftPanel({ setNotice }: { setNotice: (value: string) => void }) {
     <div className="civ-panel-body craft">
       <header className="civ-panel-head"><div><small>Верстак</small><h2>Крафт</h2><p>Создавай оружие, инструменты и одежду из найденных материалов.</p></div></header>
       <div className="civ-craft-grid">
-        {craftRecipes.map(recipe => <article key={recipe.name} className={recipe.ready ? 'ready' : 'locked'}><span>{recipe.icon}</span><h3>{recipe.name}</h3><p>{recipe.needs}</p><button type="button" disabled={!recipe.ready} onClick={() => setNotice(`${recipe.name}: создано и отправлено в инвентарь.`)}>{recipe.ready ? 'Создать' : 'Не хватает ресурсов'}</button></article>)}
+        {craftRecipes.map(recipe => <article key={recipe.name} className={recipe.ready ? 'ready' : 'locked'}><PrimitiveArt kind={recipe.art} className="craft-art" /><h3>{recipe.name}</h3><p>{recipe.needs}</p><button type="button" disabled={!recipe.ready} onClick={() => setNotice(`${recipe.name}: создано и отправлено в инвентарь.`)}>{recipe.ready ? 'Создать' : 'Не хватает ресурсов'}</button></article>)}
       </div>
     </div>
   );
