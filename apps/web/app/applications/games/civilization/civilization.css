@@ -2491,3 +2491,91 @@ button{font:inherit}
 .civ-profile-identity .civ-xp{
   border-color:#29363c;
 }
+
+
+/* ==========================================================================
+   CIVILIZATION VISUAL V3 — MASCOT
+   Layered SVG character art replacing the prototype CSS doll.
+   ========================================================================== */
+.civ-mascot-v3{
+  position:relative;
+  width:220px;
+  height:330px;
+  display:block;
+  isolation:isolate;
+}
+
+.civ-mascot-v3>svg{
+  display:block;
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+
+.civ-mascot-v3 .civ-v3-character{
+  transform-origin:110px 310px;
+}
+
+.civ-mascot-v3 .civ-v3-hair{
+  filter:drop-shadow(0 5px 5px rgba(0,0,0,.32));
+}
+
+.civ-mascot-v3.compact{
+  width:220px;
+  height:330px;
+}
+
+.civ-mascot-v3.compact .civ-v3-club{
+  display:none;
+}
+
+.civ-mascot-v3.compact .civ-v3-character{
+  transform:translateY(8px) scale(.94);
+}
+
+.civ-mascot-stage .civ-mascot-v3{
+  width:248px;
+  height:370px;
+}
+
+.civ-mascot-stage .civ-mascot-v3 .civ-v3-character{
+  transform:translateY(-2px) scale(1.04);
+}
+
+.civ-avatar-card .civ-mascot-v3.compact{
+  margin:-14px auto -118px!important;
+  transform:scale(.57)!important;
+  transform-origin:top center!important;
+}
+
+.civ-create-preview .civ-mascot-v3{
+  width:260px;
+  height:390px;
+  transform:scale(1.03);
+}
+
+.civ-profile-hero-card .civ-mascot-v3{
+  filter:drop-shadow(0 18px 24px rgba(0,0,0,.48));
+}
+
+@media(max-width:1450px){
+  .civ-mascot-stage .civ-mascot-v3{
+    width:226px;
+    height:338px;
+  }
+  .civ-avatar-card .civ-mascot-v3.compact{
+    transform:scale(.51)!important;
+    margin:-15px auto -132px!important;
+  }
+}
+
+@media(min-width:721px) and (max-height:800px){
+  .civ-mascot-stage .civ-mascot-v3{
+    width:208px;
+    height:312px;
+  }
+  .civ-avatar-card .civ-mascot-v3.compact{
+    transform:scale(.45)!important;
+    margin:-15px auto -150px!important;
+  }
+}
