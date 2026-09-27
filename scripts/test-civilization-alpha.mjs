@@ -232,7 +232,8 @@ try {
   assert((await page.locator('.civ-item-art-generated').count()) >= 8, 'generated equipment art should cover the starter weapon catalog');
   const equipmentArtBackground = await page.locator('.civ-item-art-generated').first().evaluate((node) => getComputedStyle(node).backgroundImage);
   assert.match(equipmentArtBackground, /equipment\.webp/);
-  assert.equal(await page.locator('.civ-item-art svg').count(), await page.locator('.civ-item-card').count() + 1);
+  const renderedItemArt = await page.locator('.civ-item-art-generated').count() + await page.locator('.civ-item-art svg').count();
+  assert.equal(renderedItemArt, await page.locator('.civ-item-card').count() + 1, 'every catalog item and selected preview must render art');
   // Equip a real unlocked weapon through the UI. This must survive reload later.
   await page.getByRole('button', { name: /Оружие/ }).click();
   const axeCard = page.locator('.civ-item-card').filter({ hasText: 'Каменный топор' }).first();
