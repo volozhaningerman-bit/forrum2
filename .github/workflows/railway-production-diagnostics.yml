@@ -1,0 +1,49 @@
+name: Railway production diagnostics
+
+on:
+  push:
+    branches:
+      - diag/railway-production-v53
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: DNS and HTTP diagnostics
+        shell: bash
+        run: |
+          set +e
+          echo "=== DNS 4rrum.ru ==="
+          dig +short CNAME 4rrum.ru
+          dig +short A 4rrum.ru
+          dig +short AAAA 4rrum.ru
+          echo "=== DNS api.4rrum.ru ==="
+          dig +short CNAME api.4rrum.ru
+          dig +short A api.4rrum.ru
+          dig +short AAAA api.4rrum.ru
+
+          nonce="${GITHUB_SHA}-$(date +%s)"
+          echo "=== HOME HEADERS ==="
+          curl -sS -D /tmp/home.headers -o /tmp/home.html             -H 'Cache-Control: no-cache, no-store, max-age=0'             -H 'Pragma: no-cache'             "https://4rrum.ru/?diag=${nonce}"
+          cat /tmp/home.headers
+          echo "=== HOME MARKERS ==="
+          grep -o 'data-home-reference="[^"]*"' /tmp/home.html | head -5 || true
+          grep -o 'Найди своих\. Создай с AI\.' /tmp/home.html | head -2 || true
+          grep -o 'ТЕХНОЛОГИИ\. ЛЮДИ\. ИДЕИ\.' /tmp/home.html | head -2 || true
+          echo "home bytes: $(wc -c < /tmp/home.html)"
+
+          echo "=== BUILD INFO ==="
+          curl -sS -D -             -H 'Cache-Control: no-cache, no-store, max-age=0'             -H 'Pragma: no-cache'             "https://4rrum.ru/api/build-info?diag=${nonce}"
+          echo
+
+          echo "=== API HEALTH ==="
+          curl -sS -D -             -H 'Cache-Control: no-cache, no-store, max-age=0'             -H 'Pragma: no-cache'             "https://api.4rrum.ru/v1/health?diag=${nonce}"
+          echo
+
+          echo "=== TLS / ROUTE SUMMARY ==="
+          curl -sS -o /dev/null -w 'home remote_ip=%{remote_ip} http=%{http_code} redirect=%{redirect_url}\n' "https://4rrum.ru/?diag=${nonce}"
+          curl -sS -o /dev/null -w 'api remote_ip=%{remote_ip} http=%{http_code} redirect=%{redirect_url}\n' "https://api.4rrum.ru/v1/health?diag=${nonce}"
