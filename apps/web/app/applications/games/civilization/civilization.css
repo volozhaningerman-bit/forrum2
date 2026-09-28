@@ -4574,3 +4574,288 @@ button{font:inherit}
   -webkit-mask-image:radial-gradient(ellipse 76% 74% at 50% 50%,#000 54%,rgba(0,0,0,.98) 64%,rgba(0,0,0,.72) 76%,transparent 100%)!important;
   mask-image:radial-gradient(ellipse 76% 74% at 50% 50%,#000 54%,rgba(0,0,0,.98) 64%,rgba(0,0,0,.72) 76%,transparent 100%)!important;
 }
+
+
+/* ==========================================================================
+   CIVILIZATION V5 — ART INTEGRATION POLISH
+   Screenshot-driven integration of the approved cave / hero / boss / item art.
+   ========================================================================== */
+
+/* Bosses: preserve the generated creature proportions instead of stretching
+   each third of the panorama vertically into a portrait crop. */
+.civ-atlas-boss{
+  background-size:300% auto!important;
+  background-repeat:no-repeat!important;
+  background-position-y:center!important;
+}
+.civ-atlas-boss.boss-ape{background-position-x:0!important}
+.civ-atlas-boss.boss-tiger{background-position-x:50%!important}
+.civ-atlas-boss.boss-mammoth{background-position-x:100%!important}
+
+.civ-boss-detail{
+  grid-template-columns:minmax(430px,1.15fr) minmax(0,.85fr)!important;
+}
+.civ-boss-art{
+  min-height:0!important;
+  border-color:#4a3522!important;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(222,129,42,.16),transparent 38%),
+    linear-gradient(180deg,#17130f,#080d10)!important;
+}
+.civ-boss-art .civ-atlas-boss.large{
+  width:96%!important;
+  height:96%!important;
+  margin:auto!important;
+  border-radius:10px!important;
+  -webkit-mask-image:radial-gradient(ellipse 93% 91% at 50% 50%,#000 75%,rgba(0,0,0,.92) 86%,transparent 100%)!important;
+  mask-image:radial-gradient(ellipse 93% 91% at 50% 50%,#000 75%,rgba(0,0,0,.92) 86%,transparent 100%)!important;
+  filter:
+    drop-shadow(0 24px 23px rgba(0,0,0,.52))
+    drop-shadow(0 0 22px rgba(221,133,43,.08))
+    saturate(1.08)
+    contrast(1.035)!important;
+}
+.civ-boss-art::before{
+  opacity:.18!important;
+  filter:blur(22px) saturate(1.12)!important;
+}
+.civ-boss-list button>.civ-atlas-boss{
+  width:92px!important;
+  height:78px!important;
+  transform:none!important;
+  border-radius:7px!important;
+  -webkit-mask-image:radial-gradient(ellipse 96% 92% at 50% 50%,#000 72%,transparent 100%)!important;
+  mask-image:radial-gradient(ellipse 96% 92% at 50% 50%,#000 72%,transparent 100%)!important;
+}
+
+/* Equipment: zoom further inside each generated 4x3 tile so the baked card
+   border disappears and the object itself becomes the visual focus. */
+.civ-atlas-item{
+  background-size:615.385% 461.538%!important;
+}
+.civ-atlas-item.art-club{background-position:5.22% 7.45%!important}
+.civ-atlas-item.art-axe{background-position:35.15% 7.45%!important}
+.civ-atlas-item.art-knife{background-position:65.08% 7.45%!important}
+.civ-atlas-item.art-spear{background-position:95.00% 7.45%!important}
+
+.civ-atlas-item.art-bone-club{background-position:5.22% 50%!important}
+.civ-atlas-item.art-flint-shard{background-position:35.15% 50%!important}
+.civ-atlas-item.art-bow{background-position:65.08% 50%!important}
+.civ-atlas-item.art-obsidian-axe{background-position:95.00% 50%!important}
+
+.civ-atlas-item.art-hunter-spear{background-position:5.22% 92.55%!important}
+.civ-atlas-item.art-mammoth-maul{background-position:35.15% 92.55%!important}
+.civ-atlas-item.art-fur{background-position:65.08% 92.55%!important}
+.civ-atlas-item.art-fang{background-position:95.00% 92.55%!important}
+
+.civ-item-card{
+  background:
+    radial-gradient(circle at 50% 28%,rgba(184,107,35,.13),transparent 45%),
+    linear-gradient(180deg,#11191d,#091115)!important;
+}
+.civ-item-card .civ-atlas-item{
+  width:calc(100% - 12px)!important;
+  height:88px!important;
+  margin:2px auto 0!important;
+  border-radius:0!important;
+  clip-path:none!important;
+  -webkit-mask-image:radial-gradient(ellipse 78% 74% at 50% 49%,#000 52%,rgba(0,0,0,.96) 65%,rgba(0,0,0,.46) 82%,transparent 100%)!important;
+  mask-image:radial-gradient(ellipse 78% 74% at 50% 49%,#000 52%,rgba(0,0,0,.96) 65%,rgba(0,0,0,.46) 82%,transparent 100%)!important;
+  filter:
+    drop-shadow(0 11px 9px rgba(0,0,0,.42))
+    saturate(1.08)
+    contrast(1.045)!important;
+}
+.civ-item-card.active .civ-atlas-item{
+  filter:
+    drop-shadow(0 0 11px rgba(228,146,48,.16))
+    drop-shadow(0 12px 10px rgba(0,0,0,.44))
+    saturate(1.1)
+    contrast(1.05)!important;
+}
+.civ-item-hero{
+  overflow:hidden!important;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(222,136,43,.22),transparent 40%),
+    linear-gradient(180deg,#151813,#081014)!important;
+}
+.civ-item-hero .civ-atlas-item.large{
+  width:110%!important;
+  height:106%!important;
+  margin:auto!important;
+  transform:none!important;
+  clip-path:none!important;
+  mix-blend-mode:normal!important;
+  -webkit-mask-image:radial-gradient(ellipse 72% 72% at 50% 50%,#000 50%,rgba(0,0,0,.94) 66%,rgba(0,0,0,.35) 84%,transparent 100%)!important;
+  mask-image:radial-gradient(ellipse 72% 72% at 50% 50%,#000 50%,rgba(0,0,0,.94) 66%,rgba(0,0,0,.35) 84%,transparent 100%)!important;
+  filter:
+    drop-shadow(0 18px 15px rgba(0,0,0,.38))
+    drop-shadow(0 0 22px rgba(233,151,51,.12))
+    saturate(1.12)
+    contrast(1.05)!important;
+}
+
+/* Map: use the actual approved cave art as the visual anchor of the current
+   epoch instead of a generic gradient + icon. */
+.civ-map-cave-art{
+  position:relative!important;
+  overflow:hidden!important;
+  isolation:isolate;
+  background:
+    linear-gradient(0deg,rgba(4,8,10,.72),rgba(4,8,10,.06) 64%),
+    linear-gradient(90deg,rgba(4,8,10,.18),transparent 45%),
+    var(--civ-cave-art-v2) center 52%/cover no-repeat!important;
+}
+.civ-map-cave-art::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:
+    radial-gradient(circle at 31% 62%,rgba(255,139,35,.13),transparent 31%),
+    linear-gradient(90deg,transparent 55%,rgba(3,8,11,.23));
+}
+.civ-map-cave-art>div{
+  position:absolute!important;
+  left:18px;
+  right:18px;
+  bottom:16px;
+  min-width:0!important;
+  align-items:flex-start!important;
+  text-align:left!important;
+}
+.civ-map-cave-art>div>small:first-child,
+.civ-map-cave-art>div>span{
+  text-align:left!important;
+}
+.civ-map-cave-art>div>b{
+  font-size:31px!important;
+  text-shadow:0 3px 16px rgba(0,0,0,.82);
+}
+.civ-map-cave-art>div>span{
+  max-width:370px!important;
+  color:#d6d1c8!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.8);
+}
+
+/* Craft: make recipe cards feel like an actual workbench, not four admin
+   tiles.  Generated item art remains the focal content. */
+.civ-panel-body.craft{
+  position:relative;
+}
+.civ-panel-body.craft::before{
+  content:"";
+  position:absolute;
+  inset:62px 0 0;
+  pointer-events:none;
+  opacity:.13;
+  background:
+    linear-gradient(180deg,#071014 0%,rgba(7,16,20,.68) 36%,rgba(7,16,20,.96) 100%),
+    var(--civ-cave-art-v2) center 42%/cover no-repeat;
+  -webkit-mask-image:linear-gradient(180deg,#000,transparent 92%);
+  mask-image:linear-gradient(180deg,#000,transparent 92%);
+}
+.civ-craft-grid{
+  position:relative;
+  z-index:1;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+.civ-craft-grid article{
+  min-height:270px!important;
+  border-color:#34434a!important;
+  background:
+    radial-gradient(circle at 50% 26%,rgba(193,112,36,.13),transparent 40%),
+    linear-gradient(180deg,rgba(17,26,31,.96),rgba(8,14,17,.98))!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.17),inset 0 1px rgba(255,255,255,.02);
+}
+.civ-craft-grid article.ready{
+  border-color:#755126!important;
+}
+.civ-craft-art{
+  height:126px!important;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(217,130,39,.20),transparent 50%),
+    rgba(8,14,17,.62)!important;
+}
+.civ-craft-art>.civ-atlas-item{
+  width:145px!important;
+  height:116px!important;
+}
+
+/* Tribe: every card gets an illustrative top area and the current cave art
+   becomes the camp's real environment. */
+.civ-tribe-grid article{
+  min-height:330px!important;
+  grid-template-rows:145px auto auto auto minmax(0,1fr) 40px!important;
+  background:linear-gradient(180deg,#111a1f,#081014)!important;
+}
+.civ-tribe-art{
+  height:136px!important;
+}
+.civ-tribe-art.tribe-camp{
+  background-image:
+    linear-gradient(0deg,rgba(3,8,10,.76),transparent 72%),
+    var(--civ-cave-art-v2)!important;
+  background-size:100% 100%,cover!important;
+  background-position:0 0,center 55%!important;
+}
+.civ-tribe-art.tribe-camp::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 31% 61%,rgba(255,139,35,.10),transparent 36%);
+  pointer-events:none;
+}
+.civ-tribe-art.tribe-mammoth{
+  position:relative;
+  display:grid!important;
+  place-items:center;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 46%,rgba(214,125,41,.16),transparent 43%),
+    linear-gradient(180deg,#15130f,#081014)!important;
+}
+.civ-tribe-art.tribe-mammoth .civ-atlas-boss{
+  width:95%!important;
+  height:94%!important;
+  margin:auto!important;
+  -webkit-mask-image:radial-gradient(ellipse 92% 90% at 50% 50%,#000 70%,transparent 100%)!important;
+  mask-image:radial-gradient(ellipse 92% 90% at 50% 50%,#000 70%,transparent 100%)!important;
+}
+.civ-tribe-art.tribe-wood{
+  background:
+    radial-gradient(circle at 33% 50%,rgba(222,137,43,.16),transparent 38%),
+    linear-gradient(180deg,#151712,#081014)!important;
+}
+.civ-tribe-art.tribe-wood .civ-atlas-resource{
+  width:112px!important;
+  height:105px!important;
+  flex-basis:112px!important;
+}
+.civ-tribe-art.tribe-wood .civ-vector-icon{
+  width:46px!important;
+  height:46px!important;
+  color:#f0a63e;
+  filter:drop-shadow(0 0 13px rgba(238,144,43,.28));
+}
+
+/* Keep the denser visual treatment inside low-height desktop too. */
+@media(max-width:1450px){
+  .civ-boss-detail{grid-template-columns:minmax(330px,1.05fr) minmax(0,.95fr)!important}
+  .civ-item-card .civ-atlas-item{height:74px!important}
+  .civ-map-cave-art>div>b{font-size:25px!important}
+  .civ-craft-grid article{min-height:225px!important}
+  .civ-craft-art{height:94px!important}
+  .civ-craft-art>.civ-atlas-item{width:116px!important;height:88px!important}
+  .civ-tribe-grid article{min-height:270px!important;grid-template-rows:108px auto auto auto minmax(0,1fr) 34px!important}
+  .civ-tribe-art{height:101px!important}
+}
+@media(min-width:721px) and (max-height:800px){
+  .civ-boss-detail{grid-template-columns:minmax(270px,.96fr) minmax(0,1.04fr)!important}
+  .civ-item-card .civ-atlas-item{height:60px!important}
+  .civ-craft-grid article{min-height:190px!important}
+  .civ-craft-art{height:72px!important}
+  .civ-craft-art>.civ-atlas-item{width:94px!important;height:68px!important}
+  .civ-tribe-grid article{min-height:218px!important;grid-template-rows:72px auto auto auto minmax(0,1fr) 30px!important}
+  .civ-tribe-art{height:66px!important}
+}
