@@ -15,9 +15,9 @@ concurrency:
 
 jobs:
   verify-production:
-    name: Verify 4rrum.ru deployment
+    name: Deploy / verify 4rrum.ru
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 18
     steps:
       - name: Check out deployed commit
         uses: actions/checkout@v4
@@ -27,12 +27,18 @@ jobs:
         with:
           node-version: 24
 
+      - name: Trigger Railway redeploy when deploy hooks are configured
+        env:
+          RAILWAY_DEPLOY_HOOK_WEB: ${{ secrets.RAILWAY_DEPLOY_HOOK_WEB }}
+          RAILWAY_DEPLOY_HOOK_API: ${{ secrets.RAILWAY_DEPLOY_HOOK_API }}
+        run: node scripts/trigger-railway-deploy.mjs
+
       - name: Wait for Railway and verify production
         env:
           EXPECTED_SHA: ${{ github.sha }}
           EXPECTED_HOME_REFERENCE: v49
           PRODUCTION_WEB_URL: https://4rrum.ru
           PRODUCTION_API_URL: https://api.4rrum.ru
-          PRODUCTION_VERIFY_TIMEOUT_MS: 720000
+          PRODUCTION_VERIFY_TIMEOUT_MS: 900000
           PRODUCTION_VERIFY_INTERVAL_MS: 15000
         run: node scripts/verify-production.mjs
