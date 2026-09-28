@@ -16,7 +16,7 @@ RUN npm install --no-audit --no-fund
 
 COPY . .
 
-RUN node scripts/prepare-civilization-art.mjs && npm run build -w @forrum/contracts && npm run build -w @forrum/web
+RUN npm run build -w @forrum/contracts && npm run build -w @forrum/web
 
 
 FROM node:24-bookworm-slim AS runner
