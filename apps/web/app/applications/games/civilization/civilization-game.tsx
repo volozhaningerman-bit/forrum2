@@ -404,7 +404,7 @@ export function CivilizationGame() {
         </aside>
 
         <main className="civ-scene">
-          <img className="civ-cave-background" src="/games/civilization/art/cave.webp" alt="Пещера первобытного лагеря" />
+          <div className="civ-cave-background civ-atlas-cave" role="img" aria-label="Пещера первобытного лагеря" />
           <div className="civ-mascot-stage"><Mascot avatar={avatar} equippedId={equippedId} /></div>
           <Hotspot className="fire" icon="fire" title="Костёр" text="Восстановить энергию" onClick={() => setNotice('Костёр восстановит энергию после короткого отдыха.')} />
           <Hotspot className="bench" icon="craft" title="Верстак" text="Создание предметов" onClick={() => setPanel('craft')} />
