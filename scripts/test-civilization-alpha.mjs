@@ -325,7 +325,7 @@ try {
   assert.equal(await page.locator('.civ-boss-list .civ-boss-art-generated').count(), 3);
   assert.equal(await page.locator('.civ-boss-art .civ-boss-art-generated.large').count(), 1);
   const activeBossArt = await page.locator('.civ-boss-art .civ-boss-art-generated.large').evaluate((node) => getComputedStyle(node).backgroundImage);
-  assert.match(activeBossArt, /bosses\.webp/);
+  assert.match(activeBossArt, /civilization-atlas\.webp/);
   const apeHpBefore = await page.locator('.civ-boss-hp').textContent();
   for (let hit = 0; hit < 4; hit += 1) {
     await page.getByRole('button', { name: /Атаковать/ }).click();
