@@ -42,19 +42,19 @@ export function CommunityPanels({
 
   const authors=ranking ?? (period==='week' ? overview?.weekly?.[mode]?.slice(0,10) ?? [] : []);
   const today=useMemo(()=>{
-    const discussed=new Map((overview?.discussed??[]).map(item=>[item.slug,item]));
+    const discussedRows=(overview?.discussed??[]).slice().sort((a,b)=>Date.parse(b.lastActivityAt||b.createdAt)-Date.parse(a.lastActivityAt||a.createdAt));
+    const discussed=new Map(discussedRows.map(item=>[item.slug,item]));
     const active=(overview?.pulse?.activeTopics??[]).slice(0,5).map(item=>({
       slug:item.slug,
       title:item.title||'Обсуждение',
       replies:item.replyCount,
       views:discussed.get(item.slug)?.viewCount,
     }));
-    if(active.length)return active;
-    return (overview?.discussed??[])
-      .slice()
-      .sort((a,b)=>Date.parse(b.lastActivityAt||b.createdAt)-Date.parse(a.lastActivityAt||a.createdAt))
-      .slice(0,5)
+    const seen=new Set(active.map(item=>item.slug));
+    const fallback=discussedRows
+      .filter(item=>!seen.has(item.slug))
       .map(item=>({slug:item.slug,title:item.title||'Обсуждение',replies:item.commentCount,views:item.viewCount}));
+    return [...active,...fallback].slice(0,5);
   },[overview]);
 
   return <aside className="forum-right" aria-label="Обзор сообщества">
