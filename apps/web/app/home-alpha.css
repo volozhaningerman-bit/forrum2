@@ -858,3 +858,30 @@ html[data-forrum-theme="graphite"] body:has(.forum-home[data-home-reference="v49
   flex:0 0 28px;
   pointer-events:auto;
 }
+
+
+/* V57 tree interaction geometry: the disclosure control owns only the chevron hit area. */
+.forum-home[data-home-reference="v49"] .forum-category-heading {
+  padding-right:30px;
+}
+.forum-home[data-home-reference="v49"] .forum-category-heading>.forum-category-toggle {
+  position:absolute!important;
+  inset:auto 0 auto auto!important;
+  top:50%!important;
+  right:0!important;
+  transform:translateY(-50%);
+  width:28px!important;
+  height:28px!important;
+  min-width:28px!important;
+  min-height:28px!important;
+  z-index:4!important;
+  display:grid!important;
+  place-items:center;
+  padding:0!important;
+}
+.forum-home[data-home-reference="v49"] .forum-category-heading>.forum-category-toggle[aria-expanded="false"] svg {
+  transform:rotate(-90deg);
+}
+.forum-home[data-home-reference="v49"] .forum-category-heading>.forum-category-toggle[aria-expanded="true"] svg {
+  transform:none;
+}
