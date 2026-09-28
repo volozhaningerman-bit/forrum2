@@ -100,11 +100,11 @@ const weeklyTasks = [
 ];
 
 const mapStages = [
-  ['Пещера', 'Открыто', '🔥'],
-  ['Каменный век', 'Ур. 5 · 500 камня · 100 власти', '🪨'],
-  ['Бронзовый век', 'После Каменного века', '⚒️'],
-  ['Железный век', 'После Бронзового века', '🛡️'],
-  ['Средневековье', 'Позже', '🏰'],
+  { name: 'Пещера', req: 'Открыто', art: 'cave', reward: 'Костёр · первая охота · базовый крафт' },
+  { name: 'Каменный век', req: 'Ур. 5 · 500 камня · 100 власти', art: 'stone', reward: 'Поселение · новые инструменты · охота группой' },
+  { name: 'Бронзовый век', req: 'После Каменного века', art: 'bronze', reward: 'Металл · ремесло · новые ветки крафта' },
+  { name: 'Железный век', req: 'После Бронзового века', art: 'iron', reward: 'Вооружение · укрепления · экспедиции' },
+  { name: 'Средневековье', req: 'Позже', art: 'medieval', reward: 'Города · фракции · крупные войны' },
 ];
 
 const craftRecipes = [
@@ -679,20 +679,22 @@ function ProfilePanel({ avatar, equippedId }: { avatar: AvatarState; equippedId:
 
 function AchievementsPanel() {
   const achievements = [
-    ['Первый огонь', 'Развести костёр впервые', '✓', 'Получено'],
-    ['Каменный мастер', 'Создать первый инструмент', '2/5', 'В процессе'],
-    ['Охотник', 'Победить первого босса', '0/1', 'В процессе'],
-    ['Собиратель', 'Собрать 500 единиц еды', '340/500', 'В процессе'],
-    ['Голос племени', 'Набрать 100 власти', '37/100', 'В процессе'],
-    ['Следующая эпоха', 'Перейти в Каменный век', '🔒', 'Скрыто'],
+    ['Первый огонь', 'Развести костёр впервые', '✓', 'Получено', 'fire'],
+    ['Каменный мастер', 'Создать первый инструмент', '2/5', 'В процессе', 'axe'],
+    ['Охотник', 'Победить первого босса', '0/1', 'В процессе', 'boss'],
+    ['Собиратель', 'Собрать 500 единиц еды', '340/500', 'В процессе', 'berries'],
+    ['Голос племени', 'Набрать 100 власти', '37/100', 'В процессе', 'totem'],
+    ['Следующая эпоха', 'Перейти в Каменный век', '🔒', 'Скрыто', 'stone'],
   ];
   return (
     <div className="civ-panel-body civ-achievements-panel">
       <header className="civ-panel-head"><div><small>Прогресс аккаунта</small><h2>Достижения</h2><p>Вехи показывают, что уже освоено и какие долгосрочные цели ждут впереди.</p></div></header>
       <div className="civ-achievement-grid">
-        {achievements.map(([title, text, progress, state], index) => (
+        {achievements.map(([title, text, progress, state, art], index) => (
           <article key={title} className={index === 0 ? 'done' : index === achievements.length - 1 ? 'locked' : ''}>
-            <span className="civ-achievement-medal">{index === 0 ? '★' : index === 5 ? '◆' : '◇'}</span>
+            <span className="civ-achievement-medal">
+              {art === 'fire' ? <CivSymbol kind="fire" /> : art === 'axe' ? <span className="civ-atlas-item art-axe" /> : art === 'boss' ? <span className="civ-atlas-boss boss-ape" /> : art === 'berries' ? <span className="civ-atlas-resource res-berries" /> : art === 'totem' ? <span className="civ-atlas-resource res-totem" /> : <span className="civ-atlas-resource res-stone" />}
+            </span>
             <div><small>{state}</small><h3>{title}</h3><p>{text}</p></div>
             <strong>{progress}</strong>
           </article>
@@ -749,7 +751,14 @@ function EvolutionPanel() {
       <div className="civ-evolution-track">
         {steps.map(([level,title,text,open], index) => (
           <article key={level as string} className={open ? 'active' : ''}>
-            <span>{open ? '✓' : index + 1}</span><small>{level}</small><h3>{title}</h3><p>{text}</p><em>{open ? 'Открыто' : 'Закрыто'}</em>
+            <div className="civ-evolution-art">
+              {index === 0 ? <Mascot avatar={{ created:true, gender:'male', color:colors[0], hair:'Лысый' }} compact /> :
+                index === 1 ? <span className="civ-atlas-resource res-totem" /> :
+                index === 2 ? <span className="civ-atlas-item art-fur" /> :
+                index === 3 ? <span className="civ-atlas-resource res-fang" /> :
+                <CivSymbol kind="power" />}
+            </div>
+            <span className="civ-evolution-index">{open ? '✓' : index + 1}</span><small>{level}</small><h3>{title}</h3><p>{text}</p><em>{open ? 'Открыто' : 'Закрыто'}</em>
           </article>
         ))}
       </div>
@@ -869,6 +878,26 @@ function EquipmentPanel({
 }
 
 
+function BossDrop({ drop }: { drop: string }) {
+  const name = dropName(drop);
+  const artByName: Record<string, string> = {
+    'Тотем вожака': 'totem',
+    'Клык саблезуба': 'fang',
+    'Бивень мамонта': 'tusk',
+    'Редкий камень': 'rare-stone',
+    'Мясо': 'meat',
+    'Тигриная шкура': 'hide',
+    'Шкура мамонта': 'hide',
+  };
+  const art = artByName[name];
+  return (
+    <span className="civ-drop-chip">
+      {art ? <span className={`civ-atlas-resource res-${art}`} aria-hidden="true" /> : <CivSymbol kind="resources" />}
+      <b>{name}</b>
+    </span>
+  );
+}
+
 function BossArt({ boss, large = false }: { boss: Boss; large?: boolean }) {
   return (
     <span
@@ -893,7 +922,7 @@ function BossesPanel({ bosses, selected, selectedBoss, setSelectedBoss, hp, atta
             <h3>{selected.name}</h3>
             <p>Сила босса: {selected.power}. Подготовь оружие и запас энергии перед охотой.</p>
             <div className="civ-boss-hp"><span>Здоровье</span><b>{hp}/{selected.hp}</b><div><i style={{ width: `${Math.min(100, hp / selected.hp * 100)}%` }} /></div></div>
-            <div className="civ-drops"><small>Возможные трофеи</small>{selected.drops.map(drop => <span key={drop}>{drop}</span>)}</div>
+            <div className="civ-drops"><small>Возможные трофеи</small>{selected.drops.map(drop => <BossDrop key={drop} drop={drop} />)}</div>
             <button type="button" className="civ-primary" onClick={attackBoss}>{hp <= 0 ? 'Охота завершена — начать заново' : 'Атаковать · −22 HP'}</button>
           </div>
         </article>
@@ -903,20 +932,38 @@ function BossesPanel({ bosses, selected, selectedBoss, setSelectedBoss, hp, atta
 }
 
 function MapPanel({ setNotice }: { setNotice: (value: string) => void }) {
+  const EraArt = ({ art }: { art: string }) => {
+    if (art === 'cave') return <span className="civ-era-art era-cave"><CivSymbol kind="cave" /></span>;
+    if (art === 'stone') return <span className="civ-era-art era-stone"><span className="civ-atlas-resource res-stone" /></span>;
+    if (art === 'bronze') return <span className="civ-era-art era-bronze"><span className="civ-atlas-item art-axe" /></span>;
+    if (art === 'iron') return <span className="civ-era-art era-iron"><span className="civ-atlas-item art-obsidian-axe" /></span>;
+    return <span className="civ-era-art era-medieval"><CivSymbol kind="tribe" /></span>;
+  };
   return (
     <div className="civ-panel-body map">
-      <header className="civ-panel-head"><div><small>Путь цивилизации</small><h2>Карта эпох</h2><p>От первой пещеры до собственной империи. Новые эпохи меняют мир, ресурсы, боссов и технологии.</p></div></header>
+      <header className="civ-panel-head"><div><small>Путь цивилизации</small><h2>Карта эпох</h2><p>От первой пещеры до собственной империи. Каждая эпоха меняет мир, ресурсы, боссов и способы развития.</p></div></header>
       <div className="civ-map-path">
-        {mapStages.map(([name, req, icon], index) => (
-          <button type="button" key={name} className={index === 0 ? 'active' : 'locked'} onClick={() => setNotice(index === 0 ? 'Ты уже находишься в Пещере.' : `${name}: ${req}`)}>
-            {index === 0 ? <CivSymbol kind="cave" /> : <span className="civ-era-glyph">{icon}</span>}
-            <b>{name}</b><small>{req}</small><em>{index === 0 ? 'Текущая' : 'Закрыто'}</em>
+        {mapStages.map((stage, index) => (
+          <button type="button" key={stage.name} className={index === 0 ? 'active' : 'locked'} onClick={() => setNotice(index === 0 ? 'Ты уже находишься в Пещере.' : `${stage.name}: ${stage.req}`)}>
+            <EraArt art={stage.art} />
+            <b>{stage.name}</b>
+            <small>{stage.req}</small>
+            <span className="civ-era-reward">{stage.reward}</span>
+            <em>{index === 0 ? 'Текущая эпоха' : 'Закрыто'}</em>
           </button>
         ))}
       </div>
       <div className="civ-map-detail">
-        <div className="civ-map-visual civ-map-cave-art"><div><b>Пещера</b><small>Стартовая территория</small></div></div>
-        <div><h3>Что нужно для Каменного века</h3><TaskRow task={{ label: 'Достичь 5 уровня', progress: 1, total: 5, reward: '' }} /><TaskRow task={{ label: 'Собрать камень', progress: 210, total: 500, reward: '' }} /><TaskRow task={{ label: 'Набрать власть', progress: 37, total: 100, reward: '' }} /></div>
+        <div className="civ-map-visual civ-map-cave-art">
+          <div><small>Текущая эпоха</small><b>Пещера</b><span>Тёплый лагерь, первые инструменты и первые боссы.</span></div>
+        </div>
+        <div className="civ-era-goal">
+          <small>Следующий переход</small><h3>Каменный век</h3>
+          <p>Собери базовые ресурсы и укрепи власть, чтобы открыть поселение и новые технологии.</p>
+          <TaskRow task={{ label: 'Достичь 5 уровня', progress: 1, total: 5, reward: '' }} />
+          <TaskRow task={{ label: 'Собрать камень', progress: 210, total: 500, reward: '' }} />
+          <TaskRow task={{ label: 'Набрать власть', progress: 37, total: 100, reward: '' }} />
+        </div>
       </div>
     </div>
   );
@@ -929,17 +976,19 @@ function CraftPanel({ setNotice }: { setNotice: (value: string) => void }) {
   };
   return (
     <div className="civ-panel-body craft">
-      <header className="civ-panel-head"><div><small>Верстак</small><h2>Крафт</h2><p>Создавай оружие, инструменты и одежду из найденных материалов.</p></div></header>
+      <header className="civ-panel-head"><div><small>Верстак</small><h2>Крафт</h2><p>Рецепты показывают не только стоимость, но и следующий понятный шаг в развитии.</p></div></header>
       <div className="civ-craft-grid">
         {craftRecipes.map(recipe => {
           const art = artByRecipe[recipe.name];
           return (
             <article key={recipe.name} className={recipe.ready ? 'ready' : 'locked'}>
+              <div className="civ-craft-card-head"><span>{recipe.ready ? 'Можно создать' : 'Не хватает ресурсов'}</span><em>{recipe.ready ? 'Готово' : 'Закрыто'}</em></div>
               <div className="civ-craft-art">
                 {art ? <span className={`civ-atlas-item art-${art}`} aria-hidden="true" /> : recipe.name === 'Факел' ? <CivSymbol kind="fire" /> : <CivSymbol kind="craft" />}
               </div>
-              <h3>{recipe.name}</h3><p>{recipe.needs}</p>
-              <button type="button" disabled={!recipe.ready} onClick={() => setNotice(`${recipe.name}: создано и отправлено в инвентарь.`)}>{recipe.ready ? 'Создать' : 'Не хватает ресурсов'}</button>
+              <h3>{recipe.name}</h3>
+              <div className="civ-craft-cost"><small>Нужно</small><b>{recipe.needs}</b></div>
+              <button type="button" disabled={!recipe.ready} onClick={() => setNotice(`${recipe.name}: создано и отправлено в инвентарь.`)}>{recipe.ready ? 'Создать предмет' : 'Собрать материалы'}</button>
             </article>
           );
         })}
@@ -951,19 +1000,19 @@ function CraftPanel({ setNotice }: { setNotice: (value: string) => void }) {
 function TribePanel({ setNotice }: { setNotice: (value: string) => void }) {
   return (
     <div className="civ-panel-body tribe">
-      <header className="civ-panel-head"><div><small>Социальный прогресс</small><h2>Племя</h2><p>Общий лагерь игроков: развитие поселения, вклад ресурсов и совместные цели.</p></div></header>
+      <header className="civ-panel-head"><div><small>Социальный прогресс</small><h2>Племя</h2><p>Племя — это общий прогресс лагеря, совместные ресурсы и большие охоты.</p></div></header>
       <div className="civ-tribe-grid">
-        <article>
-          <div className="civ-tribe-art tribe-camp"><CivSymbol kind="tribe" /></div>
-          <small>Твоё племя</small><h3>Каменный круг</h3><strong>7 / 20 участников</strong><p>Уровень лагеря 2 · +4% к сбору ресурсов</p><button type="button" onClick={() => setNotice('Открыт список участников племени.')}>Участники</button>
+        <article className="tribe-home">
+          <div className="civ-tribe-art tribe-camp"><div className="civ-tribe-camp-scene"><span>Каменный круг</span></div></div>
+          <small>Твоё племя</small><h3>Каменный круг</h3><strong>7 / 20 участников</strong><p>Уровень лагеря 2 · +4% к сбору ресурсов</p><button type="button" onClick={() => setNotice('Открыт список участников племени.')}>Открыть участников</button>
         </article>
-        <article>
-          <div className="civ-tribe-art tribe-wood"><span className="civ-atlas-resource res-wood" /></div>
-          <small>Общая цель</small><h3>Большой костёр</h3><strong>1 420 / 2 000 дерева</strong><div className="civ-task-progress"><i style={{ width: '71%' }} /></div><button type="button" onClick={() => setNotice('Ты внёс 20 дерева в развитие племени.')}>Внести ресурсы</button>
+        <article className="tribe-goal">
+          <div className="civ-tribe-art tribe-wood"><span className="civ-atlas-resource res-wood" /><CivSymbol kind="fire" /></div>
+          <small>Общая цель</small><h3>Большой костёр</h3><strong>1 420 / 2 000 дерева</strong><div className="civ-task-progress"><i style={{ width: '71%' }} /></div><p>Общий костёр повышает бонус лагеря для всех участников.</p><button type="button" onClick={() => setNotice('Ты внёс 20 дерева в развитие племени.')}>Внести 20 дерева</button>
         </article>
-        <article>
+        <article className="tribe-hunt">
           <div className="civ-tribe-art tribe-mammoth"><span className="civ-atlas-boss boss-mammoth" /></div>
-          <small>Бонус недели</small><h3>Охота на мамонта</h3><strong>Осталось 2 дня</strong><p>Победи Мамонта вместе с племенем и получи редкий трофей.</p><button type="button" onClick={() => setNotice('Племенная охота отмечена как текущая цель.')}>Сделать целью</button>
+          <small>Бонус недели</small><h3>Охота на мамонта</h3><strong>Осталось 2 дня</strong><p>Совместная охота даёт редкий трофей и вклад в развитие племени.</p><button type="button" onClick={() => setNotice('Племенная охота отмечена как текущая цель.')}>Сделать текущей целью</button>
         </article>
       </div>
     </div>
