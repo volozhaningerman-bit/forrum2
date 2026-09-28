@@ -2876,3 +2876,7 @@ html.dark .forum-home[data-home-reference="v49"] .forum-topic h2 a,
 html[data-forrum-theme="graphite"] .forum-home[data-home-reference="v49"] .forum-topic h2 a {color:#f3f4f4!important;}
 html.dark .forum-home[data-home-reference="v49"] .forum-topic h2 a:hover,
 html[data-forrum-theme="graphite"] .forum-home[data-home-reference="v49"] .forum-topic h2 a:hover {color:#fff!important;}
+
+/* Keep topic action popovers/notices above neighbouring full-row click targets. */
+.forum-home[data-home-reference="v49"] .forum-topic:has(.forum-actions-popover),
+.forum-home[data-home-reference="v49"] .forum-topic:has(.forum-action-notice) {z-index:30!important;}
