@@ -1,5 +1,6 @@
 const expectedSha = process.env.EXPECTED_SHA || process.argv[2];
 const expectedReference = process.env.EXPECTED_HOME_REFERENCE || 'v49';
+const expectedRevision = process.env.EXPECTED_HOME_REVISION || 'v56';
 const webBase = process.env.PRODUCTION_WEB_URL || 'https://4rrum.ru';
 const apiBase = process.env.PRODUCTION_API_URL || 'https://api.4rrum.ru';
 const timeoutMs = Number(process.env.PRODUCTION_VERIFY_TIMEOUT_MS || 12 * 60 * 1000);
@@ -25,7 +26,15 @@ async function request(url, asJson = false) {
     redirect: 'follow',
   });
 
-  const body = asJson ? await response.json() : await response.text();
+  const text = await response.text();
+  let body = text;
+  if (asJson) {
+    try {
+      body = text ? JSON.parse(text) : {};
+    } catch {
+      body = {};
+    }
+  }
   return { response, body };
 }
 
@@ -42,8 +51,12 @@ while (Date.now() < deadline) {
 
     const deployedSha = String(build.body?.commit || '');
     const reference = String(build.body?.homeReference || '');
+    const revision = String(build.body?.homeRevision || '');
     const homeHtml = String(home.body || '');
     const hasReference = homeHtml.includes(`data-home-reference="${expectedReference}"`);
+    const hasRevision = homeHtml.includes(`data-home-revision="${expectedRevision}"`);
+    const shaKnown = Boolean(deployedSha && deployedSha !== 'unknown');
+    const shaMatches = !shaKnown || deployedSha === expectedSha;
 
     console.log(
       JSON.stringify({
@@ -53,8 +66,12 @@ while (Date.now() < deadline) {
         apiStatus: health.response.status,
         deployedSha: deployedSha || null,
         expectedSha,
+        shaKnown,
+        shaMatches,
         reference: reference || null,
+        revision: revision || null,
         hasReference,
+        hasRevision,
       }),
     );
 
@@ -62,15 +79,18 @@ while (Date.now() < deadline) {
       build.response.ok &&
       home.response.ok &&
       health.response.ok &&
-      deployedSha === expectedSha &&
+      shaMatches &&
       reference === expectedReference &&
-      hasReference
+      revision === expectedRevision &&
+      hasReference &&
+      hasRevision
     ) {
-      console.log(`Production verified: ${webBase} serves ${expectedSha} with homepage ${expectedReference}`);
+      const releaseProof = shaKnown ? `commit ${expectedSha}` : `homepage revision ${expectedRevision}`;
+      console.log(`Production verified: ${webBase} serves ${releaseProof} with ${expectedReference}/${expectedRevision}`);
       process.exit(0);
     }
 
-    lastError = `Production has not switched to ${expectedSha} yet`;
+    lastError = `Production has not switched to ${expectedRevision} yet`;
   } catch (error) {
     lastError = error instanceof Error ? error.stack || error.message : String(error);
     console.log(JSON.stringify({ attempt, error: lastError }));

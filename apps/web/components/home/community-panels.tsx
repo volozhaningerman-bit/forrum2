@@ -13,11 +13,13 @@ export function CommunityPanels({
   unavailable,
   news,
   events,
+  feed,
 }: {
   overview?: HomeOverview;
   unavailable: boolean;
   news: PublicationCardData[];
   events: HomeInitialData['events'];
+  feed: PublicationCardData[];
 }) {
   void news;
   void events;
@@ -41,7 +43,7 @@ export function CommunityPanels({
   },[period,mode,retry]);
 
   const authors=ranking ?? (period==='week' ? overview?.weekly?.[mode]?.slice(0,10) ?? [] : []);
-  const today=useMemo(()=>{
+  const popularToday=useMemo(()=>{
     const discussedRows=(overview?.discussed??[]).slice().sort((a,b)=>Date.parse(b.lastActivityAt||b.createdAt)-Date.parse(a.lastActivityAt||a.createdAt));
     const discussed=new Map(discussedRows.map(item=>[item.slug,item]));
     const active=(overview?.pulse?.activeTopics??[]).slice(0,5).map(item=>({
@@ -51,11 +53,19 @@ export function CommunityPanels({
       views:discussed.get(item.slug)?.viewCount,
     }));
     const seen=new Set(active.map(item=>item.slug));
-    const fallback=discussedRows
+    const discussedFallback=discussedRows
       .filter(item=>!seen.has(item.slug))
       .map(item=>({slug:item.slug,title:item.title||'Обсуждение',replies:item.commentCount,views:item.viewCount}));
-    return [...active,...fallback].slice(0,5);
-  },[overview]);
+    const todayItems=[...active,...discussedFallback].slice(0,5);
+    if(todayItems.length) return {items:todayItems,isFallback:false};
+    const feedFallback=feed
+      .filter(item=>item.format==='TOPIC')
+      .slice()
+      .sort((a,b)=>(b.viewCount??0)-(a.viewCount??0) || b.commentCount-a.commentCount)
+      .slice(0,5)
+      .map(item=>({slug:item.slug,title:item.title||'Обсуждение',replies:item.commentCount,views:item.viewCount}));
+    return {items:feedFallback,isFallback:true};
+  },[overview,feed]);
 
   return <aside className="forum-right" aria-label="Обзор сообщества">
     <section className="forum-panel forum-ranking-panel">
@@ -91,14 +101,19 @@ export function CommunityPanels({
 
     <section className="forum-panel forum-popular-today">
       <header><h2>Популярное сегодня</h2><Link href="/?tab=popular">Все →</Link></header>
-      {today.length
-        ? <ol>{today.map((item,index)=><li key={item.slug}>
-            <span className="forum-popular-rank">{index+1}</span>
-            <Link href={`/p/${item.slug}`}>
-              <strong>{item.title}</strong>
-              <small>{formatCount(item.replies)} ответов сегодня{typeof item.views==='number'? ` · ${formatCount(item.views)} просмотров` : ''}</small>
-            </Link>
-          </li>)}</ol>
+      {popularToday.items.length
+        ? <>
+            {popularToday.isFallback && <p className="forum-popular-note">Сегодня без новых всплесков · темы из текущей ленты</p>}
+            <ol>{popularToday.items.map((item,index)=><li key={item.slug}>
+              <span className="forum-popular-rank">{index+1}</span>
+              <Link href={`/p/${item.slug}`}>
+                <strong>{item.title}</strong>
+                <small>{popularToday.isFallback
+                  ? `${formatCount(item.replies)} ответов${typeof item.views==='number'? ` · ${formatCount(item.views)} просмотров` : ''}`
+                  : `${formatCount(item.replies)} ответов сегодня${typeof item.views==='number'? ` · ${formatCount(item.views)} просмотров` : ''}`}</small>
+              </Link>
+            </li>)}</ol>
+          </>
         : <div className="forum-activity-empty"><p>Сегодня пока тихо. Начните обсуждение — оно появится здесь, когда соберёт ответы.</p><Link href="/create">Создать тему →</Link></div>}
     </section>
   </aside>;
