@@ -138,6 +138,8 @@ try {
   // First launch is a one-time character creation flow.
   const createDialog = page.getByRole('dialog', { name: 'Создание персонажа' });
   await createDialog.waitFor();
+  await page.setViewportSize({ width: 1720, height: 864 });
+  await page.screenshot({ path: output + '/civilization-v3-create-character-1720x864.png', fullPage: false });
   await createDialog.getByRole('button', { name: /Девочка/ }).click();
   await createDialog.locator('.civ-color-row button').nth(2).click();
   await createDialog.getByRole('button', { name: 'Пучок' }).click();
@@ -234,6 +236,20 @@ try {
     const raw = localStorage.getItem('4rrum.civilization.alpha.v1.progress');
     return raw && JSON.parse(raw).equippedId === 'axe';
   });
+  await page.getByRole('button', { name: 'Свернуть раздел' }).click();
+  await page.locator('.civ-full-panel').waitFor({ state: 'detached' });
+  assert.equal(
+    await page.locator('.civ-mascot-stage .civ-mascot-pose-axe').count(),
+    1,
+    'equipping the stone axe must switch the hub hero state to the axe pose',
+  );
+  assert.equal(
+    await page.locator('.civ-mascot-stage .civ-mascot-female-base').count(),
+    1,
+    'the female avatar must keep the generated female base sprite while equipment changes its pose state',
+  );
+  await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
+  await page.getByRole('button', { name: /Оружие/ }).click();
 
   await page.getByRole('button', { name: /Одежда/ }).click();
   assert.match(await page.locator('.civ-item-detail').textContent(), /Шкура охотника/);
@@ -309,18 +325,48 @@ try {
   }
 
   await page.setViewportSize({ width: 1720, height: 864 });
-  assert.equal(await page.locator('.civ-atlas-cave').count(), 1, 'generated cave atlas must render');
+
+  // Visual alpha art must be served as real public assets and actually used by CSS.
+  // The visually reviewed V3 cave/hero replace the failed V2 layers; boss/item/resource V2 art stays.
+  const artAssets = [
+    '/games/civilization/art-v3/cave-hub-v3.webp',
+    '/games/civilization/art-v3/hero-sprite-v3.webp',
+    '/games/civilization/art-v2/boss-sprite-v2.avif',
+    '/games/civilization/art-v2/equipment-sprite-v2.avif',
+    '/games/civilization/art-v2/resources-sprite-v2.avif',
+  ];
+  const assetChecks = await page.evaluate(async (paths) => Promise.all(paths.map(async (path) => {
+    const response = await fetch(path, { cache: 'no-store' });
+    return { path, ok: response.ok, type: response.headers.get('content-type'), size: Number(response.headers.get('content-length') || 0) };
+  })), artAssets);
+  for (const asset of assetChecks) {
+    assert.equal(asset.ok, true, `generated art must load: ${asset.path}`);
+    assert.match(asset.type || '', /image\/(webp|avif|octet-stream)/i);
+  }
+
+  assert.equal(await page.locator('.civ-atlas-cave').count(), 1, 'generated cave art must render');
   assert.equal(await page.locator('.civ-mascot-art').count() >= 1, true, 'generated character art must render');
-  await page.screenshot({ path: output + '/civilization-hub-1720x864.png', fullPage: false });
+  const artBackgrounds = await page.evaluate(() => ({
+    cave: getComputedStyle(document.querySelector('.civ-atlas-cave')).backgroundImage,
+    hero: getComputedStyle(document.querySelector('.civ-mascot-stage .civ-mascot-art')).backgroundImage,
+  }));
+  assert.match(artBackgrounds.cave, /art-v3\/cave-hub-v3\.webp/);
+  assert.match(artBackgrounds.hero, /art-v3\/hero-sprite-v3\.webp/);
+
+  await page.screenshot({ path: output + '/civilization-v3-hub-1720x864.png', fullPage: false });
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
   await page.getByRole('button', { name: /Оружие/ }).click();
   await assertOverlayGeometry('equipment screenshot');
-  await page.screenshot({ path: output + '/civilization-equipment-1720x864.png', fullPage: false });
+  const equipmentBackground = await page.locator('.civ-item-card .civ-atlas-item').first().evaluate((node) => getComputedStyle(node).backgroundImage);
+  assert.match(equipmentBackground, /art-v2\/equipment-sprite-v2\.avif/);
+  await page.screenshot({ path: output + '/civilization-v3-equipment-1720x864.png', fullPage: false });
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
 
   await bottomNav.getByRole('button', { name: /Боссы/ }).click();
   await page.getByRole('button', { name: /Саблезубый тигр/ }).click();
-  await page.screenshot({ path: output + '/civilization-bosses-1720x864.png', fullPage: false });
+  const bossBackground = await page.locator('.civ-boss-art .civ-atlas-boss.large').evaluate((node) => getComputedStyle(node).backgroundImage);
+  assert.match(bossBackground, /art-v2\/boss-sprite-v2\.avif/);
+  await page.screenshot({ path: output + '/civilization-v3-bosses-1720x864.png', fullPage: false });
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
 
   for (const [label, file] of [
@@ -334,18 +380,34 @@ try {
     await page.getByRole('button', { name: 'Свернуть раздел' }).click();
   }
 
-  await page.getByRole('button', { name: 'Открыть меню персонажа' }).click();
-  await page.locator('.civ-player-menu').getByRole('button', { name: /Профиль/ }).click();
-  const profileCharacterRatio = await page.locator('.civ-profile-mascot .civ-mascot-art').evaluate((node) => {
-    const rect = node.getBoundingClientRect();
-    return rect.width / rect.height;
-  });
-  assert(
-    profileCharacterRatio > 0.52 && profileCharacterRatio < 0.66,
-    `profile character sprite aspect ratio must stay near 200/337, got ${profileCharacterRatio}`,
-  );
-  await page.screenshot({ path: output + '/civilization-profile-1720x864.png', fullPage: false });
-  await page.getByRole('button', { name: 'Свернуть раздел' }).click();
+  for (const [label, file] of [
+    ['Профиль', 'civilization-v3-profile-1720x864.png'],
+    ['Достижения', 'civilization-v3-achievements-1720x864.png'],
+    ['Инвентарь', 'civilization-v3-inventory-1720x864.png'],
+    ['Эволюция', 'civilization-v3-evolution-1720x864.png'],
+  ]) {
+    await page.getByRole('button', { name: 'Открыть меню персонажа' }).click();
+    await page.locator('.civ-player-menu').getByRole('button', { name: new RegExp(label, 'i') }).click();
+    await page.locator('.civ-full-panel').waitFor();
+    await assertOverlayGeometry(`visual screenshot ${label}`);
+    if (label === 'Профиль') {
+      const profileCharacterRatio = await page.locator('.civ-profile-mascot .civ-mascot-art').evaluate((node) => {
+        const rect = node.getBoundingClientRect();
+        return rect.width / rect.height;
+      });
+      assert(
+        profileCharacterRatio > 0.60 && profileCharacterRatio < 0.67,
+        `profile character sprite aspect ratio must stay near V3 cell ratio, got ${profileCharacterRatio}`,
+      );
+    }
+    await page.screenshot({ path: output + '/' + file, fullPage: false });
+    await page.getByRole('button', { name: 'Свернуть раздел' }).click();
+  }
+
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await assertOneScreen('hub visual 1366x768');
+  await page.screenshot({ path: output + '/civilization-v3-hub-1366x768.png', fullPage: false });
+  await page.setViewportSize({ width: 1720, height: 864 });
 
   // Character creation, equipped item and boss loot all survive reload.
   await page.reload({ waitUntil: 'networkidle' });
@@ -371,7 +433,7 @@ try {
   assert.match(page.url(), /\/applications\/games\/civilization/);
 
   assert.deepEqual(pageErrors, []);
-  console.log('Civilization alpha: creation, compact shell, scoped tasks, central panels, equipment persistence, real boss drops and desktop matrix passed');
+  console.log('Civilization visual alpha v3: reviewed cave/hero WebP art, real boss/item/resource sprites, full screen screenshot matrix and persistence regression passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
