@@ -922,3 +922,25 @@ html[data-forrum-theme="graphite"] body:has(.forum-home[data-home-reference="v49
 .forum-home[data-home-reference="v49"] .forum-topic:is(.is-unread,.is-updated)::before {
   width:3px;
 }
+
+
+/* V57 approved right rail and navigation hierarchy. */
+@media (min-width:1051px) {
+  .forum-home[data-home-reference="v49"] .forum-popular-today {order:1;}
+  .forum-home[data-home-reference="v49"] .forum-ranking-panel {order:2;}
+}
+.forum-home[data-home-reference="v49"] .forum-home-category {
+  padding-top:5px;
+  padding-bottom:5px;
+  border-bottom:1px solid #262a2c;
+}
+.forum-home[data-home-reference="v49"] .forum-home-category .forum-category-heading {
+  min-height:38px;
+  background:linear-gradient(90deg,#ffffff12,rgba(255,255,255,.025));
+  box-shadow:inset 2px 0 #fff;
+}
+.forum-home[data-home-reference="v49"] .forum-home-category .forum-category-heading>a {
+  color:#fff;
+  font-weight:650;
+  max-width:100%;
+}
