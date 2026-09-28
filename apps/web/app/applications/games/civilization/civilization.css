@@ -4567,3 +4567,10 @@ button{font:inherit}
     saturate(1.08)
     contrast(1.04)!important;
 }
+
+
+/* CIVILIZATION VISUAL POLISH V4.4 — PREVIEW EDGE FADE */
+.civ-item-hero .civ-atlas-item.large{
+  -webkit-mask-image:radial-gradient(ellipse 76% 74% at 50% 50%,#000 54%,rgba(0,0,0,.98) 64%,rgba(0,0,0,.72) 76%,transparent 100%)!important;
+  mask-image:radial-gradient(ellipse 76% 74% at 50% 50%,#000 54%,rgba(0,0,0,.98) 64%,rgba(0,0,0,.72) 76%,transparent 100%)!important;
+}
