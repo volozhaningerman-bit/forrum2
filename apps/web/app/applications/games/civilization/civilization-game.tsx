@@ -735,7 +735,7 @@ function InventoryPanel({ loot }: { loot: Record<string, number> }) {
             <div>{group.items.map(([name,value]) => {
               const artByName: Record<string,string> = {
                 'Ягоды':'berries','Мясо':'meat','Грибы':'mushrooms','Рыба':'fish',
-                'Дерево':'wood','Камень':'stone','Кремень':'flint','Шкуры':'hide',
+                'Дерево':'wood','Камень':'stone','Кремень':'flint','Шкуры':'hide','Кости':'bones',
                 'Клык саблезуба':'fang','Бивень мамонта':'tusk','Тотем вожака':'totem','Редкий камень':'rare-stone',
               };
               const art=artByName[name];
@@ -812,6 +812,7 @@ function ResourceRow({ icon, label, value }: { icon: string; label: string; valu
     'Камень': 'stone',
     'Кремень': 'flint',
     'Шкуры': 'hide',
+    'Кости': 'bones',
     'Клык саблезуба': 'fang',
     'Бивень мамонта': 'tusk',
     'Тотем вожака': 'totem',
