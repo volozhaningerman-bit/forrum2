@@ -1,0 +1,59 @@
+name: Deploy current main to FirstVDS web
+
+on:
+  push:
+    branches:
+      - diag/railway-production-v53
+
+permissions:
+  contents: read
+
+concurrency:
+  group: forrum-firstvds-web-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Prepare deploy SSH key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.FORRUM_SSH_KEY }}
+          SSH_HOST: ${{ secrets.FORRUM_HOST }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/forrum_actions
+          chmod 600 ~/.ssh/forrum_actions
+          ssh-keygen -y -f ~/.ssh/forrum_actions > /dev/null
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy latest main to live FirstVDS web
+        env:
+          SSH_HOST: ${{ secrets.FORRUM_HOST }}
+          SSH_USER: ${{ secrets.FORRUM_USER }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/forrum_actions             -o BatchMode=yes             -o StrictHostKeyChecking=yes             -o ServerAliveInterval=30             -o ServerAliveCountMax=30             "$SSH_USER@$SSH_HOST" deploy
+
+      - name: Verify new homepage is live
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 20); do
+            html=$(curl --fail --silent --show-error               -H 'Cache-Control: no-cache, no-store, max-age=0'               "https://4rrum.ru/?firstvds-deploy=${GITHUB_RUN_ID}-${i}" || true)
+            if printf '%s' "$html" | grep -q 'data-home-reference="v49"'; then
+              echo "New homepage reference is live"
+              printf '%s' "$html" | grep -o 'data-home-reference="[^"]*"' | head -1
+              exit 0
+            fi
+            echo "Attempt $i: old homepage still served"
+            sleep 10
+          done
+          echo "New homepage marker did not appear" >&2
+          exit 1
