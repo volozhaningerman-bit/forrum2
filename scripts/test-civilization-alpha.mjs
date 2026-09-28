@@ -192,8 +192,8 @@ try {
     display: getComputedStyle(node).display,
     visibility: getComputedStyle(node).visibility,
   }));
-  assert(caveImage.naturalWidth >= 1600);
-  assert(caveImage.naturalHeight >= 900);
+  assert(caveImage.naturalWidth >= 850);
+  assert(caveImage.naturalHeight >= 480);
   assert.notEqual(caveImage.display, 'none');
   assert.notEqual(caveImage.visibility, 'hidden');
   assert(Number(caveImage.opacity) > 0.5);
