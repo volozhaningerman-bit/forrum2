@@ -4548,3 +4548,22 @@ button{font:inherit}
 @media(min-width:721px) and (max-height:800px){
   .civ-item-card .civ-atlas-item{height:58px!important}
 }
+
+
+/* CIVILIZATION VISUAL POLISH V4.3 — CLEAN ITEM PREVIEW */
+.civ-item-hero{
+  isolation:isolate;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(221,139,48,.20),transparent 38%),
+    radial-gradient(circle at 50% 50%,rgba(83,57,31,.10),transparent 62%),
+    linear-gradient(180deg,#111713,#081014)!important;
+}
+.civ-item-hero .civ-atlas-item.large{
+  mix-blend-mode:screen!important;
+  opacity:.98;
+  filter:
+    drop-shadow(0 18px 15px rgba(0,0,0,.30))
+    drop-shadow(0 0 18px rgba(230,149,51,.12))
+    saturate(1.08)
+    contrast(1.04)!important;
+}
