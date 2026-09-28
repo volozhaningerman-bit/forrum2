@@ -396,3 +396,12 @@ html[data-forrum-theme="graphite"] body:has(.forum-home[data-home-reference="v49
     transform:none;
   }
 }
+
+.forum-home[data-home-reference="v49"] .forum-popular-note {
+  margin:0 0 7px!important;
+  padding:0 0 9px;
+  color:#777f83!important;
+  border-bottom:1px solid #25292b;
+  font:9px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;
+  letter-spacing:.15px;
+}
