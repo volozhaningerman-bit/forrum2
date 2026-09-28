@@ -90,6 +90,10 @@ try {
  assert.equal(await page.locator('.forum-categories').getByText('Дизайн',{exact:true}).count(),1);
  await page.getByRole('heading',{name:'Популярное сегодня',exact:true}).waitFor();
  assert.deepEqual(await page.locator('.forum-right>.forum-panel h2').allTextContents(),['Рейтинг пользователей','Популярное сегодня']);
+ assert.equal(await page.locator('.forum-popular-today li').count(),5);
+ const heroBox=await page.locator('.forum-search-hero').boundingBox();
+ assert(heroBox && heroBox.height>=160 && heroBox.height<=164,`Hero must stay compact, got ${heroBox?.height}`);
+ assert.equal(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(8, 9, 10)');
  assert.equal((await page.locator('.forum-brand').textContent())?.replace(/\s/g,''),'4RRUM');
  assert.equal(await page.locator('.forum-hero-copy h1').evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)');
  assert.equal(await page.locator('[aria-label*="светлую тему"],[aria-label*="тёмную тему"]').count(),0);
