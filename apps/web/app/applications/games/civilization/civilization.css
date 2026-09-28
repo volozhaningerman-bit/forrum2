@@ -4482,3 +4482,69 @@ button{font:inherit}
     transform:scale(1.02)!important;
   }
 }
+
+
+/* CIVILIZATION VISUAL POLISH V4.2 — SPRITE INNER CROP
+   Zoom into the inner 80% of each 4x3 generated sprite cell.
+   This removes the baked card frame without touching labels/layout. */
+.civ-atlas-item{
+  background-size:500% 375%!important;
+}
+.civ-atlas-item.art-club{background-position:3.125% 4.545%!important}
+.civ-atlas-item.art-axe{background-position:34.375% 4.545%!important}
+.civ-atlas-item.art-knife{background-position:65.625% 4.545%!important}
+.civ-atlas-item.art-spear{background-position:96.875% 4.545%!important}
+
+.civ-atlas-item.art-bone-club{background-position:3.125% 50%!important}
+.civ-atlas-item.art-flint-shard{background-position:34.375% 50%!important}
+.civ-atlas-item.art-bow{background-position:65.625% 50%!important}
+.civ-atlas-item.art-obsidian-axe{background-position:96.875% 50%!important}
+
+.civ-atlas-item.art-hunter-spear{background-position:3.125% 95.455%!important}
+.civ-atlas-item.art-mammoth-maul{background-position:34.375% 95.455%!important}
+.civ-atlas-item.art-fur{background-position:65.625% 95.455%!important}
+.civ-atlas-item.art-fang{background-position:96.875% 95.455%!important}
+
+.civ-item-card .civ-atlas-item{
+  width:100%!important;
+  height:82px!important;
+  margin:2px auto 2px!important;
+  transform:none!important;
+  clip-path:none!important;
+  border-radius:7px!important;
+  background-color:transparent!important;
+  filter:
+    drop-shadow(0 9px 8px rgba(0,0,0,.34))
+    saturate(1.04)
+    contrast(1.025)!important;
+}
+.civ-item-card.active .civ-atlas-item{
+  transform:none!important;
+  filter:
+    drop-shadow(0 0 10px rgba(229,148,51,.10))
+    drop-shadow(0 10px 8px rgba(0,0,0,.36))
+    saturate(1.055)
+    contrast(1.03)!important;
+}
+
+.civ-item-hero .civ-atlas-item.large{
+  width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  transform:none!important;
+  clip-path:none!important;
+  border:0!important;
+  background-color:transparent!important;
+  filter:
+    drop-shadow(0 18px 15px rgba(0,0,0,.43))
+    drop-shadow(0 0 12px rgba(229,147,49,.07))
+    saturate(1.045)
+    contrast(1.03)!important;
+}
+
+@media(max-width:1450px){
+  .civ-item-card .civ-atlas-item{height:70px!important}
+}
+@media(min-width:721px) and (max-height:800px){
+  .civ-item-card .civ-atlas-item{height:58px!important}
+}
