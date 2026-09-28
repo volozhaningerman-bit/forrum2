@@ -380,7 +380,7 @@ export function CivilizationGame() {
 
         <aside className="civ-player-rail">
           <button className="civ-avatar-card" type="button" onClick={() => { setProfileOpen(false); setPanel('profile'); }}>
-            <Mascot avatar={avatar} compact />
+            <Mascot avatar={avatar} compact equippedId={equippedId} />
             <span className="civ-player-name">Первобытный</span>
             <small>Ур. 1 · Новичок</small>
             <div className="civ-xp"><i style={{ width: '58%' }} /></div>
@@ -405,7 +405,7 @@ export function CivilizationGame() {
 
         <main className="civ-scene">
           <img className="civ-cave-background" src="/games/civilization/art/cave.webp" alt="Пещера первобытного лагеря" />
-          <div className="civ-mascot-stage"><Mascot avatar={avatar} /></div>
+          <div className="civ-mascot-stage"><Mascot avatar={avatar} equippedId={equippedId} /></div>
           <Hotspot className="fire" icon="fire" title="Костёр" text="Восстановить энергию" onClick={() => setNotice('Костёр восстановит энергию после короткого отдыха.')} />
           <Hotspot className="bench" icon="craft" title="Верстак" text="Создание предметов" onClick={() => setPanel('craft')} />
           <Hotspot className="stash" icon="inventory" title="Тайник" text="Ресурсы и трофеи" onClick={() => setResourceOpen('materials')} />
@@ -664,7 +664,7 @@ function ProfilePanel({ avatar, equippedId }: { avatar: AvatarState; equippedId:
       </header>
       <div className="civ-profile-layout">
         <article className="civ-profile-hero-card">
-          <div className="civ-profile-mascot"><Mascot avatar={avatar} /></div>
+          <div className="civ-profile-mascot"><Mascot avatar={avatar} equippedId={equippedId} /></div>
           <div className="civ-profile-identity"><small>Первобытный</small><h3>Новичок · уровень 1</h3><div className="civ-xp"><i style={{ width: '58%' }} /></div><span>58 / 100 XP</span></div>
         </article>
         <div className="civ-profile-stats">
@@ -761,12 +761,22 @@ function EvolutionPanel() {
   );
 }
 
-function Mascot({ avatar, compact = false }: { avatar: AvatarState; compact?: boolean }) {
+function Mascot({ avatar, compact = false, equippedId }: { avatar: AvatarState; compact?: boolean; equippedId?: string }) {
   const tone = Math.max(0, colors.indexOf(avatar.color));
+  const pose = avatar.gender === 'female'
+    ? 'female'
+    : ['club', 'bone-club', 'mammoth-maul'].includes(equippedId ?? '')
+      ? 'club'
+      : ['axe', 'obsidian-axe'].includes(equippedId ?? '')
+        ? 'axe'
+        : ['fur', 'tiger', 'fang'].includes(equippedId ?? '')
+          ? 'upgraded'
+          : 'base';
   return (
     <div
-      className={`civ-mascot civ-character-art ${compact ? 'compact' : ''} ${avatar.gender} tone-${tone}`}
+      className={`civ-mascot civ-character-art ${compact ? 'compact' : ''} ${avatar.gender} pose-${pose} tone-${tone}`}
       data-hair={avatar.gender === 'female' ? avatar.hair : 'Лысый'}
+      data-equipped={equippedId ?? 'none'}
       aria-hidden="true"
     >
       <span />
