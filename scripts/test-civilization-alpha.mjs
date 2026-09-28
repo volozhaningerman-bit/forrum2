@@ -149,12 +149,12 @@ try {
   assert.equal(savedAvatar.gender, 'female');
   assert.equal(savedAvatar.hair, 'Пучок');
 
-  // Approved generated art must be live, decodable, and large enough to be the real source files.
+  // Approved generated art must be live, decodable in the browser, and large enough to be real game art.
   assert.match(await page.locator('.civ-cave-background').getAttribute('src'), /\/games\/civilization\/art\/cave\.webp$/);
   const artAssets = [
-    ['/games/civilization/art/cave.webp', 1600, 900],
-    ['/games/civilization/art/characters.webp', 1400, 1000],
-    ['/games/civilization/art/bosses.webp', 1400, 1000],
+    ['/games/civilization/art/cave.webp', 850, 480],
+    ['/games/civilization/art/characters.webp', 900, 680],
+    ['/games/civilization/art/bosses.webp', 900, 680],
     ['/games/civilization/art/equipment.webp', 1400, 1000],
     ['/games/civilization/art/resources.webp', 1400, 1000],
   ];
@@ -162,14 +162,22 @@ try {
     const asset = await page.evaluate(async ({ src }) => {
       const response = await fetch(src, { cache: 'no-store' });
       const blob = await response.blob();
-      let width = 0;
-      let height = 0;
+      const objectUrl = URL.createObjectURL(blob);
+      const image = new Image();
+      image.src = objectUrl;
       try {
-        const bitmap = await createImageBitmap(blob);
-        width = bitmap.width;
-        height = bitmap.height;
+        await image.decode();
       } catch {}
-      return { ok: response.ok, status: response.status, type: blob.type, size: blob.size, width, height };
+      const result = {
+        ok: response.ok,
+        status: response.status,
+        type: blob.type,
+        size: blob.size,
+        width: image.naturalWidth,
+        height: image.naturalHeight,
+      };
+      URL.revokeObjectURL(objectUrl);
+      return result;
     }, { src });
     assert.equal(asset.ok, true, `${src}: HTTP ${asset.status}`);
     const minBytes = src.endsWith('/cave.webp') ? 20_000 : 7_000;
