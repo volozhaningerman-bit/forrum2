@@ -3183,3 +3183,611 @@ button{font:inherit}
     max-height:220px!important;
   }
 }
+
+
+/* ==========================================================================
+   CIVILIZATION ART V3 — INNER SCREENS
+   Push the atlas beyond the hub: eras, craft, tribe, achievements, evolution.
+   ========================================================================== */
+
+/* MAP ------------------------------------------------------------------- */
+.civ-map-path{
+  gap:9px!important;
+}
+
+.civ-map-path button{
+  position:relative;
+  overflow:hidden;
+  min-height:118px!important;
+  padding:10px 9px 9px!important;
+  grid-template-rows:48px auto auto auto auto!important;
+  align-content:start!important;
+  border-radius:9px!important;
+  background:
+    radial-gradient(circle at 50% 0,rgba(177,105,38,.11),transparent 38%),
+    linear-gradient(180deg,#121a1e,#091115)!important;
+}
+
+.civ-map-path button.active{
+  border-color:#b87932!important;
+  background:
+    radial-gradient(circle at 50% 6%,rgba(229,144,47,.20),transparent 44%),
+    linear-gradient(180deg,#231b14,#0d1417)!important;
+  box-shadow:0 0 0 1px rgba(255,188,80,.05),0 12px 24px rgba(0,0,0,.18)!important;
+}
+
+.civ-era-art{
+  width:54px;
+  height:46px;
+  margin:0 auto 4px;
+  display:grid;
+  place-items:center;
+  border-radius:8px;
+  background:rgba(8,13,16,.74);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);
+}
+
+.civ-era-art>.civ-vector-icon{
+  width:34px!important;
+  height:34px!important;
+  color:#efb254;
+}
+
+.civ-era-art>.civ-vector-icon svg{
+  width:31px!important;
+  height:31px!important;
+}
+
+.civ-era-art>.civ-atlas-resource{
+  width:48px!important;
+  height:42px!important;
+  flex:0 0 48px!important;
+  transform:scale(1.06);
+}
+
+.civ-era-art>.civ-atlas-item{
+  width:50px!important;
+  height:45px!important;
+  background-color:transparent!important;
+  filter:drop-shadow(0 6px 7px rgba(0,0,0,.38))!important;
+}
+
+.civ-map-path button b{
+  font-size:12px!important;
+  color:#e7e7e2!important;
+}
+
+.civ-map-path button small{
+  min-height:18px;
+  color:#8e999e!important;
+  font-size:7.5px!important;
+}
+
+.civ-era-reward{
+  min-height:24px;
+  margin-top:2px;
+  color:#707c82;
+  font-size:7px;
+  line-height:1.25;
+}
+
+.civ-map-path button.active .civ-era-reward{
+  color:#c6a66d;
+}
+
+.civ-map-path button em{
+  justify-self:center;
+  margin-top:4px;
+  padding:2px 7px;
+  border:1px solid #334147;
+  border-radius:999px;
+  color:#7f8b90;
+  font-size:6.5px!important;
+  font-style:normal;
+}
+
+.civ-map-path button.active em{
+  border-color:#845827;
+  color:#f2bd63;
+  background:#241a12;
+}
+
+.civ-map-detail{
+  gap:14px!important;
+  grid-template-columns:minmax(300px,.78fr) minmax(0,1.22fr)!important;
+}
+
+.civ-map-cave-art>div{
+  min-width:210px;
+  gap:4px!important;
+}
+
+.civ-map-cave-art>div>small:first-child{
+  color:#d99c45!important;
+  text-transform:uppercase;
+  letter-spacing:.09em;
+  font-size:7px!important;
+}
+
+.civ-map-cave-art>div>span{
+  max-width:260px;
+  color:#b0b8bc;
+  font-size:8px;
+  line-height:1.35;
+  text-align:center;
+}
+
+.civ-era-goal{
+  padding:14px 16px!important;
+  border:1px solid #2c3a41;
+  border-radius:8px;
+  background:
+    radial-gradient(circle at 100% 0,rgba(156,94,34,.10),transparent 38%),
+    linear-gradient(180deg,#111a1f,#091115);
+}
+
+.civ-era-goal>small{
+  color:#d59742!important;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  font-size:7px!important;
+}
+
+.civ-era-goal>h3{
+  margin:4px 0 4px!important;
+  color:#f0ece5!important;
+  font-size:22px!important;
+}
+
+.civ-era-goal>p{
+  max-width:620px;
+  margin:0 0 8px!important;
+  color:#9da8ad!important;
+  font-size:8.5px!important;
+  line-height:1.4!important;
+}
+
+/* CRAFT ----------------------------------------------------------------- */
+.civ-craft-grid{
+  gap:12px!important;
+  align-items:start!important;
+}
+
+.civ-craft-grid article{
+  min-height:245px!important;
+  grid-template-rows:24px 112px auto 42px 40px!important;
+  padding:11px 12px 12px!important;
+  border-radius:9px!important;
+}
+
+.civ-craft-card-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.civ-craft-card-head span{
+  color:#8f999e;
+  font-size:7px;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+}
+
+.civ-craft-card-head em{
+  padding:2px 6px;
+  border:1px solid #35434a;
+  border-radius:999px;
+  color:#8d989d;
+  font-size:6.5px;
+  font-style:normal;
+}
+
+.civ-craft-grid article.ready .civ-craft-card-head em{
+  border-color:#5b743c;
+  color:#9fd16f;
+  background:rgba(58,100,42,.16);
+}
+
+.civ-craft-art{
+  height:106px!important;
+  border-bottom:0!important;
+  border-radius:7px;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(211,127,37,.16),transparent 50%),
+    #0b1114;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025);
+}
+
+.civ-craft-art>.civ-atlas-item{
+  width:132px!important;
+  height:100px!important;
+}
+
+.civ-craft-grid article h3{
+  margin:10px 0 0!important;
+  font-size:15px!important;
+}
+
+.civ-craft-cost{
+  min-height:38px;
+  display:grid;
+  align-content:center;
+  gap:2px;
+}
+
+.civ-craft-cost small{
+  color:#7f8b90;
+  font-size:6.5px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.civ-craft-cost b{
+  color:#cbd1d4;
+  font-size:8px;
+  font-weight:600;
+}
+
+.civ-craft-grid article button{
+  min-height:36px!important;
+  border-radius:6px!important;
+}
+
+/* TRIBE ----------------------------------------------------------------- */
+.civ-tribe-grid{
+  gap:14px!important;
+}
+
+.civ-tribe-grid article{
+  min-height:300px!important;
+  grid-template-rows:116px auto auto auto minmax(0,1fr) 38px!important;
+  padding:12px!important;
+  border-radius:9px!important;
+}
+
+.civ-tribe-art{
+  height:108px!important;
+  overflow:hidden;
+  border:1px solid #2c393f;
+  border-radius:8px;
+  background:#0a1013;
+}
+
+.civ-tribe-art.tribe-camp{
+  position:relative;
+  display:block!important;
+  background-image:
+    linear-gradient(0deg,rgba(4,8,10,.78),transparent 70%),
+    var(--civ-art-atlas)!important;
+  background-size:100% 100%,133.333333% auto!important;
+  background-position:0 0,0 0!important;
+  background-repeat:no-repeat!important;
+}
+
+.civ-tribe-camp-scene{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:flex-end;
+  padding:9px;
+}
+
+.civ-tribe-camp-scene span{
+  padding:4px 8px;
+  border:1px solid rgba(224,157,65,.28);
+  border-radius:5px;
+  background:rgba(5,9,11,.76);
+  color:#e6b45f;
+  font-size:8px;
+  backdrop-filter:blur(6px);
+}
+
+.civ-tribe-art.tribe-wood{
+  display:flex!important;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  background:
+    radial-gradient(circle at 50% 55%,rgba(221,132,40,.14),transparent 48%),
+    #0a1013!important;
+}
+
+.civ-tribe-art.tribe-wood .civ-atlas-resource{
+  width:74px!important;
+  height:62px!important;
+  flex:0 0 74px!important;
+}
+
+.civ-tribe-art.tribe-wood .civ-vector-icon{
+  width:48px!important;
+  height:48px!important;
+  color:#ffb64f;
+  filter:drop-shadow(0 0 12px rgba(238,138,40,.18));
+}
+
+.civ-tribe-art.tribe-wood .civ-vector-icon svg{
+  width:40px!important;
+  height:40px!important;
+}
+
+.civ-tribe-art.tribe-mammoth .civ-atlas-boss{
+  width:100%!important;
+  height:100%!important;
+}
+
+.civ-tribe-grid article>small{
+  margin-top:8px;
+  color:#d59843!important;
+  font-size:7px!important;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.civ-tribe-grid article h3{
+  margin:3px 0 4px!important;
+  color:#f0ece5!important;
+  font-size:17px!important;
+}
+
+.civ-tribe-grid article strong{
+  color:#e2e7e9!important;
+  font-size:11px!important;
+}
+
+.civ-tribe-grid article p{
+  color:#98a4a9!important;
+  font-size:8.5px!important;
+  line-height:1.4!important;
+}
+
+.civ-tribe-grid article button{
+  min-height:36px!important;
+  border-radius:6px!important;
+}
+
+/* ACHIEVEMENTS ----------------------------------------------------------- */
+.civ-achievement-grid{
+  gap:10px!important;
+}
+
+.civ-achievement-grid article{
+  min-height:96px!important;
+  grid-template-columns:74px minmax(0,1fr) auto!important;
+  gap:12px!important;
+  padding:10px 12px!important;
+  border-radius:8px!important;
+}
+
+.civ-achievement-medal{
+  width:62px!important;
+  height:62px!important;
+  display:grid!important;
+  place-items:center;
+  overflow:hidden;
+  border:1px solid #3a474d!important;
+  border-radius:9px!important;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(191,111,35,.14),transparent 48%),
+    #0a1013!important;
+  color:#e3a748!important;
+}
+
+.civ-achievement-medal>.civ-vector-icon{
+  width:34px!important;
+  height:34px!important;
+}
+
+.civ-achievement-medal>.civ-atlas-item,
+.civ-achievement-medal>.civ-atlas-boss{
+  width:58px!important;
+  height:58px!important;
+  background-color:transparent!important;
+}
+
+.civ-achievement-medal>.civ-atlas-resource{
+  width:52px!important;
+  height:46px!important;
+  flex:0 0 52px!important;
+}
+
+.civ-achievement-grid article.done{
+  border-color:#456a47!important;
+  background:
+    linear-gradient(90deg,rgba(42,87,47,.18),transparent 36%),
+    linear-gradient(180deg,#111a1f,#091115)!important;
+}
+
+.civ-achievement-grid article.locked{
+  opacity:.58!important;
+  filter:saturate(.62);
+}
+
+/* EVOLUTION -------------------------------------------------------------- */
+.civ-evolution-track{
+  gap:9px!important;
+}
+
+.civ-evolution-track article{
+  position:relative;
+  min-height:190px!important;
+  padding:9px!important;
+  grid-template-rows:92px 26px auto auto 24px!important;
+  align-content:start!important;
+  border-radius:9px!important;
+}
+
+.civ-evolution-art{
+  width:100%;
+  height:84px;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  border-radius:7px;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(186,109,36,.14),transparent 50%),
+    #0a1013;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.022);
+}
+
+.civ-evolution-art .civ-mascot-art{
+  width:74px!important;
+  height:108px!important;
+  transform:translateY(12px)!important;
+  -webkit-mask-image:linear-gradient(#000 0 76%,rgba(0,0,0,.6) 87%,transparent 100%)!important;
+  mask-image:linear-gradient(#000 0 76%,rgba(0,0,0,.6) 87%,transparent 100%)!important;
+}
+
+.civ-evolution-art>.civ-atlas-resource{
+  width:76px!important;
+  height:64px!important;
+  flex:0 0 76px!important;
+}
+
+.civ-evolution-art>.civ-atlas-item{
+  width:84px!important;
+  height:72px!important;
+  background-color:transparent!important;
+}
+
+.civ-evolution-art>.civ-vector-icon{
+  width:42px!important;
+  height:42px!important;
+  color:#e4a74e;
+}
+
+.civ-evolution-index{
+  width:26px!important;
+  height:26px!important;
+  margin:-15px auto 0;
+  z-index:2;
+  display:grid!important;
+  place-items:center;
+  border:1px solid #46545b;
+  border-radius:50%;
+  background:#0e161a;
+  color:#909da2;
+  font-size:9px;
+}
+
+.civ-evolution-track article.active .civ-evolution-index{
+  border-color:#b77a31;
+  color:#ffd171;
+  background:#302115;
+  box-shadow:0 0 12px rgba(221,140,45,.10);
+}
+
+.civ-evolution-track article h3{
+  margin:3px 0!important;
+  color:#e4e9eb!important;
+  font-size:11px!important;
+}
+
+.civ-evolution-track article p{
+  min-height:30px;
+  color:#8d989d!important;
+  font-size:7.5px!important;
+  line-height:1.3!important;
+}
+
+.civ-evolution-track article em{
+  align-self:end;
+  color:#6f7b80!important;
+  font-size:7px!important;
+}
+
+.civ-evolution-track article.active em{
+  color:#8fc879!important;
+}
+
+@media(max-width:1450px){
+  .civ-map-path button{
+    min-height:102px!important;
+    grid-template-rows:40px auto auto auto auto!important;
+  }
+  .civ-era-art{width:46px;height:39px}
+  .civ-era-art>.civ-atlas-resource{width:41px!important;height:36px!important;flex-basis:41px!important}
+  .civ-era-art>.civ-atlas-item{width:43px!important;height:38px!important}
+
+  .civ-craft-grid article{
+    min-height:214px!important;
+    grid-template-rows:22px 88px auto 36px 34px!important;
+  }
+  .civ-craft-art{height:84px!important}
+  .civ-craft-art>.civ-atlas-item{width:108px!important;height:80px!important}
+
+  .civ-tribe-grid article{
+    min-height:252px!important;
+    grid-template-rows:88px auto auto auto minmax(0,1fr) 34px!important;
+  }
+  .civ-tribe-art{height:82px!important}
+
+  .civ-achievement-grid article{
+    min-height:82px!important;
+    grid-template-columns:60px minmax(0,1fr) auto!important;
+  }
+  .civ-achievement-medal{width:50px!important;height:50px!important}
+  .civ-achievement-medal>.civ-atlas-item,
+  .civ-achievement-medal>.civ-atlas-boss{width:46px!important;height:46px!important}
+  .civ-achievement-medal>.civ-atlas-resource{width:44px!important;height:39px!important;flex-basis:44px!important}
+
+  .civ-evolution-track article{
+    min-height:166px!important;
+    grid-template-rows:72px 24px auto auto 20px!important;
+  }
+  .civ-evolution-art{height:66px}
+}
+
+@media(min-width:721px) and (max-height:800px){
+  .civ-map-path button{
+    min-height:88px!important;
+    padding:6px!important;
+    grid-template-rows:32px auto auto auto auto!important;
+  }
+  .civ-era-art{width:38px;height:31px}
+  .civ-era-reward{display:none}
+  .civ-map-path button em{margin-top:2px}
+
+  .civ-map-detail{
+    gap:9px!important;
+    grid-template-columns:minmax(240px,.72fr) minmax(0,1.28fr)!important;
+  }
+  .civ-era-goal{padding:9px!important}
+  .civ-era-goal>h3{font-size:17px!important}
+  .civ-era-goal>p{font-size:7.5px!important;margin-bottom:4px!important}
+
+  .civ-craft-grid article{
+    min-height:174px!important;
+    grid-template-rows:18px 66px auto 30px 30px!important;
+    padding:8px!important;
+  }
+  .civ-craft-art{height:62px!important}
+  .civ-craft-art>.civ-atlas-item{width:82px!important;height:58px!important}
+
+  .civ-tribe-grid article{
+    min-height:198px!important;
+    grid-template-rows:62px auto auto auto minmax(0,1fr) 30px!important;
+    padding:8px!important;
+  }
+  .civ-tribe-art{height:58px!important}
+  .civ-tribe-grid article h3{font-size:14px!important}
+  .civ-tribe-grid article p{font-size:7.5px!important}
+
+  .civ-achievement-grid article{
+    min-height:68px!important;
+    grid-template-columns:48px minmax(0,1fr) auto!important;
+    padding:7px 9px!important;
+  }
+  .civ-achievement-medal{width:40px!important;height:40px!important}
+  .civ-achievement-medal>.civ-atlas-item,
+  .civ-achievement-medal>.civ-atlas-boss{width:38px!important;height:38px!important}
+  .civ-achievement-medal>.civ-atlas-resource{width:36px!important;height:32px!important;flex-basis:36px!important}
+
+  .civ-evolution-track article{
+    min-height:142px!important;
+    grid-template-rows:56px 20px auto auto 18px!important;
+    padding:6px!important;
+  }
+  .civ-evolution-art{height:52px}
+  .civ-evolution-art .civ-mascot-art{width:54px!important;height:82px!important}
+}
