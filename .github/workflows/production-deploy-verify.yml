@@ -1,0 +1,38 @@
+name: Production deployment verification
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-deploy-verification
+  cancel-in-progress: true
+
+jobs:
+  verify-production:
+    name: Verify 4rrum.ru deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out deployed commit
+        uses: actions/checkout@v4
+
+      - name: Use Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Wait for Railway and verify production
+        env:
+          EXPECTED_SHA: ${{ github.sha }}
+          EXPECTED_HOME_REFERENCE: v49
+          PRODUCTION_WEB_URL: https://4rrum.ru
+          PRODUCTION_API_URL: https://api.4rrum.ru
+          PRODUCTION_VERIFY_TIMEOUT_MS: 720000
+          PRODUCTION_VERIFY_INTERVAL_MS: 15000
+        run: node scripts/verify-production.mjs
