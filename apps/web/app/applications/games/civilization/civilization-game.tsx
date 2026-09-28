@@ -405,7 +405,18 @@ export function CivilizationGame() {
 
         <main className="civ-scene">
           <div className="civ-cave-background civ-atlas-cave" role="img" aria-label="Пещера первобытного лагеря" />
-          <div className="civ-mascot-stage"><Mascot avatar={avatar} /></div>
+          <div className="civ-mascot-stage">
+            <Mascot
+              avatar={avatar}
+              pose={
+                equippedId === 'axe' || equippedId === 'obsidian-axe'
+                  ? 'axe'
+                  : equippedId === 'club' || equippedId === 'bone-club' || equippedId === 'mammoth-maul'
+                    ? 'club'
+                    : 'base'
+              }
+            />
+          </div>
           <Hotspot className="fire" icon="fire" title="Костёр" text="Восстановить энергию" onClick={() => setNotice('Костёр восстановит энергию после короткого отдыха.')} />
           <Hotspot className="bench" icon="craft" title="Верстак" text="Создание предметов" onClick={() => setPanel('craft')} />
           <Hotspot className="stash" icon="inventory" title="Тайник" text="Ресурсы и трофеи" onClick={() => setResourceOpen('materials')} />
@@ -767,11 +778,20 @@ function EvolutionPanel() {
   );
 }
 
-function Mascot({ avatar, compact = false }: { avatar: AvatarState; compact?: boolean }) {
+function Mascot({
+  avatar,
+  compact = false,
+  pose = 'base',
+}: {
+  avatar: AvatarState;
+  compact?: boolean;
+  pose?: 'base' | 'club' | 'axe' | 'upgraded';
+}) {
   const variant = avatar.gender === 'female' ? 'female' : 'male';
+  const poseClass = avatar.gender === 'female' ? 'female-base' : `male-${pose}`;
   return (
     <span
-      className={`civ-mascot civ-mascot-art civ-mascot-${variant} ${compact ? 'compact' : ''}`}
+      className={`civ-mascot civ-mascot-art civ-mascot-${variant} civ-mascot-${poseClass} ${compact ? 'compact' : ''}`}
       style={{ '--civ-skin': avatar.color } as CSSProperties}
       role="img"
       aria-label={avatar.gender === 'female' ? 'Персонаж: девушка' : 'Персонаж: парень'}
