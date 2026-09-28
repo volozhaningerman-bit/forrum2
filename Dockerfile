@@ -3,7 +3,6 @@ FROM node:24-bookworm-slim
 WORKDIR /app
 
 ENV CI=true
-ENV NODE_ENV=production
 
 ARG DATABASE_URL=postgresql://forrum:forrum@localhost:5432/forrum
 
@@ -25,6 +24,8 @@ RUN npm run build \
     && rm -rf apps/web/.next/standalone/apps/web/.next/static apps/web/.next/standalone/apps/web/public \
     && cp -R apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static \
     && cp -R apps/web/public apps/web/.next/standalone/apps/web/public
+
+ENV NODE_ENV=production
 
 EXPOSE 3000 4000
 
