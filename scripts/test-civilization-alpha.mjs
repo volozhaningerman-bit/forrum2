@@ -365,7 +365,7 @@ try {
   await bottomNav.getByRole('button', { name: /Боссы/ }).click();
   await page.getByRole('button', { name: /Саблезубый тигр/ }).click();
   const bossBackground = await page.locator('.civ-boss-art .civ-atlas-boss.large').evaluate((node) => getComputedStyle(node).backgroundImage);
-  assert.match(bossBackground, /art-v2\/boss-sprite-v2\.avif/);
+  assert.match(bossBackground, /art\/civilization-atlas\.webp/);
   await page.screenshot({ path: output + '/civilization-v3-bosses-1720x864.png', fullPage: false });
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
 
