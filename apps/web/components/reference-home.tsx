@@ -69,6 +69,7 @@ function Categories({ items: sourceItems, selected }: { items: Community[]; sele
   </div>{open && !!children.length && <div className="forum-category-children">{children.map(child => renderCategory(child, nextTrail))}</div>}</div>;
  }
  return <nav className="forum-categories" aria-label="Категории"><div className="forum-category-title"><p className="forum-eyebrow">Разделы форума</p></div>
+  <div className="forum-category forum-home-category"><div className="forum-category-heading is-active"><Link href="/"><Icon name="home"/><span>Главная</span></Link></div></div>
   {(roots.length ? roots : items).map(root => renderCategory(root))}
   <div className="forum-category forum-app-category"><div className="forum-category-heading"><Link href="/applications"><Icon name="game"/><span>Приложения</span></Link><button className="forum-category-toggle" type="button" aria-label={`${expanded.has('@apps') ? 'Свернуть' : 'Развернуть'}: Приложения`} aria-expanded={expanded.has('@apps')} onClick={()=>toggle('@apps')}><Icon name="chevron"/></button></div>{expanded.has('@apps') && <div className="forum-category-children">{["AI-инструменты","Игры","Эксперименты","Neural Lab"].map((name,i)=><Link key={name} href={`/applications#section-${i}`}>{name}</Link>)}</div>}</div>
   <Link className="forum-all-communities" href="/communities">Все сообщества →</Link>
