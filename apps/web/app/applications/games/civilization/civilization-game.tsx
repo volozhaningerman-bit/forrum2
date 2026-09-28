@@ -956,8 +956,8 @@ function MapPanel({ setNotice }: { setNotice: (value: string) => void }) {
   const EraArt = ({ art }: { art: string }) => {
     if (art === 'cave') return <span className="civ-era-art era-cave"><CivSymbol kind="cave" /></span>;
     if (art === 'stone') return <span className="civ-era-art era-stone"><span className="civ-atlas-resource res-stone" /></span>;
-    if (art === 'bronze') return <span className="civ-era-art era-bronze"><span className="civ-atlas-item art-axe" /></span>;
-    if (art === 'iron') return <span className="civ-era-art era-iron"><span className="civ-atlas-item art-obsidian-axe" /></span>;
+    if (art === 'bronze') return <span className="civ-era-art era-bronze"><CivSymbol kind="craft" /></span>;
+    if (art === 'iron') return <span className="civ-era-art era-iron"><CivSymbol kind="equipment" /></span>;
     return <span className="civ-era-art era-medieval"><CivSymbol kind="tribe" /></span>;
   };
   return (
@@ -993,6 +993,7 @@ function MapPanel({ setNotice }: { setNotice: (value: string) => void }) {
 function CraftPanel({ setNotice }: { setNotice: (value: string) => void }) {
   const artByRecipe: Record<string, string> = {
     'Каменный топор': 'axe',
+    'Каменная кирка': 'flint-shard',
     'Шкура охотника': 'fur',
   };
   return (
@@ -1004,7 +1005,7 @@ function CraftPanel({ setNotice }: { setNotice: (value: string) => void }) {
           return (
             <article key={recipe.name} className={recipe.ready ? 'ready' : 'locked'}>
               <div className="civ-craft-card-head"><span>{recipe.ready ? 'Можно создать' : 'Не хватает ресурсов'}</span><em>{recipe.ready ? 'Готово' : 'Закрыто'}</em></div>
-              <div className="civ-craft-art">
+              <div className={`civ-craft-art ${recipe.name === 'Факел' ? 'craft-torch' : recipe.name === 'Каменная кирка' ? 'craft-pick' : ''}`}>
                 {art ? <span className={`civ-atlas-item art-${art}`} aria-hidden="true" /> : recipe.name === 'Факел' ? <CivSymbol kind="fire" /> : <CivSymbol kind="craft" />}
               </div>
               <h3>{recipe.name}</h3>
