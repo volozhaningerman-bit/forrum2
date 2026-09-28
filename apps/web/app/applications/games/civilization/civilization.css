@@ -4370,3 +4370,115 @@ button{font:inherit}
     font-size:25px!important;
   }
 }
+
+
+/* CIVILIZATION VISUAL POLISH V4.1 — SCREENSHOT CORRECTIONS */
+
+/* Hero: lift the full body clear of the scene notice. */
+.civ-mascot-stage{
+  bottom:8.2%!important;
+  width:242px!important;
+  height:384px!important;
+}
+.civ-mascot-stage .civ-mascot-art{
+  width:242px!important;
+  height:384px!important;
+}
+
+/* Equipment: keep art dominant without colliding with labels. */
+.civ-item-card{
+  display:grid!important;
+  grid-template-rows:88px auto auto!important;
+  align-content:start!important;
+  overflow:hidden!important;
+}
+.civ-item-card .civ-atlas-item{
+  width:calc(100% - 14px)!important;
+  height:78px!important;
+  margin:4px auto 2px!important;
+  transform:scale(1.035)!important;
+  clip-path:inset(5% 5% 7% 5% round 7px);
+  filter:
+    drop-shadow(0 8px 8px rgba(0,0,0,.36))
+    saturate(1.035)
+    contrast(1.025)!important;
+}
+.civ-item-card.active .civ-atlas-item{
+  transform:scale(1.055)!important;
+  filter:
+    drop-shadow(0 0 9px rgba(229,148,51,.10))
+    drop-shadow(0 9px 8px rgba(0,0,0,.38))
+    saturate(1.05)
+    contrast(1.03)!important;
+}
+.civ-item-card>b,
+.civ-item-card>small,
+.civ-item-card>em{
+  position:relative;
+  z-index:2;
+}
+.civ-item-card>b{
+  margin-top:1px!important;
+  line-height:1.15!important;
+}
+.civ-item-card>small{
+  line-height:1.15!important;
+}
+
+/* Large preview: crop the sprite frame, not the item itself. */
+.civ-item-hero{
+  display:grid!important;
+  place-items:center!important;
+}
+.civ-item-hero .civ-atlas-item.large{
+  width:86%!important;
+  height:72%!important;
+  margin:auto!important;
+  transform:scale(1.04)!important;
+  clip-path:inset(5% 5% 6% 5% round 9px);
+  filter:
+    drop-shadow(0 16px 14px rgba(0,0,0,.46))
+    drop-shadow(0 0 11px rgba(229,147,49,.06))
+    saturate(1.04)
+    contrast(1.03)!important;
+}
+
+@media(max-width:1450px){
+  .civ-mascot-stage{
+    bottom:6.8%!important;
+    width:216px!important;
+    height:342px!important;
+  }
+  .civ-mascot-stage .civ-mascot-art{
+    width:216px!important;
+    height:342px!important;
+  }
+  .civ-item-card{
+    grid-template-rows:74px auto auto!important;
+  }
+  .civ-item-card .civ-atlas-item{
+    height:66px!important;
+  }
+}
+
+@media(min-width:721px) and (max-height:800px){
+  .civ-mascot-stage{
+    bottom:5.8%!important;
+    width:188px!important;
+    height:298px!important;
+  }
+  .civ-mascot-stage .civ-mascot-art{
+    width:188px!important;
+    height:298px!important;
+  }
+  .civ-item-card{
+    grid-template-rows:62px auto auto!important;
+  }
+  .civ-item-card .civ-atlas-item{
+    height:55px!important;
+    transform:scale(1.02)!important;
+  }
+  .civ-item-hero .civ-atlas-item.large{
+    transform:scale(1.02)!important;
+  }
+}
