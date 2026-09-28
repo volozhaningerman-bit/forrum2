@@ -25,7 +25,7 @@ export function CommunityPanels({overview,unavailable,news,events}:{overview?:Ho
    return()=>controller.abort();
  },[period,mode,retry]);
  const authors=ranking ?? (period==='week' ? overview?.weekly?.[mode]?.slice(0,5) ?? [] : []);
- const replies=(overview?.pulse?.recentReplies??[]).slice(0,3);
+ const replies=(overview?.pulse?.recentReplies??[]).filter((reply,index,all)=>all.findIndex(item=>item.publication.slug===reply.publication.slug)===index).slice(0,3);
  const validEvents=(events??[]).filter(event=>event.status!=="CANCELLED" && Number.isFinite(Date.parse(event.startsAt)));
  const upcoming=now===null?[]:validEvents.filter(event=>Date.parse(event.endsAt||event.startsAt)>=now).sort((a,b)=>Date.parse(a.startsAt)-Date.parse(b.startsAt)).slice(0,2).map(event=>({id:`event-${event.id}`,title:event.title,date:event.startsAt,href:`/events/${event.id}`,kind:'Событие'}));
  const past=now===null?[]:validEvents.filter(event=>Date.parse(event.endsAt||event.startsAt)<now).map(event=>({id:`event-${event.id}`,title:event.title,date:event.startsAt,href:`/events/${event.id}`,kind:'Прошедшее событие'}));
