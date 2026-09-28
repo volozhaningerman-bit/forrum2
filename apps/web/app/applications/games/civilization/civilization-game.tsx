@@ -404,7 +404,7 @@ export function CivilizationGame() {
         </aside>
 
         <main className="civ-scene">
-          <img className="civ-cave-background" src="/games/civilization/cave-hub.svg" alt="Пещера первобытного лагеря" />
+          <div className="civ-cave-background civ-atlas-cave" role="img" aria-label="Пещера первобытного лагеря" />
           <div className="civ-mascot-stage"><Mascot avatar={avatar} /></div>
           <Hotspot className="fire" icon="fire" title="Костёр" text="Восстановить энергию" onClick={() => setNotice('Костёр восстановит энергию после короткого отдыха.')} />
           <Hotspot className="bench" icon="craft" title="Верстак" text="Создание предметов" onClick={() => setPanel('craft')} />
@@ -541,6 +541,20 @@ export function CivilizationGame() {
 
 
 function ItemArt({ item, large = false }: { item: Item; large?: boolean }) {
+  const atlasItemIds = new Set([
+    'club', 'axe', 'knife', 'spear',
+    'bone-club', 'flint-shard', 'bow', 'obsidian-axe',
+    'hunter-spear', 'mammoth-maul', 'fur', 'fang',
+  ]);
+  if (atlasItemIds.has(item.id)) {
+    return (
+      <span
+        className={`civ-item-art civ-atlas-item art-${item.id} ${large ? 'large' : ''}`}
+        aria-hidden="true"
+      />
+    );
+  }
+
   const id = item.id;
   const weapon = item.category === 'weapon';
   const clothes = item.category === 'clothes';
@@ -705,7 +719,15 @@ function InventoryPanel({ loot }: { loot: Record<string, number> }) {
       <div className="civ-inventory-groups">
         {groups.map((group) => (
           <section key={group.title}><h3>{group.title}</h3>
-            <div>{group.items.map(([name,value]) => <article key={name}><span className="civ-inventory-glyph">{group.title === 'Пища' ? '●' : group.title === 'Трофеи' ? '◆' : '■'}</span><b>{name}</b><strong>{value}</strong></article>)}</div>
+            <div>{group.items.map(([name,value]) => {
+              const artByName: Record<string,string> = {
+                'Ягоды':'berries','Мясо':'meat','Грибы':'mushrooms','Рыба':'fish',
+                'Дерево':'wood','Камень':'stone','Кремень':'flint','Шкуры':'hide',
+                'Клык саблезуба':'fang','Бивень мамонта':'tusk','Тотем вожака':'totem','Редкий камень':'rare-stone',
+              };
+              const art=artByName[name];
+              return <article key={name}>{art ? <span className={`civ-atlas-resource res-${art}`} aria-hidden="true" /> : <span className="civ-inventory-glyph">◆</span>}<b>{name}</b><strong>{value}</strong></article>;
+            })}</div>
           </section>
         ))}
       </div>
@@ -737,29 +759,42 @@ function EvolutionPanel() {
 }
 
 function Mascot({ avatar, compact = false }: { avatar: AvatarState; compact?: boolean }) {
-  const hair = avatar.gender === 'female' && avatar.hair !== 'Лысый';
+  const variant = avatar.gender === 'female' ? 'female' : 'male';
   return (
-    <div className={`civ-mascot ${compact ? 'compact' : ''}`} style={{ '--civ-skin': avatar.color } as CSSProperties}>
-      <div className="civ-hair">{hair ? <span>{avatar.hair === 'Пучок' ? '●' : avatar.hair === 'Косы' ? '⌁' : avatar.hair === 'Длинные' ? '◒' : '⌒'}</span> : null}</div>
-      <div className="civ-head">
-        <i className="eye left" /><i className="eye right" />
-        <i className="brow left" /><i className="brow right" />
-        <i className="cheek left" /><i className="cheek right" />
-        <i className="mouth" />
-      </div>
-      <div className="civ-necklace">◆ ◆ ◆</div>
-      <div className="civ-body"><i className="fur" /></div>
-      {!compact ? <><div className="civ-arm left" /><div className="civ-arm right" /><div className="civ-leg left" /><div className="civ-leg right" /><div className="civ-club"><i /></div></> : null}
-    </div>
+    <span
+      className={`civ-mascot civ-mascot-art civ-mascot-${variant} ${compact ? 'compact' : ''}`}
+      style={{ '--civ-skin': avatar.color } as CSSProperties}
+      role="img"
+      aria-label={avatar.gender === 'female' ? 'Персонаж: девушка' : 'Персонаж: парень'}
+    />
   );
 }
-
 function Hotspot({ className, icon, title, text, onClick }: { className: string; icon: CivGlyph; title: string; text: string; onClick: () => void }) {
   return <button type="button" className={`civ-hotspot ${className}`} onClick={onClick}><CivSymbol kind={icon} /><div><b>{title}</b><small>{text}</small></div><em>›</em></button>;
 }
 
 function ResourceRow({ icon, label, value }: { icon: string; label: string; value: string }) {
-  return <div className="civ-resource-row"><span>{icon}</span><b>{label}</b><em>{value}</em></div>;
+  const artByLabel: Record<string, string> = {
+    'Ягоды': 'berries',
+    'Мясо': 'meat',
+    'Грибы': 'mushrooms',
+    'Рыба': 'fish',
+    'Дерево': 'wood',
+    'Камень': 'stone',
+    'Кремень': 'flint',
+    'Шкуры': 'hide',
+    'Клык саблезуба': 'fang',
+    'Бивень мамонта': 'tusk',
+    'Тотем вожака': 'totem',
+    'Редкий камень': 'rare-stone',
+  };
+  const art = artByLabel[label];
+  return (
+    <div className="civ-resource-row">
+      {art ? <span className={`civ-atlas-resource res-${art}`} aria-hidden="true" /> : <span>{icon}</span>}
+      <b>{label}</b><em>{value}</em>
+    </div>
+  );
 }
 
 function TaskRow({ task, compact = false }: { task: { label: string; progress: number; total: number; reward: string }; compact?: boolean }) {
@@ -836,55 +871,13 @@ function EquipmentPanel({
 
 function BossArt({ boss, large = false }: { boss: Boss; large?: boolean }) {
   return (
-    <span className={`civ-boss-illustration boss-${boss.id} ${large ? 'large' : ''}`} aria-hidden="true">
-      <svg viewBox="0 0 220 180" role="presentation">
-        <defs>
-          <radialGradient id={`boss-bg-${boss.id}`} cx=".5" cy=".42" r=".62">
-            <stop offset="0" stopColor={boss.id === 'tiger' ? '#c96e27' : boss.id === 'mammoth' ? '#7a716b' : '#73523b'} stopOpacity=".74" />
-            <stop offset="1" stopColor="#12110f" stopOpacity="0" />
-          </radialGradient>
-          <linearGradient id={`boss-fur-${boss.id}`} x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor={boss.id === 'tiger' ? '#d98a39' : boss.id === 'mammoth' ? '#786b61' : '#806048'} />
-            <stop offset=".55" stopColor={boss.id === 'tiger' ? '#a84f21' : boss.id === 'mammoth' ? '#4d4947' : '#513a2c'} />
-            <stop offset="1" stopColor="#241914" />
-          </linearGradient>
-        </defs>
-        <ellipse cx="110" cy="100" rx="100" ry="76" fill={`url(#boss-bg-${boss.id})`} />
-        {boss.id === 'tiger' ? (
-          <>
-            <path d="M51 70 L31 24 L75 47 Q110 27 145 47 L188 24 L169 71 Q184 93 174 127 Q153 160 110 163 Q65 161 45 127 Q35 94 51 70 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#e1a34e" strokeWidth="3" />
-            <path d="M44 45 L72 67 M176 45 L148 67 M77 48 L88 72 M143 48 L132 72 M63 88 L84 95 M157 88 L136 95" stroke="#311b14" strokeWidth="8" strokeLinecap="round" opacity=".85"/>
-            <path d="M75 109 Q90 93 109 103 Q129 93 145 109 Q137 145 110 151 Q82 145 75 109 Z" fill="#eee0c3" opacity=".93"/>
-            <ellipse cx="81" cy="88" rx="10" ry="8" fill="#0a0807"/><ellipse cx="139" cy="88" rx="10" ry="8" fill="#0a0807"/>
-            <circle cx="84" cy="86" r="2.5" fill="#f6d266"/><circle cx="142" cy="86" r="2.5" fill="#f6d266"/>
-            <path d="M104 111 L116 111 L110 120 Z" fill="#2a1915"/>
-            <path d="M91 124 L97 153 L105 128 M129 124 L123 153 L115 128" fill="#f5e4bd" stroke="#d5bd91" strokeWidth="1.5"/>
-          </>
-        ) : boss.id === 'mammoth' ? (
-          <>
-            <path d="M46 87 Q47 36 95 27 Q148 19 178 58 Q195 88 176 127 Q158 159 112 161 Q62 161 43 125 Q34 105 46 87 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#9e8d7f" strokeWidth="3"/>
-            <path d="M45 85 Q22 83 18 109 Q18 133 46 139" fill="#514944" stroke="#887a70" strokeWidth="3"/>
-            <path d="M175 84 Q203 83 207 108 Q207 132 177 139" fill="#514944" stroke="#887a70" strokeWidth="3"/>
-            <path d="M103 99 Q119 96 127 113 L124 149 Q121 170 104 170 Q91 168 92 151 L94 113 Q95 103 103 99 Z" fill="#5c514b"/>
-            <path d="M85 119 Q66 128 62 154 Q77 144 94 141 M139 119 Q158 128 163 154 Q148 144 130 141" fill="none" stroke="#ead9ac" strokeWidth="8" strokeLinecap="round"/>
-            <ellipse cx="83" cy="86" rx="8" ry="6" fill="#0c0908"/><ellipse cx="142" cy="86" rx="8" ry="6" fill="#0c0908"/>
-            <path d="M65 54 Q80 39 95 33 M158 54 Q143 39 129 33" stroke="#2d2927" strokeWidth="7" strokeLinecap="round" opacity=".65"/>
-          </>
-        ) : (
-          <>
-            <path d="M48 80 Q54 37 92 27 Q133 14 169 48 Q190 76 177 119 Q163 158 111 164 Q61 158 42 121 Q32 97 48 80 Z" fill={`url(#boss-fur-${boss.id})`} stroke="#9d7550" strokeWidth="3"/>
-            <path d="M62 80 Q75 52 105 50 Q140 46 160 78 Q162 120 139 142 Q109 157 79 141 Q57 120 62 80 Z" fill="#a67b59"/>
-            <path d="M72 52 Q52 38 42 61 M149 51 Q171 36 181 60" fill="none" stroke="#503729" strokeWidth="15" strokeLinecap="round"/>
-            <ellipse cx="83" cy="91" rx="9" ry="7" fill="#090706"/><ellipse cx="139" cy="91" rx="9" ry="7" fill="#090706"/>
-            <path d="M92 119 Q110 132 130 118" fill="none" stroke="#3b251d" strokeWidth="6" strokeLinecap="round"/>
-            <path d="M110 24 L123 6 L135 29 L154 17 L150 46 L70 46 L68 18 L88 30 L98 7 Z" fill="#d99b39" stroke="#f2c36d" strokeWidth="2"/>
-          </>
-        )}
-      </svg>
-    </span>
+    <span
+      className={`civ-boss-illustration civ-atlas-boss boss-${boss.id} ${large ? 'large' : ''}`}
+      role="img"
+      aria-label={boss.name}
+    />
   );
 }
-
 function BossesPanel({ bosses, selected, selectedBoss, setSelectedBoss, hp, attackBoss }: { bosses: Boss[]; selected: Boss; selectedBoss: string; setSelectedBoss: (id: string) => void; hp: number; attackBoss: () => void }) {
   return (
     <div className="civ-panel-body bosses">
@@ -914,10 +907,15 @@ function MapPanel({ setNotice }: { setNotice: (value: string) => void }) {
     <div className="civ-panel-body map">
       <header className="civ-panel-head"><div><small>Путь цивилизации</small><h2>Карта эпох</h2><p>От первой пещеры до собственной империи. Новые эпохи меняют мир, ресурсы, боссов и технологии.</p></div></header>
       <div className="civ-map-path">
-        {mapStages.map(([name, req, icon], index) => <button type="button" key={name} className={index === 0 ? 'active' : 'locked'} onClick={() => setNotice(index === 0 ? 'Ты уже находишься в Пещере.' : `${name}: ${req}`)}><span>{icon}</span><b>{name}</b><small>{req}</small><em>{index === 0 ? 'Текущая' : '🔒'}</em></button>)}
+        {mapStages.map(([name, req, icon], index) => (
+          <button type="button" key={name} className={index === 0 ? 'active' : 'locked'} onClick={() => setNotice(index === 0 ? 'Ты уже находишься в Пещере.' : `${name}: ${req}`)}>
+            {index === 0 ? <CivSymbol kind="cave" /> : <span className="civ-era-glyph">{icon}</span>}
+            <b>{name}</b><small>{req}</small><em>{index === 0 ? 'Текущая' : 'Закрыто'}</em>
+          </button>
+        ))}
       </div>
       <div className="civ-map-detail">
-        <div className="civ-map-visual"><span>🔥</span><b>Пещера</b><small>Стартовая территория</small></div>
+        <div className="civ-map-visual civ-map-cave-art"><div><b>Пещера</b><small>Стартовая территория</small></div></div>
         <div><h3>Что нужно для Каменного века</h3><TaskRow task={{ label: 'Достичь 5 уровня', progress: 1, total: 5, reward: '' }} /><TaskRow task={{ label: 'Собрать камень', progress: 210, total: 500, reward: '' }} /><TaskRow task={{ label: 'Набрать власть', progress: 37, total: 100, reward: '' }} /></div>
       </div>
     </div>
@@ -925,11 +923,26 @@ function MapPanel({ setNotice }: { setNotice: (value: string) => void }) {
 }
 
 function CraftPanel({ setNotice }: { setNotice: (value: string) => void }) {
+  const artByRecipe: Record<string, string> = {
+    'Каменный топор': 'axe',
+    'Шкура охотника': 'fur',
+  };
   return (
     <div className="civ-panel-body craft">
       <header className="civ-panel-head"><div><small>Верстак</small><h2>Крафт</h2><p>Создавай оружие, инструменты и одежду из найденных материалов.</p></div></header>
       <div className="civ-craft-grid">
-        {craftRecipes.map(recipe => <article key={recipe.name} className={recipe.ready ? 'ready' : 'locked'}><span>{recipe.icon}</span><h3>{recipe.name}</h3><p>{recipe.needs}</p><button type="button" disabled={!recipe.ready} onClick={() => setNotice(`${recipe.name}: создано и отправлено в инвентарь.`)}>{recipe.ready ? 'Создать' : 'Не хватает ресурсов'}</button></article>)}
+        {craftRecipes.map(recipe => {
+          const art = artByRecipe[recipe.name];
+          return (
+            <article key={recipe.name} className={recipe.ready ? 'ready' : 'locked'}>
+              <div className="civ-craft-art">
+                {art ? <span className={`civ-atlas-item art-${art}`} aria-hidden="true" /> : recipe.name === 'Факел' ? <CivSymbol kind="fire" /> : <CivSymbol kind="craft" />}
+              </div>
+              <h3>{recipe.name}</h3><p>{recipe.needs}</p>
+              <button type="button" disabled={!recipe.ready} onClick={() => setNotice(`${recipe.name}: создано и отправлено в инвентарь.`)}>{recipe.ready ? 'Создать' : 'Не хватает ресурсов'}</button>
+            </article>
+          );
+        })}
       </div>
     </div>
   );
@@ -940,9 +953,18 @@ function TribePanel({ setNotice }: { setNotice: (value: string) => void }) {
     <div className="civ-panel-body tribe">
       <header className="civ-panel-head"><div><small>Социальный прогресс</small><h2>Племя</h2><p>Общий лагерь игроков: развитие поселения, вклад ресурсов и совместные цели.</p></div></header>
       <div className="civ-tribe-grid">
-        <article><small>Твоё племя</small><h3>Каменный круг</h3><strong>7 / 20 участников</strong><p>Уровень лагеря 2 · +4% к сбору ресурсов</p><button type="button" onClick={() => setNotice('Открыт список участников племени.')}>Участники</button></article>
-        <article><small>Общая цель</small><h3>Большой костёр</h3><strong>1 420 / 2 000 дерева</strong><div className="civ-task-progress"><i style={{ width: '71%' }} /></div><button type="button" onClick={() => setNotice('Ты внёс 20 дерева в развитие племени.')}>Внести ресурсы</button></article>
-        <article><small>Бонус недели</small><h3>Охота на мамонта</h3><strong>Осталось 2 дня</strong><p>Победи Мамонта вместе с племенем и получи редкий трофей.</p><button type="button" onClick={() => setNotice('Племенная охота отмечена как текущая цель.')}>Сделать целью</button></article>
+        <article>
+          <div className="civ-tribe-art tribe-camp"><CivSymbol kind="tribe" /></div>
+          <small>Твоё племя</small><h3>Каменный круг</h3><strong>7 / 20 участников</strong><p>Уровень лагеря 2 · +4% к сбору ресурсов</p><button type="button" onClick={() => setNotice('Открыт список участников племени.')}>Участники</button>
+        </article>
+        <article>
+          <div className="civ-tribe-art tribe-wood"><span className="civ-atlas-resource res-wood" /></div>
+          <small>Общая цель</small><h3>Большой костёр</h3><strong>1 420 / 2 000 дерева</strong><div className="civ-task-progress"><i style={{ width: '71%' }} /></div><button type="button" onClick={() => setNotice('Ты внёс 20 дерева в развитие племени.')}>Внести ресурсы</button>
+        </article>
+        <article>
+          <div className="civ-tribe-art tribe-mammoth"><span className="civ-atlas-boss boss-mammoth" /></div>
+          <small>Бонус недели</small><h3>Охота на мамонта</h3><strong>Осталось 2 дня</strong><p>Победи Мамонта вместе с племенем и получи редкий трофей.</p><button type="button" onClick={() => setNotice('Племенная охота отмечена как текущая цель.')}>Сделать целью</button>
+        </article>
       </div>
     </div>
   );

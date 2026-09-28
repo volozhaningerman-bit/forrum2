@@ -221,7 +221,9 @@ try {
   assert.match(await page.locator('.civ-full-panel').textContent(), /Управление персонажем/);
   assert.equal(await page.locator('.civ-equipment-tabs>button').count(), 5);
   assert((await page.locator('.civ-item-card').count()) >= 8, 'weapon catalog should show progression and locked goals');
-  assert.equal(await page.locator('.civ-item-art svg').count(), await page.locator('.civ-item-card').count() + 1);
+  const weaponCardCount = await page.locator('.civ-item-card').count();
+  assert.equal(await page.locator('.civ-atlas-item').count(), weaponCardCount + 1, 'generated weapon art should render in cards and detail');
+  assert.equal(await page.locator('.civ-item-art svg').count(), 0, 'generated weapon items should no longer use fallback SVG art');
   // Equip a real unlocked weapon through the UI. This must survive reload later.
   await page.getByRole('button', { name: /Оружие/ }).click();
   const axeCard = page.locator('.civ-item-card').filter({ hasText: 'Каменный топор' }).first();
@@ -266,8 +268,9 @@ try {
   await bottomNav.getByRole('button', { name: /Боссы/ }).click();
   await page.getByRole('button', { name: /Вожак обезьян/ }).click();
   assert.match(await page.locator('.civ-boss-detail').textContent(), /Тотем вожака/);
-  assert.equal(await page.locator('.civ-boss-list .civ-boss-illustration svg').count(), 3);
-  assert.equal(await page.locator('.civ-boss-art .civ-boss-illustration.large svg').count(), 1);
+  assert.equal(await page.locator('.civ-boss-list .civ-atlas-boss').count(), 3);
+  assert.equal(await page.locator('.civ-boss-art .civ-atlas-boss.large').count(), 1);
+  assert.equal(await page.locator('.civ-boss-illustration svg').count(), 0, 'generated boss art should replace fallback SVG illustrations');
   const apeHpBefore = await page.locator('.civ-boss-hp').textContent();
   for (let hit = 0; hit < 4; hit += 1) {
     await page.getByRole('button', { name: /Атаковать/ }).click();
@@ -306,6 +309,8 @@ try {
   }
 
   await page.setViewportSize({ width: 1720, height: 864 });
+  assert.equal(await page.locator('.civ-atlas-cave').count(), 1, 'generated cave atlas must render');
+  assert.equal(await page.locator('.civ-mascot-art').count() >= 1, true, 'generated character art must render');
   await page.screenshot({ path: output + '/civilization-hub-1720x864.png', fullPage: false });
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
   await page.getByRole('button', { name: /Оружие/ }).click();
@@ -331,6 +336,14 @@ try {
 
   await page.getByRole('button', { name: 'Открыть меню персонажа' }).click();
   await page.locator('.civ-player-menu').getByRole('button', { name: /Профиль/ }).click();
+  const profileCharacterRatio = await page.locator('.civ-profile-mascot .civ-mascot-art').evaluate((node) => {
+    const rect = node.getBoundingClientRect();
+    return rect.width / rect.height;
+  });
+  assert(
+    profileCharacterRatio > 0.52 && profileCharacterRatio < 0.66,
+    `profile character sprite aspect ratio must stay near 200/337, got ${profileCharacterRatio}`,
+  );
   await page.screenshot({ path: output + '/civilization-profile-1720x864.png', fullPage: false });
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
 
