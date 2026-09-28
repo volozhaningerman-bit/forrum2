@@ -1,8 +1,0 @@
-[build]
-builder = "RAILPACK"
-buildCommand = "npm run build && mkdir -p apps/web/.next/standalone/apps/web/.next && rm -rf apps/web/.next/standalone/apps/web/.next/static apps/web/.next/standalone/apps/web/public && cp -R apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static && cp -R apps/web/public apps/web/.next/standalone/apps/web/public"
-
-[deploy]
-startCommand = "if [ \"$RAILWAY_SERVICE_NAME\" = \"web\" ]; then exec node apps/web/.next/standalone/apps/web/server.js; elif [ \"$RAILWAY_SERVICE_NAME\" = \"api\" ]; then exec npm run start -w @forrum/api; else echo \"Unsupported Railway service: $RAILWAY_SERVICE_NAME\" >&2; exit 1; fi"
-restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 3
