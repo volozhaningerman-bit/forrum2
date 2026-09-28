@@ -11,7 +11,9 @@
     "node": ">=24 <27"
   },
   "scripts": {
+    "predev": "node scripts/prepare-civilization-art.mjs",
     "dev": "node scripts/dev.mjs",
+    "prebuild": "node scripts/prepare-civilization-art.mjs",
     "build": "npm run build -w @forrum/contracts && npm run build -w @forrum/api && npm run build -w @forrum/web",
     "typecheck": "npm run typecheck -w @forrum/contracts && npm run typecheck -w @forrum/api && npm run typecheck -w @forrum/web",
     "test": "npm run test -w @forrum/api",
