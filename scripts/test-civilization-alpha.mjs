@@ -221,7 +221,9 @@ try {
   assert.match(await page.locator('.civ-full-panel').textContent(), /Управление персонажем/);
   assert.equal(await page.locator('.civ-equipment-tabs>button').count(), 5);
   assert((await page.locator('.civ-item-card').count()) >= 8, 'weapon catalog should show progression and locked goals');
-  assert.equal(await page.locator('.civ-item-art svg').count(), await page.locator('.civ-item-card').count() + 1);
+  const weaponCardCount = await page.locator('.civ-item-card').count();
+  assert.equal(await page.locator('.civ-atlas-item').count(), weaponCardCount + 1, 'generated weapon art should render in cards and detail');
+  assert.equal(await page.locator('.civ-item-art svg').count(), 0, 'generated weapon items should no longer use fallback SVG art');
   // Equip a real unlocked weapon through the UI. This must survive reload later.
   await page.getByRole('button', { name: /Оружие/ }).click();
   const axeCard = page.locator('.civ-item-card').filter({ hasText: 'Каменный топор' }).first();
