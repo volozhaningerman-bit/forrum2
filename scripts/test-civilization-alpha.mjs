@@ -268,8 +268,9 @@ try {
   await bottomNav.getByRole('button', { name: /Боссы/ }).click();
   await page.getByRole('button', { name: /Вожак обезьян/ }).click();
   assert.match(await page.locator('.civ-boss-detail').textContent(), /Тотем вожака/);
-  assert.equal(await page.locator('.civ-boss-list .civ-boss-illustration svg').count(), 3);
-  assert.equal(await page.locator('.civ-boss-art .civ-boss-illustration.large svg').count(), 1);
+  assert.equal(await page.locator('.civ-boss-list .civ-atlas-boss').count(), 3);
+  assert.equal(await page.locator('.civ-boss-art .civ-atlas-boss.large').count(), 1);
+  assert.equal(await page.locator('.civ-boss-illustration svg').count(), 0, 'generated boss art should replace fallback SVG illustrations');
   const apeHpBefore = await page.locator('.civ-boss-hp').textContent();
   for (let hit = 0; hit < 4; hit += 1) {
     await page.getByRole('button', { name: /Атаковать/ }).click();
@@ -308,6 +309,8 @@ try {
   }
 
   await page.setViewportSize({ width: 1720, height: 864 });
+  assert.equal(await page.locator('.civ-atlas-cave').count(), 1, 'generated cave atlas must render');
+  assert.equal(await page.locator('.civ-mascot-art').count() >= 1, true, 'generated character art must render');
   await page.screenshot({ path: output + '/civilization-hub-1720x864.png', fullPage: false });
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
   await page.getByRole('button', { name: /Оружие/ }).click();
