@@ -4859,3 +4859,87 @@ button{font:inherit}
   .civ-tribe-grid article{min-height:218px!important;grid-template-rows:72px auto auto auto minmax(0,1fr) 30px!important}
   .civ-tribe-art{height:66px!important}
 }
+
+
+/* ==========================================================================
+   CIVILIZATION V5.1 — HERO PREVIEW + BOSS ART FIX
+   Remove the last obvious "sprite pasted inside a card" artifacts.
+   ========================================================================== */
+
+/* Large equipment preview: show the entire generated cell at native composition.
+   The surrounding panel already provides the visual frame. */
+.civ-item-hero .civ-atlas-item.large{
+  width:88%!important;
+  height:82%!important;
+  background-size:400% 300%!important;
+  border-radius:0!important;
+  mix-blend-mode:normal!important;
+  -webkit-mask-image:radial-gradient(ellipse 82% 78% at 50% 50%,#000 58%,rgba(0,0,0,.92) 72%,rgba(0,0,0,.32) 88%,transparent 100%)!important;
+  mask-image:radial-gradient(ellipse 82% 78% at 50% 50%,#000 58%,rgba(0,0,0,.92) 72%,rgba(0,0,0,.32) 88%,transparent 100%)!important;
+}
+.civ-item-hero .art-club{background-position:0 0!important}
+.civ-item-hero .art-axe{background-position:33.333% 0!important}
+.civ-item-hero .art-knife{background-position:66.667% 0!important}
+.civ-item-hero .art-spear{background-position:100% 0!important}
+
+.civ-item-hero .art-bone-club{background-position:0 50%!important}
+.civ-item-hero .art-flint-shard{background-position:33.333% 50%!important}
+.civ-item-hero .art-bow{background-position:66.667% 50%!important}
+.civ-item-hero .art-obsidian-axe{background-position:100% 50%!important}
+
+.civ-item-hero .art-hunter-spear{background-position:0 100%!important}
+.civ-item-hero .art-mammoth-maul{background-position:33.333% 100%!important}
+.civ-item-hero .art-fur{background-position:66.667% 100%!important}
+.civ-item-hero .art-fang{background-position:100% 100%!important}
+
+/* Boss art: use the selected sprite directly as the panel background so the
+   generated cave scene reaches the panel edges. The child remains for semantics
+   but is visually hidden. */
+.civ-boss-art{
+  position:relative!important;
+  background-repeat:no-repeat!important;
+  background-color:#090e11!important;
+  background-size:100% 100%,300% auto!important;
+  background-position:0 0,center!important;
+}
+.civ-boss-art:has(.boss-ape){
+  background-image:
+    linear-gradient(90deg,rgba(4,8,10,.04),rgba(4,8,10,.14)),
+    var(--civ-boss-art-v2)!important;
+  background-position:0 0,0 center!important;
+}
+.civ-boss-art:has(.boss-tiger){
+  background-image:
+    linear-gradient(90deg,rgba(4,8,10,.05),rgba(4,8,10,.12)),
+    var(--civ-boss-art-v2)!important;
+  background-position:0 0,50% center!important;
+}
+.civ-boss-art:has(.boss-mammoth){
+  background-image:
+    linear-gradient(90deg,rgba(4,8,10,.05),rgba(4,8,10,.14)),
+    var(--civ-boss-art-v2)!important;
+  background-position:0 0,100% center!important;
+}
+.civ-boss-art::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    linear-gradient(0deg,rgba(5,9,11,.18),transparent 32%),
+    radial-gradient(ellipse at 50% 50%,transparent 58%,rgba(5,9,11,.16) 100%);
+}
+.civ-boss-art .civ-atlas-boss.large{
+  opacity:0!important;
+}
+.civ-boss-art::before{
+  display:none!important;
+}
+
+@media(max-width:1450px){
+  .civ-item-hero .civ-atlas-item.large{width:84%!important;height:80%!important}
+}
+@media(min-width:721px) and (max-height:800px){
+  .civ-item-hero .civ-atlas-item.large{width:82%!important;height:78%!important}
+}
