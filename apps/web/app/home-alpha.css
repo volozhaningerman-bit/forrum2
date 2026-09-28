@@ -885,3 +885,40 @@ html[data-forrum-theme="graphite"] body:has(.forum-home[data-home-reference="v49
 .forum-home[data-home-reference="v49"] .forum-category-heading>.forum-category-toggle[aria-expanded="true"] svg {
   transform:none;
 }
+
+
+/* V57 final tree contract: name navigates; empty row area toggles the branch. */
+.forum-home[data-home-reference="v49"] .forum-category-heading {
+  padding-right:0;
+}
+.forum-home[data-home-reference="v49"] .forum-category-heading>a {
+  position:relative;
+  z-index:2;
+  width:fit-content;
+  max-width:calc(100% - 70px);
+  justify-self:start;
+}
+.forum-home[data-home-reference="v49"] .forum-category-heading>.forum-category-toggle {
+  position:absolute!important;
+  inset:0!important;
+  top:0!important;
+  right:0!important;
+  transform:none!important;
+  width:100%!important;
+  height:100%!important;
+  min-width:0!important;
+  min-height:0!important;
+  z-index:1!important;
+  display:flex!important;
+  justify-content:flex-end!important;
+  align-items:center!important;
+  padding:0 4px!important;
+}
+.forum-home[data-home-reference="v49"] .forum-category-counts {
+  position:relative;
+  z-index:2;
+  pointer-events:none;
+}
+.forum-home[data-home-reference="v49"] .forum-topic:is(.is-unread,.is-updated)::before {
+  width:3px;
+}
