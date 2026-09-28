@@ -237,9 +237,14 @@ try {
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
   await page.locator('.civ-full-panel').waitFor({ state: 'detached' });
   assert.equal(
-    await page.locator('.civ-mascot-stage .civ-mascot-male-axe').count(),
+    await page.locator('.civ-mascot-stage .civ-mascot-pose-axe').count(),
     1,
-    'equipping the stone axe must switch the generated hub hero to the axe pose',
+    'equipping the stone axe must switch the hub hero state to the axe pose',
+  );
+  assert.equal(
+    await page.locator('.civ-mascot-stage .civ-mascot-female-base').count(),
+    1,
+    'the female avatar must keep the generated female base sprite while equipment changes its pose state',
   );
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
   await page.getByRole('button', { name: /Оружие/ }).click();
