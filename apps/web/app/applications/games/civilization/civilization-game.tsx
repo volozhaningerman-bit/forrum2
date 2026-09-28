@@ -791,7 +791,7 @@ function Mascot({
   const poseClass = avatar.gender === 'female' ? 'female-base' : `male-${pose}`;
   return (
     <span
-      className={`civ-mascot civ-mascot-art civ-mascot-${variant} civ-mascot-${poseClass} ${compact ? 'compact' : ''}`}
+      className={`civ-mascot civ-mascot-art civ-mascot-${variant} civ-mascot-${poseClass} civ-mascot-pose-${pose} ${compact ? 'compact' : ''}`}
       style={{ '--civ-skin': avatar.color } as CSSProperties}
       role="img"
       aria-label={avatar.gender === 'female' ? 'Персонаж: девушка' : 'Персонаж: парень'}
