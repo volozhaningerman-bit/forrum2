@@ -1,0 +1,136 @@
+/* V51 — fidelity polish for the approved monochrome/pixel homepage reference. */
+.forum-home[data-home-reference="v49"] {
+  grid-template-columns: 260px minmax(0,1fr) 292px;
+  column-gap: 14px;
+}
+
+.forum-home[data-home-reference="v49"] .forum-important {
+  margin-top: 0;
+}
+
+/* Keep the monochrome base, but let identity accents break it in controlled places. */
+.forum-home[data-home-reference="v49"] .avatar-tone-0:not(.avatar-image) {
+  color:#fff!important;
+  border-color:#e06a87!important;
+  background:linear-gradient(145deg,#4b1e31,#d24d75)!important;
+}
+.forum-home[data-home-reference="v49"] .avatar-tone-1:not(.avatar-image) {
+  color:#fff!important;
+  border-color:#6bd3df!important;
+  background:linear-gradient(145deg,#163846,#2a9fb2)!important;
+}
+.forum-home[data-home-reference="v49"] .avatar-tone-2:not(.avatar-image) {
+  color:#fff!important;
+  border-color:#a78bfa!important;
+  background:linear-gradient(145deg,#30204f,#7758c7)!important;
+}
+.forum-home[data-home-reference="v49"] .avatar-tone-3:not(.avatar-image) {
+  color:#fff!important;
+  border-color:#d8ad6e!important;
+  background:linear-gradient(145deg,#49331d,#b17b38)!important;
+}
+
+.forum-home[data-home-reference="v49"] .forum-topic {
+  min-height:86px;
+  background-image:
+    linear-gradient(90deg,rgba(15,17,18,.985) 0%,rgba(15,17,18,.94) 40%,rgba(10,12,13,.74) 100%),
+    radial-gradient(circle at 76% 45%,color-mix(in srgb,var(--chip-accent,#868686) 23%,transparent) 0,transparent 27%),
+    linear-gradient(135deg,transparent 0 55%,color-mix(in srgb,var(--chip-accent,#868686) 10%,transparent) 56% 58%,transparent 59%),
+    var(--topic-image);
+  background-size:auto,auto,auto,cover;
+  background-position:center,center,center,center;
+}
+
+.forum-home[data-home-reference="v49"] .forum-topic::after {
+  opacity:.38;
+  background:
+    linear-gradient(90deg,transparent 52%,color-mix(in srgb,var(--chip-accent,#888) 28%,transparent)),
+    repeating-linear-gradient(90deg,transparent 0 13px,rgba(255,255,255,.015) 14px),
+    repeating-linear-gradient(0deg,transparent 0 7px,rgba(255,255,255,.012) 8px);
+}
+
+.forum-home[data-home-reference="v49"] .forum-topic:is(.is-unread,.is-updated)::before {
+  width:3px;
+  background:color-mix(in srgb,var(--chip-accent,#d9d9d9) 34%,#fff 66%);
+  box-shadow:0 0 10px color-mix(in srgb,var(--chip-accent,#fff) 28%,transparent);
+}
+
+.forum-home[data-home-reference="v49"] .forum-topic:hover,
+.forum-home[data-home-reference="v49"] .forum-topic:focus-within {
+  transform:scale(1.006);
+  background-color:#1a1e20;
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.58),
+    inset 0 0 0 1px #62696d,
+    inset 0 0 28px color-mix(in srgb,var(--chip-accent,#fff) 8%,transparent);
+}
+
+.forum-home[data-home-reference="v49"] .forum-topic-category-cell a {
+  font-weight:650;
+  letter-spacing:.1px;
+  box-shadow:inset 0 0 10px color-mix(in srgb,var(--chip-accent) 8%,transparent);
+}
+
+.forum-home[data-home-reference="v49"] .forum-topic-avatar .avatar,
+.forum-home[data-home-reference="v49"] .forum-topic-last .avatar,
+.forum-home[data-home-reference="v49"] .forum-author-ranking .avatar {
+  filter:saturate(1.16) contrast(1.04);
+}
+
+/* A crisper pixel-space hero without changing the approved structure. */
+.forum-home[data-home-reference="v49"] .forum-search-hero::after {
+  right:2.5%;
+  top:-16%;
+  width:39%;
+  opacity:.34;
+  background:
+    radial-gradient(circle at 57% 27%,rgba(255,255,255,.96) 0 2px,transparent 3px),
+    radial-gradient(circle at 78% 43%,rgba(255,255,255,.60) 0 1px,transparent 2px),
+    radial-gradient(circle at 43% 61%,rgba(255,255,255,.40) 0 1px,transparent 2px),
+    repeating-linear-gradient(0deg,#fff0 0 3px,rgba(255,255,255,.78) 4px),
+    repeating-linear-gradient(90deg,#fff0 0 6px,rgba(255,255,255,.68) 7px);
+  mask-image:radial-gradient(circle,#000 0 58%,transparent 59%);
+}
+
+.forum-home[data-home-reference="v49"] .forum-search-hero::before {
+  background:
+    radial-gradient(circle at 74% 28%,rgba(255,255,255,.8) 0 1px,transparent 2px),
+    radial-gradient(circle at 67% 68%,rgba(255,255,255,.45) 0 1px,transparent 2px),
+    radial-gradient(circle at 92% 17%,rgba(255,255,255,.55) 0 1px,transparent 2px),
+    linear-gradient(90deg,#0c0e0f 0%,#0c0e0fed 47%,transparent 78%),
+    repeating-linear-gradient(90deg,transparent 0 11px,rgba(255,255,255,.025) 12px),
+    repeating-linear-gradient(0deg,transparent 0 11px,rgba(255,255,255,.02) 12px);
+}
+
+.forum-home[data-home-reference="v49"] .forum-brand {
+  letter-spacing:-.5px;
+}
+.forum-home[data-home-reference="v49"] .forum-brand::before {
+  box-shadow:7px 7px 0 rgba(255,255,255,.72);
+}
+.forum-home[data-home-reference="v49"] .forum-brand-four {
+  text-shadow:1px 0 0 #fff;
+}
+.forum-home[data-home-reference="v49"] .forum-brand strong {
+  letter-spacing:-.4px;
+}
+
+/* Reference keeps the live-content panel above the ranking. */
+.forum-home[data-home-reference="v49"] .forum-popular-today {
+  order:1;
+}
+.forum-home[data-home-reference="v49"] .forum-ranking-panel {
+  order:2;
+}
+
+@media (max-width:1180px) {
+  .forum-home[data-home-reference="v49"] {
+    grid-template-columns:240px minmax(0,1fr) 270px;
+  }
+}
+
+@media (max-width:980px) {
+  .forum-home[data-home-reference="v49"] {
+    grid-template-columns:minmax(0,1fr);
+  }
+}
