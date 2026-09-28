@@ -244,7 +244,7 @@ try {
   assert.match(await page.locator('.civ-resource-popover').textContent(), /Мясо/);
   assert((await page.locator('.civ-resource-popover .civ-resource-art').count()) >= 4);
   const foodArtBackground = await page.locator('.civ-resource-popover .civ-resource-art').first().evaluate((node) => getComputedStyle(node).backgroundImage);
-  assert.match(foodArtBackground, /resources\\.webp/);
+  assert.match(foodArtBackground, /resources\.webp/);
   await page.locator('.civ-resource').filter({ hasText: 'Еда' }).click();
   await page.locator('.civ-resource').filter({ hasText: 'Ресурсы' }).click();
   assert.match(await page.locator('.civ-resource-popover.resources').textContent(), /Камень/);
@@ -282,7 +282,7 @@ try {
   assert((await page.locator('.civ-item-card').count()) >= 8, 'weapon catalog should show progression and locked goals');
   assert((await page.locator('.civ-item-art-generated').count()) >= 8, 'generated equipment art should cover the starter weapon catalog');
   const equipmentArtBackground = await page.locator('.civ-item-art-generated').first().evaluate((node) => getComputedStyle(node).backgroundImage);
-  assert.match(equipmentArtBackground, /equipment\\.webp/);
+  assert.match(equipmentArtBackground, /equipment\.webp/);
   const renderedItemArt = await page.locator('.civ-item-art-generated').count() + await page.locator('.civ-item-art svg').count();
   assert.equal(renderedItemArt, await page.locator('.civ-item-card').count() + 1, 'every catalog item and selected preview must render art');
   // Equip a real unlocked weapon through the UI. This must survive reload later.
@@ -341,7 +341,7 @@ try {
   assert.equal(await page.locator('.civ-boss-list .civ-boss-art-generated').count(), 3);
   assert.equal(await page.locator('.civ-boss-art .civ-boss-art-generated.large').count(), 1);
   const activeBossArt = await page.locator('.civ-boss-art .civ-boss-art-generated.large').evaluate((node) => getComputedStyle(node).backgroundImage);
-  assert.match(activeBossArt, /bosses\\.webp/);
+  assert.match(activeBossArt, /bosses\.webp/);
   const apeHpBefore = await page.locator('.civ-boss-hp').textContent();
   for (let hit = 0; hit < 4; hit += 1) {
     await page.getByRole('button', { name: /Атаковать/ }).click();
@@ -391,7 +391,7 @@ try {
   await page.getByRole('button', { name: /Саблезубый тигр/ }).click();
   assert((await page.locator('.civ-boss-art-generated').count()) >= 4, 'generated boss art must be used in list and detail');
   const bossArtBackground = await page.locator('.civ-boss-art-generated.large').evaluate((node) => getComputedStyle(node).backgroundImage);
-  assert.match(bossArtBackground, /bosses\\.webp/);
+  assert.match(bossArtBackground, /bosses\.webp/);
   await page.screenshot({ path: output + '/civilization-bosses-1720x864.png', fullPage: false });
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
 
