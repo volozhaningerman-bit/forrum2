@@ -285,7 +285,11 @@ try {
   });
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
   await page.locator('.civ-full-panel').waitFor({ state: 'detached' });
-  assert.equal(await page.locator('.civ-mascot-stage .civ-character-art.pose-axe').count(), 1);
+  const hubCharacter = page.locator('.civ-mascot-stage .civ-character-art');
+  assert.equal(await hubCharacter.count(), 1);
+  assert.equal(await hubCharacter.getAttribute('data-equipped'), 'axe');
+  const hubCharacterBackground = await hubCharacter.locator('>span').evaluate((node) => getComputedStyle(node).backgroundImage);
+  assert.match(hubCharacterBackground, /characters\.webp/);
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
 
 
