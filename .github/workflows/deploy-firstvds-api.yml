@@ -1,0 +1,58 @@
+name: Deploy FORRUM API to FirstVDS
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/api/**"
+      - "packages/contracts/**"
+      - "Dockerfile.api"
+      - "docker-compose.yml"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy-firstvds-api.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: forrum-firstvds-api-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy live API
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Prepare SSH
+        env:
+          SSH_PRIVATE_KEY_B64: ${{ secrets.FORRUM_API_SSH_KEY_B64 }}
+          SSH_HOST: ${{ secrets.FORRUM_HOST }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s' "$SSH_PRIVATE_KEY_B64" | base64 -d > ~/.ssh/forrum_api_actions
+          chmod 600 ~/.ssh/forrum_api_actions
+          ssh-keygen -y -f ~/.ssh/forrum_api_actions > /dev/null
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy latest main API
+        env:
+          SSH_HOST: ${{ secrets.FORRUM_HOST }}
+          SSH_USER: ${{ secrets.FORRUM_USER }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/forrum_api_actions             -o BatchMode=yes             -o StrictHostKeyChecking=yes             -o ServerAliveInterval=30             -o ServerAliveCountMax=30             "$SSH_USER@$SSH_HOST" deploy
+
+      - name: Verify live API
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error             --retry 12             --retry-delay 5             https://api.4rrum.ru/v1/health
