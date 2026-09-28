@@ -2804,3 +2804,75 @@ body:has(.forum-home[data-home-reference="v49"]) .site-footer {display:none;}
 
 html.dark .forum-home[data-home-reference="v49"] .forum-hero-copy h1,
 html[data-forrum-theme="graphite"] .forum-home[data-home-reference="v49"] .forum-hero-copy h1 {color:#fff!important;}
+
+/* V49 visual parity pass after browser capture. */
+html.dark body:has(.forum-home[data-home-reference="v49"]),
+html[data-forrum-theme="graphite"] body:has(.forum-home[data-home-reference="v49"]) {
+  background-color:#08090a!important;
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.014) 1px,transparent 1px)!important;
+  background-size:18px 18px!important;
+}
+html.dark .forum-home[data-home-reference="v49"],
+html[data-forrum-theme="graphite"] .forum-home[data-home-reference="v49"] {
+  --f-bg:#08090a;
+  --f-panel:#0f1112;
+  --f-rail:#0c0e0f;
+  --f-text:#f2f3f3;
+  --f-muted:#8e959a;
+  --f-line:#2a2e31;
+  --f-border:#2a2e31;
+  --f-accent:#fff;
+}
+html.dark .forum-home[data-home-reference="v49"] .forum-search-hero,
+html[data-forrum-theme="graphite"] .forum-home[data-home-reference="v49"] .forum-search-hero {
+  height:162px!important;
+  min-height:162px!important;
+  padding:0!important;
+  border-radius:1px!important;
+  background-color:#0b0d0e!important;
+  background-image:
+    radial-gradient(circle at 86% 47%,rgba(245,246,246,.92) 0 1%,rgba(118,123,126,.72) 1.5%,rgba(46,50,52,.95) 23%,rgba(10,12,13,.98) 24%,transparent 43%),
+    radial-gradient(circle at 77% 22%,rgba(255,255,255,.55) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 69% 70%,rgba(255,255,255,.35) 0 1px,transparent 1.5px),
+    linear-gradient(115deg,#0d0f10 0%,#0a0c0d 56%,#121516 100%)!important;
+  background-size:auto!important;
+  background-position:center!important;
+}
+html.dark .forum-home[data-home-reference="v49"] .forum-search-hero::before,
+html[data-forrum-theme="graphite"] .forum-home[data-home-reference="v49"] .forum-search-hero::before {
+  z-index:1!important;
+  background:
+    linear-gradient(90deg,#0b0d0e 0%,#0b0d0ef7 46%,rgba(11,13,14,.62) 67%,transparent 85%),
+    repeating-linear-gradient(90deg,transparent 0 11px,rgba(255,255,255,.025) 12px),
+    repeating-linear-gradient(0deg,transparent 0 11px,rgba(255,255,255,.02) 12px)!important;
+}
+html.dark .forum-home[data-home-reference="v49"] .forum-hero-copy,
+html[data-forrum-theme="graphite"] .forum-home[data-home-reference="v49"] .forum-hero-copy {
+  position:relative!important;
+  z-index:2!important;
+  width:68%!important;
+  max-width:720px!important;
+  min-height:162px!important;
+  margin:0!important;
+  padding:24px 34px!important;
+  text-align:left!important;
+}
+html.dark .forum-home[data-home-reference="v49"] .forum-hero-copy h1,
+html[data-forrum-theme="graphite"] .forum-home[data-home-reference="v49"] .forum-hero-copy h1 {
+  max-width:none!important;
+  margin:0 0 7px!important;
+  color:#fff!important;
+}
+html.dark .forum-home[data-home-reference="v49"] .forum-hero-copy p,
+html[data-forrum-theme="graphite"] .forum-home[data-home-reference="v49"] .forum-hero-copy p {
+  max-width:none!important;
+  min-height:0!important;
+}
+html.dark .forum-home[data-home-reference="v49"] .forum-hero-pixel-art,
+html[data-forrum-theme="graphite"] .forum-home[data-home-reference="v49"] .forum-hero-pixel-art {z-index:3;}
+html.dark .forum-home[data-home-reference="v49"] .forum-topic h2 a,
+html[data-forrum-theme="graphite"] .forum-home[data-home-reference="v49"] .forum-topic h2 a {color:#f3f4f4!important;}
+html.dark .forum-home[data-home-reference="v49"] .forum-topic h2 a:hover,
+html[data-forrum-theme="graphite"] .forum-home[data-home-reference="v49"] .forum-topic h2 a:hover {color:#fff!important;}
