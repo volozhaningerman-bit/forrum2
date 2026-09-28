@@ -3035,3 +3035,31 @@ button{font:inherit}
     height:52px;
   }
 }
+
+
+/* CIVILIZATION ART V2 — PROFILE SPRITE FIX */
+.civ-profile-hero-card{
+  grid-template-rows:minmax(150px,1fr) auto!important;
+}
+.civ-profile-mascot{
+  min-height:150px!important;
+}
+.civ-profile-mascot .civ-mascot-art{
+  height:100%!important;
+  width:auto!important;
+  aspect-ratio:200/337!important;
+  max-width:none!important;
+  transform:none!important;
+  margin:auto!important;
+  flex:0 0 auto;
+}
+@media(max-width:1450px){
+  .civ-profile-hero-card{grid-template-rows:minmax(128px,1fr) auto!important}
+  .civ-profile-mascot{min-height:128px!important}
+  .civ-profile-mascot .civ-mascot-art{transform:none!important}
+}
+@media(min-width:721px) and (max-height:800px){
+  .civ-profile-hero-card{grid-template-rows:minmax(112px,1fr) auto!important}
+  .civ-profile-mascot{min-height:112px!important}
+  .civ-profile-mascot .civ-mascot-art{transform:none!important}
+}
