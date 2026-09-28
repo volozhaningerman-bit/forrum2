@@ -2798,3 +2798,6 @@ body:has(.forum-home[data-home-reference="v49"]) .site-footer {display:none;}
 @media(prefers-reduced-motion:reduce) {
   .forum-home[data-home-reference="v49"] .forum-topic {transition:none!important;}
 }
+
+/* V49 regression: preserve the established full-row topic target under the table layout. */
+.forum-home[data-home-reference="v49"] .forum-topic-content {position:static;}
