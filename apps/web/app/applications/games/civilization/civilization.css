@@ -4197,3 +4197,380 @@ button{font:inherit}
     height:114px!important;
   }
 }
+
+
+/* ==========================================================================
+   CIVILIZATION VISUAL POLISH V4 — SCREENSHOT FIXES
+   Final screenshot-driven polish for hero, equipment and bosses.
+   ========================================================================== */
+
+/* HERO: keep the full silhouette visible above the scene notice. */
+.civ-mascot-stage{
+  left:56.5%!important;
+  bottom:4.2%!important;
+  width:252px!important;
+  height:400px!important;
+}
+.civ-mascot-stage .civ-mascot-art{
+  width:252px!important;
+  height:400px!important;
+  filter:
+    drop-shadow(0 24px 18px rgba(0,0,0,.54))
+    drop-shadow(0 0 12px rgba(239,143,48,.06))
+    saturate(1.04)
+    contrast(1.03)!important;
+}
+.civ-mascot-stage::before{
+  width:300px!important;
+  height:320px!important;
+  top:12%!important;
+  background:radial-gradient(circle at 50% 55%,rgba(255,150,48,.17),rgba(255,150,48,.05) 44%,transparent 72%)!important;
+  filter:blur(7px);
+}
+
+/* EQUIPMENT: crop away the generated cell frame and let the object dominate. */
+.civ-item-card{
+  overflow:hidden!important;
+}
+.civ-item-card .civ-atlas-item{
+  width:calc(100% - 12px)!important;
+  height:84px!important;
+  margin:5px auto 1px!important;
+  transform:scale(1.13)!important;
+  transform-origin:center!important;
+  border-radius:8px!important;
+  box-shadow:none!important;
+  filter:
+    drop-shadow(0 11px 10px rgba(0,0,0,.44))
+    saturate(1.04)
+    contrast(1.03)!important;
+}
+.civ-item-card.active .civ-atlas-item{
+  transform:scale(1.17)!important;
+  filter:
+    drop-shadow(0 0 12px rgba(229,148,51,.12))
+    drop-shadow(0 12px 10px rgba(0,0,0,.46))
+    saturate(1.06)
+    contrast(1.04)!important;
+}
+.civ-item-hero{
+  overflow:hidden!important;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(224,139,47,.14),transparent 40%),
+    linear-gradient(180deg,#151914,#091014)!important;
+}
+.civ-item-hero .civ-atlas-item.large{
+  width:88%!important;
+  height:78%!important;
+  margin:auto!important;
+  transform:scale(1.18)!important;
+  transform-origin:center!important;
+  border:0!important;
+  box-shadow:none!important;
+  filter:
+    drop-shadow(0 18px 16px rgba(0,0,0,.52))
+    drop-shadow(0 0 14px rgba(229,147,49,.08))
+    saturate(1.05)
+    contrast(1.035)!important;
+}
+
+/* BOSSES: give encounter art more visual weight and a cinematic backdrop. */
+.civ-boss-detail{
+  grid-template-columns:minmax(360px,1.08fr) minmax(0,.92fr)!important;
+  gap:16px!important;
+}
+.civ-boss-art{
+  min-height:0!important;
+  isolation:isolate;
+  overflow:hidden!important;
+  background:
+    radial-gradient(circle at 50% 46%,rgba(229,133,44,.18),transparent 36%),
+    linear-gradient(180deg,#17130f,#080e11)!important;
+}
+.civ-boss-art::before{
+  content:"";
+  position:absolute;
+  inset:-10%;
+  z-index:0;
+  opacity:.28;
+  filter:blur(18px) saturate(1.15);
+  transform:scale(1.12);
+  background-image:var(--civ-boss-art-v2);
+  background-repeat:no-repeat;
+  background-size:300% 100%;
+}
+.civ-boss-art:has(.boss-ape)::before{background-position:0 0}
+.civ-boss-art:has(.boss-tiger)::before{background-position:50% 0}
+.civ-boss-art:has(.boss-mammoth)::before{background-position:100% 0}
+.civ-boss-art .civ-atlas-boss.large{
+  position:relative;
+  z-index:1;
+  width:88%!important;
+  height:92%!important;
+  margin:auto!important;
+  background-color:transparent!important;
+  border-radius:8px!important;
+  filter:
+    drop-shadow(0 23px 20px rgba(0,0,0,.5))
+    saturate(1.06)
+    contrast(1.035)!important;
+}
+.civ-boss-list button>.civ-atlas-boss{
+  transform:scale(1.07);
+  transform-origin:center;
+}
+.civ-boss-detail h3{
+  font-size:32px!important;
+}
+.civ-boss-detail>div:last-child{
+  padding-right:10px!important;
+}
+
+/* Laptop / low-height desktop. */
+@media(max-width:1450px){
+  .civ-mascot-stage{
+    width:224px!important;
+    height:355px!important;
+    bottom:3.3%!important;
+  }
+  .civ-mascot-stage .civ-mascot-art{
+    width:224px!important;
+    height:355px!important;
+  }
+  .civ-item-card .civ-atlas-item{
+    height:72px!important;
+  }
+  .civ-boss-detail{
+    grid-template-columns:minmax(300px,1fr) minmax(0,1fr)!important;
+  }
+}
+
+@media(min-width:721px) and (max-height:800px){
+  .civ-mascot-stage{
+    width:194px!important;
+    height:307px!important;
+    bottom:2.6%!important;
+  }
+  .civ-mascot-stage .civ-mascot-art{
+    width:194px!important;
+    height:307px!important;
+  }
+  .civ-item-card .civ-atlas-item{
+    height:62px!important;
+    transform:scale(1.10)!important;
+  }
+  .civ-item-hero .civ-atlas-item.large{
+    transform:scale(1.12)!important;
+  }
+  .civ-boss-detail{
+    grid-template-columns:minmax(250px,.94fr) minmax(0,1.06fr)!important;
+    gap:10px!important;
+  }
+  .civ-boss-detail h3{
+    font-size:25px!important;
+  }
+}
+
+
+/* CIVILIZATION VISUAL POLISH V4.1 — SCREENSHOT CORRECTIONS */
+
+/* Hero: lift the full body clear of the scene notice. */
+.civ-mascot-stage{
+  bottom:8.2%!important;
+  width:242px!important;
+  height:384px!important;
+}
+.civ-mascot-stage .civ-mascot-art{
+  width:242px!important;
+  height:384px!important;
+}
+
+/* Equipment: keep art dominant without colliding with labels. */
+.civ-item-card{
+  display:grid!important;
+  grid-template-rows:88px auto auto!important;
+  align-content:start!important;
+  overflow:hidden!important;
+}
+.civ-item-card .civ-atlas-item{
+  width:calc(100% - 14px)!important;
+  height:78px!important;
+  margin:4px auto 2px!important;
+  transform:scale(1.035)!important;
+  clip-path:inset(5% 5% 7% 5% round 7px);
+  filter:
+    drop-shadow(0 8px 8px rgba(0,0,0,.36))
+    saturate(1.035)
+    contrast(1.025)!important;
+}
+.civ-item-card.active .civ-atlas-item{
+  transform:scale(1.055)!important;
+  filter:
+    drop-shadow(0 0 9px rgba(229,148,51,.10))
+    drop-shadow(0 9px 8px rgba(0,0,0,.38))
+    saturate(1.05)
+    contrast(1.03)!important;
+}
+.civ-item-card>b,
+.civ-item-card>small,
+.civ-item-card>em{
+  position:relative;
+  z-index:2;
+}
+.civ-item-card>b{
+  margin-top:1px!important;
+  line-height:1.15!important;
+}
+.civ-item-card>small{
+  line-height:1.15!important;
+}
+
+/* Large preview: crop the sprite frame, not the item itself. */
+.civ-item-hero{
+  display:grid!important;
+  place-items:center!important;
+}
+.civ-item-hero .civ-atlas-item.large{
+  width:86%!important;
+  height:72%!important;
+  margin:auto!important;
+  transform:scale(1.04)!important;
+  clip-path:inset(5% 5% 6% 5% round 9px);
+  filter:
+    drop-shadow(0 16px 14px rgba(0,0,0,.46))
+    drop-shadow(0 0 11px rgba(229,147,49,.06))
+    saturate(1.04)
+    contrast(1.03)!important;
+}
+
+@media(max-width:1450px){
+  .civ-mascot-stage{
+    bottom:6.8%!important;
+    width:216px!important;
+    height:342px!important;
+  }
+  .civ-mascot-stage .civ-mascot-art{
+    width:216px!important;
+    height:342px!important;
+  }
+  .civ-item-card{
+    grid-template-rows:74px auto auto!important;
+  }
+  .civ-item-card .civ-atlas-item{
+    height:66px!important;
+  }
+}
+
+@media(min-width:721px) and (max-height:800px){
+  .civ-mascot-stage{
+    bottom:5.8%!important;
+    width:188px!important;
+    height:298px!important;
+  }
+  .civ-mascot-stage .civ-mascot-art{
+    width:188px!important;
+    height:298px!important;
+  }
+  .civ-item-card{
+    grid-template-rows:62px auto auto!important;
+  }
+  .civ-item-card .civ-atlas-item{
+    height:55px!important;
+    transform:scale(1.02)!important;
+  }
+  .civ-item-hero .civ-atlas-item.large{
+    transform:scale(1.02)!important;
+  }
+}
+
+
+/* CIVILIZATION VISUAL POLISH V4.2 — SPRITE INNER CROP
+   Zoom into the inner 80% of each 4x3 generated sprite cell.
+   This removes the baked card frame without touching labels/layout. */
+.civ-atlas-item{
+  background-size:500% 375%!important;
+}
+.civ-atlas-item.art-club{background-position:3.125% 4.545%!important}
+.civ-atlas-item.art-axe{background-position:34.375% 4.545%!important}
+.civ-atlas-item.art-knife{background-position:65.625% 4.545%!important}
+.civ-atlas-item.art-spear{background-position:96.875% 4.545%!important}
+
+.civ-atlas-item.art-bone-club{background-position:3.125% 50%!important}
+.civ-atlas-item.art-flint-shard{background-position:34.375% 50%!important}
+.civ-atlas-item.art-bow{background-position:65.625% 50%!important}
+.civ-atlas-item.art-obsidian-axe{background-position:96.875% 50%!important}
+
+.civ-atlas-item.art-hunter-spear{background-position:3.125% 95.455%!important}
+.civ-atlas-item.art-mammoth-maul{background-position:34.375% 95.455%!important}
+.civ-atlas-item.art-fur{background-position:65.625% 95.455%!important}
+.civ-atlas-item.art-fang{background-position:96.875% 95.455%!important}
+
+.civ-item-card .civ-atlas-item{
+  width:100%!important;
+  height:82px!important;
+  margin:2px auto 2px!important;
+  transform:none!important;
+  clip-path:none!important;
+  border-radius:7px!important;
+  background-color:transparent!important;
+  filter:
+    drop-shadow(0 9px 8px rgba(0,0,0,.34))
+    saturate(1.04)
+    contrast(1.025)!important;
+}
+.civ-item-card.active .civ-atlas-item{
+  transform:none!important;
+  filter:
+    drop-shadow(0 0 10px rgba(229,148,51,.10))
+    drop-shadow(0 10px 8px rgba(0,0,0,.36))
+    saturate(1.055)
+    contrast(1.03)!important;
+}
+
+.civ-item-hero .civ-atlas-item.large{
+  width:100%!important;
+  height:100%!important;
+  margin:0!important;
+  transform:none!important;
+  clip-path:none!important;
+  border:0!important;
+  background-color:transparent!important;
+  filter:
+    drop-shadow(0 18px 15px rgba(0,0,0,.43))
+    drop-shadow(0 0 12px rgba(229,147,49,.07))
+    saturate(1.045)
+    contrast(1.03)!important;
+}
+
+@media(max-width:1450px){
+  .civ-item-card .civ-atlas-item{height:70px!important}
+}
+@media(min-width:721px) and (max-height:800px){
+  .civ-item-card .civ-atlas-item{height:58px!important}
+}
+
+
+/* CIVILIZATION VISUAL POLISH V4.3 — CLEAN ITEM PREVIEW */
+.civ-item-hero{
+  isolation:isolate;
+  background:
+    radial-gradient(circle at 50% 48%,rgba(221,139,48,.20),transparent 38%),
+    radial-gradient(circle at 50% 50%,rgba(83,57,31,.10),transparent 62%),
+    linear-gradient(180deg,#111713,#081014)!important;
+}
+.civ-item-hero .civ-atlas-item.large{
+  mix-blend-mode:screen!important;
+  opacity:.98;
+  filter:
+    drop-shadow(0 18px 15px rgba(0,0,0,.30))
+    drop-shadow(0 0 18px rgba(230,149,51,.12))
+    saturate(1.08)
+    contrast(1.04)!important;
+}
+
+
+/* CIVILIZATION VISUAL POLISH V4.4 — PREVIEW EDGE FADE */
+.civ-item-hero .civ-atlas-item.large{
+  -webkit-mask-image:radial-gradient(ellipse 76% 74% at 50% 50%,#000 54%,rgba(0,0,0,.98) 64%,rgba(0,0,0,.72) 76%,transparent 100%)!important;
+  mask-image:radial-gradient(ellipse 76% 74% at 50% 50%,#000 54%,rgba(0,0,0,.98) 64%,rgba(0,0,0,.72) 76%,transparent 100%)!important;
+}
