@@ -336,6 +336,14 @@ try {
 
   await page.getByRole('button', { name: 'Открыть меню персонажа' }).click();
   await page.locator('.civ-player-menu').getByRole('button', { name: /Профиль/ }).click();
+  const profileCharacterRatio = await page.locator('.civ-profile-mascot .civ-mascot-art').evaluate((node) => {
+    const rect = node.getBoundingClientRect();
+    return rect.width / rect.height;
+  });
+  assert(
+    profileCharacterRatio > 0.52 && profileCharacterRatio < 0.66,
+    `profile character sprite aspect ratio must stay near 200/337, got ${profileCharacterRatio}`,
+  );
   await page.screenshot({ path: output + '/civilization-profile-1720x864.png', fullPage: false });
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
 
