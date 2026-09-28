@@ -878,6 +878,26 @@ function EquipmentPanel({
 }
 
 
+function BossDrop({ drop }: { drop: string }) {
+  const name = dropName(drop);
+  const artByName: Record<string, string> = {
+    'Тотем вожака': 'totem',
+    'Клык саблезуба': 'fang',
+    'Бивень мамонта': 'tusk',
+    'Редкий камень': 'rare-stone',
+    'Мясо': 'meat',
+    'Тигриная шкура': 'hide',
+    'Шкура мамонта': 'hide',
+  };
+  const art = artByName[name];
+  return (
+    <span className="civ-drop-chip">
+      {art ? <span className={`civ-atlas-resource res-${art}`} aria-hidden="true" /> : <CivSymbol kind="resources" />}
+      <b>{name}</b>
+    </span>
+  );
+}
+
 function BossArt({ boss, large = false }: { boss: Boss; large?: boolean }) {
   return (
     <span
@@ -902,7 +922,7 @@ function BossesPanel({ bosses, selected, selectedBoss, setSelectedBoss, hp, atta
             <h3>{selected.name}</h3>
             <p>Сила босса: {selected.power}. Подготовь оружие и запас энергии перед охотой.</p>
             <div className="civ-boss-hp"><span>Здоровье</span><b>{hp}/{selected.hp}</b><div><i style={{ width: `${Math.min(100, hp / selected.hp * 100)}%` }} /></div></div>
-            <div className="civ-drops"><small>Возможные трофеи</small>{selected.drops.map(drop => <span key={drop}>{drop}</span>)}</div>
+            <div className="civ-drops"><small>Возможные трофеи</small>{selected.drops.map(drop => <BossDrop key={drop} drop={drop} />)}</div>
             <button type="button" className="civ-primary" onClick={attackBoss}>{hp <= 0 ? 'Охота завершена — начать заново' : 'Атаковать · −22 HP'}</button>
           </div>
         </article>
