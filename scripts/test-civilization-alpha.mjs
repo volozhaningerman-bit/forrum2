@@ -138,6 +138,7 @@ try {
   // First launch is a one-time character creation flow.
   const createDialog = page.getByRole('dialog', { name: 'Создание персонажа' });
   await createDialog.waitFor();
+  await page.screenshot({ path: output + '/civilization-character-create-1720x864.png', fullPage: false });
   await createDialog.getByRole('button', { name: /Девочка/ }).click();
   await createDialog.locator('.civ-color-row button').nth(2).click();
   await createDialog.getByRole('button', { name: 'Пучок' }).click();
@@ -245,11 +246,13 @@ try {
   assert((await page.locator('.civ-resource-popover .civ-resource-art').count()) >= 4);
   const foodArtBackground = await page.locator('.civ-resource-popover .civ-resource-art').first().evaluate((node) => getComputedStyle(node).backgroundImage);
   assert.match(foodArtBackground, /resources\.webp/);
+  await page.screenshot({ path: output + '/civilization-food-popover-1720x864.png', fullPage: false });
   await page.locator('.civ-resource').filter({ hasText: 'Еда' }).click();
   await page.locator('.civ-resource').filter({ hasText: 'Ресурсы' }).click();
   assert.match(await page.locator('.civ-resource-popover.resources').textContent(), /Камень/);
   assert.match(await page.locator('.civ-resource-popover.resources').textContent(), /Кости/);
   assert.equal(await page.locator('.civ-resource').filter({ hasText: 'Ресурсы' }).getAttribute('aria-expanded'), 'true');
+  await page.screenshot({ path: output + '/civilization-materials-popover-1720x864.png', fullPage: false });
   await page.keyboard.press('Escape');
   await page.locator('.civ-resource-popover.resources').waitFor({ state: 'detached' });
 
