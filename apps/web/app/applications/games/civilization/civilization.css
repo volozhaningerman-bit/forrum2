@@ -5179,3 +5179,26 @@ button{font:inherit}
   .civ-tribe-art.tribe-wood .civ-atlas-resource{width:58px!important;height:48px!important}
   .civ-tribe-art.tribe-wood .civ-vector-icon{width:31px!important;height:31px!important}
 }
+
+
+/* CIVILIZATION V5.4 — TRIBE CLEANUP */
+.civ-tribe-art.tribe-wood .civ-atlas-resource{
+  display:none!important;
+}
+.civ-tribe-art.tribe-wood{
+  background:
+    linear-gradient(0deg,rgba(6,11,13,.68),rgba(6,11,13,.08)),
+    var(--civ-cave-art-v2) 31% 63%/186% auto no-repeat!important;
+}
+.civ-tribe-art.tribe-wood .civ-vector-icon{
+  left:50%!important;
+  right:auto!important;
+  bottom:50%!important;
+  transform:translate(-50%,50%);
+  width:44px!important;
+  height:44px!important;
+  color:#ffbd58!important;
+  filter:
+    drop-shadow(0 0 12px rgba(255,150,34,.38))
+    drop-shadow(0 7px 11px rgba(0,0,0,.35));
+}
