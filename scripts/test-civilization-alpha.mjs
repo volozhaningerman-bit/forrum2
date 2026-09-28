@@ -379,8 +379,8 @@ try {
     return rect.width / rect.height;
   });
   assert(
-    profileCharacterRatio > 0.52 && profileCharacterRatio < 0.66,
-    `profile character sprite aspect ratio must stay near 200/337, got ${profileCharacterRatio}`,
+    profileCharacterRatio > 0.68 && profileCharacterRatio < 0.77,
+    `profile character sprite aspect ratio must stay near generated 200/277, got ${profileCharacterRatio}`,
   );
   await page.screenshot({ path: output + '/civilization-profile-1720x864.png', fullPage: false });
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
