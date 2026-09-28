@@ -149,32 +149,44 @@ try {
   assert.equal(savedAvatar.gender, 'female');
   assert.equal(savedAvatar.hair, 'Пучок');
 
-  // Approved art is reconstructed from verified text chunks before build/dev and rendered from one atlas.
-  const atlasAsset = await page.evaluate(async () => {
-    const src = '/games/civilization/art/civilization-atlas.webp';
-    const response = await fetch(src, { cache: 'no-store' });
-    const blob = await response.blob();
-    const objectUrl = URL.createObjectURL(blob);
-    const image = new Image();
-    image.src = objectUrl;
-    try {
-      await image.decode();
-    } catch {}
-    const result = {
-      ok: response.ok,
-      status: response.status,
-      type: blob.type,
-      size: blob.size,
-      width: image.naturalWidth,
-      height: image.naturalHeight,
-    };
-    URL.revokeObjectURL(objectUrl);
-    return result;
+  // Approved generated art is shipped as dedicated WebP assets and must decode in the browser.
+  const artAssets = await page.evaluate(async () => {
+    const sources = [
+      '/games/civilization/art/cave.webp',
+      '/games/civilization/art/characters.webp',
+      '/games/civilization/art/equipment.webp',
+      '/games/civilization/art/resources.webp',
+      '/games/civilization/art/bosses.webp',
+    ];
+    return Promise.all(sources.map(async (src) => {
+      const response = await fetch(src, { cache: 'no-store' });
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const image = new Image();
+      image.src = objectUrl;
+      try {
+        await image.decode();
+      } catch {}
+      const result = {
+        src,
+        ok: response.ok,
+        status: response.status,
+        type: blob.type,
+        size: blob.size,
+        width: image.naturalWidth,
+        height: image.naturalHeight,
+      };
+      URL.revokeObjectURL(objectUrl);
+      return result;
+    }));
   });
-  assert.equal(atlasAsset.ok, true, `atlas HTTP ${atlasAsset.status}`);
-  assert(atlasAsset.size > 150_000, `atlas suspicious size ${atlasAsset.size}`);
-  assert(atlasAsset.width >= 2000, `atlas decoded width ${atlasAsset.width}`);
-  assert(atlasAsset.height >= 1500, `atlas decoded height ${atlasAsset.height}`);
+  for (const asset of artAssets) {
+    assert.equal(asset.ok, true, `${asset.src} HTTP ${asset.status}`);
+    assert.match(asset.type, /image\/webp/i, `${asset.src} MIME ${asset.type}`);
+    assert(asset.size > 50_000, `${asset.src} suspicious size ${asset.size}`);
+    assert(asset.width >= 512, `${asset.src} decoded width ${asset.width}`);
+    assert(asset.height >= 384, `${asset.src} decoded height ${asset.height}`);
+  }
 
   const caveBackground = await page.locator('.civ-cave-background').evaluate((node) => {
     const style = getComputedStyle(node);
@@ -185,13 +197,13 @@ try {
       opacity: style.opacity,
     };
   });
-  assert.match(caveBackground.backgroundImage, /civilization-atlas\.webp/);
+  assert.match(caveBackground.backgroundImage, /cave\.webp/);
   assert.notEqual(caveBackground.display, 'none');
   assert.notEqual(caveBackground.visibility, 'hidden');
   assert(Number(caveBackground.opacity) > 0.5);
 
   const characterBackground = await page.locator('.civ-character-art>span').first().evaluate((node) => getComputedStyle(node).backgroundImage);
-  assert.match(characterBackground, /civilization-atlas\.webp/);
+  assert.match(characterBackground, /characters\.webp/);
 
   // Left side is intentionally compact: avatar, XP and one disclosure menu.
   assert.equal(await page.locator('.civ-player-rail').count(), 1);
@@ -232,7 +244,7 @@ try {
   assert.match(await page.locator('.civ-resource-popover').textContent(), /Мясо/);
   assert((await page.locator('.civ-resource-popover .civ-resource-art').count()) >= 4);
   const foodArtBackground = await page.locator('.civ-resource-popover .civ-resource-art').first().evaluate((node) => getComputedStyle(node).backgroundImage);
-  assert.match(foodArtBackground, /civilization-atlas\.webp/);
+  assert.match(foodArtBackground, /resources\\.webp/);
   await page.locator('.civ-resource').filter({ hasText: 'Еда' }).click();
   await page.locator('.civ-resource').filter({ hasText: 'Ресурсы' }).click();
   assert.match(await page.locator('.civ-resource-popover.resources').textContent(), /Камень/);
@@ -270,7 +282,7 @@ try {
   assert((await page.locator('.civ-item-card').count()) >= 8, 'weapon catalog should show progression and locked goals');
   assert((await page.locator('.civ-item-art-generated').count()) >= 8, 'generated equipment art should cover the starter weapon catalog');
   const equipmentArtBackground = await page.locator('.civ-item-art-generated').first().evaluate((node) => getComputedStyle(node).backgroundImage);
-  assert.match(equipmentArtBackground, /civilization-atlas\.webp/);
+  assert.match(equipmentArtBackground, /equipment\\.webp/);
   const renderedItemArt = await page.locator('.civ-item-art-generated').count() + await page.locator('.civ-item-art svg').count();
   assert.equal(renderedItemArt, await page.locator('.civ-item-card').count() + 1, 'every catalog item and selected preview must render art');
   // Equip a real unlocked weapon through the UI. This must survive reload later.
@@ -329,7 +341,7 @@ try {
   assert.equal(await page.locator('.civ-boss-list .civ-boss-art-generated').count(), 3);
   assert.equal(await page.locator('.civ-boss-art .civ-boss-art-generated.large').count(), 1);
   const activeBossArt = await page.locator('.civ-boss-art .civ-boss-art-generated.large').evaluate((node) => getComputedStyle(node).backgroundImage);
-  assert.match(activeBossArt, /civilization-atlas\.webp/);
+  assert.match(activeBossArt, /bosses\\.webp/);
   const apeHpBefore = await page.locator('.civ-boss-hp').textContent();
   for (let hit = 0; hit < 4; hit += 1) {
     await page.getByRole('button', { name: /Атаковать/ }).click();
@@ -379,7 +391,7 @@ try {
   await page.getByRole('button', { name: /Саблезубый тигр/ }).click();
   assert((await page.locator('.civ-boss-art-generated').count()) >= 4, 'generated boss art must be used in list and detail');
   const bossArtBackground = await page.locator('.civ-boss-art-generated.large').evaluate((node) => getComputedStyle(node).backgroundImage);
-  assert.match(bossArtBackground, /civilization-atlas\.webp/);
+  assert.match(bossArtBackground, /bosses\\.webp/);
   await page.screenshot({ path: output + '/civilization-bosses-1720x864.png', fullPage: false });
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
 
