@@ -234,6 +234,15 @@ try {
     const raw = localStorage.getItem('4rrum.civilization.alpha.v1.progress');
     return raw && JSON.parse(raw).equippedId === 'axe';
   });
+  await page.getByRole('button', { name: 'Свернуть раздел' }).click();
+  await page.locator('.civ-full-panel').waitFor({ state: 'detached' });
+  assert.equal(
+    await page.locator('.civ-mascot-stage .civ-mascot-male-axe').count(),
+    1,
+    'equipping the stone axe must switch the generated hub hero to the axe pose',
+  );
+  await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
+  await page.getByRole('button', { name: /Оружие/ }).click();
 
   await page.getByRole('button', { name: /Одежда/ }).click();
   assert.match(await page.locator('.civ-item-detail').textContent(), /Шкура охотника/);
@@ -309,18 +318,47 @@ try {
   }
 
   await page.setViewportSize({ width: 1720, height: 864 });
-  assert.equal(await page.locator('.civ-atlas-cave').count(), 1, 'generated cave atlas must render');
+
+  // V2 generated art must be served as real public assets and actually used by CSS.
+  const artAssets = [
+    '/games/civilization/art-v2/cave-hub-v2.avif',
+    '/games/civilization/art-v2/hero-sprite-v2.avif',
+    '/games/civilization/art-v2/boss-sprite-v2.avif',
+    '/games/civilization/art-v2/equipment-sprite-v2.avif',
+    '/games/civilization/art-v2/resources-sprite-v2.avif',
+  ];
+  const assetChecks = await page.evaluate(async (paths) => Promise.all(paths.map(async (path) => {
+    const response = await fetch(path, { cache: 'no-store' });
+    return { path, ok: response.ok, type: response.headers.get('content-type'), size: Number(response.headers.get('content-length') || 0) };
+  })), artAssets);
+  for (const asset of assetChecks) {
+    assert.equal(asset.ok, true, `generated art must load: ${asset.path}`);
+    assert.match(asset.type || '', /image\/(avif|octet-stream)/i);
+  }
+
+  assert.equal(await page.locator('.civ-atlas-cave').count(), 1, 'generated cave art must render');
   assert.equal(await page.locator('.civ-mascot-art').count() >= 1, true, 'generated character art must render');
-  await page.screenshot({ path: output + '/civilization-hub-1720x864.png', fullPage: false });
+  const artBackgrounds = await page.evaluate(() => ({
+    cave: getComputedStyle(document.querySelector('.civ-atlas-cave')).backgroundImage,
+    hero: getComputedStyle(document.querySelector('.civ-mascot-stage .civ-mascot-art')).backgroundImage,
+  }));
+  assert.match(artBackgrounds.cave, /art-v2\/cave-hub-v2\.avif/);
+  assert.match(artBackgrounds.hero, /art-v2\/hero-sprite-v2\.avif/);
+
+  await page.screenshot({ path: output + '/civilization-v2-hub-1720x864.png', fullPage: false });
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
   await page.getByRole('button', { name: /Оружие/ }).click();
   await assertOverlayGeometry('equipment screenshot');
-  await page.screenshot({ path: output + '/civilization-equipment-1720x864.png', fullPage: false });
+  const equipmentBackground = await page.locator('.civ-item-card .civ-atlas-item').first().evaluate((node) => getComputedStyle(node).backgroundImage);
+  assert.match(equipmentBackground, /art-v2\/equipment-sprite-v2\.avif/);
+  await page.screenshot({ path: output + '/civilization-v2-equipment-1720x864.png', fullPage: false });
   await bottomNav.getByRole('button', { name: /Снаряжение/ }).click();
 
   await bottomNav.getByRole('button', { name: /Боссы/ }).click();
   await page.getByRole('button', { name: /Саблезубый тигр/ }).click();
-  await page.screenshot({ path: output + '/civilization-bosses-1720x864.png', fullPage: false });
+  const bossBackground = await page.locator('.civ-boss-art .civ-atlas-boss.large').evaluate((node) => getComputedStyle(node).backgroundImage);
+  assert.match(bossBackground, /art-v2\/boss-sprite-v2\.avif/);
+  await page.screenshot({ path: output + '/civilization-v2-bosses-1720x864.png', fullPage: false });
   await page.getByRole('button', { name: 'Свернуть раздел' }).click();
 
   for (const [label, file] of [
@@ -371,7 +409,7 @@ try {
   assert.match(page.url(), /\/applications\/games\/civilization/);
 
   assert.deepEqual(pageErrors, []);
-  console.log('Civilization alpha: creation, compact shell, scoped tasks, central panels, equipment persistence, real boss drops and desktop matrix passed');
+  console.log('Civilization visual v2: generated AVIF art pack, equipment-driven hero poses, real boss/item/resource sprites and full alpha regression passed');
 } finally {
   await browser?.close();
   web.kill('SIGTERM');
