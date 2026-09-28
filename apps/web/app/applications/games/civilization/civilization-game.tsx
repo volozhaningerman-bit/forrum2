@@ -719,7 +719,15 @@ function InventoryPanel({ loot }: { loot: Record<string, number> }) {
       <div className="civ-inventory-groups">
         {groups.map((group) => (
           <section key={group.title}><h3>{group.title}</h3>
-            <div>{group.items.map(([name,value]) => <article key={name}><span className="civ-inventory-glyph">{group.title === 'Пища' ? '●' : group.title === 'Трофеи' ? '◆' : '■'}</span><b>{name}</b><strong>{value}</strong></article>)}</div>
+            <div>{group.items.map(([name,value]) => {
+              const artByName: Record<string,string> = {
+                'Ягоды':'berries','Мясо':'meat','Грибы':'mushrooms','Рыба':'fish',
+                'Дерево':'wood','Камень':'stone','Кремень':'flint','Шкуры':'hide',
+                'Клык саблезуба':'fang','Бивень мамонта':'tusk','Тотем вожака':'totem','Редкий камень':'rare-stone',
+              };
+              const art=artByName[name];
+              return <article key={name}>{art ? <span className={`civ-atlas-resource res-${art}`} aria-hidden="true" /> : <span className="civ-inventory-glyph">◆</span>}<b>{name}</b><strong>{value}</strong></article>;
+            })}</div>
           </section>
         ))}
       </div>
@@ -775,9 +783,9 @@ function ResourceRow({ icon, label, value }: { icon: string; label: string; valu
     'Камень': 'stone',
     'Кремень': 'flint',
     'Шкуры': 'hide',
-    'Кости': 'bones',
     'Клык саблезуба': 'fang',
     'Бивень мамонта': 'tusk',
+    'Тотем вожака': 'totem',
     'Редкий камень': 'rare-stone',
   };
   const art = artByLabel[label];
@@ -899,10 +907,15 @@ function MapPanel({ setNotice }: { setNotice: (value: string) => void }) {
     <div className="civ-panel-body map">
       <header className="civ-panel-head"><div><small>Путь цивилизации</small><h2>Карта эпох</h2><p>От первой пещеры до собственной империи. Новые эпохи меняют мир, ресурсы, боссов и технологии.</p></div></header>
       <div className="civ-map-path">
-        {mapStages.map(([name, req, icon], index) => <button type="button" key={name} className={index === 0 ? 'active' : 'locked'} onClick={() => setNotice(index === 0 ? 'Ты уже находишься в Пещере.' : `${name}: ${req}`)}><span>{icon}</span><b>{name}</b><small>{req}</small><em>{index === 0 ? 'Текущая' : '🔒'}</em></button>)}
+        {mapStages.map(([name, req, icon], index) => (
+          <button type="button" key={name} className={index === 0 ? 'active' : 'locked'} onClick={() => setNotice(index === 0 ? 'Ты уже находишься в Пещере.' : `${name}: ${req}`)}>
+            {index === 0 ? <CivSymbol kind="cave" /> : <span className="civ-era-glyph">{icon}</span>}
+            <b>{name}</b><small>{req}</small><em>{index === 0 ? 'Текущая' : 'Закрыто'}</em>
+          </button>
+        ))}
       </div>
       <div className="civ-map-detail">
-        <div className="civ-map-visual"><span>🔥</span><b>Пещера</b><small>Стартовая территория</small></div>
+        <div className="civ-map-visual civ-map-cave-art"><div><b>Пещера</b><small>Стартовая территория</small></div></div>
         <div><h3>Что нужно для Каменного века</h3><TaskRow task={{ label: 'Достичь 5 уровня', progress: 1, total: 5, reward: '' }} /><TaskRow task={{ label: 'Собрать камень', progress: 210, total: 500, reward: '' }} /><TaskRow task={{ label: 'Набрать власть', progress: 37, total: 100, reward: '' }} /></div>
       </div>
     </div>
@@ -910,11 +923,26 @@ function MapPanel({ setNotice }: { setNotice: (value: string) => void }) {
 }
 
 function CraftPanel({ setNotice }: { setNotice: (value: string) => void }) {
+  const artByRecipe: Record<string, string> = {
+    'Каменный топор': 'axe',
+    'Шкура охотника': 'fur',
+  };
   return (
     <div className="civ-panel-body craft">
       <header className="civ-panel-head"><div><small>Верстак</small><h2>Крафт</h2><p>Создавай оружие, инструменты и одежду из найденных материалов.</p></div></header>
       <div className="civ-craft-grid">
-        {craftRecipes.map(recipe => <article key={recipe.name} className={recipe.ready ? 'ready' : 'locked'}><span>{recipe.icon}</span><h3>{recipe.name}</h3><p>{recipe.needs}</p><button type="button" disabled={!recipe.ready} onClick={() => setNotice(`${recipe.name}: создано и отправлено в инвентарь.`)}>{recipe.ready ? 'Создать' : 'Не хватает ресурсов'}</button></article>)}
+        {craftRecipes.map(recipe => {
+          const art = artByRecipe[recipe.name];
+          return (
+            <article key={recipe.name} className={recipe.ready ? 'ready' : 'locked'}>
+              <div className="civ-craft-art">
+                {art ? <span className={`civ-atlas-item art-${art}`} aria-hidden="true" /> : recipe.name === 'Факел' ? <CivSymbol kind="fire" /> : <CivSymbol kind="craft" />}
+              </div>
+              <h3>{recipe.name}</h3><p>{recipe.needs}</p>
+              <button type="button" disabled={!recipe.ready} onClick={() => setNotice(`${recipe.name}: создано и отправлено в инвентарь.`)}>{recipe.ready ? 'Создать' : 'Не хватает ресурсов'}</button>
+            </article>
+          );
+        })}
       </div>
     </div>
   );
@@ -925,9 +953,18 @@ function TribePanel({ setNotice }: { setNotice: (value: string) => void }) {
     <div className="civ-panel-body tribe">
       <header className="civ-panel-head"><div><small>Социальный прогресс</small><h2>Племя</h2><p>Общий лагерь игроков: развитие поселения, вклад ресурсов и совместные цели.</p></div></header>
       <div className="civ-tribe-grid">
-        <article><small>Твоё племя</small><h3>Каменный круг</h3><strong>7 / 20 участников</strong><p>Уровень лагеря 2 · +4% к сбору ресурсов</p><button type="button" onClick={() => setNotice('Открыт список участников племени.')}>Участники</button></article>
-        <article><small>Общая цель</small><h3>Большой костёр</h3><strong>1 420 / 2 000 дерева</strong><div className="civ-task-progress"><i style={{ width: '71%' }} /></div><button type="button" onClick={() => setNotice('Ты внёс 20 дерева в развитие племени.')}>Внести ресурсы</button></article>
-        <article><small>Бонус недели</small><h3>Охота на мамонта</h3><strong>Осталось 2 дня</strong><p>Победи Мамонта вместе с племенем и получи редкий трофей.</p><button type="button" onClick={() => setNotice('Племенная охота отмечена как текущая цель.')}>Сделать целью</button></article>
+        <article>
+          <div className="civ-tribe-art tribe-camp"><CivSymbol kind="tribe" /></div>
+          <small>Твоё племя</small><h3>Каменный круг</h3><strong>7 / 20 участников</strong><p>Уровень лагеря 2 · +4% к сбору ресурсов</p><button type="button" onClick={() => setNotice('Открыт список участников племени.')}>Участники</button>
+        </article>
+        <article>
+          <div className="civ-tribe-art tribe-wood"><span className="civ-atlas-resource res-wood" /></div>
+          <small>Общая цель</small><h3>Большой костёр</h3><strong>1 420 / 2 000 дерева</strong><div className="civ-task-progress"><i style={{ width: '71%' }} /></div><button type="button" onClick={() => setNotice('Ты внёс 20 дерева в развитие племени.')}>Внести ресурсы</button>
+        </article>
+        <article>
+          <div className="civ-tribe-art tribe-mammoth"><span className="civ-atlas-boss boss-mammoth" /></div>
+          <small>Бонус недели</small><h3>Охота на мамонта</h3><strong>Осталось 2 дня</strong><p>Победи Мамонта вместе с племенем и получи редкий трофей.</p><button type="button" onClick={() => setNotice('Племенная охота отмечена как текущая цель.')}>Сделать целью</button>
+        </article>
       </div>
     </div>
   );
