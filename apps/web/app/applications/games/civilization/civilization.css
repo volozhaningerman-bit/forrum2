@@ -2756,6 +2756,11 @@ button{font:inherit}
 
 .civ-character-art.male>span{background-position-x:0%}
 .civ-character-art.female>span{background-position-x:25%}
+.civ-character-art.pose-base>span{background-position-x:0%}
+.civ-character-art.pose-female>span{background-position-x:25%}
+.civ-character-art.pose-club>span{background-position-x:50%}
+.civ-character-art.pose-axe>span{background-position-x:75%}
+.civ-character-art.pose-upgraded>span{background-position-x:100%}
 
 .civ-character-art.tone-1>span{
   filter:saturate(.95) brightness(.95) sepia(.05) drop-shadow(0 18px 20px rgba(0,0,0,.36));
