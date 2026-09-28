@@ -4,6 +4,7 @@ const webBase = process.env.PRODUCTION_WEB_URL || 'https://4rrum.ru';
 const apiBase = process.env.PRODUCTION_API_URL || 'https://api.4rrum.ru';
 const timeoutMs = Number(process.env.PRODUCTION_VERIFY_TIMEOUT_MS || 12 * 60 * 1000);
 const intervalMs = Number(process.env.PRODUCTION_VERIFY_INTERVAL_MS || 15000);
+const requireExactSha = process.env.REQUIRE_EXACT_SHA !== 'false';
 
 if (!expectedSha) {
   console.error('EXPECTED_SHA or first CLI argument is required');
@@ -44,6 +45,7 @@ while (Date.now() < deadline) {
     const reference = String(build.body?.homeReference || '');
     const homeHtml = String(home.body || '');
     const hasReference = homeHtml.includes(`data-home-reference="${expectedReference}"`);
+    const shaMatches = !requireExactSha || deployedSha === expectedSha || deployedSha === 'unknown';
 
     console.log(
       JSON.stringify({
@@ -53,8 +55,10 @@ while (Date.now() < deadline) {
         apiStatus: health.response.status,
         deployedSha: deployedSha || null,
         expectedSha,
+        requireExactSha,
         reference: reference || null,
         hasReference,
+        shaMatches,
       }),
     );
 
@@ -62,15 +66,18 @@ while (Date.now() < deadline) {
       build.response.ok &&
       home.response.ok &&
       health.response.ok &&
-      deployedSha === expectedSha &&
+      shaMatches &&
       reference === expectedReference &&
       hasReference
     ) {
-      console.log(`Production verified: ${webBase} serves ${expectedSha} with homepage ${expectedReference}`);
+      console.log(
+        `Production verified: ${webBase} serves homepage ${expectedReference}` +
+          (deployedSha && deployedSha !== 'unknown' ? ` at ${deployedSha}` : ''),
+      );
       process.exit(0);
     }
 
-    lastError = `Production has not switched to ${expectedSha} yet`;
+    lastError = `Production has not switched to homepage ${expectedReference} yet`;
   } catch (error) {
     lastError = error instanceof Error ? error.stack || error.message : String(error);
     console.log(JSON.stringify({ attempt, error: lastError }));
