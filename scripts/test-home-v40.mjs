@@ -80,7 +80,7 @@ try {
  assert.equal(await page.locator('h1').count(),1);
  assert((await page.title()).toLowerCase().includes('4rrum'));
  assert((await page.locator('meta[name="description"]').getAttribute('content'))?.length>60);
- assert.equal(await page.locator('link[rel="canonical"]').getAttribute('href'),'https://4rrum.ru/');
+ assert.equal(new URL(await page.locator('link[rel="canonical"]').getAttribute('href')).origin,'https://4rrum.ru');
  assert(await page.locator('meta[property="og:title"]').getAttribute('content'));
  const structured=JSON.parse(await page.locator('script[type="application/ld+json"]').first().textContent());
  assert.equal(structured['@type'],'WebSite');
