@@ -208,17 +208,17 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
  const visible = demo ? topics.filter(item=>item.format==='TOPIC' && (tab!=='unanswered'||!item.commentCount) && (!community||item.community.slug===community)) : topics;
  const news = initialData.announcements?.slice(0, 4) ?? [];
  const important = [...news.slice(0,2), ...topics.filter(item => item.format === 'TOPIC' && !news.some(row => row.id === item.id))].slice(0,2);
- return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v59" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
+ return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v60" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
   <aside ref={sidebarRef} className={`forum-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="Навигация форума">
    <button type="button" className="forum-sidebar-close" onClick={()=>setSidebar(false)} aria-label="Закрыть меню"><Icon name="close"/></button>
    <Categories items={communities} selected={community}/>
    {overview && !activityError && <section className="forum-side-stats" aria-label="Статистика форума">
     <h2>Статистика</h2>
     <dl>
-     <div><dt>Сообществ</dt><dd>{formatCount(overview.stats.communities)}</dd></div>
+     <div><dt>Пользователей</dt><dd>{formatCount(overview.stats.users ?? 0)}</dd></div>
      <div><dt>Тем</dt><dd>{formatCount(overview.stats.topics)}</dd></div>
      <div><dt>Сообщений</dt><dd>{formatCount(overview.stats.messages)}</dd></div>
-     <div><dt>Онлайн</dt><dd>{formatCount(overview.stats.usersOnline)}</dd></div>
+     <div className="forum-newest-user"><dt>Новый пользователь</dt><dd>{overview.stats.newestUser ? <Link href={`/u/${overview.stats.newestUser.username}`}>{overview.stats.newestUser.displayName}</Link> : '—'}</dd></div>
     </dl>
    </section>}
    <div className="forum-sidebar-bottom"><Link href="/rules">Правила</Link><Link href="/support">Обратная связь</Link></div>
@@ -260,7 +260,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
    </section>}
 
    <div className="forum-feed-toolbar">
-    <h2 className="forum-feed-title">Обсуждения</h2>
+    <h2 className="forum-feed-title"><Icon name="comment"/>Обсуждения</h2>
     <div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-pressed={item.id === tab} key={item.id} title={item.id === 'popular' ? 'Темы с ответами за последние 24 часа' : undefined} onClick={() => choose(item.id, community)}>{item.label}</button>)}</div>
     <Link className="forum-feed-create" href="/create"><Icon name="plus"/>Создать тему</Link>
     <button type="button" className="forum-filter-toggle" aria-label="Фильтры" aria-expanded={filters} onClick={() => setFilters(value => !value)}><Icon name="filter"/></button>
