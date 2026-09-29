@@ -24,6 +24,11 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npm run typecheck
+      - run: npm run validate:static
+      - run: npm run validate:ux
+      - run: npm run validate:a11y
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
       - run: npx playwright install --with-deps chromium
       - run: node scripts/test-home-v39.mjs
       - run: node scripts/test-civilization-alpha.mjs

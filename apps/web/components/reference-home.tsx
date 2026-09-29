@@ -13,6 +13,7 @@ import { mainLinks } from './main-nav';
 import { TopicActions } from './home/topic-actions';
 import { categoryStyle } from './home/category-style';
 import { formatCount } from './home/utils';
+import { CompactSelect } from './home/compact-select';
 import type { Community, HomeInitialData, HomeOverview } from './home/types';
 export type { HomeInitialData } from './home/types';
 
@@ -206,8 +207,8 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
  }
  const visible = demo ? topics.filter(item=>item.format==='TOPIC' && (tab!=='unanswered'||!item.commentCount) && (!community||item.community.slug===community)) : topics;
  const news = initialData.announcements?.slice(0, 4) ?? [];
- const important = [...news.slice(0,2), ...topics.filter(item => item.format === 'TOPIC' && !news.some(row => row.id === item.id))].slice(0,2);
- return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v58" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
+ const important = [...news.slice(0,2), ...(initialData.feed ?? []).filter(item => item.format === 'TOPIC' && !news.some(row => row.id === item.id))].slice(0,2);
+ return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v59" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
   <aside ref={sidebarRef} className={`forum-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="Навигация форума">
    <button type="button" className="forum-sidebar-close" onClick={()=>setSidebar(false)} aria-label="Закрыть меню"><Icon name="close"/></button>
    <Categories items={communities} selected={community}/>
@@ -258,13 +259,25 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
      </Link>)}</div>
    </section>}
 
-   <div className="forum-feed-toolbar">
-    <h2 className="forum-feed-title">Обсуждения</h2>
-    <div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-pressed={item.id === tab} key={item.id} title={item.id === 'popular' ? 'Темы с ответами за последние 24 часа' : undefined} onClick={() => choose(item.id, community)}>{item.label}</button>)}</div>
-    <Link className="forum-feed-create" href="/create"><Icon name="plus"/>Создать тему</Link>
-    <button type="button" className="forum-filter-toggle" aria-label="Фильтры" aria-expanded={filters} onClick={() => setFilters(value => !value)}><Icon name="filter"/></button>
+   <div className="forum-feed-controls">
+    <div className="forum-feed-toolbar">
+     <h2 className="forum-feed-title">Обсуждения</h2>
+     <div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-pressed={item.id === tab} key={item.id} title={item.id === 'popular' ? 'Темы с ответами за последние 24 часа' : undefined} onClick={() => choose(item.id, community)}>{item.label}</button>)}</div>
+     <Link className="forum-feed-create" href="/create"><Icon name="plus"/>Создать тему</Link>
+     <button type="button" className="forum-filter-toggle" aria-label="Фильтры" aria-expanded={filters} onClick={() => setFilters(value => !value)}><Icon name="filter"/></button>
+    </div>
+    {filters && <div className="forum-filters" role="group" aria-label="Фильтры обсуждений">
+      <span className="forum-filter-label">Сообщество</span>
+      <CompactSelect
+        className="forum-community-select"
+        label="Сообщество"
+        value={community}
+        options={[{value:'',label:'Все сообщества'},...communities.map(item=>({value:item.slug,label:item.name.replace(/^FORRUM\b/i,'4rrum')}))]}
+        onChange={value=>choose(tab,value)}
+      />
+      <button className="forum-filter-reset" type="button" disabled={!community} onClick={() => choose(tab,'')}>Сбросить</button>
+    </div>}
    </div>
-   {filters && <div className="forum-filters"><label>Сообщество<select aria-label="Сообщество" value={community} onChange={event => choose(tab,event.target.value)}><option value="">Все сообщества</option>{communities.map(item => <option key={item.slug} value={item.slug}>{item.name}</option>)}</select></label><button type="button" onClick={() => choose(tab,'')}>Сбросить</button></div>}
    {community && <div className="forum-active-filter">{communities.find(item=>item.slug===community)?.name || community}<button type="button" onClick={()=>choose(tab,'')} aria-label="Сбросить выбранное сообщество">×</button></div>}
    {pendingTopics && !loading && <button type="button" className="forum-feed-update" onClick={() => {setTopics(pendingTopics.slice(0,20));setHasMore(pendingTopics.length>20);setOffset(20);setPendingTopics(null);}}>Есть обновления в ленте · Показать</button>}
    <div className="forum-topic-columns" aria-hidden="true"><span>Тема</span><span>Категория</span><span>Ответы</span><span>Просмотры</span><span>Последнее сообщение</span><span/></div>

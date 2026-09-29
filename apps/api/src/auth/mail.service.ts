@@ -1,6 +1,6 @@
 import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import nodemailer from 'nodemailer';
+import nodemailer, { type SendMailOptions } from 'nodemailer';
 import { smtpOptions } from './smtp-options.js';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class MailService {
 
   constructor(private readonly config: ConfigService) {}
 
-  private async send(message: nodemailer.SendMailOptions) {
+  private async send(message: SendMailOptions) {
     try {
       const transporter = nodemailer.createTransport(smtpOptions(this.config));
       await transporter.sendMail(message);

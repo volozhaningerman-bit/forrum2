@@ -1094,3 +1094,214 @@ html[data-forrum-theme="graphite"] body:has(.forum-home[data-home-reference="v49
 .forum-home[data-home-reference="v49"] .forum-important-list:has(.forum-important-row:only-child) .forum-important-row {
   min-height:60px;
 }
+
+
+/* Homepage alpha v59 — audit hardening: custom controls, unclipped actions, compact filters. */
+.forum-home[data-home-reference="v49"] .forum-feed-controls {
+  position:relative;
+  z-index:12;
+}
+
+.forum-home[data-home-reference="v49"] .forum-topic {
+  overflow:visible;
+}
+
+.forum-home[data-home-reference="v49"] .forum-topic:has(.forum-actions-popover),
+.forum-home[data-home-reference="v49"] .forum-topic:has(.forum-action-notice) {
+  z-index:40;
+}
+
+.forum-home[data-home-reference="v49"] .forum-actions-popover {
+  z-index:60;
+}
+
+.forum-home[data-home-reference="v49"] .forum-compact-select {
+  position:relative;
+  min-width:0;
+}
+
+.forum-home[data-home-reference="v49"] .forum-compact-select-trigger {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  width:100%;
+  min-height:32px;
+  margin:0;
+  padding:6px 9px;
+  color:#d9dcde;
+  border:1px solid #3d4346;
+  border-radius:1px;
+  background:#0d0f10;
+  box-shadow:none;
+  cursor:pointer;
+  text-align:left;
+}
+
+.forum-home[data-home-reference="v49"] .forum-compact-select-trigger:hover,
+.forum-home[data-home-reference="v49"] .forum-compact-select-trigger[aria-expanded="true"] {
+  color:#fff;
+  border-color:#60666a;
+  background:#141718;
+}
+
+.forum-home[data-home-reference="v49"] .forum-compact-select-chevron {
+  color:#8c9498;
+  font-size:14px;
+  line-height:1;
+  transform:translateY(-1px);
+}
+
+.forum-home[data-home-reference="v49"] .forum-compact-select-menu {
+  position:absolute;
+  z-index:90;
+  top:calc(100% + 4px);
+  left:0;
+  display:grid;
+  width:max-content;
+  min-width:100%;
+  max-width:min(360px,80vw);
+  padding:4px;
+  color:#dfe2e3;
+  border:1px solid #555c60;
+  background:#0b0d0e;
+  box-shadow:0 16px 42px rgba(0,0,0,.72);
+}
+
+.forum-home[data-home-reference="v49"] .forum-compact-select-option {
+  display:block;
+  width:100%;
+  min-height:32px;
+  padding:7px 10px;
+  overflow:hidden;
+  color:#c6cbce;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  cursor:pointer;
+  text-align:left;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.forum-home[data-home-reference="v49"] .forum-compact-select-option:hover,
+.forum-home[data-home-reference="v49"] .forum-compact-select-option:focus-visible {
+  color:#fff;
+  background:#1a1d1f;
+  outline:1px solid #777e82;
+  outline-offset:-1px;
+}
+
+.forum-home[data-home-reference="v49"] .forum-compact-select-option[aria-selected="true"] {
+  color:#08090a;
+  background:#eef0f0;
+  font-weight:700;
+}
+
+.forum-home[data-home-reference="v49"] .forum-ranking-period {
+  width:96px;
+  max-width:none;
+  padding:0;
+  border:0;
+  background:transparent;
+}
+
+.forum-home[data-home-reference="v49"] .forum-ranking-period .forum-compact-select-trigger {
+  min-height:30px;
+  padding:5px 8px;
+  font:10px ui-monospace,SFMono-Regular,Consolas,monospace;
+}
+
+.forum-home[data-home-reference="v49"] .forum-ranking-period .forum-compact-select-menu {
+  right:0;
+  left:auto;
+  min-width:112px;
+  font:10px ui-monospace,SFMono-Regular,Consolas,monospace;
+}
+
+@media (min-width:761px) {
+  .forum-home[data-home-reference="v49"] .forum-filters {
+    position:absolute;
+    z-index:80;
+    top:calc(100% + 5px);
+    right:0;
+    display:grid;
+    grid-template-columns:minmax(210px,1fr) auto;
+    gap:8px 10px;
+    width:330px;
+    margin:0;
+    padding:12px;
+    align-items:end;
+    color:#aeb4b7;
+    border:1px solid #555c60;
+    background:#0a0c0d;
+    box-shadow:0 18px 46px rgba(0,0,0,.72);
+  }
+
+  .forum-home[data-home-reference="v49"] .forum-filter-label {
+    grid-column:1/-1;
+    color:#8d9599;
+    font:600 9px ui-monospace,SFMono-Regular,Consolas,monospace;
+    letter-spacing:.55px;
+    text-transform:uppercase;
+  }
+
+  .forum-home[data-home-reference="v49"] .forum-community-select {
+    grid-column:1;
+    width:100%;
+  }
+
+  .forum-home[data-home-reference="v49"] .forum-filter-reset {
+    grid-column:2;
+    min-height:34px;
+    padding:7px 10px;
+    color:#d8dcde;
+    border:1px solid #3b4144;
+    border-radius:1px;
+    background:#111314;
+  }
+
+  .forum-home[data-home-reference="v49"] .forum-filter-reset:hover:not(:disabled) {
+    color:#fff;
+    border-color:#60666a;
+    background:#1a1d1f;
+  }
+
+  .forum-home[data-home-reference="v49"] .forum-filter-reset:disabled {
+    color:#5f666a;
+    cursor:not-allowed;
+  }
+}
+
+@media (max-width:760px) {
+  .forum-home[data-home-reference="v49"] .forum-filters {
+    position:static;
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    gap:8px;
+    margin:7px 0 0;
+    padding:10px;
+  }
+
+  .forum-home[data-home-reference="v49"] .forum-filter-label {
+    grid-column:1/-1;
+    font-size:11px;
+  }
+
+  .forum-home[data-home-reference="v49"] .forum-filter-reset {
+    min-height:36px;
+    padding:7px 10px;
+    border:1px solid #3b4144;
+    background:#111314;
+  }
+
+  .forum-home[data-home-reference="v49"] .forum-compact-select-menu {
+    max-width:calc(100vw - 42px);
+  }
+}
+
+/* Native selects are intentionally removed from the homepage so OS blue menus cannot break the reference. */
+.forum-home[data-home-reference="v49"] select.forum-ranking-period,
+.forum-home[data-home-reference="v49"] .forum-filters select {
+  display:none!important;
+}

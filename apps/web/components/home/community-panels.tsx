@@ -7,6 +7,7 @@ import { Avatar } from '../avatar';
 import { formatCount } from './utils';
 import type { HomeInitialData, HomeOverview } from './types';
 import type { PublicationCardData } from '@/lib/types';
+import { CompactSelect } from './compact-select';
 
 export function CommunityPanels({
   overview,
@@ -71,10 +72,13 @@ export function CommunityPanels({
     <section className="forum-panel forum-ranking-panel">
       <header>
         <h2>Рейтинг пользователей</h2>
-        <select className="forum-ranking-period" aria-label="Период рейтинга" value={period} onChange={event=>setPeriod(event.target.value as 'week'|'all')}>
-          <option value="week">За 7 дней</option>
-          <option value="all">Всё время</option>
-        </select>
+        <CompactSelect
+          className="forum-ranking-period"
+          label="Период рейтинга"
+          value={period}
+          options={[{value:'week',label:'За 7 дней'},{value:'all',label:'Всё время'}]}
+          onChange={value=>setPeriod(value as 'week'|'all')}
+        />
       </header>
       <div className="forum-ranking-tabs" role="group" aria-label="Показатель рейтинга">
         <button type="button" aria-pressed={mode==='activity'} onClick={()=>setMode('activity')}>Сообщения</button>
