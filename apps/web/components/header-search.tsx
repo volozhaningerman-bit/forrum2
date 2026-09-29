@@ -29,6 +29,7 @@ export function HeaderSearch({ inputRef }: { inputRef?: RefObject<HTMLInputEleme
  }, [focused, value, inputRef]);
  return <form className={inputRef ? "forum-header-search" : "header-search"} action="/search" role="search">
   <input ref={inputRef} name="q" aria-label="Поиск тем, людей, проектов" placeholder={inputRef ? 'Поиск тем, людей и проектов' : focused ? 'Поиск тем, людей, проектов' : placeholder} autoComplete="off" value={value} onChange={event => setValue(event.target.value)} onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}/>
+  {inputRef && <kbd className="forum-search-shortcut" aria-hidden="true">CTRL + K</kbd>}
   <button type="submit" aria-label="Найти" title="Найти"><SearchIcon/></button>
  </form>;
 }

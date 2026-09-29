@@ -12,10 +12,10 @@ export class HomeController {
 
   @Get('ranking')
   ranking(@Query('period') period = 'week', @Query('mode') mode = 'activity') {
-    if (period !== 'week' && period !== 'all' || mode !== 'activity' && mode !== 'likes') {
+    if (period !== 'week' && period !== 'month' && period !== 'all' || mode !== 'activity' && mode !== 'likes') {
       throw new BadRequestException('Неверный период или показатель рейтинга');
     }
-    return this.service.ranking(period, mode);
+    return this.service.ranking(period as 'week' | 'month' | 'all', mode);
   }
 
   @Get('overview')
