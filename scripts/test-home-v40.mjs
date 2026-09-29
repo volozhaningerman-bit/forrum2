@@ -148,6 +148,12 @@ try {
    await page.setViewportSize({width,height:width===1648?926:1000});await page.waitForTimeout(100);
    const size=await page.evaluate(()=>({w:innerWidth,scroll:document.documentElement.scrollWidth}));if(size.scroll>size.w+1)console.log(await page.evaluate(()=>Array.from(document.querySelectorAll('body *')).filter(el=>{const r=el.getBoundingClientRect();return r.width&&r.right>innerWidth+1}).slice(0,15).map(el=>({tag:el.tagName,cls:el.className,width:el.getBoundingClientRect().width,right:el.getBoundingClientRect().right}))));assert(size.scroll<=size.w+1,`${theme} ${width}: overflow ${size.scroll}`);
    if(width<=760){const tabsFit=await page.locator('.forum-tabs').evaluate(el=>el.scrollWidth<=el.clientWidth+1);assert(tabsFit,`Filters must fit at ${width}px`);}
+   if(width===1648){
+    const heroTitleFits=await page.locator('.forum-hero-copy h1').evaluate(el=>el.scrollWidth<=el.clientWidth+1);assert(heroTitleFits,'Hero title must fit one desktop line');
+    const topicFont=Number.parseFloat(await page.locator('.forum-topic h2').first().evaluate(el=>getComputedStyle(el).fontSize));assert(topicFont>=13,'Topic titles must remain readable');
+    const categoryTargets=await page.locator('.forum-category-heading>a').evaluateAll(nodes=>nodes.every(el=>el.getBoundingClientRect().height>=32));assert(categoryTargets,'Category links must retain usable hit areas');
+    const actionTargets=await page.locator('.forum-feed-create,.forum-filter-toggle,.forum-more-trigger').evaluateAll(nodes=>nodes.every(el=>{const r=el.getBoundingClientRect();return r.width>=24&&r.height>=24;}));assert(actionTargets,'Primary icon controls must meet minimum target size');
+   }
    if([1648,1600,390].includes(width)){await page.evaluate(()=>{window.scrollTo({top:0,behavior:"instant"});document.activeElement?.blur();});await page.screenshot({path:`${output}/${theme}-${width}.png`});}
   }
  }
@@ -170,5 +176,8 @@ try {
  await page.keyboard.press('Escape');
  await page.setViewportSize({width:800,height:600});
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
- assert.deepEqual(errors,[]);console.log('V49: approved monochrome homepage, topic table, menus, ranking, popular today and responsive checks passed');
+ await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'domcontentloaded'});
+ await page.locator('.skip-link').focus();
+ const skipBox=await page.locator('.skip-link').boundingBox();assert(skipBox&&skipBox.top>=0,'Skip link must become visible on keyboard focus');
+ assert.deepEqual(errors,[]);console.log('V67: visual, responsive, SEO, security, accessibility, ranking, topic actions and navigation audit passed');
 } finally {await browser?.close();web.kill('SIGTERM');upstream.close();}
