@@ -6,6 +6,7 @@ on:
       - feat/homepage-alpha-audit-v59
     paths:
       - ".github/workflows/dependency-security-v59.yml"
+      - "apps/api/src/auth/mail.service.ts"
 
 permissions:
   contents: write
