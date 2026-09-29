@@ -133,7 +133,7 @@ try {
   }
  }
  await page.getByRole('button',{name:'Открыть меню',exact:true}).click();assert(await page.getByRole('button',{name:'Закрыть меню',exact:true}).last().isVisible());await page.keyboard.press('Escape');
- await page.setViewportSize({width:1600,height:1000});await page.getByRole('button',{name:'Фильтры',exact:true}).click();await page.locator('summary[aria-label="Выбрать сообщество"]').click();await page.getByRole('menuitemradio',{name:'Category 0',exact:true}).click();await page.waitForTimeout(400);assert(requests.some(r=>r.query.includes('community=category-0')));
+ await page.setViewportSize({width:1600,height:1000});await page.getByRole('button',{name:'Фильтры',exact:true}).click();await page.locator('summary[aria-label="Выбрать сообщество"]').click();await page.getByRole('menuitemradio',{name:'Разработка',exact:true}).click();await page.waitForTimeout(400);assert(requests.some(r=>r.query.includes('community=category-0')));
  failFeed=true;await page.getByRole('button',{name:'Активные',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
  await page.goto('http://127.0.0.1:'+port+'/applications',{waitUntil:'networkidle'});assert.equal(await page.locator('.applications-grid article').count(),4);
  await page.goto('http://127.0.0.1:'+port+'/digital-services',{waitUntil:'domcontentloaded'});
