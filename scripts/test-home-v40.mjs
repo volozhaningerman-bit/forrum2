@@ -114,14 +114,14 @@ try {
  assert.equal(await page.getByRole('button',{name:'Новые',exact:true}).getAttribute('aria-pressed'),'true');
  assert(requests.some(r=>r.path==='/v1/feed'&&r.cookie?.includes('forrum_test=viewer')));
  const first=page.locator('.forum-topic').first(),more=first.getByRole('button',{name:/Действия с темой/});
- await more.click();await page.keyboard.press('Escape');assert.equal(await more.getAttribute('aria-expanded'),'false');assert(await more.evaluate(el=>el===document.activeElement));
+ await more.click();const popoverBox=await first.locator('.forum-actions-popover').boundingBox();const rowBox=await first.boundingBox();assert(popoverBox&&rowBox&&popoverBox.y+popoverBox.height>rowBox.y+rowBox.height,'Topic action popover must escape the row without clipping');await page.keyboard.press('Escape');assert.equal(await more.getAttribute('aria-expanded'),'false');assert(await more.evaluate(el=>el===document.activeElement));
  await more.click();await first.getByRole('button',{name:'В избранное',exact:true}).click();await first.getByText('Добавлено в избранное',{exact:true}).waitFor();assert(saved);assert.equal(await first.locator('.forum-saved-dot').count(),1);
  await more.click();await first.getByRole('button',{name:'Убрать из избранного',exact:true}).click();await first.getByText('Убрано из избранного',{exact:true}).waitFor();assert(!saved);assert.equal(await first.locator('.forum-saved-dot').count(),0);
  failBookmark=true;await more.click();await first.getByRole('button',{name:'В избранное',exact:true}).click();await first.getByText('Войдите, чтобы сохранить тему',{exact:true}).waitFor();failBookmark=false;
  await page.keyboard.press('Escape');await more.click();await first.getByRole('button',{name:'Пожаловаться',exact:true}).click();await page.getByRole('dialog').getByLabel('Что нарушено?').fill('Спам и реклама без маркировки');await page.getByRole('button',{name:'Отправить жалобу',exact:true}).click();await first.getByText('Жалоба отправлена модераторам',{exact:true}).waitFor();assert.equal(reports,1);
  await page.evaluate(()=>{Object.defineProperty(navigator,'share',{value:undefined,configurable:true});Object.defineProperty(navigator,'clipboard',{value:{writeText:async text=>{window.__copied=text;}},configurable:true});});
  await more.click();await first.getByRole('button',{name:'Поделиться',exact:true}).click();await first.getByText('Ссылка скопирована',{exact:true}).waitFor();assert((await page.evaluate(()=>window.__copied)).endsWith('/p/topic-0'));await first.getByRole('button',{name:'Закрыть сообщение'}).click();
- await page.getByRole('button',{name:'Симпатии',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.forum-author-ranking li>small')?.textContent==='20');await page.getByRole('button',{name:'Сообщения',exact:true}).click();
+ assert.equal(await page.locator('.forum-ranking-panel select').count(),0);await page.getByRole('button',{name:'Симпатии',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.forum-author-ranking li>small')?.textContent==='20');await page.getByRole('button',{name:'Сообщения',exact:true}).click();
  await page.getByRole('button',{name:'Показать ещё обсуждения',exact:true}).click();await page.waitForFunction(()=>document.querySelectorAll('.forum-topic').length===40);assert.equal(await page.getByRole('button',{name:'Показать ещё обсуждения',exact:true}).count(),0);
  for(const theme of ['graphite']){
   await page.evaluate(theme=>{document.documentElement.classList.toggle('dark',theme==='graphite');document.documentElement.dataset.forrumTheme=theme;localStorage.setItem('forrum-theme',theme);},theme);
@@ -133,7 +133,7 @@ try {
   }
  }
  await page.getByRole('button',{name:'Открыть меню',exact:true}).click();assert(await page.getByRole('button',{name:'Закрыть меню',exact:true}).last().isVisible());await page.keyboard.press('Escape');
- await page.setViewportSize({width:1600,height:1000});await page.getByRole('button',{name:'Фильтры',exact:true}).click();await page.getByLabel('Сообщество',{exact:true}).selectOption('category-0');await page.waitForTimeout(400);assert(requests.some(r=>r.query.includes('community=category-0')));
+ await page.setViewportSize({width:1600,height:1000});await page.getByRole('button',{name:'Фильтры',exact:true}).click();assert.equal(await page.locator('.forum-filters select').count(),0);await page.getByRole('button',{name:'Сообщество: Все сообщества',exact:true}).click();await page.getByRole('option',{name:'Разработка',exact:true}).click();await page.waitForTimeout(400);assert(requests.some(r=>r.query.includes('community=category-0')));
  failFeed=true;await page.getByRole('button',{name:'Активные',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
  await page.goto('http://127.0.0.1:'+port+'/applications',{waitUntil:'networkidle'});assert.equal(await page.locator('.applications-grid article').count(),4);
  await page.goto('http://127.0.0.1:'+port+'/digital-services',{waitUntil:'domcontentloaded'});
@@ -144,7 +144,7 @@ try {
  assert.equal(await page.locator('.forum-author-ranking').count(),0);
  assert.equal(await page.locator('.forum-side-stats dl>div').filter({hasText:'Онлайн'}).locator('dd').textContent(),'0');
  await page.getByRole('button',{name:'Участники за всё время →',exact:true}).click();
- assert.equal(await page.getByLabel('Период рейтинга').inputValue(),'all');
+ assert.equal(await page.getByRole('button',{name:'Период рейтинга: Всё время',exact:true}).count(),1);
  await page.locator('.forum-author-ranking li').first().waitFor();
  assert(requests.some(r=>r.path==='/v1/home/ranking'&&r.query.includes('period=all')));
  await page.locator('.forum-topic').first().getByRole('button',{name:/Действия с темой/}).click();
