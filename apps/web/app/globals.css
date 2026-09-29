@@ -13370,6 +13370,53 @@ body:has(.section-page-v14-4) .main {
   outline: 1px solid rgba(25, 211, 154, .20);
 }
 
+.section-topic-sort-options {
+  display: flex;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--forrum-home-line-strong);
+  border-radius: 4px;
+  background: var(--forrum-home-surface-soft);
+}
+
+.section-topic-sort-options button {
+  min-height: 34px;
+  flex: 1 1 0;
+  padding: 0 9px;
+  border: 0;
+  border-left: 1px solid var(--forrum-home-line-soft);
+  border-radius: 0;
+  background: transparent;
+  color: var(--forrum-home-muted);
+  font-size: 9.5px;
+  font-weight: 560;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.section-topic-sort-options button:first-child {
+  border-left: 0;
+}
+
+.section-topic-sort-options button:hover {
+  color: var(--forrum-home-text-soft);
+  background: var(--forrum-home-surface-hover);
+}
+
+.section-topic-sort-options button.active,
+.section-topic-sort-options button[aria-pressed="true"] {
+  color: var(--forrum-home-accent);
+  background: rgba(25, 211, 154, .07);
+  box-shadow: inset 0 -2px var(--forrum-home-accent);
+}
+
+.section-topic-sort-options button:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline: 1px solid var(--forrum-home-accent);
+  outline-offset: -2px;
+}
+
 .section-topic-table-head,
 .section-topic-row {
   display: grid;
