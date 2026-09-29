@@ -71,10 +71,10 @@ export function CommunityPanels({
     <section className="forum-panel forum-ranking-panel">
       <header>
         <h2>Рейтинг пользователей</h2>
-        <select className="forum-ranking-period" aria-label="Период рейтинга" value={period} onChange={event=>setPeriod(event.target.value as 'week'|'all')}>
-          <option value="week">За 7 дней</option>
-          <option value="all">Всё время</option>
-        </select>
+        <div className="forum-ranking-period" role="group" aria-label="Период рейтинга">
+          <button type="button" aria-pressed={period==='week'} onClick={()=>setPeriod('week')}>7 дней</button>
+          <button type="button" aria-pressed={period==='all'} onClick={()=>setPeriod('all')}>Всё время</button>
+        </div>
       </header>
       <div className="forum-ranking-tabs" role="group" aria-label="Показатель рейтинга">
         <button type="button" aria-pressed={mode==='activity'} onClick={()=>setMode('activity')}>Сообщения</button>
