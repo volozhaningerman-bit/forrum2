@@ -112,7 +112,7 @@ try {
  await page.locator('.forum-topic').first().hover(); await page.waitForTimeout(160);
  const afterHover=await page.locator('.forum-topic').first().boundingBox();
  assert(afterHover.width>beforeHover.width,'Topic hover should subtly scale the row');
- assert.equal(await page.getByRole('button',{name:'Новые',exact:true}).getAttribute('aria-pressed'),'true');
+ assert.equal(await page.getByRole('button',{name:'Последние',exact:true}).getAttribute('aria-pressed'),'true');
  assert(requests.some(r=>r.path==='/v1/feed'&&r.cookie?.includes('forrum_test=viewer')));
  const first=page.locator('.forum-topic').first(),more=first.getByRole('button',{name:/Действия с темой/});
  await more.click();await page.keyboard.press('Escape');assert.equal(await more.getAttribute('aria-expanded'),'false');assert(await more.evaluate(el=>el===document.activeElement));
@@ -135,7 +135,7 @@ try {
  }
  await page.getByRole('button',{name:'Открыть меню',exact:true}).click();assert(await page.getByRole('button',{name:'Закрыть меню',exact:true}).last().isVisible());await page.keyboard.press('Escape');
  await page.setViewportSize({width:1600,height:1000});await page.getByRole('button',{name:'Фильтры',exact:true}).click();await page.locator('summary[aria-label="Выбрать сообщество"]').click();await page.getByRole('menuitemradio',{name:'Разработка',exact:true}).click();await page.waitForTimeout(400);assert(requests.some(r=>r.query.includes('community=category-0')));
- failFeed=true;await page.getByRole('button',{name:'Активные',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
+ failFeed=true;await page.getByRole('button',{name:'Популярные',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
  await page.goto('http://127.0.0.1:'+port+'/applications',{waitUntil:'networkidle'});assert.equal(await page.locator('.applications-grid article').count(),4);
  await page.goto('http://127.0.0.1:'+port+'/digital-services',{waitUntil:'domcontentloaded'});
  await page.getByRole('heading',{name:'Цифровые сервисы'}).waitFor();
