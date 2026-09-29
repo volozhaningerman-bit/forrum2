@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="90" viewBox="0 0 320 90" role="img" aria-label="4RRUM">
+  <g fill="none" stroke="#fff" stroke-width="3" stroke-linecap="square" opacity=".98">
+    <path d="M4 29h55M18 20h55M12 38h39"/>
+  </g>
+  <g transform="translate(45 5) skewX(-13)">
+    <path fill="#fff" d="M28 7h27L29 47h25l5-21h19L73 47h14l-5 17H68l-4 18H43l4-18H2L28 7Zm11 17L23 47h20l5-23H39Z"/>
+    <text x="78" y="62" fill="#fff" font-family="Arial Black, Arial, sans-serif" font-size="51" font-weight="900" letter-spacing="-3">RRUM</text>
+  </g>
+</svg>
