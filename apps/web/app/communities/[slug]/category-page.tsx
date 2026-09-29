@@ -70,13 +70,13 @@ const topicTabs: Array<{ key: TopicTab; label: string }> = [
   { key: 'unanswered', label: 'Без ответа' },
 ];
 
-const TOPICS_PER_PAGE = 20;
+const topicSortOptions: Array<{ key: TopicSort; label: string }> = [
+  { key: 'activity', label: 'Активность' },
+  { key: 'new', label: 'Новые' },
+  { key: 'popular', label: 'Обсуждаемые' },
+];
 
-const workshopNavigation = [
-  { label: 'Проекты и заказы', href: '/workshop?section=projects' },
-  { label: 'Готовые решения', href: '/workshop?section=solutions' },
-  { label: 'Команды и специалисты', href: '/workshop?section=teams' },
-] as const;
+const TOPICS_PER_PAGE = 20;
 
 const preferredRootOrder = [
   'internet-projects',
@@ -289,6 +289,7 @@ function sortRootCommunities(left: TreeCommunity, right: TreeCommunity) {
 // FORRUM_SECTION_PAGE_NAVIGATION_V14_10
 // FORRUM_SECTION_TREE_HIT_AREA_V14_11
 // FORRUM_SECTION_TREE_HIT_AREA_V14_12
+// FORRUM_COMMUNITY_SHELL_V62
 export function CategoryPage({
   slug,
   initialData,
@@ -308,7 +309,6 @@ export function CategoryPage({
         initialData.slug,
       ]),
   );
-  const [workshopOpen, setWorkshopOpen] = useState(true);
   const [topicTab, setTopicTab] = useState<TopicTab>('all');
   const [topicSort, setTopicSort] = useState<TopicSort>('activity');
   const [topicPage, setTopicPage] = useState(1);
@@ -643,73 +643,6 @@ export function CategoryPage({
             <strong>Категории</strong>
           </div>
 
-          <div className="section-tree-workshop">
-            <div
-              className={`section-tree-row section-workshop-row ${
-                workshopOpen ? 'opened' : ''
-              }`}
-              onClick={(event) => {
-                const target = event.target as HTMLElement;
-                if (target.closest('a, button')) return;
-                setWorkshopOpen((current) => !current);
-              }}
-            >
-              <Link
-                className="section-tree-icon-link"
-                href="/workshop"
-                aria-label="Открыть Мастерскую"
-              >
-                <span
-                  className="section-tree-icon workshop"
-                  aria-hidden="true"
-                >
-                  ⛏
-                </span>
-              </Link>
-
-              <Link
-                className="section-tree-name-link"
-                href="/workshop"
-              >
-                Мастерская
-              </Link>
-
-              <button
-                type="button"
-                className="section-tree-chevron"
-                aria-label={
-                  workshopOpen
-                    ? 'Свернуть Мастерскую'
-                    : 'Развернуть Мастерскую'
-                }
-                aria-expanded={workshopOpen}
-                onClick={() =>
-                  setWorkshopOpen((current) => !current)
-                }
-              >
-                <svg viewBox="0 0 16 16" aria-hidden="true">
-                  <path d="m4 6 4 4 4-4" />
-                </svg>
-              </button>
-            </div>
-
-            {workshopOpen && (
-              <div className="section-tree-static-children">
-                {workshopNavigation.map((item) => (
-                  <Link href={item.href} key={item.label}>
-                    <span aria-hidden="true">−</span>
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div
-            className="section-tree-separator"
-            aria-hidden="true"
-          />
-
           {treeLoading ? (
             <div
               className="section-tree-loading"
@@ -881,26 +814,29 @@ export function CategoryPage({
                 </nav>
               </div>
 
-              <label className="section-topic-sort">
+              <div
+                className="section-topic-sort"
+                role="group"
+                aria-label="Сортировка тем"
+              >
                 <span>Сортировка:</span>
-                <select
-                  value={topicSort}
-                  onChange={(event) => {
-                    setTopicSort(
-                      event.target.value as TopicSort,
-                    );
-                    setTopicPage(1);
-                  }}
-                >
-                  <option value="activity">
-                    Последняя активность
-                  </option>
-                  <option value="new">Сначала новые</option>
-                  <option value="popular">
-                    Самые обсуждаемые
-                  </option>
-                </select>
-              </label>
+                <div className="section-topic-sort-options">
+                  {topicSortOptions.map((option) => (
+                    <button
+                      type="button"
+                      key={option.key}
+                      className={topicSort === option.key ? 'active' : ''}
+                      aria-pressed={topicSort === option.key}
+                      onClick={() => {
+                        setTopicSort(option.key);
+                        setTopicPage(1);
+                      }}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div
