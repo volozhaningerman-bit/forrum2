@@ -3086,3 +3086,32 @@ body:has(.forum-home[data-home-reference="v49"]) {
     display:none!important;
   }
 }
+
+
+/* v66 responsive safety for image-based brand. */
+@media (max-width:1050px) {
+  .forum-home[data-home-reference="v49"] .forum-brand {
+    width:170px!important;
+    max-width:170px!important;
+    padding-left:8px!important;
+    transform:none!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-brand img {
+    width:158px!important;
+    max-width:100%!important;
+    height:48px!important;
+    object-fit:contain!important;
+    object-position:left center!important;
+  }
+}
+@media (max-width:760px) {
+  .forum-home[data-home-reference="v49"] .forum-brand {
+    width:118px!important;
+    max-width:118px!important;
+    padding-left:0!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-brand img {
+    width:118px!important;
+    height:38px!important;
+  }
+}
