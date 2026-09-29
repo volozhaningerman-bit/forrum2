@@ -6,7 +6,7 @@ const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright')
 const root = new URL('../', import.meta.url).pathname;
 const output = process.env.HOME_TEST_OUTPUT || root + 'test-results/home-reference';
 await mkdir(output, { recursive: true });
-const names = ['Алексей Петров', 'Мария Кузнецова', 'Иван Соколов', 'Дмитрий Волков', 'Елена Смирнова'];
+const names = ['Алексей Петров', 'Мария Кузнецова', 'Иван Соколов', 'Дмитрий Волков', 'Елена Смирнова', 'Артём Орлов', 'Кира Белова', 'Михаил Серов', 'Лина Романова', 'Олег Миронов'];
 const categories = ['Разработка', 'Backend', 'Дизайн', 'Бизнес', 'Карьера', 'AI и данные', 'Маркетинг', 'Общество', 'Разное'];
 const communities = categories.map((name, i) => ({ id: String(i), slug: 'category-' + i, name, parent: i === 1 ? { slug: 'category-0', name: categories[0] } : null, subscriberCount: 120, publicationCount: 5, onlineCount: 3, description: '' }));
 communities.push({id:'retired',slug:'workshop',name:'Мастерская',parent:null,subscriberCount:0,onlineCount:0,publicationCount:0,description:''});
@@ -16,7 +16,7 @@ const excerpts = ['Команда обсуждает реальный опыт �
 const topics = titles.map((title, i) => ({ id: String(i), slug: 'topic-' + i, title, format: 'TOPIC', type: 'DISCUSSION', excerpt: excerpts[i], createdAt: new Date(Date.now() - (i + 1) * 7200000).toISOString(), author: { username: 'person-' + i, displayName: names[i], avatarUrl: null }, community: communities[[1,4,2,3,5][i]], commentCount: [47,29,18,35,0][i], viewCount: [2100,1600,980,1200,3400][i], reactionCount: [128,93,76,64,51][i], viewerReaction: null, isBookmarked: false, tags: [{ id: 'tag-' + i, slug: 'tag-' + i, label: ['rust','советы','интерфейсы','стартап','opensource'][i] }] }));
 topics[0].lastComment = {id:'reply-1',excerpt:'Мы начали с одного сервиса. Что вы хотите ускорить?',createdAt:new Date().toISOString(),author:topics[1].author};
 const pulse = {activeTopics:[{slug:topics[0].slug,title:topics[0].title,replyCount:3}],recentReplies:[{id:'reply-1',excerpt:'Мы начали с одного сервиса. Что вы хотите ускорить?',createdAt:new Date().toISOString(),author:topics[1].author,publication:{slug:topics[0].slug,title:topics[0].title,community:topics[0].community}}]};
-const people = names.map((displayName, i) => ({ username: 'person-' + i, displayName, score: [2400,1800,1600,1400,1200][i], topicCount: 5-i, commentCount: 15-i, reactionCount: 20-i }));
+const people = names.map((displayName, i) => ({ username: 'person-' + i, displayName, score: 3000-i*180, topicCount: Math.max(1,10-i), commentCount: Math.max(1,20-i), reactionCount: Math.max(1,30-i) }));
 const announcements = ['Обновления правил сообщества','Новый раздел: AI и данные','Запуск программы менторства','Интервью с командой FORRUM'].map((title,i) => ({ ...topics[i], id:'news-'+i, slug:'news-'+i, title }));
 let emptyPeople = false, guest = false, showBanners = true, admin = false;
 let bannerSettings=[];
@@ -33,7 +33,7 @@ const upstream = createServer(async (req,res) => {
  if (url.pathname === '/v1/communities') data = communities;
  else if (url.pathname === '/v1/feed') { data = allTopics.slice(Number(url.searchParams.get('offset')||0),Number(url.searchParams.get('offset')||0)+21); if(failFeed){status=503;data={message:'Сервис временно недоступен'};} }
  else if (url.pathname === '/v1/home/ranking') data = emptyPeople && url.searchParams.get('period')!=='all' ? [] : people;
- else if (url.pathname === '/v1/home/overview') data = { banners:showBanners?banners:[], pulse:emptyPeople ? {activeTopics:[],recentReplies:[]} : pulse, discussed: topics, weekly: { likes:people, activity:emptyPeople ? [] : people }, stats: {communities:9,topics:5,messages:134,usersOnline:emptyPeople ? 0 : 3,recordOnline:10} };
+ else if (url.pathname === '/v1/home/overview') data = { banners:showBanners?banners:[], pulse:emptyPeople ? {activeTopics:[],recentReplies:[]} : pulse, discussed: topics, weekly: { likes:people, activity:emptyPeople ? [] : people }, stats: {users:10,newestUser:{username:'person-9',displayName:names[9]},communities:9,topics:5,messages:134,usersOnline:emptyPeople ? 0 : 3,recordOnline:10} };
  else if (url.pathname === '/v1/admin/home-banners') {if(req.method==='PUT'){let body='';for await(const chunk of req)body+=chunk;bannerSettings=JSON.parse(body).banners;}data={banners:bannerSettings};}
  else if (url.pathname === '/v1/admin/ai-taxonomy') {if(req.method==='POST'){let body='';for await(const chunk of req)body+=chunk;assert.equal(JSON.parse(body).version,taxonomyPlan.version);taxonomyApplied=true;data={ok:true};}else data=taxonomyPlan;}
  else if(url.pathname.endsWith('/report')){let body='';for await(const chunk of req)body+=chunk;assert(JSON.parse(body).reason.length>=5);reports++;data={ok:true};}
@@ -125,11 +125,11 @@ try {
  await page.getByRole('button',{name:'Показать ещё обсуждения',exact:true}).click();await page.waitForFunction(()=>document.querySelectorAll('.forum-topic').length===40);assert.equal(await page.getByRole('button',{name:'Показать ещё обсуждения',exact:true}).count(),0);
  for(const theme of ['graphite']){
   await page.evaluate(theme=>{document.documentElement.classList.toggle('dark',theme==='graphite');document.documentElement.dataset.forrumTheme=theme;localStorage.setItem('forrum-theme',theme);},theme);
-  for(const width of [1920,1600,1280,1024,760,390,320]){
-   await page.setViewportSize({width,height:1000});await page.waitForTimeout(100);
+  for(const width of [1920,1648,1600,1280,1024,760,390,320]){
+   await page.setViewportSize({width,height:width===1648?926:1000});await page.waitForTimeout(100);
    const size=await page.evaluate(()=>({w:innerWidth,scroll:document.documentElement.scrollWidth}));if(size.scroll>size.w+1)console.log(await page.evaluate(()=>Array.from(document.querySelectorAll('body *')).filter(el=>{const r=el.getBoundingClientRect();return r.width&&r.right>innerWidth+1}).slice(0,15).map(el=>({tag:el.tagName,cls:el.className,width:el.getBoundingClientRect().width,right:el.getBoundingClientRect().right}))));assert(size.scroll<=size.w+1,`${theme} ${width}: overflow ${size.scroll}`);
    if(width<=760){const tabsFit=await page.locator('.forum-tabs').evaluate(el=>el.scrollWidth<=el.clientWidth+1);assert(tabsFit,`Filters must fit at ${width}px`);}
-   if([1600,390].includes(width)){await page.evaluate(()=>{window.scrollTo({top:0,behavior:"instant"});document.activeElement?.blur();});await page.screenshot({path:`${output}/${theme}-${width}.png`});}
+   if([1648,1600,390].includes(width)){await page.evaluate(()=>{window.scrollTo({top:0,behavior:"instant"});document.activeElement?.blur();});await page.screenshot({path:`${output}/${theme}-${width}.png`});}
   }
  }
  await page.getByRole('button',{name:'Открыть меню',exact:true}).click();assert(await page.getByRole('button',{name:'Закрыть меню',exact:true}).last().isVisible());await page.keyboard.press('Escape');
@@ -142,7 +142,7 @@ try {
  guest=true;emptyPeople=true;await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'domcontentloaded'});
  await page.getByText('Первое слово — за вами',{exact:true}).waitFor();
  assert.equal(await page.locator('.forum-author-ranking').count(),0);
- assert.equal(await page.locator('.forum-side-stats dl>div').filter({hasText:'Онлайн'}).locator('dd').textContent(),'0');
+ assert.equal(await page.locator('.forum-side-stats dl>div').filter({hasText:'Пользователей'}).locator('dd').textContent(),'10');
  await page.getByRole('button',{name:'Участники за всё время →',exact:true}).click();
  assert.equal(await page.getByRole('group',{name:'Период рейтинга'}).getByRole('button',{name:'Всё время',exact:true}).getAttribute('aria-pressed'),'true');
  await page.locator('.forum-author-ranking li').first().waitFor();
