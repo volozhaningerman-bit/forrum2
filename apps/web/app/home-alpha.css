@@ -3047,3 +3047,42 @@ body:has(.forum-home[data-home-reference="v49"]) {
 }
 
 .forum-home .forum-brand-test-label{display:none!important;}
+
+
+/* Homepage v66 screenshot correction pass. */
+@media (min-width:1051px) {
+  .forum-home[data-home-reference="v49"] .forum-brand {
+    width:250px!important;
+    padding-left:10px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-brand img {
+    width:245px!important;
+    height:64px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-hero-art {
+    width:70%!important;
+    transform:translateX(-1.5%) scale(1.28);
+    transform-origin:right center;
+    opacity:1!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic {
+    background-image:
+      linear-gradient(90deg,rgba(7,9,10,.998) 0%,rgba(7,9,10,.985) 24%,rgba(7,9,10,.72) 44%,rgba(7,9,10,.27) 67%,rgba(7,9,10,.13) 85%,rgba(7,9,10,.47) 100%),
+      var(--topic-image)!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-side-stats dd {
+    font-size:16px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-popular-today strong {
+    font-size:12px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-panel h2 {
+    font-size:13.5px!important;
+  }
+}
+
+@media (max-width:1050px) {
+  .forum-home .forum-hero-art {
+    display:none!important;
+  }
+}
