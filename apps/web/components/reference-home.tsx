@@ -50,6 +50,16 @@ function categoryIcon(name: string): Glyph {
  return 'code';
 }
 
+function topicBackdrop(slug: string, name: string) {
+ const value = `${slug} ${name}`.toLowerCase();
+ if (/gta|rp|игр/.test(value)) return '/forrum-assets/row-gta.svg';
+ if (/продвиж|promotion|маркет|seo/.test(value)) return '/forrum-assets/row-promotion.svg';
+ if (/telegram/.test(value)) return '/forrum-assets/row-telegram.svg';
+ if (/project|проект|бизнес|startup/.test(value)) return '/forrum-assets/row-projects.svg';
+ if (/forrum|4rrum|start|сообщест/.test(value)) return '/forrum-assets/row-forrum.svg';
+ return '/forrum-assets/row-default.svg';
+}
+
 function Categories({ items: sourceItems, selected }: { items: Community[]; selected: string }) {
  // Flatten retired navigation groups only; their publications and URLs stay intact.
  const hidden = new Set(sourceItems.filter(item => /^(мастерская|медиа)$/i.test(item.name.trim())).map(item => item.slug));
@@ -93,7 +103,7 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
  const important=Boolean(item.isOfficial && item.pinnedUntil && Date.parse(item.pinnedUntil)>Date.now());
  const lastAuthor=item.lastComment?.author ?? item.author;
  const lastAt=item.lastComment?.createdAt ?? item.lastActivityAt ?? item.createdAt;
- const cover=item.community.coverUrl?.replace(/["\\]/g,'');
+ const cover=topicBackdrop(item.community.slug,item.community.name);
  const style={
    ...categoryStyle(item.community.slug, category?.accentColor ?? item.community.accentColor),
    '--topic-image':cover ? `url("${cover}")` : 'none',
@@ -120,7 +130,7 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
  </article>;
 }
 
-const tabs = [{ id: 'new', label: 'Новые', mode: 'new' }, { id: 'popular', label: 'Активные', mode: 'popular' }, { id: 'unanswered', label: 'Без ответов', mode: 'all' }] as const;
+const tabs = [{ id: 'new', label: 'Последние', mode: 'new' }, { id: 'popular', label: 'Популярные', mode: 'popular' }, { id: 'unanswered', label: 'Без ответа', mode: 'all' }] as const;
 type Tab = typeof tabs[number]['id'];
 export function HomeDashboard({ initialData, demo = false }: { initialData: HomeInitialData; demo?: boolean }) {
  const reading = useTopicReading();
@@ -210,7 +220,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
  const visible = demo ? topics.filter(item=>item.format==='TOPIC' && (tab!=='unanswered'||!item.commentCount) && (!community||item.community.slug===community)) : topics;
  const news = initialData.announcements?.slice(0, 4) ?? [];
  const important = [...news.slice(0,2), ...topics.filter(item => item.format === 'TOPIC' && !news.some(row => row.id === item.id))].slice(0,2);
- return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v65" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
+ return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v66" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
   <aside ref={sidebarRef} className={`forum-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="Навигация форума">
    <button type="button" className="forum-sidebar-close" onClick={()=>setSidebar(false)} aria-label="Закрыть меню"><Icon name="close"/></button>
    <Categories items={communities} selected={community}/>
@@ -227,7 +237,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
   </aside>
   {sidebar && <button type="button" className="forum-sidebar-backdrop" aria-label="Закрыть навигацию" onClick={() => setSidebar(false)}/>}
   <header className="forum-topbar">
-   <Link className="forum-brand" href="/" aria-label="4rrum — главная"><span className="forum-brand-four" aria-hidden="true">4</span><strong>RRUM</strong></Link>
+   <Link className="forum-brand" href="/" aria-label="4rrum — главная"><img src="/forrum-assets/brand-4rrum.svg" alt="" aria-hidden="true"/></Link>
    <button type="button" className="forum-menu" aria-label={sidebar ? 'Закрыть меню' : 'Открыть меню'} aria-expanded={sidebar} onClick={() => setSidebar(value => !value)}><Icon name="menu"/></button>
    <nav className="forum-primary" aria-label="Основная навигация">{mainLinks.map(([href,label]) => <Link key={href} href={href} title={href === '/digital-services' ? 'Цифровые инструменты и сервисы' : href === '/services' ? 'Услуги специалистов' : undefined} aria-current={href === '/' ? 'page' : undefined}>{label}</Link>)}</nav>
    <HeaderSearch inputRef={searchInput}/>
@@ -239,6 +249,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
   <section className="forum-intro" aria-label="О 4rrum">
    {demo && <span className="forum-demo-label">Демонстрационные данные · <Link href="/">На форум</Link></span>}
    <div className="forum-search-hero">
+    <img className="forum-hero-art" src="/forrum-assets/hero-planet.svg" alt="" aria-hidden="true"/>
     <div className="forum-hero-copy">
      <p className="forum-hero-kicker">4RRUM // БОЛЬШЕ ЧЕМ ФОРУМ</p>
      <h1>ТЕХНОЛОГИИ. ЛЮДИ. ИДЕИ.</h1>
@@ -264,7 +275,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
    <div className="forum-feed-toolbar">
     <h2 className="forum-feed-title"><Icon name="comment"/>Обсуждения</h2>
     <div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-pressed={item.id === tab} key={item.id} title={item.id === 'popular' ? 'Темы с ответами за последние 24 часа' : undefined} onClick={() => choose(item.id, community)}>{item.label}</button>)}</div>
-    <Link className="forum-feed-create" href="/create"><Icon name="plus"/>Создать тему</Link>
+    <Link className="forum-feed-create" href="/create" aria-label="Создать тему" title="Создать тему"><Icon name="plus"/><span>Создать тему</span></Link>
     <button type="button" className="forum-filter-toggle" aria-label="Фильтры" aria-expanded={filters} onClick={() => setFilters(value => !value)}><Icon name="filter"/></button>
    </div>
    {filters && <div className="forum-filters">
