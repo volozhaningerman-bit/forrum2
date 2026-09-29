@@ -49,6 +49,15 @@ function categoryIcon(name: string): Glyph {
  if (/telegram|общест|forrum/i.test(name)) return 'community';
  return 'code';
 }
+function topicRowArt(slug: string, name: string) {
+ const value=`${slug} ${name}`.toLowerCase();
+ if (/gta|game|игр/.test(value)) return '/forrum-assets/topic-row-game.svg';
+ if (/design|дизайн|media/.test(value)) return '/forrum-assets/topic-row-design.svg';
+ if (/promotion|marketing|бизнес|продвиж|маркет/.test(value)) return '/forrum-assets/topic-row-growth.svg';
+ if (/telegram|social|community|общест|forrum/.test(value)) return '/forrum-assets/topic-row-social.svg';
+ if (/dev|code|internet|project|карьер|ai|данн|разработ/.test(value)) return '/forrum-assets/topic-row-code.svg';
+ return '/forrum-assets/topic-row-default.svg';
+}
 function Categories({ items: sourceItems, selected }: { items: Community[]; selected: string }) {
  // Flatten retired navigation groups only; their publications and URLs stay intact.
  const hidden = new Set(sourceItems.filter(item => /^(мастерская|медиа)$/i.test(item.name.trim())).map(item => item.slug));
@@ -92,10 +101,10 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
  const important=Boolean(item.isOfficial && item.pinnedUntil && Date.parse(item.pinnedUntil)>Date.now());
  const lastAuthor=item.lastComment?.author ?? item.author;
  const lastAt=item.lastComment?.createdAt ?? item.lastActivityAt ?? item.createdAt;
- const cover=item.community.coverUrl?.replace(/["\\]/g,'');
+ const art=topicRowArt(item.community.slug,item.community.name);
  const style={
    ...categoryStyle(item.community.slug, category?.accentColor ?? item.community.accentColor),
-   '--topic-image':cover ? `url("${cover}")` : 'none',
+   '--topic-image':`url("${art}")`,
  } as CSSProperties;
  return <article className={`forum-topic is-${readState}`} style={style} data-reading-state={readState}>
   <Link className="forum-topic-avatar" href={`/communities/${item.community.slug}`} title={item.community.name} aria-label={`Раздел: ${item.community.name}`}><span className="forum-topic-category-icon"><Icon name={categoryIcon(item.community.name)}/></span></Link>
