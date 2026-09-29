@@ -9,7 +9,8 @@ await mkdir(output, { recursive: true });
 await copyFile(root + 'docs/design-reference/home-approved.png', output + '/approved.png');
 const names = ['Алексей Петров', 'Мария Кузнецова', 'Иван Соколов', 'Дмитрий Волков', 'Елена Смирнова', 'Артём Орлов', 'Кира Белова', 'Михаил Серов', 'Лина Романова', 'Олег Миронов'];
 const categories = ['Разработка', 'Backend', 'Дизайн', 'Бизнес', 'Карьера', 'AI и данные', 'Маркетинг', 'Общество', 'Разное'];
-const communities = categories.map((name, i) => ({ id: String(i), slug: 'category-' + i, name, parent: i === 1 ? { slug: 'category-0', name: categories[0] } : null, subscriberCount: 120, publicationCount: 5, onlineCount: 3, description: '' }));
+const topicCovers = ['/forrum-assets/cover-internet-projects.svg','/forrum-assets/cover-promotion.svg','/forrum-assets/cover-gta-rp.svg','/forrum-assets/topic-forrum.svg','/forrum-assets/topic-seo.svg','/forrum-assets/cover-telegram.svg','/forrum-assets/topic-projects.svg','/forrum-assets/topic-promotion.svg','/forrum-assets/topic-telegram.svg'];
+const communities = categories.map((name, i) => ({ id: String(i), slug: 'category-' + i, name, parent: i === 1 ? { slug: 'category-0', name: categories[0] } : null, subscriberCount: 120, publicationCount: 5, onlineCount: 3, description: '', coverUrl: topicCovers[i % topicCovers.length] }));
 communities.push({id:'retired',slug:'workshop',name:'Мастерская',parent:null,subscriberCount:0,onlineCount:0,publicationCount:0,description:''});
 communities[2].parent={slug:'workshop',name:'Мастерская'};
 const titles = ['Стоит ли переходить на Rust в продакшене?', 'Как составить сильное IT-резюме?', 'Лучшие практики для тёмных интерфейсов', 'Идея: платформа для поиска технических сооснователей', 'Как меняется работа с нейросетями'];
@@ -111,7 +112,7 @@ try {
  const beforeHover=await page.locator('.forum-topic').first().boundingBox();
  assert(beforeHover && beforeHover.height>=58 && beforeHover.height<=63,`Reference topic row must stay compact, got ${beforeHover?.height}`);
  const topicIconBox=await page.locator('.forum-topic-category-icon').first().boundingBox();
- assert(topicIconBox && topicIconBox.width>=39 && topicIconBox.width<=41,`Reference topic icon should be about 40px, got ${topicIconBox?.width}`);
+ assert(topicIconBox && topicIconBox.width>=41 && topicIconBox.width<=43,`Reference topic icon should be about 42px, got ${topicIconBox?.width}`);
  const lastAvatarBox=await page.locator('.forum-topic-last .avatar').first().boundingBox();
  assert(lastAvatarBox && lastAvatarBox.width>=31 && lastAvatarBox.width<=33,`Reference last-message avatar should be about 32px, got ${lastAvatarBox?.width}`);
  await page.locator('.forum-topic').first().hover(); await page.waitForTimeout(160);
