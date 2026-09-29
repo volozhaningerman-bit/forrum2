@@ -27,7 +27,11 @@
     "test:home": "node scripts/test-home-v40.mjs"
   },
   "devDependencies": {
-    "typescript": "5.9.3",
-    "playwright": "1.62.1"
+    "playwright": "1.62.1",
+    "typescript": "5.9.3"
+  },
+  "overrides": {
+    "mysql2": "3.24.4",
+    "valibot": "1.5.0"
   }
 }
