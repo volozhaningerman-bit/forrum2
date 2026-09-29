@@ -107,7 +107,7 @@ try {
  assert.equal(await page.locator('.forum-topic-excerpt').first().textContent(),excerpts[0]);
  assert.equal(await page.locator('.forum-topic-menu .forum-more-trigger').count(),20);
  const unreadStrip=await page.locator('.forum-topic').first().evaluate(el=>getComputedStyle(el,'::before').width);
- assert.equal(unreadStrip,'3px');
+ assert.equal(unreadStrip,'2px');
  const beforeHover=await page.locator('.forum-topic').first().boundingBox();
  await page.locator('.forum-topic').first().hover(); await page.waitForTimeout(160);
  const afterHover=await page.locator('.forum-topic').first().boundingBox();
