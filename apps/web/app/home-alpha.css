@@ -2303,3 +2303,242 @@ body:has(.forum-home[data-home-reference="v49"]) {
     font-size:8px!important;
   }
 }
+
+
+/* Homepage alpha v63 — screenshot convergence against approved reference. */
+@media (min-width:1051px) {
+  .forum-home[data-home-reference="v49"] .forum-search-hero {
+    min-height:160px!important;
+    height:160px!important;
+    overflow:hidden;
+  }
+  .forum-home[data-home-reference="v49"] .forum-hero-copy {
+    min-height:160px!important;
+    padding:25px 31px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-search-hero::after {
+    right:-1%!important;
+    top:-26%!important;
+    width:46%!important;
+    opacity:.48!important;
+    filter:contrast(1.28) brightness(1.12);
+  }
+  .forum-home[data-home-reference="v49"] .forum-hero-copy h1 {
+    font-size:clamp(31px,2.55vw,44px)!important;
+    letter-spacing:-1.7px!important;
+  }
+
+  .forum-home[data-home-reference="v49"] .forum-important>header {
+    min-height:43px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-important-row {
+    min-height:70px!important;
+    padding:7px 11px!important;
+  }
+
+  .forum-home[data-home-reference="v49"] .forum-feed-toolbar {
+    min-height:52px!important;
+    padding:10px 6px 7px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic-columns {
+    min-height:28px!important;
+  }
+
+  .forum-home[data-home-reference="v49"] .forum-topic {
+    grid-template-columns:40px minmax(0,1fr) 124px 54px 62px 154px 32px!important;
+    min-height:62px!important;
+    padding:5px 8px!important;
+    gap:8px!important;
+    background-image:
+      linear-gradient(90deg,
+        rgba(8,10,11,.998) 0%,
+        rgba(8,10,11,.995) 31%,
+        rgba(8,10,11,.94) 48%,
+        rgba(8,10,11,.76) 66%,
+        rgba(8,10,11,.58) 82%,
+        rgba(8,10,11,.66) 100%),
+      var(--topic-image)!important;
+    background-size:auto,58% 140%!important;
+    background-position:center,right center!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic::after {
+    opacity:.2!important;
+    background:
+      linear-gradient(90deg,transparent 37%,color-mix(in srgb,var(--chip-accent,#8b8b8b) 25%,transparent) 74%,transparent),
+      repeating-linear-gradient(90deg,transparent 0 31px,rgba(255,255,255,.028) 32px),
+      repeating-linear-gradient(0deg,transparent 0 15px,rgba(255,255,255,.020) 16px)!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic-category-icon {
+    width:38px!important;
+    height:38px!important;
+    border-color:#454d52!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic-category-icon svg {
+    width:20px!important;
+    height:20px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic-content {
+    padding-left:5px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic h2 {
+    margin:0 0 2px!important;
+    font-size:12.5px!important;
+    line-height:1.18!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic-excerpt {
+    max-width:86ch!important;
+    margin:0!important;
+    color:#b1b7ba!important;
+    font-size:10.2px!important;
+    line-height:1.24!important;
+    -webkit-line-clamp:2!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic-last {
+    grid-template-columns:28px minmax(0,1fr)!important;
+    gap:7px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic-last .avatar {
+    width:28px!important;
+    height:28px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic-last strong {
+    font-size:10px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-more-trigger {
+    width:30px!important;
+    height:38px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic:hover,
+  .forum-home[data-home-reference="v49"] .forum-topic:focus-within {
+    transform:scale(1.004)!important;
+    box-shadow:
+      0 8px 26px #000c,
+      inset 0 0 0 1px color-mix(in srgb,var(--chip-accent,#9ecbff) 58%,#c6e2ff),
+      0 0 18px color-mix(in srgb,var(--chip-accent,#9ecbff) 24%,transparent)!important;
+  }
+
+  .forum-home[data-home-reference="v49"] .forum-popular-today li {
+    min-height:48px!important;
+    padding:7px 0!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-author-ranking li {
+    min-height:38px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-author-ranking .avatar {
+    width:28px!important;
+    height:28px!important;
+  }
+
+  .forum-home[data-home-reference="v49"] .forum-brand {
+    transform:skew(-7deg) scaleX(1.21)!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-brand-four {
+    font-size:57px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-brand strong {
+    font-size:35px!important;
+    letter-spacing:.6px!important;
+  }
+}
+
+@media (min-width:1051px) and (max-width:1300px) {
+  .forum-home[data-home-reference="v49"] .forum-topic {
+    grid-template-columns:38px minmax(0,1fr) 94px 48px 54px 138px 30px!important;
+  }
+}
+
+
+/* Homepage alpha v64 — replace card-like fallbacks with native row atmosphere. */
+@media (min-width:1051px) {
+  .forum-home[data-home-reference="v49"] .forum-topic {
+    background-image:
+      linear-gradient(90deg,
+        rgba(8,10,11,.998) 0%,
+        rgba(8,10,11,.994) 30%,
+        rgba(8,10,11,.90) 49%,
+        rgba(8,10,11,.68) 67%,
+        rgba(8,10,11,.58) 83%,
+        rgba(8,10,11,.72) 100%),
+      radial-gradient(ellipse at 72% 44%,
+        color-mix(in srgb,var(--chip-accent,#8aa6bc) 30%,transparent) 0%,
+        color-mix(in srgb,var(--chip-accent,#8aa6bc) 12%,transparent) 28%,
+        transparent 62%),
+      linear-gradient(128deg,
+        transparent 43%,
+        color-mix(in srgb,var(--chip-accent,#8aa6bc) 17%,transparent) 55%,
+        transparent 74%),
+      var(--topic-image)!important;
+    background-size:auto,auto,auto,58% 140%!important;
+    background-position:center,center,center,right center!important;
+    background-repeat:no-repeat!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic::after {
+    opacity:.24!important;
+    background:
+      linear-gradient(90deg,transparent 39%,color-mix(in srgb,var(--chip-accent,#8aa6bc) 24%,transparent) 69%,transparent 94%),
+      repeating-linear-gradient(90deg,transparent 0 31px,rgba(255,255,255,.026) 32px),
+      repeating-linear-gradient(0deg,transparent 0 15px,rgba(255,255,255,.018) 16px)!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic-category-cell a {
+    background:color-mix(in srgb,var(--chip-accent) 11%,#090b0c)!important;
+    border-color:color-mix(in srgb,var(--chip-accent) 62%,#42484c)!important;
+  }
+}
+
+
+/* Homepage alpha v65 — stronger approved-reference accents after screenshot review. */
+@media (min-width:1051px) {
+  .forum-home[data-home-reference="v49"] .forum-important-row {
+    min-height:76px!important;
+  }
+
+  .forum-home[data-home-reference="v49"] .forum-topic {
+    background-image:
+      linear-gradient(90deg,
+        rgba(8,10,11,.998) 0%,
+        rgba(8,10,11,.992) 28%,
+        rgba(8,10,11,.84) 47%,
+        rgba(8,10,11,.55) 63%,
+        rgba(8,10,11,.48) 82%,
+        rgba(8,10,11,.68) 100%),
+      radial-gradient(ellipse at 71% 48%,
+        color-mix(in srgb,var(--chip-accent,#8aa6bc) 46%,transparent) 0%,
+        color-mix(in srgb,var(--chip-accent,#8aa6bc) 24%,transparent) 30%,
+        transparent 65%),
+      linear-gradient(132deg,
+        transparent 40%,
+        color-mix(in srgb,var(--chip-accent,#8aa6bc) 29%,transparent) 55%,
+        transparent 76%),
+      var(--topic-image)!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic::after {
+    opacity:.30!important;
+    background:
+      linear-gradient(90deg,transparent 35%,color-mix(in srgb,var(--chip-accent,#8aa6bc) 31%,transparent) 69%,transparent 95%),
+      repeating-linear-gradient(90deg,transparent 0 31px,rgba(255,255,255,.032) 32px),
+      repeating-linear-gradient(0deg,transparent 0 15px,rgba(255,255,255,.022) 16px)!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic-category-cell a {
+    background:color-mix(in srgb,var(--chip-accent) 18%,#090b0c)!important;
+    border-color:color-mix(in srgb,var(--chip-accent) 72%,#42484c)!important;
+    color:color-mix(in srgb,var(--chip-accent) 48%,#fff)!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic-category-icon {
+    background:
+      linear-gradient(145deg,
+        color-mix(in srgb,var(--chip-accent,#888) 22%,#151819),
+        #0c0e0f)!important;
+    box-shadow:
+      inset 0 0 18px color-mix(in srgb,var(--chip-accent,#888) 14%,transparent),
+      0 0 10px color-mix(in srgb,var(--chip-accent,#888) 8%,transparent)!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic:is(.is-unread,.is-updated)::before {
+    background:color-mix(in srgb,var(--chip-accent,#dbe9ff) 62%,#eaf4ff)!important;
+    box-shadow:0 0 9px color-mix(in srgb,var(--chip-accent,#cfe7ff) 52%,transparent)!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic.is-read .forum-topic-content,
+  .forum-home[data-home-reference="v49"] .forum-topic.is-read .forum-topic-last,
+  .forum-home[data-home-reference="v49"] .forum-topic.is-read .forum-topic-metric {
+    opacity:.94!important;
+  }
+}
