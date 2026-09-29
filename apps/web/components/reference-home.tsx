@@ -97,7 +97,7 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
    '--topic-image':cover ? `url("${cover}")` : 'none',
  } as CSSProperties;
  return <article className={`forum-topic is-${readState}`} style={style} data-reading-state={readState}>
-  <Link className="forum-topic-avatar" href={`/u/${item.author.username}`} title={item.author.displayName} aria-label={`Автор: ${item.author.displayName}`}><Avatar name={item.author.displayName} url={item.author.avatarUrl} size={38}/></Link>
+  <Link className="forum-topic-avatar" href={`/communities/${item.community.slug}`} title={item.community.name} aria-label={`Раздел: ${item.community.name}`}><span className="forum-topic-category-icon"><Icon name={categoryIcon(item.community.name)}/></span></Link>
   <div className="forum-topic-content">
    <h2>{important && <span className="forum-topic-pinned" title="Закреплена форумом"><Icon name="pin"/></span>}{important && <span className="forum-topic-important">Важно</span>}<Link className="forum-topic-main-link" href={`/p/${item.slug}`}>{item.title?.trim() || 'Запись без заголовка'}</Link>{important && <span className="forum-topic-attachment" title="Прикреплено к ленте"><Icon name="paperclip"/></span>}</h2>
    <p className="forum-topic-excerpt">{item.excerpt || 'Откройте тему, чтобы прочитать обсуждение и присоединиться.'}</p>
