@@ -31,7 +31,7 @@ export function CommunityPanels({
   void news;
   void events;
   const [mode,setMode]=useState<'activity'|'likes'>('activity');
-  const [period,setPeriod]=useState<'week'|'month'|'all'>('week');
+  const [period,setPeriod]=useState<'week'|'month'|'all'>(() => overview?.weekly?.activity?.length ? 'week' : 'all');
   const [ranking,setRanking]=useState<WeeklyUser[]|null>(null);
   const [rankingError,setRankingError]=useState(false);
   const [rankingLoading,setRankingLoading]=useState(false);
@@ -112,7 +112,6 @@ export function CommunityPanels({
       <header><h2><PanelIcon kind="flame"/>Популярное сегодня</h2><Link href="/?tab=popular">Все →</Link></header>
       {popularToday.items.length
         ? <>
-            {popularToday.isFallback && <p className="forum-popular-note">Сегодня без новых всплесков · темы из текущей ленты</p>}
             <ol>{popularToday.items.map((item,index)=><li key={item.slug}>
               <span className="forum-popular-rank">{index+1}</span>
               <Link href={`/p/${item.slug}`}>
