@@ -32,14 +32,15 @@ jobs:
           npm install next@16.3.6 -w @forrum/web --save-exact
           npm install @nestjs/common@11.2.6 @nestjs/core@11.2.6 @nestjs/platform-express@11.2.6 @nestjs/swagger@11.4.7 nodemailer@10.0.12 sharp@0.35.5 -w @forrum/api --save-exact
           npm install @nestjs/testing@11.2.6 -w @forrum/api -D --save-exact
-          npm pkg set 'overrides.mysql2=3.24.4' 'overrides.valibot=1.5.0'
+          npm pkg delete overrides.mysql2 overrides.valibot || true
+          npm pkg set 'overrides.lodash=4.18.1'
           npm install
       - run: npm run db:generate
       - run: npm test
       - run: npm run build
       - run: npm run typecheck
       - name: Inspect patched dependency graph
-        run: npm ls next @nestjs/platform-express @nestjs/swagger nodemailer sharp hono lodash mysql2 valibot || true
+        run: npm ls next @nestjs/platform-express @nestjs/swagger nodemailer sharp lodash prisma || true
       - name: Commit patched dependency graph
         run: |
           git config user.name "4rrum security bot"
