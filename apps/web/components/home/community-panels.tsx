@@ -36,7 +36,6 @@ export function CommunityPanels({
   const [rankingError,setRankingError]=useState(false);
   const [rankingLoading,setRankingLoading]=useState(false);
   const [retry,setRetry]=useState(0);
-  const [autoPeriodFallback,setAutoPeriodFallback]=useState(true);
 
   useEffect(()=>{
     const controller=new AbortController();
@@ -44,13 +43,7 @@ export function CommunityPanels({
     setRankingError(false);
     setRanking(null);
     api<WeeklyUser[]>(`/home/ranking?period=${period}&mode=${mode}`,{signal:controller.signal})
-      .then(rows=>{
-        if(controller.signal.aborted) return;
-        if(autoPeriodFallback && rows.length===0 && period==='week'){setPeriod('month');return;}
-        if(autoPeriodFallback && rows.length===0 && period==='month'){setPeriod('all');return;}
-        setRanking(rows);
-        setAutoPeriodFallback(false);
-      })
+      .then(rows=>{if(!controller.signal.aborted)setRanking(rows);})
       .catch(()=>{if(!controller.signal.aborted)setRankingError(true);})
       .finally(()=>{if(!controller.signal.aborted)setRankingLoading(false);});
     return()=>controller.abort();
