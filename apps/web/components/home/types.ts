@@ -65,6 +65,8 @@ export type HomeOverview = {
   };
   discussed?: HomeDiscussedTopic[];
   stats: {
+    users?: number;
+    newestUser?: { username: string; displayName: string } | null;
     communities: number;
     topics: number;
     messages: number;
