@@ -2846,7 +2846,12 @@ body:has(.forum-home[data-home-reference="v49"]) {
     height:18px!important;
   }
   .forum-home[data-home-reference="v49"] .forum-filter-toggle {
-    display:none!important;
+    width:39px!important;
+    min-width:39px!important;
+    height:39px!important;
+    min-height:39px!important;
+    border-color:#596166!important;
+    background:#111416!important;
   }
 
   /* Topic table */
@@ -2946,7 +2951,7 @@ body:has(.forum-home[data-home-reference="v49"]) {
     height:38px!important;
   }
   .forum-home[data-home-reference="v49"] .forum-topic:is(.is-unread,.is-updated)::before {
-    width:3px!important;
+    width:2px!important;
     top:4px!important;
     bottom:4px!important;
     background:color-mix(in srgb,var(--chip-accent,#cbe6ff) 72%,#fff)!important;
@@ -2983,7 +2988,14 @@ body:has(.forum-home[data-home-reference="v49"]) {
     font-size:9px!important;
   }
   .forum-home[data-home-reference="v49"] .forum-ranking-tabs {
-    display:none!important;
+    min-height:30px!important;
+    margin-bottom:6px!important;
+    border-bottom:1px solid #343a3e!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-ranking-tabs button {
+    min-height:30px!important;
+    font-size:8.5px!important;
+    text-transform:uppercase!important;
   }
   .forum-home[data-home-reference="v49"] .forum-ranking-period {
     min-height:38px!important;
