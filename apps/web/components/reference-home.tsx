@@ -156,6 +156,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
  const [retry, setRetry] = useState(0);
  const searchInput = useRef<HTMLInputElement>(null);
  const sidebarRef = useRef<HTMLElement>(null);
+ const filterDetailsRef = useRef<HTMLDetailsElement>(null);
  const moreRequest = useRef<AbortController | null>(null);
  const [pendingTopics, setPendingTopics] = useState<PublicationCardData[] | null>(null);
  function choose(nextTab: Tab, nextCommunity: string) {
@@ -207,7 +208,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
  const visible = demo ? topics.filter(item=>item.format==='TOPIC' && (tab!=='unanswered'||!item.commentCount) && (!community||item.community.slug===community)) : topics;
  const news = initialData.announcements?.slice(0, 4) ?? [];
  const important = [...news.slice(0,2), ...topics.filter(item => item.format === 'TOPIC' && !news.some(row => row.id === item.id))].slice(0,2);
- return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v58" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
+ return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v59" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
   <aside ref={sidebarRef} className={`forum-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="Навигация форума">
    <button type="button" className="forum-sidebar-close" onClick={()=>setSidebar(false)} aria-label="Закрыть меню"><Icon name="close"/></button>
    <Categories items={communities} selected={community}/>
@@ -264,7 +265,17 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
     <Link className="forum-feed-create" href="/create"><Icon name="plus"/>Создать тему</Link>
     <button type="button" className="forum-filter-toggle" aria-label="Фильтры" aria-expanded={filters} onClick={() => setFilters(value => !value)}><Icon name="filter"/></button>
    </div>
-   {filters && <div className="forum-filters"><label>Сообщество<select aria-label="Сообщество" value={community} onChange={event => choose(tab,event.target.value)}><option value="">Все сообщества</option>{communities.map(item => <option key={item.slug} value={item.slug}>{item.name}</option>)}</select></label><button type="button" onClick={() => choose(tab,'')}>Сбросить</button></div>}
+   {filters && <div className="forum-filters">
+    <span className="forum-filter-label">Сообщество</span>
+    <details className="forum-filter-menu" ref={filterDetailsRef}>
+     <summary aria-label="Выбрать сообщество">{communities.find(item=>item.slug===community)?.name || 'Все сообщества'}<span aria-hidden="true">⌄</span></summary>
+     <div className="forum-filter-options" role="menu" aria-label="Фильтр по сообществу">
+      <button type="button" role="menuitemradio" aria-checked={!community} onClick={()=>{choose(tab,'');filterDetailsRef.current?.removeAttribute('open');}}>Все сообщества</button>
+      {communities.map(item=><button key={item.slug} type="button" role="menuitemradio" aria-checked={community===item.slug} onClick={()=>{choose(tab,item.slug);filterDetailsRef.current?.removeAttribute('open');}}>{item.name}</button>)}
+     </div>
+    </details>
+    {community && <button className="forum-filter-reset" type="button" onClick={() => choose(tab,'')}>Сбросить</button>}
+   </div>}
    {community && <div className="forum-active-filter">{communities.find(item=>item.slug===community)?.name || community}<button type="button" onClick={()=>choose(tab,'')} aria-label="Сбросить выбранное сообщество">×</button></div>}
    {pendingTopics && !loading && <button type="button" className="forum-feed-update" onClick={() => {setTopics(pendingTopics.slice(0,20));setHasMore(pendingTopics.length>20);setOffset(20);setPendingTopics(null);}}>Есть обновления в ленте · Показать</button>}
    <div className="forum-topic-columns" aria-hidden="true"><span>Тема</span><span>Категория</span><span>Ответы</span><span>Просмотры</span><span>Последнее сообщение</span><span/></div>
