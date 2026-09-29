@@ -1,0 +1,52 @@
+name: Security dependency upgrade v59
+
+on:
+  push:
+    branches:
+      - feat/homepage-alpha-audit-v59
+    paths:
+      - ".github/workflows/dependency-security-v59.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: postgresql://test:test@localhost:5432/test
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/homepage-alpha-audit-v59
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - name: Upgrade patched production dependencies
+        run: |
+          npm install next@16.3.6 -w @forrum/web --save-exact
+          npm install @nestjs/common@11.2.6 @nestjs/core@11.2.6 @nestjs/platform-express@11.2.6 @nestjs/swagger@11.4.7 nodemailer@10.0.12 sharp@0.35.5 -w @forrum/api --save-exact
+          npm install @nestjs/testing@11.2.6 -w @forrum/api -D --save-exact
+          npm pkg set 'overrides.mysql2=3.24.4' 'overrides.valibot=1.5.0'
+          npm install
+      - run: npm run db:generate
+      - run: npm test
+      - run: npm run build
+      - run: npm run typecheck
+      - name: Confirm production dependency audit
+        run: npm audit --omit=dev --audit-level=high
+      - name: Commit patched dependency graph
+        run: |
+          git config user.name "4rrum security bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add package.json package-lock.json apps/api/package.json apps/web/package.json
+          if git diff --cached --quiet; then
+            echo "No dependency changes"
+            exit 0
+          fi
+          git commit -m "Security v59: upgrade vulnerable production dependencies"
+          git push origin HEAD:feat/homepage-alpha-audit-v59
