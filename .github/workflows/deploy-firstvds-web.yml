@@ -57,11 +57,11 @@ jobs:
           set -euo pipefail
           for i in $(seq 1 30); do
             html=$(curl --fail --silent --show-error               -H 'Cache-Control: no-cache, no-store, max-age=0'               "https://4rrum.ru/?deploy-check=${GITHUB_RUN_ID}-${i}" || true)
-            if printf '%s' "$html" | grep -q 'data-home-revision="v61"'; then
-              echo "4rrum.ru serves homepage revision v61"
+            if printf '%s' "$html" | grep -q 'data-home-revision="v67"'; then
+              echo "4rrum.ru serves homepage revision v67"
               exit 0
             fi
             sleep 10
           done
-          echo "Homepage revision v61 did not appear on 4rrum.ru" >&2
+          echo "Homepage revision v67 did not appear on 4rrum.ru" >&2
           exit 1

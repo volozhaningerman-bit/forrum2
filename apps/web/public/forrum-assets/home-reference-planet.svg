@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="180" viewBox="0 0 760 180">
+<defs>
+  <radialGradient id="glow" cx=".60" cy=".24" r=".82"><stop offset="0" stop-color="#fff" stop-opacity=".24"/><stop offset=".52" stop-color="#c4c4c1" stop-opacity=".09"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+  <pattern id="grid" width="8" height="8" patternUnits="userSpaceOnUse"><path d="M8 0H0V8" fill="none" stroke="#deded9" stroke-opacity=".24" stroke-width=".65"/></pattern>
+  <clipPath id="planet"><circle cx="520" cy="210" r="250"/></clipPath>
+</defs>
+<g clip-path="url(#planet)">
+  <circle cx="520" cy="210" r="250" fill="#9d9d99" fill-opacity=".07"/>
+  <rect x="250" y="-50" width="520" height="270" fill="url(#grid)"/>
+  <path d="M286 95c85-56 151-76 234-76 95 0 175 26 238 76M278 126c92-48 165-64 244-64 91 0 166 20 229 59M286 154c91-37 163-48 237-48 84 0 155 14 217 41" fill="none" stroke="#e7e7e2" stroke-opacity=".17"/>
+  <path d="M330 6c-44 58-64 116-58 182M410-12c-28 67-36 134-24 204M520-20v218M630-8c27 67 34 132 22 199M706 14c39 56 54 111 46 170" fill="none" stroke="#e7e7e2" stroke-opacity=".14"/>
+  <rect x="250" y="-50" width="520" height="270" fill="url(#glow)"/>
+</g>
+<g fill="#fff">
+  <circle cx="642" cy="56" r="8" fill-opacity=".88"/>
+  <circle cx="610" cy="88" r="1.7" fill-opacity=".5"/>
+  <circle cx="503" cy="38" r="1.2" fill-opacity=".46"/>
+</g>
+<g stroke="#fff" stroke-opacity=".82" stroke-width="1">
+  <path d="M232 43h30M247 28v30"/>
+  <path d="M694 35h24M706 23v24"/>
+  <path d="M184 72h14M191 65v14"/>
+</g>
+<g fill="#aeb1b0" fill-opacity=".78" font-family="monospace" font-size="7" letter-spacing="1.2">
+  <text x="685" y="121">IDEAS</text><text x="685" y="132">PEOPLE</text><text x="685" y="143">TECHNOLOGIES</text>
+</g>
+</svg>

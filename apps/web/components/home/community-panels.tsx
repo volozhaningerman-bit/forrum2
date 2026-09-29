@@ -33,6 +33,7 @@ export function CommunityPanels({
   const [mode,setMode]=useState<'activity'|'likes'>('activity');
   const [period,setPeriod]=useState<'week'|'month'|'all'>('week');
   const [ranking,setRanking]=useState<WeeklyUser[]|null>(null);
+  const [fallbackRanking,setFallbackRanking]=useState<WeeklyUser[]>([]);
   const [rankingError,setRankingError]=useState(false);
   const [rankingLoading,setRankingLoading]=useState(false);
   const [retry,setRetry]=useState(0);
@@ -42,14 +43,26 @@ export function CommunityPanels({
     setRankingLoading(true);
     setRankingError(false);
     setRanking(null);
+    setFallbackRanking([]);
     api<WeeklyUser[]>(`/home/ranking?period=${period}&mode=${mode}`,{signal:controller.signal})
-      .then(rows=>{if(!controller.signal.aborted)setRanking(rows);})
+      .then(async rows=>{
+        if(controller.signal.aborted) return;
+        setRanking(rows);
+        if(rows.length===0 && period!=='all'){
+          try {
+            const fallback=await api<WeeklyUser[]>(`/home/ranking?period=all&mode=${mode}`,{signal:controller.signal});
+            if(!controller.signal.aborted)setFallbackRanking(fallback.slice(0,10));
+          } catch {}
+        }
+      })
       .catch(()=>{if(!controller.signal.aborted)setRankingError(true);})
       .finally(()=>{if(!controller.signal.aborted)setRankingLoading(false);});
     return()=>controller.abort();
   },[period,mode,retry]);
 
-  const authors=ranking ?? (period==='week' ? overview?.weekly?.[mode]?.slice(0,10) ?? [] : []);
+  const weeklyCached=period==='week' ? overview?.weekly?.[mode]?.slice(0,10) ?? [] : [];
+  const authors=ranking?.length ? ranking : fallbackRanking.length ? fallbackRanking : ranking===null ? weeklyCached : [];
+  const rankingUsesFallback=Boolean(ranking && ranking.length===0 && fallbackRanking.length);
   const periodLabel=period==='week'?'За неделю':period==='month'?'За месяц':'За всё время';
   const popularToday=useMemo(()=>{
     const discussedRows=(overview?.discussed??[]).slice().sort((a,b)=>Date.parse(b.lastActivityAt||b.createdAt)-Date.parse(a.lastActivityAt||a.createdAt));
@@ -94,11 +107,11 @@ export function CommunityPanels({
         : rankingError || (unavailable && !ranking)
           ? <p className="forum-muted">Рейтинг временно недоступен. <button type="button" onClick={()=>setRetry(value=>value+1)}>Повторить</button></p>
           : authors.length
-            ? <ol className="forum-author-ranking">{authors.map((person,index)=><li key={person.username}>
+            ? <>{rankingUsesFallback && <p className="forum-ranking-note">{periodLabel}: активности пока нет · показан общий рейтинг</p>}<ol className="forum-author-ranking">{authors.map((person,index)=><li key={person.username}>
                 <span className={"forum-rank"+(index<3?` is-medal is-medal-${index+1}`:'')}>{index<3?'♛':index+1}</span>
                 <Link href={`/u/${person.username}`}><Avatar name={person.displayName} url={person.avatarUrl} size={28}/><strong>{person.displayName}</strong></Link>
                 <small title={mode==='likes'?'Симпатии к темам':'Темы и ответы'}>{formatCount(mode==='likes'?person.reactionCount:person.topicCount+person.commentCount)}</small>
-              </li>)}</ol>
+              </li>)}</ol></>
             : <div className="forum-ranking-empty">
                 <strong>{mode==='likes'?'Поддержите полезную тему':'Первое слово — за вами'}</strong>
                 <p className="forum-muted">{periodLabel} {mode==='likes'?'пока нет симпатий к темам.':'ещё нет новых тем и ответов.'}</p>
