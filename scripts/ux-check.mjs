@@ -121,6 +121,14 @@ for (const [relative, pattern, label] of releaseCandidateRequirements) {
   } catch { failures.push(`missing release candidate interface: ${relative}`); }
 }
 
+const categoryPage = join(root, 'apps/web/app/communities/[slug]/category-page.tsx');
+try {
+  const text = await readFile(categoryPage, 'utf8');
+  if (/<select[\s>]/.test(text)) failures.push('community category page uses a native select instead of forum-native controls');
+  if (/section-tree-workshop|workshopNavigation|workshopOpen/.test(text)) failures.push('community category tree reintroduced the retired workshop shortcut');
+  if (!/section-topic-sort-options/.test(text)) failures.push('community category page is missing compact topic sorting controls');
+} catch { failures.push('missing community category page'); }
+
 const eventsPage = join(root, 'apps/web/app/events/events-client.tsx');
 try {
   const text = await readFile(eventsPage, 'utf8');
