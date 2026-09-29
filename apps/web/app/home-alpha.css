@@ -3000,3 +3000,24 @@ body:has(.forum-home[data-home-reference="v49"]) {
     min-height:50px!important;
   }
 }
+
+
+/* Homepage alpha v66 — reference hero artwork. */
+@media (min-width:1051px) {
+  .forum-home[data-home-reference="v49"] .forum-search-hero::after {
+    content:''!important;
+    position:absolute!important;
+    top:0!important;
+    right:0!important;
+    bottom:0!important;
+    width:58%!important;
+    height:100%!important;
+    opacity:.96!important;
+    filter:none!important;
+    background:url('/forrum-assets/home-reference-planet.svg') right center / auto 100% no-repeat!important;
+    pointer-events:none!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-hero-pixel-art {
+    display:none!important;
+  }
+}
