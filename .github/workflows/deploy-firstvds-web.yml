@@ -57,7 +57,7 @@ jobs:
           set -euo pipefail
           for i in $(seq 1 30); do
             html=$(curl --fail --silent --show-error               -H 'Cache-Control: no-cache, no-store, max-age=0'               "https://4rrum.ru/?deploy-check=${GITHUB_RUN_ID}-${i}" || true)
-            if printf '%s' "$html" | grep -q 'data-home-revision="v64"'; then
+            if printf '%s' "$html" | grep -q 'data-home-revision="v65"'; then
               echo "4rrum.ru serves homepage revision v64"
               exit 0
             fi
