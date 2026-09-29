@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="180" viewBox="0 0 1200 180" role="img" aria-label="Интернет-проекты">
+  <defs>
+    <linearGradient id="base" x1="0" x2="1"><stop offset="0" stop-color="#050607"/><stop offset=".42" stop-color="#080a0b"/><stop offset=".72" stop-color="#376e95" stop-opacity=".26"/><stop offset="1" stop-color="#060708"/></linearGradient>
+    <radialGradient id="g" cx="72%" cy="48%" r="52%"><stop offset="0" stop-color="#9fd6ff" stop-opacity=".52"/><stop offset=".52" stop-color="#376e95" stop-opacity=".22"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#fff" stroke-width=".5" opacity=".08"/></pattern>
+  </defs>
+  <rect width="1200" height="180" fill="url(#base)"/>
+  <rect width="1200" height="180" fill="url(#g)"/>
+  <rect width="1200" height="180" fill="url(#grid)"/>
+  <path d="M470 150 610 42 748 132 884 32 1060 145" fill="none" stroke="#9fd6ff" stroke-width="2" opacity=".34"/>
+  <path d="M540 164 678 86 816 142 952 66 1125 164" fill="none" stroke="#fff" stroke-width="1" opacity=".1"/>
+  <g fill="none" stroke="#a9ddff" opacity=".28"><circle cx="834" cy="90" r="48"/><path d="M786 90h96M834 42c14 16 22 31 22 48s-8 32-22 48M834 42c-14 16-22 31-22 48s8 32 22 48"/></g>
+  <g fill="#fff" opacity=".13"><rect x="756" y="30" width="3" height="3"/><rect x="834" y="54" width="2" height="2"/><rect x="916" y="24" width="4" height="4"/><rect x="1018" y="78" width="3" height="3"/></g>
+  <text x="520" y="34" fill="#fff" opacity=".12" font-family="Arial, sans-serif" font-size="12" letter-spacing="3">4RRUM / COMMUNITY</text>
+ </svg>
