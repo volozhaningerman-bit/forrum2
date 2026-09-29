@@ -4,7 +4,7 @@ export const metadata = { title: 'Приложения — 4rrum' };
 
 const sections = [
   { name: 'AI-инструменты', description: 'Помощники для повседневных задач и творчества.' },
-  { name: 'Игры', description: 'Браузерные игры и интерактивные миры. Первый проект — игра развития «Цивилизация».', href: '/applications/games/civilization', badge: 'Цивилизация' },
+  { name: 'Игры', description: 'Браузерные игры и интерактивные миры. Первый новый alpha-проект — социальная RPG «Экспедиция».', href: '/applications/games/expedition', badge: 'Alpha · Экспедиция' },
   { name: 'Эксперименты', description: 'Небольшие прототипы и необычные идеи.' },
   { name: 'Neural Lab', description: 'Исследования возможностей нейросетей.' },
 ];
