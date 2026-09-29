@@ -41,6 +41,24 @@ async function publicApi<T>(path: string) {
   }
 }
 
+const homeStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: '4rrum',
+  alternateName: '4RRUM',
+  url: 'https://4rrum.ru/',
+  inLanguage: 'ru',
+  description: 'Форум о технологиях, проектах, сообществах и практическом опыте.',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: {
+      '@type': 'EntryPoint',
+      urlTemplate: 'https://4rrum.ru/search?q={search_term_string}',
+    },
+    'query-input': 'required name=search_term_string',
+  },
+};
+
 export default async function Home() {
   const [communities, announcements, feed, overview, events] = await Promise.all([
     publicApi<HomeInitialData['communities']>('/communities'),
@@ -49,5 +67,11 @@ export default async function Home() {
     publicApi<HomeInitialData['overview']>('/home/overview'),
     publicApi<HomeInitialData['events']>('/events'),
   ]);
-  return <HomeDashboard initialData={{ communities, announcements, feed, overview, events }}/>;
+  return <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(homeStructuredData).replace(/</g, '\\u003c') }}
+    />
+    <HomeDashboard initialData={{ communities, announcements, feed, overview, events }}/>
+  </>;
 }
