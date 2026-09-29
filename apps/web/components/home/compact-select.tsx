@@ -95,8 +95,8 @@ export function CompactSelect({
           list.current?.querySelector<HTMLElement>('[role="option"]')?.focus();
         } else if (event.key === 'End') {
           event.preventDefault();
-          const items = list.current?.querySelectorAll<HTMLElement>('[role="option"]');
-          items?.[items.length - 1]?.focus();
+          const items = Array.from(list.current?.querySelectorAll<HTMLElement>('[role="option"]') ?? []);
+          items.at(-1)?.focus();
         }
       }}
     >
