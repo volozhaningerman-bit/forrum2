@@ -133,7 +133,7 @@ try {
   }
  }
  await page.getByRole('button',{name:'Открыть меню',exact:true}).click();assert(await page.getByRole('button',{name:'Закрыть меню',exact:true}).last().isVisible());await page.keyboard.press('Escape');
- await page.setViewportSize({width:1600,height:1000});await page.getByRole('button',{name:'Фильтры',exact:true}).click();await page.getByLabel('Сообщество',{exact:true}).selectOption('category-0');await page.waitForTimeout(400);assert(requests.some(r=>r.query.includes('community=category-0')));
+ await page.setViewportSize({width:1600,height:1000});await page.getByRole('button',{name:'Фильтры',exact:true}).click();await page.getByRole('group',{name:'Фильтр по сообществу'}).waitFor({state:'detached'}).catch(()=>{});await page.getByText('Все сообщества',{exact:true}).last().click();await page.getByRole('menuitemradio',{name:'Category 0',exact:true}).click();await page.waitForTimeout(400);assert(requests.some(r=>r.query.includes('community=category-0')));
  failFeed=true;await page.getByRole('button',{name:'Активные',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
  await page.goto('http://127.0.0.1:'+port+'/applications',{waitUntil:'networkidle'});assert.equal(await page.locator('.applications-grid article').count(),4);
  await page.goto('http://127.0.0.1:'+port+'/digital-services',{waitUntil:'domcontentloaded'});
@@ -144,7 +144,7 @@ try {
  assert.equal(await page.locator('.forum-author-ranking').count(),0);
  assert.equal(await page.locator('.forum-side-stats dl>div').filter({hasText:'Онлайн'}).locator('dd').textContent(),'0');
  await page.getByRole('button',{name:'Участники за всё время →',exact:true}).click();
- assert.equal(await page.getByLabel('Период рейтинга').inputValue(),'all');
+ assert.equal(await page.getByRole('group',{name:'Период рейтинга'}).getByRole('button',{name:'Всё время',exact:true}).getAttribute('aria-pressed'),'true');
  await page.locator('.forum-author-ranking li').first().waitFor();
  assert(requests.some(r=>r.path==='/v1/home/ranking'&&r.query.includes('period=all')));
  await page.locator('.forum-topic').first().getByRole('button',{name:/Действия с темой/}).click();
