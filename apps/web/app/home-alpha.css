@@ -2446,3 +2446,41 @@ body:has(.forum-home[data-home-reference="v49"]) {
     grid-template-columns:38px minmax(0,1fr) 94px 48px 54px 138px 30px!important;
   }
 }
+
+
+/* Homepage alpha v64 — replace card-like fallbacks with native row atmosphere. */
+@media (min-width:1051px) {
+  .forum-home[data-home-reference="v49"] .forum-topic {
+    background-image:
+      linear-gradient(90deg,
+        rgba(8,10,11,.998) 0%,
+        rgba(8,10,11,.994) 30%,
+        rgba(8,10,11,.90) 49%,
+        rgba(8,10,11,.68) 67%,
+        rgba(8,10,11,.58) 83%,
+        rgba(8,10,11,.72) 100%),
+      radial-gradient(ellipse at 72% 44%,
+        color-mix(in srgb,var(--chip-accent,#8aa6bc) 30%,transparent) 0%,
+        color-mix(in srgb,var(--chip-accent,#8aa6bc) 12%,transparent) 28%,
+        transparent 62%),
+      linear-gradient(128deg,
+        transparent 43%,
+        color-mix(in srgb,var(--chip-accent,#8aa6bc) 17%,transparent) 55%,
+        transparent 74%),
+      var(--topic-image)!important;
+    background-size:auto,auto,auto,58% 140%!important;
+    background-position:center,center,center,right center!important;
+    background-repeat:no-repeat!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic::after {
+    opacity:.24!important;
+    background:
+      linear-gradient(90deg,transparent 39%,color-mix(in srgb,var(--chip-accent,#8aa6bc) 24%,transparent) 69%,transparent 94%),
+      repeating-linear-gradient(90deg,transparent 0 31px,rgba(255,255,255,.026) 32px),
+      repeating-linear-gradient(0deg,transparent 0 15px,rgba(255,255,255,.018) 16px)!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic-category-cell a {
+    background:color-mix(in srgb,var(--chip-accent) 11%,#090b0c)!important;
+    border-color:color-mix(in srgb,var(--chip-accent) 62%,#42484c)!important;
+  }
+}
