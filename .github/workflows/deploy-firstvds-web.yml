@@ -58,10 +58,10 @@ jobs:
           for i in $(seq 1 30); do
             html=$(curl --fail --silent --show-error               -H 'Cache-Control: no-cache, no-store, max-age=0'               "https://4rrum.ru/?deploy-check=${GITHUB_RUN_ID}-${i}" || true)
             if printf '%s' "$html" | grep -q 'data-home-revision="v64"'; then
-              echo "4rrum.ru serves homepage revision v63"
+              echo "4rrum.ru serves homepage revision v64"
               exit 0
             fi
             sleep 10
           done
-          echo "Homepage revision v63 did not appear on 4rrum.ru" >&2
+          echo "Homepage revision v64 did not appear on 4rrum.ru" >&2
           exit 1
