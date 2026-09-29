@@ -336,7 +336,7 @@ export default function TyuryagaGamePage() {
 
         <section className="md:col-span-8 bg-[#14171d] border border-zinc-800/80 rounded-xl p-4 md:p-5 flex flex-col">
           <nav className="flex gap-2 border-b border-zinc-800 pb-3 mb-4">
-            <button
+            <button type="button"
               onClick={() => setActiveTab('quests')}
               className={`px-3.5 py-1.5 text-xs font-medium rounded-lg transition ${
                 activeTab === 'quests'
@@ -346,7 +346,7 @@ export default function TyuryagaGamePage() {
             >
               Движухи
             </button>
-            <button
+            <button type="button"
               onClick={() => setActiveTab('bosses')}
               className={`px-3.5 py-1.5 text-xs font-medium rounded-lg transition ${
                 activeTab === 'bosses'
@@ -356,7 +356,7 @@ export default function TyuryagaGamePage() {
             >
               Боссы {state.activeBoss && !state.activeBoss.isDefeated && '🔥'}
             </button>
-            <button
+            <button type="button"
               onClick={() => setActiveTab('tattoos')}
               className={`px-3.5 py-1.5 text-xs font-medium rounded-lg transition ${
                 activeTab === 'tattoos'
@@ -398,7 +398,7 @@ export default function TyuryagaGamePage() {
                       </div>
                     </div>
 
-                    <button
+                    <button type="button"
                       disabled={isLocked || notEnoughEnergy || actionLoading}
                       onClick={() => handleQuest(q.id)}
                       className={`px-3 py-1.5 rounded text-xs font-bold font-mono transition flex items-center gap-1.5 ${
@@ -448,7 +448,7 @@ export default function TyuryagaGamePage() {
                     {state.weapons.map((w) => {
                       const canAfford = state.cigarettes >= w.costCigarettes && state.sugar >= w.costSugar;
                       return (
-                        <button
+                        <button type="button"
                           key={w.id}
                           disabled={!canAfford || actionLoading}
                           onClick={() => handleHitBoss(w.id)}
@@ -494,7 +494,7 @@ export default function TyuryagaGamePage() {
                           </div>
                         </div>
 
-                        <button
+                        <button type="button"
                           disabled={isLocked || actionLoading}
                           onClick={() => handleStartBoss(b.id)}
                           className={`mt-4 w-full py-1.5 rounded text-xs font-bold font-mono transition ${
@@ -552,7 +552,7 @@ export default function TyuryagaGamePage() {
                           {t.costCigarettes > 0 && <span>🚬 {t.costCigarettes} </span>}
                           {t.costSugar > 0 && <span>🍬 {t.costSugar}</span>}
                         </div>
-                        <button
+                        <button type="button"
                           disabled={isLocked || !canAfford || actionLoading}
                           onClick={() => handleBuyTattoo(t.id)}
                           className={`px-3 py-1 rounded text-xs font-bold font-mono transition ${
