@@ -86,8 +86,12 @@ function readOnlineRecord(value: unknown) {
 export class HomeService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async ranking(period: 'week' | 'all', mode: 'activity' | 'likes') {
-    const since = period === 'week' ? new Date(Date.now() - 7 * 86400000) : new Date(0);
+  async ranking(period: 'week' | 'month' | 'all', mode: 'activity' | 'likes') {
+    const since = period === 'week'
+      ? new Date(Date.now() - 7 * 86400000)
+      : period === 'month'
+        ? new Date(Date.now() - 30 * 86400000)
+        : new Date(0);
     // Aggregate in PostgreSQL: never load the complete history into the API process.
     const counts = mode === 'likes' ? Prisma.sql`
       SELECT p."authorId" AS id, 0::bigint AS topics, 0::bigint AS comments, count(*) AS likes
@@ -118,7 +122,7 @@ export class HomeService {
       )
       SELECT u.username, u."displayName", u."avatarUrl", t."topicCount", t."commentCount", t."reactionCount", t.score
       FROM totals t JOIN "User" u ON u.id=t.id
-      WHERE t.score>0 ORDER BY t.score DESC, u.username ASC LIMIT 5
+      WHERE t.score>0 ORDER BY t.score DESC, u.username ASC LIMIT 10
     `);
   }
 
@@ -136,6 +140,7 @@ export class HomeService {
 
     const [
       verifiedUsers,
+      newestUser,
       activeUsers24h,
       publications,
       comments24h,
@@ -152,6 +157,11 @@ export class HomeService {
     ] = await Promise.all([
       this.prisma.user.count({
         where: { emailVerifiedAt: { not: null } },
+      }),
+      this.prisma.user.findFirst({
+        where: { emailVerifiedAt: { not: null } },
+        orderBy: { createdAt: 'desc' },
+        select: { username: true, displayName: true },
       }),
       this.prisma.user.count({
         where: { lastSeenAt: { gte: dayAgo } },
@@ -458,6 +468,8 @@ export class HomeService {
       stats: {
         // Existing fields stay for backward compatibility.
         verifiedUsers,
+        users: verifiedUsers,
+        newestUser,
         activeUsers24h,
         publications,
         comments24h,
