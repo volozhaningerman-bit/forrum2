@@ -67,8 +67,26 @@ try {
  const context=await browser.newContext({viewport:{width:1600,height:1000},deviceScaleFactor:1});
  await context.addCookies([{name:'forrum_test',value:'viewer',domain:'127.0.0.1',path:'/'}]);
  const page=await context.newPage();const errors=[];page.on('pageerror',error=>errors.push(error.message));
+ const rootResponse=await fetch('http://127.0.0.1:'+port+'/');
+ assert.equal(rootResponse.headers.get('x-content-type-options'),'nosniff');
+ assert.equal(rootResponse.headers.get('x-frame-options'),'DENY');
+ assert.equal(rootResponse.headers.get('referrer-policy'),'strict-origin-when-cross-origin');
+ assert.equal(rootResponse.headers.get('strict-transport-security'),'max-age=31536000');
+ assert.equal(rootResponse.headers.get('cross-origin-opener-policy'),'same-origin');
+ const robotsResponse=await fetch('http://127.0.0.1:'+port+'/robots.txt');assert(robotsResponse.ok);assert((await robotsResponse.text()).includes('sitemap.xml'));
+ const sitemapResponse=await fetch('http://127.0.0.1:'+port+'/sitemap.xml');assert(sitemapResponse.ok);assert((await sitemapResponse.text()).includes('https://4rrum.ru/communities'));
  await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
  await page.locator('.forum-topic').first().waitFor();
+ assert.equal(await page.locator('h1').count(),1);
+ assert((await page.title()).toLowerCase().includes('4rrum'));
+ assert((await page.locator('meta[name="description"]').getAttribute('content'))?.length>60);
+ assert.equal(new URL(await page.locator('link[rel="canonical"]').getAttribute('href')).origin,'https://4rrum.ru');
+ assert(await page.locator('meta[property="og:title"]').getAttribute('content'));
+ const structured=JSON.parse(await page.locator('script[type="application/ld+json"]').first().textContent());
+ assert.equal(structured['@type'],'WebSite');
+ assert.equal(structured.potentialAction?.['@type'],'SearchAction');
+ assert.equal(await page.locator('.forum-brand img[width][height]').count(),1);
+ assert.equal(await page.locator('.forum-hero-art[width][height]').count(),1);
  assert.equal(await page.locator('.forum-topic').count(),20);
  assert.equal(await page.locator('.forum-right>.forum-panel').count(),2);
  assert.equal(await page.locator('.forum-topbar .forum-primary a').count(),5);
@@ -112,7 +130,7 @@ try {
  await page.locator('.forum-topic').first().hover(); await page.waitForTimeout(160);
  const afterHover=await page.locator('.forum-topic').first().boundingBox();
  assert(afterHover.width>beforeHover.width,'Topic hover should subtly scale the row');
- assert.equal(await page.getByRole('button',{name:'Новые',exact:true}).getAttribute('aria-pressed'),'true');
+ assert.equal(await page.getByRole('button',{name:'Последние',exact:true}).getAttribute('aria-pressed'),'true');
  assert(requests.some(r=>r.path==='/v1/feed'&&r.cookie?.includes('forrum_test=viewer')));
  const first=page.locator('.forum-topic').first(),more=first.getByRole('button',{name:/Действия с темой/});
  await more.click();await page.keyboard.press('Escape');assert.equal(await more.getAttribute('aria-expanded'),'false');assert(await more.evaluate(el=>el===document.activeElement));
@@ -130,23 +148,27 @@ try {
    await page.setViewportSize({width,height:width===1648?926:1000});await page.waitForTimeout(100);
    const size=await page.evaluate(()=>({w:innerWidth,scroll:document.documentElement.scrollWidth}));if(size.scroll>size.w+1)console.log(await page.evaluate(()=>Array.from(document.querySelectorAll('body *')).filter(el=>{const r=el.getBoundingClientRect();return r.width&&r.right>innerWidth+1}).slice(0,15).map(el=>({tag:el.tagName,cls:el.className,width:el.getBoundingClientRect().width,right:el.getBoundingClientRect().right}))));assert(size.scroll<=size.w+1,`${theme} ${width}: overflow ${size.scroll}`);
    if(width<=760){const tabsFit=await page.locator('.forum-tabs').evaluate(el=>el.scrollWidth<=el.clientWidth+1);assert(tabsFit,`Filters must fit at ${width}px`);}
+   if(width===1648){
+    const heroTitleFits=await page.locator('.forum-hero-copy h1').evaluate(el=>el.scrollWidth<=el.clientWidth+1);assert(heroTitleFits,'Hero title must fit one desktop line');
+    const topicFont=Number.parseFloat(await page.locator('.forum-topic h2').first().evaluate(el=>getComputedStyle(el).fontSize));assert(topicFont>=13,'Topic titles must remain readable');
+    const categoryTargets=await page.locator('.forum-category-heading>a').evaluateAll(nodes=>nodes.every(el=>el.getBoundingClientRect().height>=32));assert(categoryTargets,'Category links must retain usable hit areas');
+    const actionTargets=await page.locator('.forum-feed-create,.forum-filter-toggle,.forum-more-trigger').evaluateAll(nodes=>nodes.every(el=>{const r=el.getBoundingClientRect();return r.width>=24&&r.height>=24;}));assert(actionTargets,'Primary icon controls must meet minimum target size');
+   }
    if([1648,1600,390].includes(width)){await page.evaluate(()=>{window.scrollTo({top:0,behavior:"instant"});document.activeElement?.blur();});await page.screenshot({path:`${output}/${theme}-${width}.png`});}
   }
  }
  await page.getByRole('button',{name:'Открыть меню',exact:true}).click();assert(await page.getByRole('button',{name:'Закрыть меню',exact:true}).last().isVisible());await page.keyboard.press('Escape');
  await page.setViewportSize({width:1600,height:1000});await page.getByRole('button',{name:'Фильтры',exact:true}).click();await page.locator('summary[aria-label="Выбрать сообщество"]').click();await page.getByRole('menuitemradio',{name:'Разработка',exact:true}).click();await page.waitForTimeout(400);assert(requests.some(r=>r.query.includes('community=category-0')));
- failFeed=true;await page.getByRole('button',{name:'Активные',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
+ failFeed=true;await page.getByRole('button',{name:'Популярные',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
  await page.goto('http://127.0.0.1:'+port+'/applications',{waitUntil:'networkidle'});assert.equal(await page.locator('.applications-grid article').count(),4);
  await page.goto('http://127.0.0.1:'+port+'/digital-services',{waitUntil:'domcontentloaded'});
  await page.getByRole('heading',{name:'Цифровые сервисы'}).waitFor();
  assert.equal(await page.locator('html').getAttribute('data-forrum-theme'),'graphite');
  guest=true;emptyPeople=true;await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'domcontentloaded'});
- await page.getByText('Первое слово — за вами',{exact:true}).waitFor();
- assert.equal(await page.locator('.forum-author-ranking').count(),0);
- assert.equal(await page.locator('.forum-side-stats dl>div').filter({hasText:'Пользователей'}).locator('dd').textContent(),'10');
- await page.getByRole('button',{name:'Участники за всё время →',exact:true}).click();
- assert.equal(await page.getByRole('group',{name:'Период рейтинга'}).getByRole('button',{name:'За всё время',exact:true}).getAttribute('aria-pressed'),'true');
  await page.locator('.forum-author-ranking li').first().waitFor();
+ assert.equal(await page.locator('.forum-author-ranking li').count(),10);
+ assert.equal(await page.getByRole('group',{name:'Период рейтинга'}).getByRole('button',{name:'За всё время',exact:true}).getAttribute('aria-pressed'),'true');
+ assert.equal(await page.locator('.forum-side-stats dl>div').filter({hasText:'Пользователей'}).locator('dd').textContent(),'10');
  assert(requests.some(r=>r.path==='/v1/home/ranking'&&r.query.includes('period=all')));
  await page.locator('.forum-topic').first().getByRole('button',{name:/Действия с темой/}).click();
  await page.getByRole('link',{name:'Войти, чтобы сохранить или пожаловаться'}).waitFor();
@@ -154,5 +176,8 @@ try {
  await page.keyboard.press('Escape');
  await page.setViewportSize({width:800,height:600});
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
- assert.deepEqual(errors,[]);console.log('V49: approved monochrome homepage, topic table, menus, ranking, popular today and responsive checks passed');
+ await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'domcontentloaded'});
+ await page.locator('.skip-link').focus();
+ const skipBox=await page.locator('.skip-link').boundingBox();assert(skipBox&&skipBox.top>=0,'Skip link must become visible on keyboard focus');
+ assert.deepEqual(errors,[]);console.log('V67: visual, responsive, SEO, security, accessibility, ranking, topic actions and navigation audit passed');
 } finally {await browser?.close();web.kill('SIGTERM');upstream.close();}

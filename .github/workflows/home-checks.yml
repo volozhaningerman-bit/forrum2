@@ -21,6 +21,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run db:generate
+      - run: npm run validate:static
+      - run: npm run validate:ux
+      - run: npm run validate:a11y
       - run: npm test
       - run: npm run build
       - run: npm run typecheck
