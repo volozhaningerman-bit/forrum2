@@ -3033,3 +3033,5 @@ body:has(.forum-home[data-home-reference="v49"]) {
     grid-template-columns:minmax(0,1fr) 96px 46px 52px 132px 30px!important;
   }
 }
+
+.forum-home .forum-brand-test-label{display:none!important;}
