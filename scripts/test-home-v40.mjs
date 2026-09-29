@@ -144,7 +144,7 @@ try {
  assert.equal(await page.locator('.forum-author-ranking').count(),0);
  assert.equal(await page.locator('.forum-side-stats dl>div').filter({hasText:'Пользователей'}).locator('dd').textContent(),'10');
  await page.getByRole('button',{name:'Участники за всё время →',exact:true}).click();
- assert.equal(await page.getByRole('group',{name:'Период рейтинга'}).getByRole('button',{name:'Всё время',exact:true}).getAttribute('aria-pressed'),'true');
+ assert.equal(await page.getByRole('group',{name:'Период рейтинга'}).getByRole('button',{name:'За всё время',exact:true}).getAttribute('aria-pressed'),'true');
  await page.locator('.forum-author-ranking li').first().waitFor();
  assert(requests.some(r=>r.path==='/v1/home/ranking'&&r.query.includes('period=all')));
  await page.locator('.forum-topic').first().getByRole('button',{name:/Действия с темой/}).click();
