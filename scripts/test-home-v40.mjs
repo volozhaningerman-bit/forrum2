@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { spawn } from 'node:child_process';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { copyFile, mkdir, writeFile } from 'node:fs/promises';
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const root = new URL('../', import.meta.url).pathname;
 const output = process.env.HOME_TEST_OUTPUT || root + 'test-results/home-reference';
 await mkdir(output, { recursive: true });
+await copyFile(root + 'docs/design-reference/home-approved.png', output + '/approved.png');
 const names = ['Алексей Петров', 'Мария Кузнецова', 'Иван Соколов', 'Дмитрий Волков', 'Елена Смирнова', 'Артём Орлов', 'Кира Белова', 'Михаил Серов', 'Лина Романова', 'Олег Миронов'];
 const categories = ['Разработка', 'Backend', 'Дизайн', 'Бизнес', 'Карьера', 'AI и данные', 'Маркетинг', 'Общество', 'Разное'];
 const communities = categories.map((name, i) => ({ id: String(i), slug: 'category-' + i, name, parent: i === 1 ? { slug: 'category-0', name: categories[0] } : null, subscriberCount: 120, publicationCount: 5, onlineCount: 3, description: '' }));
