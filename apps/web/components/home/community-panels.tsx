@@ -8,6 +8,13 @@ import { formatCount } from './utils';
 import type { HomeInitialData, HomeOverview } from './types';
 import type { PublicationCardData } from '@/lib/types';
 
+function PanelIcon({kind}:{kind:'flame'|'trophy'}) {
+  const path=kind==='flame'
+    ? 'M12 2c2 5 8 7 8 13a8 8 0 0 1-16 0c0-3 2-5 4-7 0 4 2 5 3 5 2-3 2-7 1-11Z'
+    : 'M7 4h10v4c0 4-2 7-5 7s-5-3-5-7V4Zm-3 2h3v3c0 2-1 3-3 3V6Zm13 0h3v6c-2 0-3-1-3-3V6ZM12 15v4M8 21h8';
+  return <svg className={`forum-panel-icon forum-panel-icon-${kind}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={path}/></svg>;
+}
+
 export function CommunityPanels({
   overview,
   unavailable,
@@ -71,7 +78,7 @@ export function CommunityPanels({
   return <aside className="forum-right" aria-label="Обзор сообщества">
     <section className="forum-panel forum-ranking-panel">
       <header>
-        <h2><span className="forum-panel-icon forum-panel-icon-trophy" aria-hidden="true">♛</span>Рейтинг пользователей</h2>
+        <h2><PanelIcon kind="trophy"/>Рейтинг пользователей</h2>
         <div className="forum-ranking-period" role="group" aria-label="Период рейтинга">
           <button type="button" aria-pressed={period==='week'} onClick={()=>setPeriod('week')}>За неделю</button>
           <button type="button" aria-pressed={period==='month'} onClick={()=>setPeriod('month')}>За месяц</button>
@@ -102,7 +109,7 @@ export function CommunityPanels({
     </section>
 
     <section className="forum-panel forum-popular-today">
-      <header><h2><span className="forum-panel-icon forum-panel-icon-flame" aria-hidden="true">◆</span>Популярное сегодня</h2><Link href="/?tab=popular">Все →</Link></header>
+      <header><h2><PanelIcon kind="flame"/>Популярное сегодня</h2><Link href="/?tab=popular">Все →</Link></header>
       {popularToday.items.length
         ? <>
             {popularToday.isFallback && <p className="forum-popular-note">Сегодня без новых всплесков · темы из текущей ленты</p>}
