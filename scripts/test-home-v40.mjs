@@ -109,6 +109,11 @@ try {
  const unreadStrip=await page.locator('.forum-topic').first().evaluate(el=>getComputedStyle(el,'::before').width);
  assert.equal(unreadStrip,'2px');
  const beforeHover=await page.locator('.forum-topic').first().boundingBox();
+ assert(beforeHover && beforeHover.height>=58 && beforeHover.height<=63,`Reference topic row must stay compact, got ${beforeHover?.height}`);
+ const topicIconBox=await page.locator('.forum-topic-category-icon').first().boundingBox();
+ assert(topicIconBox && topicIconBox.width>=39 && topicIconBox.width<=41,`Reference topic icon should be about 40px, got ${topicIconBox?.width}`);
+ const lastAvatarBox=await page.locator('.forum-topic-last .avatar').first().boundingBox();
+ assert(lastAvatarBox && lastAvatarBox.width>=31 && lastAvatarBox.width<=33,`Reference last-message avatar should be about 32px, got ${lastAvatarBox?.width}`);
  await page.locator('.forum-topic').first().hover(); await page.waitForTimeout(160);
  const afterHover=await page.locator('.forum-topic').first().boundingBox();
  assert(afterHover.width>beforeHover.width,'Topic hover should subtly scale the row');
@@ -141,12 +146,10 @@ try {
  await page.getByRole('heading',{name:'Цифровые сервисы'}).waitFor();
  assert.equal(await page.locator('html').getAttribute('data-forrum-theme'),'graphite');
  guest=true;emptyPeople=true;await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'domcontentloaded'});
- await page.getByText('Первое слово — за вами',{exact:true}).waitFor();
- assert.equal(await page.locator('.forum-author-ranking').count(),0);
+ await page.getByText('За неделю: активности пока нет · показан общий рейтинг',{exact:true}).waitFor();
+ assert.equal(await page.locator('.forum-author-ranking li').count(),10);
  assert.equal(await page.locator('.forum-side-stats dl>div').filter({hasText:'Пользователей'}).locator('dd').textContent(),'10');
- await page.getByRole('button',{name:'Участники за всё время →',exact:true}).click();
- assert.equal(await page.getByRole('group',{name:'Период рейтинга'}).getByRole('button',{name:'За всё время',exact:true}).getAttribute('aria-pressed'),'true');
- await page.locator('.forum-author-ranking li').first().waitFor();
+ assert.equal(await page.getByRole('group',{name:'Период рейтинга'}).getByRole('button',{name:'За неделю',exact:true}).getAttribute('aria-pressed'),'true');
  assert(requests.some(r=>r.path==='/v1/home/ranking'&&r.query.includes('period=all')));
  await page.locator('.forum-topic').first().getByRole('button',{name:/Действия с темой/}).click();
  await page.getByRole('link',{name:'Войти, чтобы сохранить или пожаловаться'}).waitFor();
