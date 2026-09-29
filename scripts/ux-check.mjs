@@ -90,7 +90,7 @@ const profileTrustRequirements = [
   ['apps/web/app/u/[username]/profile-client.tsx', /achievements/, 'profile does not show verified achievements'],
   ['apps/web/app/u/[username]/profile-client.tsx', /reviews/, 'profile does not show verified reviews'],
   ['apps/web/app/interactions/page.tsx', /\/interactions\//, 'interaction manager is not connected to its API'],
-  ['apps/web/app/admin/page.tsx', /community-roles/, 'Control Center cannot manage community role lifecycle'],
+  ['apps/web/components/admin/legacy-panel.tsx', /\/admin\/community-roles/, 'Control Center cannot manage community role lifecycle'],
   ['apps/api/src/users/users.service.ts', /userId:\s*\{\s*not:\s*userId\s*\}/, 'self reactions or bookmarks can influence trust evidence'],
 ];
 for (const [relative, pattern, label] of profileTrustRequirements) {
@@ -111,7 +111,7 @@ const releaseCandidateRequirements = [
   ['apps/web/app/promote/[slug]/page.tsx', /baseDurationPrice/, 'promotion does not disclose its base price'],
   ['apps/web/app/promote/[slug]/page.tsx', /demandSurcharge/, 'promotion does not disclose demand surcharge'],
   ['apps/web/app/wallet/page.tsx', /promotions\/:id\/cancel|promotions\/\$\{id\}\/cancel/, 'wallet cannot stop active promotion'],
-  ['apps/web/app/admin/page.tsx', /admin\/promotions/, 'Control Center does not load promotion orders'],
+  ['apps/web/components/admin/legacy-panel.tsx', /\/admin\/promotions/, 'Control Center does not load promotion orders'],
 ];
 for (const [relative, pattern, label] of releaseCandidateRequirements) {
   const file = join(root, relative);
