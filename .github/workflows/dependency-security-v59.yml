@@ -51,5 +51,7 @@ jobs:
           fi
           git commit -m "Security v59: upgrade vulnerable production dependencies"
           git push origin HEAD:feat/homepage-alpha-audit-v59
-      - name: Confirm production dependency audit
-        run: npm audit --omit=dev --audit-level=high
+      - name: Confirm web production dependency audit
+        run: npm audit --omit=dev --audit-level=high -w @forrum/web
+      - name: Confirm API production dependency audit
+        run: npm audit --omit=dev --audit-level=high -w @forrum/api
