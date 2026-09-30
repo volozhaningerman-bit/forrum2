@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 620">
+<defs>
+ <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e0a06e"/><stop offset="1" stop-color="#a9694d"/></linearGradient>
+ <linearGradient id="rag" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8b755f"/><stop offset="1" stop-color="#4b3d34"/></linearGradient>
+ <linearGradient id="pants" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#514844"/><stop offset="1" stop-color="#272426"/></linearGradient>
+ <filter id="shadow"><feDropShadow dx="0" dy="16" stdDeviation="14" flood-opacity=".35"/></filter>
+</defs>
+<g filter="url(#shadow)" stroke="#201a19" stroke-width="6" stroke-linejoin="round">
+ <path fill="#27201f" d="M146 91c10-45 48-69 91-55 26 9 46 37 39 68-24-8-42-22-58-43-7 21-29 37-72 42z"/>
+ <ellipse fill="url(#skin)" cx="211" cy="118" rx="57" ry="65"/>
+ <path fill="#2a2220" d="M156 94c12-48 47-70 90-59 23 6 43 28 43 55-29-1-52-18-69-42-12 28-32 43-64 46z"/>
+ <path fill="none" d="M178 123q13-10 27 0m19 0q13-10 27 0" stroke-width="5"/>
+ <path fill="none" d="M198 150q14 11 28 0" stroke-width="4"/>
+ <path fill="url(#rag)" d="M139 185l43-35 30 18 31-18 44 36-18 169-115 0z"/>
+ <path fill="#655344" d="M154 191l-36 35 21 112 30-13-13-88zm113 0l37 35-19 111-31-12 13-88z"/>
+ <path fill="url(#skin)" d="M118 321l-8 73 28 3 14-69zm167 0l11 73-28 4-16-69z"/>
+ <path fill="#6d543d" d="M145 329h134v35H145z"/>
+ <circle fill="#b98746" cx="211" cy="347" r="15"/>
+ <path fill="url(#pants)" d="M157 359h108l12 173h-49l-18-108-18 108h-49z"/>
+ <path fill="#6c5c4f" d="M144 521h55l-8 60h-65zm77 0h56l17 60h-66z"/>
+ <path fill="none" d="M157 207l38 26m79-28-39 27M166 288l35-24m56 25-34-25" stroke="#382e29" stroke-width="8"/>
+ <path fill="none" d="M145 437l42 25m40 0 43-25" stroke="#171515" stroke-width="8"/>
+</g>
+<g opacity=".8" fill="#d9b07b">
+ <circle cx="126" cy="270" r="5"/><circle cx="292" cy="279" r="5"/><circle cx="160" cy="215" r="4"/>
+</g>
+</svg>
