@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { api } from '@/lib/api';
 import type { WeeklyUser } from './types';
 import { Avatar } from '../avatar';
-import { formatCount } from './utils';
+import { formatCount, formatCountLabel } from './utils';
 import type { HomeInitialData, HomeOverview } from './types';
 import type { PublicationCardData } from '@/lib/types';
 import { popularTopics } from '@/lib/popular-topics';
@@ -101,14 +101,14 @@ export function CommunityPanels({
       <header><h2><PanelIcon kind="flame"/>Популярное сегодня</h2><Link href="/?tab=popular">Все →</Link></header>
       {popularToday.items.length
         ? <>
-            {popularToday.isFallback && <p className="forum-popular-note">Сегодня без новых всплесков · темы из текущей ленты</p>}
+            {popularToday.isFallback && <p className="forum-popular-note">За 24 ч новых ответов нет · ниже общая статистика тем</p>}
             <ol>{popularToday.items.map((item,index)=><li key={item.slug}>
               <span className="forum-popular-rank">{index+1}</span>
               <Link href={`/p/${item.slug}`}>
                 <strong>{item.title}</strong>
                 <small>{popularToday.isFallback
-                  ? `${formatCount(item.replies)} ответов${typeof item.views==='number'? ` · ${formatCount(item.views)} просмотров` : ''}`
-                  : `${formatCount(item.replies)} ответов за 24 ч${typeof item.views==='number'? ` · ${formatCount(item.views)} просмотров всего` : ''}`}</small>
+                  ? `${formatCountLabel(item.replies,['ответ','ответа','ответов'])}${typeof item.views==='number'? ` · ${formatCountLabel(item.views,['просмотр','просмотра','просмотров'])}` : ''}`
+                  : `${formatCountLabel(item.replies,['ответ','ответа','ответов'])} за 24 ч${typeof item.views==='number'? ` · ${formatCountLabel(item.views,['просмотр','просмотра','просмотров'])} всего` : ''}`}</small>
               </Link>
             </li>)}</ol>
           </>

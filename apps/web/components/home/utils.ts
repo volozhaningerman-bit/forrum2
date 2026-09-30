@@ -23,3 +23,10 @@ export function relativeTime(value?: string | null) {
     month: 'short',
   });
 }
+
+export function formatCountLabel(value:number|undefined,forms:readonly [string,string,string]) {
+  const count=Number.isFinite(value)?Math.max(0,Math.trunc(Number(value))):0;
+  const rule=new Intl.PluralRules('ru').select(count);
+  const noun=forms[rule==='one'?0:rule==='few'?1:2];
+  return `${formatCount(count)} ${noun}`;
+}
