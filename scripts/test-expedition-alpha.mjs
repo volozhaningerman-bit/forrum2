@@ -331,6 +331,10 @@ try {
       locationBg: getComputedStyle(document.querySelector('.exp-location-art')).backgroundImage,
       bossBg: getComputedStyle(document.querySelector('.exp-boss-crop')).backgroundImage,
       bossDisplay: getComputedStyle(document.querySelector('.exp-boss-crop')).display,
+      raidDisplay: getComputedStyle(document.querySelector('.exp-raid')).display,
+      raidButtonVisible: (() => { const el=document.querySelector('.exp-raid-copy button'); if(!el) return false; const r=el.getBoundingClientRect(); const s=getComputedStyle(el); return r.width>0 && r.height>0 && s.display!=='none' && s.visibility!=='hidden'; })(),
+      championArtDisplay: getComputedStyle(document.querySelector('.exp-champion'),'::before').display,
+      relicArtDisplay: getComputedStyle(document.querySelector('.exp-relic'),'::before').display,
       slots: document.querySelectorAll('.exp-slots button').length,
       layoutHeight: layout?.height ?? 9999,
       locationHeight: location?.height ?? 0,
@@ -345,6 +349,15 @@ try {
   assert(metrics.avatarBg.includes('hero-base.svg'), 'hero art must render from live-safe SVG');
   assert(metrics.locationBg.includes('rust-outskirts.svg'), 'location art must render from live-safe SVG');
   assert(metrics.bossBg.includes('iron-shepherd.svg') && metrics.bossDisplay !== 'none', 'boss art must be visibly rendered');
+  assert.equal(metrics.raidDisplay, 'grid', 'desktop raid must render boss and copy side by side');
+  assert(metrics.raidButtonVisible, 'raid action must remain visible and clickable');
+  assert.notEqual(metrics.championArtDisplay, 'none', 'Champion art must be rendered');
+  assert.notEqual(metrics.relicArtDisplay, 'none', 'Ark Core art must be rendered');
+  assert.equal(metrics.slots, 16, 'all 16 equipment slots must remain available');
+  assert(metrics.locationHeight >= 250, `game world too small: ${metrics.locationHeight}px`);
+  assert(metrics.layoutHeight <= 760, `1720 desktop composition is too tall: ${metrics.layoutHeight}px`);
+  assert(metrics.characterRect && metrics.centerRect && metrics.inventoryRect && metrics.inventoryRect.left >= metrics.centerRect.right - 2, 'inventory must stay in the right rail');
+  assert(metrics.raidRect && metrics.locationRect && metrics.raidRect.top >= metrics.locationRect.bottom - 2, 'raid must sit below the world scene, never over it');
   assert(metrics.scrollWidth <= metrics.width + 2, `horizontal overflow ${metrics.scrollWidth}/${metrics.width}`);
 
   await page.screenshot({ path: output + '/expedition-alpha-v06-1720x900.png', fullPage: true });
