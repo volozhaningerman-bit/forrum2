@@ -317,3 +317,32 @@ A new user should understand within minutes:
 > spend energy → send expedition → get loot → equip it → look stronger/different → go deeper → see why other players matter.
 
 If that loop is not satisfying, do not expand the meta systems yet.
+
+
+## 20. Alpha 0.1 implementation status
+
+Implemented in code:
+
+- authenticated hidden route `/applications/games/expedition-alpha`;
+- server-authoritative profile, energy regeneration, XP and depth progress;
+- server-authoritative expeditions with one active run at a time;
+- server-issued numbered item instances with circulation caps;
+- 16 equipment slots and exactly four game rarities;
+- server equip flow with one equipped item per slot;
+- persistent expedition resources: metal, cloth, scrap and old-world parts;
+- dedicated Expedition art pack for base hero, Rust Outskirts, Iron Shepherd and starter equipment;
+- shared Iron Shepherd raid lobby with a common participant list;
+- raid power snapshot at join time;
+- automatic raid resolution after start time;
+- one-time shared resource reward on successful raid resolution.
+
+Still intentionally deferred until the personal loop is proven:
+
+- category Champion persistence and battles;
+- syndicate creation, shared relic and shared storage;
+- player market and ownership-history UI;
+- category trade agreements and licences;
+- additional locations and larger item library.
+
+The acceptance gate for Alpha 0.1 remains:
+**energy → expedition → server reward → numbered loot → equip → visible character change → deeper location → shared boss participation.**

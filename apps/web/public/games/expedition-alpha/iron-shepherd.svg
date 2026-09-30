@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 520">
+<defs>
+ <linearGradient id="armor" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#54392b"/><stop offset=".45" stop-color="#24292c"/><stop offset="1" stop-color="#11181c"/></linearGradient>
+ <linearGradient id="ember" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffd074"/><stop offset=".4" stop-color="#ff6a28"/><stop offset="1" stop-color="#7f1815"/></linearGradient>
+ <filter id="g"><feGaussianBlur stdDeviation="12"/></filter>
+</defs>
+<rect width="760" height="520" fill="#171110"/>
+<circle cx="390" cy="250" r="180" fill="#e35627" opacity=".16" filter="url(#g)"/>
+<g stroke="#0d1113" stroke-width="12" stroke-linejoin="round">
+ <path fill="url(#armor)" d="M272 116l70-50h92l64 52 46 139-39 191H245l-32-192z"/>
+ <path fill="#382820" d="M301 95l76-55 88 58-28 101H327z"/>
+ <path fill="#151a1d" d="M334 120l48-29 49 29-16 71h-64z"/>
+ <path fill="url(#ember)" d="M371 131h31l15 34-31 35-31-35z"/>
+ <path fill="url(#armor)" d="M256 160l-119 70 36 105 105-48z"/>
+ <path fill="url(#armor)" d="M506 160l118 70-36 105-105-48z"/>
+ <path fill="#2a2320" d="M212 266l-67 178h72l76-143z"/>
+ <path fill="#2a2320" d="M550 268l67 176h-74l-76-143z"/>
+ <path fill="#22282a" d="M292 407l-44 91h115l21-91zm178 0 43 91H397l-20-91z"/>
+ <path fill="#6f4327" d="M235 192l-43-90 48-32 61 78zm284 0 43-90-48-32-60 78z"/>
+ <path fill="#352c26" d="M590 186l40-120 40 24-19 139z"/>
+ <circle fill="url(#ember)" cx="635" cy="74" r="28"/>
+ <circle fill="#ffb14d" cx="385" cy="285" r="34"/>
+ <circle fill="#ff5c23" cx="385" cy="285" r="18"/>
+</g>
+<g fill="#f5a94b"><circle cx="330" cy="229" r="8"/><circle cx="440" cy="229" r="8"/></g>
+</svg>

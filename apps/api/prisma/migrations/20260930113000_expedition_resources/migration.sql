@@ -1,0 +1,6 @@
+-- Persist expedition resources used by the first social game loop.
+ALTER TABLE "ExpeditionProfile"
+  ADD COLUMN IF NOT EXISTS "metal" INTEGER NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS "cloth" INTEGER NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS "scrap" INTEGER NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS "oldParts" INTEGER NOT NULL DEFAULT 0;

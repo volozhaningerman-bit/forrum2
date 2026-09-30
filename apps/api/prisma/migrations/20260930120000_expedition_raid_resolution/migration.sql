@@ -1,0 +1,8 @@
+-- Resolve cooperative raid results once and award shared resources.
+ALTER TABLE "ExpeditionRaid"
+  ADD COLUMN IF NOT EXISTS "bossPower" INTEGER NOT NULL DEFAULT 36,
+  ADD COLUMN IF NOT EXISTS "totalPower" INTEGER NOT NULL DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS "success" BOOLEAN,
+  ADD COLUMN IF NOT EXISTS "resolvedAt" TIMESTAMP(3),
+  ADD COLUMN IF NOT EXISTS "rewardMetal" INTEGER NOT NULL DEFAULT 30,
+  ADD COLUMN IF NOT EXISTS "rewardOldParts" INTEGER NOT NULL DEFAULT 3;

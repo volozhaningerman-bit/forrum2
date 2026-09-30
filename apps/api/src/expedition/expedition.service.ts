@@ -124,15 +124,16 @@ export class ExpeditionService {
       throw new BadRequestException('Экспедиция ещё не завершена');
     }
 
-    const candidates = await this.prisma.expeditionItemTemplate.findMany({
+    const candidates = (await this.prisma.expeditionItemTemplate.findMany({
       where: { active: true, minDepth: { lte: run.depth } },
       orderBy: [{ minDepth: 'desc' }, { power: 'asc' }],
-    });
-    if (!candidates.length) throw new NotFoundException('Для глубины не настроена добыча');
+    })).filter((item) => item.issuedCount < item.circulationCap);
+    if (!candidates.length) throw new NotFoundException('Для глубины не осталось доступного тиража');
 
     const picked = candidates[Math.abs(run.rewardSeed) % candidates.length];
     const xpGain = 30 + run.depth * 10;
     const resources = {
+      metal: 6 + run.depth * 4,
       scrap: 8 + run.depth * 5,
       cloth: 3 + run.depth * 2,
       oldParts: Math.max(0, run.depth - 1) * 2,
@@ -176,6 +177,10 @@ export class ExpeditionService {
           level: nextLevel,
           xp: nextXp,
           unlockedDepth: Math.min(5, Math.max(current.unlockedDepth, run.depth + 1)),
+          metal: { increment: resources.metal },
+          cloth: { increment: resources.cloth },
+          scrap: { increment: resources.scrap },
+          oldParts: { increment: resources.oldParts },
         },
       });
 
@@ -205,12 +210,71 @@ export class ExpeditionService {
         ...result.reward,
         item: this.serializeItem(result.item),
       },
-      profile: {
-        level: result.profile.level,
-        xp: result.profile.xp,
-        unlockedDepth: result.profile.unlockedDepth,
-      },
+      state: await this.state(actorId),
     };
+  }
+
+  async raidState(actorId: string) {
+    await this.resolveDueRaids();
+
+    const recent = await this.prisma.expeditionRaidParticipant.findFirst({
+      where: {
+        userId: actorId,
+        raid: {
+          status: 'RESOLVED',
+          resolvedAt: { gte: new Date(Date.now() - 5 * 60 * 1000) },
+        },
+      },
+      include: { raid: true },
+      orderBy: { joinedAt: 'desc' },
+    });
+
+    if (recent) {
+      const participantCount = await this.prisma.expeditionRaidParticipant.count({
+        where: { raidId: recent.raidId },
+      });
+      return this.serializeRaid(recent.raid, participantCount, recent);
+    }
+
+    const raid = await this.ensureUpcomingRaid();
+    const [participantCount, participant] = await Promise.all([
+      this.prisma.expeditionRaidParticipant.count({ where: { raidId: raid.id } }),
+      this.prisma.expeditionRaidParticipant.findUnique({
+        where: { raidId_userId: { raidId: raid.id, userId: actorId } },
+      }),
+    ]);
+
+    return this.serializeRaid(raid, participantCount, participant);
+  }
+
+  async joinRaid(actorId: string) {
+    await this.resolveDueRaids();
+    const raid = await this.ensureUpcomingRaid();
+    if (raid.startsAt.getTime() <= Date.now()) {
+      throw new BadRequestException('Сбор на этот рейд уже завершён');
+    }
+
+    const participantCount = await this.prisma.expeditionRaidParticipant.count({
+      where: { raidId: raid.id },
+    });
+    if (participantCount >= raid.maxParticipants) {
+      throw new ConflictException('В этом рейде уже нет свободных мест');
+    }
+
+    const playerState = await this.state(actorId);
+    await this.prisma.expeditionRaidParticipant.upsert({
+      where: { raidId_userId: { raidId: raid.id, userId: actorId } },
+      create: {
+        raidId: raid.id,
+        userId: actorId,
+        powerSnapshot: playerState.profile.power,
+      },
+      update: {
+        powerSnapshot: playerState.profile.power,
+      },
+    });
+
+    return this.raidState(actorId);
   }
 
   async equip(actorId: string, itemId: string) {
@@ -238,6 +302,93 @@ export class ExpeditionService {
     });
 
     return this.state(actorId);
+  }
+
+  private async resolveDueRaids() {
+    const due = await this.prisma.expeditionRaid.findMany({
+      where: {
+        status: 'SCHEDULED',
+        startsAt: { lte: new Date() },
+      },
+      orderBy: { startsAt: 'asc' },
+      take: 8,
+    });
+
+    for (const raid of due) {
+      await this.prisma.$transaction(async (tx) => {
+        const locked = await tx.expeditionRaid.updateMany({
+          where: { id: raid.id, status: 'SCHEDULED' },
+          data: { status: 'RESOLVED', resolvedAt: new Date() },
+        });
+        if (locked.count !== 1) return;
+
+        const participants = await tx.expeditionRaidParticipant.findMany({
+          where: { raidId: raid.id },
+        });
+        const totalPower = participants.reduce((sum, entry) => sum + entry.powerSnapshot, 0);
+        const success = participants.length >= raid.minParticipants && totalPower >= raid.bossPower;
+
+        await tx.expeditionRaid.update({
+          where: { id: raid.id },
+          data: { totalPower, success },
+        });
+
+        if (success && participants.length) {
+          await tx.expeditionProfile.updateMany({
+            where: { userId: { in: participants.map((entry) => entry.userId) } },
+            data: {
+              metal: { increment: raid.rewardMetal },
+              oldParts: { increment: raid.rewardOldParts },
+            },
+          });
+        }
+      });
+    }
+  }
+
+  private serializeRaid(raid: any, participantCount: number, participant: any | null) {
+    return {
+      id: raid.id,
+      bossKey: raid.bossKey,
+      bossName: 'Железный Пастырь',
+      locationKey: raid.locationKey,
+      startsAt: raid.startsAt,
+      status: raid.status,
+      minParticipants: raid.minParticipants,
+      maxParticipants: raid.maxParticipants,
+      participantCount,
+      joined: Boolean(participant),
+      powerSnapshot: participant?.powerSnapshot ?? null,
+      bossPower: raid.bossPower,
+      totalPower: raid.totalPower,
+      success: raid.success,
+      resolvedAt: raid.resolvedAt,
+      reward: {
+        metal: raid.rewardMetal,
+        oldParts: raid.rewardOldParts,
+      },
+    };
+  }
+
+  private async ensureUpcomingRaid() {
+    const intervalMs = 15 * 60 * 1000;
+    const startsAtMs = Math.ceil((Date.now() + 60_000) / intervalMs) * intervalMs;
+    const startsAt = new Date(startsAtMs);
+    const slot = startsAt.toISOString().slice(0, 16).replace(/[:T-]/g, '');
+    const id = `iron-shepherd-${slot}`;
+
+    return this.prisma.expeditionRaid.upsert({
+      where: { id },
+      create: {
+        id,
+        bossKey: 'iron-shepherd',
+        locationKey: 'rust-outskirts',
+        startsAt,
+        minParticipants: 3,
+        maxParticipants: 10,
+      },
+      update: {},
+    });
   }
 
   private async ensureProfile(actorId: string) {
@@ -296,6 +447,10 @@ export class ExpeditionService {
       maxEnergy: number;
       unlockedDepth: number;
       basePower: number;
+      metal: number;
+      cloth: number;
+      scrap: number;
+      oldParts: number;
     },
     run: {
       id: string;
@@ -334,6 +489,12 @@ export class ExpeditionService {
         maxEnergy: profile.maxEnergy,
         unlockedDepth: profile.unlockedDepth,
         power: profile.basePower + profile.level * 3 + equippedPower,
+        resources: {
+          metal: profile.metal,
+          cloth: profile.cloth,
+          scrap: profile.scrap,
+          oldParts: profile.oldParts,
+        },
       },
       run: run ? {
         ...run,
