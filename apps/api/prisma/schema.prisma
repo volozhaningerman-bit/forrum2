@@ -1648,6 +1648,12 @@ model ExpeditionRaid {
   status          ExpeditionRaidStatus       @default(SCHEDULED)
   minParticipants Int                        @default(3)
   maxParticipants Int                        @default(10)
+  bossPower       Int                        @default(36)
+  totalPower      Int                        @default(0)
+  success         Boolean?
+  resolvedAt      DateTime?
+  rewardMetal     Int                        @default(30)
+  rewardOldParts  Int                        @default(3)
   participants    ExpeditionRaidParticipant[]
   createdAt       DateTime                   @default(now())
   updatedAt       DateTime                   @updatedAt
