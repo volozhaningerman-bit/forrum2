@@ -128,6 +128,12 @@ try {
  assert.deepEqual(afterHover,beforeHover,'Hover must not move or scale the row');
  assert.equal(await page.getByRole('button',{name:'Новые',exact:true}).getAttribute('aria-pressed'),'true');
  assert(requests.some(r=>r.path==='/v1/feed'&&r.cookie?.includes('forrum_test=viewer')));
+ const bookmarkCalls=requests.filter(r=>r.path==='/v1/publications/topic-0/bookmark').length;
+ const hostile=await page.request.post('http://127.0.0.1:'+port+'/api/publications/topic-0/bookmark',{headers:{Origin:'https://evil.example'}});
+ assert.equal(hostile.status(),403,'Cross-site writes must be rejected before forwarding session cookies');
+ assert.equal(requests.filter(r=>r.path==='/v1/publications/topic-0/bookmark').length,bookmarkCalls);
+ const malformedVital=await page.request.post('http://127.0.0.1:'+port+'/api/vitals',{headers:{Origin:'http://127.0.0.1:'+port},data:{name:'not-a-vital',value:1,rating:'good',device:'desktop'}});
+ assert.equal(malformedVital.status(),400);
  const first=page.locator('.forum-topic').first(),more=first.getByRole('button',{name:/Действия с темой/});
  await more.click();await page.keyboard.press('Escape');assert.equal(await more.getAttribute('aria-expanded'),'false');assert(await more.evaluate(el=>el===document.activeElement));
  await more.click();await first.getByRole('button',{name:'В избранное',exact:true}).click();await first.getByText('Добавлено в избранное',{exact:true}).waitFor({timeout:5000}).catch(async error=>{console.log('Bookmark notice:',await first.locator('.forum-action-notice').textContent());throw error;});assert(saved);assert.equal(await first.locator('.forum-saved-dot').count(),1);
