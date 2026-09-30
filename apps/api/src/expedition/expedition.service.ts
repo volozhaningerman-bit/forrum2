@@ -240,6 +240,22 @@ export class ExpeditionService {
     return this.state(actorId);
   }
 
+  async unequip(actorId: string, itemId: string) {
+    const item = await this.prisma.expeditionItemInstance.findFirst({
+      where: { id: itemId, ownerId: actorId },
+      select: { id: true, equipped: true },
+    });
+    if (!item) throw new NotFoundException('Предмет не найден');
+    if (!item.equipped) return this.state(actorId);
+
+    await this.prisma.expeditionItemInstance.update({
+      where: { id: item.id },
+      data: { equipped: false, equippedAt: null },
+    });
+
+    return this.state(actorId);
+  }
+
   private async ensureProfile(actorId: string) {
     return this.prisma.expeditionProfile.upsert({
       where: { userId: actorId },
