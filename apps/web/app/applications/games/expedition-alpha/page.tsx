@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
+import { requireUser, serverApi } from '@/lib/server-api';
 import './expedition-alpha.css';
-import { ExpeditionAlphaGame } from './expedition-alpha-game';
+import { ExpeditionAlphaGame, type ExpeditionState } from './expedition-alpha-game';
 
 export const metadata: Metadata = {
   title: 'Экспедиция — alpha · 4rrum',
@@ -8,6 +9,13 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function ExpeditionAlphaPage() {
-  return <ExpeditionAlphaGame />;
+export default async function ExpeditionAlphaPage() {
+  await requireUser('/applications/games/expedition-alpha');
+  const initialState = await serverApi<ExpeditionState>('/expedition/me');
+
+  if (!initialState) {
+    throw new Error('Не удалось загрузить игровой профиль');
+  }
+
+  return <ExpeditionAlphaGame initialState={initialState} />;
 }
