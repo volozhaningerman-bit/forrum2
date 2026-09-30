@@ -124,15 +124,16 @@ export class ExpeditionService {
       throw new BadRequestException('Экспедиция ещё не завершена');
     }
 
-    const candidates = await this.prisma.expeditionItemTemplate.findMany({
+    const candidates = (await this.prisma.expeditionItemTemplate.findMany({
       where: { active: true, minDepth: { lte: run.depth } },
       orderBy: [{ minDepth: 'desc' }, { power: 'asc' }],
-    });
-    if (!candidates.length) throw new NotFoundException('Для глубины не настроена добыча');
+    })).filter((item) => item.issuedCount < item.circulationCap);
+    if (!candidates.length) throw new NotFoundException('Для глубины не осталось доступного тиража');
 
     const picked = candidates[Math.abs(run.rewardSeed) % candidates.length];
     const xpGain = 30 + run.depth * 10;
     const resources = {
+      metal: 6 + run.depth * 4,
       scrap: 8 + run.depth * 5,
       cloth: 3 + run.depth * 2,
       oldParts: Math.max(0, run.depth - 1) * 2,
@@ -176,6 +177,10 @@ export class ExpeditionService {
           level: nextLevel,
           xp: nextXp,
           unlockedDepth: Math.min(5, Math.max(current.unlockedDepth, run.depth + 1)),
+          metal: { increment: resources.metal },
+          cloth: { increment: resources.cloth },
+          scrap: { increment: resources.scrap },
+          oldParts: { increment: resources.oldParts },
         },
       });
 
@@ -205,11 +210,7 @@ export class ExpeditionService {
         ...result.reward,
         item: this.serializeItem(result.item),
       },
-      profile: {
-        level: result.profile.level,
-        xp: result.profile.xp,
-        unlockedDepth: result.profile.unlockedDepth,
-      },
+      state: await this.state(actorId),
     };
   }
 
@@ -296,6 +297,10 @@ export class ExpeditionService {
       maxEnergy: number;
       unlockedDepth: number;
       basePower: number;
+      metal: number;
+      cloth: number;
+      scrap: number;
+      oldParts: number;
     },
     run: {
       id: string;
@@ -334,6 +339,12 @@ export class ExpeditionService {
         maxEnergy: profile.maxEnergy,
         unlockedDepth: profile.unlockedDepth,
         power: profile.basePower + profile.level * 3 + equippedPower,
+        resources: {
+          metal: profile.metal,
+          cloth: profile.cloth,
+          scrap: profile.scrap,
+          oldParts: profile.oldParts,
+        },
       },
       run: run ? {
         ...run,
