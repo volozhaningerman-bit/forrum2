@@ -160,7 +160,7 @@ export function ExpeditionAlphaGame() {
 
   useEffect(() => {
     let alive = true;
-    let readyTimer: ReturnType<typeof window.setTimeout> | null = null;
+    let readyTimer: number | null = null;
 
     async function load() {
       try {
