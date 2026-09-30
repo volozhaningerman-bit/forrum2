@@ -200,7 +200,7 @@ export function ExpeditionAlphaGame() {
   const [run, setRun] = useState<RunState>(null);
   const [readyRun, setReadyRun] = useState<number | null>(null);
   const [lastDrops, setLastDrops] = useState<Item[]>([]);
-  const [resources, setResources] = useState({ metal: 12, scrap: 7, parts: 2 });
+  const [resources, setResources] = useState({ scrap: 7, cloth: 4, oldParts: 2 });
   const [runCount, setRunCount] = useState(0);
   const [raidJoined, setRaidJoined] = useState(false);
   const [now, setNow] = useState(() => Date.now());
@@ -224,6 +224,7 @@ export function ExpeditionAlphaGame() {
     setXp(state.profile.xp);
     setLevel(state.profile.level);
     setUnlockedDepth(state.profile.unlockedDepth);
+    setResources(state.profile.resources);
     setInventory(mappedItems);
     setEquipped(nextEquipped);
 
@@ -342,11 +343,6 @@ export function ExpeditionAlphaGame() {
         const claimed = await claimExpedition(serverRunId);
         const drop = mapServerItem(claimed.reward.item);
         setLastDrops([drop]);
-        setResources((current) => ({
-          metal: current.metal,
-          scrap: current.scrap + claimed.reward.resources.scrap,
-          parts: current.parts + claimed.reward.resources.oldParts,
-        }));
         const state = await loadExpeditionState();
         applyServerState(state);
       } catch (cause) {
@@ -371,9 +367,9 @@ export function ExpeditionAlphaGame() {
     });
     setLastDrops(drops);
     setResources((current) => ({
-      metal: current.metal + 3 * readyRun,
       scrap: current.scrap + 2 * readyRun,
-      parts: current.parts + (readyRun >= 2 ? 1 : 0),
+      cloth: current.cloth + Math.max(1, readyRun),
+      oldParts: current.oldParts + (readyRun >= 2 ? 1 : 0),
     }));
     setXp((value) => {
       const next = value + 25 + readyRun * 12;
@@ -602,7 +598,7 @@ export function ExpeditionAlphaGame() {
         <aside className="exp-panel exp-inventory">
           <div className="exp-panel-title">
             <div><span>Инвентарь</span><strong>{inventory.length} предметов</strong></div>
-            <em>{resources.metal} металл · {resources.scrap} лом</em>
+            <em>{resources.scrap} лом · {resources.oldParts} детали</em>
           </div>
 
           <div className="exp-rarity-key">
