@@ -76,6 +76,13 @@ if (/publicApi<HomeInitialData\['events'\]>\('\/events'\)/.test(homePage)) failu
 const homeCss = readFileSync('apps/web/app/home-alpha.css', 'utf8');
 if (!/@media \(prefers-reduced-data:reduce\)/.test(homeCss)) failures.push('homepage: reduced-data preference fallback is missing');
 if (!/@media \(forced-colors:active\)/.test(homeCss)) failures.push('homepage: forced-colors keyboard/structure support is missing');
+
+for (const path of [
+  '.github/workflows/forrum-v34-ai-reference-20260909.yml',
+  '.github/workflows/forrum-v34-ai-reference-20260909(1).yml',
+  '.github/workflows/4rrum-v42-tyuryaga2.yml',
+]) expect(path, /Archived workflow/, 'obsolete migration workflow must stay archived');
+
 const sitemap = readFileSync('apps/web/app/sitemap.ts', 'utf8');
 if (/lastModified:\s*now/.test(sitemap)) failures.push('sitemap: synthetic current timestamps create false recrawl signals');
 
