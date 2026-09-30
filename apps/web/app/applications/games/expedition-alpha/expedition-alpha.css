@@ -1658,3 +1658,30 @@
 .exp-relic span{
   z-index:3!important;
 }
+
+
+/* v0.6.3 final desktop composition correctness.
+   Legacy flex rules must not hide the raid copy beside the boss art. */
+@media (min-width:1181px){
+  .exp-raid{
+    display:grid!important;
+    grid-template-columns:150px minmax(0,1fr)!important;
+    flex-direction:initial!important;
+    align-items:stretch!important;
+    overflow:hidden!important;
+  }
+  .exp-raid-art{
+    min-width:0!important;
+    height:100%!important;
+  }
+  .exp-raid-copy{
+    min-width:0!important;
+    position:relative!important;
+    z-index:2!important;
+  }
+}
+.exp-champion::before,
+.exp-relic::before{
+  display:block!important;
+  visibility:visible!important;
+}
