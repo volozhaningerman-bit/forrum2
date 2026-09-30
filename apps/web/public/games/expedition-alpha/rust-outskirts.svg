@@ -1,53 +1,68 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520">
 <defs>
-  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#2f718e"/><stop offset=".42" stop-color="#df9854"/><stop offset=".75" stop-color="#7d4d35"/><stop offset="1" stop-color="#2b2625"/></linearGradient>
-  <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#66503c"/><stop offset=".45" stop-color="#3a302b"/><stop offset="1" stop-color="#171719"/></linearGradient>
-  <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#786454"/><stop offset="1" stop-color="#342d2a"/></linearGradient>
-  <radialGradient id="reactor"><stop stop-color="#efffff"/><stop offset=".18" stop-color="#65e8ff"/><stop offset=".5" stop-color="#1888aa"/><stop offset="1" stop-color="#07181f"/></radialGradient>
-  <filter id="soft"><feGaussianBlur stdDeviation="8"/></filter>
+ <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#73c9ee"/><stop offset=".55" stop-color="#b9dcdf"/><stop offset="1" stop-color="#edc58e"/></linearGradient>
+ <linearGradient id="stone" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d6c08f"/><stop offset=".55" stop-color="#a8885a"/><stop offset="1" stop-color="#6a513d"/></linearGradient>
+ <linearGradient id="roof" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ba5138"/><stop offset="1" stop-color="#713324"/></linearGradient>
+ <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#8c774e"/><stop offset=".45" stop-color="#5f5139"/><stop offset="1" stop-color="#2c2925"/></linearGradient>
+ <radialGradient id="reactor"><stop stop-color="#f5ffff"/><stop offset=".16" stop-color="#8cf2ff"/><stop offset=".5" stop-color="#27b7d7"/><stop offset="1" stop-color="#123d5a"/></radialGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="8"/></filter>
 </defs>
 <rect width="1200" height="520" fill="url(#sky)"/>
-<circle cx="945" cy="102" r="61" fill="#ffe3a0"/>
-<circle cx="945" cy="102" r="96" fill="#ffd77c" opacity=".18" filter="url(#soft)"/>
-<!-- distant city -->
-<path d="M0 318 80 279l91 20 88-74 83 58 103-105 90 69 91-92 95 76 87-57 91 78 92-33 109 71v210H0z" fill="#55453a" opacity=".88"/>
-<g fill="#302b29">
- <path d="M52 330V203h80v127z"/><path d="M154 330V148h107v182z"/><path d="M282 330V220h78v110z"/>
- <path d="M387 330V170h92v160z"/><path d="M506 330V112h95v218z"/><path d="M620 330V198h87v132z"/>
+<!-- clouds -->
+<g fill="#f5fbfa" opacity=".82">
+ <path d="M64 86q20-35 53-12 20-27 48-3 42-10 52 29H44q-2-11 20-14z"/>
+ <path d="M696 66q24-41 62-11 20-25 48-2 42-8 54 29H676q-2-12 20-16z"/>
 </g>
-<g fill="#1d1c1d">
- <path d="M78 200h18V88h14v112z"/><path d="M183 145h23V47h15v98z"/><path d="M536 108h20V26h16v82z"/>
+<circle cx="1010" cy="86" r="62" fill="#ffe4a4"/>
+<circle cx="1010" cy="86" r="92" fill="#ffd67e" opacity=".15"/>
+<!-- distant broken high-tech rings -->
+<g transform="translate(790 122) rotate(-18)" fill="none" stroke="#81939b" stroke-width="22" opacity=".72">
+ <ellipse rx="153" ry="82"/><ellipse rx="111" ry="56" stroke-width="13"/>
+ <path d="M-147 0h36M111 0h36M0-80v31M0 49v31" stroke="#65777e" stroke-width="17"/>
 </g>
-<!-- cranes -->
-<g stroke="#282627" stroke-width="11" fill="none">
- <path d="M32 173h187M79 173 41 318M161 173l51 167M735 145h183M796 145l-62 203M866 145l59 203"/>
+<!-- far fortified city -->
+<path d="M0 261 104 216l78 22 81-57 86 34 95-74 104 49 78-47 93 56 86-36 86 44 101-33 108 61v113H0z" fill="#8a795c" opacity=".66"/>
+<g fill="url(#stone)" stroke="#63513b" stroke-width="5">
+ <path d="M39 278v-90h77v90z"/><path d="M128 278v-119h92v119z"/><path d="M235 278v-75h79v75z"/>
+ <path d="M337 278v-132h86v132z"/><path d="M449 278v-97h74v97z"/><path d="M549 278v-121h92v121z"/>
+ <path d="M660 278v-81h71v81z"/>
 </g>
-<g stroke="#a16f48" stroke-width="4" fill="none" opacity=".75"><path d="M43 174h159M748 146h155"/><path d="M66 195h117M768 168h118"/></g>
-<!-- foreground old medieval workshops -->
-<path d="M0 364c137-29 255-10 388 24 181 46 331 10 475-29 128-35 234-28 337 8v153H0z" fill="url(#ground)"/>
-<g stroke="#271e19" stroke-width="8" fill="url(#wall)">
- <path d="M60 398v-111l73-47 83 47v111z"/><path d="M278 411v-133l85-58 90 58v133z"/>
+<g fill="#765338"><path d="M57 188h41v-23h-41z"/><path d="M146 159h55v-28h-55z"/><path d="M355 146h50v-29h-50z"/><path d="M570 157h49v-29h-49z"/></g>
+<!-- bridges/arches -->
+<g fill="none" stroke="#b69b70" stroke-width="19" opacity=".95">
+ <path d="M77 290q35-67 70 0M147 290q35-67 70 0M217 290q35-67 70 0M405 288q38-72 76 0M481 288q38-72 76 0"/>
 </g>
-<g fill="#d07a36"><rect x="101" y="321" width="28" height="48"/><rect x="347" y="319" width="31" height="54"/></g>
-<g fill="#231c19"><path d="m48 287 86-66 94 66z"/><path d="m266 279 97-76 103 76z"/></g>
+<!-- foreground market / medieval workshops -->
+<path d="M0 355c132-29 245-15 362 14 148 38 271 25 405-13 142-41 286-36 433 16v148H0z" fill="url(#ground)"/>
+<g stroke="#4a3527" stroke-width="7">
+ <path d="M28 413v-105l84-56 91 56v105z" fill="url(#stone)"/><path d="m15 308 99-76 104 76z" fill="#7e382b"/>
+ <path d="M226 428v-121l91-61 100 61v121z" fill="url(#stone)"/><path d="m210 306 107-82 117 82z" fill="url(#roof)"/>
+</g>
+<g fill="#d78a45"><rect x="91" y="338" width="30" height="55"/><rect x="302" y="342" width="33" height="60"/></g>
+<!-- market awning -->
+<path d="M436 316h190l-18 54H454z" fill="#a74631" stroke="#4d2d24" stroke-width="6"/>
+<path d="M455 316v132M605 316v132" stroke="#4b3729" stroke-width="9"/>
+<g fill="#d8c392"><rect x="469" y="368" width="120" height="56" rx="5"/></g>
+<!-- foliage -->
+<g fill="#66894b" opacity=".9">
+ <circle cx="62" cy="359" r="34"/><circle cx="190" cy="379" r="28"/><circle cx="675" cy="350" r="33"/><circle cx="745" cy="376" r="24"/>
+</g>
 <!-- reactor relic -->
-<g transform="translate(904 165)">
- <path d="M-20 191V77c0-56 42-92 96-92s97 36 97 92v114z" fill="#1a292f" stroke="#0c1417" stroke-width="12"/>
- <ellipse cx="76" cy="78" rx="50" ry="104" fill="url(#reactor)"/>
- <path d="M3 86h146M14 31h124M10 142h132" stroke="#4f6e78" stroke-width="11"/>
- <path d="M39 -4v-33h74v33M28 191v31h96v-31" stroke="#1d282c" stroke-width="15"/>
-</g>
-<!-- rubble -->
-<g fill="#473a32" stroke="#2a221e" stroke-width="4">
- <path d="m43 441 72-34 96 38-71 44z"/><path d="m224 459 80-42 91 37-75 50z"/>
- <path d="m518 445 95-44 105 39-89 54z"/><path d="m740 456 88-35 94 37-77 43z"/>
+<g transform="translate(940 178)">
+ <path d="M-22 183V68c0-53 40-88 91-88s92 35 92 88v115z" fill="#243238" stroke="#11191d" stroke-width="12"/>
+ <ellipse cx="69" cy="72" rx="49" ry="99" fill="url(#reactor)"/>
+ <ellipse cx="69" cy="72" rx="62" ry="113" fill="#44d9f2" opacity=".13" filter="url(#glow)"/>
+ <path d="M-2 80h143M8 27h123M5 134h129" stroke="#6b8791" stroke-width="10"/>
+ <path d="M33 -13v-29h72v29M23 183v29h93v-29" stroke="#26353a" stroke-width="14"/>
 </g>
 <!-- tech debris -->
-<g fill="#31515d" stroke="#17272d" stroke-width="6">
- <circle cx="485" cy="430" r="24"/><circle cx="485" cy="430" r="10" fill="#64d9f3"/>
- <rect x="658" y="421" width="61" height="33" rx="6"/><path d="M669 433h37" stroke="#79d4e4" stroke-width="5"/>
+<g fill="#243e48" stroke="#14252c" stroke-width="5">
+ <circle cx="535" cy="441" r="23"/><circle cx="535" cy="441" r="9" fill="#70e3f7"/>
+ <rect x="695" y="432" width="62" height="30" rx="5"/><path d="M708 443h35" stroke="#72d6e9" stroke-width="5"/>
 </g>
 <!-- banners -->
-<g fill="#9c4b31"><path d="M236 248h7v111h-7z"/><path d="m243 253 55 11-55 35z"/><path d="M474 201h7v124h-7z"/><path d="m481 207 50 10-50 33z"/></g>
-<rect width="1200" height="520" fill="none" stroke="#071013" stroke-width="22" opacity=".18"/>
+<g fill="#a74031"><path d="M186 209h7v123h-7z"/><path d="m193 214 51 10-51 36z"/><path d="M635 191h7v117h-7z"/><path d="m642 196 52 11-52 35z"/></g>
+<!-- foreground stones -->
+<g fill="#4a4034" stroke="#29251f" stroke-width="3"><path d="m24 470 75-30 81 32-70 34z"/><path d="m321 470 91-38 94 37-82 36z"/><path d="m792 470 86-31 91 34-77 31z"/></g>
+<rect width="1200" height="520" fill="none" stroke="#0b1518" stroke-width="18" opacity=".08"/>
 </svg>
