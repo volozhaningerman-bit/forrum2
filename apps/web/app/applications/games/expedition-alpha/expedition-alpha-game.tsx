@@ -204,6 +204,47 @@ export function ExpeditionAlphaGame() {
   const [runCount, setRunCount] = useState(0);
   const [raidJoined, setRaidJoined] = useState(false);
   const [now, setNow] = useState(() => Date.now());
+  const [serverMode, setServerMode] = useState<'checking' | 'server' | 'demo'>('checking');
+  const [serverRunId, setServerRunId] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  const applyServerState = useCallback((state: ExpeditionServerState) => {
+    const mappedItems = state.inventory.map(mapServerItem);
+    const mappedById = new Map(mappedItems.map((item) => [item.id, item]));
+    const nextEquipped: Partial<Record<Slot, Item>> = {};
+
+    for (const raw of state.inventory) {
+      if (!raw.equipped) continue;
+      const item = mappedById.get(raw.id);
+      if (item) nextEquipped[item.slot] = item;
+    }
+
+    setEnergy(state.profile.energy);
+    setXp(state.profile.xp);
+    setLevel(state.profile.level);
+    setUnlockedDepth(state.profile.unlockedDepth);
+    setInventory(mappedItems);
+    setEquipped(nextEquipped);
+
+    if (state.run) {
+      setServerRunId(state.run.id);
+      if (state.run.status === 'READY' || state.run.secondsLeft <= 0) {
+        setReadyRun(state.run.depth);
+        setRun(null);
+      } else {
+        setRun({
+          depthId: state.run.depth,
+          endsAt: new Date(state.run.readyAt).getTime(),
+        });
+        setReadyRun(null);
+      }
+    } else {
+      setServerRunId(null);
+      setRun(null);
+      setReadyRun(null);
+    }
+  }, []);
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 500);
