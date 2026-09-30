@@ -252,6 +252,25 @@ export function ExpeditionAlphaGame() {
   }, []);
 
   useEffect(() => {
+    const controller = new AbortController();
+
+    loadExpeditionState(controller.signal)
+      .then((state) => {
+        applyServerState(state);
+        setServerMode('server');
+        setApiError(null);
+      })
+      .catch((cause) => {
+        if (controller.signal.aborted) return;
+        setServerMode('demo');
+        setApiError(cause instanceof Error ? cause.message : 'Серверная игра недоступна');
+      });
+
+    return () => controller.abort();
+  }, [applyServerState]);
+
+  useEffect(() => {
+    if (serverMode === 'server') return;
     if (run && now >= run.endsAt) {
       setReadyRun(run.depthId);
       setRun(null);
