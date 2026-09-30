@@ -521,3 +521,14 @@
 .exp-avatar-art{
   inset:14px 30px 46px!important;
 }
+
+.exp-raid-copy button.resolved{
+  background:#1d292e;
+  color:#b8c6cc;
+  border:1px solid #344850;
+}
+.exp-raid-copy button.resolved.joined{
+  background:#17302b;
+  color:#8fe4d2;
+  border-color:#2b5a51;
+}
