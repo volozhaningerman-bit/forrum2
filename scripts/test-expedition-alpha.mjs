@@ -50,6 +50,7 @@ const staticChecks = [
   ['Iron Shepherd raid join', gameSource.includes('Железный Пастырь') && gameSource.includes('raidJoined')],
   ['category and syndicate preview', gameSource.includes('Железный Герольд') && gameSource.includes('Ядро Ковчега')],
   ['live-safe art pack referenced', cssSource.includes('/games/expedition-alpha/hero-base.svg') && cssSource.includes('/games/expedition-alpha/rust-outskirts.svg') && cssSource.includes('/games/expedition-alpha/iron-shepherd.svg') && cssSource.includes('/games/expedition-alpha/equipment-atlas.svg')],
+  ['v0.6 reference composition', cssSource.includes('EXPEDITION ALPHA V0.6') && cssSource.includes('champion-herald-v06.svg') && cssSource.includes('ark-core-v06.svg')],
   ['true paper-doll layers wired', gameSource.includes('exp-gear exp-gear-cloak') && gameSource.includes('exp-gear exp-gear-mainhand') && cssSource.includes('.exp-avatar.has-gloves .exp-gear-gloves')],
   ['world hero uses live-safe art', gameSource.includes('exp-world-hero') && cssSource.includes('/games/expedition-alpha/hero-base.svg')],
   ['no civilization art dependency', !cssSource.includes('/games/civilization/')],
@@ -316,25 +317,50 @@ try {
   await page.goto('http://127.0.0.1:' + port + '/applications/games/expedition-alpha', { waitUntil: 'networkidle' });
   await page.getByText('серверный прогресс').waitFor();
 
-  const metrics = await page.evaluate(() => ({
-    width: innerWidth,
-    scrollWidth: document.documentElement.scrollWidth,
-    game: Boolean(document.querySelector('[data-testid="expedition-alpha"]')),
-    avatar: Boolean(document.querySelector('.exp-avatar-art')),
-    location: Boolean(document.querySelector('.exp-location-art')),
-    boss: Boolean(document.querySelector('.exp-boss-crop')),
-    avatarBg: getComputedStyle(document.querySelector('.exp-avatar-art')).backgroundImage,
-    locationBg: getComputedStyle(document.querySelector('.exp-location-art')).backgroundImage,
-    bossBg: getComputedStyle(document.querySelector('.exp-boss-crop')).backgroundImage,
-    bossDisplay: getComputedStyle(document.querySelector('.exp-boss-crop')).display,
-  }));
+  const metrics = await page.evaluate(() => {
+    const layout = document.querySelector('.exp-layout')?.getBoundingClientRect();
+    const location = document.querySelector('.exp-location-art')?.getBoundingClientRect();
+    return {
+      width: innerWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      game: Boolean(document.querySelector('[data-testid="expedition-alpha"]')),
+      avatar: Boolean(document.querySelector('.exp-avatar-art')),
+      location: Boolean(document.querySelector('.exp-location-art')),
+      boss: Boolean(document.querySelector('.exp-boss-crop')),
+      avatarBg: getComputedStyle(document.querySelector('.exp-avatar-art')).backgroundImage,
+      locationBg: getComputedStyle(document.querySelector('.exp-location-art')).backgroundImage,
+      bossBg: getComputedStyle(document.querySelector('.exp-boss-crop')).backgroundImage,
+      bossDisplay: getComputedStyle(document.querySelector('.exp-boss-crop')).display,
+      raidDisplay: getComputedStyle(document.querySelector('.exp-raid')).display,
+      raidButtonVisible: (() => { const el=document.querySelector('.exp-raid-copy button'); if(!el) return false; const r=el.getBoundingClientRect(); const s=getComputedStyle(el); return r.width>0 && r.height>0 && s.display!=='none' && s.visibility!=='hidden'; })(),
+      championArtDisplay: getComputedStyle(document.querySelector('.exp-champion'),'::before').display,
+      relicArtDisplay: getComputedStyle(document.querySelector('.exp-relic'),'::before').display,
+      slots: document.querySelectorAll('.exp-slots button').length,
+      layoutHeight: layout?.height ?? 9999,
+      locationHeight: location?.height ?? 0,
+      characterRect: (() => { const r=document.querySelector('.exp-character')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
+      centerRect: (() => { const r=document.querySelector('.exp-center')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
+      inventoryRect: (() => { const r=document.querySelector('.exp-inventory')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
+      raidRect: (() => { const r=document.querySelector('.exp-raid')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
+      locationRect: (() => { const r=document.querySelector('.exp-location')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
+    };
+  });
   assert(metrics.game && metrics.avatar && metrics.location && metrics.boss, 'core visual surfaces missing');
   assert(metrics.avatarBg.includes('hero-base.svg'), 'hero art must render from live-safe SVG');
   assert(metrics.locationBg.includes('rust-outskirts.svg'), 'location art must render from live-safe SVG');
   assert(metrics.bossBg.includes('iron-shepherd.svg') && metrics.bossDisplay !== 'none', 'boss art must be visibly rendered');
+  assert.equal(metrics.raidDisplay, 'grid', 'desktop raid must render boss and copy side by side');
+  assert(metrics.raidButtonVisible, 'raid action must remain visible and clickable');
+  assert.notEqual(metrics.championArtDisplay, 'none', 'Champion art must be rendered');
+  assert.notEqual(metrics.relicArtDisplay, 'none', 'Ark Core art must be rendered');
+  assert.equal(metrics.slots, 16, 'all 16 equipment slots must remain available');
+  assert(metrics.locationHeight >= 250, `game world too small: ${metrics.locationHeight}px`);
+  assert(metrics.layoutHeight <= 760, `1720 desktop composition is too tall: ${metrics.layoutHeight}px`);
+  assert(metrics.characterRect && metrics.centerRect && metrics.inventoryRect && metrics.inventoryRect.left >= metrics.centerRect.right - 2, 'inventory must stay in the right rail');
+  assert(metrics.raidRect && metrics.locationRect && metrics.raidRect.top >= metrics.locationRect.bottom - 2, 'raid must sit below the world scene, never over it');
   assert(metrics.scrollWidth <= metrics.width + 2, `horizontal overflow ${metrics.scrollWidth}/${metrics.width}`);
 
-  await page.screenshot({ path: output + '/expedition-alpha-v051-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v06-1720x900.png', fullPage: true });
 
   const raidJoin = page.getByRole('button', { name: 'Отправить персонажа' });
   await raidJoin.click();
@@ -358,11 +384,19 @@ try {
   }));
   assert.equal(gloveLayer.display === 'none', false, 'paper-doll glove layer must exist');
   assert(Number(gloveLayer.opacity) > 0.8, 'equipped gloves must visibly activate paper-doll layer');
+  const legacyGlove = await page.locator('.exp-avatar.has-gloves').evaluate((node) => getComputedStyle(node, '::before').content);
+  assert(['none', 'normal', '""'].includes(legacyGlove), 'legacy glove pseudo must not render duplicate side bars');
+  const socialArt = await page.evaluate(() => ({
+    champion: getComputedStyle(document.querySelector('.exp-champion'), '::before').display,
+    relic: getComputedStyle(document.querySelector('.exp-relic'), '::before').display,
+  }));
+  assert.notEqual(socialArt.champion, 'none', 'champion art must be visible');
+  assert.notEqual(socialArt.relic, 'none', 'relic art must be visible');
 
-  await page.screenshot({ path: output + '/expedition-alpha-v051-loot-equipped-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v06-loot-equipped-1720x900.png', fullPage: true });
 
   await page.setViewportSize({ width: 1366, height: 768 });
-  await page.screenshot({ path: output + '/expedition-alpha-v051-1366x768.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v06-1366x768.png', fullPage: true });
   const mobileish = await page.evaluate(() => ({
     width: innerWidth,
     scrollWidth: document.documentElement.scrollWidth,
@@ -379,4 +413,4 @@ try {
   upstream.close();
 }
 
-console.log(`Expedition alpha v0.5.1 live-art checks passed. Item templates covered: ${itemCount}.`);
+console.log(`Expedition alpha v0.6 reference-led checks passed. Item templates covered: ${itemCount}.`);
