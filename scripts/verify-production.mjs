@@ -12,6 +12,15 @@ if (!expectedSha) {
   process.exit(2);
 }
 
+async function verifyPublicOrigin() {
+  const origin=new URL(webBase).origin;
+  const probe=async originHeader=>fetch(`${webBase}/api/auth/login`,{method:'POST',cache:'no-store',headers:{Origin:originHeader,'Content-Type':'application/json'},body:'{}'});
+  // Empty login input only exercises validation; it creates no session/account.
+  const valid=await probe(origin),hostile=await probe('https://evil.example');
+  console.log(JSON.stringify({sameOriginValidation:valid.status,hostileOrigin:hostile.status}));
+  if(valid.status!==400||hostile.status!==403)throw new Error(`Production Origin check failed: same-origin=${valid.status}, hostile=${hostile.status}`);
+}
+
 const deadline = Date.now() + timeoutMs;
 let attempt = 0;
 let lastError = '';
@@ -77,6 +86,7 @@ while (Date.now() < deadline) {
       hasReference &&
       hasRevision
     ) {
+      await verifyPublicOrigin();
       console.log(
         `Production verified: ${webBase} serves homepage ${expectedReference}${expectedRevision ? ` revision ${expectedRevision}` : ''}` +
           (deployedSha && deployedSha !== 'unknown' ? ` at ${deployedSha}` : ''),
