@@ -43,7 +43,14 @@ export function CommunityPanels({
     setRankingError(false);
     setRanking(null);
     api<WeeklyUser[]>(`/home/ranking?period=${period}&mode=${mode}`,{signal:controller.signal})
-      .then(rows=>{if(!controller.signal.aborted)setRanking(rows);})
+      .then(rows=>{
+        if(controller.signal.aborted) return;
+        if(rows.length===0 && period==='week'){
+          setPeriod('all');
+          return;
+        }
+        setRanking(rows);
+      })
       .catch(()=>{if(!controller.signal.aborted)setRankingError(true);})
       .finally(()=>{if(!controller.signal.aborted)setRankingLoading(false);});
     return()=>controller.abort();

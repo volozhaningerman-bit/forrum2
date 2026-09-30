@@ -8,6 +8,11 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: [
           '/admin/',
+          '/activity/',
+          '/welcome',
+          '/verify-email',
+          '/register',
+          '/login',
           '/api/',
           '/messages/',
           '/notifications/',

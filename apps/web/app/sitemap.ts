@@ -7,6 +7,7 @@ const routes = [
   '/digital-services',
   '/services',
   '/events',
+  '/news',
   '/projects',
   '/rules',
   '/support',
@@ -14,10 +15,8 @@ const routes = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
   return routes.map((path, index) => ({
     url: `https://4rrum.ru${path}`,
-    lastModified: now,
     changeFrequency: index === 0 ? 'hourly' : 'daily',
     priority: index === 0 ? 1 : 0.7,
   }));

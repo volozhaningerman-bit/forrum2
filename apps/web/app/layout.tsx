@@ -15,11 +15,9 @@ export const metadata: Metadata = {
   },
   description: 'Форум о технологиях, сообществах, проектах и практическом опыте. Обсуждения, вопросы, идеи и живое общение.',
   keywords: ['форум', 'технологии', 'сообщества', 'проекты', 'разработка', '4rrum'],
-  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     locale: 'ru_RU',
-    url: '/',
     siteName: '4rrum',
     title: '4rrum — технологии, люди, идеи',
     description: 'Форум о технологиях, сообществах, проектах и практическом опыте.',

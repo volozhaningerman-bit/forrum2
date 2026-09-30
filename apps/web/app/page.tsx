@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import './home-v51.css';
 import './home-alpha.css';
 import {
@@ -6,6 +7,17 @@ import {
 } from '@/components/reference-home';
 import { cookies } from 'next/headers';
 import { resolveApiBase } from '@/lib/api-base';
+
+export const metadata: Metadata = {
+  title: '4rrum — технологии, люди, идеи',
+  description: 'Форум о технологиях, сообществах, проектах и практическом опыте. Обсуждения, вопросы, идеи и живое общение.',
+  alternates: { canonical: '/' },
+  openGraph: {
+    url: '/',
+    title: '4rrum — технологии, люди, идеи',
+    description: 'Форум о технологиях, сообществах, проектах и практическом опыте.',
+  },
+};
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;

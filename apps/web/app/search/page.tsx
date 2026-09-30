@@ -1,5 +1,13 @@
+import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { SearchClient } from './search-client';
+export const metadata: Metadata = {
+  title: 'Поиск',
+  description: 'Поиск по темам, сообществам, пользователям и хэштегам 4rrum.',
+  alternates: { canonical: '/search' },
+  openGraph: { url: '/search', title: 'Поиск', description: 'Поиск по темам, сообществам, пользователям и хэштегам 4rrum.' },
+};
+
 
 function SearchFallback() {
   return (

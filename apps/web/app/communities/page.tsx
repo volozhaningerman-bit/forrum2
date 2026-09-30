@@ -1,8 +1,16 @@
+import type { Metadata } from 'next';
 import {
   CommunitiesClient,
   type Community,
 } from './communities-client';
 import { serverApi } from '@/lib/server-api';
+export const metadata: Metadata = {
+  title: 'Сообщества',
+  description: 'Каталог сообществ 4rrum: разделы, темы и актуальная активность.',
+  alternates: { canonical: '/communities' },
+  openGraph: { url: '/communities', title: 'Сообщества', description: 'Каталог сообществ 4rrum: разделы, темы и актуальная активность.' },
+};
+
 
 export const dynamic = 'force-dynamic';
 

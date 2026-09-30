@@ -26,6 +26,12 @@ const securityHeaders = [
   { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
   { key: 'X-DNS-Prefetch-Control', value: 'off' },
   { key: 'Origin-Agent-Cluster', value: '?1' },
+  { key: 'Cross-Origin-Resource-Policy', value: 'same-site' },
+  { key: 'X-Permitted-Cross-Domain-Policies', value: 'none' },
+];
+
+const noIndexHeaders = [
+  { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
 ];
 
 const noStoreHeaders = [
@@ -48,7 +54,21 @@ const nextConfig: NextConfig = {
     return [
       { source: '/(.*)', headers: securityHeaders },
       { source: '/', headers: noStoreHeaders },
-      { source: '/api/build-info', headers: noStoreHeaders },
+      { source: '/api/build-info', headers: [...noStoreHeaders, ...noIndexHeaders] },
+      { source: '/api/:path*', headers: noIndexHeaders },
+      { source: '/admin/:path*', headers: noIndexHeaders },
+      { source: '/messages/:path*', headers: noIndexHeaders },
+      { source: '/notifications/:path*', headers: noIndexHeaders },
+      { source: '/settings/:path*', headers: noIndexHeaders },
+      { source: '/wallet/:path*', headers: noIndexHeaders },
+      { source: '/saved/:path*', headers: noIndexHeaders },
+      { source: '/subscriptions/:path*', headers: noIndexHeaders },
+      { source: '/activity/:path*', headers: noIndexHeaders },
+      { source: '/interactions/:path*', headers: noIndexHeaders },
+      { source: '/login', headers: noIndexHeaders },
+      { source: '/register', headers: noIndexHeaders },
+      { source: '/verify-email', headers: noIndexHeaders },
+      { source: '/welcome', headers: noIndexHeaders },
     ];
   },
 };
