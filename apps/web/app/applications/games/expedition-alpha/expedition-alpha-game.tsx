@@ -93,6 +93,10 @@ export function ExpeditionAlphaGame() {
   const [equipped, setEquipped] = useState<Partial<Record<Slot, Item>>>({});
   const [run, setRun] = useState<'idle' | 'away' | 'returned'>('idle');
   const [lastDrop, setLastDrop] = useState<Item | null>(null);
+  const [finishAt, setFinishAt] = useState<number | null>(null);
+  const [remaining, setRemaining] = useState(0);
+  const [resources, setResources] = useState({ metal: 0, scrap: 0, parts: 0 });
+  const [raidJoined, setRaidJoined] = useState(false);
 
   const depth = depths.find((entry) => entry.id === selectedDepth) ?? depths[0];
   const equippedPower = useMemo(
@@ -101,19 +105,47 @@ export function ExpeditionAlphaGame() {
   );
   const power = 10 + level * 3 + equippedPower;
 
+  useEffect(() => {
+    if (run !== 'away' || !finishAt) return;
+    const tick = () => {
+      const left = Math.max(0, finishAt - Date.now());
+      setRemaining(left);
+      if (left <= 0) {
+        setRun('returned');
+        setFinishAt(null);
+      }
+    };
+    tick();
+    const timer = window.setInterval(tick, 250);
+    return () => window.clearInterval(timer);
+  }, [finishAt, run]);
+
   function sendExpedition() {
     if (run !== 'idle' || energy < depth.energy || depth.id > unlockedDepth) return;
     setEnergy((value) => value - depth.energy);
     setRun('away');
     setLastDrop(null);
-    window.setTimeout(() => setRun('returned'), 1800);
+    const duration = 4500 + depth.id * 900;
+    setRemaining(duration);
+    setFinishAt(Date.now() + duration);
   }
 
   function collectReturn() {
     if (run !== 'returned') return;
-    const drop = expeditionDrops[(selectedDepth - 1) % expeditionDrops.length];
-    setInventory((items) => items.some((item) => item.id === drop.id) ? items : [...items, drop]);
+    const template = expeditionDrops[(selectedDepth + level + inventory.length) % expeditionDrops.length];
+    const ownedOfTemplate = inventory.filter((item) => item.name === template.name).length;
+    const drop: Item = {
+      ...template,
+      id: `${template.id}-${Date.now()}`,
+      serial: Math.min(template.circulation, template.serial + ownedOfTemplate),
+    };
+    setInventory((items) => [...items, drop]);
     setLastDrop(drop);
+    setResources((current) => ({
+      metal: current.metal + 8 + selectedDepth * 3,
+      scrap: current.scrap + 5 + selectedDepth * 2,
+      parts: current.parts + (selectedDepth >= 3 ? 1 : 0),
+    }));
     setXp((value) => {
       const next = value + 35 + selectedDepth * 10;
       if (next >= 100) {
@@ -156,6 +188,7 @@ export function ExpeditionAlphaGame() {
           </div>
 
           <div className={`exp-avatar ${Object.values(equipped).map((item) => item?.visual ? `has-${item.visual}` : '').join(' ')}`}>
+            <img className="exp-avatar-art" src="/games/expedition-alpha/hero.webp" alt="Базовый персонаж в лохмотьях" />
             <div className="exp-avatar-glow" />
             <div className="exp-avatar-head">●</div>
             <div className="exp-avatar-rags exp-avatar-body" />
@@ -238,7 +271,7 @@ export function ExpeditionAlphaGame() {
                 </button>
               ) : run === 'away' ? (
                 <button className="exp-primary is-waiting" type="button" disabled>
-                  Персонаж в пути…
+                  В пути · ${Math.max(1, Math.ceil(remaining / 1000))} сек.
                 </button>
               ) : (
                 <button className="exp-primary is-return" type="button" onClick={collectReturn}>
@@ -275,7 +308,13 @@ export function ExpeditionAlphaGame() {
                 <span><b>21:00</b><small>начало</small></span>
                 <span><b>5</b><small>глубина</small></span>
               </div>
-              <button type="button">Посмотреть сбор</button>
+              <button
+                type="button"
+                className={raidJoined ? 'is-joined' : ''}
+                onClick={() => setRaidJoined((value) => !value)}
+              >
+                {raidJoined ? 'Персонаж записан · выйти' : 'Записаться на рейд'}
+              </button>
             </div>
           </article>
         </section>
@@ -303,13 +342,19 @@ export function ExpeditionAlphaGame() {
                 className={`exp-item rarity-${item.rarity}`}
                 onClick={() => equip(item)}
               >
-                <span className={`exp-item-icon visual-${item.visual}`} />
+                <span className={`exp-item-icon atlas-${item.atlas} visual-${item.visual}`} />
                 <small>{slotLabel[item.slot]}</small>
                 <b>{item.name}</b>
                 <em>№{item.serial}/{item.circulation}</em>
                 <strong>+{item.power}</strong>
               </button>
             ))}
+          </div>
+
+          <div className="exp-resources">
+            <span><b>{resources.metal}</b><small>металл</small></span>
+            <span><b>{resources.scrap}</b><small>лом</small></span>
+            <span><b>{resources.parts}</b><small>старые детали</small></span>
           </div>
 
           <div className="exp-social-preview">
