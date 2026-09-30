@@ -472,3 +472,60 @@
 .exp-api-error b{color:#f4d0cb}
 .exp-alpha button:disabled{cursor:not-allowed}
 .exp-item:disabled{opacity:.62;transform:none}
+
+
+/* Expedition alpha v0.3 — reference fidelity and readability pass */
+.exp-alpha h1,
+.exp-alpha h2,
+.exp-alpha h3,
+.exp-alpha strong,
+.exp-alpha b{color:var(--text)}
+.exp-topbar h1{color:#f4f7f8!important;text-shadow:0 2px 12px rgba(0,0,0,.35)}
+.exp-location-copy h2{color:#fff7ec!important;text-shadow:0 3px 16px rgba(0,0,0,.78)}
+.exp-raid-copy h2{color:#fff1df!important;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+.exp-community-card h3{color:#f0f4f5!important}
+.exp-location-art{min-height:336px}
+.exp-location-art::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    linear-gradient(180deg,rgba(3,8,10,.02) 0%,rgba(3,8,10,.05) 38%,rgba(3,8,10,.82) 100%),
+    linear-gradient(90deg,rgba(3,8,10,.12),transparent 56%);
+}
+.exp-location-copy{z-index:4}
+.exp-avatar-art{
+  inset:8px 22px 42px;
+  filter:
+    drop-shadow(0 20px 18px rgba(0,0,0,.48))
+    saturate(1.08)
+    contrast(1.06)
+    brightness(1.04);
+}
+.exp-boss-crop{
+  inset:2px;
+  filter:
+    saturate(1.1)
+    contrast(1.07)
+    brightness(1.04)
+    drop-shadow(0 20px 18px rgba(0,0,0,.46));
+}
+.exp-raid-art{
+  background:
+    radial-gradient(circle at 50% 38%,rgba(237,123,45,.22),transparent 36%),
+    linear-gradient(180deg,#3a2118 0%,#161416 55%,#090e11 100%);
+}
+.exp-panel{
+  box-shadow:
+    0 15px 42px rgba(0,0,0,.26),
+    inset 0 1px rgba(255,255,255,.025);
+}
+.exp-item{transition:transform .14s ease,background-color .14s ease,border-color .14s ease}
+.exp-primary,.exp-raid-copy button{
+  box-shadow:0 6px 18px rgba(20,190,163,.13);
+}
+@media(prefers-reduced-motion:reduce){
+  .exp-item{transition:none}
+}

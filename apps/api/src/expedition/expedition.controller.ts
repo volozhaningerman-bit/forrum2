@@ -54,6 +54,21 @@ export class ExpeditionController {
     return this.expedition.unequip(this.actorId(actorValue), id);
   }
 
+  @Get('raid/current')
+  raid(@CurrentUser() actorValue: unknown) {
+    return this.expedition.raidState(this.actorId(actorValue));
+  }
+
+  @Post('raid/current/join')
+  joinRaid(@CurrentUser() actorValue: unknown) {
+    return this.expedition.joinRaid(this.actorId(actorValue));
+  }
+
+  @Post('raid/current/leave')
+  leaveRaid(@CurrentUser() actorValue: unknown) {
+    return this.expedition.leaveRaid(this.actorId(actorValue));
+  }
+
   private actorId(value: unknown) {
     if (typeof value === 'string' && value) return value;
     if (value && typeof value === 'object') {

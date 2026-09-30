@@ -307,6 +307,7 @@ model User {
   tyuryagaProfile TyuryagaProfile?
   expeditionProfile ExpeditionProfile?
   expeditionItems ExpeditionItemInstance[]
+  expeditionRaidParticipations ExpeditionRaidParticipant[]
   id                 String       @id @default(uuid()) @db.Uuid
   forrumId           Int          @unique @default(autoincrement())
   email              String       @unique
@@ -1556,6 +1557,12 @@ enum ExpeditionRunStatus {
   CLAIMED
 }
 
+enum ExpeditionRaidStatus {
+  OPEN
+  RESOLVED
+  CANCELLED
+}
+
 model ExpeditionProfile {
   id              String          @id @default(cuid())
   userId          String          @unique @db.Uuid
@@ -1567,6 +1574,9 @@ model ExpeditionProfile {
   lastEnergySync  DateTime        @default(now())
   unlockedDepth   Int             @default(1)
   basePower       Int             @default(10)
+  scrap           Int             @default(0)
+  cloth           Int             @default(0)
+  oldParts        Int             @default(0)
   runs            ExpeditionRun[]
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
@@ -1626,4 +1636,30 @@ model ExpeditionRun {
   @@index([profileId, status, startedAt(sort: Desc)])
 }
 
-// /4RRUM_EXPEDITION_ALPHA_V02
+model ExpeditionRaid {
+  id              String                    @id @default(cuid())
+  bossKey         String
+  startsAt        DateTime
+  minParticipants Int                       @default(5)
+  maxParticipants Int                       @default(10)
+  status          ExpeditionRaidStatus      @default(OPEN)
+  participants    ExpeditionRaidParticipant[]
+  createdAt       DateTime                  @default(now())
+  resolvedAt      DateTime?
+
+  @@unique([bossKey, startsAt])
+  @@index([status, startsAt])
+}
+
+model ExpeditionRaidParticipant {
+  raidId    String
+  userId    String         @db.Uuid
+  joinedAt  DateTime       @default(now())
+  raid      ExpeditionRaid @relation(fields: [raidId], references: [id], onDelete: Cascade)
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([raidId, userId])
+  @@index([userId, joinedAt(sort: Desc)])
+}
+
+// /4RRUM_EXPEDITION_ALPHA_V03

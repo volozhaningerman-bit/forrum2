@@ -1,27 +1,47 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 620">
-  <defs>
-    <linearGradient id="armor" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#41484c"/><stop offset=".48" stop-color="#191e21"/><stop offset="1" stop-color="#080b0d"/></linearGradient>
-    <radialGradient id="core"><stop stop-color="#fff3db"/><stop offset=".15" stop-color="#ff9a42"/><stop offset=".45" stop-color="#e13d20"/><stop offset="1" stop-color="#44100b"/></radialGradient>
-    <filter id="ds"><feDropShadow dx="0" dy="20" stdDeviation="13" flood-opacity=".5"/></filter>
-  </defs>
-  <ellipse cx="350" cy="575" rx="210" ry="28" fill="#000" opacity=".35"/>
-  <g filter="url(#ds)">
-    <path d="M223 164 350 94l128 70 66 137-51 226H208l-53-226z" fill="url(#armor)" stroke="#111416" stroke-width="18"/>
-    <path d="m209 194-86 84 40 94 102-54zM491 194l87 84-40 94-102-54z" fill="#252c30" stroke="#101315" stroke-width="16"/>
-    <path d="M267 116 350 59l83 57-26 99H292z" fill="#202629" stroke="#0e1113" stroke-width="15"/>
-    <path d="m294 95 56-51 57 51-21 28-36-16-36 16z" fill="#8c4d2b"/>
-    <path d="M309 132h82l-11 63-30 18-30-18z" fill="#121719" stroke="#7d4629" stroke-width="9"/>
-    <circle cx="350" cy="164" r="20" fill="url(#core)" filter="url(#ds)"/>
-    <path d="M240 232h220l49 176-74 106H266l-75-106z" fill="#202528" stroke="#704126" stroke-width="12"/>
-    <circle cx="350" cy="340" r="54" fill="#111719" stroke="#794229" stroke-width="15"/>
-    <circle cx="350" cy="340" r="28" fill="url(#core)"/>
-    <path d="M260 500 228 585h82l34-86zM440 500l32 85h-82l-34-86z" fill="#1d2326" stroke="#0d1113" stroke-width="14"/>
-    <path d="M122 278 71 409l58 29 66-129z" fill="#282d30" stroke="#111416" stroke-width="14"/>
-    <path d="M578 278 629 409l-58 29-66-129z" fill="#282d30" stroke="#111416" stroke-width="14"/>
-    <path d="m59 413-24 111 41 11 32-107zM641 413l24 111-41 11-32-107z" fill="#13181a" stroke="#5f3825" stroke-width="9"/>
-    <g fill="url(#core)">
-      <circle cx="218" cy="271" r="14"/><circle cx="482" cy="271" r="14"/><circle cx="269" cy="448" r="13"/><circle cx="431" cy="448" r="13"/>
-    </g>
-    <path d="m175 198-42-82 57 24 14-78 44 91zM525 198l42-82-57 24-14-78-44 91z" fill="#353b3e" stroke="#111416" stroke-width="10"/>
+<defs>
+  <linearGradient id="metal" x1=".1" y1="0" x2=".9" y2="1"><stop stop-color="#697178"/><stop offset=".28" stop-color="#30383d"/><stop offset=".72" stop-color="#171d20"/><stop offset="1" stop-color="#090d0f"/></linearGradient>
+  <linearGradient id="rust" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#cb6c2e"/><stop offset=".55" stop-color="#7b321e"/><stop offset="1" stop-color="#321615"/></linearGradient>
+  <radialGradient id="core"><stop stop-color="#fff8dc"/><stop offset=".12" stop-color="#ffc45b"/><stop offset=".32" stop-color="#ff642f"/><stop offset=".7" stop-color="#b51e16"/><stop offset="1" stop-color="#3a0808"/></radialGradient>
+  <filter id="glow"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="ds"><feDropShadow dx="0" dy="20" stdDeviation="14" flood-opacity=".55"/></filter>
+</defs>
+<ellipse cx="350" cy="574" rx="225" ry="31" fill="#000" opacity=".4"/>
+<g filter="url(#ds)" stroke-linejoin="round" stroke-linecap="round">
+  <!-- horns / silhouette -->
+  <path d="m231 172-72-121 16 92-73-54 61 126zM469 172l72-121-16 92 73-54-61 126z" fill="#30383d" stroke="#111719" stroke-width="13"/>
+  <!-- legs -->
+  <path d="M255 432 206 583h95l45-139zM445 432l49 151h-95l-45-139z" fill="url(#metal)" stroke="#0d1214" stroke-width="17"/>
+  <path d="m198 553-32 42h145l-12-43zM502 553l32 42H389l12-43z" fill="#161c1f" stroke="#080b0d" stroke-width="12"/>
+  <!-- body -->
+  <path d="m215 177 135-91 136 91 63 153-66 192H217l-66-192z" fill="url(#metal)" stroke="#0d1214" stroke-width="18"/>
+  <path d="m218 191 63-39 69 31 69-31 64 39-28 61H246z" fill="#242b2f" stroke="#6e3420" stroke-width="10"/>
+  <path d="M245 260h210l45 139-69 92H269l-69-92z" fill="#1e2528" stroke="#873c23" stroke-width="13"/>
+  <!-- shoulders -->
+  <path d="m213 193-112 87 44 112 126-72zM487 193l112 87-44 112-126-72z" fill="#323b40" stroke="#0d1214" stroke-width="17"/>
+  <path d="m132 272-62 139 70 34 85-139zM568 272l62 139-70 34-85-139z" fill="url(#metal)" stroke="#0d1214" stroke-width="15"/>
+  <!-- head -->
+  <path d="m276 128 74-76 75 76-24 111-51 34-51-34z" fill="#20282c" stroke="#0c1113" stroke-width="16"/>
+  <path d="m294 111 56-42 57 42-19 38-38-17-38 17z" fill="url(#rust)" stroke="#4c2117" stroke-width="7"/>
+  <path d="M309 155h82l-13 62-28 18-28-18z" fill="#0e1416" stroke="#7c3823" stroke-width="10"/>
+  <path d="m321 176 20-9 9 9 9-9 20 9-7 24h-44z" fill="#411511"/>
+  <circle cx="350" cy="184" r="22" fill="url(#core)" filter="url(#glow)"/>
+  <!-- chest reactor -->
+  <circle cx="350" cy="352" r="64" fill="#0c1214" stroke="#9a4526" stroke-width="16"/>
+  <circle cx="350" cy="352" r="42" fill="#241311" stroke="#e0632e" stroke-width="7"/>
+  <circle cx="350" cy="352" r="25" fill="url(#core)" filter="url(#glow)"/>
+  <!-- armor scratches -->
+  <g stroke="#879096" stroke-width="5" opacity=".45">
+    <path d="m269 288 45 23-34 18M423 277l-37 29 31 12M278 410l39-22M424 393l-35 25"/>
   </g>
+  <g fill="url(#core)" filter="url(#glow)">
+    <circle cx="221" cy="287" r="13"/><circle cx="479" cy="287" r="13"/>
+    <circle cx="271" cy="459" r="12"/><circle cx="429" cy="459" r="12"/>
+  </g>
+  <!-- staff -->
+  <path d="M589 192 650 523" stroke="#272a29" stroke-width="24"/>
+  <path d="M589 192 650 523" stroke="#8f5b32" stroke-width="7"/>
+  <path d="m566 160 31-77 47 62-21 58z" fill="#262d30" stroke="#914526" stroke-width="11"/>
+  <circle cx="607" cy="151" r="22" fill="url(#core)" filter="url(#glow)"/>
+</g>
 </svg>

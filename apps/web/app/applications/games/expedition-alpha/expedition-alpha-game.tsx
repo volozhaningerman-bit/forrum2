@@ -4,10 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   claimExpedition,
   equipExpeditionItem,
+  joinExpeditionRaid,
+  leaveExpeditionRaid,
   loadExpeditionState,
   startExpedition,
   unequipExpeditionItem,
   type ExpeditionServerItem,
+  type ExpeditionServerRaid,
   type ExpeditionServerState,
 } from './expedition-client';
 
@@ -200,9 +203,10 @@ export function ExpeditionAlphaGame() {
   const [run, setRun] = useState<RunState>(null);
   const [readyRun, setReadyRun] = useState<number | null>(null);
   const [lastDrops, setLastDrops] = useState<Item[]>([]);
-  const [resources, setResources] = useState({ metal: 12, scrap: 7, parts: 2 });
+  const [resources, setResources] = useState({ scrap: 7, cloth: 4, oldParts: 2 });
   const [runCount, setRunCount] = useState(0);
   const [raidJoined, setRaidJoined] = useState(false);
+  const [serverRaid, setServerRaid] = useState<ExpeditionServerRaid | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const [serverMode, setServerMode] = useState<'checking' | 'server' | 'demo'>('checking');
   const [serverRunId, setServerRunId] = useState<string | null>(null);
@@ -224,8 +228,10 @@ export function ExpeditionAlphaGame() {
     setXp(state.profile.xp);
     setLevel(state.profile.level);
     setUnlockedDepth(state.profile.unlockedDepth);
+    setResources(state.profile.resources);
     setInventory(mappedItems);
     setEquipped(nextEquipped);
+    setServerRaid(state.raid);
 
     if (state.run) {
       setServerRunId(state.run.id);
@@ -296,6 +302,28 @@ export function ExpeditionAlphaGame() {
     };
   }, [applyServerState, now, run, serverMode]);
 
+  async function toggleRaid() {
+    if (busy) return;
+
+    if (serverMode !== 'server') {
+      setRaidJoined((value) => !value);
+      return;
+    }
+
+    setBusy(true);
+    setApiError(null);
+    try {
+      const next = serverRaid?.joined
+        ? await leaveExpeditionRaid()
+        : await joinExpeditionRaid();
+      setServerRaid(next);
+    } catch (cause) {
+      setApiError(cause instanceof Error ? cause.message : 'Не удалось обновить участие в рейде');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const depth = depths.find((entry) => entry.id === selectedDepth) ?? depths[0];
   const equippedPower = useMemo(
     () => Object.values(equipped).reduce((sum, item) => sum + (item?.power ?? 0), 0),
@@ -303,6 +331,14 @@ export function ExpeditionAlphaGame() {
   );
   const power = 10 + level * 3 + equippedPower;
   const remaining = secondsLeft(run?.endsAt ?? null, now);
+  const displayedRaidJoined = serverMode === 'server' ? Boolean(serverRaid?.joined) : raidJoined;
+  const displayedRaidCount = serverMode === 'server'
+    ? (serverRaid?.participantCount ?? 0)
+    : (raidJoined ? 8 : 7);
+  const displayedRaidMax = serverMode === 'server' ? (serverRaid?.maxParticipants ?? 10) : 10;
+  const raidStart = serverRaid
+    ? new Intl.DateTimeFormat('ru-RU', { hour: '2-digit', minute: '2-digit' }).format(new Date(serverRaid.startsAt))
+    : '21:00';
 
   const appearanceClasses = Object.values(equipped)
     .map((item) => item?.visual ? `has-${item.visual}` : '')
@@ -342,11 +378,6 @@ export function ExpeditionAlphaGame() {
         const claimed = await claimExpedition(serverRunId);
         const drop = mapServerItem(claimed.reward.item);
         setLastDrops([drop]);
-        setResources((current) => ({
-          metal: current.metal,
-          scrap: current.scrap + claimed.reward.resources.scrap,
-          parts: current.parts + claimed.reward.resources.oldParts,
-        }));
         const state = await loadExpeditionState();
         applyServerState(state);
       } catch (cause) {
@@ -371,9 +402,9 @@ export function ExpeditionAlphaGame() {
     });
     setLastDrops(drops);
     setResources((current) => ({
-      metal: current.metal + 3 * readyRun,
       scrap: current.scrap + 2 * readyRun,
-      parts: current.parts + (readyRun >= 2 ? 1 : 0),
+      cloth: current.cloth + Math.max(1, readyRun),
+      oldParts: current.oldParts + (readyRun >= 2 ? 1 : 0),
     }));
     setXp((value) => {
       const next = value + 25 + readyRun * 12;
@@ -450,7 +481,7 @@ export function ExpeditionAlphaGame() {
           <span><b>⚡ {energy}/12</b><small>энергия</small></span>
           <span><b>ур. {level}</b><small>{xp}/100 XP</small></span>
           <span><b>{power}</b><small>сила</small></span>
-          <span><b>{resources.parts}</b><small>старые детали</small></span>
+          <span><b>{resources.oldParts}</b><small>старые детали</small></span>
         </div>
       </header>
 
@@ -573,12 +604,17 @@ export function ExpeditionAlphaGame() {
               <h2>Железный Пастырь</h2>
               <p>Бой рассчитывается автоматически. Главное — заранее собрать людей и отправить персонажей к назначенному времени.</p>
               <div className="exp-raid-meta">
-                <span><b>{raidJoined ? '8/10' : '7/10'}</b><small>участников</small></span>
-                <span><b>21:00</b><small>начало</small></span>
+                <span><b>{displayedRaidCount}/{displayedRaidMax}</b><small>участников</small></span>
+                <span><b>{raidStart}</b><small>начало</small></span>
                 <span><b>5</b><small>глубина</small></span>
               </div>
-              <button className={raidJoined ? 'joined' : ''} type="button" onClick={() => setRaidJoined((value) => !value)}>
-                {raidJoined ? 'Вы записаны' : 'Отправить персонажа'}
+              <button
+                className={displayedRaidJoined ? 'joined' : ''}
+                type="button"
+                disabled={busy || serverMode === 'checking'}
+                onClick={toggleRaid}
+              >
+                {displayedRaidJoined ? 'Вы записаны' : 'Отправить персонажа'}
               </button>
             </div>
           </article>
@@ -602,7 +638,7 @@ export function ExpeditionAlphaGame() {
         <aside className="exp-panel exp-inventory">
           <div className="exp-panel-title">
             <div><span>Инвентарь</span><strong>{inventory.length} предметов</strong></div>
-            <em>{resources.metal} металл · {resources.scrap} лом</em>
+            <em>{resources.scrap} лом · {resources.oldParts} детали</em>
           </div>
 
           <div className="exp-rarity-key">
