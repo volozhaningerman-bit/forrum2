@@ -50,6 +50,7 @@ const staticChecks = [
   ['no civilization art dependency', !cssSource.includes('/games/civilization/')],
   ['typed server client wired', clientSource.includes("'/expedition/me'") && clientSource.includes("'/expedition/runs'") && gameSource.includes('serverMode') && gameSource.includes('applyServerState')],
   ['server unequip contract', controllerSource.includes("items/:id/unequip") && serviceSource.includes('async unequip(')],
+  ['independent avatar gear layers', gameSource.includes('exp-gear-layer') && cssSource.includes('.gear-chest') && cssSource.includes('.gear-main') && cssSource.includes('.gear-relic')],
   ['server authority documented', specSource.includes('Server authority') && specSource.includes('localStorage')],
   ['office styling explicitly excluded', specSource.includes('not office / corporate styling')],
 ];
@@ -286,6 +287,7 @@ try {
   await drop.waitFor();
   await drop.click();
   await page.getByText('Перчатки Сервомастера').first().waitFor();
+  assert.equal(await page.locator('.gear-gloves').count(), 1, 'equipped gloves must create an independent avatar layer');
 
   await page.screenshot({ path: output + '/expedition-alpha-v02-loot-equipped-1720x900.png', fullPage: true });
 
