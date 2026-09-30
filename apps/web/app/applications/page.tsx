@@ -1,40 +1,77 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import styles from './applications.module.css';
 
-export const metadata: Metadata = { title: 'Приложения', description: 'AI-инструменты, игры и эксперименты внутри 4rrum.', alternates: { canonical: '/applications' }, openGraph: { url: '/applications', title: 'Приложения', description: 'AI-инструменты, игры и эксперименты внутри 4rrum.' } };
+export const metadata: Metadata = {
+  title: 'Приложения',
+  description: 'Игры, AI-инструменты и эксперименты внутри 4rrum.',
+  alternates: { canonical: '/applications' },
+  openGraph: {
+    url: '/applications',
+    title: 'Приложения',
+    description: 'Игры, AI-инструменты и эксперименты внутри 4rrum.',
+  },
+};
 
-const sections = [
+const secondarySections = [
   { name: 'AI-инструменты', description: 'Помощники для повседневных задач и творчества.' },
-  { name: 'Игры', description: 'Браузерные игры и интерактивные миры. Первый проект — игра развития «Цивилизация».', href: '/applications/games/civilization', badge: 'Цивилизация' },
   { name: 'Эксперименты', description: 'Небольшие прототипы и необычные идеи.' },
   { name: 'Neural Lab', description: 'Исследования возможностей нейросетей.' },
 ];
 
 export default function Applications() {
   return (
-    <section className="applications-directory">
-      <span className="eyebrow">Лаборатория сообщества</span>
-      <h1>Приложения</h1>
-      <p>Инструменты, игры и эксперименты внутри 4rrum.</p>
+    <section className={styles.page}>
+      <header className={styles.header}>
+        <span className={styles.eyebrow}>Лаборатория сообщества</span>
+        <h1>Приложения</h1>
+        <p>Игры, инструменты и эксперименты внутри 4rrum.</p>
+      </header>
 
       <div className="applications-grid">
-        {sections.map((item, i) => (
-          <article key={item.name} id={`section-${i}`}>
-            <div className="inline-actions">
-              <h2>{item.name}</h2>
-              {item.badge ? <small className="tag">{item.badge}</small> : null}
-            </div>
+      <article className={styles.featured}>
+        <div className={styles.featuredArt} aria-hidden="true" />
+        <div className={styles.featuredCopy}>
+          <div className={styles.badges}>
+            <span className={styles.badge}>Игра</span>
+            <span className={styles.alphaBadge}>Alpha</span>
+          </div>
+          <h2>Экспедиция</h2>
+          <p>
+            Социальная RPG о мире после падения высоких технологий. Отправляй героя
+            в экспедиции, находи серийные предметы, меняй внешний вид экипировкой
+            и собирайся с другими игроками на совместных боссов.
+          </p>
+          <div className={styles.gameFacts}>
+            <span>Экспедиции</span>
+            <span>•</span>
+            <span>Серийный лут</span>
+            <span>•</span>
+            <span>Совместные боссы</span>
+          </div>
+          <Link className={styles.openButton} href="/applications/games/expedition-alpha">
+            Открыть альфу
+          </Link>
+        </div>
+      </article>
+
+      <div className={styles.grid}>
+        {secondarySections.map((item) => (
+          <article className={styles.card} key={item.name}>
+            <h2>{item.name}</h2>
             <p>{item.description}</p>
-            {item.href ? (
-              <Link className="button small" href={item.href}>Открыть игру</Link>
-            ) : (
-              <small>Приложений пока нет</small>
-            )}
+            <small>Приложений пока нет</small>
           </article>
         ))}
       </div>
 
-      <Link className="button" href="/create?intent=result">Предложить свой проект</Link>
+      </div>
+
+      <div className={styles.footerAction}>
+        <Link className={styles.projectButton} href="/create?intent=result">
+          Предложить свой проект
+        </Link>
+      </div>
     </section>
   );
 }

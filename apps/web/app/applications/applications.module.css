@@ -1,0 +1,233 @@
+.page {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 18px 0 64px;
+  color: var(--fvt-text, var(--text));
+}
+
+.header {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.eyebrow {
+  color: var(--fvt-accent, var(--accent));
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin: 0;
+  color: var(--fvt-text, var(--text));
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.02;
+  letter-spacing: -.04em;
+}
+
+.header p {
+  margin: 0;
+  color: var(--fvt-muted, var(--muted));
+  font-size: 14px;
+}
+
+.featured {
+  position: relative;
+  min-height: 320px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr);
+  border: 1px solid var(--fvt-line, var(--line));
+  border-radius: 12px;
+  background: var(--fvt-panel, var(--surface));
+  box-shadow: 0 16px 44px rgba(0,0,0,.13);
+}
+
+.featuredArt {
+  min-height: 320px;
+  background:
+    linear-gradient(90deg, rgba(7,13,16,.06), rgba(7,13,16,.2)),
+    url('/games/expedition-alpha/rust-outskirts.webp') center / cover no-repeat;
+}
+
+.featuredCopy {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding: 30px;
+  background:
+    linear-gradient(145deg,
+      color-mix(in srgb, var(--fvt-panel, #20262a) 96%, transparent),
+      color-mix(in srgb, var(--fvt-panel-soft, #1b2024) 94%, transparent));
+}
+
+.badges {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.badge,
+.alphaBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 3px 8px;
+  border: 1px solid var(--fvt-line, var(--line));
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.badge {
+  color: var(--fvt-accent, var(--accent));
+  background: var(--fvt-accent-soft, rgba(57,124,255,.1));
+}
+
+.alphaBadge {
+  color: #e7ad52;
+  border-color: color-mix(in srgb, #e7ad52 45%, var(--fvt-line, #3b444a));
+  background: color-mix(in srgb, #e7ad52 8%, transparent);
+}
+
+.featuredCopy h2 {
+  margin: 0;
+  color: var(--fvt-text, var(--text));
+  font-size: clamp(28px, 3vw, 42px);
+  line-height: 1;
+  letter-spacing: -.045em;
+}
+
+.featuredCopy p {
+  margin: 0;
+  color: var(--fvt-muted, var(--muted));
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.gameFacts {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--fvt-faint, var(--muted));
+  font-size: 11px;
+}
+
+.openButton {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 1px solid var(--fvt-accent, var(--accent));
+  border-radius: 4px;
+  background: var(--fvt-accent, var(--accent));
+  color: white !important;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.openButton:hover,
+.openButton:focus-visible {
+  filter: brightness(.96);
+  color: white !important;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.card {
+  min-height: 154px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--fvt-line, var(--line));
+  border-radius: 8px;
+  background: var(--fvt-panel, var(--surface));
+}
+
+.card h2 {
+  margin: 0;
+  color: var(--fvt-text, var(--text));
+  font-size: 15px;
+}
+
+.card p {
+  margin: 0;
+  color: var(--fvt-muted, var(--muted));
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.card small {
+  margin-top: auto;
+  color: var(--fvt-faint, var(--muted));
+  font-size: 10px;
+}
+
+.footerAction {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.projectButton {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  padding: 8px 11px;
+  border: 1px solid var(--fvt-line-strong, var(--line));
+  border-radius: 4px;
+  background: var(--fvt-panel, var(--surface));
+  color: var(--fvt-text, var(--text));
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.projectButton:hover,
+.projectButton:focus-visible {
+  border-color: var(--fvt-accent, var(--accent));
+  color: var(--fvt-accent, var(--accent));
+}
+
+@media (max-width: 840px) {
+  .featured {
+    grid-template-columns: 1fr;
+  }
+
+  .featuredArt {
+    min-height: 240px;
+  }
+
+  .featuredCopy {
+    padding: 22px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .page {
+    width: min(100% - 20px, 1180px);
+  }
+
+  .featuredArt {
+    min-height: 200px;
+  }
+}
