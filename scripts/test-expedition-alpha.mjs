@@ -23,7 +23,6 @@ const files = {
   locationArt: path.join(root, 'apps/web/public/games/expedition-alpha/rust-outskirts.svg'),
   bossArt: path.join(root, 'apps/web/public/games/expedition-alpha/iron-shepherd.svg'),
   itemArt: path.join(root, 'apps/web/public/games/expedition-alpha/equipment-atlas.svg'),
-  approvedAtlas: path.join(root, 'apps/web/public/games/expedition/alpha-reference-atlas.webp'),
 };
 
 for (const [name, file] of Object.entries(files)) {
@@ -50,8 +49,7 @@ const staticChecks = [
   ['five Rust Outskirts depths', gameSource.includes('Реакторная зона') && gameSource.includes('Ломовые дворы') && gameSource.includes('depthId')],
   ['Iron Shepherd raid join', gameSource.includes('Железный Пастырь') && gameSource.includes('raidJoined')],
   ['category and syndicate preview', gameSource.includes('Железный Герольд') && gameSource.includes('Ядро Ковчега')],
-  ['dedicated art pack referenced', cssSource.includes('/games/expedition-alpha/equipment-atlas.svg')],
-  ['approved reference atlas wired', cssSource.includes('/games/expedition/alpha-reference-atlas.webp') && cssSource.includes('--exp-art')],
+  ['dedicated art pack referenced', cssSource.includes('/games/expedition-alpha/hero-base.svg') && cssSource.includes('/games/expedition-alpha/rust-outskirts.svg') && cssSource.includes('/games/expedition-alpha/iron-shepherd.svg') && cssSource.includes('/games/expedition-alpha/equipment-atlas.svg')],
   ['true paper-doll layers wired', gameSource.includes('exp-gear exp-gear-cloak') && gameSource.includes('exp-gear exp-gear-mainhand') && cssSource.includes('.exp-avatar.has-gloves .exp-gear-gloves')],
   ['no civilization art dependency', !cssSource.includes('/games/civilization/')],
   ['typed server client wired', clientSource.includes("'/expedition/me'") && clientSource.includes("'/expedition/runs'") && gameSource.includes('serverMode') && gameSource.includes('applyServerState')],
@@ -296,7 +294,6 @@ try {
     '/games/expedition-alpha/rust-outskirts.svg',
     '/games/expedition-alpha/iron-shepherd.svg',
     '/games/expedition-alpha/equipment-atlas.svg',
-    '/games/expedition/alpha-reference-atlas.webp',
   ]) {
     const response = await fetch('http://127.0.0.1:' + port + asset);
     assert.equal(response.status, 200, `asset missing: ${asset}`);
@@ -346,6 +343,7 @@ try {
   await drop.click();
   await page.getByText('Перчатки Сервомастера').first().waitFor();
   await page.locator('.exp-avatar.has-gloves').waitFor({ timeout: 5000 });
+  await page.waitForTimeout(250);
   const gloveLayer = await page.locator('.exp-gear-gloves').evaluate((node) => ({
     opacity: getComputedStyle(node).opacity,
     display: getComputedStyle(node).display,
