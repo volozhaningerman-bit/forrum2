@@ -287,6 +287,7 @@ try {
   await drop.waitFor();
   await drop.click();
   await page.getByText('Перчатки Сервомастера').first().waitFor();
+  await page.locator('.gear-gloves').waitFor({ timeout: 5000 });
   assert.equal(await page.locator('.gear-gloves').count(), 1, 'equipped gloves must create an independent avatar layer');
 
   await page.screenshot({ path: output + '/expedition-alpha-v02-loot-equipped-1720x900.png', fullPage: true });
