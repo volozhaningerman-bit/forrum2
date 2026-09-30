@@ -65,7 +65,7 @@ try {
  for(let n=0;n<120;n++){try{const r=await fetch('http://127.0.0.1:'+port+'/login');if(r.ok)break;}catch{} await new Promise(r=>setTimeout(r,500));if(n===119)throw new Error('Next did not start: '+logs);}
  const portable = process.env.PORTABLE_CHROMIUM ? (await import(process.env.PORTABLE_CHROMIUM)).default : null;
  browser=await chromium.launch({headless:true,...(portable ? {executablePath:process.env.CHROMIUM_EXECUTABLE || await portable.executablePath(),args:portable.args.filter(arg => !['--disable-web-security','--allow-running-insecure-content','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'].includes(arg)).concat('--disable-gpu')} : {})});
- const context=await browser.newContext({viewport:{width:1600,height:1000},deviceScaleFactor:1});
+ const context=await browser.newContext({viewport:{width:1600,height:1000},deviceScaleFactor:1,timezoneId:'UTC'});
  await context.addCookies([{name:'forrum_test',value:'viewer',domain:'127.0.0.1',path:'/'}]);
  const page=await context.newPage();await page.clock.setFixedTime(new Date(fixtureNow));const errors=[];page.on('pageerror',error=>errors.push(error.message));
  await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
@@ -182,8 +182,9 @@ try {
  await writeFile(output+'/reference-geometry.json',JSON.stringify(boxes,null,2));
  await page.screenshot({path:output+'/reference-preview.png'});
  const {checkHomeSnapshot}=await import('./home-visual-check.mjs');
- await checkHomeSnapshot(output+'/reference-preview.png',root+'docs/design-reference/home-implemented-desktop.png',output,process.env.UPDATE_HOME_SNAPSHOTS==='1');
  await page.setViewportSize({width:390,height:844});
  await page.screenshot({path:output+'/reference-mobile.png'});
- await checkHomeSnapshot(output+'/reference-mobile.png',root+'docs/design-reference/home-implemented-mobile.png',output,process.env.UPDATE_HOME_SNAPSHOTS==='1');
+ const suffix=process.env.PORTABLE_CHROMIUM?'-portable':'';
+ await checkHomeSnapshot(output+'/reference-preview.png',root+'docs/design-reference/home-implemented-desktop'+suffix+'.png',output,process.env.UPDATE_HOME_SNAPSHOTS==='1');
+ await checkHomeSnapshot(output+'/reference-mobile.png',root+'docs/design-reference/home-implemented-mobile'+suffix+'.png',output,process.env.UPDATE_HOME_SNAPSHOTS==='1');
 } finally {await browser?.close();web.kill('SIGTERM');upstream.close();}
