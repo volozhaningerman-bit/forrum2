@@ -1685,3 +1685,59 @@
   display:block!important;
   visibility:visible!important;
 }
+
+
+/* v0.6.4 paper-doll alignment for the redrawn hero.
+   Equipment must read as worn gear, never floating rectangles. */
+.exp-avatar.has-gloves .exp-gear-gloves{
+  top:158px!important;
+  width:132px!important;
+  height:45px!important;
+  background:none!important;
+  filter:drop-shadow(0 4px 3px rgba(0,0,0,.42))!important;
+}
+.exp-gear-gloves::before,
+.exp-gear-gloves::after{
+  content:"";
+  position:absolute;
+  top:4px;
+  width:24px;
+  height:35px;
+  border:2px solid #2a1c17;
+  border-radius:7px 7px 11px 11px;
+  background:
+    linear-gradient(180deg,#8c5b3b 0 35%,#5b392b 36% 100%);
+  box-shadow:inset 0 -7px 0 rgba(33,21,17,.22);
+}
+.exp-gear-gloves::before{left:2px;transform:rotate(12deg)}
+.exp-gear-gloves::after{right:2px;transform:rotate(-12deg)}
+
+.exp-avatar.has-wrists .exp-gear-wrists{
+  top:145px!important;
+  width:128px!important;
+  height:34px!important;
+  background:
+    linear-gradient(105deg,#9b6a44 0 17%,transparent 18% 82%,#9b6a44 83% 100%)!important;
+  border-radius:8px;
+}
+.exp-avatar.has-belt .exp-gear-belt{top:142px!important;width:91px!important;height:14px!important}
+.exp-avatar.has-ring .exp-gear-ring,
+.exp-avatar.has-ring-blue .exp-gear-ring{top:176px!important;width:126px!important}
+.exp-avatar.has-relic .exp-gear-relic,
+.exp-avatar.has-relic-epic .exp-gear-relic{top:153px!important;margin-left:57px!important}
+.exp-avatar.has-sword .exp-gear-mainhand,
+.exp-avatar.has-sword-blue .exp-gear-mainhand,
+.exp-avatar.has-spear .exp-gear-mainhand,
+.exp-avatar.has-hammer .exp-gear-mainhand{
+  top:109px!important;
+  margin-left:57px!important;
+  height:126px!important;
+}
+.exp-avatar.has-spear .exp-gear-mainhand{top:91px!important;height:155px!important}
+.exp-avatar.has-hammer .exp-gear-mainhand{top:111px!important;height:108px!important}
+.exp-avatar.has-shield .exp-gear-offhand{
+  top:126px!important;
+  margin-left:-55px!important;
+  width:54px!important;
+  height:73px!important;
+}
