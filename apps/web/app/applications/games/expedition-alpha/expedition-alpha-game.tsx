@@ -320,9 +320,13 @@ export function ExpeditionAlphaGame() {
 
           <div className={`exp-avatar ${Object.values(equipped).map((item) => item?.visual ? `has-${item.visual}` : '').join(' ')}`}>
             <div className="exp-avatar-glow" />
-            <div className="exp-avatar-head">●</div>
-            <div className="exp-avatar-rags exp-avatar-body" />
-            <div className="exp-avatar-rags exp-avatar-legs" />
+            <div className="exp-avatar-art" aria-label="Базовый персонаж в лохмотьях" />
+            <div className="exp-gear exp-gear-hood" />
+            <div className="exp-gear exp-gear-chest" />
+            <div className="exp-gear exp-gear-cloak" />
+            <div className="exp-gear exp-gear-shoulders" />
+            <div className="exp-gear exp-gear-gloves" />
+            <div className="exp-gear exp-gear-boots" />
             <div className="exp-avatar-weapon" />
             <div className="exp-avatar-shield" />
             <div className="exp-avatar-relic" />
@@ -439,6 +443,27 @@ export function ExpeditionAlphaGame() {
                 <span><b>5</b><small>глубина</small></span>
               </div>
               <button type="button">Посмотреть сбор</button>
+            </div>
+          </article>
+
+          <article className="exp-panel exp-shared-world">
+            <div className="exp-shared-card exp-champion-card">
+              <div className="exp-shared-art exp-champion-art" />
+              <div>
+                <small>Категория · следующий этап</small>
+                <h3>Железный Герольд</h3>
+                <p>Общий Чемпион развивается уровнями и заметно меняется внешне.</p>
+                <span>5 стадий эволюции уже зафиксированы в арт-системе</span>
+              </div>
+            </div>
+            <div className="exp-shared-card exp-relic-card">
+              <div className="exp-shared-art exp-relic-art" />
+              <div>
+                <small>Синдикат · следующий этап</small>
+                <h3>Ядро Ковчега</h3>
+                <p>Общий реликт клана: вклад участников, уровни и визуальная эволюция.</p>
+                <span>Фрагмент → пробуждение → активная → полная форма</span>
+              </div>
             </div>
           </article>
         </section>
