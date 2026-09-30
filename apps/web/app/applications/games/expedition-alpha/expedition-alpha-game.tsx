@@ -468,14 +468,14 @@ export function ExpeditionAlphaGame() {
     <main className="exp-alpha" data-testid="expedition-alpha">
       <header className="exp-topbar">
         <div>
-          <span className="exp-kicker">4rrum · hidden alpha</span>
+          <span className="exp-kicker">4rrum · alpha 0.7</span>
           <div className="exp-title-row">
             <h1>Экспедиция</h1>
             <span className={`exp-mode exp-mode-${serverMode}`}>
               {serverMode === 'server' ? 'серверный прогресс' : serverMode === 'demo' ? 'демо-режим' : 'подключение…'}
             </span>
           </div>
-          <p>Рабочее название · посттехнологичное средневековье</p>
+          <p>Экспедиции, серийный лут и совместные боссы в мире после падения технологий.</p>
         </div>
         <div className="exp-hud">
           <span><b>⚡ {energy}/12</b><small>энергия</small></span>
@@ -494,7 +494,7 @@ export function ExpeditionAlphaGame() {
       <section className="exp-layout">
         <aside className="exp-panel exp-character">
           <div className="exp-panel-title">
-            <div><span>Персонаж</span><strong>Новичок</strong></div>
+            <div><span>Персонаж</span><strong>Искатель</strong></div>
             <em>{Object.keys(equipped).length ? 'снаряжён' : 'в лохмотьях'}</em>
           </div>
 
@@ -535,6 +535,7 @@ export function ExpeditionAlphaGame() {
                 >
                   <span>{slot.label}</span>
                   <b>{item ? item.name : '—'}</b>
+                  <i>{item ? 'Снять' : 'Пусто'}</i>
                 </button>
               );
             })}
@@ -568,7 +569,7 @@ export function ExpeditionAlphaGame() {
                   >
                     <small>Глубина {entry.id}</small>
                     <b>{entry.name}</b>
-                    <span>{locked ? 'Закрыто' : `⚡ ${entry.energy} · сила ${entry.recommended}+`}</span>
+                    <span>{locked ? '🔒 Закрыто' : `⚡ ${entry.energy} · сила ${entry.recommended}+`}</span>
                   </button>
                 );
               })}
@@ -583,7 +584,7 @@ export function ExpeditionAlphaGame() {
               </div>
               {!run && !readyRun ? (
                 <button className="exp-primary" type="button" disabled={busy || serverMode === 'checking' || energy < depth.energy} onClick={sendExpedition}>
-                  Отправить · ⚡ {depth.energy}
+                  Отправить героя · ⚡ {depth.energy}
                 </button>
               ) : run ? (
                 <div className="exp-run-progress">
@@ -643,12 +644,14 @@ export function ExpeditionAlphaGame() {
               <h3>Чемпион сообщества</h3>
               <div className="exp-champion"><i /><span>Железный Герольд · ур. 3</span></div>
               <p>Общий прогресс: 68% до следующей формы.</p>
+              <b className="exp-system-note">Развивается всей категорией</b>
             </div>
             <div className="exp-community-card">
               <small>Синдикат</small>
               <h3>Ядро Ковчега</h3>
               <div className="exp-relic"><i /><span>Пробуждение · стадия 2/4</span></div>
               <p>Следующий апгрейд требует 18 старых деталей.</p>
+              <b className="exp-system-note">Общий реликт синдиката</b>
             </div>
           </article>
         </section>
@@ -679,6 +682,7 @@ export function ExpeditionAlphaGame() {
                 <b>{item.name}</b>
                 <em>№{item.serial}/{item.circulation}</em>
                 <strong>+{item.power}</strong>
+                <span className="exp-item-action">{equipped[item.slot]?.id === item.id ? 'Надето' : 'Надеть'}</span>
               </button>
             ))}
           </div>
