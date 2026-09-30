@@ -13,6 +13,7 @@ const categories = ['Разработка', 'Backend', 'Дизайн', 'Бизн
 const communities = categories.map((name, i) => ({ id: String(i), slug: 'category-' + i, name, parent: i === 1 ? { slug: 'category-0', name: categories[0] } : null, subscriberCount: 120, publicationCount: 5, onlineCount: 3, description: '' }));
 communities.push({id:'retired',slug:'workshop',name:'Мастерская',parent:null,subscriberCount:0,onlineCount:0,publicationCount:0,description:''});
 communities[2].parent={slug:'workshop',name:'Мастерская'};
+communities.push({id:'brand',slug:'forrum-start',name:'FORRUM Start',parent:null,subscriberCount:0,onlineCount:0,publicationCount:0,description:''});
 const titles = ['Стоит ли переходить на Rust в продакшене?', 'Как составить сильное IT-резюме?', 'Лучшие практики для тёмных интерфейсов', 'Идея: платформа для поиска технических сооснователей', 'Как меняется работа с нейросетями'];
 const excerpts = ['Команда обсуждает реальный опыт миграции критичных сервисов на Rust. Какие подводные камни, что с экосистемой, стоит ли игра свеч?', 'Делимся примерами, разбираем ошибки, обсуждаем, что действительно работает при поиске работы в текущих реалиях.', 'Собрали коллекцию подходов, примеров и рекомендаций по созданию комфортных тёмных тем.', 'Обсуждаем концепцию сервиса, который помогает находить партнёров по навыкам и интересам. Нужна ли такая платформа?', 'Пробуем новые инструменты, делимся первыми впечатлениями. Что нового и как это меняет правила игры?'];
 const topics = titles.map((title, i) => ({ id: String(i), slug: 'topic-' + i, title, format: 'TOPIC', type: 'DISCUSSION', excerpt: excerpts[i], createdAt: new Date(fixtureNow - (i + 1) * 7200000).toISOString(), author: { username: 'person-' + i, displayName: names[i], avatarUrl: null }, community: communities[[1,4,2,3,5][i]], commentCount: [47,29,18,35,0][i], viewCount: [2100,1600,980,1200,3400][i], reactionCount: [128,93,76,64,51][i], viewerReaction: null, isBookmarked: false, tags: [{ id: 'tag-' + i, slug: 'tag-' + i, label: ['rust','советы','интерфейсы','стартап','opensource'][i] }] }));
@@ -155,7 +156,18 @@ try {
   }
  }
  await page.getByRole('button',{name:'Открыть меню',exact:true}).click();assert(await page.getByRole('button',{name:'Закрыть меню',exact:true}).last().isVisible());await page.keyboard.press('Escape');
- await page.setViewportSize({width:1600,height:1000});await page.getByRole('button',{name:'Фильтры',exact:true}).click();await page.locator('summary[aria-label="Выбрать сообщество"]').click();await page.getByRole('menuitemradio',{name:'Разработка',exact:true}).click();await page.waitForTimeout(400);assert(requests.some(r=>r.query.includes('community=category-0')));
+ await page.setViewportSize({width:1600,height:1000});await page.getByRole('button',{name:'Фильтры',exact:true}).click();await page.locator('summary[aria-label="Выбрать сообщество"]').focus();
+ await page.keyboard.press('ArrowDown');
+ assert.equal(await page.evaluate(()=>document.activeElement?.textContent),'Все сообщества');
+ await page.keyboard.press('End');
+ assert.equal(await page.evaluate(()=>document.activeElement?.textContent),'4rrum Start');
+ await page.keyboard.press('Enter');await page.waitForTimeout(300);
+ assert((await page.locator('.forum-active-filter').textContent()).startsWith('4rrum Start'));
+ await page.getByRole('button',{name:'Сбросить выбранное сообщество',exact:true}).click();
+ await page.locator('summary[aria-label="Выбрать сообщество"]').focus();await page.keyboard.press('ArrowDown');await page.keyboard.press('Escape');
+ assert.equal(await page.locator('.forum-filter-menu').getAttribute('open'),null);
+ assert(await page.locator('summary[aria-label="Выбрать сообщество"]').evaluate(el=>el===document.activeElement));
+ await page.locator('summary[aria-label="Выбрать сообщество"]').click();await page.getByRole('menuitemradio',{name:'Разработка',exact:true}).click();await page.waitForTimeout(400);assert(requests.some(r=>r.query.includes('community=category-0')));
  failFeed=true;await page.getByRole('button',{name:'Активные',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
  await page.goto('http://127.0.0.1:'+port+'/applications',{waitUntil:'networkidle'});assert.equal(await page.locator('.applications-grid article').count(),4);
  await page.goto('http://127.0.0.1:'+port+'/digital-services',{waitUntil:'domcontentloaded'});
