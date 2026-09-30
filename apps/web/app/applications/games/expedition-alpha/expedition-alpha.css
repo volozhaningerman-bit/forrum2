@@ -1589,3 +1589,42 @@
   pointer-events:none!important;
 }
 .exp-raid,.exp-community{position:relative;z-index:3}
+
+/* v0.6.2 reset the older two-column grid-area contract.
+   Explicit placement prevents raid/location overlap and restores the right inventory rail. */
+@media (min-width:1181px){
+  .exp-layout{
+    grid-template-areas:none!important;
+  }
+  .exp-character{
+    grid-area:auto!important;
+    grid-column:1!important;
+    grid-row:1!important;
+  }
+  .exp-center{
+    grid-area:auto!important;
+    grid-column:2!important;
+    grid-row:1!important;
+    grid-template-areas:none!important;
+  }
+  .exp-inventory{
+    grid-area:auto!important;
+    grid-column:3!important;
+    grid-row:1!important;
+  }
+  .exp-location{
+    grid-area:auto!important;
+    grid-column:1 / -1!important;
+    grid-row:1!important;
+  }
+  .exp-raid{
+    grid-area:auto!important;
+    grid-column:1!important;
+    grid-row:2!important;
+  }
+  .exp-community{
+    grid-area:auto!important;
+    grid-column:2!important;
+    grid-row:2!important;
+  }
+}
