@@ -38,6 +38,16 @@ export class ExpeditionController {
     return this.expedition.claimRun(this.actorId(actorValue), id);
   }
 
+  @Get('raid')
+  raid(@CurrentUser() actorValue: unknown) {
+    return this.expedition.raidState(this.actorId(actorValue));
+  }
+
+  @Post('raid/join')
+  joinRaid(@CurrentUser() actorValue: unknown) {
+    return this.expedition.joinRaid(this.actorId(actorValue));
+  }
+
   @Post('items/:id/equip')
   equip(
     @CurrentUser() actorValue: unknown,
