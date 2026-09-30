@@ -1,28 +1,50 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 720">
-  <defs>
-    <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d9a27a"/><stop offset="1" stop-color="#a66d4e"/></linearGradient>
-    <linearGradient id="rag" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8d735d"/><stop offset="1" stop-color="#493d35"/></linearGradient>
-    <linearGradient id="pants" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4a4542"/><stop offset="1" stop-color="#272526"/></linearGradient>
-    <filter id="shadow"><feDropShadow dx="0" dy="16" stdDeviation="10" flood-opacity=".42"/></filter>
-  </defs>
-  <ellipse cx="240" cy="675" rx="112" ry="24" fill="#000" opacity=".28"/>
-  <g filter="url(#shadow)">
-    <path d="M182 190c14-24 40-41 58-41 24 0 46 15 59 41l19 69-21 164-111-2-24-165z" fill="url(#rag)" stroke="#211c19" stroke-width="8" stroke-linejoin="round"/>
-    <path d="M198 185 222 219l18-21 19 20 26-36 18 86-123-5z" fill="#a3896d" opacity=".85"/>
-    <path d="m183 257 28 16-21 136-38 126-31-15 35-148z" fill="url(#skin)" stroke="#2a211d" stroke-width="7" stroke-linejoin="round"/>
-    <path d="m297 258-28 16 19 136 39 126 31-15-36-149z" fill="url(#skin)" stroke="#2a211d" stroke-width="7" stroke-linejoin="round"/>
-    <path d="m183 408 114 1 35 220-57 2-33-142-29 142-61-2z" fill="url(#pants)" stroke="#1c1a1a" stroke-width="8" stroke-linejoin="round"/>
-    <path d="m168 609 59-3-4 54-72 1zM257 607l60 1 13 53-76-1z" fill="#3d3029" stroke="#1d1715" stroke-width="7"/>
-    <path d="m156 648 72-3-5 30-82 1zM254 645l76 3 9 29-88-2z" fill="#2b2421" stroke="#151313" stroke-width="6"/>
-    <ellipse cx="241" cy="123" rx="56" ry="64" fill="url(#skin)" stroke="#2b211d" stroke-width="8"/>
-    <path d="M182 122c3-65 37-92 71-89 26 3 53 23 62 62-19-17-38-20-60-12-22 8-39 7-73 39z" fill="#211a18"/>
-    <path d="M197 80c18-29 47-42 69-34l-9 18 24-8-4 24 22-6-15 28c-40-23-64-12-87 9z" fill="#2d211d"/>
-    <path d="M215 127q13-9 24 0M260 127q13-9 24 0" stroke="#37251f" stroke-width="6" stroke-linecap="round" fill="none"/>
-    <path d="M236 160q10 8 22 0" stroke="#6b3d2c" stroke-width="5" stroke-linecap="round" fill="none"/>
-    <path d="m176 282 16 38 20-7-18 95-40 127-34-15 37-157zM305 282l-17 38-19-7 18 95 40 127 33-15-37-157z" fill="#b48766" opacity=".36"/>
-    <path d="M174 329c29 15 104 16 136-2" stroke="#3b2a22" stroke-width="14" stroke-linecap="round"/>
-    <rect x="221" y="320" width="42" height="30" rx="7" fill="#6f4e2d" stroke="#1f1713" stroke-width="6"/>
-    <path d="m190 220 28 28-16 37-30-12zM290 219l-29 29 15 37 33-14z" fill="#75604e"/>
-    <path d="M174 418 205 431l-17 35-29-17zM285 430l31-13 16 32-29 18z" fill="#1f1f21"/>
+<defs>
+  <linearGradient id="skin" x1="0" y1="0" x2=".85" y2="1"><stop stop-color="#efbd8e"/><stop offset=".55" stop-color="#d69264"/><stop offset="1" stop-color="#a85f43"/></linearGradient>
+  <linearGradient id="rag" x1=".1" y1="0" x2=".9" y2="1"><stop stop-color="#b18c64"/><stop offset=".45" stop-color="#77604c"/><stop offset="1" stop-color="#43372f"/></linearGradient>
+  <linearGradient id="pants" x1=".2" y1="0" x2=".8" y2="1"><stop stop-color="#59504c"/><stop offset="1" stop-color="#272326"/></linearGradient>
+  <linearGradient id="leather" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#84562f"/><stop offset="1" stop-color="#40291d"/></linearGradient>
+  <radialGradient id="warm"><stop stop-color="#ffd58d" stop-opacity=".24"/><stop offset="1" stop-color="#d77535" stop-opacity="0"/></radialGradient>
+  <filter id="shadow"><feDropShadow dx="0" dy="17" stdDeviation="11" flood-opacity=".44"/></filter>
+</defs>
+<ellipse cx="240" cy="677" rx="116" ry="25" fill="#000" opacity=".32"/>
+<ellipse cx="240" cy="330" rx="176" ry="230" fill="url(#warm)"/>
+<g filter="url(#shadow)" stroke-linejoin="round" stroke-linecap="round">
+  <!-- cloak scraps behind body -->
+  <path d="M191 197c-26 37-31 100-23 162l-38 141 56-25 34-151zM289 197c27 37 31 100 23 162l37 141-55-25-35-151z" fill="#514237" stroke="#2a211c" stroke-width="8"/>
+  <!-- legs -->
+  <path d="m181 395 118 1 28 230-58 3-28-151-29 151-61-3z" fill="url(#pants)" stroke="#211d1d" stroke-width="9"/>
+  <path d="m164 588 63-4-5 55-71 4zM256 584l62 4 15 55-78-4z" fill="#4a382c" stroke="#241a16" stroke-width="8"/>
+  <path d="m153 625 77-3-8 43-87 2 8-29zM252 622l75 2 17 42-94-1z" fill="#2a211d" stroke="#151212" stroke-width="7"/>
+  <!-- torso rag -->
+  <path d="M181 202c12-27 38-45 59-45 25 0 51 17 62 45l21 105-27 108-112-1-28-109z" fill="url(#rag)" stroke="#2a211c" stroke-width="9"/>
+  <path d="m184 205 36 37 20-24 21 23 36-39 9 66-132 4z" fill="#c0a17a" opacity=".7"/>
+  <path d="m172 282 24 9-14 84-35 142-35-14 35-159z" fill="url(#skin)" stroke="#30231d" stroke-width="8"/>
+  <path d="m308 282-24 9 14 84 35 142 35-14-35-159z" fill="url(#skin)" stroke="#30231d" stroke-width="8"/>
+  <!-- wraps -->
+  <g fill="#d2c1a5" stroke="#6a5948" stroke-width="4">
+    <path d="m139 410 45 11-6 22-44-12z"/><path d="m132 444 44 11-6 22-44-12z"/>
+    <path d="m296 421 45-11 6 22-44 12z"/><path d="m304 455 44-11 6 22-44 12z"/>
   </g>
+  <!-- belt -->
+  <path d="M170 324c45 14 96 14 140 0" fill="none" stroke="#4b2d20" stroke-width="18"/>
+  <rect x="219" y="310" width="44" height="35" rx="6" fill="#b77b38" stroke="#382317" stroke-width="7"/>
+  <circle cx="241" cy="327" r="7" fill="#34221a"/>
+  <path d="m181 338 35 6-9 56-39-7zM267 344l35-6 13 55-39 7z" fill="url(#leather)" stroke="#352219" stroke-width="6"/>
+  <!-- head -->
+  <ellipse cx="240" cy="128" rx="57" ry="66" fill="url(#skin)" stroke="#30231e" stroke-width="8"/>
+  <path d="M180 130c1-65 31-102 68-102 31 0 62 24 72 68-18-13-36-20-54-16-23 5-40 12-55 25-11 9-20 17-31 25z" fill="#2b211d" stroke="#1a1513" stroke-width="5"/>
+  <path d="m191 87 19-33 16 11 15-31 16 23 26-19-1 30 28-7-13 29c-39-18-76-13-106-3z" fill="#392820"/>
+  <path d="M207 126q14-11 29 0M253 126q14-11 29 0" stroke="#472b23" stroke-width="6" fill="none"/>
+  <ellipse cx="222" cy="132" rx="4" ry="5" fill="#171311"/><ellipse cx="268" cy="132" rx="4" ry="5" fill="#171311"/>
+  <path d="M238 139q-4 13 6 15" stroke="#ad684b" stroke-width="4" fill="none"/>
+  <path d="M221 166q19 15 39 0" stroke="#733e30" stroke-width="5" fill="none"/>
+  <!-- rips and stitches -->
+  <g stroke="#332820" stroke-width="5">
+    <path d="m193 258 19 15-20 14M276 279l21-18M207 377l16-16M258 389l18-20"/>
+  </g>
+  <g stroke="#d5b188" stroke-width="3">
+    <path d="m195 261 14 10M280 276l13-11M209 380l11-10"/>
+  </g>
+</g>
 </svg>
