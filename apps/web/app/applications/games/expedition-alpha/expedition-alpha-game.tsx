@@ -469,7 +469,18 @@ export function ExpeditionAlphaGame() {
 
           <div className={`exp-avatar ${appearanceClasses}`}>
             <div className="exp-avatar-art" />
-            <div className="exp-avatar-overlay" />
+            {equipped.cloak ? <div className={`exp-gear-layer gear-cloak gear-${equipped.cloak.visual}`} /> : null}
+            {equipped.chest ? <div className={`exp-gear-layer gear-chest gear-${equipped.chest.visual}`} /> : null}
+            {equipped.shoulders ? <div className={`exp-gear-layer gear-shoulders gear-${equipped.shoulders.visual}`} /> : null}
+            {equipped.head ? <div className={`exp-gear-layer gear-head gear-${equipped.head.visual}`} /> : null}
+            {equipped.wrists ? <div className={`exp-gear-layer gear-wrists gear-${equipped.wrists.visual}`} /> : null}
+            {equipped.gloves ? <div className={`exp-gear-layer gear-gloves gear-${equipped.gloves.visual}`} /> : null}
+            {equipped.belt ? <div className={`exp-gear-layer gear-belt gear-${equipped.belt.visual}`} /> : null}
+            {equipped.feet ? <div className={`exp-gear-layer gear-feet gear-${equipped.feet.visual}`} /> : null}
+            {equipped.mainHand ? <div className={`exp-gear-layer gear-main gear-${equipped.mainHand.visual}`} /> : null}
+            {equipped.offHand ? <div className={`exp-gear-layer gear-off gear-${equipped.offHand.visual}`} /> : null}
+            {equipped.relic1 ? <div className={`exp-gear-layer gear-relic gear-${equipped.relic1.visual}`} /> : null}
+            {equipped.relic2 ? <div className={`exp-gear-layer gear-relic gear-${equipped.relic2.visual}`} /> : null}
             <div className="exp-avatar-label">
               <b>{power} силы</b>
               <span>{Object.keys(equipped).length}/16 предметов</span>
