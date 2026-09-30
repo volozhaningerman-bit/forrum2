@@ -24,6 +24,16 @@ export type ExpeditionServerRun = {
   secondsLeft: number;
 };
 
+export type ExpeditionServerRaid = {
+  id: string;
+  bossKey: string;
+  startsAt: string;
+  minParticipants: number;
+  maxParticipants: number;
+  participantCount: number;
+  joined: boolean;
+};
+
 export type ExpeditionServerState = {
   profile: {
     level: number;
@@ -39,6 +49,7 @@ export type ExpeditionServerState = {
     };
   };
   run: ExpeditionServerRun | null;
+  raid: ExpeditionServerRaid;
   inventory: ExpeditionServerItem[];
 };
 
@@ -88,6 +99,18 @@ export function equipExpeditionItem(itemId: string) {
 
 export function unequipExpeditionItem(itemId: string) {
   return api<ExpeditionServerState>(`/expedition/items/${itemId}/unequip`, {
+    method: 'POST',
+  });
+}
+
+export function joinExpeditionRaid() {
+  return api<ExpeditionServerRaid>('/expedition/raid/current/join', {
+    method: 'POST',
+  });
+}
+
+export function leaveExpeditionRaid() {
+  return api<ExpeditionServerRaid>('/expedition/raid/current/leave', {
     method: 'POST',
   });
 }
