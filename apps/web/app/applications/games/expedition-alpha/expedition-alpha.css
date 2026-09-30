@@ -298,7 +298,7 @@
   position:absolute;
   inset:18px 34px 44px;
   z-index:2;
-  background-image:url('/games/civilization/art-v3/hero-sprite-v3.webp');
+  background-image:url('/games/expedition-alpha/hero-base.svg');
   background-repeat:no-repeat;
   background-position:center;
   background-size:contain;
@@ -354,7 +354,7 @@
   min-height:318px;
   background:
     linear-gradient(180deg,rgba(4,8,10,.08),rgba(4,8,10,.76)),
-    url('/games/civilization/art-v3/cave-hub-v3.webp') center 54%/cover no-repeat;
+    url('/games/expedition-alpha/rust-outskirts.svg') center 54%/cover no-repeat;
 }
 .exp-location-art::after{
   content:"";position:absolute;inset:0;pointer-events:none;
@@ -388,7 +388,7 @@
 }
 .exp-boss-crop{
   position:absolute;inset:8px;
-  background-image:url('/games/civilization/art-v2/boss-sprite-v2.avif');
+  background-image:url('/games/expedition-alpha/iron-shepherd.svg');
   background-size:300% auto;
   background-position:0 center;
   background-repeat:no-repeat;
@@ -413,7 +413,7 @@
 .exp-champion span,.exp-relic span{font-size:10px}
 
 .exp-item-icon{
-  background-image:url('/games/civilization/art-v2/equipment-sprite-v2.avif');
+  background-image:url('/games/expedition-alpha/equipment-atlas.svg');
   background-repeat:no-repeat;
   background-size:400% 300%;
   background-color:#0f171b;
@@ -507,4 +507,17 @@
 .exp-raid-copy button:disabled{opacity:.58;cursor:not-allowed}
 @media(max-width:820px){
   .exp-resources{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* Dedicated Expedition art pack: no Civilization sprite dependency. */
+.exp-boss-crop{
+  background-size:contain!important;
+  background-position:center!important;
+}
+.exp-location-art{
+  background-position:center 58%!important;
+  background-size:cover!important;
+}
+.exp-avatar-art{
+  inset:14px 30px 46px!important;
 }
