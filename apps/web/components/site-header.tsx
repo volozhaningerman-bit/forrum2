@@ -19,7 +19,7 @@ export function SiteHeader() {
     <>
       <header data-forrum-shell="header" className="header">
         <div className="shell nav">
-          <Link className="reference-site-brand" href="/" aria-label="4rrum">4rrum</Link>
+          <Link className="reference-site-brand" href="/" aria-label="4rrum — главная"><img src="/forrum-assets/brand-4rrum.svg" alt="" width="160" height="45"/></Link>
 
           <MainNav />
 
@@ -42,23 +42,23 @@ export function SiteHeader() {
         className="mobile-nav"
         aria-label="Навигация на телефоне"
       >
-        <Link href="/">
+        <Link href="/" aria-current={pathname === '/' ? 'page' : undefined}>
           <HomeIcon />
           <span>Главная</span>
         </Link>
-        <Link href="/communities">
+        <Link href="/communities" aria-current={pathname.startsWith('/communities') ? 'page' : undefined}>
           <GridIcon />
           <span>Сообщества</span>
         </Link>
-        <Link className="mobile-create" href="/create">
+        <Link className="mobile-create" href="/create" aria-current={pathname === '/create' ? 'page' : undefined}>
           <PlusIcon />
           <span>Создать</span>
         </Link>
-        <Link href="/search">
+        <Link href="/search" aria-current={pathname === '/search' ? 'page' : undefined}>
           <SearchIcon />
           <span>Поиск</span>
         </Link>
-        <Link href="/messages">
+        <Link href="/messages" aria-current={pathname.startsWith('/messages') ? 'page' : undefined}>
           <MessageIcon />
           <span>Сообщения</span>
         </Link>

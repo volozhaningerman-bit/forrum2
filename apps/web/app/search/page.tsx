@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 function SearchFallback() {
   return (
-    <div className="search-page-skeleton">
+    <div className="search-page-skeleton" role="status" aria-label="Загружаем поиск">
       <div className="compact-page-heading">
         <div>
           <h1>Поиск</h1>
@@ -47,8 +47,8 @@ function SearchFallback() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<SearchFallback />}>
+    <div className="alpha-search-page"><Suspense fallback={<SearchFallback />}>
       <SearchClient />
-    </Suspense>
+    </Suspense></div>
   );
 }

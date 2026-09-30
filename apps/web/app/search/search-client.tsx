@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api';
 import { PublicationCard } from '@/components/publication-card';
@@ -34,6 +34,7 @@ export function SearchClient() {
   const [type, setType] = useState('ALL');
   const [sort, setSort] = useState<Sort>('RELEVANCE');
   const [recent, setRecent] = useState<string[]>([]);
+  const request = useRef<AbortController | null>(null);
 
   useEffect(() => {
     try { setRecent(JSON.parse(window.localStorage.getItem('forrum-recent-searches') ?? '[]').filter((item: unknown) => typeof item === 'string').slice(0, 5)); }
@@ -41,23 +42,27 @@ export function SearchClient() {
   }, []);
 
   async function run(q: string) {
+    request.current?.abort();
+    const controller = new AbortController();
+    request.current = controller;
     const normalized = q.trim();
-    if (normalized.length < 2) { setResult(null); setError('Введите минимум два символа'); return; }
-    setLoading(true); setError('');
+    if (normalized.length < 2) { setLoading(false); setResult(null); setError('Введите минимум два символа'); return; }
+    setLoading(true); setError(''); setResult(null);
     try {
-      const next = await api<Results>(`/search?q=${encodeURIComponent(normalized)}`);
+      const next = await api<Results>(`/search?q=${encodeURIComponent(normalized)}`, { signal: controller.signal });
+      if (controller.signal.aborted) return;
       setResult(next);
       setGroup('ALL'); setFormat('ALL'); setType('ALL'); setSort('RELEVANCE');
       setRecent((current) => {
         const nextRecent = [normalized, ...current.filter((item) => item.toLowerCase() !== normalized.toLowerCase())].slice(0, 5);
-        window.localStorage.setItem('forrum-recent-searches', JSON.stringify(nextRecent));
+        try { window.localStorage.setItem('forrum-recent-searches', JSON.stringify(nextRecent)); } catch { /* Search works when browser storage is unavailable. */ }
         return nextRecent;
       });
-    } catch (cause) { setError(cause instanceof Error ? cause.message : 'Поиск временно недоступен'); }
-    finally { setLoading(false); }
+    } catch (cause) { if (!controller.signal.aborted) setError(cause instanceof Error ? cause.message : 'Поиск временно недоступен'); }
+    finally { if (!controller.signal.aborted) setLoading(false); }
   }
 
-  useEffect(() => { setQuery(initial); if (initial) void run(initial); else setResult(null); }, [initial]);
+  useEffect(() => { setQuery(initial); if (initial) void run(initial); else { request.current?.abort(); setResult(null); setLoading(false); setError(''); } return () => request.current?.abort(); }, [initial]);
 
   function submit(event: FormEvent) {
     event.preventDefault();
@@ -107,7 +112,7 @@ export function SearchClient() {
     </section>}
 
     {result && !loading && <div className="search-results-shell">
-      <div className="search-result-summary"><div><strong>{total}</strong><span>{resultWord(total)} по запросу «{result.query}»</span></div>{recent.length > 0 && <button className="text-button" type="button" onClick={() => { setRecent([]); window.localStorage.removeItem('forrum-recent-searches'); }}>Очистить историю</button>}</div>
+      <div className="search-result-summary"><div><strong>{total}</strong><span>{resultWord(total)} по запросу «{result.query}»</span></div>{recent.length > 0 && <button className="text-button" type="button" onClick={() => { setRecent([]); try { window.localStorage.removeItem('forrum-recent-searches'); } catch { /* Storage may be blocked. */ } }}>Очистить историю</button>}</div>
 
       <nav className="search-group-tabs" aria-label="Тип результатов">{groups.map(([value, label, count]) => <button key={value} className={group === value ? 'active' : ''} type="button" onClick={() => setGroup(value)}>{label}<span>{count}</span></button>)}</nav>
 

@@ -20,15 +20,9 @@ export function AuthShell({
         <Link
           className="compact-auth-brand"
           href="/"
-          aria-label="FORRUM"
+          aria-label="4rrum — главная"
         >
-          <span
-            className="brand-mark"
-            aria-hidden="true"
-          >
-            F
-          </span>
-          <strong aria-hidden="true">FORRUM</strong>
+          <img src="/forrum-assets/brand-4rrum.svg" alt="" width="160" height="45"/>
         </Link>
 
         <header>

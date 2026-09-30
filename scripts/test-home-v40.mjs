@@ -27,7 +27,7 @@ let taxonomyApplied=false;
 const taxonomyPlan={version:'a'.repeat(64),rows:[{slug:'video-games',name:'Видеоигры',parent:null,action:'create'},{slug:'gta-rp',name:'GTA RP',parent:'video-games',action:'move'}]};
 const banners=[1,2].map(slot=>({slot,enabled:true,kind:slot===1?'ad':'promotion',title:slot===1?'AI-инструменты для ваших проектов':'Покажи, что ты создал с AI',imageLight:slot===1?'/images/home/tools-v35.webp':'/images/home/creations-v35.webp',imageDark:'',href:'/communities/category-0',startsAt:'',endsAt:'',disclosure:slot===1?'Тестовый рекламодатель':''}));
 let saved = false, reaction = null, failFeed = false, failBookmark = false;
-let reports=0;
+let reports=0, curatorApplications=0, replies=0;
 const allTopics=Array.from({length:40},(_,i)=>({...topics[i%5],id:String(i),slug:'topic-'+i}));
 const requests = [];
 const upstream = createServer(async (req,res) => {
@@ -48,6 +48,9 @@ const upstream = createServer(async (req,res) => {
  else if (url.pathname === '/v1/announcements') data = announcements;
  else if (url.pathname === '/v1/auth/me' && guest) {status=401;data={message:'Войдите'};}
  else if (url.pathname === '/v1/auth/me') data = { user: { id:'viewer',username:'viewer',displayName:'Алексей Петров',emailVerified:true,onboardingCompleted:true,role:admin?'OWNER':'USER' } };
+ else if (url.pathname === '/v1/search') data = {query:url.searchParams.get('q'),publications:topics,communities:[communities[0]],users:[],tags:[]};
+ else if (url.pathname === '/v1/governance/curator-applications') {let body='';for await(const chunk of req)body+=chunk;const form=JSON.parse(body);assert.equal(form.communitySlug,'category-0');assert(form.motivation.length>=20&&form.plan.length>=20);curatorApplications++;data={id:'application-1'};}
+ else if (url.pathname === '/v1/publications/topic-0/comments' && req.method==='POST') {replies++;await new Promise(resolve=>setTimeout(resolve,300));data={id:'reply-new'};}
  else if (url.pathname === '/v1/publications/topic-0') data = {...topics[0],body:topics[0].excerpt,updatedAt:topics[0].createdAt,lastActivityAt:topics[0].lastComment.createdAt,pinnedUntil:null,canEdit:false,canDelete:false,bookmarkCount:0,comments:[{id:'reply-1',body:topics[0].lastComment.excerpt,createdAt:topics[0].lastComment.createdAt,parentId:null,author:{...topics[1].author,forrumId:2},reactionCount:0,replyCount:0,viewerReaction:null}]};
  else if (url.pathname.endsWith('/bookmark')) { if(failBookmark){ status=403;data={message:'Войдите, чтобы сохранить тему'}; } else {saved=!saved;data={bookmarked:saved};} }
  else if (url.pathname.endsWith('/reaction')) {let body='';for await(const chunk of req)body+=chunk;const type=JSON.parse(body).type;reaction=type===reaction?null:type;data={active:!!reaction,type:reaction};}
@@ -127,7 +130,7 @@ try {
  await page.locator('.forum-topic').first().hover(); await page.waitForTimeout(160);
  const afterHover=await page.locator('.forum-topic').first().boundingBox();
  assert.deepEqual(afterHover,beforeHover,'Hover must not move or scale the row');
- assert.equal(await page.getByRole('button',{name:'Новые',exact:true}).getAttribute('aria-pressed'),'true');
+ assert.equal(await page.getByRole('button',{name:'Последние — новые темы',exact:true}).getAttribute('aria-pressed'),'true');
  assert(requests.some(r=>r.path==='/v1/feed'&&r.cookie?.includes('forrum_test=viewer')));
  const bookmarkCalls=requests.filter(r=>r.path==='/v1/publications/topic-0/bookmark').length;
  const hostile=await page.request.post('http://127.0.0.1:'+port+'/api/publications/topic-0/bookmark',{headers:{Origin:'https://evil.example'}});
@@ -169,7 +172,7 @@ try {
  assert.equal(await page.locator('.forum-filter-menu').getAttribute('open'),null);
  assert(await page.locator('summary[aria-label="Выбрать сообщество"]').evaluate(el=>el===document.activeElement));
  await page.locator('summary[aria-label="Выбрать сообщество"]').click();await page.getByRole('menuitemradio',{name:'Разработка',exact:true}).click();await page.waitForTimeout(400);assert(requests.some(r=>r.query.includes('community=category-0')));
- failFeed=true;await page.getByRole('button',{name:'Активные',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
+ failFeed=true;await page.getByRole('button',{name:'Популярные — активные темы за 24 часа',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
  await page.goto('http://127.0.0.1:'+port+'/applications',{waitUntil:'networkidle'});assert.equal(await page.locator('.applications-grid article').count(),4);
  await page.goto('http://127.0.0.1:'+port+'/digital-services',{waitUntil:'domcontentloaded'});
  await page.getByRole('heading',{name:'Цифровые сервисы'}).waitFor();
@@ -188,6 +191,39 @@ try {
  assert.equal(await page.locator('.forum-popular-note').textContent(),'По просмотрам за всё время');
  await page.setViewportSize({width:800,height:600});
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+ // Alpha journeys: public utility screens must remain usable in the graphite theme.
+ for (const route of ['/search?q=Rust','/login','/register','/support','/not-a-real-page']) {
+  await page.goto('http://127.0.0.1:'+port+route,{waitUntil:'networkidle'});
+  for (const width of [320,390,760,1280]) {
+   await page.setViewportSize({width,height:900});
+   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`${route} overflows at ${width}`);
+  }
+  const results=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
+  await writeFile(output+'/axe-alpha-'+route.split('?')[0].replaceAll('/','')+'.json',JSON.stringify(results.violations,null,2));
+  assert.deepEqual(results.violations.filter(v=>['critical','serious'].includes(v.impact)).map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)})),[],`Accessibility: ${route}`);
+  await page.screenshot({path:output+'/alpha-'+route.split('?')[0].replaceAll('/','')+'.png'});
+ }
+ await page.goto('http://127.0.0.1:'+port+'/communities/curators',{waitUntil:'networkidle'});
+ assert(page.url().includes('/login?next='),'Guest curator application requires sign-in');
+ await page.goto('http://127.0.0.1:'+port+'/p/topic-0',{waitUntil:'networkidle'});
+ await page.getByRole('link',{name:'Войти и ответить',exact:true}).waitFor();
+ assert.equal(await page.locator('.reply-composer textarea').count(),0,'Guest should not type a reply that cannot be sent');
+ guest=false;
+ await page.goto('http://127.0.0.1:'+port+'/communities/curators',{waitUntil:'networkidle'});
+ await page.getByLabel('Сообщество',{exact:true}).selectOption('category-0');
+ await page.getByLabel('Почему хотите стать куратором').fill('Хочу помогать участникам и развивать полезные обсуждения.');
+ await page.getByLabel('Что планируете сделать для раздела').fill('Подготовлю инструкции и помогу отвечать на вопросы новичков.');
+ await page.getByRole('button',{name:'Отправить заявку',exact:true}).click();
+ await page.getByRole('heading',{name:'Заявка отправлена',exact:true}).waitFor();
+ assert.equal(curatorApplications,1);
+ await page.screenshot({path:output+'/alpha-curator.png'});
+ await page.goto('http://127.0.0.1:'+port+'/p/topic-0',{waitUntil:'networkidle'});
+ await page.locator('.reply-composer textarea').fill('Проверяем отправку одного ответа без повторов.');
+ await page.getByRole('button',{name:'Отправить ответ',exact:true}).click();
+ await page.getByRole('button',{name:'Отправляем…',exact:true}).waitFor();
+ assert.equal(await page.getByRole('button',{name:'Отправляем…',exact:true}).isDisabled(),true);
+ await page.waitForFunction(()=>document.querySelector('.reply-composer textarea')?.value==='');
+ assert.equal(replies,1);
  assert.deepEqual(errors,[]);console.log('V49: approved monochrome homepage, topic table, menus, ranking, popular today and responsive checks passed');
  await page.setViewportSize({width:1672,height:941});
  await page.goto('http://127.0.0.1:'+port+'/preview/home',{waitUntil:'domcontentloaded'});

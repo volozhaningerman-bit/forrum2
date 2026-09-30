@@ -14,10 +14,10 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <section className="route-state route-state-error">
-      <strong>Раздел не удалось открыть</strong>
+    <section className="route-state route-state-error" role="alert">
+      <h1>Раздел не удалось открыть</h1>
       <p>
-        Данные не потеряны. Повторите запрос или
+        Повторите запрос или
         вернитесь на главную.
       </p>
       <div className="inline-actions">

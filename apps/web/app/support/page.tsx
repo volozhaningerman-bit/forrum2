@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function SupportPage() {
   return (
-    <main className="forrum-info-page">
+    <div className="forrum-info-page">
       <article className="forrum-info-document">
         <header>
           <span className="forrum-info-kicker">FORRUM</span>
@@ -20,6 +20,13 @@ export default function SupportPage() {
             публикациями, разделами и работой сайта.
           </p>
         </header>
+
+        <section id="alpha">
+          <h2>Участие в закрытой альфе</h2>
+          <p>Основной сценарий: подтвердить почту, выбрать сообщество, создать тему и ответить участнику. Некоторые разделы ещё развиваются; о доступности функций сообщаем на их страницах.</p>
+          <p>Для сообщения об ошибке укажите: ссылку на страницу, устройство и браузер, шаги, ожидаемый результат и то, что произошло. Пишите одну проблему в одной теме. Не добавляйте пароли, коды входа и личные данные.</p>
+          <div className="forrum-info-actions"><Link href="/communities/forrum-feedback">Открыть обратную связь →</Link><Link href="/create?community=forrum-feedback">Сообщить об ошибке →</Link></div>
+        </section>
 
         <section>
           <h2>Техническая проблема</h2>
@@ -58,7 +65,7 @@ export default function SupportPage() {
           <div className="forrum-info-actions">
             <Link href="/search">Открыть поиск</Link>
             <Link href="/news">Последние новости</Link>
-            <Link href="/communities">Найти «Обратную связь»</Link>
+            <Link href="/communities/forrum-feedback">Открыть «Обратную связь»</Link>
           </div>
         </section>
 
@@ -67,6 +74,6 @@ export default function SupportPage() {
           <Link href="/rules">Правила →</Link>
         </footer>
       </article>
-    </main>
+    </div>
   );
 }

@@ -96,9 +96,15 @@ export async function api<T>(
       cause instanceof Error &&
       cause.name === 'AbortError'
     ) {
+      // A superseded search/filter is a cancellation, not a server timeout.
+      if (init.signal?.aborted) throw cause;
       throw new Error(
         'Сервер не ответил за 20 секунд',
       );
+    }
+
+    if (cause instanceof TypeError) {
+      throw new Error('Не удалось связаться с сервером. Проверьте подключение и повторите попытку.');
     }
 
     throw cause;

@@ -143,6 +143,8 @@ export function PublicationClient({
   const [error, setError] = useState('');
   const [replyTo, setReplyTo] = useState<Comment | null>(null);
   const [replyText, setReplyText] = useState('');
+  const [sendingReply, setSendingReply] = useState(false);
+  const replyInFlight = useRef(false);
   const [editing, setEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editBody, setEditBody] = useState('');
@@ -204,6 +206,7 @@ export function PublicationClient({
   }, [item, commentOrder]);
 
   function chooseReply(comment: Comment) {
+    if (viewer === 'guest') { router.push(`/login?next=${encodeURIComponent(`/p/${slug}#discussion`)}`); return; }
     setReplyTo(comment);
     requestAnimationFrame(() => {
       replyEditorRef.current?.focus();
@@ -213,17 +216,25 @@ export function PublicationClient({
 
   async function sendComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (replyInFlight.current || replyText.trim().length < 2) return;
+    replyInFlight.current = true;
+    setSendingReply(true);
+    const submittedText = replyText;
+    const submittedParent = replyTo?.id;
     setError('');
     try {
       await api(`/publications/${slug}/comments`, {
         method: 'POST',
-        body: JSON.stringify({ body: replyText, parentId: replyTo?.id }),
+        body: JSON.stringify({ body: submittedText, parentId: submittedParent }),
       });
-      setReplyText('');
-      setReplyTo(null);
+      setReplyText(current => current === submittedText ? '' : current);
+      setReplyTo(current => current?.id === submittedParent ? null : current);
       await load();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Не удалось отправить ответ');
+    } finally {
+      replyInFlight.current = false;
+      setSendingReply(false);
     }
   }
 
@@ -510,7 +521,7 @@ export function PublicationClient({
             <div id="discussion" className="discussion-tools"><label>Порядок<select value={commentOrder} onChange={(event) => setCommentOrder(event.target.value as 'oldest' | 'newest')}><option value="oldest">Сначала ранние</option><option value="newest">Сначала новые</option></select></label><span className="discussion-count">{item.comments.length}</span></div>
           </div>
 
-          <form
+          {viewer === 'guest' ? <div className="topic-guest-reply"><h3>Присоединиться к обсуждению</h3><p>Для ответа войдите в аккаунт. После входа вы вернётесь в эту тему.</p><Link className="button" href={`/login?next=${encodeURIComponent(`/p/${slug}#discussion`)}`}>Войти и ответить</Link></div> : !viewer ? <p role="status">Проверяем доступ к ответам…</p> : <form
             className="reply-composer topic-reply-composer-v15-6"
             onSubmit={sendComment}
           >
@@ -536,9 +547,9 @@ export function PublicationClient({
             />
             <div className="composer-footer">
               <span>{replyText.length}/8000</span>
-              <button className="button" disabled={replyText.trim().length < 2}>Отправить ответ</button>
+              <button className="button" disabled={sendingReply || replyText.trim().length < 2}>{sendingReply ? 'Отправляем…' : 'Отправить ответ'}</button>
             </div>
-          </form>
+          </form>}
 
           <div className="threaded-comments">
             {comments.map((comment) => <CommentThread key={comment.id} comment={comment} onReply={chooseReply} onReact={reactComment} onReport={reportComment}/>)}

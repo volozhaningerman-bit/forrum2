@@ -11,14 +11,7 @@ import { api } from '@/lib/api';
 import { AuthShell } from '@/components/auth-shell';
 import { PasswordField } from '@/components/password-field';
 import type { Me } from '@/lib/types';
-
-function safeNext(value: string | null) {
-  return value &&
-    value.startsWith('/') &&
-    !value.startsWith('//')
-    ? value
-    : '/';
-}
+import { safeNext } from '@/lib/safe-next';
 
 export default function LoginPage() {
   const router = useRouter();
