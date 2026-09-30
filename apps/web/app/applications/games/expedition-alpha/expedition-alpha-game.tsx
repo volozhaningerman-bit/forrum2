@@ -117,6 +117,73 @@ const lootPools: Record<number, string[]> = {
 
 const slotLabel = Object.fromEntries(slots.map((slot) => [slot.id, slot.label])) as Record<Slot, string>;
 
+const serverSlotMap: Record<string, Slot> = {
+  HEAD: 'head',
+  NECK: 'neck',
+  SHOULDERS: 'shoulders',
+  CLOAK: 'cloak',
+  CHEST: 'chest',
+  WRISTS: 'wrists',
+  GLOVES: 'gloves',
+  BELT: 'belt',
+  LEGS: 'legs',
+  FEET: 'feet',
+  RING_1: 'ring1',
+  RING_2: 'ring2',
+  RELIC_1: 'relic1',
+  RELIC_2: 'relic2',
+  MAIN_HAND: 'mainHand',
+  OFF_HAND: 'offHand',
+};
+
+const serverRarityMap: Record<string, Rarity> = {
+  COMMON: 'common',
+  UNCOMMON: 'uncommon',
+  RARE: 'rare',
+  EPIC: 'epic',
+};
+
+const visualArtMap: Record<string, number> = {
+  hood: 0,
+  helm: 1,
+  neck: 2,
+  'consul-mask': 3,
+  shoulders: 4,
+  cloak: 5,
+  'cloak-blue': 6,
+  chest: 7,
+  'chest-guard': 8,
+  'chest-epic': 9,
+  wrists: 10,
+  gloves: 11,
+  belt: 0,
+  legs: 1,
+  boots: 2,
+  ring: 3,
+  'ring-blue': 4,
+  relic: 5,
+  'relic-epic': 6,
+  sword: 7,
+  spear: 8,
+  'sword-blue': 9,
+  hammer: 10,
+  shield: 11,
+};
+
+function mapServerItem(item: ExpeditionServerItem): Item {
+  return {
+    id: item.id,
+    name: item.name,
+    slot: serverSlotMap[item.slot] ?? 'relic1',
+    rarity: serverRarityMap[item.rarity] ?? 'common',
+    serial: item.serialNumber,
+    circulation: item.circulation,
+    power: item.power,
+    visual: item.visualKey,
+    art: visualArtMap[item.visualKey] ?? 0,
+  };
+}
+
 function secondsLeft(endsAt: number | null, now: number) {
   if (!endsAt) return 0;
   return Math.max(0, Math.ceil((endsAt - now) / 1000));
