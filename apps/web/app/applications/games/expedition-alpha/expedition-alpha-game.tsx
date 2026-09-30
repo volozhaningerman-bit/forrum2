@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 type Rarity = 'common' | 'uncommon' | 'rare' | 'epic';
 type Slot =
@@ -16,6 +16,7 @@ type Item = {
   circulation: number;
   power: number;
   visual: string;
+  art: number;
 };
 
 type Depth = {
@@ -24,7 +25,13 @@ type Depth = {
   energy: number;
   recommended: number;
   reward: string;
+  flavor: string;
 };
+
+type RunState = {
+  depthId: number;
+  endsAt: number;
+} | null;
 
 const rarityLabel: Record<Rarity, string> = {
   common: 'Обычный',
@@ -53,29 +60,58 @@ const slots: Array<{ id: Slot; label: string }> = [
 ];
 
 const depths: Depth[] = [
-  { id: 1, name: 'Вход в окраины', energy: 1, recommended: 1, reward: 'Ткань · лом · обычные вещи' },
-  { id: 2, name: 'Ломовые дворы', energy: 2, recommended: 4, reward: 'Старые детали · необычные вещи' },
-  { id: 3, name: 'Старые кварталы', energy: 2, recommended: 7, reward: 'Редкие находки · фрагменты' },
-  { id: 4, name: 'Промышленный двор', energy: 3, recommended: 10, reward: 'Технореликты · редкий лут' },
-  { id: 5, name: 'Реакторная зона', energy: 4, recommended: 14, reward: 'Эпический шанс · босс' },
+  { id: 1, name: 'Вход в окраины', energy: 1, recommended: 1, reward: 'Ткань · лом · обычные вещи', flavor: 'Лагеря сборщиков у городской стены.' },
+  { id: 2, name: 'Ломовые дворы', energy: 2, recommended: 4, reward: 'Старые детали · необычные вещи', flavor: 'Завалы машин, древние краны и охотники за железом.' },
+  { id: 3, name: 'Старые кварталы', energy: 2, recommended: 7, reward: 'Редкие находки · фрагменты', flavor: 'Жилые башни, давно переделанные под укрепления.' },
+  { id: 4, name: 'Промышленный двор', energy: 3, recommended: 10, reward: 'Технореликты · редкий лут', flavor: 'Здесь до сих пор слышно, как что-то работает под землёй.' },
+  { id: 5, name: 'Реакторная зона', energy: 4, recommended: 14, reward: 'Эпический шанс · рейд', flavor: 'Запретная часть старого комплекса. Там видели Пастыря.' },
 ];
 
-const starterInventory: Item[] = [
-  { id: 'hood-1843', name: 'Капюшон Собирателя', slot: 'head', rarity: 'common', serial: 1843, circulation: 5000, power: 2, visual: 'hood' },
-  { id: 'chest-317', name: 'Панцирь Старой Стражи', slot: 'chest', rarity: 'uncommon', serial: 317, circulation: 2500, power: 5, visual: 'chest' },
-  { id: 'cloak-85', name: 'Плащ Синего Знамени', slot: 'cloak', rarity: 'rare', serial: 85, circulation: 500, power: 8, visual: 'cloak' },
-  { id: 'sword-91', name: 'Клинок Последнего Контура', slot: 'mainHand', rarity: 'rare', serial: 91, circulation: 400, power: 11, visual: 'sword' },
-  { id: 'relic-17', name: 'Сердце Маяка', slot: 'relic1', rarity: 'epic', serial: 17, circulation: 60, power: 14, visual: 'relic' },
-  { id: 'boots-741', name: 'Сапоги Железного Шага', slot: 'feet', rarity: 'uncommon', serial: 741, circulation: 3000, power: 4, visual: 'boots' },
+const allItems: Item[] = [
+  { id:'hood-1843', name:'Капюшон Собирателя', slot:'head', rarity:'common', serial:1843, circulation:5000, power:2, visual:'hood', art:0 },
+  { id:'helm-481', name:'Шлем Дозорного', slot:'head', rarity:'uncommon', serial:481, circulation:2400, power:4, visual:'helm', art:1 },
+  { id:'seal-932', name:'Печать Путника', slot:'neck', rarity:'common', serial:932, circulation:8000, power:2, visual:'neck', art:2 },
+  { id:'eye-117', name:'Око Архивариуса', slot:'neck', rarity:'rare', serial:117, circulation:500, power:7, visual:'neck', art:3 },
+  { id:'shoulders-206', name:'Наплечники Рубежа', slot:'shoulders', rarity:'rare', serial:206, circulation:650, power:7, visual:'shoulders', art:4 },
+  { id:'cloak-903', name:'Плащ Пепельной Дороги', slot:'cloak', rarity:'common', serial:903, circulation:7000, power:3, visual:'cloak', art:5 },
+  { id:'cloak-85', name:'Плащ Синего Знамени', slot:'cloak', rarity:'rare', serial:85, circulation:500, power:8, visual:'cloak-blue', art:6 },
+  { id:'jacket-1388', name:'Куртка Пограничника', slot:'chest', rarity:'common', serial:1388, circulation:10000, power:3, visual:'chest', art:7 },
+  { id:'chest-317', name:'Панцирь Старой Стражи', slot:'chest', rarity:'uncommon', serial:317, circulation:2500, power:5, visual:'chest-guard', art:8 },
+  { id:'consul-23', name:'Кираса Ржавого Консула', slot:'chest', rarity:'epic', serial:23, circulation:80, power:14, visual:'chest-epic', art:9 },
+  { id:'wrists-761', name:'Наручи Искателя', slot:'wrists', rarity:'common', serial:761, circulation:6000, power:2, visual:'wrists', art:10 },
+  { id:'gloves-1188', name:'Перчатки Сервомастера', slot:'gloves', rarity:'uncommon', serial:1188, circulation:4000, power:4, visual:'gloves', art:11 },
+  { id:'belt-611', name:'Пояс Механика', slot:'belt', rarity:'uncommon', serial:611, circulation:3500, power:4, visual:'belt', art:0 },
+  { id:'legs-901', name:'Штаны Пыльной Тропы', slot:'legs', rarity:'common', serial:901, circulation:9000, power:2, visual:'legs', art:1 },
+  { id:'boots-741', name:'Сапоги Железного Шага', slot:'feet', rarity:'uncommon', serial:741, circulation:3000, power:4, visual:'boots', art:2 },
+  { id:'ring-4321', name:'Кольцо Старого Сплава', slot:'ring1', rarity:'common', serial:4321, circulation:12000, power:2, visual:'ring', art:3 },
+  { id:'ring-144', name:'Перстень Реакторщика', slot:'ring2', rarity:'rare', serial:144, circulation:800, power:6, visual:'ring-blue', art:4 },
+  { id:'shard-933', name:'Осколок Реактора', slot:'relic1', rarity:'uncommon', serial:933, circulation:3000, power:5, visual:'relic', art:5 },
+  { id:'relic-17', name:'Сердце Маяка', slot:'relic2', rarity:'epic', serial:17, circulation:60, power:14, visual:'relic-epic', art:6 },
+  { id:'sword-2166', name:'Меч Пыльной Стражи', slot:'mainHand', rarity:'common', serial:2166, circulation:10000, power:5, visual:'sword', art:7 },
+  { id:'spear-608', name:'Копьё Руинного Охотника', slot:'mainHand', rarity:'uncommon', serial:608, circulation:3000, power:7, visual:'spear', art:8 },
+  { id:'blade-91', name:'Клинок Последнего Контура', slot:'mainHand', rarity:'rare', serial:91, circulation:400, power:11, visual:'sword-blue', art:9 },
+  { id:'hammer-12', name:'Молот Стального Приора', slot:'mainHand', rarity:'epic', serial:12, circulation:45, power:16, visual:'hammer', art:10 },
+  { id:'shield-42', name:'Щит Заслона', slot:'offHand', rarity:'rare', serial:42, circulation:300, power:9, visual:'shield', art:11 },
 ];
 
-const expeditionDrops: Item[] = [
-  { id: 'gloves-1188', name: 'Перчатки Сервомастера', slot: 'gloves', rarity: 'uncommon', serial: 1188, circulation: 4000, power: 4, visual: 'gloves' },
-  { id: 'shoulders-206', name: 'Наплечники Рубежа', slot: 'shoulders', rarity: 'rare', serial: 206, circulation: 650, power: 7, visual: 'shoulders' },
-  { id: 'shield-42', name: 'Щит Заслона', slot: 'offHand', rarity: 'rare', serial: 42, circulation: 300, power: 9, visual: 'shield' },
-];
+const starterInventory = allItems.filter((item) =>
+  ['hood-1843','jacket-1388','belt-611','boots-741','sword-2166','seal-932'].includes(item.id),
+);
+
+const lootPools: Record<number, string[]> = {
+  1: ['wrists-761','ring-4321','legs-901'],
+  2: ['gloves-1188','helm-481','shard-933'],
+  3: ['shoulders-206','eye-117','cloak-85'],
+  4: ['blade-91','ring-144','shield-42'],
+  5: ['consul-23','hammer-12','relic-17'],
+};
 
 const slotLabel = Object.fromEntries(slots.map((slot) => [slot.id, slot.label])) as Record<Slot, string>;
+
+function secondsLeft(endsAt: number | null, now: number) {
+  if (!endsAt) return 0;
+  return Math.max(0, Math.ceil((endsAt - now) / 1000));
+}
 
 export function ExpeditionAlphaGame() {
   const [energy, setEnergy] = useState(12);
@@ -85,8 +121,25 @@ export function ExpeditionAlphaGame() {
   const [unlockedDepth, setUnlockedDepth] = useState(3);
   const [inventory, setInventory] = useState<Item[]>(starterInventory);
   const [equipped, setEquipped] = useState<Partial<Record<Slot, Item>>>({});
-  const [run, setRun] = useState<'idle' | 'away' | 'returned'>('idle');
-  const [lastDrop, setLastDrop] = useState<Item | null>(null);
+  const [run, setRun] = useState<RunState>(null);
+  const [readyRun, setReadyRun] = useState<number | null>(null);
+  const [lastDrops, setLastDrops] = useState<Item[]>([]);
+  const [resources, setResources] = useState({ metal: 12, scrap: 7, parts: 2 });
+  const [runCount, setRunCount] = useState(0);
+  const [raidJoined, setRaidJoined] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(Date.now()), 500);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (run && now >= run.endsAt) {
+      setReadyRun(run.depthId);
+      setRun(null);
+    }
+  }, [now, run]);
 
   const depth = depths.find((entry) => entry.id === selectedDepth) ?? depths[0];
   const equippedPower = useMemo(
@@ -94,34 +147,62 @@ export function ExpeditionAlphaGame() {
     [equipped],
   );
   const power = 10 + level * 3 + equippedPower;
+  const remaining = secondsLeft(run?.endsAt ?? null, now);
+
+  const appearanceClasses = Object.values(equipped)
+    .map((item) => item?.visual ? `has-${item.visual}` : '')
+    .join(' ');
 
   function sendExpedition() {
-    if (run !== 'idle' || energy < depth.energy || depth.id > unlockedDepth) return;
+    if (run || readyRun || energy < depth.energy || depth.id > unlockedDepth) return;
     setEnergy((value) => value - depth.energy);
-    setRun('away');
-    setLastDrop(null);
-    window.setTimeout(() => setRun('returned'), 1800);
+    setLastDrops([]);
+    setRun({ depthId: depth.id, endsAt: Date.now() + 3500 + depth.id * 500 });
   }
 
   function collectReturn() {
-    if (run !== 'returned') return;
-    const drop = expeditionDrops[(selectedDepth - 1) % expeditionDrops.length];
-    setInventory((items) => items.some((item) => item.id === drop.id) ? items : [...items, drop]);
-    setLastDrop(drop);
+    if (!readyRun) return;
+    const pool = lootPools[readyRun] ?? lootPools[1];
+    const firstId = pool[runCount % pool.length];
+    const secondId = readyRun >= 3 ? pool[(runCount + 1) % pool.length] : null;
+    const drops = [firstId, secondId]
+      .filter(Boolean)
+      .map((id) => allItems.find((item) => item.id === id))
+      .filter((item): item is Item => Boolean(item));
+
+    setInventory((items) => {
+      const known = new Set(items.map((item) => item.id));
+      return [...items, ...drops.filter((item) => !known.has(item.id))];
+    });
+    setLastDrops(drops);
+    setResources((current) => ({
+      metal: current.metal + 3 * readyRun,
+      scrap: current.scrap + 2 * readyRun,
+      parts: current.parts + (readyRun >= 2 ? 1 : 0),
+    }));
     setXp((value) => {
-      const next = value + 35 + selectedDepth * 10;
+      const next = value + 25 + readyRun * 12;
       if (next >= 100) {
         setLevel((current) => current + 1);
         return next - 100;
       }
       return next;
     });
-    setUnlockedDepth((value) => Math.min(5, Math.max(value, selectedDepth + 1)));
-    setRun('idle');
+    setUnlockedDepth((value) => Math.min(5, Math.max(value, readyRun + 1)));
+    setRunCount((value) => value + 1);
+    setReadyRun(null);
   }
 
   function equip(item: Item) {
     setEquipped((current) => ({ ...current, [item.slot]: item }));
+  }
+
+  function unequip(slot: Slot) {
+    setEquipped((current) => {
+      const copy = { ...current };
+      delete copy[slot];
+      return copy;
+    });
   }
 
   return (
@@ -130,33 +211,26 @@ export function ExpeditionAlphaGame() {
         <div>
           <span className="exp-kicker">4rrum · hidden alpha</span>
           <h1>Экспедиция</h1>
-          <p>Рабочее название · визуальный и игровой vertical slice</p>
+          <p>Рабочее название · посттехнологичное средневековье</p>
         </div>
         <div className="exp-hud">
           <span><b>⚡ {energy}/12</b><small>энергия</small></span>
           <span><b>ур. {level}</b><small>{xp}/100 XP</small></span>
           <span><b>{power}</b><small>сила</small></span>
+          <span><b>{resources.parts}</b><small>старые детали</small></span>
         </div>
       </header>
 
       <section className="exp-layout">
         <aside className="exp-panel exp-character">
           <div className="exp-panel-title">
-            <div>
-              <span>Персонаж</span>
-              <strong>Новичок</strong>
-            </div>
-            <em>в лохмотьях</em>
+            <div><span>Персонаж</span><strong>Новичок</strong></div>
+            <em>{Object.keys(equipped).length ? 'снаряжён' : 'в лохмотьях'}</em>
           </div>
 
-          <div className={`exp-avatar ${Object.values(equipped).map((item) => item?.visual ? `has-${item.visual}` : '').join(' ')}`}>
-            <div className="exp-avatar-glow" />
-            <div className="exp-avatar-head">●</div>
-            <div className="exp-avatar-rags exp-avatar-body" />
-            <div className="exp-avatar-rags exp-avatar-legs" />
-            <div className="exp-avatar-weapon" />
-            <div className="exp-avatar-shield" />
-            <div className="exp-avatar-relic" />
+          <div className={`exp-avatar ${appearanceClasses}`}>
+            <div className="exp-avatar-art" />
+            <div className="exp-avatar-overlay" />
             <div className="exp-avatar-label">
               <b>{power} силы</b>
               <span>{Object.keys(equipped).length}/16 предметов</span>
@@ -170,8 +244,9 @@ export function ExpeditionAlphaGame() {
                 <button
                   key={slot.id}
                   className={item ? `equipped rarity-${item.rarity}` : ''}
-                  title={item ? item.name : slot.label}
+                  title={item ? `${item.name} — снять` : slot.label}
                   type="button"
+                  onClick={() => item && unequip(slot.id)}
                 >
                   <span>{slot.label}</span>
                   <b>{item ? item.name : '—'}</b>
@@ -184,15 +259,10 @@ export function ExpeditionAlphaGame() {
         <section className="exp-center">
           <article className="exp-panel exp-location">
             <div className="exp-location-art">
-              <div className="exp-sun" />
-              <div className="exp-ruin exp-ruin-a" />
-              <div className="exp-ruin exp-ruin-b" />
-              <div className="exp-reactor" />
-              <div className="exp-ground" />
               <div className="exp-location-copy">
                 <span>Локация 01</span>
                 <h2>Ржавые окраины</h2>
-                <p>Старый город, построенный вокруг руин промышленной эпохи.</p>
+                <p>Средневековый город вырос вокруг обломков давно погибшей высокотехнологичной эпохи.</p>
               </div>
             </div>
 
@@ -203,7 +273,7 @@ export function ExpeditionAlphaGame() {
                   <button
                     type="button"
                     key={entry.id}
-                    disabled={locked || run !== 'idle'}
+                    disabled={locked || Boolean(run) || Boolean(readyRun)}
                     className={selectedDepth === entry.id ? 'active' : ''}
                     onClick={() => setSelectedDepth(entry.id)}
                   >
@@ -219,21 +289,19 @@ export function ExpeditionAlphaGame() {
               <div>
                 <small>Выбрано</small>
                 <h3>Глубина {depth.id} · {depth.name}</h3>
-                <p>{depth.reward}</p>
+                <p>{depth.flavor}</p>
+                <em>{depth.reward}</em>
               </div>
-              {run === 'idle' ? (
-                <button
-                  className="exp-primary"
-                  type="button"
-                  disabled={energy < depth.energy}
-                  onClick={sendExpedition}
-                >
-                  Отправить в экспедицию · ⚡ {depth.energy}
+              {!run && !readyRun ? (
+                <button className="exp-primary" type="button" disabled={energy < depth.energy} onClick={sendExpedition}>
+                  Отправить · ⚡ {depth.energy}
                 </button>
-              ) : run === 'away' ? (
-                <button className="exp-primary is-waiting" type="button" disabled>
-                  Персонаж в пути…
-                </button>
+              ) : run ? (
+                <div className="exp-run-progress">
+                  <b>Персонаж в пути</b>
+                  <span>{remaining} сек.</span>
+                  <i style={{ width: `${Math.max(8, 100 - remaining * 16)}%` }} />
+                </div>
               ) : (
                 <button className="exp-primary is-return" type="button" onClick={collectReturn}>
                   Забрать добычу
@@ -241,46 +309,60 @@ export function ExpeditionAlphaGame() {
               )}
             </div>
 
-            {lastDrop ? (
-              <div className={`exp-drop rarity-${lastDrop.rarity}`}>
-                <span>Найден предмет</span>
-                <div>
-                  <b>{lastDrop.name}</b>
-                  <small>{rarityLabel[lastDrop.rarity]} · №{lastDrop.serial}/{lastDrop.circulation}</small>
+            {lastDrops.length ? (
+              <div className="exp-result">
+                <span>Последняя экспедиция</span>
+                <div className="exp-result-grid">
+                  {lastDrops.map((item) => (
+                    <button key={item.id} type="button" className={`rarity-${item.rarity}`} onClick={() => equip(item)}>
+                      <span className={`exp-item-icon art-${item.art}`} />
+                      <b>{item.name}</b>
+                      <small>{rarityLabel[item.rarity]} · №{item.serial}/{item.circulation}</small>
+                      <em>Надеть</em>
+                    </button>
+                  ))}
                 </div>
-                <button type="button" onClick={() => equip(lastDrop)}>Надеть</button>
               </div>
             ) : null}
           </article>
 
           <article className="exp-panel exp-raid">
-            <div className="exp-raid-art">
-              <div className="exp-boss-shape">
-                <span />
-                <i />
-              </div>
-            </div>
+            <div className="exp-raid-art"><div className="exp-boss-crop" /></div>
             <div className="exp-raid-copy">
               <small>Совместный босс · Ржавые окраины</small>
               <h2>Железный Пастырь</h2>
-              <p>Одному его не победить. На боевой выход персонажи отправляются заранее.</p>
+              <p>Бой рассчитывается автоматически. Главное — заранее собрать людей и отправить персонажей к назначенному времени.</p>
               <div className="exp-raid-meta">
-                <span><b>7/10</b><small>участников</small></span>
+                <span><b>{raidJoined ? '8/10' : '7/10'}</b><small>участников</small></span>
                 <span><b>21:00</b><small>начало</small></span>
                 <span><b>5</b><small>глубина</small></span>
               </div>
-              <button type="button">Посмотреть сбор</button>
+              <button className={raidJoined ? 'joined' : ''} type="button" onClick={() => setRaidJoined((value) => !value)}>
+                {raidJoined ? 'Вы записаны' : 'Отправить персонажа'}
+              </button>
+            </div>
+          </article>
+
+          <article className="exp-panel exp-community">
+            <div className="exp-community-card">
+              <small>Категория</small>
+              <h3>Чемпион сообщества</h3>
+              <div className="exp-champion"><i /><span>Железный Герольд · ур. 3</span></div>
+              <p>Общий прогресс: 68% до следующей формы.</p>
+            </div>
+            <div className="exp-community-card">
+              <small>Синдикат</small>
+              <h3>Ядро Ковчега</h3>
+              <div className="exp-relic"><i /><span>Пробуждение · стадия 2/4</span></div>
+              <p>Следующий апгрейд требует 18 старых деталей.</p>
             </div>
           </article>
         </section>
 
         <aside className="exp-panel exp-inventory">
           <div className="exp-panel-title">
-            <div>
-              <span>Инвентарь</span>
-              <strong>{inventory.length} предметов</strong>
-            </div>
-            <em>demo</em>
+            <div><span>Инвентарь</span><strong>{inventory.length} предметов</strong></div>
+            <em>{resources.metal} металл · {resources.scrap} лом</em>
           </div>
 
           <div className="exp-rarity-key">
@@ -297,7 +379,7 @@ export function ExpeditionAlphaGame() {
                 className={`exp-item rarity-${item.rarity}`}
                 onClick={() => equip(item)}
               >
-                <span className={`exp-item-icon visual-${item.visual}`} />
+                <span className={`exp-item-icon art-${item.art}`} />
                 <small>{slotLabel[item.slot]}</small>
                 <b>{item.name}</b>
                 <em>№{item.serial}/{item.circulation}</em>
@@ -306,27 +388,16 @@ export function ExpeditionAlphaGame() {
             ))}
           </div>
 
-          <div className="exp-social-preview">
-            <span>Следующие системы</span>
-            <div>
-              <b>Категория</b>
-              <small>Чемпион · общий прогресс</small>
-            </div>
-            <div>
-              <b>Синдикат</b>
-              <small>Реликт · склад · вклад</small>
-            </div>
-            <div>
-              <b>Рынок</b>
-              <small>Серийные предметы · владельцы</small>
-            </div>
+          <div className="exp-inventory-hint">
+            <b>Каждый экземпляр уникален</b>
+            <span>Номер предмета сохранится при будущей продаже или передаче другому игроку.</span>
           </div>
         </aside>
       </section>
 
       <footer className="exp-footer">
         <span>Source of truth: docs/game-expedition-alpha-source-of-truth.md</span>
-        <span>Состояние здесь временное и хранится только в React state — экономика будет серверной.</span>
+        <span>Состояние пока demo-only; редкие предметы и экономика в публичной альфе будут серверными.</span>
       </footer>
     </main>
   );
