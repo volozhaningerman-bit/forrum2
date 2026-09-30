@@ -2061,3 +2061,25 @@
 @media(prefers-reduced-motion:reduce){
   .exp-slots button,.exp-depths button,.exp-item,.exp-primary{transition:none!important}
 }
+
+
+/* v0.7.1 viewport breakout: the game lives inside the forum shell but must center on
+   the actual viewport without extending the document width. */
+.exp-alpha{
+  position:relative!important;
+  left:50%!important;
+  transform:translateX(-50%)!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  max-width:calc(100vw - 28px)!important;
+}
+@media(max-width:1560px){
+  .exp-alpha{max-width:calc(100vw - 18px)!important}
+}
+@media(max-width:820px){
+  .exp-alpha{
+    left:0!important;
+    transform:none!important;
+    max-width:100%!important;
+  }
+}
