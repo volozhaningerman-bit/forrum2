@@ -20,7 +20,7 @@ export async function GET() {
       service: 'web',
       commit: currentCommit(),
       homeReference: 'v49',
-      homeRevision: 'v74',
+      homeRevision: 'v75',
       railwayService: process.env.RAILWAY_SERVICE_NAME || null,
       railwayEnvironment: process.env.RAILWAY_ENVIRONMENT_NAME || null,
       deploymentId: process.env.RAILWAY_DEPLOYMENT_ID || null,

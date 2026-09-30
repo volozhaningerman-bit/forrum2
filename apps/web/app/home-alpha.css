@@ -1,4 +1,4 @@
-/* 4rrum v74. One homepage stylesheet; geometry follows the 1672×941 approved reference. */
+/* 4rrum v75. One homepage stylesheet; geometry follows the 1672×941 approved reference. */
 @font-face {font-family:ForumRoboto;src:url('/fonts/roboto-cyrillic-400.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
 @font-face {font-family:ForumRoboto;src:url('/fonts/roboto-latin-400.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap;unicode-range:U+0000-024F,U+2000-206F,U+20AC,U+2122;}
 @font-face {font-family:ForumRoboto;src:url('/fonts/roboto-cyrillic-500.woff2') format('woff2');font-style:normal;font-weight:500;font-display:swap;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;}
@@ -132,7 +132,7 @@ body:has(.forum-home) .site-footer {display:none;}
 .forum-home .forum-topic-metric svg {display:none;}
 .forum-home .forum-topic-last {display:flex;align-items:center;gap:10px;min-width:0;}
 .forum-home .forum-topic-last>span {min-width:0;}
-.forum-home .forum-topic-last strong {display:block;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.forum-home .forum-topic-last strong {display:block;font-size:13px;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;line-height:1.2;}
 .forum-home .forum-topic-last time {display:block;font-size:11px;color:#c2c9ce;white-space:nowrap;margin-top:3px;}
 .forum-home .avatar {display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid #9bbdcf;border-radius:50%;background:#162e49;color:#f4f8ff;overflow:hidden;}
 .forum-home .avatar img {width:100%;height:100%;object-fit:cover;}
