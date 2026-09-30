@@ -49,6 +49,20 @@ export type ExpeditionState = {
   inventory: ExpeditionItem[];
 };
 
+export type ExpeditionRaidState = {
+  id: string;
+  bossKey: string;
+  bossName: string;
+  locationKey: string;
+  startsAt: string;
+  status: 'SCHEDULED' | 'RESOLVED' | 'CANCELLED';
+  minParticipants: number;
+  maxParticipants: number;
+  participantCount: number;
+  joined: boolean;
+  powerSnapshot: number | null;
+};
+
 type ClaimResponse = {
   ok: true;
   reward: {
@@ -132,13 +146,20 @@ function remainingSeconds(run: ExpeditionState['run'], now: number) {
   return Math.max(0, Math.ceil((new Date(run.readyAt).getTime() - now) / 1000));
 }
 
-export function ExpeditionAlphaGame({ initialState }: { initialState: ExpeditionState }) {
+export function ExpeditionAlphaGame({
+  initialState,
+  initialRaid,
+}: {
+  initialState: ExpeditionState;
+  initialRaid: ExpeditionRaidState;
+}) {
   const [state, setState] = useState(initialState);
+  const [raid, setRaid] = useState(initialRaid);
   const [selectedDepth, setSelectedDepth] = useState(
     initialState.run?.depth ?? Math.min(initialState.profile.unlockedDepth, 3),
   );
   const [lastDrops, setLastDrops] = useState<ExpeditionItem[]>([]);
-  const [busy, setBusy] = useState<'start' | 'claim' | 'equip' | null>(null);
+  const [busy, setBusy] = useState<'start' | 'claim' | 'equip' | 'raid' | null>(null);
   const [error, setError] = useState('');
   const [now, setNow] = useState(() => Date.now());
 
@@ -150,6 +171,9 @@ export function ExpeditionAlphaGame({ initialState }: { initialState: Expedition
   const run = state.run;
   const remaining = remainingSeconds(run, now);
   const runReady = Boolean(run && (run.status === 'READY' || remaining <= 0));
+  const raidSeconds = Math.max(0, Math.ceil((new Date(raid.startsAt).getTime() - now) / 1000));
+  const raidMinutes = Math.floor(raidSeconds / 60);
+  const raidClock = `${raidMinutes}:${String(raidSeconds % 60).padStart(2, '0')}`;
   const depth = depths.find((entry) => entry.id === selectedDepth) ?? depths[0];
 
   const equipped = useMemo(() => {
@@ -175,6 +199,33 @@ export function ExpeditionAlphaGame({ initialState }: { initialState: Expedition
     if (!run || run.status !== 'ACTIVE' || remaining > 0) return;
     void refresh().catch(() => undefined);
   }, [remaining, run?.id, run?.status]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      void refreshRaid().catch(() => undefined);
+    }, 5000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  async function refreshRaid() {
+    const next = await api<ExpeditionRaidState>('/expedition/raid');
+    setRaid(next);
+    return next;
+  }
+
+  async function joinRaid() {
+    if (busy || raid.joined || raid.participantCount >= raid.maxParticipants) return;
+    setBusy('raid');
+    setError('');
+    try {
+      const next = await api<ExpeditionRaidState>('/expedition/raid/join', { method: 'POST' });
+      setRaid(next);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'Не удалось присоединиться к рейду');
+    } finally {
+      setBusy(null);
+    }
+  }
 
   async function startExpedition() {
     if (busy || run || depth.id > state.profile.unlockedDepth) return;
@@ -374,14 +425,21 @@ export function ExpeditionAlphaGame({ initialState }: { initialState: Expedition
             <div className="exp-raid-art"><div className="exp-boss-crop" /></div>
             <div className="exp-raid-copy">
               <small>Совместный босс · Ржавые окраины</small>
-              <h2>Железный Пастырь</h2>
-              <p>Следующий серверный слой: игроки заранее отправляют персонажей к назначенному времени, а общий бой рассчитывается автоматически.</p>
+              <h2>{raid.bossName}</h2>
+              <p>Игроки заранее отправляют персонажей в один общий рейд. Сила фиксируется в момент записи.</p>
               <div className="exp-raid-meta">
-                <span><b>—/10</b><small>сбор откроется</small></span>
-                <span><b>21:00</b><small>окно рейда</small></span>
-                <span><b>5</b><small>глубина</small></span>
+                <span><b>{raid.participantCount}/{raid.maxParticipants}</b><small>участников</small></span>
+                <span><b>{raidClock}</b><small>до старта</small></span>
+                <span><b>{raid.minParticipants}</b><small>минимум</small></span>
               </div>
-              <button type="button" disabled>Рейд · alpha 0.2</button>
+              <button
+                className={raid.joined ? 'joined' : ''}
+                type="button"
+                disabled={raid.joined || busy !== null || raid.participantCount >= raid.maxParticipants || raidSeconds <= 0}
+                onClick={joinRaid}
+              >
+                {raid.joined ? `Вы в рейде · сила ${raid.powerSnapshot ?? state.profile.power}` : busy === 'raid' ? 'Записываем…' : 'Отправить персонажа'}
+              </button>
             </div>
           </article>
 
