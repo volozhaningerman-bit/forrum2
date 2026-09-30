@@ -271,7 +271,7 @@ export function ExpeditionAlphaGame() {
                 </button>
               ) : run === 'away' ? (
                 <button className="exp-primary is-waiting" type="button" disabled>
-                  В пути · ${Math.max(1, Math.ceil(remaining / 1000))} сек.
+                  В пути · {Math.max(1, Math.ceil(remaining / 1000))} сек.
                 </button>
               ) : (
                 <button className="exp-primary is-return" type="button" onClick={collectReturn}>
@@ -304,7 +304,7 @@ export function ExpeditionAlphaGame() {
               <h2>Железный Пастырь</h2>
               <p>Одному его не победить. На боевой выход персонажи отправляются заранее.</p>
               <div className="exp-raid-meta">
-                <span><b>7/10</b><small>участников</small></span>
+                <span><b>{raidJoined ? '8/10' : '7/10'}</b><small>участников</small></span>
                 <span><b>21:00</b><small>начало</small></span>
                 <span><b>5</b><small>глубина</small></span>
               </div>
