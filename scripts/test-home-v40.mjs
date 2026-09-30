@@ -162,6 +162,7 @@ try {
  await page.keyboard.press('End');
  assert.equal(await page.evaluate(()=>document.activeElement?.textContent),'4rrum Start');
  await page.keyboard.press('Enter');await page.waitForTimeout(300);
+ assert(await page.locator('summary[aria-label="Выбрать сообщество"]').evaluate(el=>el===document.activeElement));
  assert((await page.locator('.forum-active-filter').textContent()).startsWith('4rrum Start'));
  await page.getByRole('button',{name:'Сбросить выбранное сообщество',exact:true}).click();
  await page.locator('summary[aria-label="Выбрать сообщество"]').focus();await page.keyboard.press('ArrowDown');await page.keyboard.press('Escape');

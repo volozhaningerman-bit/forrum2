@@ -317,8 +317,8 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
      }}>
      <summary aria-label="Выбрать сообщество">{communityLabel(communities.find(item=>item.slug===community)?.name || 'Все сообщества')}<span aria-hidden="true">⌄</span></summary>
      <div className="forum-filter-options" role="menu" aria-label="Фильтр по сообществу">
-      <button type="button" role="menuitemradio" aria-checked={!community} onClick={()=>{choose(tab,'');filterDetailsRef.current?.removeAttribute('open');}}>Все сообщества</button>
-      {communities.map(item=><button key={item.slug} type="button" role="menuitemradio" aria-checked={community===item.slug} onClick={()=>{choose(tab,item.slug);filterDetailsRef.current?.removeAttribute('open');}}>{communityLabel(item.name)}</button>)}
+      <button type="button" role="menuitemradio" aria-checked={!community} onClick={()=>{choose(tab,'');filterDetailsRef.current?.removeAttribute('open');filterDetailsRef.current?.querySelector('summary')?.focus();}}>Все сообщества</button>
+      {communities.map(item=><button key={item.slug} type="button" role="menuitemradio" aria-checked={community===item.slug} onClick={()=>{choose(tab,item.slug);filterDetailsRef.current?.removeAttribute('open');filterDetailsRef.current?.querySelector('summary')?.focus();}}>{communityLabel(item.name)}</button>)}
      </div>
     </details>
     {community && <button className="forum-filter-reset" type="button" onClick={() => choose(tab,'')}>Сбросить</button>}
