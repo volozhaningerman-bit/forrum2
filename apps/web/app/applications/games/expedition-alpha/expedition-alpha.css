@@ -529,3 +529,216 @@
 @media(prefers-reduced-motion:reduce){
   .exp-item{transition:none}
 }
+
+
+/* ==========================================================================
+   EXPEDITION ALPHA V0.4 — APPROVED ART + TRUE PAPER-DOLL
+   Uses the locked visual reference atlas from the approved concept pass.
+   ========================================================================== */
+.exp-alpha{--exp-art:url('/games/expedition/alpha-reference-atlas.webp')}
+
+/* Approved base hero from the reference atlas. */
+.exp-avatar{
+  background:
+    radial-gradient(circle at 50% 29%,rgba(104,147,151,.20),transparent 34%),
+    linear-gradient(180deg,#111c21,#080e12 75%);
+}
+.exp-avatar::before,
+.exp-avatar-head,
+.exp-avatar-body,
+.exp-avatar-legs{display:none!important}
+.exp-avatar-art{
+  position:absolute;
+  z-index:3;
+  left:50%;
+  top:25px;
+  width:160px;
+  height:322px;
+  transform:translateX(-50%);
+  background-image:var(--exp-art)!important;
+  background-repeat:no-repeat!important;
+  background-size:640px 720px!important;
+  background-position:0 0!important;
+  border-radius:12px;
+  filter:drop-shadow(0 22px 17px rgba(0,0,0,.52)) saturate(1.05) contrast(1.04);
+  -webkit-mask-image:linear-gradient(180deg,#000 0 90%,transparent 100%);
+  mask-image:linear-gradient(180deg,#000 0 90%,transparent 100%);
+}
+
+/* Every visible equipment family has its own independent layer. */
+.exp-gear{
+  position:absolute;
+  z-index:6;
+  left:50%;
+  pointer-events:none;
+  opacity:0;
+  transform:translateX(-50%);
+  transition:opacity .16s ease,filter .16s ease;
+}
+.exp-avatar.has-cloak .exp-gear-cloak,
+.exp-avatar.has-cloak-blue .exp-gear-cloak{
+  opacity:.94;z-index:2;top:103px;width:138px;height:188px;
+  background:linear-gradient(180deg,#55432f,#2c2521 78%,#1d1917);
+  clip-path:polygon(20% 0,80% 0,100% 84%,73% 100%,52% 90%,31% 100%,0 84%);
+  filter:drop-shadow(0 10px 10px rgba(0,0,0,.36));
+}
+.exp-avatar.has-cloak-blue .exp-gear-cloak{
+  background:linear-gradient(180deg,#315f8c,#18334f 72%,#102136);
+  box-shadow:inset 0 0 0 2px rgba(97,177,243,.17);
+}
+.exp-avatar.has-chest .exp-gear-chest,
+.exp-avatar.has-chest-guard .exp-gear-chest,
+.exp-avatar.has-chest-epic .exp-gear-chest{
+  opacity:1;top:120px;width:108px;height:105px;z-index:5;
+  clip-path:polygon(8% 7%,34% 0,50% 11%,66% 0,92% 7%,82% 100%,18% 100%);
+  background:linear-gradient(135deg,#665542,#3b3028);
+  border-bottom:4px solid #8b6338;
+}
+.exp-avatar.has-chest-guard .exp-gear-chest{
+  background:linear-gradient(135deg,#5e7382,#293b45);
+  border-bottom-color:#a07845;
+  box-shadow:inset 0 0 0 2px rgba(141,176,191,.16);
+}
+.exp-avatar.has-chest-epic .exp-gear-chest{
+  background:linear-gradient(135deg,#3a2d4a,#1f293c);
+  border-bottom-color:#8d64d5;
+  box-shadow:0 0 24px rgba(129,92,211,.32),inset 0 0 16px rgba(79,184,255,.12);
+}
+.exp-avatar.has-shoulders .exp-gear-shoulders{
+  opacity:1;top:113px;width:150px;height:40px;z-index:7;
+  background:
+    radial-gradient(ellipse at 11% 50%,#9b7149 0 25%,#3d4f59 27% 57%,transparent 60%),
+    radial-gradient(ellipse at 89% 50%,#9b7149 0 25%,#3d4f59 27% 57%,transparent 60%);
+}
+.exp-avatar.has-hood .exp-gear-hood,
+.exp-avatar.has-helm .exp-gear-hood,
+.exp-avatar.has-consul-mask .exp-gear-hood{
+  opacity:1;top:49px;width:72px;height:66px;z-index:9;
+  border:4px solid #34302e;border-bottom:0;border-radius:48% 48% 28% 28%;
+  box-shadow:0 7px 0 #2a2725,0 0 0 2px rgba(187,151,104,.25);
+}
+.exp-avatar.has-helm .exp-gear-hood{border-color:#58666d;box-shadow:0 7px 0 #26333a,0 0 0 2px rgba(111,179,207,.22)}
+.exp-avatar.has-consul-mask .exp-gear-hood{background:#241820;border-color:#714052;box-shadow:0 0 16px rgba(181,82,136,.38)}
+.exp-avatar.has-neck .exp-gear-neck{
+  opacity:1;top:112px;width:22px;height:22px;z-index:10;border-radius:50%;
+  background:radial-gradient(circle,#d8f8ff 0 15%,#6cc8dc 20% 42%,#8b6b39 48% 62%,transparent 64%);
+}
+.exp-avatar.has-wrists .exp-gear-wrists{
+  opacity:1;top:182px;width:158px;height:28px;z-index:8;
+  background:linear-gradient(90deg,#765740 0 13%,transparent 13% 87%,#765740 87%);
+}
+.exp-avatar.has-gloves .exp-gear-gloves{
+  opacity:1;top:196px;width:164px;height:42px;z-index:9;
+  background:linear-gradient(90deg,#563f33 0 14%,transparent 14% 86%,#563f33 86%);
+  filter:drop-shadow(0 3px 2px #111);
+}
+.exp-avatar.has-belt .exp-gear-belt{
+  opacity:1;top:217px;width:108px;height:18px;z-index:9;border-radius:6px;
+  background:linear-gradient(90deg,#3e2a1e,#8c623b 44%,#d69a50 48% 52%,#8c623b 56%,#3e2a1e);
+}
+.exp-avatar.has-legs .exp-gear-legs{
+  opacity:1;top:228px;width:86px;height:100px;z-index:5;
+  background:linear-gradient(90deg,#3d3735 0 43%,transparent 43% 57%,#3d3735 57%);
+  clip-path:polygon(6% 0,94% 0,84% 100%,59% 100%,50% 34%,41% 100%,16% 100%);
+}
+.exp-avatar.has-boots .exp-gear-boots{
+  opacity:1;top:294px;width:96px;height:48px;z-index:8;
+  background:linear-gradient(90deg,#302a27 0 42%,transparent 42% 58%,#302a27 58%);
+  border-bottom:5px solid #74583f;
+}
+.exp-avatar.has-ring .exp-gear-ring,
+.exp-avatar.has-ring-blue .exp-gear-ring{
+  opacity:1;top:205px;width:154px;height:18px;z-index:10;
+  background:
+    radial-gradient(circle at 7% 50%,#e7b875 0 4px,transparent 5px),
+    radial-gradient(circle at 93% 50%,#e7b875 0 4px,transparent 5px);
+}
+.exp-avatar.has-ring-blue .exp-gear-ring{
+  filter:drop-shadow(0 0 8px rgba(80,188,255,.7));
+}
+.exp-avatar.has-relic .exp-gear-relic,
+.exp-avatar.has-relic-epic .exp-gear-relic{
+  opacity:1;top:190px;right:auto;margin-left:72px;width:31px;height:31px;z-index:11;border-radius:50%;
+  background:radial-gradient(circle,#efffff 0 10%,#5ee2ff 14% 36%,#245e8c 42% 58%,transparent 60%);
+  box-shadow:0 0 18px rgba(70,210,255,.44);
+}
+.exp-avatar.has-relic-epic .exp-gear-relic{box-shadow:0 0 24px rgba(167,102,255,.68);filter:hue-rotate(35deg)}
+.exp-avatar.has-sword .exp-gear-mainhand,
+.exp-avatar.has-sword-blue .exp-gear-mainhand,
+.exp-avatar.has-spear .exp-gear-mainhand,
+.exp-avatar.has-hammer .exp-gear-mainhand{
+  opacity:1;top:147px;margin-left:69px;width:10px;height:154px;z-index:12;border-radius:6px 6px 2px 2px;
+  background:linear-gradient(90deg,#a7c7d6,#f6fbff 45%,#6fa5c1 55%,#334a5a);
+  transform:translateX(-50%) rotate(-10deg);
+  box-shadow:0 0 13px rgba(87,181,235,.28);
+}
+.exp-avatar.has-sword-blue .exp-gear-mainhand{background:linear-gradient(90deg,#96efff,#ecffff 42%,#5aa8ff 55%,#184c92);box-shadow:0 0 18px rgba(70,165,255,.62)}
+.exp-avatar.has-spear .exp-gear-mainhand{height:188px;width:8px;top:124px}
+.exp-avatar.has-hammer .exp-gear-mainhand{height:127px;width:23px;top:150px;background:linear-gradient(90deg,#694831,#c88a4e,#454a4d)}
+.exp-avatar.has-shield .exp-gear-offhand{
+  opacity:1;top:170px;margin-left:-67px;width:65px;height:88px;z-index:11;
+  background:linear-gradient(135deg,#263f50,#10232e);border:4px solid #806a42;
+  clip-path:polygon(50% 0,95% 18%,82% 78%,50% 100%,18% 78%,5% 18%);
+}
+
+/* The approved reference is now the actual environment rather than a CSS mock. */
+.exp-location-art{isolation:isolate;background:#11181c!important}
+.exp-location-art::before{
+  content:"";position:absolute;z-index:0;inset:0;
+  background-image:linear-gradient(180deg,rgba(5,10,13,.03),rgba(5,10,13,.62)),var(--exp-art);
+  background-repeat:no-repeat,no-repeat;
+  background-size:100% 100%,100% 742%;
+  background-position:center,bottom center;
+  filter:saturate(1.08) contrast(1.04);
+  transform:scale(1.015);
+}
+.exp-location-art::after{
+  content:"";position:absolute;z-index:1;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,rgba(3,8,10,.52),transparent 44%,rgba(3,8,10,.10)),linear-gradient(0deg,rgba(3,8,10,.58),transparent 55%);
+}
+.exp-location-copy{z-index:3!important}
+.exp-location-copy h2{font-size:32px;text-shadow:0 4px 16px rgba(0,0,0,.82)}
+.exp-location-copy p{max-width:430px;text-shadow:0 2px 10px rgba(0,0,0,.85)}
+
+/* Iron Shepherd crop from the same approved sheet. */
+.exp-raid-art{min-height:215px;background:#17140f!important}
+.exp-raid-art::before{
+  content:"";position:absolute;inset:0;z-index:1;
+  background-image:var(--exp-art);
+  background-repeat:no-repeat;
+  background-size:200% 381%;
+  background-position:100% 0;
+  filter:saturate(1.09) contrast(1.05);
+  transform:scale(1.035);
+}
+.exp-raid-art::after{content:"";position:absolute;inset:0;z-index:2;background:linear-gradient(90deg,transparent 52%,rgba(7,12,15,.35)),linear-gradient(0deg,rgba(7,12,15,.42),transparent 50%)}
+.exp-boss-crop{display:none!important}
+
+/* Use real locked-reference art for the shared category/syndicate preview. */
+.exp-champion,.exp-relic{
+  position:relative;overflow:hidden;height:78px;padding-left:92px;
+  background:#0a1318!important;
+}
+.exp-champion::before,.exp-relic::before{
+  content:"";position:absolute;left:0;top:0;width:82px;height:100%;
+  background-image:var(--exp-art);background-repeat:no-repeat;
+  filter:saturate(1.06) contrast(1.04);
+}
+.exp-champion::before{background-size:640px 720px;background-position:0 -480px}
+.exp-relic::before{background-size:640px 720px;background-position:-160px -480px}
+.exp-champion i,.exp-relic i{display:none!important}
+
+/* Art-backed icons stay on top of the current server-authoritative item model. */
+.exp-item-icon{background-image:url('/games/expedition-alpha/equipment-atlas.svg')!important}
+.exp-item.rarity-common .exp-item-icon{box-shadow:inset 0 0 0 1px #58636a}
+.exp-item.rarity-uncommon .exp-item-icon{box-shadow:inset 0 0 0 1px #3e8b5d}
+.exp-item.rarity-rare .exp-item-icon{box-shadow:inset 0 0 0 1px #3f86c8}
+.exp-item.rarity-epic .exp-item-icon{box-shadow:inset 0 0 0 1px #8558b5,0 0 16px rgba(145,87,202,.13)}
+
+@media(max-width:820px){
+  .exp-avatar-art{width:145px;height:300px;background-size:580px 652.5px!important}
+  .exp-gear{transform:translateX(-50%) scale(.92)}
+}
+@media(prefers-reduced-motion:reduce){
+  .exp-gear{transition:none}
+}
