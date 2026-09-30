@@ -544,6 +544,10 @@ export function ExpeditionAlphaGame() {
         <section className="exp-center">
           <article className="exp-panel exp-location">
             <div className="exp-location-art">
+              <div className={`exp-world-hero ${appearanceClasses}`} aria-hidden="true">
+                <span className="exp-world-hero-base" />
+                <span className="exp-world-hero-gear" />
+              </div>
               <div className="exp-location-copy">
                 <span>Локация 01</span>
                 <h2>Ржавые окраины</h2>
