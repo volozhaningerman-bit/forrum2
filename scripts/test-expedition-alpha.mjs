@@ -7,6 +7,13 @@ const files = {
   game: path.join(root, 'apps/web/app/applications/games/expedition-alpha/expedition-alpha-game.tsx'),
   css: path.join(root, 'apps/web/app/applications/games/expedition-alpha/expedition-alpha.css'),
   spec: path.join(root, 'docs/game-expedition-alpha-source-of-truth.md'),
+  client: path.join(root, 'apps/web/app/applications/games/expedition-alpha/expedition-client.ts'),
+  controller: path.join(root, 'apps/api/src/expedition/expedition.controller.ts'),
+  service: path.join(root, 'apps/api/src/expedition/expedition.service.ts'),
+  heroArt: path.join(root, 'apps/web/public/games/expedition-alpha/hero-base.svg'),
+  locationArt: path.join(root, 'apps/web/public/games/expedition-alpha/rust-outskirts.svg'),
+  bossArt: path.join(root, 'apps/web/public/games/expedition-alpha/iron-shepherd.svg'),
+  itemArt: path.join(root, 'apps/web/public/games/expedition-alpha/equipment-atlas.svg'),
 };
 
 for (const [name, file] of Object.entries(files)) {
@@ -17,6 +24,9 @@ const page = fs.readFileSync(files.page, 'utf8');
 const game = fs.readFileSync(files.game, 'utf8');
 const css = fs.readFileSync(files.css, 'utf8');
 const spec = fs.readFileSync(files.spec, 'utf8');
+const client = fs.readFileSync(files.client, 'utf8');
+const controller = fs.readFileSync(files.controller, 'utf8');
+const service = fs.readFileSync(files.service, 'utf8');
 
 const itemCount = (game.match(/circulation:/g) ?? []).length;
 const checks = [
@@ -29,7 +39,10 @@ const checks = [
   ['loot pools by depth', game.includes('lootPools') && game.includes('lastDrops')],
   ['Iron Shepherd raid join', game.includes('Железный Пастырь') && game.includes('raidJoined')],
   ['category and syndicate preview', game.includes('Железный Герольд') && game.includes('Ядро Ковчега')],
-  ['generated art files referenced', css.includes('/games/civilization/art-v3/hero-sprite-v3.webp') && css.includes('/games/civilization/art-v2/boss-sprite-v2.avif')],
+  ['dedicated art pack referenced', css.includes('/games/expedition-alpha/hero-base.svg') && css.includes('/games/expedition-alpha/rust-outskirts.svg') && css.includes('/games/expedition-alpha/iron-shepherd.svg') && css.includes('/games/expedition-alpha/equipment-atlas.svg')],
+  ['no civilization art dependency', !css.includes('/games/civilization/')],
+  ['typed server client wired', client.includes("'/expedition/me'") && client.includes("'/expedition/runs'") && game.includes('serverMode') && game.includes('applyServerState')],
+  ['server unequip contract', controller.includes("items/:id/unequip") && service.includes('async unequip(')],
   ['modular avatar appearance hooks', game.includes('appearanceClasses') && css.includes('.exp-avatar.has-chest-epic')],
   ['server authority documented', spec.includes('Server authority') && spec.includes('localStorage')],
   ['office styling explicitly excluded', spec.includes('not office / corporate styling')],
