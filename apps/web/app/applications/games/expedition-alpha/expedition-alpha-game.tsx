@@ -4,10 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   claimExpedition,
   equipExpeditionItem,
+  joinExpeditionRaid,
+  leaveExpeditionRaid,
   loadExpeditionState,
   startExpedition,
   unequipExpeditionItem,
   type ExpeditionServerItem,
+  type ExpeditionServerRaid,
   type ExpeditionServerState,
 } from './expedition-client';
 
@@ -203,6 +206,7 @@ export function ExpeditionAlphaGame() {
   const [resources, setResources] = useState({ scrap: 7, cloth: 4, oldParts: 2 });
   const [runCount, setRunCount] = useState(0);
   const [raidJoined, setRaidJoined] = useState(false);
+  const [serverRaid, setServerRaid] = useState<ExpeditionServerRaid | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const [serverMode, setServerMode] = useState<'checking' | 'server' | 'demo'>('checking');
   const [serverRunId, setServerRunId] = useState<string | null>(null);
@@ -227,6 +231,7 @@ export function ExpeditionAlphaGame() {
     setResources(state.profile.resources);
     setInventory(mappedItems);
     setEquipped(nextEquipped);
+    setServerRaid(state.raid);
 
     if (state.run) {
       setServerRunId(state.run.id);
@@ -297,6 +302,28 @@ export function ExpeditionAlphaGame() {
     };
   }, [applyServerState, now, run, serverMode]);
 
+  async function toggleRaid() {
+    if (busy) return;
+
+    if (serverMode !== 'server') {
+      setRaidJoined((value) => !value);
+      return;
+    }
+
+    setBusy(true);
+    setApiError(null);
+    try {
+      const next = serverRaid?.joined
+        ? await leaveExpeditionRaid()
+        : await joinExpeditionRaid();
+      setServerRaid(next);
+    } catch (cause) {
+      setApiError(cause instanceof Error ? cause.message : 'Не удалось обновить участие в рейде');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const depth = depths.find((entry) => entry.id === selectedDepth) ?? depths[0];
   const equippedPower = useMemo(
     () => Object.values(equipped).reduce((sum, item) => sum + (item?.power ?? 0), 0),
@@ -304,6 +331,14 @@ export function ExpeditionAlphaGame() {
   );
   const power = 10 + level * 3 + equippedPower;
   const remaining = secondsLeft(run?.endsAt ?? null, now);
+  const displayedRaidJoined = serverMode === 'server' ? Boolean(serverRaid?.joined) : raidJoined;
+  const displayedRaidCount = serverMode === 'server'
+    ? (serverRaid?.participantCount ?? 0)
+    : (raidJoined ? 8 : 7);
+  const displayedRaidMax = serverMode === 'server' ? (serverRaid?.maxParticipants ?? 10) : 10;
+  const raidStart = serverRaid
+    ? new Intl.DateTimeFormat('ru-RU', { hour: '2-digit', minute: '2-digit' }).format(new Date(serverRaid.startsAt))
+    : '21:00';
 
   const appearanceClasses = Object.values(equipped)
     .map((item) => item?.visual ? `has-${item.visual}` : '')
@@ -569,12 +604,17 @@ export function ExpeditionAlphaGame() {
               <h2>Железный Пастырь</h2>
               <p>Бой рассчитывается автоматически. Главное — заранее собрать людей и отправить персонажей к назначенному времени.</p>
               <div className="exp-raid-meta">
-                <span><b>{raidJoined ? '8/10' : '7/10'}</b><small>участников</small></span>
-                <span><b>21:00</b><small>начало</small></span>
+                <span><b>{displayedRaidCount}/{displayedRaidMax}</b><small>участников</small></span>
+                <span><b>{raidStart}</b><small>начало</small></span>
                 <span><b>5</b><small>глубина</small></span>
               </div>
-              <button className={raidJoined ? 'joined' : ''} type="button" onClick={() => setRaidJoined((value) => !value)}>
-                {raidJoined ? 'Вы записаны' : 'Отправить персонажа'}
+              <button
+                className={displayedRaidJoined ? 'joined' : ''}
+                type="button"
+                disabled={busy || serverMode === 'checking'}
+                onClick={toggleRaid}
+              >
+                {displayedRaidJoined ? 'Вы записаны' : 'Отправить персонажа'}
               </button>
             </div>
           </article>
