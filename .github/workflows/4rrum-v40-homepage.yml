@@ -1205,6 +1205,7 @@ jobs:
       - run: npm run typecheck
       - run: npx playwright install --with-deps chromium
       - run: npm run test:home
+      - run: npm run test:expedition
       - name: Создать проверенную ветку
         shell: bash
         run: |

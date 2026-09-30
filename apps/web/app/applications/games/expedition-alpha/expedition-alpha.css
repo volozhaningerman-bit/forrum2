@@ -272,3 +272,7 @@
   .exp-depths{grid-template-columns:1fr 1fr}.exp-run-card{align-items:stretch;flex-direction:column}.exp-raid{grid-template-columns:1fr}.exp-raid-art{min-height:190px}
   .exp-items{grid-template-columns:repeat(2,minmax(0,1fr))}.exp-footer{flex-direction:column}
 }
+
+
+.exp-server-ok{color:#62dcc5;font-weight:700}
+.exp-server-demo{color:#d9a15a;font-weight:700}

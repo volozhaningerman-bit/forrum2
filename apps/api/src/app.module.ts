@@ -27,10 +27,12 @@ import { PortfolioModule } from './portfolio/portfolio.module.js';
 import { MediaPartnersModule } from './media-partners/media-partners.module.js';
 
 import { InventoryModule } from './inventory/inventory.module.js';
+import { ExpeditionModule } from './expedition/expedition.module.js';
 @Module({
   imports: [
     TyuryagaModule,
     InventoryModule,
+    ExpeditionModule,
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ['../../.env', '.env'] }),
     PrismaModule,
     AuthModule,

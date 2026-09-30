@@ -305,6 +305,8 @@ enum PromotionOrderStatus {
 
 model User {
   tyuryagaProfile TyuryagaProfile?
+  expeditionProfile ExpeditionProfile?
+  expeditionItems ExpeditionItemInstance[]
   id                 String       @id @default(uuid()) @db.Uuid
   forrumId           Int          @unique @default(autoincrement())
   email              String       @unique
@@ -1518,3 +1520,110 @@ model TyuryagaBossBattle {
 
   @@index([profileId])
 }
+
+
+// 4RRUM_EXPEDITION_ALPHA_V02
+
+enum ExpeditionItemRarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+}
+
+enum ExpeditionEquipmentSlot {
+  HEAD
+  NECK
+  SHOULDERS
+  CLOAK
+  CHEST
+  WRISTS
+  GLOVES
+  BELT
+  LEGS
+  FEET
+  RING_1
+  RING_2
+  RELIC_1
+  RELIC_2
+  MAIN_HAND
+  OFF_HAND
+}
+
+enum ExpeditionRunStatus {
+  ACTIVE
+  READY
+  CLAIMED
+}
+
+model ExpeditionProfile {
+  id              String          @id @default(cuid())
+  userId          String          @unique @db.Uuid
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level           Int             @default(1)
+  xp              Int             @default(0)
+  energy          Int             @default(12)
+  maxEnergy       Int             @default(12)
+  lastEnergySync  DateTime        @default(now())
+  unlockedDepth   Int             @default(1)
+  basePower       Int             @default(10)
+  runs            ExpeditionRun[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([userId])
+}
+
+model ExpeditionItemTemplate {
+  id              String                    @id
+  slug            String                    @unique
+  name            String
+  slot            ExpeditionEquipmentSlot
+  rarity          ExpeditionItemRarity      @default(COMMON)
+  circulationCap  Int
+  issuedCount     Int                       @default(0)
+  power           Int                       @default(0)
+  visualKey       String
+  minDepth        Int                       @default(1)
+  active          Boolean                   @default(true)
+  instances       ExpeditionItemInstance[]
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+
+  @@index([active, minDepth, rarity])
+}
+
+model ExpeditionItemInstance {
+  id           String                 @id @default(cuid())
+  templateId   String
+  ownerId      String                 @db.Uuid
+  serialNumber Int
+  sourceKey    String?                @unique
+  equipped     Boolean                @default(false)
+  acquiredAt   DateTime               @default(now())
+  equippedAt   DateTime?
+  template     ExpeditionItemTemplate @relation(fields: [templateId], references: [id], onDelete: Restrict)
+  owner        User                   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@unique([templateId, serialNumber])
+  @@index([ownerId, equipped])
+  @@index([ownerId, acquiredAt(sort: Desc)])
+}
+
+model ExpeditionRun {
+  id          String              @id @default(cuid())
+  profileId   String
+  profile     ExpeditionProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  depth       Int
+  energyCost  Int
+  rewardSeed  Int
+  status      ExpeditionRunStatus @default(ACTIVE)
+  startedAt   DateTime            @default(now())
+  readyAt     DateTime
+  claimedAt   DateTime?
+  rewardJson  Json?
+
+  @@index([profileId, status, startedAt(sort: Desc)])
+}
+
+// /4RRUM_EXPEDITION_ALPHA_V02
