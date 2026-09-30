@@ -3173,3 +3173,53 @@ body:has(.forum-home[data-home-reference="v49"]) {
     transition-duration:.001ms!important;
   }
 }
+
+
+/* Site audit v69 — desktop information density, readability and user preferences. */
+@media (min-width:1451px) {
+  .forum-home[data-home-reference="v49"] {
+    grid-template-columns:290px minmax(0,1fr) 330px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topbar {
+    grid-template-columns:290px minmax(430px,1fr) minmax(300px,390px) 40px auto auto!important;
+  }
+}
+
+@media (min-width:1051px) {
+  .forum-home[data-home-reference="v49"] .forum-category-heading > a {
+    min-height:44px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-category-heading > a > span {
+    text-overflow:clip!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-category-counts {
+    flex-basis:24px!important;
+  }
+}
+
+/* Respect data-saving preferences: decorative row art must never be required
+   to understand or operate the forum. */
+@media (prefers-reduced-data:reduce) {
+  .forum-home[data-home-reference="v49"] .forum-topic {
+    background-image:linear-gradient(90deg,#080a0b,#0b0d0e)!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-hero-art {
+    display:none!important;
+  }
+}
+
+/* Keep keyboard affordances visible in Windows high-contrast modes. */
+@media (forced-colors:active) {
+  .forum-home[data-home-reference="v49"] :is(a,button,input,summary,select,textarea):focus-visible {
+    outline:2px solid Highlight!important;
+  }
+  .forum-home[data-home-reference="v49"] :is(
+    .forum-topic,
+    .forum-important,
+    .forum-panel,
+    .forum-categories,
+    .forum-side-stats
+  ) {
+    border-color:CanvasText!important;
+  }
+}
