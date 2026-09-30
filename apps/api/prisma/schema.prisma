@@ -307,6 +307,7 @@ model User {
   tyuryagaProfile TyuryagaProfile?
   expeditionProfile ExpeditionProfile?
   expeditionItems ExpeditionItemInstance[]
+  expeditionRaidEntries ExpeditionRaidParticipant[]
   id                 String       @id @default(uuid()) @db.Uuid
   forrumId           Int          @unique @default(autoincrement())
   email              String       @unique
@@ -1631,3 +1632,39 @@ model ExpeditionRun {
 }
 
 // /4RRUM_EXPEDITION_ALPHA_V02
+
+
+enum ExpeditionRaidStatus {
+  SCHEDULED
+  RESOLVED
+  CANCELLED
+}
+
+model ExpeditionRaid {
+  id              String                     @id
+  bossKey         String
+  locationKey     String
+  startsAt        DateTime
+  status          ExpeditionRaidStatus       @default(SCHEDULED)
+  minParticipants Int                        @default(3)
+  maxParticipants Int                        @default(10)
+  participants    ExpeditionRaidParticipant[]
+  createdAt       DateTime                   @default(now())
+  updatedAt       DateTime                   @updatedAt
+
+  @@unique([bossKey, startsAt])
+  @@index([status, startsAt])
+}
+
+model ExpeditionRaidParticipant {
+  id            String         @id @default(cuid())
+  raidId        String
+  userId        String         @db.Uuid
+  powerSnapshot Int
+  joinedAt      DateTime       @default(now())
+  raid          ExpeditionRaid @relation(fields: [raidId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([raidId, userId])
+  @@index([userId, joinedAt(sort: Desc)])
+}
