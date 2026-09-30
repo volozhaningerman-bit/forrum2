@@ -3115,3 +3115,12 @@ body:has(.forum-home[data-home-reference="v49"]) {
     height:38px!important;
   }
 }
+
+
+/* CI/reference contract: desktop topic rows retain the approved subtle hover lift. */
+.forum-home[data-home-reference="v49"] .forum-topic:hover,
+.forum-home[data-home-reference="v49"] .forum-topic:focus-within{
+  transform:scale(1.003)!important;
+  transform-origin:center center!important;
+  will-change:transform;
+}
