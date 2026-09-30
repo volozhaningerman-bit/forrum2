@@ -1,37 +1,35 @@
 name: Deploy FORRUM Web to FirstVDS
-
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "apps/web/**"
-      - "packages/contracts/**"
-      - "Dockerfile.web"
-      - "docker-compose.yml"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/deploy-firstvds-web.yml"
+  workflow_run:
+    workflows: [Homepage checks]
+    branches: [main]
+    types: [completed]
   workflow_dispatch:
-
 permissions:
   contents: read
-
 concurrency:
   group: forrum-firstvds-web-deploy
   cancel-in-progress: false
-
 jobs:
   deploy:
-    name: Deploy live web
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      VERIFIED_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.VERIFIED_SHA }}
+      - name: Reject a superseded source commit
+        run: |
+          set -euo pipefail
+          remote_sha=$(git ls-remote origin refs/heads/main | cut -f1)
+          test "$remote_sha" = "$VERIFIED_SHA"
       - name: Prepare SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.FORRUM_SSH_KEY }}
           SSH_HOST: ${{ secrets.FORRUM_HOST }}
-        shell: bash
         run: |
           set -euo pipefail
           mkdir -p ~/.ssh
@@ -41,27 +39,21 @@ jobs:
           ssh-keygen -y -f ~/.ssh/forrum_actions > /dev/null
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
-
-      - name: Deploy latest main
+      - name: Deploy validated main
         env:
           SSH_HOST: ${{ secrets.FORRUM_HOST }}
           SSH_USER: ${{ secrets.FORRUM_USER }}
-        shell: bash
         run: |
           set -euo pipefail
-          ssh -i ~/.ssh/forrum_actions             -o BatchMode=yes             -o StrictHostKeyChecking=yes             -o ServerAliveInterval=30             -o ServerAliveCountMax=30             "$SSH_USER@$SSH_HOST" deploy
-
-      - name: Verify live homepage
-        shell: bash
-        run: |
-          set -euo pipefail
-          for i in $(seq 1 30); do
-            html=$(curl --fail --silent --show-error               -H 'Cache-Control: no-cache, no-store, max-age=0'               "https://4rrum.ru/?deploy-check=${GITHUB_RUN_ID}-${i}" || true)
-            if printf '%s' "$html" | grep -q 'data-home-revision="v72"'; then
-              echo "4rrum.ru serves homepage revision v72"
-              exit 0
-            fi
-            sleep 10
-          done
-          echo "Homepage revision v72 did not appear on 4rrum.ru" >&2
-          exit 1
+          ssh -i ~/.ssh/forrum_actions -o BatchMode=yes -o StrictHostKeyChecking=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=30 "$SSH_USER@$SSH_HOST" deploy
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify live commit and homepage
+        env:
+          EXPECTED_SHA: ${{ env.VERIFIED_SHA }}
+          EXPECTED_HOME_REFERENCE: v49
+          EXPECTED_HOME_REVISION: v73
+          REQUIRE_EXACT_SHA: 'true'
+          PRODUCTION_VERIFY_TIMEOUT_MS: '600000'
+        run: node scripts/verify-production.mjs

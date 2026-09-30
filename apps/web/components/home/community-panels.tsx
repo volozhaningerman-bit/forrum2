@@ -7,6 +7,7 @@ import { Avatar } from '../avatar';
 import { formatCount } from './utils';
 import type { HomeInitialData, HomeOverview } from './types';
 import type { PublicationCardData } from '@/lib/types';
+import { popularTopics } from '@/lib/popular-topics';
 
 function PanelIcon({kind}:{kind:'flame'|'trophy'}) {
   const path=kind==='flame'
@@ -21,7 +22,9 @@ export function CommunityPanels({
   news,
   events,
   feed,
+  demo = false,
 }: {
+  demo?: boolean;
   overview?: HomeOverview;
   unavailable: boolean;
   news: PublicationCardData[];
@@ -38,6 +41,7 @@ export function CommunityPanels({
   const [retry,setRetry]=useState(0);
 
   useEffect(()=>{
+    if(demo){setRanking(overview?.weekly?.[mode]??[]);setRankingLoading(false);setRankingError(false);return;}
     const controller=new AbortController();
     setRankingLoading(true);
     setRankingError(false);
@@ -54,33 +58,11 @@ export function CommunityPanels({
       .catch(()=>{if(!controller.signal.aborted)setRankingError(true);})
       .finally(()=>{if(!controller.signal.aborted)setRankingLoading(false);});
     return()=>controller.abort();
-  },[period,mode,retry]);
+  },[period,mode,retry,demo,overview]);
 
   const authors=ranking ?? (period==='week' ? overview?.weekly?.[mode]?.slice(0,10) ?? [] : []);
   const periodLabel=period==='week'?'За неделю':period==='month'?'За месяц':'За всё время';
-  const popularToday=useMemo(()=>{
-    const discussedRows=(overview?.discussed??[]).slice().sort((a,b)=>Date.parse(b.lastActivityAt||b.createdAt)-Date.parse(a.lastActivityAt||a.createdAt));
-    const discussed=new Map(discussedRows.map(item=>[item.slug,item]));
-    const active=(overview?.pulse?.activeTopics??[]).slice(0,5).map(item=>({
-      slug:item.slug,
-      title:item.title||'Обсуждение',
-      replies:item.replyCount,
-      views:discussed.get(item.slug)?.viewCount,
-    }));
-    const seen=new Set(active.map(item=>item.slug));
-    const discussedFallback=discussedRows
-      .filter(item=>!seen.has(item.slug))
-      .map(item=>({slug:item.slug,title:item.title||'Обсуждение',replies:item.commentCount,views:item.viewCount}));
-    const todayItems=[...active,...discussedFallback].slice(0,5);
-    if(todayItems.length) return {items:todayItems,isFallback:false};
-    const feedFallback=feed
-      .filter(item=>item.format==='TOPIC')
-      .slice()
-      .sort((a,b)=>(b.viewCount??0)-(a.viewCount??0) || b.commentCount-a.commentCount)
-      .slice(0,5)
-      .map(item=>({slug:item.slug,title:item.title||'Обсуждение',replies:item.commentCount,views:item.viewCount}));
-    return {items:feedFallback,isFallback:true};
-  },[overview,feed]);
+  const popularToday=useMemo(()=>popularTopics(overview,feed),[overview,feed]);
 
   return <aside className="forum-right" aria-label="Обзор сообщества">
     <section className="forum-panel forum-ranking-panel">
@@ -102,7 +84,7 @@ export function CommunityPanels({
           ? <p className="forum-muted">Рейтинг временно недоступен. <button type="button" onClick={()=>setRetry(value=>value+1)}>Повторить</button></p>
           : authors.length
             ? <ol className="forum-author-ranking">{authors.map((person,index)=><li key={person.username}>
-                <span className={"forum-rank"+(index<3?` is-medal is-medal-${index+1}`:'')}>{index<3?'♛':index+1}</span>
+                <span className={"forum-rank"+(index<3?` is-medal is-medal-${index+1}`:'')}>{index<3?<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m3 6 5 5 4-8 4 8 5-5-2 13H5ZM5 21h14v-2H5Z"/></svg>:index+1}</span>
                 <Link href={`/u/${person.username}`}><Avatar name={person.displayName} url={person.avatarUrl} size={28}/><strong>{person.displayName}</strong></Link>
                 <small title={mode==='likes'?'Симпатии к темам':'Темы и ответы'}>{formatCount(mode==='likes'?person.reactionCount:person.topicCount+person.commentCount)}</small>
               </li>)}</ol>
@@ -112,7 +94,7 @@ export function CommunityPanels({
                 {period==='week' && <button className="forum-ranking-all" type="button" onClick={()=>setPeriod('all')}>Участники за всё время →</button>}
                 <Link href={mode==='likes'?'/':'/create'}>{mode==='likes'?'Посмотреть обсуждения →':'Начать обсуждение →'}</Link>
               </div>}
-      <Link className="forum-panel-footer" href="/communities">Весь рейтинг →</Link>
+      <Link className="forum-panel-footer" href="/users">Весь рейтинг →</Link>
     </section>
 
     <section className="forum-panel forum-popular-today">
@@ -126,7 +108,7 @@ export function CommunityPanels({
                 <strong>{item.title}</strong>
                 <small>{popularToday.isFallback
                   ? `${formatCount(item.replies)} ответов${typeof item.views==='number'? ` · ${formatCount(item.views)} просмотров` : ''}`
-                  : `${formatCount(item.replies)} ответов сегодня${typeof item.views==='number'? ` · ${formatCount(item.views)} просмотров` : ''}`}</small>
+                  : `${formatCount(item.replies)} ответов за 24 ч${typeof item.views==='number'? ` · ${formatCount(item.views)} просмотров всего` : ''}`}</small>
               </Link>
             </li>)}</ol>
           </>

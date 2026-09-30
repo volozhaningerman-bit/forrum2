@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { BUILD_COMMIT } from '@/lib/build-version';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -9,7 +10,7 @@ function currentCommit() {
     process.env.GITHUB_SHA ||
     process.env.SOURCE_VERSION ||
     process.env.VERCEL_GIT_COMMIT_SHA ||
-    'unknown'
+    BUILD_COMMIT
   );
 }
 
@@ -19,7 +20,7 @@ export async function GET() {
       service: 'web',
       commit: currentCommit(),
       homeReference: 'v49',
-      homeRevision: 'v72',
+      homeRevision: 'v73',
       railwayService: process.env.RAILWAY_SERVICE_NAME || null,
       railwayEnvironment: process.env.RAILWAY_ENVIRONMENT_NAME || null,
       deploymentId: process.env.RAILWAY_DEPLOYMENT_ID || null,

@@ -3,12 +3,12 @@ WORKDIR /app
 ENV CI=true
 ARG DATABASE_URL=postgresql://forrum:forrum@localhost:5432/forrum
 RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates && rm -rf /var/lib/apt/lists/*
-COPY package.json ./
+COPY package.json package-lock.json ./
 COPY apps/api/package.json apps/api/package.json
 COPY apps/web/package.json apps/web/package.json
 COPY packages/contracts/package.json packages/contracts/package.json
-RUN npm install --no-audit --no-fund
+RUN npm ci --no-audit --no-fund
 COPY . .
-RUN npm run db:generate -w @forrum/api && npm run build -w @forrum/contracts && npm run build -w @forrum/api
+RUN npm run build -w @forrum/contracts && NODE_OPTIONS="--max-old-space-size=1536" npm run build -w @forrum/api
 EXPOSE 4000
 CMD ["sh", "-c", "npm run db:push -w @forrum/api && npm run db:seed -w @forrum/api && npm run start -w @forrum/api"]

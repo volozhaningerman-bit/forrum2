@@ -13,11 +13,22 @@ import { mainLinks } from './main-nav';
 import { TopicActions } from './home/topic-actions';
 import { categoryStyle } from './home/category-style';
 import { formatCount } from './home/utils';
+import { ForumTime } from './home/forum-time';
+import { HomeWebVitals } from './home/web-vitals';
 import type { Community, HomeInitialData, HomeOverview } from './home/types';
 export type { HomeInitialData } from './home/types';
 
-type Glyph = 'home' | 'work' | 'media' | 'service' | 'search' | 'plus' | 'bell' | 'comment' | 'eye' | 'bookmark' | 'close' | 'chevron' | 'menu' | 'filter' | 'code' | 'flame' | 'game' | 'growth' | 'community' | 'pin' | 'paperclip';
+type Glyph = 'home' | 'work' | 'media' | 'service' | 'search' | 'plus' | 'bell' | 'comment' | 'eye' | 'bookmark' | 'close' | 'chevron' | 'menu' | 'filter' | 'code' | 'flame' | 'game' | 'growth' | 'community' | 'pin' | 'paperclip' | 'monitor' | 'chip' | 'cube' | 'wifi' | 'image' | 'document' | 'megaphone' | 'calendar' | 'stats';
 const paths: Record<Glyph, string> = {
+ monitor:'M3 4h18v12H3ZM8 21h8M12 16v5',
+ chip:'M7 7h10v10H7ZM9 2v5M15 2v5M9 17v5M15 17v5M2 9h5M2 15h5M17 9h5M17 15h5',
+ cube:'m12 2 9 5v10l-9 5-9-5V7ZM3 7l9 5 9-5M12 12v10',
+ wifi:'M2 8a16 16 0 0 1 20 0M5 12a11 11 0 0 1 14 0M8 16a6 6 0 0 1 8 0M12 20h.01',
+ image:'M3 3h18v18H3ZM3 17l6-6 4 4 3-3 5 5M16 7h.01',
+ document:'M5 2h10l4 4v16H5ZM14 2v5h5M8 11h8M8 15h8M8 19h5',
+ megaphone:'M3 10h5l11-6v16L8 14H3ZM8 14l2 7h4l-2-5',
+ calendar:'M3 5h18v16H3ZM7 2v6M17 2v6M3 10h18M7 14h.01M12 14h.01M17 14h.01M7 18h.01M12 18h.01',
+ stats:'M4 21V12h3v9M10 21V3h3v18M16 21V8h3v13',
  game: 'M7 7h10l4 10-3 2-4-4h-4l-4 4-3-2ZM7 10v4M5 12h4M16 11h.01M18 13h.01',
  pin: 'm16 3 5 5-3 1-3 3v5l-2 2-4-4-5 5-1-1 5-5-4-4 2-2h5l3-3z',
  paperclip: 'm21 11.5-8.8 8.8a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5',
@@ -43,21 +54,26 @@ function Icon({ name }: { name: Glyph }) {
  return <svg data-ui-icon="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]}/></svg>;
 }
 function categoryIcon(name: string): Glyph {
+ if (/новост|правил/i.test(name)) return 'document';
+ if (/желез|компьютер|hardware/i.test(name)) return 'chip';
+ if (/интернет|сет|сервер/i.test(name) && !/проект/i.test(name)) return 'wifi';
+ if (/софт|linux/i.test(name)) return 'cube';
+ if (/технолог|AI|нейро/i.test(name)) return 'monitor';
  if (/GTA|игр|gaming/i.test(name)) return 'game';
  if (/продвиж|маркет|бизнес/i.test(name)) return 'growth';
- if (/мастер|дизайн/i.test(name)) return 'work';
- if (/telegram|общест|forrum/i.test(name)) return 'community';
+ if (/мастер|дизайн|медиа/i.test(name)) return 'image';
+ if (/telegram|общест|forrum|4rrum/i.test(name)) return 'community';
  return 'code';
 }
 
 function topicBackdrop(slug: string, name: string) {
  const value = `${slug} ${name}`.toLowerCase();
- if (/gta|rp|игр/.test(value)) return '/forrum-assets/row-gta.svg';
- if (/продвиж|promotion|маркет|seo/.test(value)) return '/forrum-assets/row-promotion.svg';
- if (/telegram/.test(value)) return '/forrum-assets/row-telegram.svg';
- if (/project|проект|бизнес|startup/.test(value)) return '/forrum-assets/row-projects.svg';
- if (/forrum|4rrum|start|сообщест/.test(value)) return '/forrum-assets/row-forrum.svg';
- return '/forrum-assets/row-default.svg';
+ if (/gta|rp|игр/.test(value)) return '/forrum-assets/row-games-v72.webp';
+ if (/желез|hardware|компьютер|продвиж|promotion|маркет|seo/.test(value)) return '/forrum-assets/row-hardware-v72.webp';
+ if (/дизайн|design|медиа/.test(value)) return '/forrum-assets/row-design-v72.webp';
+ if (/интернет|сет|сервер|telegram/.test(value) && !/проект/.test(value)) return '/forrum-assets/row-network-v72.webp';
+ if (/софт|linux|технолог|ai/.test(value)) return '/forrum-assets/row-tech-v72.webp';
+ return '/forrum-assets/row-code-v72.webp';
 }
 
 function Categories({ items: sourceItems, selected }: { items: Community[]; selected: string }) {
@@ -87,18 +103,10 @@ function Categories({ items: sourceItems, selected }: { items: Community[]; sele
  </nav>;
 }
 
-function topicTime(value:string){
- const date=new Date(value);
- if(!Number.isFinite(date.getTime())) return '—';
- const now=Date.now(), diff=Math.max(0,now-date.getTime()), day=86400000;
- if(diff<day && date.getUTCDate()===new Date(now).getUTCDate()) return `сегодня, ${date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',timeZone:'UTC'})}`;
- if(diff<day*2) return `вчера, ${date.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit',timeZone:'UTC'})}`;
- return date.toLocaleDateString('ru-RU',{day:'numeric',month:'short',timeZone:'UTC'});
-}
 
 function Topic({ item, history, communities, demo, guest }: { item: PublicationCardData; history: ReadHistory | null; communities: Community[]; demo: boolean; guest: boolean }) {
  const category=communities.find(row=>row.slug===item.community.slug);
- const categoryLabel=category?.parent ? `${category.parent.name.replace(/^FORRUM\\b/i,'4rrum')} › ${item.community.name.replace(/^FORRUM\\b/i,'4rrum')}` : item.community.name.replace(/^FORRUM\\b/i,'4rrum');
+ const categoryLabel=category?.parent ? `${category.parent.name.replace(/^FORRUM\b/i,'4rrum')} › ${item.community.name.replace(/^FORRUM\b/i,'4rrum')}` : item.community.name.replace(/^FORRUM\b/i,'4rrum');
  const readState=topicReadState(history,item.id,item.lastComment?.createdAt);
  const important=Boolean(item.isOfficial && item.pinnedUntil && Date.parse(item.pinnedUntil)>Date.now());
  const lastAuthor=item.lastComment?.author ?? item.author;
@@ -111,7 +119,7 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
  return <article className={`forum-topic is-${readState}`} style={style} data-reading-state={readState}>
   <Link className="forum-topic-avatar" href={`/communities/${item.community.slug}`} title={item.community.name} aria-label={`Раздел: ${item.community.name}`}><span className="forum-topic-category-icon"><Icon name={categoryIcon(item.community.name)}/></span></Link>
   <div className="forum-topic-content">
-   <h2>{important && <span className="forum-topic-pinned" title="Закреплено форумом"><Icon name="paperclip"/></span>}{important && <span className="forum-topic-important">Важно</span>}<Link className="forum-topic-main-link" href={`/p/${item.slug}`}>{item.title?.trim() || 'Запись без заголовка'}</Link></h2>
+   <h2>{important && <span className="forum-topic-pinned" title="Закреплено форумом"><Icon name="paperclip"/></span>}{important && <span className="forum-topic-important">Важно</span>}<Link className="forum-topic-main-link" href={`/p/${item.slug}`}>{item.title?.trim().replace(/FORRUM/g,'4rrum') || 'Запись без заголовка'}</Link></h2>
    <p className="forum-topic-excerpt">{item.excerpt || 'Откройте тему, чтобы прочитать обсуждение и присоединиться.'}</p>
    <div className="forum-topic-context" aria-label="Автор и метки темы">
     <Link className="forum-topic-author" href={`/u/${item.author.username}`}>{item.author.displayName}</Link>
@@ -119,12 +127,12 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
     {readState==='updated' && <Link className="forum-new-replies" href={`/p/${item.slug}#new-replies`}>Новые ответы</Link>}
    </div>
   </div>
-  <div className="forum-topic-category-cell"><Link style={categoryStyle(item.community.slug,category?.accentColor ?? item.community.accentColor)} href={`/communities/${item.community.slug}`}>{categoryLabel}</Link></div>
+  <div className="forum-topic-category-cell"><Link style={categoryStyle(item.community.slug,category?.accentColor ?? item.community.accentColor)} href={`/communities/${item.community.slug}`} title={categoryLabel}>{item.community.name.replace(/^FORRUM\b/i,'4rrum')}</Link></div>
   <Link className="forum-topic-metric forum-reply-count" href={`/p/${item.slug}#discussion`} aria-label={`Ответы: ${item.commentCount}`} title="Ответы"><Icon name="comment"/><span>{formatCount(item.commentCount)}</span></Link>
   <span className="forum-topic-metric forum-view-count" title="Просмотры" aria-label={`Просмотры: ${item.viewCount ?? 0}`}><Icon name="eye"/><span>{formatCount(item.viewCount)}</span></span>
   <div className="forum-topic-last">
-   <Avatar name={lastAuthor.displayName} url={lastAuthor.avatarUrl} size={26}/>
-   <span><strong>{lastAuthor.displayName}</strong><small>{topicTime(lastAt)}</small></span>
+   <Avatar name={lastAuthor.displayName} url={lastAuthor.avatarUrl} size={36}/>
+   <span><strong>{lastAuthor.displayName}</strong><ForumTime value={lastAt}/></span>
   </div>
   <div className="forum-topic-menu"><TopicActions item={item} demo={demo} guest={guest}/></div>
  </article>;
@@ -228,13 +236,14 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
  }
  const visible = demo ? topics.filter(item=>item.format==='TOPIC' && (tab!=='unanswered'||!item.commentCount) && (!community||item.community.slug===community)) : topics;
  const news = initialData.announcements?.slice(0, 4) ?? [];
- const important = [...news.slice(0,2), ...topics.filter(item => item.format === 'TOPIC' && !news.some(row => row.id === item.id))].slice(0,2);
- return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v72" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
+ const important = [...news.slice(0,2), ...topics.filter(item => item.isOfficial && item.pinnedUntil && Date.parse(item.pinnedUntil)>Date.now() && !news.some(row => row.id === item.id))].slice(0,2);
+ return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v73" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
+  {!demo && <HomeWebVitals/>}
   <aside ref={sidebarRef} className={`forum-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="Навигация форума">
    <button type="button" className="forum-sidebar-close" onClick={()=>setSidebar(false)} aria-label="Закрыть меню"><Icon name="close"/></button>
    <Categories items={communities} selected={community}/>
    {overview && !activityError && <section className="forum-side-stats" aria-label="Статистика форума">
-    <h2>Статистика</h2>
+    <h2><Icon name="stats"/>Статистика</h2>
     <dl>
      <div><dt>Пользователей</dt><dd>{formatCount(overview.stats.users ?? 0)}</dd></div>
      <div><dt>Тем</dt><dd>{formatCount(overview.stats.topics)}</dd></div>
@@ -258,7 +267,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
   <section className="forum-intro" aria-label="О 4rrum">
    {demo && <span className="forum-demo-label">Демонстрационные данные · <Link href="/">На форум</Link></span>}
    <div className="forum-search-hero">
-    <img className="forum-hero-art" src="/forrum-assets/hero-planet.svg" alt="" aria-hidden="true" width="1600" height="420" fetchPriority="high" decoding="async"/>
+    <img className="forum-hero-art" src="/forrum-assets/hero-planet-v72.webp" alt="" aria-hidden="true" width="1600" height="420" fetchPriority="high" decoding="async"/>
     <div className="forum-hero-copy">
      <p className="forum-hero-kicker">4RRUM // БОЛЬШЕ ЧЕМ ФОРУМ</p>
      <h1>ТЕХНОЛОГИИ. ЛЮДИ. ИДЕИ.</h1>
@@ -272,9 +281,9 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
    {!!important.length && <section className="forum-important" aria-labelledby="forum-important-title">
     <header><h2 id="forum-important-title"><Icon name="pin"/>Важное</h2><Link href="/news">Все новости →</Link></header>
     <div className="forum-important-list">{important.map((item,index)=><Link className="forum-important-row" href={`/p/${item.slug}`} key={item.id}>
-      <span className="forum-important-icon"><Icon name={index===0?'community':'flame'}/></span>
-      <span className="forum-important-copy"><small>{index===0?'Официально':'Сообщество'}</small><strong>{item.title||'Обновление 4rrum'}</strong><span>{item.excerpt}</span></span>
-      <time dateTime={item.createdAt}>{new Date(item.createdAt).toLocaleDateString('ru-RU',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'})}</time>
+      <span className="forum-important-icon"><Icon name={index===0?'megaphone':'calendar'}/></span>
+      <span className="forum-important-copy"><small>{item.isOfficial?'Официально':'Сообщество'}</small><span className="forum-important-text"><strong>{(item.title||'Обновление 4rrum').replace(/FORRUM/g,'4rrum')}</strong><span>{item.excerpt}</span></span></span>
+      <ForumTime value={item.createdAt} absolute/>
       <span className="forum-important-stat"><Icon name="comment"/>{formatCount(item.commentCount)}</span>
       <span className="forum-important-stat"><Icon name="eye"/>{formatCount(item.viewCount)}</span>
       <span className="forum-important-arrow">›</span>
@@ -306,6 +315,6 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
    {!loading && !error && !hasMore && visible.length > 0 && <footer className="forum-feed-end"><span>Вы просмотрели все загруженные обсуждения</span><a href="#top">Наверх ↑</a></footer>}
    {moreError && <p className="forum-action-error" role="alert">{moreError}</p>}
   </div>
-  <CommunityPanels overview={overview} unavailable={activityError || !overview} news={news} events={initialData.events} feed={topics}/>
+  <CommunityPanels demo={demo} overview={overview} unavailable={activityError || !overview} news={news} events={initialData.events} feed={topics}/>
  </div>;
 }
