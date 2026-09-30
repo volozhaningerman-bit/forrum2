@@ -1628,3 +1628,33 @@
     grid-row:2!important;
   }
 }
+
+
+/* v0.6.2 visual QA fixes — remove legacy duplicate gear and force social art visible. */
+.exp-avatar.has-gloves::before,
+.exp-avatar.has-cloak::after{
+  content:none!important;
+  display:none!important;
+}
+.exp-champion::before,
+.exp-relic::before{
+  display:block!important;
+  opacity:1!important;
+}
+.exp-champion,
+.exp-relic{
+  isolation:isolate;
+}
+.exp-champion::after,
+.exp-relic::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(180deg,transparent 45%,rgba(4,9,12,.42));
+  z-index:1;
+}
+.exp-champion span,
+.exp-relic span{
+  z-index:3!important;
+}
