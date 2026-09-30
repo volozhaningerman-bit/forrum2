@@ -32,6 +32,11 @@ export type ExpeditionServerState = {
     maxEnergy: number;
     unlockedDepth: number;
     power: number;
+    resources: {
+      scrap: number;
+      cloth: number;
+      oldParts: number;
+    };
   };
   run: ExpeditionServerRun | null;
   inventory: ExpeditionServerItem[];
