@@ -50,6 +50,7 @@ const staticChecks = [
   ['Iron Shepherd raid join', gameSource.includes('Железный Пастырь') && gameSource.includes('raidJoined')],
   ['category and syndicate preview', gameSource.includes('Железный Герольд') && gameSource.includes('Ядро Ковчега')],
   ['dedicated art pack referenced', cssSource.includes('/games/expedition-alpha/hero-base.svg') && cssSource.includes('/games/expedition-alpha/rust-outskirts.svg') && cssSource.includes('/games/expedition-alpha/iron-shepherd.svg') && cssSource.includes('/games/expedition-alpha/equipment-atlas.svg')],
+  ['true paper-doll layers wired', gameSource.includes('exp-gear exp-gear-cloak') && gameSource.includes('exp-gear exp-gear-mainhand') && cssSource.includes('.exp-avatar.has-gloves .exp-gear-gloves')],
   ['no civilization art dependency', !cssSource.includes('/games/civilization/')],
   ['typed server client wired', clientSource.includes("'/expedition/me'") && clientSource.includes("'/expedition/runs'") && gameSource.includes('serverMode') && gameSource.includes('applyServerState')],
   ['server unequip contract', controllerSource.includes("items/:id/unequip") && serviceSource.includes('async unequip(')],
@@ -325,7 +326,7 @@ try {
   assert(metrics.game && metrics.avatar && metrics.location && metrics.boss, 'core visual surfaces missing');
   assert(metrics.scrollWidth <= metrics.width + 2, `horizontal overflow ${metrics.scrollWidth}/${metrics.width}`);
 
-  await page.screenshot({ path: output + '/expedition-alpha-v03-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v04-1720x900.png', fullPage: true });
 
   const raidJoin = page.getByRole('button', { name: 'Отправить персонажа' });
   await raidJoin.click();
@@ -341,11 +342,19 @@ try {
   await drop.waitFor();
   await drop.click();
   await page.getByText('Перчатки Сервомастера').first().waitFor();
+  await page.locator('.exp-avatar.has-gloves').waitFor({ timeout: 5000 });
+  await page.waitForTimeout(250);
+  const gloveLayer = await page.locator('.exp-gear-gloves').evaluate((node) => ({
+    opacity: getComputedStyle(node).opacity,
+    display: getComputedStyle(node).display,
+  }));
+  assert.equal(gloveLayer.display === 'none', false, 'paper-doll glove layer must exist');
+  assert(Number(gloveLayer.opacity) > 0.8, 'equipped gloves must visibly activate paper-doll layer');
 
-  await page.screenshot({ path: output + '/expedition-alpha-v03-loot-equipped-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v04-loot-equipped-1720x900.png', fullPage: true });
 
   await page.setViewportSize({ width: 1366, height: 768 });
-  await page.screenshot({ path: output + '/expedition-alpha-v03-1366x768.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v04-1366x768.png', fullPage: true });
   const mobileish = await page.evaluate(() => ({
     width: innerWidth,
     scrollWidth: document.documentElement.scrollWidth,
@@ -362,4 +371,4 @@ try {
   upstream.close();
 }
 
-console.log(`Expedition alpha v0.3 checks passed. Item templates covered: ${itemCount}.`);
+console.log(`Expedition alpha v0.4 checks passed. Item templates covered: ${itemCount}.`);

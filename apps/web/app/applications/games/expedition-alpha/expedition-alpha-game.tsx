@@ -501,6 +501,20 @@ export function ExpeditionAlphaGame() {
           <div className={`exp-avatar ${appearanceClasses}`}>
             <div className="exp-avatar-art" />
             <div className="exp-avatar-overlay" />
+            <i className="exp-gear exp-gear-cloak" />
+            <i className="exp-gear exp-gear-chest" />
+            <i className="exp-gear exp-gear-shoulders" />
+            <i className="exp-gear exp-gear-hood" />
+            <i className="exp-gear exp-gear-neck" />
+            <i className="exp-gear exp-gear-wrists" />
+            <i className="exp-gear exp-gear-gloves" />
+            <i className="exp-gear exp-gear-belt" />
+            <i className="exp-gear exp-gear-legs" />
+            <i className="exp-gear exp-gear-boots" />
+            <i className="exp-gear exp-gear-ring" />
+            <i className="exp-gear exp-gear-relic" />
+            <i className="exp-gear exp-gear-mainhand" />
+            <i className="exp-gear exp-gear-offhand" />
             <div className="exp-avatar-label">
               <b>{power} силы</b>
               <span>{Object.keys(equipped).length}/16 предметов</span>
