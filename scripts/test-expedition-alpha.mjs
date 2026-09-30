@@ -18,6 +18,7 @@ const files = {
   client: path.join(root, 'apps/web/app/applications/games/expedition-alpha/expedition-client.ts'),
   controller: path.join(root, 'apps/api/src/expedition/expedition.controller.ts'),
   service: path.join(root, 'apps/api/src/expedition/expedition.service.ts'),
+  schema: path.join(root, 'apps/api/prisma/schema.prisma'),
   heroArt: path.join(root, 'apps/web/public/games/expedition-alpha/hero-base.svg'),
   locationArt: path.join(root, 'apps/web/public/games/expedition-alpha/rust-outskirts.svg'),
   bossArt: path.join(root, 'apps/web/public/games/expedition-alpha/iron-shepherd.svg'),
@@ -35,6 +36,7 @@ const specSource = fs.readFileSync(files.spec, 'utf8');
 const clientSource = fs.readFileSync(files.client, 'utf8');
 const controllerSource = fs.readFileSync(files.controller, 'utf8');
 const serviceSource = fs.readFileSync(files.service, 'utf8');
+const schemaSource = fs.readFileSync(files.schema, 'utf8');
 
 const itemCount = (gameSource.match(/circulation:/g) ?? []).length;
 const staticChecks = [
@@ -50,6 +52,9 @@ const staticChecks = [
   ['no civilization art dependency', !cssSource.includes('/games/civilization/')],
   ['typed server client wired', clientSource.includes("'/expedition/me'") && clientSource.includes("'/expedition/runs'") && gameSource.includes('serverMode') && gameSource.includes('applyServerState')],
   ['server unequip contract', controllerSource.includes("items/:id/unequip") && serviceSource.includes('async unequip(')],
+  ['persistent expedition resources', schemaSource.includes('scrap           Int') && schemaSource.includes('cloth           Int') && schemaSource.includes('oldParts        Int') && serviceSource.includes('scrap: { increment: resources.scrap }')],
+  ['claim skips exhausted templates', serviceSource.includes('for (const candidate of orderedCandidates)') && serviceSource.includes('Тираж доступной добычи для этой глубины исчерпан')],
+  ['run start is serializable', serviceSource.includes("isolationLevel: 'Serializable'") && serviceSource.includes('pendingInside')],
   ['server authority documented', specSource.includes('Server authority') && specSource.includes('localStorage')],
   ['office styling explicitly excluded', specSource.includes('not office / corporate styling')],
 ];
@@ -95,6 +100,7 @@ let state = {
     maxEnergy: 12,
     unlockedDepth: 3,
     power: 13,
+    resources: { scrap: 7, cloth: 4, oldParts: 2 },
   },
   run: null,
   inventory: [starter],
@@ -167,7 +173,16 @@ const upstream = createServer(async (req, res) => {
   if (url.pathname === '/v1/expedition/runs/run-browser-1/claim' && req.method === 'POST') {
     state = {
       ...state,
-      profile: { ...state.profile, xp: 40, unlockedDepth: 3 },
+      profile: {
+        ...state.profile,
+        xp: 40,
+        unlockedDepth: 3,
+        resources: {
+          scrap: state.profile.resources.scrap + 13,
+          cloth: state.profile.resources.cloth + 5,
+          oldParts: state.profile.resources.oldParts,
+        },
+      },
       run: null,
       inventory: [...state.inventory, rewardItem],
     };
