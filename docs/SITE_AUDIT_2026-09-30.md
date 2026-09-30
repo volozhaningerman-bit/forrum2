@@ -113,3 +113,13 @@ The following are intentionally not presented as completed because they need pro
 - runtime axe-core coverage for authenticated journeys;
 - dynamic sitemap expansion beyond stable public routes;
 - automated backup-restore drills plus synthetic uptime/latency alerting.
+
+
+## v70 — CI hygiene follow-up
+
+29. Three historical one-time migration workflows still appeared as failed workflow runs around normal main-branch releases, creating false red CI noise even though the active release checks passed.
+   - Archived the two V34 patch workflows and the second v42 Tyuryaga patch workflow as read-only manual stubs.
+   - Their complete implementation remains in Git history.
+   - The site-audit regression now rejects reintroduction of executable migration payloads into these retired workflow files.
+
+This leaves the active homepage/release checks as the signal for current code rather than mixing them with obsolete migration jobs.
