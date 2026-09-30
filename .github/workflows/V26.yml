@@ -1,1 +1,14 @@
+name: "Archived V26 migration"
 
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  archived:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Archived workflow
+        run: echo "This one-time migration workflow is archived. Its implementation remains available in Git history."
