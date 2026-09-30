@@ -26,7 +26,7 @@ const checks = [
   ['Iron Shepherd raid', game.includes('Железный Пастырь')],
   ['modular avatar appearance hooks', game.includes('has-sword') && css.includes('.exp-avatar.has-sword')],
   ['server authority documented', spec.includes('Server authority') && spec.includes('localStorage')],
-  ['office concept rejected', !spec.toLowerCase().includes('office / corporate styling;\n- strong')],
+  ['office styling explicitly excluded', spec.includes('not office / corporate styling')],
 ];
 
 const failed = checks.filter(([, pass]) => !pass);
