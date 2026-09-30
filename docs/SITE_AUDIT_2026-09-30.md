@@ -26,6 +26,10 @@ Scope: production homepage and repository-wide release guardrails for the web/AP
    - CI now gates on static validation, UX truthfulness, accessibility source checks and the new site-audit regression check in addition to tests/build/typecheck/browser regression.
 8. Mobile rendering still carried a fixed page background.
    - Disabled fixed background attachment on small screens and strengthened touch/focus/reduced-motion behavior.
+9. A stricter accessibility gate exposed action buttons without an explicit non-submit type.
+   - Fixed the affected admin and game controls so incidental form submission cannot occur.
+10. Existing community-role and promotion administration was functional but poorly surfaced and the UX regression check looked in the wrong file.
+   - Added direct admin dashboard entries and pointed the regression check at the real connected implementation.
 
 ## Already healthy before v67
 - Argon2id password hashing.
