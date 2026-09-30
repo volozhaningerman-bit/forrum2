@@ -2,7 +2,7 @@ name: Deploy FORRUM API to FirstVDS
 
 on:
   workflow_run:
-    workflows: [Homepage checks]
+    workflows: [Deploy FORRUM Web to FirstVDS]
     branches: [main]
     types: [completed]
   workflow_dispatch:
@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && (github.event.workflow_run.event == 'workflow_run' || github.event.workflow_run.event == 'workflow_dispatch'))
     name: Deploy live API
     runs-on: ubuntu-latest
     timeout-minutes: 25
