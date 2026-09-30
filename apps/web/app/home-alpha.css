@@ -3372,3 +3372,133 @@ body:has(.forum-home[data-home-reference="v49"]) {
     font-size:10.9px!important;
   }
 }
+
+
+/* Homepage v72 — final screenshot-driven polish from the 1899×908 production capture. */
+@media (min-width:1451px) {
+  .forum-home[data-home-reference="v49"] {
+    grid-template-columns:300px minmax(0,1fr) 334px!important;
+    column-gap:16px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topbar {
+    grid-template-columns:300px minmax(470px,1fr) minmax(305px,390px) 42px auto auto!important;
+  }
+
+  /* Left navigation: never abbreviate short community names like “4rrum Start”. */
+  .forum-home[data-home-reference="v49"] .forum-category-heading {
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) 28px 24px!important;
+    align-items:center!important;
+    min-height:49px!important;
+    padding-right:4px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-home-category .forum-category-heading {
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-category-heading > a {
+    display:grid!important;
+    grid-template-columns:24px minmax(0,1fr)!important;
+    align-items:center!important;
+    gap:13px!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    padding-right:6px!important;
+    font-size:14.4px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-category-heading > a > span {
+    display:block!important;
+    min-width:0!important;
+    width:auto!important;
+    max-width:none!important;
+    white-space:normal!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+    line-height:1.13!important;
+    -webkit-line-clamp:unset!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-category-counts {
+    justify-self:center!important;
+    width:28px!important;
+    min-width:28px!important;
+    flex:none!important;
+    font-size:11px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-category-toggle {
+    justify-self:center!important;
+    width:24px!important;
+    min-width:24px!important;
+    height:28px!important;
+  }
+
+  /* Keep the center readable instead of letting the wide desktop become tiny-density UI. */
+  .forum-home[data-home-reference="v49"] .forum-primary a {
+    font-size:13.4px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-header-search input {
+    font-size:12.4px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-important-copy>strong {
+    font-size:13.7px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-important-copy>span {
+    font-size:11.15px!important;
+    line-height:1.3!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic h2 {
+    font-size:13.55px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-topic-excerpt {
+    font-size:11.05px!important;
+    line-height:1.3!important;
+  }
+
+  /* Right rail should read like a product panel, not tiny metadata. */
+  .forum-home[data-home-reference="v49"] .forum-panel {
+    padding:14px 15px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-panel h2 {
+    font-size:14.2px!important;
+    letter-spacing:.55px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-popular-today strong {
+    font-size:12.35px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-popular-today small {
+    font-size:9.25px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-author-ranking li {
+    min-height:44px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-author-ranking .avatar {
+    width:34px!important;
+    height:34px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-author-ranking strong {
+    font-size:11.35px!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-author-ranking li > span:last-child {
+    font-size:11px!important;
+  }
+}
+
+@media (min-width:1301px) and (max-width:1450px) {
+  .forum-home[data-home-reference="v49"] .forum-category-heading > a > span {
+    white-space:normal!important;
+    text-overflow:clip!important;
+  }
+}
+
+/* The approved mockup uses hard separators and almost no rounded-card language. */
+@media (min-width:1051px) {
+  .forum-home[data-home-reference="v49"] :is(
+    .forum-topic,
+    .forum-important,
+    .forum-panel,
+    .forum-categories,
+    .forum-side-stats,
+    .forum-search-hero
+  ) {
+    border-radius:0!important;
+  }
+}
