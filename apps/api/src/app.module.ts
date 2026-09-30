@@ -1,4 +1,5 @@
 import { TyuryagaModule } from './modules/tyuryaga/tyuryaga.module.js';
+import { ExpeditionModule } from './modules/expedition/expedition.module.js';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module.js';
@@ -29,6 +30,7 @@ import { MediaPartnersModule } from './media-partners/media-partners.module.js';
 import { InventoryModule } from './inventory/inventory.module.js';
 @Module({
   imports: [
+    ExpeditionModule,
     TyuryagaModule,
     InventoryModule,
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ['../../.env', '.env'] }),
