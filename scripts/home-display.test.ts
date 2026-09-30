@@ -23,3 +23,10 @@ test('proxy rejects hostile Origin before forwarding session cookies',()=>{
  assert.equal(allowedRequestOrigin(new Headers({origin:'http://127.0.0.1:3126',host:'127.0.0.1:3126'}),'http://localhost:3126'),true);
  assert.equal(allowedRequestOrigin(new Headers({origin:'null'}),'https://4rrum.ru'),false);
 });
+
+test('public HTTPS origin survives an internal HTTP proxy hop',()=>{
+ const headers=new Headers({origin:'https://4rrum.ru',host:'web:3000','x-forwarded-proto':'http','sec-fetch-site':'same-origin'});
+ assert.equal(allowedRequestOrigin(headers,'http://web:3000'),true);
+ headers.set('origin','http://4rrum.ru');assert.equal(allowedRequestOrigin(headers,'http://web:3000'),false);
+ headers.set('origin','https://evil.example');assert.equal(allowedRequestOrigin(headers,'http://web:3000'),false);
+});

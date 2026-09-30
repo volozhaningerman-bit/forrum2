@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: forrum-firstvds-web-deploy
+  group: forrum-firstvds-deploy
   cancel-in-progress: false
 jobs:
   deploy:
