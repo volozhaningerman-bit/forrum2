@@ -80,3 +80,9 @@ export function equipExpeditionItem(itemId: string) {
     method: 'POST',
   });
 }
+
+export function unequipExpeditionItem(itemId: string) {
+  return api<ExpeditionServerState>(`/expedition/items/${itemId}/unequip`, {
+    method: 'POST',
+  });
+}
