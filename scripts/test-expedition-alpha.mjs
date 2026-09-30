@@ -371,6 +371,14 @@ try {
   }));
   assert.equal(gloveLayer.display === 'none', false, 'paper-doll glove layer must exist');
   assert(Number(gloveLayer.opacity) > 0.8, 'equipped gloves must visibly activate paper-doll layer');
+  const legacyGlove = await page.locator('.exp-avatar.has-gloves').evaluate((node) => getComputedStyle(node, '::before').content);
+  assert(['none', 'normal', '""'].includes(legacyGlove), 'legacy glove pseudo must not render duplicate side bars');
+  const socialArt = await page.evaluate(() => ({
+    champion: getComputedStyle(document.querySelector('.exp-champion'), '::before').display,
+    relic: getComputedStyle(document.querySelector('.exp-relic'), '::before').display,
+  }));
+  assert.notEqual(socialArt.champion, 'none', 'champion art must be visible');
+  assert.notEqual(socialArt.relic, 'none', 'relic art must be visible');
 
   await page.screenshot({ path: output + '/expedition-alpha-v06-loot-equipped-1720x900.png', fullPage: true });
 
