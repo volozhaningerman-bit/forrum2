@@ -28,7 +28,7 @@ const checks = [
   ['five Rust Outskirts depths', game.includes('Реакторная зона') && game.includes('Ломовые дворы')],
   ['numbered loot', game.includes('serial') && game.includes('circulation')],
   ['Iron Shepherd raid', game.includes('Железный Пастырь')],
-  ['modular avatar appearance hooks', game.includes('has-sword') && css.includes('.exp-avatar.has-sword')],
+  ['modular avatar appearance hooks', game.includes('has-${item.visual}') && css.includes('.exp-avatar.has-sword')],
   ['server authority documented', spec.includes('Server authority') && spec.includes('localStorage')],
   ['office styling explicitly excluded', spec.includes('not office / corporate styling')],
   ['generated hero art wired', game.includes('/games/expedition-alpha/hero.webp') && css.includes('.exp-avatar-art')],
