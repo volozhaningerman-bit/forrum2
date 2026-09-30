@@ -20620,3 +20620,33 @@ html[data-forrum-theme="graphite"] body {--ui-icon-hover:#15262d; --ui-icon-acce
  color:var(--f-accent,var(--ui-icon-accent))!important;
  background-color:var(--f-hover,var(--ui-icon-hover))!important;
 }
+
+
+/* Audit v67 — accessibility, input ergonomics and rendering safety. */
+:where(a, button, input, textarea, select, summary):focus-visible {
+  outline: 2px solid #dcefff;
+  outline-offset: 3px;
+}
+:where(button, [role="button"], summary) {
+  touch-action: manipulation;
+}
+@media (pointer: coarse) {
+  :where(button, [role="button"], summary, .forum-more-trigger, .forum-category-toggle) {
+    min-width: 32px;
+    min-height: 32px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+@media (max-width: 760px) {
+  body:has(.forum-home[data-home-reference="v49"]) {
+    background-attachment: scroll !important;
+  }
+}

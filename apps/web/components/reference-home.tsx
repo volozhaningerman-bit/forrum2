@@ -220,7 +220,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
  const visible = demo ? topics.filter(item=>item.format==='TOPIC' && (tab!=='unanswered'||!item.commentCount) && (!community||item.community.slug===community)) : topics;
  const news = initialData.announcements?.slice(0, 4) ?? [];
  const important = [...news.slice(0,2), ...topics.filter(item => item.format === 'TOPIC' && !news.some(row => row.id === item.id))].slice(0,2);
- return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v66" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
+ return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v67" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
   <aside ref={sidebarRef} className={`forum-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="Навигация форума">
    <button type="button" className="forum-sidebar-close" onClick={()=>setSidebar(false)} aria-label="Закрыть меню"><Icon name="close"/></button>
    <Categories items={communities} selected={community}/>
@@ -237,7 +237,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
   </aside>
   {sidebar && <button type="button" className="forum-sidebar-backdrop" aria-label="Закрыть навигацию" onClick={() => setSidebar(false)}/>}
   <header className="forum-topbar">
-   <Link className="forum-brand" href="/" aria-label="4rrum — главная"><img src="/forrum-assets/brand-4rrum.svg" alt="" aria-hidden="true"/><span className="forum-brand-test-label" aria-hidden="true">4RRUM</span></Link>
+   <Link className="forum-brand" href="/" aria-label="4rrum — главная"><img src="/forrum-assets/brand-4rrum.svg" alt="" aria-hidden="true" width="320" height="90" fetchPriority="high"/><span className="forum-brand-test-label" aria-hidden="true">4RRUM</span></Link>
    <button type="button" className="forum-menu" aria-label={sidebar ? 'Закрыть меню' : 'Открыть меню'} aria-expanded={sidebar} onClick={() => setSidebar(value => !value)}><Icon name="menu"/></button>
    <nav className="forum-primary" aria-label="Основная навигация">{mainLinks.map(([href,label]) => <Link key={href} href={href} title={href === '/digital-services' ? 'Цифровые инструменты и сервисы' : href === '/services' ? 'Услуги специалистов' : undefined} aria-current={href === '/' ? 'page' : undefined}>{label}</Link>)}</nav>
    <HeaderSearch inputRef={searchInput}/>
@@ -249,7 +249,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
   <section className="forum-intro" aria-label="О 4rrum">
    {demo && <span className="forum-demo-label">Демонстрационные данные · <Link href="/">На форум</Link></span>}
    <div className="forum-search-hero">
-    <img className="forum-hero-art" src="/forrum-assets/hero-planet.svg" alt="" aria-hidden="true"/>
+    <img className="forum-hero-art" src="/forrum-assets/hero-planet.svg" alt="" aria-hidden="true" width="1600" height="420" fetchPriority="high" decoding="async"/>
     <div className="forum-hero-copy">
      <p className="forum-hero-kicker">4RRUM // БОЛЬШЕ ЧЕМ ФОРУМ</p>
      <h1>ТЕХНОЛОГИИ. ЛЮДИ. ИДЕИ.</h1>
@@ -292,7 +292,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
    {community && <div className="forum-active-filter">{communities.find(item=>item.slug===community)?.name || community}<button type="button" onClick={()=>choose(tab,'')} aria-label="Сбросить выбранное сообщество">×</button></div>}
    {pendingTopics && !loading && <button type="button" className="forum-feed-update" onClick={() => {setTopics(pendingTopics.slice(0,20));setHasMore(pendingTopics.length>20);setOffset(20);setPendingTopics(null);}}>Есть обновления в ленте · Показать</button>}
    <div className="forum-topic-columns" aria-hidden="true"><span>Тема</span><span>Категория</span><span>Ответы</span><span>Просмотры</span><span>Последнее сообщение</span><span/></div>
-   <section className="forum-feed" aria-label="Темы форума" aria-busy={loading}>{loading ? <div className="forum-empty" role="status">Загружаем темы…</div> : error ? <div className="forum-empty" role="alert"><p>{error}</p><button type="button" className="forum-button" onClick={() => setRetry(value => value + 1)}>Попробовать снова</button></div> : visible.length ? visible.map(item => <Topic key={`${tab}-${item.id}`} item={item} history={history} communities={communities} demo={demo} guest={viewer === 'guest'}/>) : <div className="forum-empty"><strong>{tab==='popular'?'За сутки новых ответов пока нет':tab==='unanswered'?'Вопросов без ответа пока нет':'Здесь пока нет тем'}</strong><p>Выберите другую подборку или начните своё обсуждение.</p><Link className="forum-button" href="/create">Создать тему</Link></div>}</section>
+   <section className="forum-feed" aria-label="Темы форума" aria-busy={loading} aria-live="polite">{loading ? <div className="forum-empty" role="status">Загружаем темы…</div> : error ? <div className="forum-empty" role="alert"><p>{error}</p><button type="button" className="forum-button" onClick={() => setRetry(value => value + 1)}>Попробовать снова</button></div> : visible.length ? visible.map(item => <Topic key={`${tab}-${item.id}`} item={item} history={history} communities={communities} demo={demo} guest={viewer === 'guest'}/>) : <div className="forum-empty"><strong>{tab==='popular'?'За сутки новых ответов пока нет':tab==='unanswered'?'Вопросов без ответа пока нет':'Здесь пока нет тем'}</strong><p>Выберите другую подборку или начните своё обсуждение.</p><Link className="forum-button" href="/create">Создать тему</Link></div>}</section>
    {!loading && !error && hasMore && !demo && <div className="forum-load-more"><button className="forum-button" type="button" disabled={loadingMore} onClick={()=>void loadMore()}>{loadingMore?'Загружаем…':'Показать ещё обсуждения'}</button></div>}
    {!loading && !error && !hasMore && visible.length > 0 && <footer className="forum-feed-end"><span>Вы просмотрели все загруженные обсуждения</span><a href="#top">Наверх ↑</a></footer>}
    {moreError && <p className="forum-action-error" role="alert">{moreError}</p>}
