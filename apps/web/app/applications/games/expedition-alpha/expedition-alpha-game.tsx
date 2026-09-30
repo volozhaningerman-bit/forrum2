@@ -438,7 +438,12 @@ export function ExpeditionAlphaGame() {
       <header className="exp-topbar">
         <div>
           <span className="exp-kicker">4rrum · hidden alpha</span>
-          <h1>Экспедиция</h1>
+          <div className="exp-title-row">
+            <h1>Экспедиция</h1>
+            <span className={`exp-mode exp-mode-${serverMode}`}>
+              {serverMode === 'server' ? 'серверный прогресс' : serverMode === 'demo' ? 'демо-режим' : 'подключение…'}
+            </span>
+          </div>
           <p>Рабочее название · посттехнологичное средневековье</p>
         </div>
         <div className="exp-hud">
@@ -448,6 +453,12 @@ export function ExpeditionAlphaGame() {
           <span><b>{resources.parts}</b><small>старые детали</small></span>
         </div>
       </header>
+
+      {apiError && serverMode === 'server' ? (
+        <div className="exp-api-error" role="status">
+          <b>Связь с игровым сервером:</b> {apiError}
+        </div>
+      ) : null}
 
       <section className="exp-layout">
         <aside className="exp-panel exp-character">
@@ -474,6 +485,7 @@ export function ExpeditionAlphaGame() {
                   className={item ? `equipped rarity-${item.rarity}` : ''}
                   title={item ? `${item.name} — снять` : slot.label}
                   type="button"
+                  disabled={busy}
                   onClick={() => item && unequip(slot.id)}
                 >
                   <span>{slot.label}</span>
@@ -521,7 +533,7 @@ export function ExpeditionAlphaGame() {
                 <em>{depth.reward}</em>
               </div>
               {!run && !readyRun ? (
-                <button className="exp-primary" type="button" disabled={energy < depth.energy} onClick={sendExpedition}>
+                <button className="exp-primary" type="button" disabled={busy || serverMode === 'checking' || energy < depth.energy} onClick={sendExpedition}>
                   Отправить · ⚡ {depth.energy}
                 </button>
               ) : run ? (
@@ -531,7 +543,7 @@ export function ExpeditionAlphaGame() {
                   <i style={{ width: `${Math.max(8, 100 - remaining * 16)}%` }} />
                 </div>
               ) : (
-                <button className="exp-primary is-return" type="button" onClick={collectReturn}>
+                <button className="exp-primary is-return" type="button" disabled={busy} onClick={collectReturn}>
                   Забрать добычу
                 </button>
               )}
@@ -605,6 +617,7 @@ export function ExpeditionAlphaGame() {
                 type="button"
                 key={item.id}
                 className={`exp-item rarity-${item.rarity}`}
+                disabled={busy}
                 onClick={() => equip(item)}
               >
                 <span className={`exp-item-icon art-${item.art}`} />
@@ -625,7 +638,7 @@ export function ExpeditionAlphaGame() {
 
       <footer className="exp-footer">
         <span>Source of truth: docs/game-expedition-alpha-source-of-truth.md</span>
-        <span>Состояние пока demo-only; редкие предметы и экономика в публичной альфе будут серверными.</span>
+        <span>{serverMode === 'server' ? 'Прогресс, энергия и серийные предметы подтверждаются API.' : 'Гостевой демо-режим не сохраняет экономически значимый прогресс.'}</span>
       </footer>
     </main>
   );
