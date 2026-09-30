@@ -2083,3 +2083,28 @@
     max-width:100%!important;
   }
 }
+
+
+/* v0.7.2 paper-doll alignment from browser screenshot QA. */
+.exp-avatar.has-gloves .exp-gear-gloves{
+  opacity:1!important;
+  top:185px!important;
+  width:154px!important;
+  height:42px!important;
+  z-index:9!important;
+  background:
+    radial-gradient(ellipse 17px 22px at 8% 48%,#704934 0 62%,#3b2922 66% 78%,transparent 81%),
+    radial-gradient(ellipse 17px 22px at 92% 48%,#704934 0 62%,#3b2922 66% 78%,transparent 81%)!important;
+  filter:drop-shadow(0 3px 3px rgba(0,0,0,.48))!important;
+}
+.exp-avatar.has-wrists .exp-gear-wrists{
+  top:179px!important;
+  width:150px!important;
+  height:25px!important;
+  background:
+    linear-gradient(90deg,#8a6547 0 10%,#4a3429 10% 14%,transparent 14% 86%,#4a3429 86% 90%,#8a6547 90%)!important;
+}
+@media(max-width:1560px) and (min-width:1181px){
+  .exp-avatar.has-gloves .exp-gear-gloves{top:169px!important;width:142px!important}
+  .exp-avatar.has-wrists .exp-gear-wrists{top:164px!important;width:139px!important}
+}
