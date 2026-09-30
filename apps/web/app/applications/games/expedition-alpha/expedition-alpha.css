@@ -298,7 +298,7 @@
   position:absolute;
   inset:18px 34px 44px;
   z-index:2;
-  background-image:url('/games/civilization/art-v3/hero-sprite-v3.webp');
+  background-image:url('/games/expedition-alpha/hero-base.svg');
   background-repeat:no-repeat;
   background-position:center;
   background-size:contain;
@@ -354,7 +354,7 @@
   min-height:318px;
   background:
     linear-gradient(180deg,rgba(4,8,10,.08),rgba(4,8,10,.76)),
-    url('/games/civilization/art-v3/cave-hub-v3.webp') center 54%/cover no-repeat;
+    url('/games/expedition-alpha/rust-outskirts.svg') center 54%/cover no-repeat;
 }
 .exp-location-art::after{
   content:"";position:absolute;inset:0;pointer-events:none;
@@ -388,13 +388,11 @@
 }
 .exp-boss-crop{
   position:absolute;inset:8px;
-  background-image:url('/games/civilization/art-v2/boss-sprite-v2.avif');
-  background-size:300% auto;
-  background-position:0 center;
+  background-image:url('/games/expedition-alpha/iron-shepherd.svg');
+  background-size:contain;
+  background-position:center bottom;
   background-repeat:no-repeat;
-  filter:saturate(1.05) contrast(1.04) drop-shadow(0 18px 18px rgba(0,0,0,.38));
-  -webkit-mask-image:radial-gradient(ellipse 92% 92% at 50% 50%,#000 68%,transparent 100%);
-  mask-image:radial-gradient(ellipse 92% 92% at 50% 50%,#000 68%,transparent 100%);
+  filter:saturate(1.04) contrast(1.04) drop-shadow(0 18px 18px rgba(0,0,0,.38));
 }
 .exp-raid-copy button.joined{background:#213b39;color:#8bd4c8;border:1px solid #32615b}
 
@@ -413,7 +411,7 @@
 .exp-champion span,.exp-relic span{font-size:10px}
 
 .exp-item-icon{
-  background-image:url('/games/civilization/art-v2/equipment-sprite-v2.avif');
+  background-image:url('/games/expedition-alpha/equipment-atlas.svg');
   background-repeat:no-repeat;
   background-size:400% 300%;
   background-color:#0f171b;
