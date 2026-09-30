@@ -298,7 +298,7 @@
   position:absolute;
   inset:18px 34px 44px;
   z-index:2;
-  background-image:url('/games/civilization/art-v3/hero-sprite-v3.webp');
+  background-image:url('/games/expedition-alpha/hero-base.svg');
   background-repeat:no-repeat;
   background-position:center;
   background-size:contain;
@@ -354,7 +354,7 @@
   min-height:318px;
   background:
     linear-gradient(180deg,rgba(4,8,10,.08),rgba(4,8,10,.76)),
-    url('/games/civilization/art-v3/cave-hub-v3.webp') center 54%/cover no-repeat;
+    url('/games/expedition-alpha/rust-outskirts.svg') center 54%/cover no-repeat;
 }
 .exp-location-art::after{
   content:"";position:absolute;inset:0;pointer-events:none;
@@ -388,13 +388,11 @@
 }
 .exp-boss-crop{
   position:absolute;inset:8px;
-  background-image:url('/games/civilization/art-v2/boss-sprite-v2.avif');
-  background-size:300% auto;
-  background-position:0 center;
+  background-image:url('/games/expedition-alpha/iron-shepherd.svg');
+  background-size:contain;
+  background-position:center bottom;
   background-repeat:no-repeat;
-  filter:saturate(1.05) contrast(1.04) drop-shadow(0 18px 18px rgba(0,0,0,.38));
-  -webkit-mask-image:radial-gradient(ellipse 92% 92% at 50% 50%,#000 68%,transparent 100%);
-  mask-image:radial-gradient(ellipse 92% 92% at 50% 50%,#000 68%,transparent 100%);
+  filter:saturate(1.04) contrast(1.04) drop-shadow(0 18px 18px rgba(0,0,0,.38));
 }
 .exp-raid-copy button.joined{background:#213b39;color:#8bd4c8;border:1px solid #32615b}
 
@@ -413,7 +411,7 @@
 .exp-champion span,.exp-relic span{font-size:10px}
 
 .exp-item-icon{
-  background-image:url('/games/civilization/art-v2/equipment-sprite-v2.avif');
+  background-image:url('/games/expedition-alpha/equipment-atlas.svg');
   background-repeat:no-repeat;
   background-size:400% 300%;
   background-color:#0f171b;
@@ -442,3 +440,35 @@
   .exp-community{grid-template-columns:1fr}.exp-community-card+ .exp-community-card{border-left:0;border-top:1px solid var(--line)}
   .exp-result-grid{grid-template-columns:1fr}.exp-hud{grid-template-columns:repeat(2,1fr)}
 }
+
+
+/* Expedition alpha v0.2 — server-authoritative state feedback */
+.exp-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.exp-title-row h1{margin-right:2px}
+.exp-mode{
+  border:1px solid #314650;
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:9px;
+  line-height:1;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  color:#9cafb8;
+  background:#0b151a;
+}
+.exp-mode-server{color:#7de0cf;border-color:#27685c;background:#0a1c1a}
+.exp-mode-demo{color:#e4b06a;border-color:#6f4c24;background:#1d150c}
+.exp-mode-checking{color:#91a7b2}
+.exp-api-error{
+  max-width:1680px;
+  margin:0 auto 10px;
+  border:1px solid #6d3b36;
+  border-radius:9px;
+  padding:8px 10px;
+  background:#201313;
+  color:#e7b6b1;
+  font-size:10px;
+}
+.exp-api-error b{color:#f4d0cb}
+.exp-alpha button:disabled{cursor:not-allowed}
+.exp-item:disabled{opacity:.62;transform:none}

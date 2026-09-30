@@ -1,6 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  claimExpedition,
+  equipExpeditionItem,
+  loadExpeditionState,
+  startExpedition,
+  unequipExpeditionItem,
+  type ExpeditionServerItem,
+  type ExpeditionServerState,
+} from './expedition-client';
 
 type Rarity = 'common' | 'uncommon' | 'rare' | 'epic';
 type Slot =
@@ -108,6 +117,73 @@ const lootPools: Record<number, string[]> = {
 
 const slotLabel = Object.fromEntries(slots.map((slot) => [slot.id, slot.label])) as Record<Slot, string>;
 
+const serverSlotMap: Record<string, Slot> = {
+  HEAD: 'head',
+  NECK: 'neck',
+  SHOULDERS: 'shoulders',
+  CLOAK: 'cloak',
+  CHEST: 'chest',
+  WRISTS: 'wrists',
+  GLOVES: 'gloves',
+  BELT: 'belt',
+  LEGS: 'legs',
+  FEET: 'feet',
+  RING_1: 'ring1',
+  RING_2: 'ring2',
+  RELIC_1: 'relic1',
+  RELIC_2: 'relic2',
+  MAIN_HAND: 'mainHand',
+  OFF_HAND: 'offHand',
+};
+
+const serverRarityMap: Record<string, Rarity> = {
+  COMMON: 'common',
+  UNCOMMON: 'uncommon',
+  RARE: 'rare',
+  EPIC: 'epic',
+};
+
+const visualArtMap: Record<string, number> = {
+  hood: 0,
+  helm: 1,
+  neck: 2,
+  'consul-mask': 3,
+  shoulders: 4,
+  cloak: 5,
+  'cloak-blue': 6,
+  chest: 7,
+  'chest-guard': 8,
+  'chest-epic': 9,
+  wrists: 10,
+  gloves: 11,
+  belt: 0,
+  legs: 1,
+  boots: 2,
+  ring: 3,
+  'ring-blue': 4,
+  relic: 5,
+  'relic-epic': 6,
+  sword: 7,
+  spear: 8,
+  'sword-blue': 9,
+  hammer: 10,
+  shield: 11,
+};
+
+function mapServerItem(item: ExpeditionServerItem): Item {
+  return {
+    id: item.id,
+    name: item.name,
+    slot: serverSlotMap[item.slot] ?? 'relic1',
+    rarity: serverRarityMap[item.rarity] ?? 'common',
+    serial: item.serialNumber,
+    circulation: item.circulation,
+    power: item.power,
+    visual: item.visualKey,
+    art: visualArtMap[item.visualKey] ?? 0,
+  };
+}
+
 function secondsLeft(endsAt: number | null, now: number) {
   if (!endsAt) return 0;
   return Math.max(0, Math.ceil((endsAt - now) / 1000));
@@ -128,6 +204,47 @@ export function ExpeditionAlphaGame() {
   const [runCount, setRunCount] = useState(0);
   const [raidJoined, setRaidJoined] = useState(false);
   const [now, setNow] = useState(() => Date.now());
+  const [serverMode, setServerMode] = useState<'checking' | 'server' | 'demo'>('checking');
+  const [serverRunId, setServerRunId] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  const applyServerState = useCallback((state: ExpeditionServerState) => {
+    const mappedItems = state.inventory.map(mapServerItem);
+    const mappedById = new Map(mappedItems.map((item) => [item.id, item]));
+    const nextEquipped: Partial<Record<Slot, Item>> = {};
+
+    for (const raw of state.inventory) {
+      if (!raw.equipped) continue;
+      const item = mappedById.get(raw.id);
+      if (item) nextEquipped[item.slot] = item;
+    }
+
+    setEnergy(state.profile.energy);
+    setXp(state.profile.xp);
+    setLevel(state.profile.level);
+    setUnlockedDepth(state.profile.unlockedDepth);
+    setInventory(mappedItems);
+    setEquipped(nextEquipped);
+
+    if (state.run) {
+      setServerRunId(state.run.id);
+      if (state.run.status === 'READY' || state.run.secondsLeft <= 0) {
+        setReadyRun(state.run.depth);
+        setRun(null);
+      } else {
+        setRun({
+          depthId: state.run.depth,
+          endsAt: new Date(state.run.readyAt).getTime(),
+        });
+        setReadyRun(null);
+      }
+    } else {
+      setServerRunId(null);
+      setRun(null);
+      setReadyRun(null);
+    }
+  }, []);
 
   useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 500);
@@ -135,11 +252,49 @@ export function ExpeditionAlphaGame() {
   }, []);
 
   useEffect(() => {
+    const controller = new AbortController();
+
+    loadExpeditionState(controller.signal)
+      .then((state) => {
+        applyServerState(state);
+        setServerMode('server');
+        setApiError(null);
+      })
+      .catch((cause) => {
+        if (controller.signal.aborted) return;
+        setServerMode('demo');
+        setApiError(cause instanceof Error ? cause.message : 'Серверная игра недоступна');
+      });
+
+    return () => controller.abort();
+  }, [applyServerState]);
+
+  useEffect(() => {
+    if (serverMode === 'server') return;
     if (run && now >= run.endsAt) {
       setReadyRun(run.depthId);
       setRun(null);
     }
-  }, [now, run]);
+  }, [now, run, serverMode]);
+
+  useEffect(() => {
+    if (serverMode !== 'server' || !run || now < run.endsAt) return;
+    let cancelled = false;
+
+    loadExpeditionState()
+      .then((state) => {
+        if (!cancelled) applyServerState(state);
+      })
+      .catch((cause) => {
+        if (!cancelled) {
+          setApiError(cause instanceof Error ? cause.message : 'Не удалось обновить экспедицию');
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [applyServerState, now, run, serverMode]);
 
   const depth = depths.find((entry) => entry.id === selectedDepth) ?? depths[0];
   const equippedPower = useMemo(
@@ -153,15 +308,55 @@ export function ExpeditionAlphaGame() {
     .map((item) => item?.visual ? `has-${item.visual}` : '')
     .join(' ');
 
-  function sendExpedition() {
-    if (run || readyRun || energy < depth.energy || depth.id > unlockedDepth) return;
+  async function sendExpedition() {
+    if (busy || run || readyRun || energy < depth.energy || depth.id > unlockedDepth) return;
+
+    if (serverMode === 'server') {
+      setBusy(true);
+      setApiError(null);
+      setLastDrops([]);
+      try {
+        await startExpedition(depth.id);
+        const state = await loadExpeditionState();
+        applyServerState(state);
+      } catch (cause) {
+        setApiError(cause instanceof Error ? cause.message : 'Не удалось начать экспедицию');
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
     setEnergy((value) => value - depth.energy);
     setLastDrops([]);
     setRun({ depthId: depth.id, endsAt: Date.now() + 3500 + depth.id * 500 });
   }
 
-  function collectReturn() {
-    if (!readyRun) return;
+  async function collectReturn() {
+    if (!readyRun || busy) return;
+
+    if (serverMode === 'server' && serverRunId) {
+      setBusy(true);
+      setApiError(null);
+      try {
+        const claimed = await claimExpedition(serverRunId);
+        const drop = mapServerItem(claimed.reward.item);
+        setLastDrops([drop]);
+        setResources((current) => ({
+          metal: current.metal,
+          scrap: current.scrap + claimed.reward.resources.scrap,
+          parts: current.parts + claimed.reward.resources.oldParts,
+        }));
+        const state = await loadExpeditionState();
+        applyServerState(state);
+      } catch (cause) {
+        setApiError(cause instanceof Error ? cause.message : 'Не удалось забрать добычу');
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
     const pool = lootPools[readyRun] ?? lootPools[1];
     const firstId = pool[runCount % pool.length];
     const secondId = readyRun >= 3 ? pool[(runCount + 1) % pool.length] : null;
@@ -193,11 +388,44 @@ export function ExpeditionAlphaGame() {
     setReadyRun(null);
   }
 
-  function equip(item: Item) {
+  async function equip(item: Item) {
+    if (busy) return;
+
+    if (serverMode === 'server') {
+      setBusy(true);
+      setApiError(null);
+      try {
+        const state = await equipExpeditionItem(item.id);
+        applyServerState(state);
+      } catch (cause) {
+        setApiError(cause instanceof Error ? cause.message : 'Не удалось надеть предмет');
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
     setEquipped((current) => ({ ...current, [item.slot]: item }));
   }
 
-  function unequip(slot: Slot) {
+  async function unequip(slot: Slot) {
+    const item = equipped[slot];
+    if (!item || busy) return;
+
+    if (serverMode === 'server') {
+      setBusy(true);
+      setApiError(null);
+      try {
+        const state = await unequipExpeditionItem(item.id);
+        applyServerState(state);
+      } catch (cause) {
+        setApiError(cause instanceof Error ? cause.message : 'Не удалось снять предмет');
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
     setEquipped((current) => {
       const copy = { ...current };
       delete copy[slot];
@@ -210,7 +438,12 @@ export function ExpeditionAlphaGame() {
       <header className="exp-topbar">
         <div>
           <span className="exp-kicker">4rrum · hidden alpha</span>
-          <h1>Экспедиция</h1>
+          <div className="exp-title-row">
+            <h1>Экспедиция</h1>
+            <span className={`exp-mode exp-mode-${serverMode}`}>
+              {serverMode === 'server' ? 'серверный прогресс' : serverMode === 'demo' ? 'демо-режим' : 'подключение…'}
+            </span>
+          </div>
           <p>Рабочее название · посттехнологичное средневековье</p>
         </div>
         <div className="exp-hud">
@@ -220,6 +453,12 @@ export function ExpeditionAlphaGame() {
           <span><b>{resources.parts}</b><small>старые детали</small></span>
         </div>
       </header>
+
+      {apiError && serverMode === 'server' ? (
+        <div className="exp-api-error" role="status">
+          <b>Связь с игровым сервером:</b> {apiError}
+        </div>
+      ) : null}
 
       <section className="exp-layout">
         <aside className="exp-panel exp-character">
@@ -246,6 +485,7 @@ export function ExpeditionAlphaGame() {
                   className={item ? `equipped rarity-${item.rarity}` : ''}
                   title={item ? `${item.name} — снять` : slot.label}
                   type="button"
+                  disabled={busy}
                   onClick={() => item && unequip(slot.id)}
                 >
                   <span>{slot.label}</span>
@@ -293,7 +533,7 @@ export function ExpeditionAlphaGame() {
                 <em>{depth.reward}</em>
               </div>
               {!run && !readyRun ? (
-                <button className="exp-primary" type="button" disabled={energy < depth.energy} onClick={sendExpedition}>
+                <button className="exp-primary" type="button" disabled={busy || serverMode === 'checking' || energy < depth.energy} onClick={sendExpedition}>
                   Отправить · ⚡ {depth.energy}
                 </button>
               ) : run ? (
@@ -303,7 +543,7 @@ export function ExpeditionAlphaGame() {
                   <i style={{ width: `${Math.max(8, 100 - remaining * 16)}%` }} />
                 </div>
               ) : (
-                <button className="exp-primary is-return" type="button" onClick={collectReturn}>
+                <button className="exp-primary is-return" type="button" disabled={busy} onClick={collectReturn}>
                   Забрать добычу
                 </button>
               )}
@@ -377,6 +617,7 @@ export function ExpeditionAlphaGame() {
                 type="button"
                 key={item.id}
                 className={`exp-item rarity-${item.rarity}`}
+                disabled={busy}
                 onClick={() => equip(item)}
               >
                 <span className={`exp-item-icon art-${item.art}`} />
@@ -397,7 +638,7 @@ export function ExpeditionAlphaGame() {
 
       <footer className="exp-footer">
         <span>Source of truth: docs/game-expedition-alpha-source-of-truth.md</span>
-        <span>Состояние пока demo-only; редкие предметы и экономика в публичной альфе будут серверными.</span>
+        <span>{serverMode === 'server' ? 'Прогресс, энергия и серийные предметы подтверждаются API.' : 'Гостевой демо-режим не сохраняет экономически значимый прогресс.'}</span>
       </footer>
     </main>
   );

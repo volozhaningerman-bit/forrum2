@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#091014"/>
+  <g stroke="#11181c" stroke-width="8">
+    <g transform="translate(0 0)"><rect width="200" height="200" fill="#151d21"/><path d="M70 145 83 61l18-25 18 25 12 84-31 26z" fill="#52443b"/><path d="M82 64q18-26 37 0" stroke="#251f1c" stroke-width="14" fill="none"/></g>
+    <g transform="translate(200 0)"><rect width="200" height="200" fill="#142019"/><path d="M54 145 72 77l28-34 28 34 18 68-46 27z" fill="#355a4b"/><circle cx="100" cy="99" r="26" fill="#20352d"/></g>
+    <g transform="translate(400 0)"><rect width="200" height="200" fill="#111c26"/><path d="M55 145 72 67l28-35 28 35 17 78-45 27z" fill="#31557f"/><path d="M76 82h48" stroke="#78b9ff" stroke-width="7"/></g>
+    <g transform="translate(600 0)"><rect width="200" height="200" fill="#1d1425"/><path d="M54 145 72 64l28-37 28 37 18 81-46 29z" fill="#5d3b76"/><circle cx="100" cy="93" r="18" fill="#c47cff"/></g>
+    <g transform="translate(0 200)"><rect width="200" height="200" fill="#171d21"/><path d="M51 64 77 44l23 23 23-23 26 20-17 95H68z" fill="#5d5146"/><path d="M84 88h32v45H84z" fill="#3a312b"/></g>
+    <g transform="translate(200 200)"><rect width="200" height="200" fill="#122019"/><path d="M50 66 77 43l23 22 23-22 27 23-18 95H68z" fill="#315945"/><path d="M75 91h50" stroke="#5bbf84" stroke-width="8"/></g>
+    <g transform="translate(400 200)"><rect width="200" height="200" fill="#111b26"/><path d="M48 68 77 42l23 22 23-22 29 26-19 94H67z" fill="#31567d"/><path d="M80 76h40v73H80z" fill="#1b3452"/></g>
+    <g transform="translate(600 200)"><rect width="200" height="200" fill="#1c1425"/><path d="M47 68 77 39l23 23 23-23 30 29-20 95H67z" fill="#613e75"/><path d="M76 92h48" stroke="#d380ff" stroke-width="9"/></g>
+    <g transform="translate(0 400)"><rect width="200" height="200" fill="#171c20"/><path d="m70 156 57-109 14 9-57 109z" fill="#b7bec3"/><path d="m61 160 32-11 8 20-32 11z" fill="#6c4d31"/></g>
+    <g transform="translate(200 400)"><rect width="200" height="200" fill="#111f25"/><path d="m67 160 61-116 12 7-61 116z" fill="#6fd5ff"/><path d="m58 164 34-12 8 21-34 11z" fill="#365e7b"/></g>
+    <g transform="translate(400 400)"><rect width="200" height="200" fill="#1a1720"/><path d="M65 154h70l-17-86-18-24-18 24z" fill="#6b4b35"/><circle cx="100" cy="108" r="17" fill="#f4a64c"/></g>
+    <g transform="translate(600 400)"><rect width="200" height="200" fill="#15151f"/><path d="M100 35 157 72l-20 80-37 29-37-29-20-80z" fill="#2a455d"/><path d="m100 53 30 22-11 51-19 16-19-16-11-51z" fill="#7db8df"/></g>
+  </g>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 720">
+  <defs>
+    <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d9a27a"/><stop offset="1" stop-color="#a66d4e"/></linearGradient>
+    <linearGradient id="rag" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8d735d"/><stop offset="1" stop-color="#493d35"/></linearGradient>
+    <linearGradient id="pants" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4a4542"/><stop offset="1" stop-color="#272526"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="16" stdDeviation="10" flood-opacity=".42"/></filter>
+  </defs>
+  <ellipse cx="240" cy="675" rx="112" ry="24" fill="#000" opacity=".28"/>
+  <g filter="url(#shadow)">
+    <path d="M182 190c14-24 40-41 58-41 24 0 46 15 59 41l19 69-21 164-111-2-24-165z" fill="url(#rag)" stroke="#211c19" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M198 185 222 219l18-21 19 20 26-36 18 86-123-5z" fill="#a3896d" opacity=".85"/>
+    <path d="m183 257 28 16-21 136-38 126-31-15 35-148z" fill="url(#skin)" stroke="#2a211d" stroke-width="7" stroke-linejoin="round"/>
+    <path d="m297 258-28 16 19 136 39 126 31-15-36-149z" fill="url(#skin)" stroke="#2a211d" stroke-width="7" stroke-linejoin="round"/>
+    <path d="m183 408 114 1 35 220-57 2-33-142-29 142-61-2z" fill="url(#pants)" stroke="#1c1a1a" stroke-width="8" stroke-linejoin="round"/>
+    <path d="m168 609 59-3-4 54-72 1zM257 607l60 1 13 53-76-1z" fill="#3d3029" stroke="#1d1715" stroke-width="7"/>
+    <path d="m156 648 72-3-5 30-82 1zM254 645l76 3 9 29-88-2z" fill="#2b2421" stroke="#151313" stroke-width="6"/>
+    <ellipse cx="241" cy="123" rx="56" ry="64" fill="url(#skin)" stroke="#2b211d" stroke-width="8"/>
+    <path d="M182 122c3-65 37-92 71-89 26 3 53 23 62 62-19-17-38-20-60-12-22 8-39 7-73 39z" fill="#211a18"/>
+    <path d="M197 80c18-29 47-42 69-34l-9 18 24-8-4 24 22-6-15 28c-40-23-64-12-87 9z" fill="#2d211d"/>
+    <path d="M215 127q13-9 24 0M260 127q13-9 24 0" stroke="#37251f" stroke-width="6" stroke-linecap="round" fill="none"/>
+    <path d="M236 160q10 8 22 0" stroke="#6b3d2c" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <path d="m176 282 16 38 20-7-18 95-40 127-34-15 37-157zM305 282l-17 38-19-7 18 95 40 127 33-15-37-157z" fill="#b48766" opacity=".36"/>
+    <path d="M174 329c29 15 104 16 136-2" stroke="#3b2a22" stroke-width="14" stroke-linecap="round"/>
+    <rect x="221" y="320" width="42" height="30" rx="7" fill="#6f4e2d" stroke="#1f1713" stroke-width="6"/>
+    <path d="m190 220 28 28-16 37-30-12zM290 219l-29 29 15 37 33-14z" fill="#75604e"/>
+    <path d="M174 418 205 431l-17 35-29-17zM285 430l31-13 16 32-29 18z" fill="#1f1f21"/>
+  </g>
+</svg>
