@@ -1,37 +1,53 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520">
-  <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#4f88a0"/><stop offset=".52" stop-color="#e2a35c"/><stop offset="1" stop-color="#5c4132"/></linearGradient>
-    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#564234"/><stop offset="1" stop-color="#171719"/></linearGradient>
-    <radialGradient id="glow"><stop stop-color="#dffcff"/><stop offset=".22" stop-color="#4fdcff"/><stop offset=".58" stop-color="#166c8c"/><stop offset="1" stop-color="#07151b"/></radialGradient>
-  </defs>
-  <rect width="1200" height="520" fill="url(#sky)"/>
-  <circle cx="935" cy="116" r="58" fill="#ffe0a1" opacity=".92"/>
-  <path d="M0 311 88 270l102 21 110-76 112 59 124-101 85 56 108-66 130 95 116-39 135 68v223H0z" fill="#554538"/>
-  <path d="M0 364c178-39 304-19 438 16 184 49 314 11 436-22 118-32 220-31 326 6v156H0z" fill="url(#ground)"/>
-  <g fill="#2b2928" stroke="#171617" stroke-width="10">
-    <path d="M81 347v-151h92v151z"/><path d="M210 341v-198h122v198z"/><path d="M386 355v-119h99v119z"/><path d="M564 334v-209h93v209z"/>
-  </g>
-  <g fill="#1a1a1c">
-    <path d="M100 188h28v-90h17v90z"/><path d="M239 138h24V58h15v80z"/><path d="M592 122h26V42h17v80z"/>
-  </g>
-  <g stroke="#242326" stroke-width="12" fill="none">
-    <path d="M40 182h158M97 182 60 305M145 182l52 138"/>
-    <path d="M730 164h157M782 164l-58 171M842 164l56 171"/>
-  </g>
-  <g stroke="#4b4339" stroke-width="5" fill="none">
-    <path d="M54 183h121M744 165h128"/>
-    <path d="M72 202h91M760 186h100"/>
-  </g>
-  <g transform="translate(900 188)">
-    <path d="M0 168V63c0-45 34-75 76-75s77 30 77 75v105z" fill="#1c2a31" stroke="#0f171a" stroke-width="10"/>
-    <ellipse cx="76" cy="73" rx="44" ry="91" fill="url(#glow)"/>
-    <path d="M18 80h116M29 32h94M25 125h103" stroke="#405c66" stroke-width="10" opacity=".8"/>
-  </g>
-  <g fill="#393230">
-    <path d="m85 426 87-25 94 36-73 37z"/><path d="m320 437 92-36 109 47-91 39z"/><path d="m690 440 103-39 117 34-92 46z"/>
-  </g>
-  <g fill="#ab5c33" opacity=".55">
-    <rect x="239" y="245" width="18" height="76"/><rect x="275" y="255" width="17" height="66"/><rect x="592" y="191" width="18" height="78"/>
-  </g>
-  <rect width="1200" height="520" fill="none" stroke="#091013" stroke-width="24" opacity=".18"/>
+<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#2f718e"/><stop offset=".42" stop-color="#df9854"/><stop offset=".75" stop-color="#7d4d35"/><stop offset="1" stop-color="#2b2625"/></linearGradient>
+  <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#66503c"/><stop offset=".45" stop-color="#3a302b"/><stop offset="1" stop-color="#171719"/></linearGradient>
+  <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#786454"/><stop offset="1" stop-color="#342d2a"/></linearGradient>
+  <radialGradient id="reactor"><stop stop-color="#efffff"/><stop offset=".18" stop-color="#65e8ff"/><stop offset=".5" stop-color="#1888aa"/><stop offset="1" stop-color="#07181f"/></radialGradient>
+  <filter id="soft"><feGaussianBlur stdDeviation="8"/></filter>
+</defs>
+<rect width="1200" height="520" fill="url(#sky)"/>
+<circle cx="945" cy="102" r="61" fill="#ffe3a0"/>
+<circle cx="945" cy="102" r="96" fill="#ffd77c" opacity=".18" filter="url(#soft)"/>
+<!-- distant city -->
+<path d="M0 318 80 279l91 20 88-74 83 58 103-105 90 69 91-92 95 76 87-57 91 78 92-33 109 71v210H0z" fill="#55453a" opacity=".88"/>
+<g fill="#302b29">
+ <path d="M52 330V203h80v127z"/><path d="M154 330V148h107v182z"/><path d="M282 330V220h78v110z"/>
+ <path d="M387 330V170h92v160z"/><path d="M506 330V112h95v218z"/><path d="M620 330V198h87v132z"/>
+</g>
+<g fill="#1d1c1d">
+ <path d="M78 200h18V88h14v112z"/><path d="M183 145h23V47h15v98z"/><path d="M536 108h20V26h16v82z"/>
+</g>
+<!-- cranes -->
+<g stroke="#282627" stroke-width="11" fill="none">
+ <path d="M32 173h187M79 173 41 318M161 173l51 167M735 145h183M796 145l-62 203M866 145l59 203"/>
+</g>
+<g stroke="#a16f48" stroke-width="4" fill="none" opacity=".75"><path d="M43 174h159M748 146h155"/><path d="M66 195h117M768 168h118"/></g>
+<!-- foreground old medieval workshops -->
+<path d="M0 364c137-29 255-10 388 24 181 46 331 10 475-29 128-35 234-28 337 8v153H0z" fill="url(#ground)"/>
+<g stroke="#271e19" stroke-width="8" fill="url(#wall)">
+ <path d="M60 398v-111l73-47 83 47v111z"/><path d="M278 411v-133l85-58 90 58v133z"/>
+</g>
+<g fill="#d07a36"><rect x="101" y="321" width="28" height="48"/><rect x="347" y="319" width="31" height="54"/></g>
+<g fill="#231c19"><path d="m48 287 86-66 94 66z"/><path d="m266 279 97-76 103 76z"/></g>
+<!-- reactor relic -->
+<g transform="translate(904 165)">
+ <path d="M-20 191V77c0-56 42-92 96-92s97 36 97 92v114z" fill="#1a292f" stroke="#0c1417" stroke-width="12"/>
+ <ellipse cx="76" cy="78" rx="50" ry="104" fill="url(#reactor)"/>
+ <path d="M3 86h146M14 31h124M10 142h132" stroke="#4f6e78" stroke-width="11"/>
+ <path d="M39 -4v-33h74v33M28 191v31h96v-31" stroke="#1d282c" stroke-width="15"/>
+</g>
+<!-- rubble -->
+<g fill="#473a32" stroke="#2a221e" stroke-width="4">
+ <path d="m43 441 72-34 96 38-71 44z"/><path d="m224 459 80-42 91 37-75 50z"/>
+ <path d="m518 445 95-44 105 39-89 54z"/><path d="m740 456 88-35 94 37-77 43z"/>
+</g>
+<!-- tech debris -->
+<g fill="#31515d" stroke="#17272d" stroke-width="6">
+ <circle cx="485" cy="430" r="24"/><circle cx="485" cy="430" r="10" fill="#64d9f3"/>
+ <rect x="658" y="421" width="61" height="33" rx="6"/><path d="M669 433h37" stroke="#79d4e4" stroke-width="5"/>
+</g>
+<!-- banners -->
+<g fill="#9c4b31"><path d="M236 248h7v111h-7z"/><path d="m243 253 55 11-55 35z"/><path d="M474 201h7v124h-7z"/><path d="m481 207 50 10-50 33z"/></g>
+<rect width="1200" height="520" fill="none" stroke="#071013" stroke-width="22" opacity=".18"/>
 </svg>
