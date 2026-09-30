@@ -32,6 +32,7 @@ jobs:
       - run: node scripts/test-home-v39.mjs
       - run: node scripts/test-civilization-alpha.mjs
       - run: node scripts/test-expedition-alpha.mjs
+      - run: node scripts/test-expedition-alpha-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
