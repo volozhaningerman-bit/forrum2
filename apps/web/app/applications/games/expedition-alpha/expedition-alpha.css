@@ -1579,3 +1579,13 @@
   .exp-slots{grid-template-columns:repeat(4,1fr)!important}
   .exp-avatar{height:310px!important}
 }
+
+/* v0.6.1 interaction safety: decorative world art must never cover controls. */
+.exp-location-art,
+.exp-location-art::before,
+.exp-location-art::after,
+.exp-world-hero,
+.exp-world-hero *{
+  pointer-events:none!important;
+}
+.exp-raid,.exp-community{position:relative;z-index:3}
