@@ -49,7 +49,7 @@ const staticChecks = [
   ['five Rust Outskirts depths', gameSource.includes('Реакторная зона') && gameSource.includes('Ломовые дворы') && gameSource.includes('depthId')],
   ['Iron Shepherd raid join', gameSource.includes('Железный Пастырь') && gameSource.includes('raidJoined')],
   ['category and syndicate preview', gameSource.includes('Железный Герольд') && gameSource.includes('Ядро Ковчега')],
-  ['live-safe art pack referenced', cssSource.includes('/games/expedition-alpha/hero-base.svg') && cssSource.includes('/games/expedition-alpha/rust-outskirts.svg') && cssSource.includes('/games/expedition-alpha/iron-shepherd.svg') && cssSource.includes('/games/expedition-alpha/equipment-atlas.svg')],
+  ['live-safe art pack referenced', cssSource.includes('/games/expedition-alpha/hero-base.svg') && cssSource.includes('/games/expedition-alpha/rust-outskirts.svg') && cssSource.includes('/games/expedition-alpha/iron-shepherd.svg') && cssSource.includes('/games/expedition-alpha/equipment-atlas.svg')],\n  ['v0.6 reference composition', cssSource.includes('EXPEDITION ALPHA V0.6') && cssSource.includes('champion-herald-v06.svg') && cssSource.includes('ark-core-v06.svg')],
   ['true paper-doll layers wired', gameSource.includes('exp-gear exp-gear-cloak') && gameSource.includes('exp-gear exp-gear-mainhand') && cssSource.includes('.exp-avatar.has-gloves .exp-gear-gloves')],
   ['world hero uses live-safe art', gameSource.includes('exp-world-hero') && cssSource.includes('/games/expedition-alpha/hero-base.svg')],
   ['no civilization art dependency', !cssSource.includes('/games/civilization/')],
@@ -316,25 +316,32 @@ try {
   await page.goto('http://127.0.0.1:' + port + '/applications/games/expedition-alpha', { waitUntil: 'networkidle' });
   await page.getByText('серверный прогресс').waitFor();
 
-  const metrics = await page.evaluate(() => ({
-    width: innerWidth,
-    scrollWidth: document.documentElement.scrollWidth,
-    game: Boolean(document.querySelector('[data-testid="expedition-alpha"]')),
-    avatar: Boolean(document.querySelector('.exp-avatar-art')),
-    location: Boolean(document.querySelector('.exp-location-art')),
-    boss: Boolean(document.querySelector('.exp-boss-crop')),
-    avatarBg: getComputedStyle(document.querySelector('.exp-avatar-art')).backgroundImage,
-    locationBg: getComputedStyle(document.querySelector('.exp-location-art')).backgroundImage,
-    bossBg: getComputedStyle(document.querySelector('.exp-boss-crop')).backgroundImage,
-    bossDisplay: getComputedStyle(document.querySelector('.exp-boss-crop')).display,
-  }));
+  const metrics = await page.evaluate(() => {
+    const layout = document.querySelector('.exp-layout')?.getBoundingClientRect();
+    const location = document.querySelector('.exp-location-art')?.getBoundingClientRect();
+    return {
+      width: innerWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      game: Boolean(document.querySelector('[data-testid="expedition-alpha"]')),
+      avatar: Boolean(document.querySelector('.exp-avatar-art')),
+      location: Boolean(document.querySelector('.exp-location-art')),
+      boss: Boolean(document.querySelector('.exp-boss-crop')),
+      avatarBg: getComputedStyle(document.querySelector('.exp-avatar-art')).backgroundImage,
+      locationBg: getComputedStyle(document.querySelector('.exp-location-art')).backgroundImage,
+      bossBg: getComputedStyle(document.querySelector('.exp-boss-crop')).backgroundImage,
+      bossDisplay: getComputedStyle(document.querySelector('.exp-boss-crop')).display,
+      slots: document.querySelectorAll('.exp-slots button').length,
+      layoutHeight: layout?.height ?? 9999,
+      locationHeight: location?.height ?? 0,
+    };
+  });
   assert(metrics.game && metrics.avatar && metrics.location && metrics.boss, 'core visual surfaces missing');
   assert(metrics.avatarBg.includes('hero-base.svg'), 'hero art must render from live-safe SVG');
   assert(metrics.locationBg.includes('rust-outskirts.svg'), 'location art must render from live-safe SVG');
   assert(metrics.bossBg.includes('iron-shepherd.svg') && metrics.bossDisplay !== 'none', 'boss art must be visibly rendered');
   assert(metrics.scrollWidth <= metrics.width + 2, `horizontal overflow ${metrics.scrollWidth}/${metrics.width}`);
 
-  await page.screenshot({ path: output + '/expedition-alpha-v051-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v06-1720x900.png', fullPage: true });
 
   const raidJoin = page.getByRole('button', { name: 'Отправить персонажа' });
   await raidJoin.click();
@@ -359,10 +366,10 @@ try {
   assert.equal(gloveLayer.display === 'none', false, 'paper-doll glove layer must exist');
   assert(Number(gloveLayer.opacity) > 0.8, 'equipped gloves must visibly activate paper-doll layer');
 
-  await page.screenshot({ path: output + '/expedition-alpha-v051-loot-equipped-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v06-loot-equipped-1720x900.png', fullPage: true });
 
   await page.setViewportSize({ width: 1366, height: 768 });
-  await page.screenshot({ path: output + '/expedition-alpha-v051-1366x768.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v06-1366x768.png', fullPage: true });
   const mobileish = await page.evaluate(() => ({
     width: innerWidth,
     scrollWidth: document.documentElement.scrollWidth,
@@ -379,4 +386,4 @@ try {
   upstream.close();
 }
 
-console.log(`Expedition alpha v0.5.1 live-art checks passed. Item templates covered: ${itemCount}.`);
+console.log(`Expedition alpha v0.6 reference-led checks passed. Item templates covered: ${itemCount}.`);
