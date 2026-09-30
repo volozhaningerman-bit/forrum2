@@ -98,10 +98,10 @@ export function CommunityPanels({
     </section>
 
     <section className="forum-panel forum-popular-today">
-      <header><h2><PanelIcon kind="flame"/>Популярное сегодня</h2><Link href="/?tab=popular">Все →</Link></header>
+      <header><h2><PanelIcon kind="flame"/>{popularToday.isFallback ? 'Популярные темы' : 'Популярное сегодня'}</h2><Link href={popularToday.isFallback ? "/?tab=new" : "/?tab=popular"}>Все →</Link></header>
       {popularToday.items.length
         ? <>
-            {popularToday.isFallback && <p className="forum-popular-note">За 24 ч новых ответов нет · ниже общая статистика тем</p>}
+            {popularToday.isFallback && <p className="forum-popular-note">По просмотрам за всё время</p>}
             <ol>{popularToday.items.map((item,index)=><li key={item.slug}>
               <span className="forum-popular-rank">{index+1}</span>
               <Link href={`/p/${item.slug}`}>
