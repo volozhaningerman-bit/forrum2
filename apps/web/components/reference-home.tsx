@@ -74,13 +74,13 @@ function Categories({ items: sourceItems, selected }: { items: Community[]; sele
   const children = items.filter(item => item.parent?.slug === root.slug && !nextTrail.has(item.slug));
   const open = expanded.has(root.slug);
   return <div className="forum-category" key={root.slug} style={categoryStyle(root.slug, root.accentColor)}><div className={`forum-category-heading ${selected === root.slug ? 'is-active' : ''}`}>
-   <Link href={`/communities/${root.slug}`}><Icon name={categoryIcon(root.name)}/><span>{root.name.replace(/^FORRUM\b/i, '4rrum')}</span></Link>
+   <Link href={`/communities/${root.slug}`} title={root.name.replace(/^FORRUM\b/i, '4rrum')} aria-current={selected === root.slug ? 'page' : undefined}><Icon name={categoryIcon(root.name)}/><span>{root.name.replace(/^FORRUM\b/i, '4rrum')}</span></Link>
    <span className="forum-category-counts" title="Темы в разделе" aria-label={`Темы: ${root.publicationCount}`}><span>{formatCount(root.publicationCount)}</span></span>
    {!!children.length && <button className="forum-category-toggle" type="button" aria-label={`${open ? 'Свернуть' : 'Развернуть'}: ${root.name}`} aria-expanded={open} onClick={() => toggle(root.slug)}><Icon name="chevron"/></button>}
   </div>{open && !!children.length && <div className="forum-category-children">{children.map(child => renderCategory(child, nextTrail))}</div>}</div>;
  }
  return <nav className="forum-categories" aria-label="Категории"><div className="forum-category-title"><p className="forum-eyebrow">Разделы форума</p></div>
-  <div className="forum-category forum-home-category"><div className="forum-category-heading is-active"><Link href="/"><Icon name="home"/><span>Главная</span></Link></div></div>
+  <div className="forum-category forum-home-category"><div className="forum-category-heading is-active"><Link href="/" aria-current={!selected ? 'page' : undefined}><Icon name="home"/><span>Главная</span></Link></div></div>
   {(roots.length ? roots : items).map(root => renderCategory(root))}
   <div className="forum-category forum-app-category"><div className="forum-category-heading"><Link href="/applications"><Icon name="game"/><span>Приложения</span></Link><button className="forum-category-toggle" type="button" aria-label={`${expanded.has('@apps') ? 'Свернуть' : 'Развернуть'}: Приложения`} aria-expanded={expanded.has('@apps')} onClick={()=>toggle('@apps')}><Icon name="chevron"/></button></div>{expanded.has('@apps') && <div className="forum-category-children">{["AI-инструменты","Игры","Эксперименты","Neural Lab"].map((name,i)=><Link key={name} href={`/applications#section-${i}`}>{name}</Link>)}</div>}</div>
   <Link className="forum-all-communities" href="/communities">Все сообщества →</Link>
@@ -170,6 +170,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
  const sidebarRef = useRef<HTMLElement>(null);
  const filterDetailsRef = useRef<HTMLDetailsElement>(null);
  const moreRequest = useRef<AbortController | null>(null);
+ const skipInitialDefaultFeed = useRef(true);
  const [pendingTopics, setPendingTopics] = useState<PublicationCardData[] | null>(null);
  function choose(nextTab: Tab, nextCommunity: string) {
   const params = new URLSearchParams(window.location.search);
@@ -199,6 +200,14 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
  }, [sidebar]);
  useEffect(() => {
   if (demo || !ready) return;
+  // The server already rendered the default newest feed. Avoid immediately
+  // downloading the same list again after hydration; filtered/deep-linked
+  // views still fetch as soon as their URL state is restored.
+  if (skipInitialDefaultFeed.current && tab === 'new' && !community && retry === 0) {
+    skipInitialDefaultFeed.current = false;
+    return;
+  }
+  skipInitialDefaultFeed.current = false;
   moreRequest.current?.abort(); setLoadingMore(false);setMoreError('');
   const controller = new AbortController(); setPendingTopics(null);setLoading(true);setError('');
   api<PublicationCardData[]>(feedUrl,{signal:controller.signal}).then(rows => {if(!controller.signal.aborted){setTopics(rows.slice(0,20));setHasMore(rows.length>20);setOffset(20);}}).catch(() => {if(!controller.signal.aborted)setError('Не удалось загрузить обсуждения. Попробуйте ещё раз.');}).finally(()=>{if(!controller.signal.aborted)setLoading(false);});
@@ -220,7 +229,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
  const visible = demo ? topics.filter(item=>item.format==='TOPIC' && (tab!=='unanswered'||!item.commentCount) && (!community||item.community.slug===community)) : topics;
  const news = initialData.announcements?.slice(0, 4) ?? [];
  const important = [...news.slice(0,2), ...topics.filter(item => item.format === 'TOPIC' && !news.some(row => row.id === item.id))].slice(0,2);
- return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v68" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
+ return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v69" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
   <aside ref={sidebarRef} className={`forum-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="Навигация форума">
    <button type="button" className="forum-sidebar-close" onClick={()=>setSidebar(false)} aria-label="Закрыть меню"><Icon name="close"/></button>
    <Categories items={communities} selected={community}/>
@@ -237,7 +246,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
   </aside>
   {sidebar && <button type="button" className="forum-sidebar-backdrop" aria-label="Закрыть навигацию" onClick={() => setSidebar(false)}/>}
   <header className="forum-topbar">
-   <Link className="forum-brand" href="/" aria-label="4rrum — главная"><img src="/forrum-assets/brand-4rrum.svg" alt="" aria-hidden="true" width="320" height="90" fetchPriority="high"/><span className="forum-brand-test-label" aria-hidden="true">4RRUM</span></Link>
+   <Link className="forum-brand" href="/" aria-label="4rrum — главная"><img src="/forrum-assets/brand-4rrum.svg" alt="" aria-hidden="true" width="320" height="90" decoding="async"/><span className="forum-brand-test-label" aria-hidden="true">4RRUM</span></Link>
    <button type="button" className="forum-menu" aria-label={sidebar ? 'Закрыть меню' : 'Открыть меню'} aria-expanded={sidebar} onClick={() => setSidebar(value => !value)}><Icon name="menu"/></button>
    <nav className="forum-primary" aria-label="Основная навигация">{mainLinks.map(([href,label]) => <Link key={href} href={href} title={href === '/digital-services' ? 'Цифровые инструменты и сервисы' : href === '/services' ? 'Услуги специалистов' : undefined} aria-current={href === '/' ? 'page' : undefined}>{label}</Link>)}</nav>
    <HeaderSearch inputRef={searchInput}/>
