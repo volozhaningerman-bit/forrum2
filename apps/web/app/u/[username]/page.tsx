@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import type { CSSProperties } from 'react';
 import { notFound } from 'next/navigation';
 import {
@@ -10,8 +11,36 @@ import {
 } from './inventory-panel';
 import { serverApi } from '@/lib/server-api';
 import type { Me } from '@/lib/types';
+import { canonicalPath, metadataText } from '@/lib/public-metadata';
 
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}): Promise<Metadata> {
+  const { username } = await params;
+  const data = await serverApi<Profile>(`/users/${encodeURIComponent(username)}`);
+  if (!data) return { title: 'Пользователь не найден', robots: { index: false, follow: false } };
+
+  const title = metadataText(data.displayName, username, 80);
+  const description = metadataText(data.bio, `Профиль @${data.username} на 4rrum.`, 180);
+  const url = canonicalPath('u', username);
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'profile',
+      url,
+      title,
+      description,
+      images: data.avatarUrl ? [{ url: data.avatarUrl, alt: data.displayName }] : undefined,
+    },
+    twitter: { card: data.avatarUrl ? 'summary_large_image' : 'summary', title, description, images: data.avatarUrl ? [data.avatarUrl] : undefined },
+  };
+}
 
 type InventoryStyle = CSSProperties & {
   '--inventory-nick-color'?: string;

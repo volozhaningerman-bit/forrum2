@@ -37,6 +37,13 @@ expect('apps/api/src/main.ts', /helmet\(/, 'Helmet middleware is missing');
 
 expect('apps/web/components/reference-home.tsx', /width="1600" height="420" fetchPriority="high"/, 'hero intrinsic dimensions/LCP hint are missing');
 expect('apps/web/components/reference-home.tsx', /aria-live="polite"/, 'dynamic forum feed live region is missing');
+expect('apps/web/app/p/[slug]/page.tsx', /generateMetadata/, 'publication metadata is missing');
+expect('apps/web/app/communities/[slug]/page.tsx', /generateMetadata/, 'community metadata is missing');
+expect('apps/web/app/u/[username]/page.tsx', /generateMetadata/, 'profile metadata is missing');
+expect('apps/web/app/events/[id]/page.tsx', /generateMetadata/, 'event metadata is missing');
+expect('apps/web/next.config.ts', /X-Robots-Tag/, 'private route noindex header is missing');
+requireFile('apps/web/app/.well-known/security.txt/route.ts');
+requireFile('apps/web/app/global-error.tsx');
 
 if (failures.length) {
   console.error('Site audit regression check failed:\n' + failures.map(item => '- ' + item).join('\n'));

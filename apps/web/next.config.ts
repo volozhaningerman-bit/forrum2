@@ -37,6 +37,23 @@ const noStoreHeaders = [
   { key: 'Cloudflare-CDN-Cache-Control', value: 'no-store' },
 ];
 
+const privateRouteHeaders = [
+  ...noStoreHeaders,
+  { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
+];
+
+const privateRoutes = [
+  '/admin/:path*',
+  '/messages/:path*',
+  '/notifications/:path*',
+  '/settings/:path*',
+  '/wallet/:path*',
+  '/saved/:path*',
+  '/subscriptions/:path*',
+  '/interactions/:path*',
+  '/portfolio/:path*',
+];
+
 const nextConfig: NextConfig = {
   output: 'standalone',
   poweredByHeader: false,
@@ -49,6 +66,7 @@ const nextConfig: NextConfig = {
       { source: '/(.*)', headers: securityHeaders },
       { source: '/', headers: noStoreHeaders },
       { source: '/api/build-info', headers: noStoreHeaders },
+      ...privateRoutes.map((source) => ({ source, headers: privateRouteHeaders })),
     ];
   },
 };
