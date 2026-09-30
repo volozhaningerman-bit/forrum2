@@ -282,9 +282,9 @@ try {
   await page.getByRole('button', { name: 'Забрать добычу' }).waitFor({ timeout: 8000 });
   await page.getByRole('button', { name: 'Забрать добычу' }).click();
 
-  const drop = page.getByRole('button', { name: /Перчатки Сервомастера/ });
+  const drop = page.getByRole('button', { name: /Перчатки Сервомастера/ }).first();
   await drop.waitFor();
-  await drop.first().click();
+  await drop.click();
   await page.getByText('Перчатки Сервомастера').first().waitFor();
 
   await page.screenshot({ path: output + '/expedition-alpha-v02-loot-equipped-1720x900.png', fullPage: true });
