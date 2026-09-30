@@ -13,14 +13,14 @@ const ENERGY_REGEN_MINUTES = 10;
 
 const itemTemplates = [
   { id: 'exp_head_hood', slug: 'collector-hood', name: 'Капюшон Собирателя', slot: 'HEAD', rarity: 'COMMON', circulationCap: 5000, power: 2, visualKey: 'hood', minDepth: 1 },
-  { id: 'exp_chest_guard', slug: 'old-guard-shell', name: 'Панцирь Старой Стражи', slot: 'CHEST', rarity: 'UNCOMMON', circulationCap: 2500, power: 5, visualKey: 'chest', minDepth: 1 },
+  { id: 'exp_chest_guard', slug: 'old-guard-shell', name: 'Панцирь Старой Стражи', slot: 'CHEST', rarity: 'UNCOMMON', circulationCap: 2500, power: 5, visualKey: 'chest-guard', minDepth: 1 },
   { id: 'exp_gloves_servo', slug: 'servo-master-gloves', name: 'Перчатки Сервомастера', slot: 'GLOVES', rarity: 'UNCOMMON', circulationCap: 4000, power: 4, visualKey: 'gloves', minDepth: 1 },
   { id: 'exp_boots_iron', slug: 'iron-step-boots', name: 'Сапоги Железного Шага', slot: 'FEET', rarity: 'UNCOMMON', circulationCap: 3000, power: 4, visualKey: 'boots', minDepth: 1 },
   { id: 'exp_shoulders_border', slug: 'border-shoulders', name: 'Наплечники Рубежа', slot: 'SHOULDERS', rarity: 'RARE', circulationCap: 650, power: 7, visualKey: 'shoulders', minDepth: 2 },
-  { id: 'exp_cloak_blue', slug: 'blue-banner-cloak', name: 'Плащ Синего Знамени', slot: 'CLOAK', rarity: 'RARE', circulationCap: 500, power: 8, visualKey: 'cloak', minDepth: 2 },
-  { id: 'exp_sword_contour', slug: 'last-contour-blade', name: 'Клинок Последнего Контура', slot: 'MAIN_HAND', rarity: 'RARE', circulationCap: 400, power: 11, visualKey: 'sword', minDepth: 3 },
+  { id: 'exp_cloak_blue', slug: 'blue-banner-cloak', name: 'Плащ Синего Знамени', slot: 'CLOAK', rarity: 'RARE', circulationCap: 500, power: 8, visualKey: 'cloak-blue', minDepth: 2 },
+  { id: 'exp_sword_contour', slug: 'last-contour-blade', name: 'Клинок Последнего Контура', slot: 'MAIN_HAND', rarity: 'RARE', circulationCap: 400, power: 11, visualKey: 'sword-blue', minDepth: 3 },
   { id: 'exp_shield_barrier', slug: 'barrier-shield', name: 'Щит Заслона', slot: 'OFF_HAND', rarity: 'RARE', circulationCap: 300, power: 9, visualKey: 'shield', minDepth: 3 },
-  { id: 'exp_relic_beacon', slug: 'beacon-heart', name: 'Сердце Маяка', slot: 'RELIC_1', rarity: 'EPIC', circulationCap: 60, power: 14, visualKey: 'relic', minDepth: 4 },
+  { id: 'exp_relic_beacon', slug: 'beacon-heart', name: 'Сердце Маяка', slot: 'RELIC_1', rarity: 'EPIC', circulationCap: 60, power: 14, visualKey: 'relic-epic', minDepth: 4 },
   { id: 'exp_head_consul', slug: 'rust-consul-mask', name: 'Маска Ржавого Консула', slot: 'HEAD', rarity: 'EPIC', circulationCap: 80, power: 13, visualKey: 'consul-mask', minDepth: 5 },
 ] as const;
 
@@ -87,6 +87,14 @@ export class ExpeditionService {
     const rewardSeed = randomInt(1, 2_000_000_000);
 
     const run = await this.prisma.$transaction(async (tx) => {
+      const pendingInside = await tx.expeditionRun.findFirst({
+        where: { profileId: synced.id, status: { in: ['ACTIVE', 'READY'] } },
+        select: { id: true },
+      });
+      if (pendingInside) {
+        throw new ConflictException('Сначала завершите текущую экспедицию');
+      }
+
       const changed = await tx.expeditionProfile.updateMany({
         where: { id: synced.id, energy: { gte: cost } },
         data: { energy: { decrement: cost } },
@@ -106,7 +114,7 @@ export class ExpeditionService {
           status: 'ACTIVE',
         },
       });
-    });
+    }, { isolationLevel: 'Serializable' });
 
     return { ok: true, run };
   }
@@ -130,7 +138,11 @@ export class ExpeditionService {
     });
     if (!candidates.length) throw new NotFoundException('Для глубины не настроена добыча');
 
-    const picked = candidates[Math.abs(run.rewardSeed) % candidates.length];
+    const startIndex = Math.abs(run.rewardSeed) % candidates.length;
+    const orderedCandidates = [
+      ...candidates.slice(startIndex),
+      ...candidates.slice(0, startIndex),
+    ];
     const xpGain = 30 + run.depth * 10;
     const resources = {
       scrap: 8 + run.depth * 5,
@@ -139,24 +151,31 @@ export class ExpeditionService {
     };
 
     const result = await this.prisma.$transaction(async (tx) => {
-      const serialRows = await tx.$queryRawUnsafe<Array<{ issuedCount: number }>>(
-        `UPDATE "ExpeditionItemTemplate"
-         SET "issuedCount" = "issuedCount" + 1, "updatedAt" = NOW()
-         WHERE "id" = $1
-           AND "issuedCount" < "circulationCap"
-         RETURNING "issuedCount"`,
-        picked.id,
-      );
-      const serial = serialRows[0]?.issuedCount;
-      if (!serial) {
-        throw new ConflictException('Тираж этого предмета уже исчерпан');
+      let reserved: { templateId: string; serialNumber: number } | null = null;
+      for (const candidate of orderedCandidates) {
+        const serialRows = await tx.$queryRawUnsafe<Array<{ issuedCount: number }>>(
+          `UPDATE "ExpeditionItemTemplate"
+           SET "issuedCount" = "issuedCount" + 1, "updatedAt" = NOW()
+           WHERE "id" = $1
+             AND "issuedCount" < "circulationCap"
+           RETURNING "issuedCount"`,
+          candidate.id,
+        );
+        const serialNumber = serialRows[0]?.issuedCount;
+        if (serialNumber) {
+          reserved = { templateId: candidate.id, serialNumber };
+          break;
+        }
+      }
+      if (!reserved) {
+        throw new ConflictException('Тираж доступной добычи для этой глубины исчерпан');
       }
 
       const item = await tx.expeditionItemInstance.create({
         data: {
-          templateId: picked.id,
+          templateId: reserved.templateId,
           ownerId: actorId,
-          serialNumber: serial,
+          serialNumber: reserved.serialNumber,
           sourceKey: `expedition:${run.id}:primary`,
         },
         include: { template: true },
@@ -176,6 +195,9 @@ export class ExpeditionService {
           level: nextLevel,
           xp: nextXp,
           unlockedDepth: Math.min(5, Math.max(current.unlockedDepth, run.depth + 1)),
+          scrap: { increment: resources.scrap },
+          cloth: { increment: resources.cloth },
+          oldParts: { increment: resources.oldParts },
         },
       });
 
@@ -312,6 +334,9 @@ export class ExpeditionService {
       maxEnergy: number;
       unlockedDepth: number;
       basePower: number;
+      scrap: number;
+      cloth: number;
+      oldParts: number;
     },
     run: {
       id: string;
@@ -350,6 +375,11 @@ export class ExpeditionService {
         maxEnergy: profile.maxEnergy,
         unlockedDepth: profile.unlockedDepth,
         power: profile.basePower + profile.level * 3 + equippedPower,
+        resources: {
+          scrap: profile.scrap,
+          cloth: profile.cloth,
+          oldParts: profile.oldParts,
+        },
       },
       run: run ? {
         ...run,
