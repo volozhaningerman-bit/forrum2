@@ -31,8 +31,6 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: node --experimental-strip-types --experimental-loader ./scripts/local-ts-loader.mjs --test scripts/home-display.test.ts
       - run: node scripts/test-home-v39.mjs
-        env:
-          UPDATE_HOME_SNAPSHOTS: '1'
       - run: node scripts/test-civilization-alpha.mjs
       - run: node scripts/test-expedition-alpha.mjs
       - uses: actions/upload-artifact@v4
