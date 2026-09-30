@@ -18,8 +18,10 @@ import { HomeWebVitals } from './home/web-vitals';
 import type { Community, HomeInitialData, HomeOverview } from './home/types';
 export type { HomeInitialData } from './home/types';
 
-type Glyph = 'home' | 'work' | 'media' | 'service' | 'search' | 'plus' | 'bell' | 'comment' | 'eye' | 'bookmark' | 'close' | 'chevron' | 'menu' | 'filter' | 'code' | 'flame' | 'game' | 'growth' | 'community' | 'pin' | 'paperclip' | 'monitor' | 'chip' | 'cube' | 'wifi' | 'image' | 'document' | 'megaphone' | 'calendar' | 'stats';
+type Glyph = 'home' | 'work' | 'media' | 'service' | 'search' | 'plus' | 'bell' | 'comment' | 'eye' | 'bookmark' | 'close' | 'chevron' | 'menu' | 'filter' | 'code' | 'flame' | 'game' | 'growth' | 'community' | 'pin' | 'paperclip' | 'monitor' | 'chip' | 'cube' | 'wifi' | 'image' | 'document' | 'megaphone' | 'calendar' | 'stats' | 'cart' | 'archive';
 const paths: Record<Glyph, string> = {
+ cart:'M2 3h3l3 13h11l3-9H6M9 21h.01M18 21h.01',
+ archive:'M4 7h16v14H4ZM3 3h18v4H3ZM9 11h6',
  monitor:'M3 4h18v12H3ZM8 21h8M12 16v5',
  chip:'M7 7h10v10H7ZM9 2v5M15 2v5M9 17v5M15 17v5M2 9h5M2 15h5M17 9h5M17 15h5',
  cube:'m12 2 9 5v10l-9 5-9-5V7ZM3 7l9 5 9-5M12 12v10',
@@ -54,6 +56,9 @@ function Icon({ name }: { name: Glyph }) {
  return <svg data-ui-icon="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]}/></svg>;
 }
 function categoryIcon(name: string): Glyph {
+ if (/архив/i.test(name)) return 'archive';
+ if (/торгов|магазин/i.test(name)) return 'cart';
+ if (/общени/i.test(name)) return 'comment';
  if (/новост|правил/i.test(name)) return 'document';
  if (/желез|компьютер|hardware/i.test(name)) return 'chip';
  if (/интернет|сет|сервер/i.test(name) && !/проект/i.test(name)) return 'wifi';
@@ -237,7 +242,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
  const visible = demo ? topics.filter(item=>item.format==='TOPIC' && (tab!=='unanswered'||!item.commentCount) && (!community||item.community.slug===community)) : topics;
  const news = initialData.announcements?.slice(0, 4) ?? [];
  const important = [...news.slice(0,2), ...topics.filter(item => item.isOfficial && item.pinnedUntil && Date.parse(item.pinnedUntil)>Date.now() && !news.some(row => row.id === item.id))].slice(0,2);
- return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v73" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
+ return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v74" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
   {!demo && <HomeWebVitals/>}
   <aside ref={sidebarRef} className={`forum-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="Навигация форума">
    <button type="button" className="forum-sidebar-close" onClick={()=>setSidebar(false)} aria-label="Закрыть меню"><Icon name="close"/></button>

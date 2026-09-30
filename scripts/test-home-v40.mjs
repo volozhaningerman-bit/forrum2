@@ -170,6 +170,9 @@ try {
  await page.getByRole('link',{name:'Войти, чтобы сохранить или пожаловаться'}).waitFor();
  assert.equal(await page.getByRole('button',{name:'Пожаловаться',exact:true}).count(),0);
  await page.keyboard.press('Escape');
+ await page.getByRole('heading',{name:'Популярные темы',exact:true}).waitFor();
+ assert.equal(await page.locator('.forum-popular-today header>a').getAttribute('href'),'/?tab=new');
+ assert.equal(await page.locator('.forum-popular-note').textContent(),'По просмотрам за всё время');
  await page.setViewportSize({width:800,height:600});
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
  assert.deepEqual(errors,[]);console.log('V49: approved monochrome homepage, topic table, menus, ranking, popular today and responsive checks passed');
