@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { api } from '../../../../lib/api';
 
 type Rarity = 'common' | 'uncommon' | 'rare' | 'epic';
 type Slot =
@@ -17,6 +18,72 @@ type Item = {
   power: number;
   visual: string;
 };
+
+
+type ServerItem = {
+  id: string;
+  name: string;
+  slot: string;
+  rarity: string;
+  serialNumber: number;
+  circulation: number;
+  power: number;
+  visualKey: string;
+  equipped: boolean;
+};
+
+type ServerState = {
+  profile: {
+    level: number;
+    xp: number;
+    energy: number;
+    maxEnergy: number;
+    unlockedDepth: number;
+    power: number;
+  };
+  run: null | {
+    id: string;
+    depth: number;
+    energyCost: number;
+    status: string;
+    startedAt: string;
+    readyAt: string;
+    secondsLeft: number;
+  };
+  inventory: ServerItem[];
+};
+
+const serverSlotMap: Record<string, Slot> = {
+  HEAD: 'head',
+  NECK: 'neck',
+  SHOULDERS: 'shoulders',
+  CLOAK: 'cloak',
+  CHEST: 'chest',
+  WRISTS: 'wrists',
+  GLOVES: 'gloves',
+  BELT: 'belt',
+  LEGS: 'legs',
+  FEET: 'feet',
+  RING_1: 'ring1',
+  RING_2: 'ring2',
+  RELIC_1: 'relic1',
+  RELIC_2: 'relic2',
+  MAIN_HAND: 'mainHand',
+  OFF_HAND: 'offHand',
+};
+
+function fromServerItem(item: ServerItem): Item {
+  return {
+    id: item.id,
+    name: item.name,
+    slot: serverSlotMap[item.slot] ?? 'relic2',
+    rarity: item.rarity.toLowerCase() as Rarity,
+    serial: item.serialNumber,
+    circulation: item.circulation,
+    power: item.power,
+    visual: item.visualKey,
+  };
+}
 
 type Depth = {
   id: number;
@@ -87,6 +154,62 @@ export function ExpeditionAlphaGame() {
   const [equipped, setEquipped] = useState<Partial<Record<Slot, Item>>>({});
   const [run, setRun] = useState<'idle' | 'away' | 'returned'>('idle');
   const [lastDrop, setLastDrop] = useState<Item | null>(null);
+  const [serverMode, setServerMode] = useState(false);
+  const [runId, setRunId] = useState<string | null>(null);
+  const [modeNotice, setModeNotice] = useState('Проверяем серверное состояние…');
+
+  useEffect(() => {
+    let alive = true;
+    let readyTimer: ReturnType<typeof window.setTimeout> | null = null;
+
+    async function load() {
+      try {
+        const state = await api<ServerState>('/expedition/me');
+        if (!alive) return;
+        applyServerState(state);
+        setServerMode(true);
+        setModeNotice('Серверный профиль');
+        if (state.run) {
+          setRunId(state.run.id);
+          if (state.run.status === 'READY' || state.run.secondsLeft <= 0) {
+            setRun('returned');
+          } else {
+            setRun('away');
+            readyTimer = window.setTimeout(() => {
+              if (alive) setRun('returned');
+            }, state.run.secondsLeft * 1000);
+          }
+        }
+      } catch {
+        if (!alive) return;
+        setServerMode(false);
+        setModeNotice('Demo-режим без входа');
+      }
+    }
+
+    void load();
+    return () => {
+      alive = false;
+      if (readyTimer) window.clearTimeout(readyTimer);
+    };
+  }, []);
+
+  function applyServerState(state: ServerState) {
+    setEnergy(state.profile.energy);
+    setXp(state.profile.xp);
+    setLevel(state.profile.level);
+    setUnlockedDepth(state.profile.unlockedDepth);
+
+    const normalized = state.inventory.map(fromServerItem);
+    setInventory(normalized);
+
+    const nextEquipped: Partial<Record<Slot, Item>> = {};
+    state.inventory.filter((item) => item.equipped).forEach((item) => {
+      const normalizedItem = fromServerItem(item);
+      nextEquipped[normalizedItem.slot] = normalizedItem;
+    });
+    setEquipped(nextEquipped);
+  }
 
   const depth = depths.find((entry) => entry.id === selectedDepth) ?? depths[0];
   const equippedPower = useMemo(
@@ -95,16 +218,52 @@ export function ExpeditionAlphaGame() {
   );
   const power = 10 + level * 3 + equippedPower;
 
-  function sendExpedition() {
+  async function sendExpedition() {
     if (run !== 'idle' || energy < depth.energy || depth.id > unlockedDepth) return;
+    setLastDrop(null);
+
+    if (serverMode) {
+      try {
+        const result = await api<{ ok: true; run: { id: string; readyAt: string } }>('/expedition/runs', {
+          method: 'POST',
+          body: JSON.stringify({ depth: depth.id }),
+        });
+        setEnergy((value) => value - depth.energy);
+        setRunId(result.run.id);
+        setRun('away');
+        const ms = Math.max(0, new Date(result.run.readyAt).getTime() - Date.now());
+        window.setTimeout(() => setRun('returned'), ms);
+        return;
+      } catch (error) {
+        setModeNotice(error instanceof Error ? error.message : 'Ошибка экспедиции');
+        return;
+      }
+    }
+
     setEnergy((value) => value - depth.energy);
     setRun('away');
-    setLastDrop(null);
     window.setTimeout(() => setRun('returned'), 1800);
   }
 
-  function collectReturn() {
+  async function collectReturn() {
     if (run !== 'returned') return;
+
+    if (serverMode && runId) {
+      try {
+        const result = await api<{ reward: { item: ServerItem } }>(`/expedition/runs/${runId}/claim`, { method: 'POST' });
+        const drop = fromServerItem(result.reward.item);
+        setLastDrop(drop);
+        const fresh = await api<ServerState>('/expedition/me');
+        applyServerState(fresh);
+        setRunId(null);
+        setRun('idle');
+        return;
+      } catch (error) {
+        setModeNotice(error instanceof Error ? error.message : 'Не удалось забрать добычу');
+        return;
+      }
+    }
+
     const drop = expeditionDrops[(selectedDepth - 1) % expeditionDrops.length];
     setInventory((items) => items.some((item) => item.id === drop.id) ? items : [...items, drop]);
     setLastDrop(drop);
@@ -120,7 +279,17 @@ export function ExpeditionAlphaGame() {
     setRun('idle');
   }
 
-  function equip(item: Item) {
+  async function equip(item: Item) {
+    if (serverMode) {
+      try {
+        const fresh = await api<ServerState>(`/expedition/items/${item.id}/equip`, { method: 'POST' });
+        applyServerState(fresh);
+        return;
+      } catch (error) {
+        setModeNotice(error instanceof Error ? error.message : 'Не удалось надеть предмет');
+        return;
+      }
+    }
     setEquipped((current) => ({ ...current, [item.slot]: item }));
   }
 
@@ -130,7 +299,7 @@ export function ExpeditionAlphaGame() {
         <div>
           <span className="exp-kicker">4rrum · hidden alpha</span>
           <h1>Экспедиция</h1>
-          <p>Рабочее название · визуальный и игровой vertical slice</p>
+          <p>Рабочее название · визуальный и игровой vertical slice · <strong className={serverMode ? 'exp-server-ok' : 'exp-server-demo'}>{modeNotice}</strong></p>
         </div>
         <div className="exp-hud">
           <span><b>⚡ {energy}/12</b><small>энергия</small></span>
