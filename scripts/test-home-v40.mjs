@@ -207,7 +207,7 @@ try {
  assert(page.url().includes('/login?next='),'Guest curator application requires sign-in');
  await page.goto('http://127.0.0.1:'+port+'/p/topic-0',{waitUntil:'domcontentloaded'});
  await page.getByRole('link',{name:'Войти и ответить',exact:true}).waitFor();
- assert.equal(await page.locator('.reply-composer textarea').count(),0,'Guest should not type a reply that cannot be sent');
+ assert.equal(await page.locator('.reply-composer [role="textbox"]').count(),0,'Guest should not type a reply that cannot be sent');
  guest=false;
  await page.goto('http://127.0.0.1:'+port+'/communities/curators',{waitUntil:'networkidle'});
  await page.getByRole('combobox').selectOption('category-0');
@@ -218,11 +218,11 @@ try {
  assert.equal(curatorApplications,1);
  await page.screenshot({path:output+'/alpha-curator.png'});
  await page.goto('http://127.0.0.1:'+port+'/p/topic-0',{waitUntil:'domcontentloaded'});
- await page.locator('.reply-composer textarea').fill('Проверяем отправку одного ответа без повторов.');
+ await page.locator('.reply-composer [role="textbox"]').fill('Проверяем отправку одного ответа без повторов.');
  await page.getByRole('button',{name:'Отправить ответ',exact:true}).click();
  await page.getByRole('button',{name:'Отправляем…',exact:true}).waitFor();
  assert.equal(await page.getByRole('button',{name:'Отправляем…',exact:true}).isDisabled(),true);
- await page.waitForFunction(()=>document.querySelector('.reply-composer textarea')?.value==='');
+ await page.waitForFunction(()=>document.querySelector('.reply-composer [role="textbox"]')?.textContent==='');
  assert.equal(replies,1);
  failFeed=true;
  await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'domcontentloaded'});
