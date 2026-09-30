@@ -334,6 +334,11 @@ try {
       slots: document.querySelectorAll('.exp-slots button').length,
       layoutHeight: layout?.height ?? 9999,
       locationHeight: location?.height ?? 0,
+      characterRect: (() => { const r=document.querySelector('.exp-character')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
+      centerRect: (() => { const r=document.querySelector('.exp-center')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
+      inventoryRect: (() => { const r=document.querySelector('.exp-inventory')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
+      raidRect: (() => { const r=document.querySelector('.exp-raid')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
+      locationRect: (() => { const r=document.querySelector('.exp-location')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
     };
   });
   assert(metrics.game && metrics.avatar && metrics.location && metrics.boss, 'core visual surfaces missing');
