@@ -345,6 +345,7 @@ try {
   await drop.waitFor();
   await drop.click();
   await page.getByText('Перчатки Сервомастера').first().waitFor();
+  await page.locator('.exp-avatar.has-gloves').waitFor({ timeout: 5000 });
   const gloveLayer = await page.locator('.exp-gear-gloves').evaluate((node) => ({
     opacity: getComputedStyle(node).opacity,
     display: getComputedStyle(node).display,
