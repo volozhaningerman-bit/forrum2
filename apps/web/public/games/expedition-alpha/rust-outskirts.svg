@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#4f88a0"/><stop offset=".52" stop-color="#e2a35c"/><stop offset="1" stop-color="#5c4132"/></linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#564234"/><stop offset="1" stop-color="#171719"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#dffcff"/><stop offset=".22" stop-color="#4fdcff"/><stop offset=".58" stop-color="#166c8c"/><stop offset="1" stop-color="#07151b"/></radialGradient>
+  </defs>
+  <rect width="1200" height="520" fill="url(#sky)"/>
+  <circle cx="935" cy="116" r="58" fill="#ffe0a1" opacity=".92"/>
+  <path d="M0 311 88 270l102 21 110-76 112 59 124-101 85 56 108-66 130 95 116-39 135 68v223H0z" fill="#554538"/>
+  <path d="M0 364c178-39 304-19 438 16 184 49 314 11 436-22 118-32 220-31 326 6v156H0z" fill="url(#ground)"/>
+  <g fill="#2b2928" stroke="#171617" stroke-width="10">
+    <path d="M81 347v-151h92v151z"/><path d="M210 341v-198h122v198z"/><path d="M386 355v-119h99v119z"/><path d="M564 334v-209h93v209z"/>
+  </g>
+  <g fill="#1a1a1c">
+    <path d="M100 188h28v-90h17v90z"/><path d="M239 138h24V58h15v80z"/><path d="M592 122h26V42h17v80z"/>
+  </g>
+  <g stroke="#242326" stroke-width="12" fill="none">
+    <path d="M40 182h158M97 182 60 305M145 182l52 138"/>
+    <path d="M730 164h157M782 164l-58 171M842 164l56 171"/>
+  </g>
+  <g stroke="#4b4339" stroke-width="5" fill="none">
+    <path d="M54 183h121M744 165h128"/>
+    <path d="M72 202h91M760 186h100"/>
+  </g>
+  <g transform="translate(900 188)">
+    <path d="M0 168V63c0-45 34-75 76-75s77 30 77 75v105z" fill="#1c2a31" stroke="#0f171a" stroke-width="10"/>
+    <ellipse cx="76" cy="73" rx="44" ry="91" fill="url(#glow)"/>
+    <path d="M18 80h116M29 32h94M25 125h103" stroke="#405c66" stroke-width="10" opacity=".8"/>
+  </g>
+  <g fill="#393230">
+    <path d="m85 426 87-25 94 36-73 37z"/><path d="m320 437 92-36 109 47-91 39z"/><path d="m690 440 103-39 117 34-92 46z"/>
+  </g>
+  <g fill="#ab5c33" opacity=".55">
+    <rect x="239" y="245" width="18" height="76"/><rect x="275" y="255" width="17" height="66"/><rect x="592" y="191" width="18" height="78"/>
+  </g>
+  <rect width="1200" height="520" fill="none" stroke="#091013" stroke-width="24" opacity=".18"/>
+</svg>
