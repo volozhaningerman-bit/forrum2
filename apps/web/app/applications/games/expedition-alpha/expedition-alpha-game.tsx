@@ -277,6 +277,25 @@ export function ExpeditionAlphaGame() {
     }
   }, [now, run, serverMode]);
 
+  useEffect(() => {
+    if (serverMode !== 'server' || !run || now < run.endsAt) return;
+    let cancelled = false;
+
+    loadExpeditionState()
+      .then((state) => {
+        if (!cancelled) applyServerState(state);
+      })
+      .catch((cause) => {
+        if (!cancelled) {
+          setApiError(cause instanceof Error ? cause.message : 'Не удалось обновить экспедицию');
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [applyServerState, now, run, serverMode]);
+
   const depth = depths.find((entry) => entry.id === selectedDepth) ?? depths[0];
   const equippedPower = useMemo(
     () => Object.values(equipped).reduce((sum, item) => sum + (item?.power ?? 0), 0),
