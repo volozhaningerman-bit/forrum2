@@ -46,6 +46,7 @@ const checks = [
   ['Iron Shepherd visible', game.includes('Железный Пастырь')],
   ['shared raid API wired', game.includes("'/expedition/raid'") && game.includes("'/expedition/raid/join'") && service.includes('joinRaid') && service.includes('raidState')],
   ['raid schema present', schema.includes('model ExpeditionRaid') && schema.includes('model ExpeditionRaidParticipant')],
+  ['raid resolution and rewards', schema.includes('bossPower') && schema.includes('resolvedAt') && service.includes('resolveDueRaids') && service.includes('rewardMetal')],
   ['category and syndicate roadmap visible', game.includes('Железный Герольд') && game.includes('Ядро Ковчега')],
   ['server authority documented', spec.includes('Server authority') && spec.includes('localStorage')],
   ['office styling excluded', spec.includes('not office / corporate styling')],
