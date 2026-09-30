@@ -1,17 +1,10 @@
 name: Deploy FORRUM API to FirstVDS
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "apps/api/**"
-      - "packages/contracts/**"
-      - "Dockerfile.api"
-      - "docker-compose.yml"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/deploy-firstvds-api.yml"
+  workflow_run:
+    workflows: [Homepage checks]
+    branches: [main]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -23,10 +16,21 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
     name: Deploy live API
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      VERIFIED_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.VERIFIED_SHA }}
+      - name: Reject a superseded source commit
+        run: |
+          set -euo pipefail
+          remote_sha=$(git ls-remote origin refs/heads/main | cut -f1)
+          test "$remote_sha" = "$VERIFIED_SHA"
       - name: Prepare SSH
         env:
           SSH_PRIVATE_KEY_B64: ${{ secrets.FORRUM_API_SSH_KEY_B64 }}

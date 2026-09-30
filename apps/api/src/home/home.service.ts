@@ -86,6 +86,14 @@ function readOnlineRecord(value: unknown) {
 export class HomeService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async publicIndex() {
+    const [communities,topics] = await Promise.all([
+      this.prisma.community.findMany({where:{status:'ACTIVE'},select:{slug:true,updatedAt:true},take:5000}),
+      this.prisma.publication.findMany({where:{status:PublicationStatus.PUBLISHED,format:PublicationFormat.TOPIC,community:{status:'ACTIVE'}},select:{slug:true,updatedAt:true},orderBy:{updatedAt:'desc'},take:10000}),
+    ]);
+    return {communities,topics};
+  }
+
   async ranking(period: 'week' | 'month' | 'all', mode: 'activity' | 'likes') {
     const since = period === 'week'
       ? new Date(Date.now() - 7 * 86400000)

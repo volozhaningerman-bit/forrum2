@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Header, Query, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import type { User } from '../generated/prisma/client.js';
 import { OptionalUser } from '../auth/current-user.js';
@@ -9,6 +9,10 @@ import { HomeService } from './home.service.js';
 @Controller('home')
 export class HomeController {
   constructor(private readonly service: HomeService) {}
+
+  @Get('index')
+  @Header('Cache-Control','public, max-age=300')
+  publicIndex() { return this.service.publicIndex(); }
 
   @Get('ranking')
   ranking(@Query('period') period = 'week', @Query('mode') mode = 'activity') {

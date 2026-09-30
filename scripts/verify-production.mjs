@@ -48,7 +48,7 @@ while (Date.now() < deadline) {
     const homeHtml = String(home.body || '');
     const hasReference = homeHtml.includes(`data-home-reference="${expectedReference}"`);
     const hasRevision = !expectedRevision || homeHtml.includes(`data-home-revision="${expectedRevision}"`);
-    const shaMatches = !requireExactSha || deployedSha === expectedSha || deployedSha === 'unknown';
+    const shaMatches = !requireExactSha || deployedSha === expectedSha;
 
     console.log(
       JSON.stringify({

@@ -7,6 +7,7 @@ const root = new URL('../', import.meta.url).pathname;
 const output = process.env.HOME_TEST_OUTPUT || root + 'test-results/home-reference';
 await mkdir(output, { recursive: true });
 await copyFile(root + 'docs/design-reference/home-approved.png', output + '/approved.png');
+const fixtureNow=Date.parse('2026-09-30T12:00:00Z');
 const names = ['Алексей Петров', 'Мария Кузнецова', 'Иван Соколов', 'Дмитрий Волков', 'Елена Смирнова', 'Артём Орлов', 'Кира Белова', 'Михаил Серов', 'Лина Романова', 'Олег Миронов'];
 const categories = ['Разработка', 'Backend', 'Дизайн', 'Бизнес', 'Карьера', 'AI и данные', 'Маркетинг', 'Общество', 'Разное'];
 const communities = categories.map((name, i) => ({ id: String(i), slug: 'category-' + i, name, parent: i === 1 ? { slug: 'category-0', name: categories[0] } : null, subscriberCount: 120, publicationCount: 5, onlineCount: 3, description: '' }));
@@ -14,7 +15,7 @@ communities.push({id:'retired',slug:'workshop',name:'Мастерская',paren
 communities[2].parent={slug:'workshop',name:'Мастерская'};
 const titles = ['Стоит ли переходить на Rust в продакшене?', 'Как составить сильное IT-резюме?', 'Лучшие практики для тёмных интерфейсов', 'Идея: платформа для поиска технических сооснователей', 'Как меняется работа с нейросетями'];
 const excerpts = ['Команда обсуждает реальный опыт миграции критичных сервисов на Rust. Какие подводные камни, что с экосистемой, стоит ли игра свеч?', 'Делимся примерами, разбираем ошибки, обсуждаем, что действительно работает при поиске работы в текущих реалиях.', 'Собрали коллекцию подходов, примеров и рекомендаций по созданию комфортных тёмных тем.', 'Обсуждаем концепцию сервиса, который помогает находить партнёров по навыкам и интересам. Нужна ли такая платформа?', 'Пробуем новые инструменты, делимся первыми впечатлениями. Что нового и как это меняет правила игры?'];
-const topics = titles.map((title, i) => ({ id: String(i), slug: 'topic-' + i, title, format: 'TOPIC', type: 'DISCUSSION', excerpt: excerpts[i], createdAt: new Date(Date.now() - (i + 1) * 7200000).toISOString(), author: { username: 'person-' + i, displayName: names[i], avatarUrl: null }, community: communities[[1,4,2,3,5][i]], commentCount: [47,29,18,35,0][i], viewCount: [2100,1600,980,1200,3400][i], reactionCount: [128,93,76,64,51][i], viewerReaction: null, isBookmarked: false, tags: [{ id: 'tag-' + i, slug: 'tag-' + i, label: ['rust','советы','интерфейсы','стартап','opensource'][i] }] }));
+const topics = titles.map((title, i) => ({ id: String(i), slug: 'topic-' + i, title, format: 'TOPIC', type: 'DISCUSSION', excerpt: excerpts[i], createdAt: new Date(fixtureNow - (i + 1) * 7200000).toISOString(), author: { username: 'person-' + i, displayName: names[i], avatarUrl: null }, community: communities[[1,4,2,3,5][i]], commentCount: [47,29,18,35,0][i], viewCount: [2100,1600,980,1200,3400][i], reactionCount: [128,93,76,64,51][i], viewerReaction: null, isBookmarked: false, tags: [{ id: 'tag-' + i, slug: 'tag-' + i, label: ['rust','советы','интерфейсы','стартап','opensource'][i] }] }));
 topics[0].lastComment = {id:'reply-1',excerpt:'Мы начали с одного сервиса. Что вы хотите ускорить?',createdAt:new Date().toISOString(),author:topics[1].author};
 const pulse = {activeTopics:[{slug:topics[0].slug,title:topics[0].title,replyCount:3}],recentReplies:[{id:'reply-1',excerpt:'Мы начали с одного сервиса. Что вы хотите ускорить?',createdAt:new Date().toISOString(),author:topics[1].author,publication:{slug:topics[0].slug,title:topics[0].title,community:topics[0].community}}]};
 const people = names.map((displayName, i) => ({ username: 'person-' + i, displayName, score: 3000-i*180, topicCount: Math.max(1,10-i), commentCount: Math.max(1,20-i), reactionCount: Math.max(1,30-i) }));
@@ -40,9 +41,9 @@ const upstream = createServer(async (req,res) => {
  else if(url.pathname.endsWith('/report')){let body='';for await(const chunk of req)body+=chunk;assert(JSON.parse(body).reason.length>=5);reports++;data={ok:true};}
  else if(url.pathname==='/v1/portfolio')data=[{id:'project-1',title:'Лаборатория промптов',summary:'Открытые эксперименты сообщества',interactionCount:3,updatedAt:new Date().toISOString(),coverUrl:'/images/home/tools-v35.webp'}];
  else if(url.pathname==='/v1/events')data=[
- {id:'far',title:'Позднее событие',startsAt:new Date(Date.now()+86400000*10).toISOString()},
- {id:'near',title:'Ближайшее событие',startsAt:new Date(Date.now()+86400000).toISOString()},
- {id:'cancelled',title:'Отменённое событие',status:'CANCELLED',startsAt:new Date(Date.now()+3600000).toISOString()}];
+ {id:'far',title:'Позднее событие',startsAt:new Date(fixtureNow+86400000*10).toISOString()},
+ {id:'near',title:'Ближайшее событие',startsAt:new Date(fixtureNow+86400000).toISOString()},
+ {id:'cancelled',title:'Отменённое событие',status:'CANCELLED',startsAt:new Date(fixtureNow+3600000).toISOString()}];
  else if (url.pathname === '/v1/announcements') data = announcements;
  else if (url.pathname === '/v1/auth/me' && guest) {status=401;data={message:'Войдите'};}
  else if (url.pathname === '/v1/auth/me') data = { user: { id:'viewer',username:'viewer',displayName:'Алексей Петров',emailVerified:true,onboardingCompleted:true,role:admin?'OWNER':'USER' } };
@@ -66,9 +67,15 @@ try {
  browser=await chromium.launch({headless:true,...(portable ? {executablePath:process.env.CHROMIUM_EXECUTABLE || await portable.executablePath(),args:portable.args.filter(arg => !['--disable-web-security','--allow-running-insecure-content','--use-gl=angle','--use-angle=swiftshader','--enable-unsafe-swiftshader'].includes(arg)).concat('--disable-gpu')} : {})});
  const context=await browser.newContext({viewport:{width:1600,height:1000},deviceScaleFactor:1});
  await context.addCookies([{name:'forrum_test',value:'viewer',domain:'127.0.0.1',path:'/'}]);
- const page=await context.newPage();const errors=[];page.on('pageerror',error=>errors.push(error.message));
+ const page=await context.newPage();await page.clock.setFixedTime(new Date(fixtureNow));const errors=[];page.on('pageerror',error=>errors.push(error.message));
  await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'networkidle'});
  await page.locator('.forum-topic').first().waitFor();
+ await page.evaluate(()=>document.fonts.ready);
+ await page.screenshot({path:output+'/initial.png'});
+ const {default:AxeBuilder}=await import('@axe-core/playwright');
+ const accessibility=await new AxeBuilder({page}).include('.forum-home').withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
+ await writeFile(output+'/axe.json',JSON.stringify(accessibility.violations,null,2));
+ assert.deepEqual(accessibility.violations.filter(v=>['critical','serious'].includes(v.impact)).map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)})),[],'Runtime accessibility violations');
  assert.equal(await page.locator('.forum-topic').count(),20);
  assert.equal(await page.locator('.forum-right>.forum-panel').count(),2);
  assert.equal(await page.locator('.forum-topbar .forum-primary a').count(),5);
@@ -97,12 +104,13 @@ try {
  assert.equal(await page.locator('.forum-categories').getByText('Дизайн',{exact:true}).count(),1);
  await page.getByRole('heading',{name:'Популярное сегодня',exact:true}).waitFor();
  assert.deepEqual((await page.locator('.forum-right>.forum-panel h2').allTextContents()).map(value=>value.replace(/[♛◆]/g,'')),['Рейтинг пользователей','Популярное сегодня']);
- assert.equal(await page.locator('.forum-popular-today li').count(),5);
+ assert.equal(await page.locator('.forum-panel-footer').getAttribute('href'),'/users');
+ assert.equal(await page.locator('.forum-popular-today li').count(),1,'Only topics with replies in the last 24h belong to the live popular panel');
  const heroBox=await page.locator('.forum-search-hero').boundingBox();
  assert(heroBox && heroBox.height>=160 && heroBox.height<=163,`Hero must stay compact, got ${heroBox?.height}`);
- assert.equal(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(8, 9, 10)');
+ assert.equal(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(8, 10, 11)');
  assert.equal((await page.locator('.forum-brand').textContent())?.replace(/\s/g,''),'4RRUM');
- assert.equal(await page.locator('.forum-hero-copy h1').evaluate(el=>getComputedStyle(el).color),'rgb(255, 255, 255)');
+ assert.equal(await page.locator('.forum-hero-copy h1').evaluate(el=>getComputedStyle(el).color),'rgb(241, 243, 244)');
  assert.equal(await page.locator('[aria-label*="светлую тему"],[aria-label*="тёмную тему"]').count(),0);
  assert.deepEqual(await page.locator('.forum-primary a').allTextContents(),['Главная','Сообщества','Приложения','Сервисы','Услуги']);
  assert.equal(await page.getByRole('search').count(),1);
@@ -117,12 +125,12 @@ try {
  const beforeHover=await page.locator('.forum-topic').first().boundingBox();
  await page.locator('.forum-topic').first().hover(); await page.waitForTimeout(160);
  const afterHover=await page.locator('.forum-topic').first().boundingBox();
- assert(afterHover.width>beforeHover.width,'Topic hover should subtly scale the row');
+ assert.deepEqual(afterHover,beforeHover,'Hover must not move or scale the row');
  assert.equal(await page.getByRole('button',{name:'Новые',exact:true}).getAttribute('aria-pressed'),'true');
  assert(requests.some(r=>r.path==='/v1/feed'&&r.cookie?.includes('forrum_test=viewer')));
  const first=page.locator('.forum-topic').first(),more=first.getByRole('button',{name:/Действия с темой/});
  await more.click();await page.keyboard.press('Escape');assert.equal(await more.getAttribute('aria-expanded'),'false');assert(await more.evaluate(el=>el===document.activeElement));
- await more.click();await first.getByRole('button',{name:'В избранное',exact:true}).click();await first.getByText('Добавлено в избранное',{exact:true}).waitFor();assert(saved);assert.equal(await first.locator('.forum-saved-dot').count(),1);
+ await more.click();await first.getByRole('button',{name:'В избранное',exact:true}).click();await first.getByText('Добавлено в избранное',{exact:true}).waitFor({timeout:5000}).catch(async error=>{console.log('Bookmark notice:',await first.locator('.forum-action-notice').textContent());throw error;});assert(saved);assert.equal(await first.locator('.forum-saved-dot').count(),1);
  await more.click();await first.getByRole('button',{name:'Убрать из избранного',exact:true}).click();await first.getByText('Убрано из избранного',{exact:true}).waitFor();assert(!saved);assert.equal(await first.locator('.forum-saved-dot').count(),0);
  failBookmark=true;await more.click();await first.getByRole('button',{name:'В избранное',exact:true}).click();await first.getByText('Войдите, чтобы сохранить тему',{exact:true}).waitFor();failBookmark=false;
  await page.keyboard.press('Escape');await more.click();await first.getByRole('button',{name:'Пожаловаться',exact:true}).click();await page.getByRole('dialog').getByLabel('Что нарушено?').fill('Спам и реклама без маркировки');await page.getByRole('button',{name:'Отправить жалобу',exact:true}).click();await first.getByText('Жалоба отправлена модераторам',{exact:true}).waitFor();assert.equal(reports,1);
@@ -136,6 +144,7 @@ try {
    await page.setViewportSize({width,height:width===1648?926:1000});await page.waitForTimeout(100);
    const size=await page.evaluate(()=>({w:innerWidth,scroll:document.documentElement.scrollWidth}));if(size.scroll>size.w+1)console.log(await page.evaluate(()=>Array.from(document.querySelectorAll('body *')).filter(el=>{const r=el.getBoundingClientRect();return r.width&&r.right>innerWidth+1}).slice(0,15).map(el=>({tag:el.tagName,cls:el.className,width:el.getBoundingClientRect().width,right:el.getBoundingClientRect().right}))));assert(size.scroll<=size.w+1,`${theme} ${width}: overflow ${size.scroll}`);
    if(width<=760){const tabsFit=await page.locator('.forum-tabs').evaluate(el=>el.scrollWidth<=el.clientWidth+1);assert(tabsFit,`Filters must fit at ${width}px`);}
+   if(width===390){const mobileAxe=await new AxeBuilder({page}).include('.forum-home').withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();await writeFile(output+'/axe-mobile.json',JSON.stringify(mobileAxe.violations,null,2));assert.deepEqual(mobileAxe.violations.filter(v=>['critical','serious'].includes(v.impact)).map(v=>v.id),[]);}
    if([1648,1600,390].includes(width)){await page.evaluate(()=>{window.scrollTo({top:0,behavior:"instant"});document.activeElement?.blur();});await page.screenshot({path:`${output}/${theme}-${width}.png`});}
   }
  }
@@ -158,4 +167,23 @@ try {
  await page.setViewportSize({width:800,height:600});
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
  assert.deepEqual(errors,[]);console.log('V49: approved monochrome homepage, topic table, menus, ranking, popular today and responsive checks passed');
+ await page.setViewportSize({width:1672,height:941});
+ await page.goto('http://127.0.0.1:'+port+'/preview/home',{waitUntil:'domcontentloaded'});
+ await page.locator('.forum-topic').first().waitFor();
+ await page.locator('.auth-actions').waitFor();
+ await page.waitForTimeout(300);
+ await page.evaluate(()=>document.fonts.ready);
+ const boxes=await page.evaluate(()=>Object.fromEntries(['.forum-search-hero','.forum-sidebar','.forum-right','.forum-important','.forum-feed-toolbar','.forum-topic'].map(selector=>{const r=document.querySelector(selector).getBoundingClientRect();return [selector,{x:r.x,y:r.y,width:r.width,height:r.height}]})));
+ assert(Math.abs(boxes['.forum-search-hero'].x-314)<=3);
+ assert(Math.abs(boxes['.forum-search-hero'].width-974)<=5);
+ assert(Math.abs(boxes['.forum-right'].x-1307)<=3);
+ assert(Math.abs(boxes['.forum-feed-toolbar'].y-487)<=8);
+ assert(boxes['.forum-topic'].height>=60 && boxes['.forum-topic'].height<=72);
+ await writeFile(output+'/reference-geometry.json',JSON.stringify(boxes,null,2));
+ await page.screenshot({path:output+'/reference-preview.png'});
+ const {checkHomeSnapshot}=await import('./home-visual-check.mjs');
+ await checkHomeSnapshot(output+'/reference-preview.png',root+'docs/design-reference/home-implemented-desktop.png',output,process.env.UPDATE_HOME_SNAPSHOTS==='1');
+ await page.setViewportSize({width:390,height:844});
+ await page.screenshot({path:output+'/reference-mobile.png'});
+ await checkHomeSnapshot(output+'/reference-mobile.png',root+'docs/design-reference/home-implemented-mobile.png',output,process.env.UPDATE_HOME_SNAPSHOTS==='1');
 } finally {await browser?.close();web.kill('SIGTERM');upstream.close();}
