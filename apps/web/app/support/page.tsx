@@ -1,4 +1,12 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+export const metadata: Metadata = {
+  title: 'Поддержка',
+  description: 'Помощь по аккаунту, публикациям, модерации и работе 4rrum.',
+  alternates: { canonical: '/support' },
+  openGraph: { url: '/support', title: 'Поддержка', description: 'Помощь по аккаунту, публикациям, модерации и работе 4rrum.' },
+};
+
 
 export default function SupportPage() {
   return (
