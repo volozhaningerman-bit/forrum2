@@ -25,7 +25,8 @@
     "validate:ux": "node scripts/ux-check.mjs",
     "validate:a11y": "node scripts/accessibility-check.mjs",
     "test:home": "node scripts/test-home-v40.mjs",
-    "validate:site": "node scripts/site-audit-check.mjs"
+    "validate:site": "node scripts/site-audit-check.mjs",
+    "test:expedition": "node scripts/test-expedition-alpha.mjs"
   },
   "devDependencies": {
     "typescript": "5.9.3",
