@@ -3508,3 +3508,46 @@ body:has(.forum-home[data-home-reference="v49"]) {
     border-radius:0!important;
   }
 }
+
+
+/* v72 tree interaction correction: preserve the approved V57 contract.
+   The name navigates; the rest of the row toggles the branch. */
+@media (min-width:1451px) {
+  .forum-home[data-home-reference="v49"] .forum-category-heading {
+    display:flex!important;
+    position:relative!important;
+    align-items:center!important;
+    padding-right:0!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-category-heading > a {
+    position:relative!important;
+    z-index:2!important;
+    display:flex!important;
+    grid-column:auto!important;
+    width:fit-content!important;
+    max-width:calc(100% - 70px)!important;
+    padding-right:0!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-category-counts {
+    position:relative!important;
+    z-index:2!important;
+    grid-column:auto!important;
+    flex:0 0 28px!important;
+    width:28px!important;
+    margin-left:auto!important;
+    pointer-events:none!important;
+  }
+  .forum-home[data-home-reference="v49"] .forum-category-heading > .forum-category-toggle {
+    position:absolute!important;
+    inset:0!important;
+    z-index:1!important;
+    width:100%!important;
+    height:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+    display:flex!important;
+    justify-content:flex-end!important;
+    align-items:center!important;
+    padding:0 4px!important;
+  }
+}
