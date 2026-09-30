@@ -28,6 +28,7 @@ export default function Applications() {
         <p>Игры, инструменты и эксперименты внутри 4rrum.</p>
       </header>
 
+      <div className="applications-grid">
       <article className={styles.featured}>
         <div className={styles.featuredArt} aria-hidden="true" />
         <div className={styles.featuredCopy}>
@@ -62,6 +63,8 @@ export default function Applications() {
             <small>Приложений пока нет</small>
           </article>
         ))}
+      </div>
+
       </div>
 
       <div className={styles.footerAction}>
