@@ -868,3 +868,53 @@
 @media(prefers-reduced-motion:reduce){
   .exp-world-hero-base{animation:none}
 }
+
+
+/* Expedition alpha v0.5.1 — live art render recovery.
+   The raster upload in v0.5 was truncated on GitHub, so the browser received
+   tiny unusable WebP files. Use the dedicated SVG masters until the raster
+   originals are committed as real binary blobs. This must never render blank. */
+.exp-avatar-art{
+  background-image:url('/games/expedition-alpha/hero-base.svg')!important;
+  background-repeat:no-repeat!important;
+  background-size:contain!important;
+  background-position:center bottom!important;
+}
+.exp-location-art{
+  background:
+    linear-gradient(180deg,rgba(5,10,13,.01) 0%,rgba(5,10,13,.03) 44%,rgba(5,10,13,.72) 100%),
+    url('/games/expedition-alpha/rust-outskirts.svg') center 52%/cover no-repeat!important;
+}
+.exp-location-art::before{display:none!important}
+.exp-location-art::after{
+  display:block!important;
+  background:
+    linear-gradient(90deg,rgba(4,8,10,.06),transparent 48%,rgba(4,8,10,.02)),
+    linear-gradient(0deg,rgba(4,8,10,.46),transparent 46%)!important;
+}
+.exp-world-hero-base{
+  background-image:url('/games/expedition-alpha/hero-base.svg')!important;
+  background-repeat:no-repeat!important;
+  background-position:center bottom!important;
+  background-size:contain!important;
+}
+.exp-raid-art{
+  background:
+    radial-gradient(circle at 50% 45%,rgba(255,132,35,.18),transparent 40%),
+    linear-gradient(180deg,#2d1b13,#0b1114)!important;
+}
+.exp-boss-crop{
+  display:block!important;
+  position:absolute!important;
+  inset:4px!important;
+  background-image:url('/games/expedition-alpha/iron-shepherd.svg')!important;
+  background-repeat:no-repeat!important;
+  background-position:center bottom!important;
+  background-size:contain!important;
+  filter:saturate(1.08) contrast(1.04) drop-shadow(0 18px 14px rgba(0,0,0,.44))!important;
+}
+.exp-avatar-art,
+.exp-world-hero-base,
+.exp-boss-crop{
+  image-rendering:auto;
+}
