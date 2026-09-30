@@ -29,6 +29,7 @@ jobs:
       - run: npm run validate:a11y
       - run: npm run validate:site
       - run: npx playwright install --with-deps chromium
+      - run: node --experimental-strip-types --experimental-loader ./scripts/local-ts-loader.mjs --test scripts/home-display.test.ts
       - run: node scripts/test-home-v39.mjs
       - run: node scripts/test-civilization-alpha.mjs
       - run: node scripts/test-expedition-alpha.mjs

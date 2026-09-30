@@ -1,5 +1,6 @@
 import { type NextRequest } from 'next/server';
 import { resolveApiBase } from '@/lib/api-base';
+import { allowedRequestOrigin } from '@/lib/request-origin';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -82,6 +83,9 @@ async function proxy(
   request: NextRequest,
   context: RouteContext,
 ) {
+  if (!['GET','HEAD','OPTIONS'].includes(request.method) && !allowedRequestOrigin(request.headers,request.nextUrl.origin)) {
+    return Response.json({message:'Источник запроса не разрешён'},{status:403});
+  }
   const { path = [] } = await context.params;
   const base = resolveApiBase();
 

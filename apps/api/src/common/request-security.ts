@@ -23,7 +23,9 @@ export function requestSecurity(options: { allowedOrigin: string }) {
 
     if (request.path === '/v1/health') { next(); return; }
     const now = Date.now();
-    const key = `${request.ip}:${request.path}`;
+    // A shared route budget prevents rotating publication slugs from bypassing throttling.
+    const budget = /\/v1\/auth\/(login|register|resend-verification|password-reset)/.test(request.path) ? 'auth' : request.path === '/v1/media' ? 'media' : 'general';
+    const key = `${request.ip}:${budget}`;
     const current = windows.get(key);
     const bucket = !current || current.resetAt <= now ? { count: 0, resetAt: now + 60_000 } : current;
     bucket.count += 1;

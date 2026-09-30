@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import './home-v51.css';
 import './home-alpha.css';
 import {
   HomeDashboard,
@@ -27,7 +26,7 @@ async function publicApi<T>(path: string) {
   const controller = new AbortController();
   const timeout = setTimeout(
     () => controller.abort(),
-    12_000,
+    4_000,
   );
 
   try {
