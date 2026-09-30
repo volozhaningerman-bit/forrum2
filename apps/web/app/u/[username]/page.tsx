@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+import { cache } from 'react';
 import type { CSSProperties } from 'react';
 import { notFound } from 'next/navigation';
 import {
@@ -10,6 +12,24 @@ import {
 } from './inventory-panel';
 import { serverApi } from '@/lib/server-api';
 import type { Me } from '@/lib/types';
+
+const loadProfile = cache((username: string) =>
+  serverApi<Profile>(`/users/${encodeURIComponent(username)}`),
+);
+
+export async function generateMetadata({ params }: { params: Promise<{ username: string }> }): Promise<Metadata> {
+  const { username } = await params;
+  const data = await loadProfile(username);
+  if (!data) return { title: 'Пользователь не найден', robots: { index: false, follow: false } };
+  const description = (data.bio?.trim() || `Профиль ${data.displayName} на 4rrum. Публикации, проекты и активность пользователя.`).slice(0, 180);
+  const canonical = `/u/${encodeURIComponent(username)}`;
+  return {
+    title: data.displayName,
+    description,
+    alternates: { canonical },
+    openGraph: { url: canonical, title: data.displayName, description, images: data.avatarUrl ? [data.avatarUrl] : undefined },
+  };
+}
 
 export const dynamic = 'force-dynamic';
 
@@ -50,7 +70,7 @@ export default async function ProfilePage({
 }) {
   const { username } = await params;
   const [data, inventory, me] = await Promise.all([
-    serverApi<Profile>(`/users/${encodeURIComponent(username)}`),
+    loadProfile(username),
     serverApi<PublicInventory>(
       `/inventory/users/${encodeURIComponent(username)}`,
     ),

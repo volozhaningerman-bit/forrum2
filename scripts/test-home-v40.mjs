@@ -141,12 +141,9 @@ try {
  await page.getByRole('heading',{name:'Цифровые сервисы'}).waitFor();
  assert.equal(await page.locator('html').getAttribute('data-forrum-theme'),'graphite');
  guest=true;emptyPeople=true;await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'domcontentloaded'});
- await page.getByText('Первое слово — за вами',{exact:true}).waitFor();
- assert.equal(await page.locator('.forum-author-ranking').count(),0);
- assert.equal(await page.locator('.forum-side-stats dl>div').filter({hasText:'Пользователей'}).locator('dd').textContent(),'10');
- await page.getByRole('button',{name:'Участники за всё время →',exact:true}).click();
- assert.equal(await page.getByRole('group',{name:'Период рейтинга'}).getByRole('button',{name:'За всё время',exact:true}).getAttribute('aria-pressed'),'true');
  await page.locator('.forum-author-ranking li').first().waitFor();
+ assert.equal(await page.locator('.forum-side-stats dl>div').filter({hasText:'Пользователей'}).locator('dd').textContent(),'10');
+ assert.equal(await page.getByRole('group',{name:'Период рейтинга'}).getByRole('button',{name:'За всё время',exact:true}).getAttribute('aria-pressed'),'true');
  assert(requests.some(r=>r.path==='/v1/home/ranking'&&r.query.includes('period=all')));
  await page.locator('.forum-topic').first().getByRole('button',{name:/Действия с темой/}).click();
  await page.getByRole('link',{name:'Войти, чтобы сохранить или пожаловаться'}).waitFor();

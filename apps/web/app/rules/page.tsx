@@ -1,4 +1,12 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+export const metadata: Metadata = {
+  title: 'Правила',
+  description: 'Правила общения, публикаций и модерации на 4rrum.',
+  alternates: { canonical: '/rules' },
+  openGraph: { url: '/rules', title: 'Правила', description: 'Правила общения, публикаций и модерации на 4rrum.' },
+};
+
 
 export default function RulesPage() {
   return (
