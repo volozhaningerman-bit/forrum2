@@ -110,6 +110,17 @@ function dateLabel(value: string) {
   }).format(new Date(value));
 }
 
+function PublicationTime({ value, prefix = '' }: { value: string; prefix?: string }) {
+  const [local, setLocal] = useState(false);
+  useEffect(() => setLocal(true), []);
+  const valid = Number.isFinite(Date.parse(value));
+  if (!valid) return <time>—</time>;
+  // The first client render must match SSR even with different time zones/ICU data.
+  const iso = new Date(value).toISOString();
+  const initial = `${iso.slice(8,10)}.${iso.slice(5,7)}.${iso.slice(0,4)} ${iso.slice(11,16)} UTC`;
+  return <time dateTime={value}>{prefix}{local ? dateLabel(value) : initial}</time>;
+}
+
 // FORRUM_TOPIC_PAGE_FRAME_V15_4
 // FORRUM_TOPIC_REPLY_EDITOR_V15_6
 export function PublicationClient({
@@ -418,9 +429,7 @@ export function PublicationClient({
                   @{item.author.username}
                 </Link>
                 <span aria-hidden="true">·</span>
-                <time dateTime={item.createdAt}>
-                  {dateLabel(item.createdAt)}
-                </time>
+                <PublicationTime value={item.createdAt}/>
                 <span aria-hidden="true">·</span>
                 <span>{item.viewCount} просмотров</span>
               </div>
@@ -466,8 +475,8 @@ export function PublicationClient({
             {item.title && <h1>{item.title}</h1>}
             {!item.title && <p className="post-lead">Публикация пользователя в сообществе {item.community.name}</p>}
             <div className="publication-meta-line">
-              <span>{dateLabel(item.createdAt)}</span>
-              {updated && <span>обновлено {dateLabel(item.updatedAt)}</span>}
+              <PublicationTime value={item.createdAt}/>
+              {updated && <PublicationTime value={item.updatedAt} prefix="обновлено "/>}
               <span><EyeIcon/> {item.viewCount}</span>
             </div>
           </header>
@@ -631,7 +640,7 @@ function CommentCard({ comment, onReply, onReact, onReport }: { comment: Comment
           <Link href={`/u/${comment.author.username}`}><strong>{comment.author.displayName}</strong></Link>
           {comment.author.emailVerified && <span className="comment-verified">✓</span>}
           <span>@{comment.author.username}</span>
-          <time>{dateLabel(comment.createdAt)}</time>
+          <PublicationTime value={comment.createdAt}/>
         </header>
         <BbcodeContent source={comment.body} className="content-body"/>
         <footer>
