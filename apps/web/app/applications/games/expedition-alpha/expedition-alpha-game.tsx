@@ -691,8 +691,8 @@ export function ExpeditionAlphaGame() {
       </section>
 
       <footer className="exp-footer">
-        <span>Source of truth: docs/game-expedition-alpha-source-of-truth.md</span>
-        <span>{serverMode === 'server' ? 'Прогресс, энергия и серийные предметы подтверждаются API.' : 'Гостевой демо-режим не сохраняет экономически значимый прогресс.'}</span>
+        <span>Alpha · Ржавые окраины</span>
+        <span>{serverMode === 'server' ? 'Прогресс, энергия и серийные предметы сохраняются на сервере.' : 'Гостевой демо-режим: прогресс не сохраняется.'}</span>
       </footer>
     </main>
   );
