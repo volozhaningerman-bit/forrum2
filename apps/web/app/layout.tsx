@@ -21,13 +21,11 @@ export const metadata: Metadata = {
     siteName: '4rrum',
     title: '4rrum — технологии, люди, идеи',
     description: 'Форум о технологиях, сообществах, проектах и практическом опыте.',
-    images: [{ url: '/forrum-assets/hero-planet.svg', width: 1600, height: 420, alt: '4rrum' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: '4rrum — технологии, люди, идеи',
     description: 'Форум о технологиях, сообществах, проектах и практическом опыте.',
-    images: ['/forrum-assets/hero-planet.svg'],
   },
   robots: {
     index: true,
