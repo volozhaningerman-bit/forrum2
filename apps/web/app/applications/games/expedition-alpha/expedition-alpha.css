@@ -742,3 +742,36 @@
 @media(prefers-reduced-motion:reduce){
   .exp-gear{transition:none}
 }
+
+
+/* V0.4.1 — production-safe art fallback.
+   The generated reference atlas experiment produced an invalid binary in the
+   repository. Keep the approved paper-doll work, but render the dedicated
+   expedition art pack until the raster masters are exported cleanly. */
+.exp-avatar-art{
+  background-image:url('/games/expedition-alpha/hero-base.svg')!important;
+  background-repeat:no-repeat!important;
+  background-size:contain!important;
+  background-position:center bottom!important;
+  width:185px!important;
+  height:322px!important;
+}
+.exp-location-art{
+  background:
+    linear-gradient(180deg,rgba(5,10,13,.02),rgba(5,10,13,.42)),
+    url('/games/expedition-alpha/rust-outskirts.svg') center/cover no-repeat!important;
+}
+.exp-location-art::before{display:none!important}
+.exp-location-art::after{
+  display:block!important;
+  background:linear-gradient(90deg,rgba(3,8,10,.42),transparent 46%,rgba(3,8,10,.06)),linear-gradient(0deg,rgba(3,8,10,.54),transparent 55%)!important;
+}
+.exp-raid-art{
+  background:
+    linear-gradient(90deg,rgba(7,12,15,.03),rgba(7,12,15,.17)),
+    url('/games/expedition-alpha/iron-shepherd.svg') center/cover no-repeat!important;
+}
+.exp-raid-art::before{display:none!important}
+.exp-raid-art::after{display:block!important;background:linear-gradient(90deg,transparent 58%,rgba(7,12,15,.28)),linear-gradient(0deg,rgba(7,12,15,.34),transparent 58%)!important}
+.exp-champion::before,.exp-relic::before{display:none!important}
+.exp-champion i,.exp-relic i{display:block!important}
