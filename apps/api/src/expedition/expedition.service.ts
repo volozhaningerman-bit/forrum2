@@ -54,7 +54,71 @@ export class ExpeditionService {
       }),
     ]);
 
-    return this.serializeState(freshProfile, run, items);
+    const raid = await this.raidState(actorId);
+    return {
+      ...this.serializeState(freshProfile, run, items),
+      raid,
+    };
+  }
+
+  async raidState(actorId: string) {
+    const raid = await this.ensureRaid();
+    const participants = await this.prisma.expeditionRaidParticipant.findMany({
+      where: { raidId: raid.id },
+      select: { userId: true },
+      orderBy: { joinedAt: 'asc' },
+    });
+
+    return {
+      id: raid.id,
+      bossKey: raid.bossKey,
+      startsAt: raid.startsAt,
+      minParticipants: raid.minParticipants,
+      maxParticipants: raid.maxParticipants,
+      participantCount: participants.length,
+      joined: participants.some((entry) => entry.userId === actorId),
+    };
+  }
+
+  async joinRaid(actorId: string) {
+    const raid = await this.ensureRaid();
+    if (raid.startsAt.getTime() <= Date.now()) {
+      throw new ConflictException('Сбор на этого босса уже закрыт');
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      const existing = await tx.expeditionRaidParticipant.findUnique({
+        where: { raidId_userId: { raidId: raid.id, userId: actorId } },
+        select: { raidId: true },
+      });
+      if (existing) return;
+
+      const count = await tx.expeditionRaidParticipant.count({
+        where: { raidId: raid.id },
+      });
+      if (count >= raid.maxParticipants) {
+        throw new ConflictException('В этом рейде больше нет свободных мест');
+      }
+
+      await tx.expeditionRaidParticipant.create({
+        data: { raidId: raid.id, userId: actorId },
+      });
+    }, { isolationLevel: 'Serializable' });
+
+    return this.raidState(actorId);
+  }
+
+  async leaveRaid(actorId: string) {
+    const raid = await this.ensureRaid();
+    if (raid.startsAt.getTime() <= Date.now()) {
+      throw new ConflictException('Сбор на этого босса уже закрыт');
+    }
+
+    await this.prisma.expeditionRaidParticipant.deleteMany({
+      where: { raidId: raid.id, userId: actorId },
+    });
+
+    return this.raidState(actorId);
   }
 
   async startRun(actorId: string, depth: number) {
@@ -276,6 +340,27 @@ export class ExpeditionService {
     });
 
     return this.state(actorId);
+  }
+
+  private async ensureRaid() {
+    const slotMs = 2 * 60 * 60 * 1000;
+    const startsAt = new Date((Math.floor(Date.now() / slotMs) + 1) * slotMs);
+    return this.prisma.expeditionRaid.upsert({
+      where: {
+        bossKey_startsAt: {
+          bossKey: 'iron-shepherd',
+          startsAt,
+        },
+      },
+      create: {
+        bossKey: 'iron-shepherd',
+        startsAt,
+        minParticipants: 5,
+        maxParticipants: 10,
+        status: 'OPEN',
+      },
+      update: {},
+    });
   }
 
   private async ensureProfile(actorId: string) {
