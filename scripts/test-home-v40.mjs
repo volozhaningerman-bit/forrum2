@@ -40,7 +40,7 @@ const upstream = createServer(async (req,res) => {
  else if (url.pathname === '/v1/admin/home-banners') {if(req.method==='PUT'){let body='';for await(const chunk of req)body+=chunk;bannerSettings=JSON.parse(body).banners;}data={banners:bannerSettings};}
  else if (url.pathname === '/v1/admin/ai-taxonomy') {if(req.method==='POST'){let body='';for await(const chunk of req)body+=chunk;assert.equal(JSON.parse(body).version,taxonomyPlan.version);taxonomyApplied=true;data={ok:true};}else data=taxonomyPlan;}
  else if(url.pathname.endsWith('/report')){let body='';for await(const chunk of req)body+=chunk;assert(JSON.parse(body).reason.length>=5);reports++;data={ok:true};}
- else if(url.pathname==='/v1/portfolio')data=[{id:'project-1',title:'Лаборатория промптов',summary:'Открытые эксперименты сообщества',interactionCount:3,updatedAt:new Date().toISOString(),coverUrl:'/images/home/tools-v35.webp'}];
+ else if(url.pathname==='/v1/portfolio')data=[{kind:url.searchParams.get('kind')||'PROJECT',status:'ACTIVE',lookingForTeam:false,priceText:null,owner:{username:'person-0',displayName:names[0],avatarUrl:null,forrumId:1},community:null,publication:null,id:'project-1',title:'Лаборатория промптов',summary:'Открытые эксперименты сообщества',interactionCount:3,updatedAt:new Date().toISOString(),coverUrl:'/images/home/tools-v35.webp'}];
  else if(url.pathname==='/v1/events')data=[
  {id:'far',title:'Позднее событие',startsAt:new Date(fixtureNow+86400000*10).toISOString()},
  {id:'near',title:'Ближайшее событие',startsAt:new Date(fixtureNow+86400000).toISOString()},
@@ -192,7 +192,7 @@ try {
  await page.setViewportSize({width:800,height:600});
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
  // Alpha journeys: public utility screens must remain usable in the graphite theme.
- for (const route of ['/search?q=Rust','/login','/register','/support','/not-a-real-page']) {
+ for (const route of ['/search?q=Rust','/login','/register','/forgot-password','/verify-email','/support','/rules','/digital-services','/services','/projects','/not-a-real-page']) {
   await page.goto('http://127.0.0.1:'+port+route,{waitUntil:'networkidle'});
   for (const width of [320,390,760,1280]) {
    await page.setViewportSize({width,height:900});
@@ -205,25 +205,31 @@ try {
  }
  await page.goto('http://127.0.0.1:'+port+'/communities/curators',{waitUntil:'networkidle'});
  assert(page.url().includes('/login?next='),'Guest curator application requires sign-in');
- await page.goto('http://127.0.0.1:'+port+'/p/topic-0',{waitUntil:'networkidle'});
+ await page.goto('http://127.0.0.1:'+port+'/p/topic-0',{waitUntil:'domcontentloaded'});
  await page.getByRole('link',{name:'Войти и ответить',exact:true}).waitFor();
  assert.equal(await page.locator('.reply-composer textarea').count(),0,'Guest should not type a reply that cannot be sent');
  guest=false;
  await page.goto('http://127.0.0.1:'+port+'/communities/curators',{waitUntil:'networkidle'});
- await page.getByLabel('Сообщество',{exact:true}).selectOption('category-0');
+ await page.getByRole('combobox').selectOption('category-0');
  await page.getByLabel('Почему хотите стать куратором').fill('Хочу помогать участникам и развивать полезные обсуждения.');
  await page.getByLabel('Что планируете сделать для раздела').fill('Подготовлю инструкции и помогу отвечать на вопросы новичков.');
  await page.getByRole('button',{name:'Отправить заявку',exact:true}).click();
  await page.getByRole('heading',{name:'Заявка отправлена',exact:true}).waitFor();
  assert.equal(curatorApplications,1);
  await page.screenshot({path:output+'/alpha-curator.png'});
- await page.goto('http://127.0.0.1:'+port+'/p/topic-0',{waitUntil:'networkidle'});
+ await page.goto('http://127.0.0.1:'+port+'/p/topic-0',{waitUntil:'domcontentloaded'});
  await page.locator('.reply-composer textarea').fill('Проверяем отправку одного ответа без повторов.');
  await page.getByRole('button',{name:'Отправить ответ',exact:true}).click();
  await page.getByRole('button',{name:'Отправляем…',exact:true}).waitFor();
  assert.equal(await page.getByRole('button',{name:'Отправляем…',exact:true}).isDisabled(),true);
  await page.waitForFunction(()=>document.querySelector('.reply-composer textarea')?.value==='');
  assert.equal(replies,1);
+ failFeed=true;
+ await page.goto('http://127.0.0.1:'+port+'/',{waitUntil:'domcontentloaded'});
+ await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();
+ failFeed=false;
+ await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();
+ await page.locator('.forum-topic').first().waitFor();
  assert.deepEqual(errors,[]);console.log('V49: approved monochrome homepage, topic table, menus, ranking, popular today and responsive checks passed');
  await page.setViewportSize({width:1672,height:941});
  await page.goto('http://127.0.0.1:'+port+'/preview/home',{waitUntil:'domcontentloaded'});
@@ -245,4 +251,5 @@ try {
  const suffix=process.env.PORTABLE_CHROMIUM?'-portable':'';
  await checkHomeSnapshot(output+'/reference-preview.png',root+'docs/design-reference/home-implemented-desktop'+suffix+'.png',output,process.env.UPDATE_HOME_SNAPSHOTS==='1');
  await checkHomeSnapshot(output+'/reference-mobile.png',root+'docs/design-reference/home-implemented-mobile'+suffix+'.png',output,process.env.UPDATE_HOME_SNAPSHOTS==='1');
-} finally {await browser?.close();web.kill('SIGTERM');upstream.close();}
+} catch (cause) { console.error(logs.slice(-4000)); console.error(requests.slice(-12).map(({path,query,method})=>({path,query,method}))); throw cause; }
+finally {await browser?.close();web.kill('SIGTERM');upstream.close();}
