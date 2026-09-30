@@ -1,6 +1,7 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 
-export const metadata = { title: 'Приложения — 4rrum' };
+export const metadata: Metadata = { title: 'Приложения', description: 'AI-инструменты, игры и эксперименты внутри 4rrum.', alternates: { canonical: '/applications' }, openGraph: { url: '/applications', title: 'Приложения', description: 'AI-инструменты, игры и эксперименты внутри 4rrum.' } };
 
 const sections = [
   { name: 'AI-инструменты', description: 'Помощники для повседневных задач и творчества.' },
