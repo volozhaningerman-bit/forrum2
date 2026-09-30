@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 type Rarity = 'common' | 'uncommon' | 'rare' | 'epic';
 type Slot =
@@ -16,6 +16,7 @@ type Item = {
   circulation: number;
   power: number;
   visual: string;
+  atlas: number;
 };
 
 type Depth = {
@@ -61,18 +62,23 @@ const depths: Depth[] = [
 ];
 
 const starterInventory: Item[] = [
-  { id: 'hood-1843', name: 'Капюшон Собирателя', slot: 'head', rarity: 'common', serial: 1843, circulation: 5000, power: 2, visual: 'hood' },
-  { id: 'chest-317', name: 'Панцирь Старой Стражи', slot: 'chest', rarity: 'uncommon', serial: 317, circulation: 2500, power: 5, visual: 'chest' },
-  { id: 'cloak-85', name: 'Плащ Синего Знамени', slot: 'cloak', rarity: 'rare', serial: 85, circulation: 500, power: 8, visual: 'cloak' },
-  { id: 'sword-91', name: 'Клинок Последнего Контура', slot: 'mainHand', rarity: 'rare', serial: 91, circulation: 400, power: 11, visual: 'sword' },
-  { id: 'relic-17', name: 'Сердце Маяка', slot: 'relic1', rarity: 'epic', serial: 17, circulation: 60, power: 14, visual: 'relic' },
-  { id: 'boots-741', name: 'Сапоги Железного Шага', slot: 'feet', rarity: 'uncommon', serial: 741, circulation: 3000, power: 4, visual: 'boots' },
+  { id: 'hood-1843', name: 'Капюшон Собирателя', slot: 'head', rarity: 'common', serial: 1843, circulation: 5000, power: 2, visual: 'hood', atlas: 0 },
+  { id: 'chest-317', name: 'Панцирь Старой Стражи', slot: 'chest', rarity: 'uncommon', serial: 317, circulation: 2500, power: 5, visual: 'chest', atlas: 1 },
+  { id: 'cloak-85', name: 'Плащ Синего Знамени', slot: 'cloak', rarity: 'rare', serial: 85, circulation: 500, power: 8, visual: 'cloak', atlas: 2 },
+  { id: 'sword-91', name: 'Клинок Последнего Контура', slot: 'mainHand', rarity: 'rare', serial: 91, circulation: 400, power: 11, visual: 'sword', atlas: 3 },
+  { id: 'relic-17', name: 'Сердце Маяка', slot: 'relic1', rarity: 'epic', serial: 17, circulation: 60, power: 14, visual: 'relic', atlas: 4 },
+  { id: 'boots-741', name: 'Сапоги Железного Шага', slot: 'feet', rarity: 'uncommon', serial: 741, circulation: 3000, power: 4, visual: 'boots', atlas: 5 },
 ];
 
 const expeditionDrops: Item[] = [
-  { id: 'gloves-1188', name: 'Перчатки Сервомастера', slot: 'gloves', rarity: 'uncommon', serial: 1188, circulation: 4000, power: 4, visual: 'gloves' },
-  { id: 'shoulders-206', name: 'Наплечники Рубежа', slot: 'shoulders', rarity: 'rare', serial: 206, circulation: 650, power: 7, visual: 'shoulders' },
-  { id: 'shield-42', name: 'Щит Заслона', slot: 'offHand', rarity: 'rare', serial: 42, circulation: 300, power: 9, visual: 'shield' },
+  { id: 'gloves-1188', name: 'Перчатки Сервомастера', slot: 'gloves', rarity: 'uncommon', serial: 1188, circulation: 4000, power: 4, visual: 'gloves', atlas: 6 },
+  { id: 'shoulders-206', name: 'Наплечники Рубежа', slot: 'shoulders', rarity: 'rare', serial: 206, circulation: 650, power: 7, visual: 'shoulders', atlas: 7 },
+  { id: 'shield-42', name: 'Щит Заслона', slot: 'offHand', rarity: 'rare', serial: 42, circulation: 300, power: 9, visual: 'shield', atlas: 8 },
+  { id: 'belt-511', name: 'Пояс Руинного Ловца', slot: 'belt', rarity: 'uncommon', serial: 511, circulation: 3200, power: 4, visual: 'belt', atlas: 9 },
+  { id: 'neck-99', name: 'Око Архивариуса', slot: 'neck', rarity: 'rare', serial: 99, circulation: 450, power: 8, visual: 'neck', atlas: 10 },
+  { id: 'legs-288', name: 'Поножи Старого Караула', slot: 'legs', rarity: 'rare', serial: 288, circulation: 800, power: 7, visual: 'legs', atlas: 11 },
+  { id: 'ring-1402', name: 'Кольцо Медного Контура', slot: 'ring1', rarity: 'uncommon', serial: 1402, circulation: 6000, power: 3, visual: 'ring', atlas: 12 },
+  { id: 'relic-43', name: 'Фрагмент Нулевого Узла', slot: 'relic2', rarity: 'epic', serial: 43, circulation: 80, power: 13, visual: 'relic2', atlas: 13 },
 ];
 
 const slotLabel = Object.fromEntries(slots.map((slot) => [slot.id, slot.label])) as Record<Slot, string>;
