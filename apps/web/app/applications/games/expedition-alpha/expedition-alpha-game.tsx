@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 type Rarity = 'common' | 'uncommon' | 'rare' | 'epic';
 type Slot =
@@ -16,6 +16,7 @@ type Item = {
   circulation: number;
   power: number;
   visual: string;
+  atlas: number;
 };
 
 type Depth = {
@@ -61,18 +62,23 @@ const depths: Depth[] = [
 ];
 
 const starterInventory: Item[] = [
-  { id: 'hood-1843', name: 'Капюшон Собирателя', slot: 'head', rarity: 'common', serial: 1843, circulation: 5000, power: 2, visual: 'hood' },
-  { id: 'chest-317', name: 'Панцирь Старой Стражи', slot: 'chest', rarity: 'uncommon', serial: 317, circulation: 2500, power: 5, visual: 'chest' },
-  { id: 'cloak-85', name: 'Плащ Синего Знамени', slot: 'cloak', rarity: 'rare', serial: 85, circulation: 500, power: 8, visual: 'cloak' },
-  { id: 'sword-91', name: 'Клинок Последнего Контура', slot: 'mainHand', rarity: 'rare', serial: 91, circulation: 400, power: 11, visual: 'sword' },
-  { id: 'relic-17', name: 'Сердце Маяка', slot: 'relic1', rarity: 'epic', serial: 17, circulation: 60, power: 14, visual: 'relic' },
-  { id: 'boots-741', name: 'Сапоги Железного Шага', slot: 'feet', rarity: 'uncommon', serial: 741, circulation: 3000, power: 4, visual: 'boots' },
+  { id: 'hood-1843', name: 'Капюшон Собирателя', slot: 'head', rarity: 'common', serial: 1843, circulation: 5000, power: 2, visual: 'hood', atlas: 0 },
+  { id: 'chest-317', name: 'Панцирь Старой Стражи', slot: 'chest', rarity: 'uncommon', serial: 317, circulation: 2500, power: 5, visual: 'chest', atlas: 1 },
+  { id: 'cloak-85', name: 'Плащ Синего Знамени', slot: 'cloak', rarity: 'rare', serial: 85, circulation: 500, power: 8, visual: 'cloak', atlas: 2 },
+  { id: 'sword-91', name: 'Клинок Последнего Контура', slot: 'mainHand', rarity: 'rare', serial: 91, circulation: 400, power: 11, visual: 'sword', atlas: 3 },
+  { id: 'relic-17', name: 'Сердце Маяка', slot: 'relic1', rarity: 'epic', serial: 17, circulation: 60, power: 14, visual: 'relic', atlas: 4 },
+  { id: 'boots-741', name: 'Сапоги Железного Шага', slot: 'feet', rarity: 'uncommon', serial: 741, circulation: 3000, power: 4, visual: 'boots', atlas: 5 },
 ];
 
 const expeditionDrops: Item[] = [
-  { id: 'gloves-1188', name: 'Перчатки Сервомастера', slot: 'gloves', rarity: 'uncommon', serial: 1188, circulation: 4000, power: 4, visual: 'gloves' },
-  { id: 'shoulders-206', name: 'Наплечники Рубежа', slot: 'shoulders', rarity: 'rare', serial: 206, circulation: 650, power: 7, visual: 'shoulders' },
-  { id: 'shield-42', name: 'Щит Заслона', slot: 'offHand', rarity: 'rare', serial: 42, circulation: 300, power: 9, visual: 'shield' },
+  { id: 'gloves-1188', name: 'Перчатки Сервомастера', slot: 'gloves', rarity: 'uncommon', serial: 1188, circulation: 4000, power: 4, visual: 'gloves', atlas: 6 },
+  { id: 'shoulders-206', name: 'Наплечники Рубежа', slot: 'shoulders', rarity: 'rare', serial: 206, circulation: 650, power: 7, visual: 'shoulders', atlas: 7 },
+  { id: 'shield-42', name: 'Щит Заслона', slot: 'offHand', rarity: 'rare', serial: 42, circulation: 300, power: 9, visual: 'shield', atlas: 8 },
+  { id: 'belt-511', name: 'Пояс Руинного Ловца', slot: 'belt', rarity: 'uncommon', serial: 511, circulation: 3200, power: 4, visual: 'belt', atlas: 9 },
+  { id: 'neck-99', name: 'Око Архивариуса', slot: 'neck', rarity: 'rare', serial: 99, circulation: 450, power: 8, visual: 'neck', atlas: 10 },
+  { id: 'legs-288', name: 'Поножи Старого Караула', slot: 'legs', rarity: 'rare', serial: 288, circulation: 800, power: 7, visual: 'legs', atlas: 11 },
+  { id: 'ring-1402', name: 'Кольцо Медного Контура', slot: 'ring1', rarity: 'uncommon', serial: 1402, circulation: 6000, power: 3, visual: 'ring', atlas: 12 },
+  { id: 'relic-43', name: 'Фрагмент Нулевого Узла', slot: 'relic2', rarity: 'epic', serial: 43, circulation: 80, power: 13, visual: 'relic2', atlas: 13 },
 ];
 
 const slotLabel = Object.fromEntries(slots.map((slot) => [slot.id, slot.label])) as Record<Slot, string>;
@@ -87,6 +93,10 @@ export function ExpeditionAlphaGame() {
   const [equipped, setEquipped] = useState<Partial<Record<Slot, Item>>>({});
   const [run, setRun] = useState<'idle' | 'away' | 'returned'>('idle');
   const [lastDrop, setLastDrop] = useState<Item | null>(null);
+  const [finishAt, setFinishAt] = useState<number | null>(null);
+  const [remaining, setRemaining] = useState(0);
+  const [resources, setResources] = useState({ metal: 0, scrap: 0, parts: 0 });
+  const [raidJoined, setRaidJoined] = useState(false);
 
   const depth = depths.find((entry) => entry.id === selectedDepth) ?? depths[0];
   const equippedPower = useMemo(
@@ -95,19 +105,47 @@ export function ExpeditionAlphaGame() {
   );
   const power = 10 + level * 3 + equippedPower;
 
+  useEffect(() => {
+    if (run !== 'away' || !finishAt) return;
+    const tick = () => {
+      const left = Math.max(0, finishAt - Date.now());
+      setRemaining(left);
+      if (left <= 0) {
+        setRun('returned');
+        setFinishAt(null);
+      }
+    };
+    tick();
+    const timer = window.setInterval(tick, 250);
+    return () => window.clearInterval(timer);
+  }, [finishAt, run]);
+
   function sendExpedition() {
     if (run !== 'idle' || energy < depth.energy || depth.id > unlockedDepth) return;
     setEnergy((value) => value - depth.energy);
     setRun('away');
     setLastDrop(null);
-    window.setTimeout(() => setRun('returned'), 1800);
+    const duration = 4500 + depth.id * 900;
+    setRemaining(duration);
+    setFinishAt(Date.now() + duration);
   }
 
   function collectReturn() {
     if (run !== 'returned') return;
-    const drop = expeditionDrops[(selectedDepth - 1) % expeditionDrops.length];
-    setInventory((items) => items.some((item) => item.id === drop.id) ? items : [...items, drop]);
+    const template = expeditionDrops[(selectedDepth + level + inventory.length) % expeditionDrops.length];
+    const ownedOfTemplate = inventory.filter((item) => item.name === template.name).length;
+    const drop: Item = {
+      ...template,
+      id: `${template.id}-${Date.now()}`,
+      serial: Math.min(template.circulation, template.serial + ownedOfTemplate),
+    };
+    setInventory((items) => [...items, drop]);
     setLastDrop(drop);
+    setResources((current) => ({
+      metal: current.metal + 8 + selectedDepth * 3,
+      scrap: current.scrap + 5 + selectedDepth * 2,
+      parts: current.parts + (selectedDepth >= 3 ? 1 : 0),
+    }));
     setXp((value) => {
       const next = value + 35 + selectedDepth * 10;
       if (next >= 100) {
@@ -150,6 +188,7 @@ export function ExpeditionAlphaGame() {
           </div>
 
           <div className={`exp-avatar ${Object.values(equipped).map((item) => item?.visual ? `has-${item.visual}` : '').join(' ')}`}>
+            <img className="exp-avatar-art" src="/games/expedition-alpha/hero.webp" alt="Базовый персонаж в лохмотьях" />
             <div className="exp-avatar-glow" />
             <div className="exp-avatar-head">●</div>
             <div className="exp-avatar-rags exp-avatar-body" />
@@ -232,7 +271,7 @@ export function ExpeditionAlphaGame() {
                 </button>
               ) : run === 'away' ? (
                 <button className="exp-primary is-waiting" type="button" disabled>
-                  Персонаж в пути…
+                  В пути · {Math.max(1, Math.ceil(remaining / 1000))} сек.
                 </button>
               ) : (
                 <button className="exp-primary is-return" type="button" onClick={collectReturn}>
@@ -265,11 +304,17 @@ export function ExpeditionAlphaGame() {
               <h2>Железный Пастырь</h2>
               <p>Одному его не победить. На боевой выход персонажи отправляются заранее.</p>
               <div className="exp-raid-meta">
-                <span><b>7/10</b><small>участников</small></span>
+                <span><b>{raidJoined ? '8/10' : '7/10'}</b><small>участников</small></span>
                 <span><b>21:00</b><small>начало</small></span>
                 <span><b>5</b><small>глубина</small></span>
               </div>
-              <button type="button">Посмотреть сбор</button>
+              <button
+                type="button"
+                className={raidJoined ? 'is-joined' : ''}
+                onClick={() => setRaidJoined((value) => !value)}
+              >
+                {raidJoined ? 'Персонаж записан · выйти' : 'Записаться на рейд'}
+              </button>
             </div>
           </article>
         </section>
@@ -297,13 +342,19 @@ export function ExpeditionAlphaGame() {
                 className={`exp-item rarity-${item.rarity}`}
                 onClick={() => equip(item)}
               >
-                <span className={`exp-item-icon visual-${item.visual}`} />
+                <span className={`exp-item-icon atlas-${item.atlas} visual-${item.visual}`} />
                 <small>{slotLabel[item.slot]}</small>
                 <b>{item.name}</b>
                 <em>№{item.serial}/{item.circulation}</em>
                 <strong>+{item.power}</strong>
               </button>
             ))}
+          </div>
+
+          <div className="exp-resources">
+            <span><b>{resources.metal}</b><small>металл</small></span>
+            <span><b>{resources.scrap}</b><small>лом</small></span>
+            <span><b>{resources.parts}</b><small>старые детали</small></span>
           </div>
 
           <div className="exp-social-preview">
