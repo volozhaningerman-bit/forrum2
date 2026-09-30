@@ -44,6 +44,8 @@ const checks = [
   ['no Civilization art dependency', !css.includes('/games/civilization/')],
   ['modular avatar appearance', game.includes('appearanceClasses') && css.includes('.exp-avatar.has-chest')],
   ['Iron Shepherd visible', game.includes('Железный Пастырь')],
+  ['shared raid API wired', game.includes("'/expedition/raid'") && game.includes("'/expedition/raid/join'") && service.includes('joinRaid') && service.includes('raidState')],
+  ['raid schema present', schema.includes('model ExpeditionRaid') && schema.includes('model ExpeditionRaidParticipant')],
   ['category and syndicate roadmap visible', game.includes('Железный Герольд') && game.includes('Ядро Ковчега')],
   ['server authority documented', spec.includes('Server authority') && spec.includes('localStorage')],
   ['office styling excluded', spec.includes('not office / corporate styling')],
