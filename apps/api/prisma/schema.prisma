@@ -1567,6 +1567,10 @@ model ExpeditionProfile {
   lastEnergySync  DateTime        @default(now())
   unlockedDepth   Int             @default(1)
   basePower       Int             @default(10)
+  metal           Int             @default(0)
+  cloth           Int             @default(0)
+  scrap           Int             @default(0)
+  oldParts        Int             @default(0)
   runs            ExpeditionRun[]
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
