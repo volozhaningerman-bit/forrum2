@@ -14,6 +14,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const config = app.get(ConfigService);
   const webOrigin = config.get('WEB_ORIGIN', 'http://localhost:3000');
+  if (config.get('NODE_ENV') === 'production') app.set('trust proxy', Number(config.get('TRUST_PROXY_HOPS', 1)));
   app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: { policy: 'cross-origin' } }));
   app.use(requestSecurity({ allowedOrigin: webOrigin }));
   app.useBodyParser('json', { limit: '12mb' });

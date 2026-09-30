@@ -1,0 +1,54 @@
+# 4rrum site audit — 2026-09-30
+
+Scope: production homepage and repository-wide release guardrails for the web/API stack.
+
+## Standards used
+- WCAG 2.2 AA-oriented checks for keyboard access, focus visibility, status announcements, reduced motion and touch ergonomics.
+- Core Web Vitals-oriented checks for LCP/CLS/INP risk.
+- OWASP secure response-header and same-origin request-hardening practices.
+- Technical SEO basics: canonical metadata, robots, sitemap, social previews, structured data and app identity.
+- Operational quality: error/loading states, regression gates, production version verification.
+
+## High-priority findings addressed in v67
+1. Root metadata was too minimal for a public forum.
+   - Added metadataBase, title template, canonical URL, OpenGraph, Twitter, robots directives and WebSite/SearchAction JSON-LD.
+2. No robots.txt / sitemap.xml / manifest route existed.
+   - Added Next metadata routes plus a scalable app icon.
+3. Browser security headers were incomplete.
+   - Added CSP, HSTS, COOP, Origin-Agent-Cluster and DNS-prefetch policy while retaining nosniff/frame/referrer/permissions controls.
+4. Production API rate limiting could see the reverse proxy IP instead of the real client IP.
+   - Added explicit production trust-proxy handling, configurable through TRUST_PROXY_HOPS.
+5. Homepage hero/logo images had no intrinsic dimensions.
+   - Added width/height and high-priority hints to reduce CLS/LCP risk.
+6. Dynamic topic-list changes were not announced to assistive technology.
+   - Added a polite live region while preserving aria-busy.
+7. Quality checks existed but were not all enforced in the main homepage workflow.
+   - CI now gates on static validation, UX truthfulness, accessibility source checks and the new site-audit regression check in addition to tests/build/typecheck/browser regression.
+8. Mobile rendering still carried a fixed page background.
+   - Disabled fixed background attachment on small screens and strengthened touch/focus/reduced-motion behavior.
+9. A stricter accessibility gate exposed action buttons without an explicit non-submit type.
+   - Fixed the affected admin and game controls so incidental form submission cannot occur.
+10. Existing community-role and promotion administration was functional but poorly surfaced and the UX regression check looked in the wrong file.
+   - Added direct admin dashboard entries and pointed the regression check at the real connected implementation.
+
+## Already healthy before v67
+- Argon2id password hashing.
+- Opaque hashed session tokens.
+- HttpOnly + SameSite session cookie and Secure in production.
+- DTO validation with whitelist/forbidNonWhitelisted.
+- Helmet on API.
+- Same-origin protection for unsafe API requests.
+- Per-route request throttling and request IDs.
+- Swagger disabled in production unless explicitly enabled.
+- Keyboard focus trap for mobile navigation.
+- Skip link and visible global focus treatment.
+- 320/390/760/1024/1280/1600/1648/1920 responsive browser regression coverage.
+
+## Remaining medium-term work
+- Move rate-limit counters from process memory to a shared store before horizontal scaling.
+- Add field Core Web Vitals/RUM collection (LCP, INP, CLS) and real-user dashboards.
+- Add automated Lighthouse budgets in a dedicated job once production test data is stable.
+- Expand sitemap generation to public topic/community/profile URLs when a stable public indexing API is available.
+- Add automated axe-core runtime checks across authenticated and public journeys.
+- Review CSP periodically if third-party integrations are introduced.
+- Add backup-restore drills and synthetic uptime/latency alerting if not already provided by infrastructure.
