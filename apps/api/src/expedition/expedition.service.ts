@@ -215,6 +215,27 @@ export class ExpeditionService {
   }
 
   async raidState(actorId: string) {
+    await this.resolveDueRaids();
+
+    const recent = await this.prisma.expeditionRaidParticipant.findFirst({
+      where: {
+        userId: actorId,
+        raid: {
+          status: 'RESOLVED',
+          resolvedAt: { gte: new Date(Date.now() - 5 * 60 * 1000) },
+        },
+      },
+      include: { raid: true },
+      orderBy: { joinedAt: 'desc' },
+    });
+
+    if (recent) {
+      const participantCount = await this.prisma.expeditionRaidParticipant.count({
+        where: { raidId: recent.raidId },
+      });
+      return this.serializeRaid(recent.raid, participantCount, recent);
+    }
+
     const raid = await this.ensureUpcomingRaid();
     const [participantCount, participant] = await Promise.all([
       this.prisma.expeditionRaidParticipant.count({ where: { raidId: raid.id } }),
@@ -223,22 +244,11 @@ export class ExpeditionService {
       }),
     ]);
 
-    return {
-      id: raid.id,
-      bossKey: raid.bossKey,
-      bossName: 'Железный Пастырь',
-      locationKey: raid.locationKey,
-      startsAt: raid.startsAt,
-      status: raid.status,
-      minParticipants: raid.minParticipants,
-      maxParticipants: raid.maxParticipants,
-      participantCount,
-      joined: Boolean(participant),
-      powerSnapshot: participant?.powerSnapshot ?? null,
-    };
+    return this.serializeRaid(raid, participantCount, participant);
   }
 
   async joinRaid(actorId: string) {
+    await this.resolveDueRaids();
     const raid = await this.ensureUpcomingRaid();
     if (raid.startsAt.getTime() <= Date.now()) {
       throw new BadRequestException('Сбор на этот рейд уже завершён');
@@ -292,6 +302,72 @@ export class ExpeditionService {
     });
 
     return this.state(actorId);
+  }
+
+  private async resolveDueRaids() {
+    const due = await this.prisma.expeditionRaid.findMany({
+      where: {
+        status: 'SCHEDULED',
+        startsAt: { lte: new Date() },
+      },
+      orderBy: { startsAt: 'asc' },
+      take: 8,
+    });
+
+    for (const raid of due) {
+      await this.prisma.$transaction(async (tx) => {
+        const locked = await tx.expeditionRaid.updateMany({
+          where: { id: raid.id, status: 'SCHEDULED' },
+          data: { status: 'RESOLVED', resolvedAt: new Date() },
+        });
+        if (locked.count !== 1) return;
+
+        const participants = await tx.expeditionRaidParticipant.findMany({
+          where: { raidId: raid.id },
+        });
+        const totalPower = participants.reduce((sum, entry) => sum + entry.powerSnapshot, 0);
+        const success = participants.length >= raid.minParticipants && totalPower >= raid.bossPower;
+
+        await tx.expeditionRaid.update({
+          where: { id: raid.id },
+          data: { totalPower, success },
+        });
+
+        if (success && participants.length) {
+          await tx.expeditionProfile.updateMany({
+            where: { userId: { in: participants.map((entry) => entry.userId) } },
+            data: {
+              metal: { increment: raid.rewardMetal },
+              oldParts: { increment: raid.rewardOldParts },
+            },
+          });
+        }
+      });
+    }
+  }
+
+  private serializeRaid(raid: any, participantCount: number, participant: any | null) {
+    return {
+      id: raid.id,
+      bossKey: raid.bossKey,
+      bossName: 'Железный Пастырь',
+      locationKey: raid.locationKey,
+      startsAt: raid.startsAt,
+      status: raid.status,
+      minParticipants: raid.minParticipants,
+      maxParticipants: raid.maxParticipants,
+      participantCount,
+      joined: Boolean(participant),
+      powerSnapshot: participant?.powerSnapshot ?? null,
+      bossPower: raid.bossPower,
+      totalPower: raid.totalPower,
+      success: raid.success,
+      resolvedAt: raid.resolvedAt,
+      reward: {
+        metal: raid.rewardMetal,
+        oldParts: raid.rewardOldParts,
+      },
+    };
   }
 
   private async ensureUpcomingRaid() {
