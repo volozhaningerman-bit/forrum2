@@ -442,3 +442,54 @@
   .exp-community{grid-template-columns:1fr}.exp-community-card+ .exp-community-card{border-left:0;border-top:1px solid var(--line)}
   .exp-result-grid{grid-template-columns:1fr}.exp-hud{grid-template-columns:repeat(2,1fr)}
 }
+
+
+/* EXPEDITION ALPHA V2.1 — screenshot-driven contrast + hero crop */
+.exp-alpha h1,
+.exp-alpha h2,
+.exp-alpha h3,
+.exp-alpha strong,
+.exp-location-copy h2,
+.exp-raid-copy h2,
+.exp-community-card h3{
+  color:#eef4f7!important;
+}
+.exp-alpha p{color:#aebbc1}
+.exp-topbar h1{color:#f4f7f8!important;text-shadow:0 2px 10px rgba(0,0,0,.24)}
+.exp-location-copy h2{color:#f5f0e9!important;text-shadow:0 3px 16px rgba(0,0,0,.72)}
+.exp-raid-copy h2{color:#f2e9df!important}
+.exp-community-card h3{color:#e8eef1!important}
+
+.exp-avatar-art{
+  inset:auto!important;
+  left:50%!important;
+  bottom:44px!important;
+  width:230px!important;
+  height:360px!important;
+  transform:translateX(-50%)!important;
+  background-size:500% 100%!important;
+  background-position:0 0!important;
+  background-repeat:no-repeat!important;
+  -webkit-mask-image:radial-gradient(ellipse 98% 104% at 50% 50%,#000 74%,rgba(0,0,0,.96) 87%,transparent 100%);
+  mask-image:radial-gradient(ellipse 98% 104% at 50% 50%,#000 74%,rgba(0,0,0,.96) 87%,transparent 100%);
+  filter:drop-shadow(0 22px 18px rgba(0,0,0,.5)) saturate(1.04) contrast(1.03)!important;
+}
+@keyframes exp-idle{
+  0%,100%{transform:translateX(-50%) translateY(0) rotate(.12deg)}
+  50%{transform:translateX(-50%) translateY(-3px) rotate(-.12deg)}
+}
+.exp-avatar{background:
+  radial-gradient(circle at 50% 34%,rgba(216,145,60,.14),transparent 35%),
+  radial-gradient(circle at 50% 82%,rgba(50,190,176,.06),transparent 30%),
+  linear-gradient(180deg,#172329,#0a1216 74%)}
+.exp-avatar-label{background:rgba(6,12,15,.86)}
+.exp-panel-title strong{color:#f0f4f5!important}
+.exp-run-card h3{color:#e9eff1!important}
+.exp-item b{color:#f1f5f6!important}
+.exp-community-card p,
+.exp-inventory-hint span,
+.exp-footer{color:#84959e!important}
+
+@media(max-width:1400px){
+  .exp-avatar-art{width:205px!important;height:322px!important}
+}
