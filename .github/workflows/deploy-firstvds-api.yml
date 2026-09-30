@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: forrum-firstvds-api-deploy
+  group: forrum-firstvds-deploy
   cancel-in-progress: false
 
 jobs:
