@@ -70,3 +70,6 @@ Scope: production homepage and repository-wide release guardrails for the web/AP
 17. Cross-origin response hardening was missing CORP and legacy cross-domain policy protection.
    - Added Cross-Origin-Resource-Policy: same-site and X-Permitted-Cross-Domain-Policies: none.
 18. Release checks now explicitly reject a global homepage canonical, missing public-route canonicals, missing private-route noindex headers and synthetic sitemap timestamps.
+
+19. Dynamic topic, community and profile pages inherited generic root metadata.
+   - Added request-deduped generateMetadata implementations with page-specific titles, descriptions, canonical URLs and noindex behavior for missing resources.
