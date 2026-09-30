@@ -43,7 +43,7 @@ const checks = [
   ['dedicated equipment art', css.includes('/games/expedition-alpha/equipment-atlas.svg')],
   ['no Civilization art dependency', !css.includes('/games/civilization/')],
   ['modular avatar appearance', game.includes('appearanceClasses') && css.includes('.exp-avatar.has-chest')],
-  ['Iron Shepherd visible', game.includes('Железный Пастырь')],
+  ['Iron Shepherd visible', game.includes('raid.bossName') && service.includes("'Железный Пастырь'")],
   ['shared raid API wired', game.includes("'/expedition/raid'") && game.includes("'/expedition/raid/join'") && service.includes('joinRaid') && service.includes('raidState')],
   ['raid schema present', schema.includes('model ExpeditionRaid') && schema.includes('model ExpeditionRaidParticipant')],
   ['raid resolution and rewards', schema.includes('bossPower') && schema.includes('resolvedAt') && service.includes('resolveDueRaids') && service.includes('rewardMetal')],
