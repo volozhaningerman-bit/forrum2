@@ -52,6 +52,7 @@ const staticChecks = [
   ['no civilization art dependency', !cssSource.includes('/games/civilization/')],
   ['typed server client wired', clientSource.includes("'/expedition/me'") && clientSource.includes("'/expedition/runs'") && gameSource.includes('serverMode') && gameSource.includes('applyServerState')],
   ['server unequip contract', controllerSource.includes("items/:id/unequip") && serviceSource.includes('async unequip(')],
+  ['server raid contract', controllerSource.includes("raid/current/join") && controllerSource.includes("raid/current/leave") && serviceSource.includes('async joinRaid(') && schemaSource.includes('model ExpeditionRaidParticipant')],
   ['persistent expedition resources', schemaSource.includes('scrap           Int') && schemaSource.includes('cloth           Int') && schemaSource.includes('oldParts        Int') && serviceSource.includes('scrap: { increment: resources.scrap }')],
   ['claim skips exhausted templates', serviceSource.includes('for (const candidate of orderedCandidates)') && serviceSource.includes('Тираж доступной добычи для этой глубины исчерпан')],
   ['run start is serializable', serviceSource.includes("isolationLevel: 'Serializable'") && serviceSource.includes('pendingInside')],
@@ -103,6 +104,15 @@ let state = {
     resources: { scrap: 7, cloth: 4, oldParts: 2 },
   },
   run: null,
+  raid: {
+    id: 'raid-browser-1',
+    bossKey: 'iron-shepherd',
+    startsAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+    minParticipants: 5,
+    maxParticipants: 10,
+    participantCount: 7,
+    joined: false,
+  },
   inventory: [starter],
 };
 
@@ -200,6 +210,30 @@ const upstream = createServer(async (req, res) => {
     });
   }
 
+  if (url.pathname === '/v1/expedition/raid/current/join' && req.method === 'POST') {
+    state = {
+      ...state,
+      raid: {
+        ...state.raid,
+        joined: true,
+        participantCount: Math.min(state.raid.maxParticipants, state.raid.participantCount + (state.raid.joined ? 0 : 1)),
+      },
+    };
+    return json(res, 201, state.raid);
+  }
+
+  if (url.pathname === '/v1/expedition/raid/current/leave' && req.method === 'POST') {
+    state = {
+      ...state,
+      raid: {
+        ...state.raid,
+        participantCount: Math.max(0, state.raid.participantCount - (state.raid.joined ? 1 : 0)),
+        joined: false,
+      },
+    };
+    return json(res, 201, state.raid);
+  }
+
   const equipMatch = url.pathname.match(/^\/v1\/expedition\/items\/([^/]+)\/(equip|unequip)$/);
   if (equipMatch && req.method === 'POST') {
     const [, id, action] = equipMatch;
@@ -290,7 +324,12 @@ try {
   assert(metrics.game && metrics.avatar && metrics.location && metrics.boss, 'core visual surfaces missing');
   assert(metrics.scrollWidth <= metrics.width + 2, `horizontal overflow ${metrics.scrollWidth}/${metrics.width}`);
 
-  await page.screenshot({ path: output + '/expedition-alpha-v02-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v03-1720x900.png', fullPage: true });
+
+  const raidJoin = page.getByRole('button', { name: 'Отправить персонажа' });
+  await raidJoin.click();
+  await page.getByRole('button', { name: 'Вы записаны' }).waitFor();
+  await page.getByText('8/10').waitFor();
 
   await page.getByRole('button', { name: /Отправить ·/ }).click();
   await page.getByText('Персонаж в пути').waitFor();
@@ -302,10 +341,10 @@ try {
   await drop.click();
   await page.getByText('Перчатки Сервомастера').first().waitFor();
 
-  await page.screenshot({ path: output + '/expedition-alpha-v02-loot-equipped-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v03-loot-equipped-1720x900.png', fullPage: true });
 
   await page.setViewportSize({ width: 1366, height: 768 });
-  await page.screenshot({ path: output + '/expedition-alpha-v02-1366x768.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v03-1366x768.png', fullPage: true });
   const mobileish = await page.evaluate(() => ({
     width: innerWidth,
     scrollWidth: document.documentElement.scrollWidth,
@@ -322,4 +361,4 @@ try {
   upstream.close();
 }
 
-console.log(`Expedition alpha v0.2 checks passed. Item templates covered: ${itemCount}.`);
+console.log(`Expedition alpha v0.3 checks passed. Item templates covered: ${itemCount}.`);
