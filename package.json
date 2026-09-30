@@ -26,7 +26,8 @@
     "validate:a11y": "node scripts/accessibility-check.mjs",
     "test:home": "node scripts/test-home-v40.mjs",
     "validate:site": "node scripts/site-audit-check.mjs",
-    "test:expedition": "node scripts/test-expedition-alpha.mjs"
+    "test:expedition": "node scripts/test-expedition-alpha.mjs",
+    "test:expedition:browser": "node scripts/test-expedition-alpha-browser.mjs"
   },
   "devDependencies": {
     "typescript": "5.9.3",
