@@ -481,7 +481,7 @@ export function ExpeditionAlphaGame() {
           <span><b>⚡ {energy}/12</b><small>энергия</small></span>
           <span><b>ур. {level}</b><small>{xp}/100 XP</small></span>
           <span><b>{power}</b><small>сила</small></span>
-          <span><b>{resources.parts}</b><small>старые детали</small></span>
+          <span><b>{resources.oldParts}</b><small>старые детали</small></span>
         </div>
       </header>
 
