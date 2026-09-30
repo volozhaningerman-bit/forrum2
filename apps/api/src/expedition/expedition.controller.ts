@@ -46,6 +46,14 @@ export class ExpeditionController {
     return this.expedition.equip(this.actorId(actorValue), id);
   }
 
+  @Post('items/:id/unequip')
+  unequip(
+    @CurrentUser() actorValue: unknown,
+    @Param('id') id: string,
+  ) {
+    return this.expedition.unequip(this.actorId(actorValue), id);
+  }
+
   private actorId(value: unknown) {
     if (typeof value === 'string' && value) return value;
     if (value && typeof value === 'object') {
