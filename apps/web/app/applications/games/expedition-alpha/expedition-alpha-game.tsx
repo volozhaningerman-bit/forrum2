@@ -1,6 +1,15 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  claimExpedition,
+  equipExpeditionItem,
+  loadExpeditionState,
+  startExpedition,
+  unequipExpeditionItem,
+  type ExpeditionServerItem,
+  type ExpeditionServerState,
+} from './expedition-client';
 
 type Rarity = 'common' | 'uncommon' | 'rare' | 'epic';
 type Slot =
