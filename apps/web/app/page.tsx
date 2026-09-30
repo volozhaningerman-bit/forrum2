@@ -54,12 +54,15 @@ async function publicApi<T>(path: string) {
 }
 
 export default async function Home() {
-  const [communities, announcements, feed, overview, events] = await Promise.all([
+  const [communities, announcements, feed, overview] = await Promise.all([
     publicApi<HomeInitialData['communities']>('/communities'),
     publicApi<HomeInitialData['announcements']>('/announcements'),
     publicApi<HomeInitialData['feed']>('/feed?mode=new&browse=1'),
     publicApi<HomeInitialData['overview']>('/home/overview'),
-    publicApi<HomeInitialData['events']>('/events'),
   ]);
-  return <HomeDashboard initialData={{ communities, announcements, feed, overview, events }}/>;
+
+  // Events are not rendered on the homepage. Keep the contract stable without
+  // spending an extra origin round-trip on every request.
+  return <HomeDashboard initialData={{ communities, announcements, feed, overview, events: [] }}/>;
+
 }
