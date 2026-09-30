@@ -61,6 +61,14 @@ export type ExpeditionRaidState = {
   participantCount: number;
   joined: boolean;
   powerSnapshot: number | null;
+  bossPower: number;
+  totalPower: number;
+  success: boolean | null;
+  resolvedAt: string | null;
+  reward: {
+    metal: number;
+    oldParts: number;
+  };
 };
 
 type ClaimResponse = {
@@ -174,6 +182,7 @@ export function ExpeditionAlphaGame({
   const raidSeconds = Math.max(0, Math.ceil((new Date(raid.startsAt).getTime() - now) / 1000));
   const raidMinutes = Math.floor(raidSeconds / 60);
   const raidClock = `${raidMinutes}:${String(raidSeconds % 60).padStart(2, '0')}`;
+  const raidResolved = raid.status === 'RESOLVED';
   const depth = depths.find((entry) => entry.id === selectedDepth) ?? depths[0];
 
   const equipped = useMemo(() => {
@@ -426,19 +435,32 @@ export function ExpeditionAlphaGame({
             <div className="exp-raid-copy">
               <small>Совместный босс · Ржавые окраины</small>
               <h2>{raid.bossName}</h2>
-              <p>Игроки заранее отправляют персонажей в один общий рейд. Сила фиксируется в момент записи.</p>
+              <p>
+                {raidResolved
+                  ? raid.success
+                    ? `Пастырь повержен. Всем участникам начислено: +${raid.reward.metal} металла и +${raid.reward.oldParts} старых деталей.`
+                    : 'Рейд завершён, но общей силы оказалось недостаточно. Следующий сбор появится автоматически.'
+                  : 'Игроки заранее отправляют персонажей в один общий рейд. Сила фиксируется в момент записи.'}
+              </p>
               <div className="exp-raid-meta">
                 <span><b>{raid.participantCount}/{raid.maxParticipants}</b><small>участников</small></span>
-                <span><b>{raidClock}</b><small>до старта</small></span>
+                <span>
+                  <b>{raidResolved ? `${raid.totalPower}/${raid.bossPower}` : raidClock}</b>
+                  <small>{raidResolved ? 'общая сила' : 'до старта'}</small>
+                </span>
                 <span><b>{raid.minParticipants}</b><small>минимум</small></span>
               </div>
               <button
-                className={raid.joined ? 'joined' : ''}
+                className={`${raid.joined ? 'joined' : ''} ${raidResolved ? 'resolved' : ''}`}
                 type="button"
-                disabled={raid.joined || busy !== null || raid.participantCount >= raid.maxParticipants || raidSeconds <= 0}
+                disabled={raidResolved || raid.joined || busy !== null || raid.participantCount >= raid.maxParticipants || raidSeconds <= 0}
                 onClick={joinRaid}
               >
-                {raid.joined ? `Вы в рейде · сила ${raid.powerSnapshot ?? state.profile.power}` : busy === 'raid' ? 'Записываем…' : 'Отправить персонажа'}
+                {raidResolved
+                  ? raid.success ? 'Победа · награда начислена' : 'Рейд не пройден'
+                  : raid.joined
+                    ? `Вы в рейде · сила ${raid.powerSnapshot ?? state.profile.power}`
+                    : busy === 'raid' ? 'Записываем…' : 'Отправить персонажа'}
               </button>
             </div>
           </article>
