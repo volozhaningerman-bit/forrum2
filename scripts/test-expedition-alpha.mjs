@@ -338,6 +338,8 @@ try {
       slots: document.querySelectorAll('.exp-slots button').length,
       layoutHeight: layout?.height ?? 9999,
       locationHeight: location?.height ?? 0,
+      inventoryActionCount: document.querySelectorAll('.exp-item-action').length,
+      slotAffordanceCount: document.querySelectorAll('.exp-slots button i').length,
       characterRect: (() => { const r=document.querySelector('.exp-character')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
       centerRect: (() => { const r=document.querySelector('.exp-center')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
       inventoryRect: (() => { const r=document.querySelector('.exp-inventory')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
@@ -354,7 +356,9 @@ try {
   assert.notEqual(metrics.championArtDisplay, 'none', 'Champion art must be rendered');
   assert.notEqual(metrics.relicArtDisplay, 'none', 'Ark Core art must be rendered');
   assert.equal(metrics.slots, 16, 'all 16 equipment slots must remain available');
-  assert(metrics.locationHeight >= 250, `game world too small: ${metrics.locationHeight}px`);
+  assert(metrics.locationHeight >= 330, `game world too small: ${metrics.locationHeight}px`);
+  assert(metrics.inventoryActionCount >= 1, 'inventory items must expose an equip affordance');
+  assert.equal(metrics.slotAffordanceCount, 16, 'all equipment slots must expose an empty/remove affordance');
   assert(metrics.layoutHeight <= 760, `1720 desktop composition is too tall: ${metrics.layoutHeight}px`);
   assert(metrics.characterRect && metrics.centerRect && metrics.inventoryRect && metrics.inventoryRect.left >= metrics.centerRect.right - 2, 'inventory must stay in the right rail');
   assert(metrics.raidRect && metrics.locationRect && metrics.raidRect.top >= metrics.locationRect.bottom - 2, 'raid must sit below the world scene, never over it');
@@ -367,7 +371,7 @@ try {
   await page.getByRole('button', { name: 'Вы записаны' }).waitFor();
   await page.getByText('8/10').waitFor();
 
-  await page.getByRole('button', { name: /Отправить ·/ }).click();
+  await page.getByRole('button', { name: /Отправить героя/ }).click();
   await page.getByText('Персонаж в пути').waitFor();
   await page.getByRole('button', { name: 'Забрать добычу' }).waitFor({ timeout: 8000 });
   await page.getByRole('button', { name: 'Забрать добычу' }).click();
