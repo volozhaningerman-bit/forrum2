@@ -31,6 +31,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: node scripts/test-home-v39.mjs
       - run: node scripts/test-civilization-alpha.mjs
+      - run: node scripts/test-expedition-alpha.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
