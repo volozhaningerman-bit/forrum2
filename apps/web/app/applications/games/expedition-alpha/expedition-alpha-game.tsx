@@ -275,7 +275,7 @@ export function ExpeditionAlphaGame() {
       setReadyRun(run.depthId);
       setRun(null);
     }
-  }, [now, run]);
+  }, [now, run, serverMode]);
 
   const depth = depths.find((entry) => entry.id === selectedDepth) ?? depths[0];
   const equippedPower = useMemo(
@@ -289,15 +289,55 @@ export function ExpeditionAlphaGame() {
     .map((item) => item?.visual ? `has-${item.visual}` : '')
     .join(' ');
 
-  function sendExpedition() {
-    if (run || readyRun || energy < depth.energy || depth.id > unlockedDepth) return;
+  async function sendExpedition() {
+    if (busy || run || readyRun || energy < depth.energy || depth.id > unlockedDepth) return;
+
+    if (serverMode === 'server') {
+      setBusy(true);
+      setApiError(null);
+      setLastDrops([]);
+      try {
+        await startExpedition(depth.id);
+        const state = await loadExpeditionState();
+        applyServerState(state);
+      } catch (cause) {
+        setApiError(cause instanceof Error ? cause.message : 'Не удалось начать экспедицию');
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
     setEnergy((value) => value - depth.energy);
     setLastDrops([]);
     setRun({ depthId: depth.id, endsAt: Date.now() + 3500 + depth.id * 500 });
   }
 
-  function collectReturn() {
-    if (!readyRun) return;
+  async function collectReturn() {
+    if (!readyRun || busy) return;
+
+    if (serverMode === 'server' && serverRunId) {
+      setBusy(true);
+      setApiError(null);
+      try {
+        const claimed = await claimExpedition(serverRunId);
+        const drop = mapServerItem(claimed.reward.item);
+        setLastDrops([drop]);
+        setResources((current) => ({
+          metal: current.metal,
+          scrap: current.scrap + claimed.reward.resources.scrap,
+          parts: current.parts + claimed.reward.resources.oldParts,
+        }));
+        const state = await loadExpeditionState();
+        applyServerState(state);
+      } catch (cause) {
+        setApiError(cause instanceof Error ? cause.message : 'Не удалось забрать добычу');
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
     const pool = lootPools[readyRun] ?? lootPools[1];
     const firstId = pool[runCount % pool.length];
     const secondId = readyRun >= 3 ? pool[(runCount + 1) % pool.length] : null;
@@ -329,11 +369,44 @@ export function ExpeditionAlphaGame() {
     setReadyRun(null);
   }
 
-  function equip(item: Item) {
+  async function equip(item: Item) {
+    if (busy) return;
+
+    if (serverMode === 'server') {
+      setBusy(true);
+      setApiError(null);
+      try {
+        const state = await equipExpeditionItem(item.id);
+        applyServerState(state);
+      } catch (cause) {
+        setApiError(cause instanceof Error ? cause.message : 'Не удалось надеть предмет');
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
     setEquipped((current) => ({ ...current, [item.slot]: item }));
   }
 
-  function unequip(slot: Slot) {
+  async function unequip(slot: Slot) {
+    const item = equipped[slot];
+    if (!item || busy) return;
+
+    if (serverMode === 'server') {
+      setBusy(true);
+      setApiError(null);
+      try {
+        const state = await unequipExpeditionItem(item.id);
+        applyServerState(state);
+      } catch (cause) {
+        setApiError(cause instanceof Error ? cause.message : 'Не удалось снять предмет');
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+
     setEquipped((current) => {
       const copy = { ...current };
       delete copy[slot];
