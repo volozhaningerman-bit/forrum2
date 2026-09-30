@@ -17,6 +17,8 @@ for (const path of [
   'apps/web/app/icon.svg',
   'apps/web/app/error.tsx',
   'apps/web/app/loading.tsx',
+  'apps/web/app/opengraph-image.tsx',
+  'apps/web/app/twitter-image.tsx',
 ]) requireFile(path);
 
 expect('apps/web/app/layout.tsx', /metadataBase:\s*siteUrl/, 'metadataBase is missing');
@@ -26,6 +28,9 @@ expect('apps/web/app/layout.tsx', /application\/ld\+json/, 'WebSite structured d
 const rootLayout = readFileSync('apps/web/app/layout.tsx', 'utf8');
 if (/alternates:\s*\{\s*canonical:\s*['"]\/['"]/.test(rootLayout)) failures.push('layout: root metadata must not force homepage canonical onto every route');
 if (/openGraph:\s*\{[\s\S]{0,300}?url:\s*['"]\/['"]/.test(rootLayout)) failures.push('layout: root OpenGraph URL must not be inherited as homepage URL on every route');
+if (/openGraph:[\s\S]{0,500}?hero-planet\.svg/.test(rootLayout) || /twitter:[\s\S]{0,500}?hero-planet\.svg/.test(rootLayout)) failures.push('layout: social previews must use generated PNG cards, not SVG hero art');
+expect('apps/web/app/opengraph-image.tsx', /contentType\s*=\s*['"]image\/png['"]/, 'OpenGraph image must render PNG');
+expect('apps/web/app/twitter-image.tsx', /contentType\s*=\s*['"]image\/png['"]/, 'Twitter image must render PNG');
 
 for (const path of [
   'apps/web/app/page.tsx',
@@ -62,6 +67,22 @@ expect('apps/api/src/main.ts', /helmet\(/, 'Helmet middleware is missing');
 
 expect('apps/web/components/reference-home.tsx', /width="1600" height="420" fetchPriority="high"/, 'hero intrinsic dimensions/LCP hint are missing');
 expect('apps/web/components/reference-home.tsx', /aria-live="polite"/, 'dynamic forum feed live region is missing');
+const homeSource = readFileSync('apps/web/components/reference-home.tsx', 'utf8');
+const highPriorityImages = (homeSource.match(/fetchPriority="high"/g) ?? []).length;
+if (highPriorityImages !== 1) failures.push(`homepage: expected exactly one high-priority image (the LCP hero), found ${highPriorityImages}`);
+if (!/skipInitialDefaultFeed\.current/.test(homeSource)) failures.push('homepage: hydration should not immediately refetch the server-rendered default feed');
+const homePage = readFileSync('apps/web/app/page.tsx', 'utf8');
+if (/publicApi<HomeInitialData\['events'\]>\('\/events'\)/.test(homePage)) failures.push('homepage: unused events API request reintroduced');
+const homeCss = readFileSync('apps/web/app/home-alpha.css', 'utf8');
+if (!/@media \(prefers-reduced-data:reduce\)/.test(homeCss)) failures.push('homepage: reduced-data preference fallback is missing');
+if (!/@media \(forced-colors:active\)/.test(homeCss)) failures.push('homepage: forced-colors keyboard/structure support is missing');
+
+for (const path of [
+  '.github/workflows/forrum-v34-ai-reference-20260909.yml',
+  '.github/workflows/forrum-v34-ai-reference-20260909(1).yml',
+  '.github/workflows/4rrum-v42-tyuryaga2.yml',
+]) expect(path, /Archived workflow/, 'obsolete migration workflow must stay archived');
+
 const sitemap = readFileSync('apps/web/app/sitemap.ts', 'utf8');
 if (/lastModified:\s*now/.test(sitemap)) failures.push('sitemap: synthetic current timestamps create false recrawl signals');
 

@@ -73,3 +73,53 @@ Scope: production homepage and repository-wide release guardrails for the web/AP
 
 19. Dynamic topic, community and profile pages inherited generic root metadata.
    - Added request-deduped generateMetadata implementations with page-specific titles, descriptions, canonical URLs and noindex behavior for missing resources.
+
+
+## v69 — production-grade follow-up audit
+
+### Additional audit layers
+- **Information architecture / desktop ergonomics:** checked the supplied 1900px production screenshot for navigation readability, hierarchy, scanability and forum-density consistency.
+- **Hydration/network efficiency:** traced the homepage data path from server render through the first client effects to identify duplicate requests and unused origin calls.
+- **Social sharing / crawler rendering:** checked whether the OpenGraph/Twitter preview format is broadly consumable by bots instead of relying on an SVG-only preview.
+- **Assistive navigation semantics:** checked current-location exposure, unique landmarks/IDs, live feed announcements, keyboard focus and Windows forced-colors behavior.
+- **User preference handling:** checked reduced motion, reduced data and high-contrast fallbacks.
+- **Release regression coverage:** promoted the findings into CI assertions instead of leaving them as manual checklist items.
+
+### Findings fixed in v69
+20. The homepage requested `/events` during SSR even though no homepage component rendered event data.
+   - Removed the request and kept the existing data contract with an empty events collection.
+21. The server-rendered default topic feed was fetched again immediately after hydration.
+   - Added a one-shot hydration guard so the default feed is downloaded once; deep-linked tabs/communities still fetch immediately.
+22. Both the logo and the hero were marked high-priority images.
+   - Reserved `fetchPriority="high"` for the actual LCP hero and left the small logo as a normal eager document image.
+23. Root social previews pointed at the SVG hero artwork.
+   - Added generated 1200×630 PNG OpenGraph and Twitter cards using Next ImageResponse.
+24. Desktop navigation labels still had too little horizontal budget at the approved wide layout.
+   - Rebalanced the desktop grid to 290px / fluid center / 330px and retained two-line community labels with full-name tooltips.
+25. Sidebar navigation did not expose the currently selected community via `aria-current`.
+   - Added current-page semantics for the home entry and selected community entry.
+26. Decorative hero/topic art had no explicit reduced-data fallback.
+   - Added `prefers-reduced-data` rules that remove nonessential artwork while preserving all text and controls.
+27. High-contrast keyboard users relied on ordinary CSS colors for focus and panel separation.
+   - Added `forced-colors` focus and structural border fallbacks.
+28. Performance fixes could regress silently.
+   - Browser regression now asserts that homepage startup does not call the unused events endpoint or duplicate the default feed request; source audit also enforces one LCP-priority image and generated PNG social cards.
+
+### Remaining infrastructure-level work
+The following are intentionally not presented as completed because they need production infrastructure, traffic or a shared service rather than a frontend-only patch:
+- shared/distributed rate-limit storage before horizontal API scaling;
+- real-user Core Web Vitals telemetry and dashboards;
+- scheduled Lighthouse budgets against a stable production data fixture;
+- runtime axe-core coverage for authenticated journeys;
+- dynamic sitemap expansion beyond stable public routes;
+- automated backup-restore drills plus synthetic uptime/latency alerting.
+
+
+## v70 — CI hygiene follow-up
+
+29. Three historical one-time migration workflows still appeared as failed workflow runs around normal main-branch releases, creating false red CI noise even though the active release checks passed.
+   - Archived the two V34 patch workflows and the second v42 Tyuryaga patch workflow as read-only manual stubs.
+   - Their complete implementation remains in Git history.
+   - The site-audit regression now rejects reintroduction of executable migration payloads into these retired workflow files.
+
+This leaves the active homepage/release checks as the signal for current code rather than mixing them with obsolete migration jobs.
