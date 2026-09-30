@@ -40,6 +40,12 @@ for (const path of [
   'apps/web/app/search/page.tsx',
 ]) expect(path, /alternates:\s*\{\s*canonical:/, 'public route canonical metadata is missing');
 
+for (const path of [
+  'apps/web/app/p/[slug]/page.tsx',
+  'apps/web/app/communities/[slug]/page.tsx',
+  'apps/web/app/u/[username]/page.tsx',
+]) expect(path, /generateMetadata[\s\S]*alternates:\s*\{\s*canonical/, 'dynamic public route metadata/canonical is missing');
+
 expect('apps/web/next.config.ts', /Content-Security-Policy/, 'CSP header is missing');
 expect('apps/web/next.config.ts', /Strict-Transport-Security/, 'HSTS header is missing');
 expect('apps/web/next.config.ts', /X-Content-Type-Options/, 'nosniff header is missing');
