@@ -305,6 +305,7 @@ enum PromotionOrderStatus {
 
 model User {
   tyuryagaProfile TyuryagaProfile?
+  expeditionProfile ExpeditionProfile?
   id                 String       @id @default(uuid()) @db.Uuid
   forrumId           Int          @unique @default(autoincrement())
   email              String       @unique
@@ -1394,6 +1395,22 @@ enum InventoryItemType {
   AVATAR_FRAME
   PROFILE_BADGE
   REACTION_PACK
+  GAME_HEAD
+  GAME_NECK
+  GAME_SHOULDERS
+  GAME_CLOAK
+  GAME_CHEST
+  GAME_WRISTS
+  GAME_GLOVES
+  GAME_BELT
+  GAME_LEGS
+  GAME_FEET
+  GAME_RING_1
+  GAME_RING_2
+  GAME_RELIC_1
+  GAME_RELIC_2
+  GAME_MAIN_HAND
+  GAME_OFF_HAND
 }
 
 enum InventoryItemRarity {
@@ -1517,4 +1534,65 @@ model TyuryagaBossBattle {
   createdAt        DateTime        @default(now())
 
   @@index([profileId])
+}
+
+
+enum ExpeditionRunStatus {
+  ACTIVE
+  READY
+  CLAIMED
+}
+
+model ExpeditionProfile {
+  id             String          @id @default(cuid())
+  userId         String          @unique @db.Uuid
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  level          Int             @default(1)
+  xp             Int             @default(0)
+  energy         Int             @default(12)
+  maxEnergy      Int             @default(12)
+  lastEnergySync DateTime        @default(now())
+  unlockedDepth  Int             @default(1)
+  metal          Int             @default(0)
+  cloth          Int             @default(0)
+  scrap          Int             @default(0)
+  oldParts       Int             @default(0)
+  runs           ExpeditionRun[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([userId])
+}
+
+model ExpeditionRun {
+  id             String              @id @default(cuid())
+  profileId      String
+  profile        ExpeditionProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  locationKey    String
+  depth          Int
+  energyCost     Int
+  status         ExpeditionRunStatus @default(ACTIVE)
+  startedAt      DateTime            @default(now())
+  resolvesAt     DateTime
+  claimedAt      DateTime?
+  rewardXp       Int                 @default(0)
+  rewardMetal    Int                 @default(0)
+  rewardCloth    Int                 @default(0)
+  rewardScrap    Int                 @default(0)
+  rewardOldParts Int                 @default(0)
+  lootSeriesKey  String?
+
+  @@index([profileId, status])
+  @@index([resolvesAt])
+}
+
+model ExpeditionItemSeries {
+  id                    String @id
+  inventoryDefinitionId String @unique
+  maxSupply             Int
+  issuedCount           Int    @default(0)
+  minimumDepth          Int    @default(1)
+  weight                Int    @default(100)
+
+  @@index([minimumDepth])
 }
