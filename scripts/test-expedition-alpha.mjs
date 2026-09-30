@@ -43,3 +43,5 @@ if (failed.length) {
 
 for (const [name] of checks) console.log(`PASS: ${name}`);
 console.log(`Expedition alpha v2 checks passed. Item templates covered: ${itemCount}.`);
+
+await import('./test-expedition-alpha-browser.mjs');
