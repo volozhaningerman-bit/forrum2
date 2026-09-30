@@ -13,15 +13,37 @@ const ENERGY_REGEN_MINUTES = 10;
 
 const itemTemplates = [
   { id: 'exp_head_hood', slug: 'collector-hood', name: 'Капюшон Собирателя', slot: 'HEAD', rarity: 'COMMON', circulationCap: 5000, power: 2, visualKey: 'hood', minDepth: 1 },
-  { id: 'exp_chest_guard', slug: 'old-guard-shell', name: 'Панцирь Старой Стражи', slot: 'CHEST', rarity: 'UNCOMMON', circulationCap: 2500, power: 5, visualKey: 'chest-guard', minDepth: 1 },
-  { id: 'exp_gloves_servo', slug: 'servo-master-gloves', name: 'Перчатки Сервомастера', slot: 'GLOVES', rarity: 'UNCOMMON', circulationCap: 4000, power: 4, visualKey: 'gloves', minDepth: 1 },
-  { id: 'exp_boots_iron', slug: 'iron-step-boots', name: 'Сапоги Железного Шага', slot: 'FEET', rarity: 'UNCOMMON', circulationCap: 3000, power: 4, visualKey: 'boots', minDepth: 1 },
-  { id: 'exp_shoulders_border', slug: 'border-shoulders', name: 'Наплечники Рубежа', slot: 'SHOULDERS', rarity: 'RARE', circulationCap: 650, power: 7, visualKey: 'shoulders', minDepth: 2 },
-  { id: 'exp_cloak_blue', slug: 'blue-banner-cloak', name: 'Плащ Синего Знамени', slot: 'CLOAK', rarity: 'RARE', circulationCap: 500, power: 8, visualKey: 'cloak-blue', minDepth: 2 },
-  { id: 'exp_sword_contour', slug: 'last-contour-blade', name: 'Клинок Последнего Контура', slot: 'MAIN_HAND', rarity: 'RARE', circulationCap: 400, power: 11, visualKey: 'sword-blue', minDepth: 3 },
-  { id: 'exp_shield_barrier', slug: 'barrier-shield', name: 'Щит Заслона', slot: 'OFF_HAND', rarity: 'RARE', circulationCap: 300, power: 9, visualKey: 'shield', minDepth: 3 },
-  { id: 'exp_relic_beacon', slug: 'beacon-heart', name: 'Сердце Маяка', slot: 'RELIC_1', rarity: 'EPIC', circulationCap: 60, power: 14, visualKey: 'relic-epic', minDepth: 4 },
+  { id: 'exp_head_watch', slug: 'watcher-helm', name: 'Шлем Дозорного', slot: 'HEAD', rarity: 'UNCOMMON', circulationCap: 2400, power: 4, visualKey: 'helm', minDepth: 2 },
   { id: 'exp_head_consul', slug: 'rust-consul-mask', name: 'Маска Ржавого Консула', slot: 'HEAD', rarity: 'EPIC', circulationCap: 80, power: 13, visualKey: 'consul-mask', minDepth: 5 },
+
+  { id: 'exp_neck_traveler', slug: 'traveler-seal', name: 'Печать Путника', slot: 'NECK', rarity: 'COMMON', circulationCap: 8000, power: 2, visualKey: 'neck', minDepth: 1 },
+  { id: 'exp_neck_archivist', slug: 'archivist-eye', name: 'Око Архивариуса', slot: 'NECK', rarity: 'RARE', circulationCap: 500, power: 7, visualKey: 'neck', minDepth: 3 },
+
+  { id: 'exp_shoulders_border', slug: 'border-shoulders', name: 'Наплечники Рубежа', slot: 'SHOULDERS', rarity: 'RARE', circulationCap: 650, power: 7, visualKey: 'shoulders', minDepth: 2 },
+  { id: 'exp_cloak_ash', slug: 'ash-road-cloak', name: 'Плащ Пепельной Дороги', slot: 'CLOAK', rarity: 'COMMON', circulationCap: 7000, power: 3, visualKey: 'cloak', minDepth: 1 },
+  { id: 'exp_cloak_blue', slug: 'blue-banner-cloak', name: 'Плащ Синего Знамени', slot: 'CLOAK', rarity: 'RARE', circulationCap: 500, power: 8, visualKey: 'cloak-blue', minDepth: 2 },
+
+  { id: 'exp_chest_border', slug: 'border-jacket', name: 'Куртка Пограничника', slot: 'CHEST', rarity: 'COMMON', circulationCap: 10000, power: 3, visualKey: 'chest', minDepth: 1 },
+  { id: 'exp_chest_guard', slug: 'old-guard-shell', name: 'Панцирь Старой Стражи', slot: 'CHEST', rarity: 'UNCOMMON', circulationCap: 2500, power: 5, visualKey: 'chest-guard', minDepth: 1 },
+  { id: 'exp_chest_consul', slug: 'rust-consul-cuirass', name: 'Кираса Ржавого Консула', slot: 'CHEST', rarity: 'EPIC', circulationCap: 80, power: 14, visualKey: 'chest-epic', minDepth: 5 },
+
+  { id: 'exp_wrists_seeker', slug: 'seeker-wrists', name: 'Наручи Искателя', slot: 'WRISTS', rarity: 'COMMON', circulationCap: 6000, power: 2, visualKey: 'wrists', minDepth: 1 },
+  { id: 'exp_gloves_servo', slug: 'servo-master-gloves', name: 'Перчатки Сервомастера', slot: 'GLOVES', rarity: 'UNCOMMON', circulationCap: 4000, power: 4, visualKey: 'gloves', minDepth: 1 },
+  { id: 'exp_belt_mechanic', slug: 'mechanic-belt', name: 'Пояс Механика', slot: 'BELT', rarity: 'UNCOMMON', circulationCap: 3500, power: 4, visualKey: 'belt', minDepth: 1 },
+  { id: 'exp_legs_dust', slug: 'dust-road-legs', name: 'Штаны Пыльной Тропы', slot: 'LEGS', rarity: 'COMMON', circulationCap: 9000, power: 2, visualKey: 'legs', minDepth: 1 },
+  { id: 'exp_boots_iron', slug: 'iron-step-boots', name: 'Сапоги Железного Шага', slot: 'FEET', rarity: 'UNCOMMON', circulationCap: 3000, power: 4, visualKey: 'boots', minDepth: 1 },
+
+  { id: 'exp_ring_alloy', slug: 'old-alloy-ring', name: 'Кольцо Старого Сплава', slot: 'RING_1', rarity: 'COMMON', circulationCap: 12000, power: 2, visualKey: 'ring', minDepth: 1 },
+  { id: 'exp_ring_reactor', slug: 'reactor-worker-ring', name: 'Перстень Реакторщика', slot: 'RING_2', rarity: 'RARE', circulationCap: 800, power: 6, visualKey: 'ring-blue', minDepth: 3 },
+  { id: 'exp_relic_shard', slug: 'reactor-shard', name: 'Осколок Реактора', slot: 'RELIC_1', rarity: 'UNCOMMON', circulationCap: 3000, power: 5, visualKey: 'relic', minDepth: 2 },
+  { id: 'exp_relic_beacon', slug: 'beacon-heart', name: 'Сердце Маяка', slot: 'RELIC_2', rarity: 'EPIC', circulationCap: 60, power: 14, visualKey: 'relic-epic', minDepth: 4 },
+
+  { id: 'exp_sword_dust', slug: 'dust-guard-sword', name: 'Меч Пыльной Стражи', slot: 'MAIN_HAND', rarity: 'COMMON', circulationCap: 10000, power: 5, visualKey: 'sword', minDepth: 1 },
+  { id: 'exp_spear_ruins', slug: 'ruin-hunter-spear', name: 'Копьё Руинного Охотника', slot: 'MAIN_HAND', rarity: 'UNCOMMON', circulationCap: 3000, power: 7, visualKey: 'spear', minDepth: 2 },
+  { id: 'exp_sword_contour', slug: 'last-contour-blade', name: 'Клинок Последнего Контура', slot: 'MAIN_HAND', rarity: 'RARE', circulationCap: 400, power: 11, visualKey: 'sword-blue', minDepth: 3 },
+  { id: 'exp_hammer_prior', slug: 'steel-prior-hammer', name: 'Молот Стального Приора', slot: 'MAIN_HAND', rarity: 'EPIC', circulationCap: 45, power: 16, visualKey: 'hammer', minDepth: 5 },
+
+  { id: 'exp_shield_barrier', slug: 'barrier-shield', name: 'Щит Заслона', slot: 'OFF_HAND', rarity: 'RARE', circulationCap: 300, power: 9, visualKey: 'shield', minDepth: 3 },
 ] as const;
 
 @Injectable()
