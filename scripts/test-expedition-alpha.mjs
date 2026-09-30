@@ -324,7 +324,7 @@ try {
     location: Boolean(document.querySelector('.exp-location-art')),
     boss: Boolean(document.querySelector('.exp-boss-crop')),
     avatarBg: getComputedStyle(document.querySelector('.exp-avatar-art')).backgroundImage,
-    locationBg: getComputedStyle(document.querySelector('.exp-location-art')).backgroundImage,
+    locationBg: getComputedStyle(document.querySelector('.exp-location-art'), '::before').backgroundImage,
     bossBg: getComputedStyle(document.querySelector('.exp-boss-crop')).backgroundImage,
     bossDisplay: getComputedStyle(document.querySelector('.exp-boss-crop')).display,
   }));
