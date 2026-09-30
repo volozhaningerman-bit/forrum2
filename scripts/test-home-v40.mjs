@@ -76,6 +76,12 @@ try {
  assert.equal(await page.locator('.forum-category-online').count(),0);
  assert.equal(await page.locator('.forum-category-children').count(),0);
  assert.equal(await page.locator('.forum-secondary-banners').count(),0);
+ assert.equal(requests.filter(r=>r.path==='/v1/events').length,0,'Homepage must not fetch unused events data');
+ assert.equal(requests.filter(r=>r.path==='/v1/feed').length,1,'Default feed should be fetched once on the server, not refetched after hydration');
+ assert.equal(await page.locator('h1').count(),1,'Homepage should expose one primary heading');
+ assert.equal(await page.locator('.forum-home-category a').getAttribute('aria-current'),'page');
+ const duplicateIds=await page.evaluate(()=>{const ids=[...document.querySelectorAll('[id]')].map(el=>el.id);return ids.filter((id,index)=>ids.indexOf(id)!==index);});
+ assert.deepEqual(duplicateIds,[],'Rendered homepage must not contain duplicate ids');
  await page.getByRole('button',{name:'Развернуть: Разработка',exact:true}).click({position:{x:180,y:16}});
  await page.locator('.forum-category-children').first().waitFor();
  await page.reload({waitUntil:'networkidle'});
