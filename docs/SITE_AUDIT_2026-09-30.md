@@ -52,3 +52,21 @@ Scope: production homepage and repository-wide release guardrails for the web/AP
 - Add automated axe-core runtime checks across authenticated and public journeys.
 - Review CSP periodically if third-party integrations are introduced.
 - Add backup-restore drills and synthetic uptime/latency alerting if not already provided by infrastructure.
+
+
+## Follow-up findings addressed in v68
+11. The root canonical and OpenGraph URL were inherited by child routes, which could cause public pages to advertise the homepage as their canonical URL.
+   - Removed route-specific URL fields from root metadata and added explicit canonical/OpenGraph metadata to the main public routes.
+12. Private/authenticated surfaces were blocked in robots.txt but did not send an HTTP noindex directive.
+   - Added X-Robots-Tag: noindex, nofollow, noarchive to admin, account, inbox, settings and authentication routes.
+13. The sitemap used the current time as lastModified for every entry on every request.
+   - Removed synthetic modification timestamps so crawlers are not told unchanged pages were freshly updated.
+14. Current-period user ranking could become a large empty panel even when real historical ranking data existed.
+   - Empty weekly ranking now falls back to real all-time data; no fabricated users or counts are introduced.
+15. Long community names were aggressively forced onto one line in the desktop sidebar.
+   - Restored a two-line clamp so labels stay readable without breaking the approved compact grid.
+16. Lower topic rows still incurred full rendering cost before entering the viewport.
+   - Added content-visibility with an intrinsic size for later rows while preserving the first screen for LCP.
+17. Cross-origin response hardening was missing CORP and legacy cross-domain policy protection.
+   - Added Cross-Origin-Resource-Policy: same-site and X-Permitted-Cross-Domain-Policies: none.
+18. Release checks now explicitly reject a global homepage canonical, missing public-route canonicals, missing private-route noindex headers and synthetic sitemap timestamps.
