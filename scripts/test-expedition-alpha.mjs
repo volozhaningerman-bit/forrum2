@@ -51,6 +51,7 @@ const staticChecks = [
   ['category and syndicate preview', gameSource.includes('Железный Герольд') && gameSource.includes('Ядро Ковчега')],
   ['live-safe art pack referenced', cssSource.includes('/games/expedition-alpha/hero-base.svg') && cssSource.includes('/games/expedition-alpha/rust-outskirts.svg') && cssSource.includes('/games/expedition-alpha/iron-shepherd.svg') && cssSource.includes('/games/expedition-alpha/equipment-atlas.svg')],
   ['v0.8 alpha readiness composition', cssSource.includes('EXPEDITION ALPHA V0.8') && gameSource.includes('alpha 0.8') && gameSource.includes('exp-depth-label')],
+  ['no escaped newline artifact in UI source', !gameSource.includes('\\\\n            <div className="exp-depths">')],
   ['true paper-doll layers wired', gameSource.includes('exp-gear exp-gear-cloak') && gameSource.includes('exp-gear exp-gear-mainhand') && cssSource.includes('.exp-avatar.has-gloves .exp-gear-gloves')],
   ['world hero uses live-safe art', gameSource.includes('exp-world-hero') && cssSource.includes('/games/expedition-alpha/hero-base.svg')],
   ['no civilization art dependency', !cssSource.includes('/games/civilization/')],
