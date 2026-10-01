@@ -245,7 +245,16 @@ try {
  assert(Math.abs(boxes['.forum-search-hero'].width-974)<=5);
  assert(Math.abs(boxes['.forum-right'].x-1307)<=3);
  assert(Math.abs(boxes['.forum-feed-toolbar'].y-487)<=8);
- assert(boxes['.forum-topic'].height>=50 && boxes['.forum-topic'].height<=60);
+ assert(boxes['.forum-topic'].height>=49 && boxes['.forum-topic'].height<=52,`Compact topic row drifted: ${boxes['.forum-topic'].height}px`);
+ const firstTopic=page.locator('.forum-topic').first();
+ assert.equal(await firstTopic.locator('.forum-topic-avatar').getAttribute('href'),'/u/person-0','Topic avatar must lead to the author profile');
+ assert.equal(await firstTopic.locator('.forum-topic-avatar img').count(),1,'Topic feed should render a visual avatar, not a category initial');
+ assert((await firstTopic.locator('.forum-topic-avatar img').getAttribute('src'))?.includes('/forrum-assets/avatar-'),'Fallback profile avatar should use the approved visual avatar set');
+ assert.equal(await firstTopic.locator('.forum-topic-metric').count(),3,'Topic row keeps replies, views and bookmarks together');
+ assert.equal(await firstTopic.locator('.forum-topic-category-cell').count(),0,'Category must live under the title, not in a separate table column');
+ const titleBox=await firstTopic.locator('.forum-topic-title-line').boundingBox();
+ const contextBox=await firstTopic.locator('.forum-topic-context').boundingBox();
+ assert(titleBox && contextBox && contextBox.y>=titleBox.y+titleBox.height-1,'Author/category metadata must sit below the title');
  await writeFile(output+'/reference-geometry.json',JSON.stringify(boxes,null,2));
  await page.screenshot({path:output+'/reference-preview.png'});
  const {checkHomeSnapshot}=await import('./home-visual-check.mjs');
