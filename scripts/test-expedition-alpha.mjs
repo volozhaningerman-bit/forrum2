@@ -341,7 +341,7 @@ try {
       inventoryActionCount: document.querySelectorAll('.exp-item-action').length,
       slotAffordanceCount: document.querySelectorAll('.exp-slots button i').length,
       characterRect: (() => { const r=document.querySelector('.exp-character')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
-      centerRect: (() => { const r=document.querySelector('.exp-center')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
+      centerRect: (() => { const el=document.querySelector('.exp-center'); if(!el) return null; const r=el.getBoundingClientRect(); return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,display:getComputedStyle(el).display}; })(),
       inventoryRect: (() => { const r=document.querySelector('.exp-inventory')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
       raidRect: (() => { const r=document.querySelector('.exp-raid')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
       locationRect: (() => { const r=document.querySelector('.exp-location')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
@@ -351,20 +351,20 @@ try {
   assert(metrics.avatarBg.includes('hero-base.svg'), 'hero art must render from live-safe SVG');
   assert(metrics.locationBg.includes('rust-outskirts.svg'), 'location art must render from live-safe SVG');
   assert(metrics.bossBg.includes('iron-shepherd.svg') && metrics.bossDisplay !== 'none', 'boss art must be visibly rendered');
-  assert.equal(metrics.raidDisplay, 'grid', 'desktop raid must render boss and copy side by side');
+  assert.equal(metrics.raidDisplay, 'grid', 'desktop raid must render as a dedicated objective card');
   assert(metrics.raidButtonVisible, 'raid action must remain visible and clickable');
   assert.notEqual(metrics.championArtDisplay, 'none', 'Champion art must be rendered');
   assert.notEqual(metrics.relicArtDisplay, 'none', 'Ark Core art must be rendered');
   assert.equal(metrics.slots, 16, 'all 16 equipment slots must remain available');
-  assert(metrics.locationHeight >= 330, `game world too small: ${metrics.locationHeight}px`);
+  assert(metrics.locationHeight >= 420, `game world too small: ${metrics.locationHeight}px`);
   assert(metrics.inventoryActionCount >= 1, 'inventory items must expose an equip affordance');
   assert.equal(metrics.slotAffordanceCount, 16, 'all equipment slots must expose an empty/remove affordance');
-  assert(metrics.layoutHeight <= 760, `1720 desktop composition is too tall: ${metrics.layoutHeight}px`);
-  assert(metrics.characterRect && metrics.centerRect && metrics.inventoryRect && metrics.inventoryRect.left >= metrics.centerRect.right - 2, 'inventory must stay in the right rail');
-  assert(metrics.raidRect && metrics.locationRect && metrics.raidRect.top >= metrics.locationRect.bottom - 2, 'raid must sit below the world scene, never over it');
+  assert(metrics.layoutHeight <= 790, `1720 desktop composition is too tall: ${metrics.layoutHeight}px`);
+  assert(metrics.characterRect && metrics.inventoryRect && metrics.locationRect && metrics.inventoryRect.left <= metrics.characterRect.right + 2 && metrics.inventoryRect.right <= metrics.locationRect.left + 2, 'inventory must stay under the character in the left rail');
+  assert(metrics.raidRect && metrics.locationRect && metrics.raidRect.left >= metrics.locationRect.right - 2, 'raid must stay in the right rail beside the world');
   assert(metrics.scrollWidth <= metrics.width + 2, `horizontal overflow ${metrics.scrollWidth}/${metrics.width}`);
 
-  await page.screenshot({ path: output + '/expedition-alpha-v06-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v08-1720x900.png', fullPage: true });
 
   const raidJoin = page.getByRole('button', { name: 'Отправить персонажа' });
   await raidJoin.click();
@@ -397,10 +397,10 @@ try {
   assert.notEqual(socialArt.champion, 'none', 'champion art must be visible');
   assert.notEqual(socialArt.relic, 'none', 'relic art must be visible');
 
-  await page.screenshot({ path: output + '/expedition-alpha-v06-loot-equipped-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v08-loot-equipped-1720x900.png', fullPage: true });
 
   await page.setViewportSize({ width: 1366, height: 768 });
-  await page.screenshot({ path: output + '/expedition-alpha-v06-1366x768.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v08-1366x768.png', fullPage: true });
   const mobileish = await page.evaluate(() => ({
     width: innerWidth,
     scrollWidth: document.documentElement.scrollWidth,
@@ -417,4 +417,4 @@ try {
   upstream.close();
 }
 
-console.log(`Expedition alpha v0.6 reference-led checks passed. Item templates covered: ${itemCount}.`);
+console.log(`Expedition alpha v0.8 audit checks passed. Item templates covered: ${itemCount}.`);
