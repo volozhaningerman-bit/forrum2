@@ -2419,7 +2419,7 @@
    ========================================================================== */
 
 .exp-item-icon{
-  background-image:url('/games/expedition-alpha/equipment-icons-v10.svg')!important;
+  background-image:var(--exp-item-art,url('/games/expedition-alpha/equipment-icons-v10.svg'))!important;
   background-repeat:no-repeat!important;
   background-size:500% 500%!important;
   background-color:#0b1419!important;
@@ -2511,7 +2511,7 @@
   opacity:0!important;
   pointer-events:none!important;
   transform:translateX(-50%)!important;
-  background-image:url('/games/expedition-alpha/equipment-paperdoll-v10.svg')!important;
+  background-image:var(--exp-paperdoll-art,url('/games/expedition-alpha/equipment-paperdoll-v10.svg'))!important;
   background-repeat:no-repeat!important;
   background-size:500% 500%!important;
   background-color:transparent!important;
@@ -2554,7 +2554,7 @@
   height:322px!important;
   margin:0!important;
   transform:translateX(-50%)!important;
-  background-image:url('/games/expedition-alpha/equipment-paperdoll-v10.svg')!important;
+  background-image:var(--exp-paperdoll-art,url('/games/expedition-alpha/equipment-paperdoll-v10.svg'))!important;
   background-repeat:no-repeat!important;
   background-size:500% 500%!important;
   background-color:transparent!important;
@@ -2620,7 +2620,7 @@
   height:100%!important;
   opacity:0!important;
   pointer-events:none!important;
-  background-image:url('/games/expedition-alpha/equipment-paperdoll-v10.svg')!important;
+  background-image:var(--exp-paperdoll-art,url('/games/expedition-alpha/equipment-paperdoll-v10.svg'))!important;
   background-repeat:no-repeat!important;
   background-size:500% 500%!important;
   background-color:transparent!important;
@@ -2655,7 +2655,7 @@
   inset:0!important;
   width:100%!important;
   height:100%!important;
-  background-image:url('/games/expedition-alpha/equipment-paperdoll-v10.svg')!important;
+  background-image:var(--exp-paperdoll-art,url('/games/expedition-alpha/equipment-paperdoll-v10.svg'))!important;
   background-repeat:no-repeat!important;
   background-size:500% 500%!important;
   background-color:transparent!important;
@@ -2842,4 +2842,85 @@
 @media(max-width:820px){
   .exp-items{max-height:420px!important}
   .exp-item-compare{font-size:7px!important}
+}
+
+
+/* Stage 2 art quality pass — use the approved high-detail equipment pack.
+   Each atlas cell is authored at the same 260×739 rig coordinates as the base hero,
+   so the layer can scale as one unit instead of stretching individual pieces. */
+.exp-avatar .exp-gear,
+.exp-avatar.has-hood .exp-gear-head,
+.exp-avatar.has-helm .exp-gear-head,
+.exp-avatar.has-consul-mask .exp-gear-head,
+.exp-avatar.has-neck .exp-gear-neck,
+.exp-avatar.has-neck-eye .exp-gear-neck,
+.exp-avatar.has-shoulders .exp-gear-shoulders,
+.exp-avatar.has-cloak .exp-gear-cloak,
+.exp-avatar.has-cloak-blue .exp-gear-cloak,
+.exp-avatar.has-chest .exp-gear-chest,
+.exp-avatar.has-chest-guard .exp-gear-chest,
+.exp-avatar.has-chest-epic .exp-gear-chest,
+.exp-avatar.has-wrists .exp-gear-wrists,
+.exp-avatar.has-gloves .exp-gear-gloves,
+.exp-avatar.has-belt .exp-gear-belt,
+.exp-avatar.has-legs .exp-gear-legs,
+.exp-avatar.has-boots .exp-gear-boots,
+.exp-avatar.has-ring .exp-gear-ring1,
+.exp-avatar.has-ring-blue .exp-gear-ring2,
+.exp-avatar.has-relic .exp-gear-relic1,
+.exp-avatar.has-relic-epic .exp-gear-relic2,
+.exp-avatar.has-sword .exp-gear-mainhand,
+.exp-avatar.has-spear .exp-gear-mainhand,
+.exp-avatar.has-sword-blue .exp-gear-mainhand,
+.exp-avatar.has-hammer .exp-gear-mainhand,
+.exp-avatar.has-shield .exp-gear-offhand{
+  left:50%!important;
+  top:4px!important;
+  width:113px!important;
+  height:321px!important;
+  transform:translateX(-50%)!important;
+  background-size:500% 500%!important;
+  image-rendering:auto!important;
+  filter:drop-shadow(0 5px 4px rgba(0,0,0,.24))!important;
+}
+.exp-world-gear,
+.exp-world-hero.has-hood .exp-world-gear-head,
+.exp-world-hero.has-helm .exp-world-gear-head,
+.exp-world-hero.has-consul-mask .exp-world-gear-head,
+.exp-world-hero.has-neck .exp-world-gear-neck,
+.exp-world-hero.has-neck-eye .exp-world-gear-neck,
+.exp-world-hero.has-shoulders .exp-world-gear-shoulders,
+.exp-world-hero.has-cloak .exp-world-gear-cloak,
+.exp-world-hero.has-cloak-blue .exp-world-gear-cloak,
+.exp-world-hero.has-chest .exp-world-gear-chest,
+.exp-world-hero.has-chest-guard .exp-world-gear-chest,
+.exp-world-hero.has-chest-epic .exp-world-gear-chest,
+.exp-world-hero.has-wrists .exp-world-gear-wrists,
+.exp-world-hero.has-gloves .exp-world-gear-gloves,
+.exp-world-hero.has-belt .exp-world-gear-belt,
+.exp-world-hero.has-legs .exp-world-gear-legs,
+.exp-world-hero.has-boots .exp-world-gear-boots,
+.exp-world-hero.has-ring .exp-world-gear-ring1,
+.exp-world-hero.has-ring-blue .exp-world-gear-ring2,
+.exp-world-hero.has-relic .exp-world-gear-relic1,
+.exp-world-hero.has-relic-epic .exp-world-gear-relic2,
+.exp-world-hero.has-sword .exp-world-gear-mainhand,
+.exp-world-hero.has-spear .exp-world-gear-mainhand,
+.exp-world-hero.has-sword-blue .exp-world-gear-mainhand,
+.exp-world-hero.has-hammer .exp-world-gear-mainhand,
+.exp-world-hero.has-shield .exp-world-gear-offhand{
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  background-size:500% 500%!important;
+  image-rendering:auto!important;
+}
+@media(max-width:1560px) and (min-width:1181px){
+  .exp-avatar .exp-gear{width:104px!important;height:296px!important;top:1px!important}
+}
+@media(max-width:1180px){
+  .exp-avatar .exp-gear{width:107px!important;height:305px!important;top:3px!important}
+}
+@media(max-width:820px){
+  .exp-avatar .exp-gear{width:98px!important;height:279px!important;top:10px!important}
 }
