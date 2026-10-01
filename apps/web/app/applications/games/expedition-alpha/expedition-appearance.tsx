@@ -374,17 +374,18 @@ function EffectChannel({ items }: { items: ExpeditionAppearanceItem[] }) {
   return (
     <g data-channel="effect" data-rarity={strongest.rarity} pointerEvents="none">
       <ellipse cx="512" cy="1398" rx="225" ry="48" fill={theme.glow} opacity={intensity + .18} />
-      <circle cx="512" cy="615" r="31" fill={theme.accent} opacity={intensity + .18} />
-      <circle cx="512" cy="615" r="58" fill="none" stroke={theme.accent} strokeWidth="9" opacity={intensity} />
+      <ellipse cx="512" cy="1378" rx="176" ry="34" fill="none" stroke={theme.accent} strokeWidth="7" opacity={intensity} strokeDasharray="22 28" />
+      <circle cx="374" cy="1110" r="7" fill={theme.accent} opacity={intensity + .12} />
+      <circle cx="650" cy="1084" r="6" fill={theme.accent} opacity={intensity + .08} />
       {strongest.rarity === 'relic' ? (
         <>
-          <circle cx="512" cy="615" r="76" fill="none" stroke="#7cecff" strokeWidth="7" opacity=".32" strokeDasharray="20 18" />
-          <circle cx="512" cy="615" r="91" fill="none" stroke="#ff88d7" strokeWidth="6" opacity=".28" strokeDasharray="12 24" />
-          <path d="M350 1040 Q512 1138 674 1040" fill="none" stroke="#ffd96b" strokeWidth="9" opacity=".30" strokeDasharray="16 22" />
+          <ellipse cx="512" cy="1378" rx="205" ry="42" fill="none" stroke="#7cecff" strokeWidth="6" opacity=".30" strokeDasharray="24 20" />
+          <ellipse cx="512" cy="1378" rx="238" ry="52" fill="none" stroke="#ff88d7" strokeWidth="5" opacity=".24" strokeDasharray="14 26" />
+          <path d="M350 1230 Q512 1302 674 1230" fill="none" stroke="#ffd96b" strokeWidth="7" opacity=".28" strokeDasharray="16 24" />
         </>
       ) : null}
       {effects.length > 2 ? (
-        <path d="M360 1035 Q512 1115 664 1035" fill="none" stroke={theme.accent} strokeWidth="10" opacity={intensity} strokeDasharray="18 24" />
+        <path d="M372 1210 Q512 1268 652 1210" fill="none" stroke={theme.accent} strokeWidth="7" opacity={intensity} strokeDasharray="18 26" />
       ) : null}
     </g>
   );
