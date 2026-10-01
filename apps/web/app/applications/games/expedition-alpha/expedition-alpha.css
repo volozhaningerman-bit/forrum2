@@ -2258,3 +2258,43 @@
 .exp-primary:not(:disabled):hover,.exp-raid-copy button:not(:disabled):hover{transform:translateY(-1px)!important;box-shadow:0 8px 20px rgba(26,198,174,.18)!important}
 .exp-slots button:focus-visible,.exp-depths button:focus-visible,.exp-item:focus-visible,.exp-primary:focus-visible,.exp-raid-copy button:focus-visible{outline:2px solid #76d9d0!important;outline-offset:2px!important}
 @media(prefers-reduced-motion:reduce){.exp-slots button,.exp-depths button,.exp-item,.exp-primary,.exp-raid-copy button{transition:none!important;transform:none!important}}
+
+
+/* v0.8.1 height budget after real 1720×900 browser QA. */
+@media (min-width:1281px){
+  .exp-layout{grid-template-rows:480px 300px!important}
+  .exp-character,.exp-inventory,.exp-location,.exp-raid,.exp-community{overflow:hidden!important}
+  .exp-avatar{height:232px!important;min-height:232px!important}
+  .exp-avatar-art{inset:4px 58px 34px!important}
+  .exp-avatar-label{bottom:6px!important}
+  .exp-slots{gap:3px!important;padding:0 7px 7px!important}
+  .exp-slots button{min-height:41px!important;padding:4px 5px!important}
+  .exp-slots button span{font-size:6.5px!important}.exp-slots button b{font-size:7.5px!important}.exp-slots button i{display:none!important}
+
+  .exp-inventory .exp-panel-title{min-height:42px!important}
+  .exp-rarity-key{padding-top:5px!important}
+  .exp-items{gap:4px!important;padding:5px 7px!important}
+  .exp-item{min-height:80px!important;grid-template-rows:34px auto auto!important;padding:5px!important}
+  .exp-item-icon{width:32px!important;height:32px!important}
+  .exp-item small{font-size:5.8px!important}.exp-item b{font-size:7px!important}.exp-item em{font-size:5.8px!important}.exp-item strong{font-size:6px!important}
+  .exp-item-action{display:none!important}
+  .exp-inventory-hint{margin:0 7px 6px!important;padding:5px 6px!important}.exp-inventory-hint b{font-size:7px!important}.exp-inventory-hint span{font-size:5.8px!important;line-height:1.25!important}
+
+  .exp-location{grid-template-rows:minmax(570px,1fr) auto auto!important}
+  .exp-location-art{min-height:570px!important}
+  .exp-world-hero{height:430px!important;width:235px!important;left:57%!important}
+
+  .exp-raid{grid-template-rows:275px 1fr!important}
+  .exp-raid-art{height:275px!important;min-height:275px!important}
+  .exp-community{grid-template-rows:1fr 1fr!important}
+  .exp-community-card{min-height:0!important}
+  .exp-champion,.exp-relic{height:72px!important}
+}
+@media (max-width:1480px) and (min-width:1281px){
+  .exp-layout{grid-template-rows:455px 295px!important}
+  .exp-avatar{height:216px!important;min-height:216px!important}
+  .exp-location{grid-template-rows:minmax(540px,1fr) auto auto!important}
+  .exp-location-art{min-height:540px!important}
+  .exp-world-hero{height:400px!important;width:215px!important}
+  .exp-raid{grid-template-rows:250px 1fr!important}.exp-raid-art{height:250px!important;min-height:250px!important}
+}
