@@ -50,7 +50,7 @@ const staticChecks = [
   ['Iron Shepherd raid join', gameSource.includes('Железный Пастырь') && gameSource.includes('raidJoined')],
   ['category and syndicate preview', gameSource.includes('Железный Герольд') && gameSource.includes('Ядро Ковчега')],
   ['live-safe art pack referenced', cssSource.includes('/games/expedition-alpha/hero-base.svg') && cssSource.includes('/games/expedition-alpha/rust-outskirts.svg') && cssSource.includes('/games/expedition-alpha/iron-shepherd.svg') && cssSource.includes('/games/expedition-alpha/equipment-atlas.svg')],
-  ['v0.6 reference composition', cssSource.includes('EXPEDITION ALPHA V0.6') && cssSource.includes('champion-herald-v06.svg') && cssSource.includes('ark-core-v06.svg')],
+  ['v0.8 alpha readiness composition', cssSource.includes('EXPEDITION ALPHA V0.8') && gameSource.includes('alpha 0.8') && gameSource.includes('exp-depth-label')],
   ['true paper-doll layers wired', gameSource.includes('exp-gear exp-gear-cloak') && gameSource.includes('exp-gear exp-gear-mainhand') && cssSource.includes('.exp-avatar.has-gloves .exp-gear-gloves')],
   ['world hero uses live-safe art', gameSource.includes('exp-world-hero') && cssSource.includes('/games/expedition-alpha/hero-base.svg')],
   ['no civilization art dependency', !cssSource.includes('/games/civilization/')],
@@ -338,6 +338,9 @@ try {
       slots: document.querySelectorAll('.exp-slots button').length,
       layoutHeight: layout?.height ?? 9999,
       locationHeight: location?.height ?? 0,
+      itemFontSize: parseFloat(getComputedStyle(document.querySelector('.exp-item b')).fontSize),
+      slotFontSize: parseFloat(getComputedStyle(document.querySelector('.exp-slots button b')).fontSize),
+      depthLabelVisible: (() => { const el=document.querySelector('.exp-depth-label'); if(!el) return false; const r=el.getBoundingClientRect(); return r.width>0 && r.height>0; })(),
       inventoryActionCount: document.querySelectorAll('.exp-item-action').length,
       slotAffordanceCount: document.querySelectorAll('.exp-slots button i').length,
       characterRect: (() => { const r=document.querySelector('.exp-character')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
@@ -356,15 +359,15 @@ try {
   assert.notEqual(metrics.championArtDisplay, 'none', 'Champion art must be rendered');
   assert.notEqual(metrics.relicArtDisplay, 'none', 'Ark Core art must be rendered');
   assert.equal(metrics.slots, 16, 'all 16 equipment slots must remain available');
-  assert(metrics.locationHeight >= 330, `game world too small: ${metrics.locationHeight}px`);
+  assert(metrics.locationHeight >= 400, `game world too small for alpha reference: ${metrics.locationHeight}px`);\n  assert(metrics.itemFontSize >= 9, `inventory typography too small: ${metrics.itemFontSize}px`);\n  assert(metrics.slotFontSize >= 8, `equipment typography too small: ${metrics.slotFontSize}px`);\n  assert(metrics.depthLabelVisible, 'expedition depth control group must have an explicit label');
   assert(metrics.inventoryActionCount >= 1, 'inventory items must expose an equip affordance');
   assert.equal(metrics.slotAffordanceCount, 16, 'all equipment slots must expose an empty/remove affordance');
-  assert(metrics.layoutHeight <= 760, `1720 desktop composition is too tall: ${metrics.layoutHeight}px`);
+  assert(metrics.layoutHeight <= 830, `1720 desktop composition is too tall: ${metrics.layoutHeight}px`);
   assert(metrics.characterRect && metrics.centerRect && metrics.inventoryRect && metrics.inventoryRect.left >= metrics.centerRect.right - 2, 'inventory must stay in the right rail');
   assert(metrics.raidRect && metrics.locationRect && metrics.raidRect.top >= metrics.locationRect.bottom - 2, 'raid must sit below the world scene, never over it');
   assert(metrics.scrollWidth <= metrics.width + 2, `horizontal overflow ${metrics.scrollWidth}/${metrics.width}`);
 
-  await page.screenshot({ path: output + '/expedition-alpha-v06-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v08-1720x900.png', fullPage: true });
 
   const raidJoin = page.getByRole('button', { name: 'Отправить персонажа' });
   await raidJoin.click();
@@ -397,10 +400,10 @@ try {
   assert.notEqual(socialArt.champion, 'none', 'champion art must be visible');
   assert.notEqual(socialArt.relic, 'none', 'relic art must be visible');
 
-  await page.screenshot({ path: output + '/expedition-alpha-v06-loot-equipped-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v08-loot-equipped-1720x900.png', fullPage: true });
 
   await page.setViewportSize({ width: 1366, height: 768 });
-  await page.screenshot({ path: output + '/expedition-alpha-v06-1366x768.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v08-1366x768.png', fullPage: true });
   const mobileish = await page.evaluate(() => ({
     width: innerWidth,
     scrollWidth: document.documentElement.scrollWidth,
@@ -417,4 +420,4 @@ try {
   upstream.close();
 }
 
-console.log(`Expedition alpha v0.6 reference-led checks passed. Item templates covered: ${itemCount}.`);
+console.log(`Expedition alpha v0.8 alpha-readiness checks passed. Item templates covered: ${itemCount}.`);
