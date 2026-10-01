@@ -56,7 +56,7 @@ const staticChecks = [
   ['live-safe art pack referenced', cssSource.includes('/games/expedition-alpha/art-v09/hero-base.webp') && cssSource.includes('/games/expedition-alpha/art-v09/rust-outskirts.webp') && cssSource.includes('/games/expedition-alpha/art-v09/iron-shepherd.webp') && cssSource.includes('/games/expedition-alpha/equipment-atlas.svg')],
   ['v0.6 reference composition', cssSource.includes('EXPEDITION ALPHA V0.6') && cssSource.includes('champion-herald-v06.svg') && cssSource.includes('ark-core-v06.svg')],
   ['true paper-doll layers wired', gameSource.includes('exp-gear exp-gear-cloak') && gameSource.includes('exp-gear exp-gear-ring1') && gameSource.includes('exp-gear exp-gear-relic2') && gameSource.includes('exp-gear exp-gear-mainhand') && gameSource.includes('exp-world-gear exp-world-gear-head') && gameSource.includes('exp-world-gear exp-world-gear-offhand') && cssSource.includes('equipment-paperdoll-v10.svg')],
-  ['stage two item atlas wired', cssSource.includes('equipment-icons-v10.svg') && cssSource.includes('.art-24') && gameSource.includes("visual:'consul-mask', art:2") && gameSource.includes("visual:'shield', art:24")],
+  ['stage two item atlas wired', gameSource.includes('EXPEDITION_EQUIPMENT_ICONS_V12') && gameSource.includes('EXPEDITION_EQUIPMENT_PAPERDOLL_V12') && cssSource.includes('--exp-item-art') && cssSource.includes('--exp-paperdoll-art') && cssSource.includes('.art-24') && gameSource.includes("visual:'consul-mask', art:2") && gameSource.includes("visual:'shield', art:24")],
   ['distinct visible neck art', serviceSource.includes("name: 'Око Архивариуса'") && serviceSource.includes("visualKey: 'neck-eye'") && gameSource.includes("'neck-eye': 4")],
   ['world hero uses live-safe art', gameSource.includes('exp-world-hero') && cssSource.includes('/games/expedition-alpha/art-v09/hero-base.webp')],
   ['male and female base heroes wired', gameSource.includes("characterBody") && gameSource.includes('EXPEDITION_FEMALE_HERO_V09') && femaleArtSource.includes('data:image/webp;base64,UklGR') && cssSource.includes('--exp-hero-art')],
@@ -390,7 +390,7 @@ try {
   assert.equal(metrics.slotAffordanceCount, 16, 'all equipment slots must expose an empty/remove affordance');
   assert.equal(metrics.portraitGearLayers, 16, 'portrait must expose all 16 paper-doll layers');
   assert.equal(metrics.worldGearLayers, 16, 'world hero must expose all 16 synchronized layers');
-  assert(metrics.inventoryIconBg.includes('equipment-icons-v10.svg'), 'inventory must render the stage two item atlas');
+  assert(metrics.inventoryIconBg.includes('data:image/webp;base64,'), 'inventory must render the high-detail Stage 2 WebP atlas');
   assert(metrics.layoutHeight <= 790, `1720 desktop composition is too tall: ${metrics.layoutHeight}px`);
   assert(metrics.characterRect && metrics.inventoryRect && metrics.locationRect && metrics.inventoryRect.left <= metrics.characterRect.right + 2 && metrics.inventoryRect.right <= metrics.locationRect.left + 2, 'inventory must stay under the character in the left rail');
   assert(metrics.raidRect && metrics.locationRect && metrics.raidRect.left >= metrics.locationRect.right - 2, 'raid must stay in the right rail beside the world');
@@ -427,7 +427,7 @@ try {
     }));
     assert(Number(portrait.opacity) > .8, check.visual + ' must appear on the portrait');
     assert(Number(world.opacity) > .8, check.visual + ' must appear on the world hero');
-    assert(portrait.bg.includes('equipment-paperdoll-v10.svg') && world.bg.includes('equipment-paperdoll-v10.svg'), check.visual + ' must use the synchronized paper-doll art');
+    assert(portrait.bg.includes('data:image/webp;base64,') && world.bg.includes('data:image/webp;base64,'), check.visual + ' must use the synchronized high-detail paper-doll art');
   }
   await page.screenshot({ path: output + '/expedition-alpha-v010-mixed-kit-1720x900.png', fullPage: true });
 
@@ -474,7 +474,7 @@ try {
   assert.equal(gloveLayer.display === 'none', false, 'paper-doll glove layer must exist');
   assert(Number(gloveLayer.opacity) > 0.8, 'equipped gloves must visibly activate portrait paper-doll layer');
   assert(Number(worldGloveLayer.opacity) > 0.8, 'equipped gloves must visibly activate synchronized world layer');
-  assert(gloveLayer.backgroundImage.includes('equipment-paperdoll-v10.svg') && worldGloveLayer.backgroundImage.includes('equipment-paperdoll-v10.svg'), 'gloves must use the shared stage two paper-doll art');
+  assert(gloveLayer.backgroundImage.includes('data:image/webp;base64,') && worldGloveLayer.backgroundImage.includes('data:image/webp;base64,'), 'gloves must use the shared high-detail stage two paper-doll art');
   const legacyGlove = await page.locator('.exp-avatar.has-gloves').evaluate((node) => getComputedStyle(node, '::before').content);
   assert(['none', 'normal', '""'].includes(legacyGlove), 'legacy glove pseudo must not render duplicate side bars');
   const socialArt = await page.evaluate(() => ({
