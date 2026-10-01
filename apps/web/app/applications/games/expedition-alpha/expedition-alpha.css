@@ -3330,6 +3330,10 @@
 .exp-world-hero.has-shield .exp-world-gear-offhand{
   opacity:1!important;
   visibility:visible!important;
+  background-image:url('/games/expedition-alpha/equipment-rig-v13.svg')!important;
+  background-repeat:no-repeat!important;
+  background-size:500% 500%!important;
+  background-color:transparent!important;
 }
 
 .exp-avatar.has-hood .exp-gear-head,.exp-world-hero.has-hood .exp-world-gear-head{background-position:0% 0%!important}
