@@ -3040,8 +3040,8 @@
    Keep the face/hair visible and put the traveler scarf back on the neck. */
 .exp-avatar.has-hood .exp-gear-head,
 .exp-world-hero.has-hood .exp-world-gear-head{
-  -webkit-mask-image:radial-gradient(ellipse 14% 6% at 50% 13.3%,transparent 0 72%,rgba(0,0,0,.3) 82%,#000 100%)!important;
-  mask-image:radial-gradient(ellipse 14% 6% at 50% 13.3%,transparent 0 72%,rgba(0,0,0,.3) 82%,#000 100%)!important;
+  -webkit-mask-image:radial-gradient(ellipse 14% 6% at 50% 13.3%,transparent 0 94%,rgba(0,0,0,.35) 97%,#000 100%)!important;
+  mask-image:radial-gradient(ellipse 14% 6% at 50% 13.3%,transparent 0 94%,rgba(0,0,0,.35) 97%,#000 100%)!important;
   -webkit-mask-repeat:no-repeat!important;
   mask-repeat:no-repeat!important;
 }
