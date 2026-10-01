@@ -3678,3 +3678,22 @@
   -webkit-mask-image:radial-gradient(ellipse 30% 56% at 50% 48%,#000 0 60%,rgba(0,0,0,.96) 70%,rgba(0,0,0,.66) 82%,transparent 100%)!important;
   mask-image:radial-gradient(ellipse 30% 56% at 50% 48%,#000 0 60%,rgba(0,0,0,.96) 70%,rgba(0,0,0,.66) 82%,transparent 100%)!important;
 }
+
+
+/* ==========================================================================
+   EXPEDITION ALPHA 0.16 — ACCENT COMPOSITOR
+   Scalable equipment no longer paints opaque geometric garments over the hero.
+   Low/mid tier templates decorate the approved base art with fitted seams,
+   trims, hardware and restrained weapon silhouettes. Higher rarities can add
+   stronger silhouette pieces and effects without requiring one body sprite per
+   item.
+   ========================================================================== */
+.exp-appearance-compositor [data-rarity="common"]:not([data-channel="effect"]){opacity:.58}
+.exp-appearance-compositor [data-rarity="uncommon"]:not([data-channel="effect"]){opacity:.68}
+.exp-appearance-compositor [data-rarity="rare"]:not([data-channel="effect"]){opacity:.78}
+.exp-appearance-compositor [data-rarity="legendary"]:not([data-channel="effect"]){opacity:.9}
+.exp-appearance-compositor [data-rarity="relic"]:not([data-channel="effect"]){opacity:1}
+.exp-appearance-compositor--portrait,
+.exp-appearance-compositor--world{
+  filter:drop-shadow(0 3px 3px rgba(0,0,0,.18))!important;
+}
