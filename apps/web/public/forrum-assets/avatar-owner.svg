@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
-  <rect x="2" y="2" width="124" height="124" rx="12" fill="#f5f5f3" stroke="#cfcfcb" stroke-width="4"/>
-  <path d="M20 92h88M20 36h88" stroke="#4b4b4b" stroke-width="4"/>
-  <circle cx="26" cy="26" r="5" fill="#4b4b4b"/>
-  <text x="64" y="79" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#242424">ВФ</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Владелец 4rrum">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9adcc3"/><stop offset=".45" stop-color="#335d50"/><stop offset="1" stop-color="#101a1b"/></linearGradient></defs>
+<circle cx="64" cy="64" r="62" fill="url(#bg)"/><circle cx="38" cy="31" r="23" fill="#d7ffed" opacity=".09"/>
+<path d="M9 104 31 58l12 28 14-44 16 42 11-29 18 49Z" fill="#152a27" opacity=".95"/>
+<path d="M18 108 42 73l9 18 13-27 13 29 13-20 20 35Z" fill="#25483e"/>
+<path d="M25 113h78" stroke="#b9ead8" stroke-width="3" stroke-linecap="round" opacity=".55"/></svg>
