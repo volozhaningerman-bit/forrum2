@@ -13,6 +13,7 @@ await mkdir(output, { recursive: true });
 const files = {
   page: path.join(root, 'apps/web/app/applications/games/expedition-alpha/page.tsx'),
   game: path.join(root, 'apps/web/app/applications/games/expedition-alpha/expedition-alpha-game.tsx'),
+  femaleArtData: path.join(root, 'apps/web/app/applications/games/expedition-alpha/expedition-art-v09.ts'),
   css: path.join(root, 'apps/web/app/applications/games/expedition-alpha/expedition-alpha.css'),
   spec: path.join(root, 'docs/game-expedition-alpha-source-of-truth.md'),
   client: path.join(root, 'apps/web/app/applications/games/expedition-alpha/expedition-client.ts'),
@@ -31,6 +32,7 @@ for (const [name, file] of Object.entries(files)) {
 
 const pageSource = fs.readFileSync(files.page, 'utf8');
 const gameSource = fs.readFileSync(files.game, 'utf8');
+const femaleArtSource = fs.readFileSync(files.femaleArtData, 'utf8');
 const cssSource = fs.readFileSync(files.css, 'utf8');
 const specSource = fs.readFileSync(files.spec, 'utf8');
 const clientSource = fs.readFileSync(files.client, 'utf8');
@@ -53,6 +55,7 @@ const staticChecks = [
   ['v0.6 reference composition', cssSource.includes('EXPEDITION ALPHA V0.6') && cssSource.includes('champion-herald-v06.svg') && cssSource.includes('ark-core-v06.svg')],
   ['true paper-doll layers wired', gameSource.includes('exp-gear exp-gear-cloak') && gameSource.includes('exp-gear exp-gear-mainhand') && cssSource.includes('.exp-avatar.has-gloves .exp-gear-gloves')],
   ['world hero uses live-safe art', gameSource.includes('exp-world-hero') && cssSource.includes('/games/expedition-alpha/art-v09/hero-base.webp')],
+  ['male and female base heroes wired', gameSource.includes("characterBody") && gameSource.includes('EXPEDITION_FEMALE_HERO_V09') && femaleArtSource.includes('data:image/webp;base64,UklGR') && cssSource.includes('--exp-hero-art')],
   ['no civilization art dependency', !cssSource.includes('/games/civilization/')],
   ['typed server client wired', clientSource.includes("'/expedition/me'") && clientSource.includes("'/expedition/runs'") && gameSource.includes('serverMode') && gameSource.includes('applyServerState')],
   ['server unequip contract', controllerSource.includes("items/:id/unequip") && serviceSource.includes('async unequip(')],
@@ -364,6 +367,19 @@ try {
   assert(metrics.raidRect && metrics.locationRect && metrics.raidRect.left >= metrics.locationRect.right - 2, 'raid must stay in the right rail beside the world');
   assert(metrics.scrollWidth <= metrics.width + 2, `horizontal overflow ${metrics.scrollWidth}/${metrics.width}`);
 
+  const femaleToggle = page.getByRole('button', { name: 'Женский герой' });
+  await femaleToggle.click();
+  await page.locator('[data-testid="expedition-alpha"][data-character-body="female"]').waitFor();
+  const femaleHero = await page.evaluate(() => ({
+    avatarBg: getComputedStyle(document.querySelector('.exp-avatar-art')).backgroundImage,
+    worldBg: getComputedStyle(document.querySelector('.exp-world-hero-base')).backgroundImage,
+  }));
+  assert(femaleHero.avatarBg.includes('data:image/webp;base64,'), 'female portrait must render from the approved WebP base');
+  assert(femaleHero.worldBg.includes('data:image/webp;base64,'), 'female world hero must stay synchronized with the portrait');
+  await page.screenshot({ path: output + '/expedition-alpha-v091-female-1720x900.png', fullPage: true });
+  await page.getByRole('button', { name: 'Мужской герой' }).click();
+  await page.locator('[data-testid="expedition-alpha"][data-character-body="male"]').waitFor();
+
   await page.screenshot({ path: output + '/expedition-alpha-v09-1720x900.png', fullPage: true });
 
   const raidJoin = page.getByRole('button', { name: 'Отправить персонажа' });
@@ -417,4 +433,4 @@ try {
   upstream.close();
 }
 
-console.log(`Expedition alpha v0.8 audit checks passed. Item templates covered: ${itemCount}.`);
+console.log(`Expedition alpha v0.9.1 Stage 1 checks passed. Item templates covered: ${itemCount}.`);
