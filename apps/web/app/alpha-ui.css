@@ -1,7 +1,7 @@
 /* Alpha audit: shared public utility surfaces, scoped away from forum/topic layouts. */
 html[data-forrum-theme="graphite"] {
-  --alpha-bg:#0d1012; --alpha-panel:#24282b; --alpha-input:#171b1e;
-  --alpha-text:#f1f3f4; --alpha-muted:#c2c8cc; --alpha-line:#596065;
+  --alpha-bg:#0d1012; --alpha-panel:#171b1e; --alpha-input:#111619;
+  --alpha-text:#f1f3f4; --alpha-muted:#c2c8cc; --alpha-line:#414c53;
 }
 .reference-site-brand {display:flex;align-items:center;flex-shrink:0;}
 .reference-site-brand img {display:block;width:140px;height:40px;object-fit:contain;}
@@ -71,15 +71,22 @@ html[data-forrum-theme="graphite"] [data-forrum-shell="header"] a[href*="registe
 .alpha-directory-page .eyebrow,.alpha-directory-page .directory-shortcuts a {color:#c7e9dd;}
 .alpha-directory-page .form-check-label {color:var(--alpha-muted);}
 .alpha-directory-page .form-check {background:var(--alpha-panel);border-color:var(--alpha-line);}
-.topic-guest-reply {padding:20px;border:1px solid #596065;background:#24282b;color:#f1f3f4;border-radius:5px;}
+.topic-guest-reply {padding:20px;border:1px solid var(--alpha-line);background:var(--alpha-panel);color:#f1f3f4;border-radius:5px;}
 .topic-guest-reply h3 {margin:0 0 8px;color:#f1f3f4;}
 .topic-guest-reply p {color:#c2c8cc;line-height:1.5;}
 .topic-guest-reply .button {min-height:44px;background:#dcebe5;color:#14241e;}
 .forrum-info-document #alpha {scroll-margin-top:90px;}
 .mobile-nav a[aria-current="page"] {color:#dcebe5;box-shadow:inset 0 2px #b8e3d7;}
+/* Utility pages use the same dark material; depth does not depend on glow. */
+html[data-forrum-theme="graphite"] :is(.compact-auth-panel,.alpha-curator-page,.route-state,.forrum-info-document,.topic-guest-reply),
+html[data-forrum-theme="graphite"] .alpha-search-page :is(.section-title,.search-form,.search-result-card,.publication-card,.search-start,.empty-state),
+html[data-forrum-theme="graphite"] .alpha-directory-page :is(.section-hero,.state-panel,.portfolio-card) {
+  border-top-color:#536168;
+  box-shadow:inset 0 1px #ffffff07,inset 0 -1px #0005,0 3px 5px #0003,0 14px 28px -14px #000b;
+}
 @media (max-width:760px) {
   .reference-site-brand img {width:100px;height:32px;}
-  .mobile-nav {background:#24282b!important;border-color:#596065!important;}
+  .mobile-nav {background:#171b1e!important;border-color:#414c53!important;}
   .mobile-nav a {min-height:48px;color:#c2c8cc;}
   .mobile-nav a span {font-size:11px;}
   .alpha-search-page .search-result-summary {align-items:flex-start;flex-wrap:wrap;}
