@@ -65,6 +65,7 @@ const staticChecks = [
   ['server supports scarce relic tier', schemaSource.includes('RELIC') && serviceSource.includes("rarity: 'RELIC'") && serviceSource.includes("circulationCap: 7")],
   ['server grants starter inventory idempotently', serviceSource.includes('STARTER_TEMPLATE_IDS') && serviceSource.includes('ensureStarterItems(actorId)') && serviceSource.includes('starter:${actorId}:${templateId}') && serviceSource.includes("isolationLevel: 'Serializable'")],
   ['female raster edges are feathered', cssSource.includes('EXPEDITION ALPHA 0.15.1 — PRODUCTION QA HOTFIX') && cssSource.includes('data-character-body="female"') && cssSource.includes('mask-image:radial-gradient')],
+  ['female portrait strip is visually integrated', gameSource.includes('alpha 0.15.2') && cssSource.includes('0.15.2 — make the narrow female source read as character art') && cssSource.includes('.exp-avatar::before')],
   ['no transmog system', !gameSource.toLowerCase().includes('transmog') && !appearanceSource.toLowerCase().includes('transmog')],
   ['distinct visible neck art', serviceSource.includes("name: 'Око Архивариуса'") && serviceSource.includes("visualKey: 'neck-eye'") && gameSource.includes("'neck-eye': 4")],
   ['world hero uses live-safe art', gameSource.includes('exp-world-hero') && cssSource.includes('/games/expedition-alpha/art-v09/hero-base.webp')],
