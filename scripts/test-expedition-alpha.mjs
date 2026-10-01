@@ -19,9 +19,9 @@ const files = {
   controller: path.join(root, 'apps/api/src/expedition/expedition.controller.ts'),
   service: path.join(root, 'apps/api/src/expedition/expedition.service.ts'),
   schema: path.join(root, 'apps/api/prisma/schema.prisma'),
-  heroArt: path.join(root, 'apps/web/public/games/expedition-alpha/hero-base.svg'),
-  locationArt: path.join(root, 'apps/web/public/games/expedition-alpha/rust-outskirts.svg'),
-  bossArt: path.join(root, 'apps/web/public/games/expedition-alpha/iron-shepherd.svg'),
+  heroArt: path.join(root, 'apps/web/public/games/expedition-alpha/art-v09/hero-base.webp'),
+  locationArt: path.join(root, 'apps/web/public/games/expedition-alpha/art-v09/rust-outskirts.webp'),
+  bossArt: path.join(root, 'apps/web/public/games/expedition-alpha/art-v09/iron-shepherd.webp'),
   itemArt: path.join(root, 'apps/web/public/games/expedition-alpha/equipment-atlas.svg'),
 };
 
@@ -49,10 +49,10 @@ const staticChecks = [
   ['five Rust Outskirts depths', gameSource.includes('Реакторная зона') && gameSource.includes('Ломовые дворы') && gameSource.includes('depthId')],
   ['Iron Shepherd raid join', gameSource.includes('Железный Пастырь') && gameSource.includes('raidJoined')],
   ['category and syndicate preview', gameSource.includes('Железный Герольд') && gameSource.includes('Ядро Ковчега')],
-  ['live-safe art pack referenced', cssSource.includes('/games/expedition-alpha/hero-base.svg') && cssSource.includes('/games/expedition-alpha/rust-outskirts.svg') && cssSource.includes('/games/expedition-alpha/iron-shepherd.svg') && cssSource.includes('/games/expedition-alpha/equipment-atlas.svg')],
+  ['live-safe art pack referenced', cssSource.includes('/games/expedition-alpha/art-v09/hero-base.webp') && cssSource.includes('/games/expedition-alpha/art-v09/rust-outskirts.webp') && cssSource.includes('/games/expedition-alpha/art-v09/iron-shepherd.webp') && cssSource.includes('/games/expedition-alpha/equipment-atlas.svg')],
   ['v0.6 reference composition', cssSource.includes('EXPEDITION ALPHA V0.6') && cssSource.includes('champion-herald-v06.svg') && cssSource.includes('ark-core-v06.svg')],
   ['true paper-doll layers wired', gameSource.includes('exp-gear exp-gear-cloak') && gameSource.includes('exp-gear exp-gear-mainhand') && cssSource.includes('.exp-avatar.has-gloves .exp-gear-gloves')],
-  ['world hero uses live-safe art', gameSource.includes('exp-world-hero') && cssSource.includes('/games/expedition-alpha/hero-base.svg')],
+  ['world hero uses live-safe art', gameSource.includes('exp-world-hero') && cssSource.includes('/games/expedition-alpha/art-v09/hero-base.webp')],
   ['no civilization art dependency', !cssSource.includes('/games/civilization/')],
   ['typed server client wired', clientSource.includes("'/expedition/me'") && clientSource.includes("'/expedition/runs'") && gameSource.includes('serverMode') && gameSource.includes('applyServerState')],
   ['server unequip contract', controllerSource.includes("items/:id/unequip") && serviceSource.includes('async unequip(')],
@@ -292,16 +292,16 @@ try {
   }
 
   for (const asset of [
-    '/games/expedition-alpha/hero-base.svg',
-    '/games/expedition-alpha/rust-outskirts.svg',
-    '/games/expedition-alpha/iron-shepherd.svg',
+    '/games/expedition-alpha/art-v09/hero-base.webp',
+    '/games/expedition-alpha/art-v09/rust-outskirts.webp',
+    '/games/expedition-alpha/art-v09/iron-shepherd.webp',
     '/games/expedition-alpha/equipment-atlas.svg',
   ]) {
     const response = await fetch('http://127.0.0.1:' + port + asset);
     assert.equal(response.status, 200, `asset missing: ${asset}`);
   }
 
-  browser = await chromium.launch({ headless: true });
+  browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_EXECUTABLE_PATH ? { executablePath: process.env.PLAYWRIGHT_EXECUTABLE_PATH, args: ['--no-sandbox'] } : {}) });
   const context = await browser.newContext({
     viewport: { width: 1720, height: 900 },
     deviceScaleFactor: 1,
@@ -348,9 +348,9 @@ try {
     };
   });
   assert(metrics.game && metrics.avatar && metrics.location && metrics.boss, 'core visual surfaces missing');
-  assert(metrics.avatarBg.includes('hero-base.svg'), 'hero art must render from live-safe SVG');
-  assert(metrics.locationBg.includes('rust-outskirts.svg'), 'location art must render from live-safe SVG');
-  assert(metrics.bossBg.includes('iron-shepherd.svg') && metrics.bossDisplay !== 'none', 'boss art must be visibly rendered');
+  assert(metrics.avatarBg.includes('hero-base.webp'), 'hero art must render from production WebP');
+  assert(metrics.locationBg.includes('rust-outskirts.webp'), 'location art must render from production WebP');
+  assert(metrics.bossBg.includes('iron-shepherd.webp') && metrics.bossDisplay !== 'none', 'boss art must be visibly rendered');
   assert.equal(metrics.raidDisplay, 'grid', 'desktop raid must render as a dedicated objective card');
   assert(metrics.raidButtonVisible, 'raid action must remain visible and clickable');
   assert.notEqual(metrics.championArtDisplay, 'none', 'Champion art must be rendered');
@@ -364,7 +364,7 @@ try {
   assert(metrics.raidRect && metrics.locationRect && metrics.raidRect.left >= metrics.locationRect.right - 2, 'raid must stay in the right rail beside the world');
   assert(metrics.scrollWidth <= metrics.width + 2, `horizontal overflow ${metrics.scrollWidth}/${metrics.width}`);
 
-  await page.screenshot({ path: output + '/expedition-alpha-v08-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v09-1720x900.png', fullPage: true });
 
   const raidJoin = page.getByRole('button', { name: 'Отправить персонажа' });
   await raidJoin.click();
@@ -397,10 +397,10 @@ try {
   assert.notEqual(socialArt.champion, 'none', 'champion art must be visible');
   assert.notEqual(socialArt.relic, 'none', 'relic art must be visible');
 
-  await page.screenshot({ path: output + '/expedition-alpha-v08-loot-equipped-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v09-loot-equipped-1720x900.png', fullPage: true });
 
   await page.setViewportSize({ width: 1366, height: 768 });
-  await page.screenshot({ path: output + '/expedition-alpha-v08-1366x768.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v09-1366x768.png', fullPage: true });
   const mobileish = await page.evaluate(() => ({
     width: innerWidth,
     scrollWidth: document.documentElement.scrollWidth,

@@ -298,7 +298,7 @@
   position:absolute;
   inset:18px 34px 44px;
   z-index:2;
-  background-image:url('/games/expedition-alpha/hero-base.webp');
+  background-image:url('/games/expedition-alpha/art-v09/hero-base.webp');
   background-repeat:no-repeat;
   background-position:center;
   background-size:contain;
@@ -354,7 +354,7 @@
   min-height:318px;
   background:
     linear-gradient(180deg,rgba(4,8,10,.08),rgba(4,8,10,.76)),
-    url('/games/expedition-alpha/rust-outskirts.webp') center 54%/cover no-repeat;
+    url('/games/expedition-alpha/art-v09/rust-outskirts.webp') center 54%/cover no-repeat;
 }
 .exp-location-art::after{
   content:"";position:absolute;inset:0;pointer-events:none;
@@ -388,7 +388,7 @@
 }
 .exp-boss-crop{
   position:absolute;inset:8px;
-  background-image:url('/games/expedition-alpha/iron-shepherd.webp');
+  background-image:url('/games/expedition-alpha/art-v09/iron-shepherd.webp');
   background-size:contain;
   background-position:center bottom;
   background-repeat:no-repeat;
@@ -749,7 +749,7 @@
    repository. Keep the approved paper-doll work, but render the dedicated
    expedition art pack until the raster masters are exported cleanly. */
 .exp-avatar-art{
-  background-image:url('/games/expedition-alpha/hero-base.webp')!important;
+  background-image:url('/games/expedition-alpha/art-v09/hero-base.webp')!important;
   background-repeat:no-repeat!important;
   background-size:contain!important;
   background-position:center bottom!important;
@@ -759,7 +759,7 @@
 .exp-location-art{
   background:
     linear-gradient(180deg,rgba(5,10,13,.02),rgba(5,10,13,.42)),
-    url('/games/expedition-alpha/rust-outskirts.webp') center/cover no-repeat!important;
+    url('/games/expedition-alpha/art-v09/rust-outskirts.webp') center/cover no-repeat!important;
 }
 .exp-location-art::before{display:none!important}
 .exp-location-art::after{
@@ -769,7 +769,7 @@
 .exp-raid-art{
   background:
     linear-gradient(90deg,rgba(7,12,15,.03),rgba(7,12,15,.17)),
-    url('/games/expedition-alpha/iron-shepherd.webp') center/cover no-repeat!important;
+    url('/games/expedition-alpha/art-v09/iron-shepherd.webp') center/cover no-repeat!important;
 }
 .exp-raid-art::before{display:none!important}
 .exp-raid-art::after{display:block!important;background:linear-gradient(90deg,transparent 58%,rgba(7,12,15,.28)),linear-gradient(0deg,rgba(7,12,15,.34),transparent 58%)!important}
@@ -786,7 +786,7 @@
 }
 .exp-avatar-art{
   inset:10px 30px 44px;
-  background-image:url('/games/expedition-alpha/hero-base.webp');
+  background-image:url('/games/expedition-alpha/art-v09/hero-base.webp');
   background-position:center bottom;
   background-size:contain;
   filter:drop-shadow(0 22px 18px rgba(0,0,0,.48)) saturate(1.08) contrast(1.03);
@@ -795,7 +795,7 @@
   min-height:382px;
   background:
     linear-gradient(180deg,rgba(5,10,13,.02) 0%,rgba(5,10,13,.04) 48%,rgba(5,10,13,.78) 100%),
-    url('/games/expedition-alpha/rust-outskirts.webp') center 52%/cover no-repeat;
+    url('/games/expedition-alpha/art-v09/rust-outskirts.webp') center 52%/cover no-repeat;
 }
 .exp-location-art::after{
   background:
@@ -818,7 +818,7 @@
 .exp-world-hero-base{
   position:absolute;
   inset:0;
-  background:url('/games/expedition-alpha/hero-base.webp') center bottom/contain no-repeat;
+  background:url('/games/expedition-alpha/art-v09/hero-base.webp') center bottom/contain no-repeat;
   animation:exp-world-idle 4.2s ease-in-out infinite;
 }
 .exp-world-hero.has-sword .exp-world-hero-gear::before,
@@ -853,7 +853,7 @@
 }
 .exp-boss-crop{
   inset:0;
-  background-image:url('/games/expedition-alpha/iron-shepherd.webp');
+  background-image:url('/games/expedition-alpha/art-v09/iron-shepherd.webp');
   background-size:contain;
   background-position:center bottom;
   filter:saturate(1.08) contrast(1.04) drop-shadow(0 20px 16px rgba(0,0,0,.42));
@@ -875,7 +875,7 @@
    tiny unusable WebP files. Use the dedicated SVG masters until the raster
    originals are committed as real binary blobs. This must never render blank. */
 .exp-avatar-art{
-  background-image:url('/games/expedition-alpha/hero-base.svg')!important;
+  background-image:url('/games/expedition-alpha/art-v09/hero-base.webp')!important;
   background-repeat:no-repeat!important;
   background-size:contain!important;
   background-position:center bottom!important;
@@ -883,7 +883,7 @@
 .exp-location-art{
   background:
     linear-gradient(180deg,rgba(5,10,13,.01) 0%,rgba(5,10,13,.03) 44%,rgba(5,10,13,.72) 100%),
-    url('/games/expedition-alpha/rust-outskirts.svg') center 52%/cover no-repeat!important;
+    url('/games/expedition-alpha/art-v09/rust-outskirts.webp') center 52%/cover no-repeat!important;
 }
 .exp-location-art::before{display:none!important}
 .exp-location-art::after{
@@ -893,7 +893,7 @@
     linear-gradient(0deg,rgba(4,8,10,.46),transparent 46%)!important;
 }
 .exp-world-hero-base{
-  background-image:url('/games/expedition-alpha/hero-base.svg')!important;
+  background-image:url('/games/expedition-alpha/art-v09/hero-base.webp')!important;
   background-repeat:no-repeat!important;
   background-position:center bottom!important;
   background-size:contain!important;
@@ -907,7 +907,7 @@
   display:block!important;
   position:absolute!important;
   inset:4px!important;
-  background-image:url('/games/expedition-alpha/iron-shepherd.svg')!important;
+  background-image:url('/games/expedition-alpha/art-v09/iron-shepherd.webp')!important;
   background-repeat:no-repeat!important;
   background-position:center bottom!important;
   background-size:contain!important;
@@ -1344,7 +1344,7 @@
   inset:4px 26px 35px!important;
   width:auto!important;
   height:auto!important;
-  background-image:url('/games/expedition-alpha/hero-base.svg')!important;
+  background-image:url('/games/expedition-alpha/art-v09/hero-base.webp')!important;
   background-position:center bottom!important;
   background-size:contain!important;
   filter:drop-shadow(0 16px 14px rgba(0,0,0,.5)) saturate(1.1)!important;
@@ -1402,7 +1402,7 @@
   height:285px;
   background:
     linear-gradient(180deg,rgba(4,9,11,.01) 0%,rgba(4,9,11,.02) 44%,rgba(4,9,11,.68) 100%),
-    url('/games/expedition-alpha/rust-outskirts.svg') center 50%/cover no-repeat!important;
+    url('/games/expedition-alpha/art-v09/rust-outskirts.webp') center 50%/cover no-repeat!important;
 }
 .exp-location-art::after{
   background:
@@ -1422,7 +1422,7 @@
   height:255px!important;
 }
 .exp-world-hero-base{
-  background-image:url('/games/expedition-alpha/hero-base.svg')!important;
+  background-image:url('/games/expedition-alpha/art-v09/hero-base.webp')!important;
   filter:drop-shadow(0 13px 10px rgba(0,0,0,.5)) saturate(1.08);
 }
 .exp-world-hero.has-sword .exp-world-hero-gear::before,
@@ -1478,7 +1478,7 @@
 .exp-boss-crop{
   display:block!important;
   inset:1px!important;
-  background-image:url('/games/expedition-alpha/iron-shepherd.svg')!important;
+  background-image:url('/games/expedition-alpha/art-v09/iron-shepherd.webp')!important;
   background-size:contain!important;
   background-position:center bottom!important;
   filter:saturate(1.1) contrast(1.05) drop-shadow(0 14px 12px rgba(0,0,0,.48))!important;
@@ -1845,7 +1845,7 @@
   border-bottom:1px solid #263b44!important;
   background:
     linear-gradient(180deg,rgba(2,7,9,0) 0%,rgba(2,7,9,.04) 42%,rgba(2,7,9,.68) 100%),
-    url('/games/expedition-alpha/rust-outskirts.svg') center 50%/cover no-repeat!important;
+    url('/games/expedition-alpha/art-v09/rust-outskirts.webp') center 50%/cover no-repeat!important;
 }
 .exp-location-art::after{
   background:
@@ -2311,4 +2311,32 @@
   .exp-raid-copy>small{font-size:7.4px!important}.exp-raid-copy p{font-size:9.3px!important}.exp-raid-meta small{font-size:7px!important}
   .exp-community-card>small{font-size:7.4px!important}.exp-community-card p{font-size:7.4px!important}.exp-system-note{font-size:7px!important}
   .exp-footer{display:none!important}
+}
+
+/* Production art v0.9. Shared assets keep the portrait and world identity in sync.
+   Equipment remains the existing functional paper-doll until the modular art pass. */
+.exp-avatar-art,.exp-world-hero-base{
+  background-image:url('/games/expedition-alpha/art-v09/hero-base.webp')!important;
+  filter:drop-shadow(0 10px 9px rgba(0,0,0,.3))!important;
+}
+.exp-location-art{
+  background-image:url('/games/expedition-alpha/art-v09/rust-outskirts.webp')!important;
+  background-position:center center!important;
+  filter:none!important;
+}
+.exp-location-art::after{
+  background:linear-gradient(0deg,rgba(5,12,16,.78),rgba(5,12,16,.12) 22%,transparent 46%)!important;
+}
+.exp-boss-crop{
+  background-image:url('/games/expedition-alpha/art-v09/iron-shepherd.webp')!important;
+  filter:drop-shadow(0 12px 12px rgba(0,0,0,.4))!important;
+}
+.exp-raid-art{
+  background:radial-gradient(ellipse at 55% 60%,#57351e 0, #241911 47%,#100f10 85%)!important;
+}
+.exp-location-copy{z-index:5!important;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+.exp-world-hero{bottom:8px!important}
+@media(min-width:1281px){
+  .exp-avatar-art{inset:4px 35px 34px!important}
+  .exp-boss-crop{inset:5px 9px 0!important}
 }

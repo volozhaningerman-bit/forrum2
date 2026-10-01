@@ -468,7 +468,7 @@ export function ExpeditionAlphaGame() {
     <main className="exp-alpha" data-testid="expedition-alpha">
       <header className="exp-topbar">
         <div>
-          <span className="exp-kicker">4rrum · alpha 0.8</span>
+          <span className="exp-kicker">4rrum · alpha 0.9</span>
           <div className="exp-title-row">
             <h1>Экспедиция</h1>
             <span className={`exp-mode exp-mode-${serverMode}`}>
