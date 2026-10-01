@@ -491,6 +491,16 @@ try {
   }));
   assert(femaleHero.avatarBg.includes('data:image/webp;base64,'), 'female portrait must render from the approved WebP base');
   assert(femaleHero.worldBg.includes('data:image/webp;base64,'), 'female world hero must stay synchronized with the portrait');
+  const femaleRig = await page.evaluate(() => ({
+    portrait:[...document.querySelectorAll('.exp-avatar .exp-gear')].filter((node) => {
+      const s=getComputedStyle(node); return Number(s.opacity) > .1 && s.visibility !== 'hidden';
+    }).length,
+    world:[...document.querySelectorAll('.exp-world-hero .exp-world-gear')].filter((node) => {
+      const s=getComputedStyle(node); return Number(s.opacity) > .1 && s.visibility !== 'hidden';
+    }).length,
+  }));
+  assert.equal(femaleRig.portrait, 0, 'female base must not receive the male rig atlas');
+  assert.equal(femaleRig.world, 0, 'female world hero must not receive the male rig atlas');
   await page.screenshot({ path: output + '/expedition-alpha-v013-female-1720x900.png', fullPage: true });
   await page.getByRole('button', { name: 'Мужской герой' }).click();
   await page.locator('[data-testid="expedition-alpha"][data-character-body="male"]').waitFor();
