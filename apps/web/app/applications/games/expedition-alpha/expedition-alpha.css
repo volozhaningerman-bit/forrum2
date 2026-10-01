@@ -3063,3 +3063,14 @@
   -webkit-mask-image:none!important;
   mask-image:none!important;
 }
+
+
+/* Keep the common hood visually present in its lowered exploration state.
+   Moving the hood body below the face is robust across the existing stacking
+   contexts and matches the approved reference's readable hero expression. */
+.exp-avatar.has-hood .exp-gear-head{
+  transform:translate(-50%,38px)!important;
+}
+.exp-world-hero.has-hood .exp-world-gear-head{
+  transform:translate(-50%,48px)!important;
+}
