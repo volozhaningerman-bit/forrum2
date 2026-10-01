@@ -1015,3 +1015,8 @@ body:has(.forum-home) .site-footer {display:none;}
  }
  .forum-home .forum-more-trigger {color:#a4b0b6;}
 }
+
+/* v79: the approved compact feed uses quiet surfaces and publication dates. */
+.forum-home .forum-topic::after {display:none;}
+.forum-home .forum-topic {background:linear-gradient(110deg,#172126,#131b1f);}
+.forum-home .forum-topic-content {background:none;border-radius:0;}

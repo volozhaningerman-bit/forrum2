@@ -138,7 +138,7 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
  const categoryLabel=category?.parent ? `${communityLabel(category.parent.name)} › ${communityLabel(item.community.name)}` : communityLabel(item.community.name);
  const readState=topicReadState(history,item.id,item.lastComment?.createdAt);
  const important=Boolean(item.isOfficial && item.pinnedUntil && Date.parse(item.pinnedUntil)>Date.now());
- const lastAt=item.lastComment?.createdAt ?? item.lastActivityAt ?? item.createdAt;
+ const publishedAt=item.createdAt;
  const cover=topicBackdrop(item.community.slug,item.community.name);
  const style={
    ...categoryStyle(item.community.slug, category?.accentColor ?? item.community.accentColor),
@@ -166,7 +166,7 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
    <Link className="forum-topic-metric forum-reply-count" href={`/p/${item.slug}#discussion`} aria-label={`Ответы: ${item.commentCount}`} title="Ответы"><Icon name="comment"/><span>{formatCount(item.commentCount)}</span></Link>
    <span className="forum-topic-metric forum-view-count" title="Просмотры" aria-label={`Просмотры: ${item.viewCount ?? 0}`}><Icon name="eye"/><span>{formatCount(item.viewCount)}</span></span>
    <span className="forum-topic-metric forum-bookmark-count" title="Закладки" aria-label={`Закладки: ${item.bookmarkCount ?? 0}`}><Icon name="bookmark"/><span>{formatCount(item.bookmarkCount ?? 0)}</span></span>
-   <span className="forum-topic-date"><ForumTime value={lastAt} absolute compact/></span>
+   <span className="forum-topic-date"><ForumTime value={publishedAt} absolute compact/></span>
   </div>
   <div className="forum-topic-menu"><TopicActions item={item} demo={demo} guest={guest}/></div>
  </article>;
