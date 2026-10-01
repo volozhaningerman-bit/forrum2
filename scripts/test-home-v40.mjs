@@ -133,7 +133,7 @@ try {
  await page.locator('.forum-topic').first().hover(); await page.waitForTimeout(160);
  const afterHover=await page.locator('.forum-topic').first().boundingBox();
  assert.deepEqual(afterHover,beforeHover,'Hover must not move or scale the row');
- assert.equal(await page.getByRole('button',{name:'Последние — новые темы',exact:true}).getAttribute('aria-pressed'),'true');
+ assert.equal(await page.getByRole('button',{name:'Новые темы',exact:true}).getAttribute('aria-pressed'),'true');
  assert(requests.some(r=>r.path==='/v1/feed'&&r.cookie?.includes('forrum_test=viewer')));
  const bookmarkCalls=requests.filter(r=>r.path==='/v1/publications/topic-0/bookmark').length;
  const hostile=await page.request.post('http://127.0.0.1:'+port+'/api/publications/topic-0/bookmark',{headers:{Origin:'https://evil.example'}});
@@ -175,7 +175,7 @@ try {
  assert.equal(await page.locator('.forum-filter-menu').getAttribute('open'),null);
  assert(await page.locator('summary[aria-label="Выбрать сообщество"]').evaluate(el=>el===document.activeElement));
  await page.locator('summary[aria-label="Выбрать сообщество"]').click();await page.getByRole('menuitemradio',{name:'Разработка',exact:true}).click();await page.waitForTimeout(400);assert(requests.some(r=>r.query.includes('community=category-0')));
- failFeed=true;await page.getByRole('button',{name:'Популярные — активные темы за 24 часа',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
+ failFeed=true;await page.getByRole('button',{name:'Активные темы за 24 часа',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
  await page.goto('http://127.0.0.1:'+port+'/applications',{waitUntil:'networkidle'});assert.equal(await page.locator('.applications-grid article').count(),4);
  await page.goto('http://127.0.0.1:'+port+'/digital-services',{waitUntil:'domcontentloaded'});
  await page.getByRole('heading',{name:'Цифровые сервисы'}).waitFor();
@@ -245,13 +245,17 @@ try {
  assert(Math.abs(boxes['.forum-search-hero'].width-974)<=5);
  assert(Math.abs(boxes['.forum-right'].x-1307)<=3);
  assert(Math.abs(boxes['.forum-feed-toolbar'].y-487)<=8);
- assert(boxes['.forum-topic'].height>=49 && boxes['.forum-topic'].height<=52,`Compact topic row drifted: ${boxes['.forum-topic'].height}px`);
+ assert(boxes['.forum-topic'].height>=45 && boxes['.forum-topic'].height<=48,`Compact topic row drifted: ${boxes['.forum-topic'].height}px`);
  const firstTopic=page.locator('.forum-topic').first();
  assert.match(await firstTopic.locator('.forum-topic-avatar').getAttribute('href') ?? '',/^\/u\/[^/]+$/,'Topic avatar must lead to an author profile, not a community');
  assert.equal(await firstTopic.locator('.forum-topic-avatar img').count(),1,'Topic feed should render a visual avatar, not a category initial');
  assert((await firstTopic.locator('.forum-topic-avatar img').getAttribute('src'))?.includes('/forrum-assets/avatar-'),'Fallback profile avatar should use the approved visual avatar set');
  assert.equal(await firstTopic.locator('.forum-topic-metric').count(),3,'Topic row keeps replies, views and bookmarks together');
  assert.equal(await firstTopic.locator('.forum-topic-category-cell').count(),0,'Category must live under the title, not in a separate table column');
+ assert.equal((await page.locator('.forum-feed-title').textContent())?.trim(),'Обсуждения','Discussion toolbar must use reference casing');
+ assert.deepEqual(await page.locator('.forum-tabs button').allTextContents(),['Новые','Активные','Без ответов'],'Discussion toolbar must use reference labels');
+ assert.equal(await page.locator('.forum-feed-title svg').count(),0,'Reference discussion title has no leading icon');
+ assert.equal(await page.locator('.forum-topic').first().evaluate(el=>getComputedStyle(el,'::after').display),'none','Topic rows must stay visually clean without category artwork');
  const titleBox=await firstTopic.locator('.forum-topic-title-line').boundingBox();
  const contextBox=await firstTopic.locator('.forum-topic-context').boundingBox();
  assert(titleBox && contextBox && contextBox.y>=titleBox.y+titleBox.height-1,'Author/category metadata must sit below the title');
