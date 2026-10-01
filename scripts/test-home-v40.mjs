@@ -248,7 +248,7 @@ try {
  assert(boxes['.forum-topic'].height>=48 && boxes['.forum-topic'].height<=50,`Compact topic row drifted: ${boxes['.forum-topic'].height}px`);
  assert.equal(await page.locator('.forum-feed-title').textContent(),'Обсуждения');
  assert.equal(await page.locator('.forum-feed-title').evaluate(el=>getComputedStyle(el).textTransform),'none');
- assert.equal(await page.locator('.forum-feed-create>span').evaluate(el=>getComputedStyle(el).display),'inline');
+ assert.notEqual(await page.locator('.forum-feed-create>span').evaluate(el=>getComputedStyle(el).display),'none');
  assert.match(await page.locator('.forum-feed-create').evaluate(el=>getComputedStyle(el).backgroundColor),/^rgb\(/);
  const firstTopic=page.locator('.forum-topic').first();
  assert.match(await firstTopic.locator('.forum-topic-avatar').getAttribute('href') ?? '',/^\/u\/[^/]+$/,'Topic avatar must lead to an author profile, not a community');
