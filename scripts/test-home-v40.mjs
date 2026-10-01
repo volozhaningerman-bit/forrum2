@@ -162,7 +162,7 @@ try {
   }
  }
  await page.getByRole('button',{name:'Открыть меню',exact:true}).click();assert(await page.getByRole('button',{name:'Закрыть меню',exact:true}).last().isVisible());await page.keyboard.press('Escape');
- await page.setViewportSize({width:1600,height:1000});await page.getByRole('button',{name:'Фильтры',exact:true}).click();await page.locator('summary[aria-label="Выбрать сообщество"]').focus();
+ await page.setViewportSize({width:1600,height:1000});await page.locator('.forum-feed-options>summary').click();await page.getByRole('button',{name:'Фильтры',exact:true}).click();await page.locator('summary[aria-label="Выбрать сообщество"]').focus();
  await page.keyboard.press('ArrowDown');
  assert.equal(await page.evaluate(()=>document.activeElement?.textContent),'Все сообщества');
  await page.keyboard.press('End');
@@ -248,8 +248,7 @@ try {
  assert(boxes['.forum-topic'].height>=59 && boxes['.forum-topic'].height<=61,`Compact topic row drifted: ${boxes['.forum-topic'].height}px`);
  assert.equal(await page.locator('.forum-feed-title').textContent(),'Обсуждения');
  assert.equal(await page.locator('.forum-feed-title').evaluate(el=>getComputedStyle(el).textTransform),'uppercase');
- assert(await page.locator('.forum-feed-create').isVisible(),'Create topic remains available through the toolbar icon');
- assert.match(await page.locator('.forum-feed-create').evaluate(el=>getComputedStyle(el).backgroundColor),/^rgb\(/);
+ assert.equal(await page.locator('.forum-feed-create').getAttribute('href'),'/create','Create topic remains available in the feed actions menu');
  const firstTopic=page.locator('.forum-topic').first();
  assert.match(await firstTopic.locator('.forum-topic-avatar').getAttribute('href') ?? '',/^\/communities\/[^/]+$/,'Left icon leads to the topic category');
  assert.equal(await firstTopic.locator('.forum-topic-category-icon svg').count(),1,'Reference uses a category icon at the left');

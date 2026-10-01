@@ -309,8 +309,13 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
    <div className="forum-feed-toolbar">
     <h2 className="forum-feed-title"><Icon name="comment"/>Обсуждения</h2>
     <div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-label={item.id==='new'?'Новые темы':item.id==='popular'?'Активные темы за 24 часа':'Темы без ответов'} aria-pressed={item.id === tab} key={item.id} title={item.id === 'popular' ? 'Темы с ответами за последние 24 часа' : undefined} onClick={() => choose(item.id, community)}>{item.label}</button>)}</div>
-    <Link className="forum-feed-create" href="/create" aria-label="Создать тему" title="Создать тему"><Icon name="plus"/><span>Создать тему</span></Link>
-    <button type="button" className="forum-filter-toggle" aria-label="Фильтры" aria-expanded={filters} onClick={() => setFilters(value => !value)}><Icon name="filter"/></button>
+    <details className="forum-feed-options" onKeyDown={event=>{if(event.key==='Escape'){event.currentTarget.open=false;event.currentTarget.querySelector('summary')?.focus();}}}>
+     <summary aria-label="Действия ленты"><Icon name="plus"/></summary>
+     <div className="forum-feed-options-menu">
+      <Link className="forum-feed-create" href="/create"><Icon name="plus"/><span>Создать тему</span></Link>
+      <button type="button" className="forum-filter-toggle" aria-expanded={filters} onClick={event=>{setFilters(value => !value);event.currentTarget.closest('details')?.removeAttribute('open');}}><Icon name="filter"/><span>Фильтры</span></button>
+     </div>
+    </details>
    </div>
    <div className="forum-topic-columns" aria-hidden="true"><span>Тема</span><span>Категория</span><span>Ответы</span><span>Просмотры</span><span>Последнее сообщение</span><span/></div>
    {filters && <div className="forum-filters">
