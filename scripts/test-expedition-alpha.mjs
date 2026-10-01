@@ -416,6 +416,7 @@ try {
   for (const check of rigChecks) {
     await page.getByRole('button', { name: check.name }).first().click();
     await page.locator('.exp-avatar.has-' + check.visual).waitFor({ timeout: 5000 });
+    await page.waitForTimeout(180);
     const portrait = await page.locator('.exp-gear-' + check.slot).evaluate((node) => ({
       opacity:getComputedStyle(node).opacity,
       bg:getComputedStyle(node).backgroundImage,
