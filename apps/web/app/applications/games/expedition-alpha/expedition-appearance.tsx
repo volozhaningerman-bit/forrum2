@@ -26,25 +26,25 @@ const themes: Record<ExpeditionAppearanceItem['rarity'], Theme> = {
     glow: 'rgba(210,154,87,.28)',
   },
   uncommon: {
-    primary: '#586b4b',
-    secondary: '#2f3d32',
-    edge: '#9aaa69',
+    primary: '#73553b',
+    secondary: '#3a2e25',
+    edge: '#a77d4f',
     accent: '#d0a45e',
-    glow: 'rgba(126,192,118,.30)',
+    glow: 'rgba(180,138,81,.28)',
   },
   rare: {
-    primary: '#3e6178',
-    secondary: '#243b4b',
-    edge: '#7caecb',
-    accent: '#67d9f1',
-    glow: 'rgba(72,170,225,.34)',
+    primary: '#52636b',
+    secondary: '#2d3a40',
+    edge: '#8499a2',
+    accent: '#69c7df',
+    glow: 'rgba(83,165,196,.30)',
   },
   epic: {
-    primary: '#654f78',
-    secondary: '#352b46',
-    edge: '#ad83cf',
-    accent: '#ff9c54',
-    glow: 'rgba(185,117,255,.34)',
+    primary: '#594c59',
+    secondary: '#302a35',
+    edge: '#9d7faa',
+    accent: '#e59455',
+    glow: 'rgba(164,110,190,.30)',
   },
 };
 
@@ -153,11 +153,11 @@ function CloakChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   const theme = themeOf(item);
   return (
     <g data-channel="cloak" opacity=".9">
-      <path d="M365 416 Q319 484 300 625 L268 1135 L352 1070 L404 1150 L438 740 L430 438 Z"
-        fill={theme.secondary} stroke={theme.edge} strokeWidth="15" />
-      <path d="M659 416 Q705 484 724 625 L756 1135 L672 1070 L620 1150 L586 740 L594 438 Z"
-        fill={theme.secondary} stroke={theme.edge} strokeWidth="15" />
-      <path d="M385 452 Q512 510 639 452" fill="none" stroke={theme.accent} strokeWidth="18" opacity=".55" />
+      <path d="M383 430 Q342 500 330 620 L305 1045 L357 1012 L390 1050 L421 690 L424 447 Z"
+        fill={theme.secondary} fillOpacity=".82" stroke={theme.edge} strokeWidth="12" />
+      <path d="M641 430 Q682 500 694 620 L719 1045 L667 1012 L634 1050 L603 690 L600 447 Z"
+        fill={theme.secondary} fillOpacity=".82" stroke={theme.edge} strokeWidth="12" />
+      <path d="M403 459 Q512 493 621 459" fill="none" stroke={theme.accent} strokeWidth="12" opacity=".44" />
     </g>
   );
 }
@@ -183,47 +183,49 @@ function TorsoChannel({
       {chest ? (
         family === 'torso.heavy' ? (
           <>
-            <path d="M372 444 Q512 376 652 444 L632 785 Q512 844 392 785 Z"
-              fill={theme.secondary} stroke={theme.edge} strokeWidth="20" />
-            <path d="M411 472 Q512 425 613 472 L598 721 Q512 770 426 721 Z"
-              fill={theme.primary} stroke={theme.edge} strokeWidth="12" />
-            <path d="M512 430 V776" stroke={theme.accent} strokeWidth="14" opacity=".55" />
+            <path d="M421 457 Q512 414 603 457 L588 695 Q512 725 436 695 Z"
+              fill={theme.secondary} fillOpacity=".88" stroke={theme.edge} strokeWidth="14" />
+            <path d="M453 480 Q512 451 571 480 L562 628 Q512 654 462 628 Z"
+              fill={theme.primary} stroke={theme.edge} strokeWidth="9" />
+            <path d="M512 452 V675" stroke={theme.accent} strokeWidth="8" opacity=".42" />
           </>
         ) : family === 'torso.guard' ? (
           <>
-            <path d="M386 452 Q512 397 638 452 L620 772 Q512 821 404 772 Z"
-              fill={theme.primary} stroke={theme.edge} strokeWidth="18" />
-            <path d="M420 492 H604 M411 588 H613 M407 682 H617"
-              fill="none" stroke={theme.secondary} strokeWidth="28" opacity=".82" />
+            <path d="M433 471 Q512 435 591 471 L580 662 Q512 691 444 662 Z"
+              fill={theme.primary} fillOpacity=".86" stroke={theme.edge} strokeWidth="12" />
+            <path d="M457 508 H567 M452 563 H572 M450 616 H574"
+              fill="none" stroke={theme.secondary} strokeWidth="15" opacity=".72" />
           </>
         ) : (
-          <path d="M401 454 Q512 410 623 454 L610 770 Q512 807 414 770 Z"
-            fill={theme.primary} fillOpacity=".84" stroke={theme.edge} strokeWidth="15" />
+          <>
+            <path d="M423 474 L485 515 L461 691" fill="none" stroke={theme.primary} strokeWidth="24" strokeLinecap="round" />
+            <path d="M601 474 L539 515 L563 691" fill="none" stroke={theme.primary} strokeWidth="24" strokeLinecap="round" />
+            <path d="M485 515 H539" stroke={theme.accent} strokeWidth="11" strokeLinecap="round" opacity=".56" />
+          </>
         )
       ) : null}
 
       {shoulders ? (
         <>
-          <path d="M347 457 Q394 401 450 425 L437 514 Q385 527 337 495 Z"
-            fill={theme.secondary} stroke={theme.edge} strokeWidth="15" />
-          <path d="M677 457 Q630 401 574 425 L587 514 Q639 527 687 495 Z"
-            fill={theme.secondary} stroke={theme.edge} strokeWidth="15" />
+          <path d="M362 468 Q399 428 445 442 L435 496 Q393 509 354 490 Z"
+            fill={theme.secondary} fillOpacity=".9" stroke={theme.edge} strokeWidth="11" />
+          <path d="M662 468 Q625 428 579 442 L589 496 Q631 509 670 490 Z"
+            fill={theme.secondary} fillOpacity=".9" stroke={theme.edge} strokeWidth="11" />
         </>
       ) : null}
 
       {belt ? (
         <>
-          <path d="M392 764 Q512 789 632 764 L628 826 Q512 850 396 826 Z"
-            fill={theme.secondary} stroke={theme.edge} strokeWidth="13" />
-          <rect x="477" y="771" width="70" height="68" rx="10" fill={theme.accent} stroke={theme.edge} strokeWidth="10" />
-          <rect x="494" y="788" width="36" height="34" rx="5" fill={theme.secondary} />
+          <path d="M414 753 Q512 770 610 753" fill="none" stroke={theme.secondary} strokeWidth="30" strokeLinecap="round" />
+          <rect x="484" y="741" width="56" height="50" rx="8" fill={theme.accent} stroke={theme.edge} strokeWidth="8" />
+          <rect x="498" y="754" width="28" height="24" rx="4" fill={theme.secondary} />
         </>
       ) : null}
 
       {neck ? (
         <>
-          <path d="M445 405 Q512 442 579 405" fill="none" stroke={theme.edge} strokeWidth="16" strokeLinecap="round" />
-          <circle cx="512" cy="450" r="21" fill={theme.accent} stroke={theme.secondary} strokeWidth="10" />
+          <path d="M457 410 Q512 435 567 410" fill="none" stroke={theme.edge} strokeWidth="10" strokeLinecap="round" />
+          <circle cx="512" cy="448" r="15" fill={theme.accent} stroke={theme.secondary} strokeWidth="7" />
         </>
       ) : null}
     </g>
@@ -244,14 +246,14 @@ function ArmsChannel({
     <g data-channel="arms">
       {wrists ? (
         <>
-          <path d="M310 674 L354 694 L333 793 L287 773 Z" fill={theme.primary} stroke={theme.edge} strokeWidth="12" />
-          <path d="M714 674 L670 694 L691 793 L737 773 Z" fill={theme.primary} stroke={theme.edge} strokeWidth="12" />
+          <path d="M316 690 L347 702 L333 770 L300 760 Z" fill={theme.primary} fillOpacity=".9" stroke={theme.edge} strokeWidth="9" />
+          <path d="M708 690 L677 702 L691 770 L724 760 Z" fill={theme.primary} fillOpacity=".9" stroke={theme.edge} strokeWidth="9" />
         </>
       ) : null}
       {gloves ? (
         <>
-          <path d="M284 774 Q327 752 352 788 L337 876 Q298 900 270 858 Z" fill={theme.secondary} stroke={theme.edge} strokeWidth="12" />
-          <path d="M740 774 Q697 752 672 788 L687 876 Q726 900 754 858 Z" fill={theme.secondary} stroke={theme.edge} strokeWidth="12" />
+          <path d="M297 773 Q324 760 345 785 L337 844 Q311 862 287 839 Z" fill={theme.secondary} stroke={theme.edge} strokeWidth="9" />
+          <path d="M727 773 Q700 760 679 785 L687 844 Q713 862 737 839 Z" fill={theme.secondary} stroke={theme.edge} strokeWidth="9" />
         </>
       ) : null}
     </g>
@@ -263,11 +265,12 @@ function LegsChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   const theme = themeOf(item);
   return (
     <g data-channel="legs">
-      <path d="M406 824 Q458 842 496 821 L478 1168 L395 1168 Z"
-        fill={theme.secondary} fillOpacity=".78" stroke={theme.edge} strokeWidth="13" />
-      <path d="M618 824 Q566 842 528 821 L546 1168 L629 1168 Z"
-        fill={theme.secondary} fillOpacity=".78" stroke={theme.edge} strokeWidth="13" />
-      <path d="M410 934 L480 952 M614 934 L544 952" stroke={theme.accent} strokeWidth="11" opacity=".55" />
+      <path d="M411 925 Q448 942 484 931 L476 1010 Q443 1027 405 1014 Z"
+        fill={theme.secondary} fillOpacity=".82" stroke={theme.edge} strokeWidth="10" />
+      <path d="M613 925 Q576 942 540 931 L548 1010 Q581 1027 619 1014 Z"
+        fill={theme.secondary} fillOpacity=".82" stroke={theme.edge} strokeWidth="10" />
+      <path d="M421 1048 L480 1063 M603 1048 L544 1063" stroke={theme.accent} strokeWidth="9" opacity=".48" />
+      <path d="M418 1092 L477 1107 M606 1092 L547 1107" stroke={theme.edge} strokeWidth="8" opacity=".7" />
     </g>
   );
 }
@@ -277,11 +280,11 @@ function FeetChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   const theme = themeOf(item);
   return (
     <g data-channel="feet">
-      <path d="M382 1128 H485 L478 1370 Q423 1420 344 1384 L355 1326 L394 1288 Z"
-        fill={theme.secondary} stroke={theme.edge} strokeWidth="15" />
-      <path d="M642 1128 H539 L546 1370 Q601 1420 680 1384 L669 1326 L630 1288 Z"
-        fill={theme.secondary} stroke={theme.edge} strokeWidth="15" />
-      <path d="M371 1194 H481 M543 1194 H653" stroke={theme.accent} strokeWidth="12" opacity=".6" />
+      <path d="M389 1160 H480 L473 1303 Q434 1330 382 1313 L383 1252 Z"
+        fill={theme.secondary} fillOpacity=".9" stroke={theme.edge} strokeWidth="11" />
+      <path d="M635 1160 H544 L551 1303 Q590 1330 642 1313 L641 1252 Z"
+        fill={theme.secondary} fillOpacity=".9" stroke={theme.edge} strokeWidth="11" />
+      <path d="M395 1201 H477 M547 1201 H629" stroke={theme.accent} strokeWidth="9" opacity=".48" />
     </g>
   );
 }
@@ -326,11 +329,11 @@ function OffHandChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   const theme = themeOf(item);
   return (
     <g data-channel="offHand">
-      <path d="M210 610 Q327 652 354 744 L329 1024 Q281 1110 207 1155 Q133 1110 85 1024 L60 744 Q87 652 210 610 Z"
-        fill={theme.secondary} fillOpacity=".9" stroke={theme.edge} strokeWidth="18" />
-      <path d="M210 688 Q286 716 305 770 L286 984 Q252 1037 210 1065 Q168 1037 134 984 L115 770 Q134 716 210 688 Z"
-        fill={theme.primary} stroke={theme.edge} strokeWidth="11" />
-      <circle cx="210" cy="862" r="44" fill={theme.accent} opacity=".75" />
+      <path d="M235 690 Q304 714 324 770 L307 956 Q278 1014 232 1046 Q186 1014 157 956 L140 770 Q160 714 235 690 Z"
+        fill={theme.secondary} fillOpacity=".88" stroke={theme.edge} strokeWidth="13" />
+      <path d="M235 742 Q279 757 291 792 L279 925 Q261 958 235 978 Q209 958 191 925 L179 792 Q191 757 235 742 Z"
+        fill={theme.primary} stroke={theme.edge} strokeWidth="8" />
+      <circle cx="235" cy="857" r="27" fill={theme.accent} opacity=".65" />
     </g>
   );
 }
