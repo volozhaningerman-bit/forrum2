@@ -347,6 +347,7 @@ try {
       characterRect: (() => { const r=document.querySelector('.exp-character')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
       centerRect: (() => { const r=document.querySelector('.exp-center')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
       inventoryRect: (() => { const r=document.querySelector('.exp-inventory')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
+      socialCardsFit: Array.from(document.querySelectorAll('.exp-community-card')).every((el) => el.scrollHeight <= el.clientHeight + 1),
       raidRect: (() => { const r=document.querySelector('.exp-raid')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
       locationRect: (() => { const r=document.querySelector('.exp-location')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
     };
@@ -364,6 +365,7 @@ try {
   assert(metrics.itemFontSize >= 9, `inventory typography too small: ${metrics.itemFontSize}px`);
   assert(metrics.slotFontSize >= 8, `equipment typography too small: ${metrics.slotFontSize}px`);
   assert(metrics.depthLabelVisible, 'expedition depth control group must have an explicit label');
+  assert(metrics.socialCardsFit, 'category/syndicate cards must not clip their alpha copy');
   assert(metrics.inventoryActionCount >= 1, 'inventory items must expose an equip affordance');
   assert.equal(metrics.slotAffordanceCount, 16, 'all equipment slots must expose an empty/remove affordance');
   assert(metrics.layoutHeight <= 830, `1720 desktop composition is too tall: ${metrics.layoutHeight}px`);
@@ -404,6 +406,7 @@ try {
   assert.notEqual(socialArt.champion, 'none', 'champion art must be visible');
   assert.notEqual(socialArt.relic, 'none', 'relic art must be visible');
 
+  await page.evaluate(() => document.activeElement instanceof HTMLElement && document.activeElement.blur());
   await page.screenshot({ path: output + '/expedition-alpha-v08-loot-equipped-1720x900.png', fullPage: true });
 
   await page.setViewportSize({ width: 1366, height: 768 });
