@@ -2932,3 +2932,62 @@
   .exp-avatar .exp-gear{width:63px!important;height:178px!important;top:4px!important}
   .exp-world-gear{width:65.5%!important}
 }
+
+
+/* Stage 2 final rig alignment after 1720x900 reference QA.
+   The authored paper-doll cell is narrow (260:739). Active world layers must
+   stay centered over the base hero instead of inheriting the old inset:0 rule,
+   which shifted a full second silhouette to the left. */
+.exp-world-hero .exp-world-gear{
+  left:50%!important;
+  right:auto!important;
+  top:0!important;
+  bottom:0!important;
+  width:65.5%!important;
+  height:100%!important;
+  transform:translateX(-50%)!important;
+}
+.exp-world-hero.has-hood .exp-world-gear-head,
+.exp-world-hero.has-helm .exp-world-gear-head,
+.exp-world-hero.has-consul-mask .exp-world-gear-head,
+.exp-world-hero.has-neck .exp-world-gear-neck,
+.exp-world-hero.has-neck-eye .exp-world-gear-neck,
+.exp-world-hero.has-shoulders .exp-world-gear-shoulders,
+.exp-world-hero.has-cloak .exp-world-gear-cloak,
+.exp-world-hero.has-cloak-blue .exp-world-gear-cloak,
+.exp-world-hero.has-chest .exp-world-gear-chest,
+.exp-world-hero.has-chest-guard .exp-world-gear-chest,
+.exp-world-hero.has-chest-epic .exp-world-gear-chest,
+.exp-world-hero.has-wrists .exp-world-gear-wrists,
+.exp-world-hero.has-gloves .exp-world-gear-gloves,
+.exp-world-hero.has-belt .exp-world-gear-belt,
+.exp-world-hero.has-legs .exp-world-gear-legs,
+.exp-world-hero.has-boots .exp-world-gear-boots,
+.exp-world-hero.has-ring .exp-world-gear-ring1,
+.exp-world-hero.has-ring-blue .exp-world-gear-ring2,
+.exp-world-hero.has-relic .exp-world-gear-relic1,
+.exp-world-hero.has-relic-epic .exp-world-gear-relic2,
+.exp-world-hero.has-sword .exp-world-gear-mainhand,
+.exp-world-hero.has-spear .exp-world-gear-mainhand,
+.exp-world-hero.has-sword-blue .exp-world-gear-mainhand,
+.exp-world-hero.has-hammer .exp-world-gear-mainhand,
+.exp-world-hero.has-shield .exp-world-gear-offhand{
+  left:50%!important;
+  right:auto!important;
+  top:0!important;
+  bottom:0!important;
+  width:65.5%!important;
+  height:100%!important;
+  transform:translateX(-50%)!important;
+}
+
+/* Keep portrait layers centered on the same narrow rig and remove any legacy
+   width/position leakage from older responsive rules. */
+.exp-avatar .exp-gear{
+  left:50%!important;
+  right:auto!important;
+  transform:translateX(-50%)!important;
+}
+@media(max-width:1480px) and (min-width:1281px){
+  .exp-world-hero .exp-world-gear{width:65.5%!important}
+}
