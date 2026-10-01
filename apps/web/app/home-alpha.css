@@ -289,17 +289,29 @@ body:has(.forum-home) .site-footer {display:none;}
 
 @media (min-width:1051px) {.forum-home .forum-app-category,.forum-home .forum-all-communities {display:none;}}
 
-/* Reference detail: restrained grid and edge lighting, readable visited topics. */
+/* Quiet depth: a dark material, a lit upper edge and a grounded shadow. */
 .forum-home :is(.forum-categories,.forum-side-stats,.forum-panel,.forum-important) {
- background-image:linear-gradient(125deg,#ffffff05,transparent 45%),linear-gradient(#ffffff03 1px,transparent 1px),linear-gradient(90deg,#ffffff03 1px,transparent 1px);
- background-size:auto,24px 24px,24px 24px;
- box-shadow:inset 0 1px #ffffff10,0 0 0 1px #ffffff05;
+ background:linear-gradient(150deg,#ffffff03,transparent 48%),#171b1e;
+ border-color:#343c41;
+ border-top-color:#4d585e;
+ box-shadow:inset 0 1px #ffffff07,inset 0 -1px #0006,0 3px 5px #0003,0 14px 28px -14px #000b;
 }
+.forum-home :is(.forum-categories,.forum-side-stats,.forum-panel,.forum-important)::before {opacity:.24;}
+.forum-home :is(.forum-categories,.forum-side-stats,.forum-panel)::after {display:none;}
+.forum-home .forum-important-row {background:linear-gradient(135deg,#ffffff03,transparent 60%),#1c2125;border-color:#30393e;box-shadow:inset 0 1px #ffffff05;}
+.forum-home .forum-feed-toolbar {background:linear-gradient(#1c2226,#161b1e);border-color:#384248;box-shadow:inset 0 1px #ffffff08,0 6px 14px -8px #000b;}
+.forum-home .forum-topic-columns {background:#0e1214;border-color:#2f373c;color:#bdc7cc;}
+.forum-home .forum-topic {background:#181d21;border-color:#30393f;box-shadow:inset 0 1px #ffffff06,inset 0 -1px #0004,0 3px 7px #0004;}
+.forum-home .forum-topic::after {opacity:.24;filter:saturate(.18) contrast(.8);mask-image:linear-gradient(90deg,transparent 35%,#0008 65%,#000 100%);}
+.forum-home .forum-topic:hover,.forum-home .forum-topic:focus-within {border-color:#718a87;box-shadow:inset 0 1px #ffffff0c,0 0 0 1px #92b6ad18,0 5px 12px #0006;}
+.forum-home .forum-topic-excerpt {color:#bdc5ca;}
+.forum-home .forum-topic-category-icon {background:linear-gradient(145deg,#252e34,#151b1f);border-color:#3c484f;box-shadow:inset 0 1px #ffffff09,0 2px 3px #0003;}
+.forum-home .forum-category-heading.is-active {background:linear-gradient(90deg,#c2ded70a,transparent);box-shadow:inset 2px 0 #b4d4ca;}
+.forum-home .forum-ranking-tabs button[aria-pressed=true] {background:#152623;border-color:#45615a;box-shadow:inset 0 1px #c2ded70a;}
 .forum-home .forum-topic.is-read h2 {color:#dce1e4;}
 .forum-home .forum-topic.is-read .forum-topic-excerpt {color:#b8c0c5;}
 .forum-home .forum-category-heading:has(.forum-category-toggle)>a {max-width:calc(100% - 48px);}
 .forum-home .forum-category-heading:has(.forum-category-toggle) .forum-category-counts {min-width:18px;}
-.forum-home .forum-feed-toolbar {background-image:linear-gradient(90deg,#ffffff04,transparent),linear-gradient(#ffffff03 1px,transparent 1px);background-size:auto,24px 24px;}
 
 /* Alpha ergonomics: clearer actions and comfortable compact text. */
 .forum-home .forum-feed-create {width:auto;min-width:36px;min-height:36px;padding:0 8px;display:flex;gap:6px;}
@@ -307,7 +319,7 @@ body:has(.forum-home) .site-footer {display:none;}
 .forum-home .forum-filter-toggle {min-width:36px;min-height:36px;}
 .forum-home .forum-topic-columns {font-size:10px;}
 .forum-home .forum-topic-excerpt {line-height:1.45;}
-.forum-home .forum-alpha-help {display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px 18px;margin-top:20px;padding:14px;border:1px solid #596065;background:#24282b;font-size:13px;line-height:1.5;color:#c2c8cc;}
+.forum-home .forum-alpha-help {display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px 18px;margin-top:20px;padding:14px;border:1px solid #343c41;background:#171b1e;box-shadow:inset 0 1px #ffffff07,0 8px 20px -12px #000b;font-size:13px;line-height:1.5;color:#c2c8cc;}
 .forum-home .forum-alpha-help strong {color:#f1f3f4;}
 .forum-home .forum-alpha-help a {color:#cee9df;min-height:32px;display:flex;align-items:center;}
 @media (min-width:1051px) and (max-width:1450px) {.forum-home .forum-feed-create>span {display:none;}.forum-home .forum-topic-columns {font-size:9px;}}
