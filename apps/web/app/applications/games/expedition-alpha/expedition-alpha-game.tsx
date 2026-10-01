@@ -14,6 +14,8 @@ import {
   type ExpeditionServerState,
 } from './expedition-client';
 import { EXPEDITION_FEMALE_HERO_V09 } from './expedition-art-v09';
+import { EXPEDITION_EQUIPMENT_ICONS_V12 } from './expedition-equipment-icons-v12';
+import { EXPEDITION_EQUIPMENT_PAPERDOLL_V12 } from './expedition-equipment-paperdoll-v12';
 
 type Rarity = 'common' | 'uncommon' | 'rare' | 'epic';
 type Slot =
@@ -347,7 +349,11 @@ export function ExpeditionAlphaGame() {
   const heroArtSource = characterBody === 'female'
     ? EXPEDITION_FEMALE_HERO_V09
     : '/games/expedition-alpha/art-v09/hero-base.webp';
-  const heroArtStyle = { '--exp-hero-art': `url("${heroArtSource}")` } as CSSProperties;
+  const heroArtStyle = {
+    '--exp-hero-art': `url("${heroArtSource}")`,
+    '--exp-item-art': `url("data:image/webp;base64,${EXPEDITION_EQUIPMENT_ICONS_V12}")`,
+    '--exp-paperdoll-art': `url("data:image/webp;base64,${EXPEDITION_EQUIPMENT_PAPERDOLL_V12}")`,
+  } as CSSProperties;
 
   const appearanceClasses = Object.values(equipped)
     .map((item) => item?.visual ? `has-${item.visual}` : '')
