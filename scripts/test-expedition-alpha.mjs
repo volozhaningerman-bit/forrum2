@@ -63,6 +63,8 @@ const staticChecks = [
   ['appearance families are reusable and slot-fallback safe', appearanceSource.includes("head.hood") && appearanceSource.includes("torso.light") && appearanceSource.includes("weapon.sword") && appearanceSource.includes("defaultFamilyBySlot")],
   ['rarity decorates reusable appearance families', appearanceSource.includes("legendary:") && appearanceSource.includes("relic:") && appearanceSource.includes("data-rarity") && cssSource.includes('EXPEDITION ALPHA 0.15 — RARITY-DRIVEN APPEARANCE')],
   ['server supports scarce relic tier', schemaSource.includes('RELIC') && serviceSource.includes("rarity: 'RELIC'") && serviceSource.includes("circulationCap: 7")],
+  ['server grants starter inventory idempotently', serviceSource.includes('STARTER_TEMPLATE_IDS') && serviceSource.includes('ensureStarterItems(actorId)') && serviceSource.includes('starter:${actorId}:${templateId}') && serviceSource.includes("isolationLevel: 'Serializable'")],
+  ['female raster edges are feathered', cssSource.includes('EXPEDITION ALPHA 0.15.1 — PRODUCTION QA HOTFIX') && cssSource.includes('data-character-body="female"') && cssSource.includes('mask-image:radial-gradient')],
   ['no transmog system', !gameSource.toLowerCase().includes('transmog') && !appearanceSource.toLowerCase().includes('transmog')],
   ['distinct visible neck art', serviceSource.includes("name: 'Око Архивариуса'") && serviceSource.includes("visualKey: 'neck-eye'") && gameSource.includes("'neck-eye': 4")],
   ['world hero uses live-safe art', gameSource.includes('exp-world-hero') && cssSource.includes('/games/expedition-alpha/art-v09/hero-base.webp')],
