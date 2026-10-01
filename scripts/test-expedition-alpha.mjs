@@ -64,6 +64,7 @@ const staticChecks = [
   ['rarity decorates reusable appearance families', appearanceSource.includes("legendary:") && appearanceSource.includes("relic:") && appearanceSource.includes("data-rarity") && cssSource.includes('EXPEDITION ALPHA 0.15 — RARITY-DRIVEN APPEARANCE')],
   ['accent compositor avoids opaque starter garments', gameSource.includes('alpha 0.17') && cssSource.includes('EXPEDITION ALPHA 0.16 — ACCENT COMPOSITOR') && appearanceSource.includes('fill="none"')],
   ['starter equipment remains readable at play scale', cssSource.includes('EXPEDITION ALPHA 0.17 — READABLE EQUIPMENT ACCENTS') && appearanceSource.includes('strokeWidth="20"') && appearanceSource.includes('width="34" height="25"')],
+  ['accessory effects stay off the torso', appearanceSource.includes('cy="1378"') && !appearanceSource.includes('cy="615" r="58"')],
   ['server supports scarce relic tier', schemaSource.includes('RELIC') && serviceSource.includes("rarity: 'RELIC'") && serviceSource.includes("circulationCap: 7")],
   ['server grants starter inventory idempotently', serviceSource.includes('STARTER_TEMPLATE_IDS') && serviceSource.includes('ensureStarterItems(actorId)') && serviceSource.includes('starter:${actorId}:${templateId}') && serviceSource.includes("isolationLevel: 'Serializable'")],
   ['female raster edges are feathered', cssSource.includes('EXPEDITION ALPHA 0.15.1 — PRODUCTION QA HOTFIX') && cssSource.includes('data-character-body="female"') && cssSource.includes('mask-image:radial-gradient')],
