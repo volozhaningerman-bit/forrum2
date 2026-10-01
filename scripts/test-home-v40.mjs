@@ -112,9 +112,9 @@ try {
  assert.equal(await page.locator('.forum-popular-today li').count(),1,'Only topics with replies in the last 24h belong to the live popular panel');
  const heroBox=await page.locator('.forum-search-hero').boundingBox();
  assert(heroBox && heroBox.height>=160 && heroBox.height<=163,`Hero must stay compact, got ${heroBox?.height}`);
- assert.equal(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(13, 16, 18)');
+ assert.equal(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(8, 10, 11)');
  assert.equal((await page.locator('.forum-brand').textContent())?.replace(/\s/g,''),'4RRUM');
- assert.equal(await page.locator('.forum-hero-copy h1').evaluate(el=>getComputedStyle(el).color),'rgb(236, 238, 239)');
+ assert.equal(await page.locator('.forum-hero-copy h1').evaluate(el=>getComputedStyle(el).color),'rgb(244, 245, 246)');
  assert.equal(await page.locator('[aria-label*="светлую тему"],[aria-label*="тёмную тему"]').count(),0);
  assert.deepEqual(await page.locator('.forum-primary>a').allTextContents(),['Главная','Форум','Пользователи','Правила']);
  assert.equal(await page.getByRole('search').count(),1);
