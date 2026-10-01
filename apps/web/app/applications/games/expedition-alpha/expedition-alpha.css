@@ -2590,3 +2590,32 @@
     animation:none!important;
   }
 }
+
+
+
+/* v0.8.1 — keep 1720×900 inside a single game viewport after readability lift. */
+@media(min-width:1561px){
+  .exp-character,
+  .exp-inventory{
+    height:752px!important;
+  }
+  .exp-location-art{
+    height:410px!important;
+    min-height:410px!important;
+  }
+  .exp-center{
+    grid-template-rows:auto 186px!important;
+  }
+  .exp-raid,
+  .exp-community{
+    height:186px!important;
+    min-height:186px!important;
+  }
+  .exp-community-card{
+    min-height:186px!important;
+  }
+  .exp-champion,
+  .exp-relic{
+    height:101px!important;
+  }
+}
