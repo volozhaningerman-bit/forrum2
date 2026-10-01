@@ -143,7 +143,7 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
    <Link className="forum-topic-metric forum-reply-count" href={`/p/${item.slug}#discussion`} aria-label={`Ответы: ${item.commentCount}`} title="Ответы"><Icon name="comment"/><span>{formatCount(item.commentCount)}</span></Link>
    <span className="forum-topic-metric forum-view-count" title="Просмотры" aria-label={`Просмотры: ${item.viewCount ?? 0}`}><Icon name="eye"/><span>{formatCount(item.viewCount)}</span></span>
    <span className="forum-topic-metric forum-bookmark-count" title="Закладки" aria-label={`Закладки: ${item.bookmarkCount ?? 0}`}><Icon name="bookmark"/><span>{formatCount(item.bookmarkCount ?? 0)}</span></span>
-   <span className="forum-topic-date"><ForumTime value={lastAt} absolute/></span>
+   <span className="forum-topic-date"><ForumTime value={lastAt} absolute compact/></span>
   </div>
   <div className="forum-topic-menu"><TopicActions item={item} demo={demo} guest={guest}/></div>
  </article>;
