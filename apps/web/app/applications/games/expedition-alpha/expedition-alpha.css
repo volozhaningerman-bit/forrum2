@@ -2348,3 +2348,10 @@
   }
   .exp-avatar.has-wrists .exp-gear-wrists{top:94px!important;width:72px!important;height:9px!important}
 }
+@media(max-width:1280px){
+  .exp-avatar.has-gloves .exp-gear-gloves{
+    top:140px!important;width:100px!important;height:24px!important;
+    background:radial-gradient(ellipse 8px 11px at 8% 48%,#704934 0 62%,#3b2922 66% 78%,transparent 81%),radial-gradient(ellipse 8px 11px at 92% 48%,#704934 0 62%,#3b2922 66% 78%,transparent 81%)!important;
+  }
+  .exp-avatar.has-wrists .exp-gear-wrists{top:133px!important;width:95px!important;height:11px!important}
+}
