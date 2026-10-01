@@ -135,10 +135,10 @@ function HeadChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   if (family === 'head.helmet') {
     return (
       <g data-channel="head" data-rarity={item.rarity}>
-        <path d="M400 315 Q404 180 512 145 Q620 180 624 315 L590 347 L574 289 Q512 250 450 289 L434 347 Z"
-          fill={theme.secondary} stroke={theme.edge} strokeWidth="18" />
-        <path d="M414 245 Q512 165 610 245" fill="none" stroke={theme.primary} strokeWidth="46" strokeLinecap="round" />
-        <path d="M445 300 H579" stroke={theme.accent} strokeWidth="12" strokeLinecap="round" opacity=".7" />
+        <path d="M423 302 Q425 218 468 180 Q512 148 556 180 Q599 218 601 302"
+          fill="none" stroke={theme.secondary} strokeWidth="32" strokeLinecap="round" opacity=".76" />
+        <path d="M447 298 Q512 259 577 298" fill="none" stroke={theme.edge} strokeWidth="8" strokeLinecap="round" />
+        <path d="M470 279 H493 M531 279 H554" stroke={theme.accent} strokeWidth="7" strokeLinecap="round" opacity=".65" />
       </g>
     );
   }
@@ -146,20 +146,20 @@ function HeadChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   if (family === 'head.mask') {
     return (
       <g data-channel="head" data-rarity={item.rarity}>
-        <path d="M438 250 Q512 204 586 250 L575 337 Q512 380 449 337 Z"
-          fill={theme.secondary} stroke={theme.edge} strokeWidth="16" />
-        <path d="M468 286 H496 M528 286 H556" stroke={theme.accent} strokeWidth="14" strokeLinecap="round" />
-        <path d="M512 312 L512 348" stroke={theme.edge} strokeWidth="10" />
+        <path d="M456 257 Q512 223 568 257 L559 329 Q512 355 465 329 Z"
+          fill={theme.secondary} fillOpacity=".72" stroke={theme.edge} strokeWidth="8" />
+        <path d="M478 284 H496 M528 284 H546" stroke={theme.accent} strokeWidth="8" strokeLinecap="round" />
       </g>
     );
   }
 
   return (
     <g data-channel="head" data-rarity={item.rarity}>
-      <path d="M414 337 Q384 260 412 204 Q449 138 512 137 Q575 138 612 204 Q640 260 610 337"
-        fill="none" stroke={theme.secondary} strokeWidth="62" strokeLinecap="round" />
-      <path d="M421 322 Q405 248 430 205 Q465 163 512 162 Q559 163 594 205 Q619 248 603 322"
-        fill="none" stroke={theme.edge} strokeWidth="12" strokeLinecap="round" opacity=".78" />
+      <path d="M432 331 Q410 278 430 226 Q444 191 478 169 M546 169 Q580 191 594 226 Q614 278 592 331"
+        fill="none" stroke={theme.secondary} strokeWidth="24" strokeLinecap="round" opacity=".72" />
+      <path d="M440 319 Q424 273 443 231 Q456 201 482 184 M542 184 Q568 201 581 231 Q600 273 584 319"
+        fill="none" stroke={theme.edge} strokeWidth="6" strokeLinecap="round" opacity=".84" />
+      <path d="M447 328 Q512 347 577 328" fill="none" stroke={theme.accent} strokeWidth="5" strokeLinecap="round" opacity=".5" />
     </g>
   );
 }
@@ -199,49 +199,47 @@ function TorsoChannel({
       {chest ? (
         family === 'torso.heavy' ? (
           <>
-            <path d="M421 457 Q512 414 603 457 L588 695 Q512 725 436 695 Z"
-              fill={theme.secondary} fillOpacity=".88" stroke={theme.edge} strokeWidth="14" />
-            <path d="M453 480 Q512 451 571 480 L562 628 Q512 654 462 628 Z"
-              fill={theme.primary} stroke={theme.edge} strokeWidth="9" />
-            <path d="M512 452 V675" stroke={theme.accent} strokeWidth="8" opacity=".42" />
+            <path d="M430 470 Q512 434 594 470 L583 667 Q512 693 441 667 Z"
+              fill={theme.secondary} fillOpacity=".66" stroke={theme.edge} strokeWidth="10" />
+            <path d="M462 500 Q512 476 562 500 L555 620 Q512 640 469 620 Z"
+              fill="none" stroke={theme.accent} strokeWidth="7" opacity=".52" />
           </>
         ) : family === 'torso.guard' ? (
           <>
-            <path d="M433 471 Q512 435 591 471 L580 662 Q512 691 444 662 Z"
-              fill={theme.primary} fillOpacity=".86" stroke={theme.edge} strokeWidth="12" />
-            <path d="M457 508 H567 M452 563 H572 M450 616 H574"
-              fill="none" stroke={theme.secondary} strokeWidth="15" opacity=".72" />
+            <path d="M438 478 Q512 446 586 478 L577 653 Q512 678 447 653 Z"
+              fill={theme.primary} fillOpacity=".46" stroke={theme.edge} strokeWidth="8" />
+            <path d="M460 518 H564 M458 570 H566 M456 620 H568"
+              fill="none" stroke={theme.accent} strokeWidth="6" opacity=".5" />
           </>
         ) : (
           <>
-            <path d="M423 474 L485 515 L461 691" fill="none" stroke={theme.primary} strokeWidth="24" strokeLinecap="round" />
-            <path d="M601 474 L539 515 L563 691" fill="none" stroke={theme.primary} strokeWidth="24" strokeLinecap="round" />
-            <path d="M485 515 H539" stroke={theme.accent} strokeWidth="11" strokeLinecap="round" opacity=".56" />
+            <path d="M438 486 L490 531 L469 678" fill="none" stroke={theme.primary} strokeWidth="9" strokeLinecap="round" opacity=".82" />
+            <path d="M586 486 L534 531 L555 678" fill="none" stroke={theme.primary} strokeWidth="9" strokeLinecap="round" opacity=".82" />
+            <path d="M486 532 H538" stroke={theme.accent} strokeWidth="5" strokeLinecap="round" opacity=".58" />
           </>
         )
       ) : null}
 
       {shoulders ? (
         <>
-          <path d="M362 468 Q399 428 445 442 L435 496 Q393 509 354 490 Z"
-            fill={theme.secondary} fillOpacity=".9" stroke={theme.edge} strokeWidth="11" />
-          <path d="M662 468 Q625 428 579 442 L589 496 Q631 509 670 490 Z"
-            fill={theme.secondary} fillOpacity=".9" stroke={theme.edge} strokeWidth="11" />
+          <path d="M374 477 Q404 449 443 454" fill="none" stroke={theme.edge} strokeWidth="14" strokeLinecap="round" opacity=".72" />
+          <path d="M650 477 Q620 449 581 454" fill="none" stroke={theme.edge} strokeWidth="14" strokeLinecap="round" opacity=".72" />
+          <path d="M381 478 Q406 460 435 465 M643 478 Q618 460 589 465"
+            fill="none" stroke={theme.accent} strokeWidth="5" strokeLinecap="round" opacity=".55" />
         </>
       ) : null}
 
       {belt ? (
         <>
-          <path d="M414 753 Q512 770 610 753" fill="none" stroke={theme.secondary} strokeWidth="30" strokeLinecap="round" />
-          <rect x="484" y="741" width="56" height="50" rx="8" fill={theme.accent} stroke={theme.edge} strokeWidth="8" />
-          <rect x="498" y="754" width="28" height="24" rx="4" fill={theme.secondary} />
+          <path d="M423 755 Q512 767 601 755" fill="none" stroke={theme.secondary} strokeWidth="12" strokeLinecap="round" opacity=".88" />
+          <rect x="498" y="747" width="28" height="22" rx="4" fill="none" stroke={theme.accent} strokeWidth="5" />
         </>
       ) : null}
 
       {neck ? (
         <>
-          <path d="M457 410 Q512 435 567 410" fill="none" stroke={theme.edge} strokeWidth="10" strokeLinecap="round" />
-          <circle cx="512" cy="448" r="15" fill={theme.accent} stroke={theme.secondary} strokeWidth="7" />
+          <path d="M470 414 Q512 431 554 414" fill="none" stroke={theme.edge} strokeWidth="5" strokeLinecap="round" opacity=".72" />
+          <circle cx="512" cy="443" r="9" fill={theme.accent} stroke={theme.secondary} strokeWidth="4" />
         </>
       ) : null}
     </g>
@@ -262,14 +260,14 @@ function ArmsChannel({
     <g data-channel="arms" data-rarity={source.rarity}>
       {wrists ? (
         <>
-          <path d="M316 690 L347 702 L333 770 L300 760 Z" fill={theme.primary} fillOpacity=".9" stroke={theme.edge} strokeWidth="9" />
-          <path d="M708 690 L677 702 L691 770 L724 760 Z" fill={theme.primary} fillOpacity=".9" stroke={theme.edge} strokeWidth="9" />
+          <path d="M307 735 L338 744 M717 735 L686 744" fill="none" stroke={theme.edge} strokeWidth="11" strokeLinecap="round" opacity=".8" />
+          <path d="M311 748 L337 756 M713 748 L687 756" fill="none" stroke={theme.accent} strokeWidth="4" strokeLinecap="round" opacity=".56" />
         </>
       ) : null}
       {gloves ? (
         <>
-          <path d="M297 773 Q324 760 345 785 L337 844 Q311 862 287 839 Z" fill={theme.secondary} stroke={theme.edge} strokeWidth="9" />
-          <path d="M727 773 Q700 760 679 785 L687 844 Q713 862 737 839 Z" fill={theme.secondary} stroke={theme.edge} strokeWidth="9" />
+          <path d="M291 806 Q316 785 341 807 M733 806 Q708 785 683 807" fill="none" stroke={theme.secondary} strokeWidth="13" strokeLinecap="round" opacity=".78" />
+          <path d="M296 824 Q316 812 336 825 M728 824 Q708 812 688 825" fill="none" stroke={theme.edge} strokeWidth="5" strokeLinecap="round" opacity=".66" />
         </>
       ) : null}
     </g>
@@ -281,12 +279,11 @@ function LegsChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   const theme = themeOf(item);
   return (
     <g data-channel="legs" data-rarity={item.rarity}>
-      <path d="M411 925 Q448 942 484 931 L476 1010 Q443 1027 405 1014 Z"
-        fill={theme.secondary} fillOpacity=".82" stroke={theme.edge} strokeWidth="10" />
-      <path d="M613 925 Q576 942 540 931 L548 1010 Q581 1027 619 1014 Z"
-        fill={theme.secondary} fillOpacity=".82" stroke={theme.edge} strokeWidth="10" />
-      <path d="M421 1048 L480 1063 M603 1048 L544 1063" stroke={theme.accent} strokeWidth="9" opacity=".48" />
-      <path d="M418 1092 L477 1107 M606 1092 L547 1107" stroke={theme.edge} strokeWidth="8" opacity=".7" />
+      <path d="M406 965 Q442 978 477 966 M618 965 Q582 978 547 966"
+        fill="none" stroke={theme.secondary} strokeWidth="14" strokeLinecap="round" opacity=".64" />
+      <path d="M410 1010 Q444 1022 475 1011 M614 1010 Q580 1022 549 1011"
+        fill="none" stroke={theme.edge} strokeWidth="6" strokeLinecap="round" opacity=".62" />
+      <path d="M419 1063 L470 1076 M605 1063 L554 1076" stroke={theme.accent} strokeWidth="5" opacity=".48" />
     </g>
   );
 }
@@ -296,11 +293,11 @@ function FeetChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   const theme = themeOf(item);
   return (
     <g data-channel="feet" data-rarity={item.rarity}>
-      <path d="M389 1160 H480 L473 1303 Q434 1330 382 1313 L383 1252 Z"
-        fill={theme.secondary} fillOpacity=".9" stroke={theme.edge} strokeWidth="11" />
-      <path d="M635 1160 H544 L551 1303 Q590 1330 642 1313 L641 1252 Z"
-        fill={theme.secondary} fillOpacity=".9" stroke={theme.edge} strokeWidth="11" />
-      <path d="M395 1201 H477 M547 1201 H629" stroke={theme.accent} strokeWidth="9" opacity=".48" />
+      <path d="M392 1190 Q430 1202 475 1191 M632 1190 Q594 1202 549 1191"
+        fill="none" stroke={theme.secondary} strokeWidth="17" strokeLinecap="round" opacity=".72" />
+      <path d="M389 1264 Q430 1280 472 1268 M635 1264 Q594 1280 552 1268"
+        fill="none" stroke={theme.edge} strokeWidth="7" strokeLinecap="round" opacity=".7" />
+      <path d="M399 1214 H469 M555 1214 H625" stroke={theme.accent} strokeWidth="4" opacity=".5" />
     </g>
   );
 }
@@ -313,9 +310,9 @@ function MainHandChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   if (family === 'weapon.spear') {
     return (
       <g data-channel="mainHand" data-rarity={item.rarity}>
-        <path d="M744 465 L653 1300" stroke={theme.secondary} strokeWidth="24" strokeLinecap="round" />
-        <path d="M760 334 L802 478 L730 445 Z" fill={theme.edge} stroke={theme.secondary} strokeWidth="10" />
-        <path d="M750 383 L773 447" stroke={theme.accent} strokeWidth="10" />
+        <path d="M710 574 L663 1270" stroke={theme.secondary} strokeWidth="11" strokeLinecap="round" opacity=".9" />
+        <path d="M718 476 L738 560 L694 548 Z" fill={theme.edge} stroke={theme.secondary} strokeWidth="5" />
+        <path d="M711 508 L721 547" stroke={theme.accent} strokeWidth="5" />
       </g>
     );
   }
@@ -323,19 +320,19 @@ function MainHandChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   if (family === 'weapon.hammer') {
     return (
       <g data-channel="mainHand" data-rarity={item.rarity}>
-        <path d="M707 626 L649 1270" stroke={theme.secondary} strokeWidth="30" strokeLinecap="round" />
-        <path d="M633 500 H826 V637 H633 Z" fill={theme.primary} stroke={theme.edge} strokeWidth="17" />
-        <circle cx="730" cy="568" r="34" fill={theme.accent} opacity=".85" />
+        <path d="M690 676 L658 1244" stroke={theme.secondary} strokeWidth="14" strokeLinecap="round" opacity=".88" />
+        <path d="M647 608 H752 V677 H647 Z" fill={theme.primary} fillOpacity=".76" stroke={theme.edge} strokeWidth="7" />
+        <circle cx="700" cy="642" r="17" fill={theme.accent} opacity=".72" />
       </g>
     );
   }
 
   return (
     <g data-channel="mainHand" data-rarity={item.rarity}>
-      <path d="M690 708 L659 1224" stroke={theme.secondary} strokeWidth="28" strokeLinecap="round" />
-      <path d="M707 515 L733 550 L681 1040 L649 1073 L653 1010 Z"
-        fill={family === 'weapon.blade' ? theme.accent : '#d8e4e8'} stroke={theme.edge} strokeWidth="11" />
-      <path d="M648 1035 L724 1058" stroke={theme.edge} strokeWidth="24" strokeLinecap="round" />
+      <path d="M674 796 L665 1215" stroke={theme.secondary} strokeWidth="10" strokeLinecap="round" opacity=".9" />
+      <path d="M682 657 L695 679 L673 1112 L658 1137 L660 1100 Z"
+        fill={family === 'weapon.blade' ? theme.accent : '#d8e4e8'} fillOpacity=".9" stroke={theme.edge} strokeWidth="5" />
+      <path d="M646 1110 L690 1124" stroke={theme.edge} strokeWidth="11" strokeLinecap="round" />
     </g>
   );
 }

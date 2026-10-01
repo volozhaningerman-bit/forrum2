@@ -352,3 +352,10 @@ Rarity is part of the scalable appearance constructor, not a requirement for a u
 - Rarity changes trim, fittings, inserts, runes and effects rather than repainting the entire item.
 - A very small number of Relic items may use bespoke art.
 - The equipped item always owns the visible appearance; there is no transmog or cosmetic override.
+
+
+## Scalable equipment rendering (Alpha 0.16)
+
+The approved hero raster remains the visual base. Common, Uncommon and Rare items should not replace large body areas with opaque geometric overlays. Reusable appearance families primarily add fitted seams, trim, hardware, cuffs, pendants, weapon silhouettes and rarity accents. Legendary and Relic families may add stronger silhouette changes or bespoke art.
+
+This keeps large inventories scalable: many item records can reuse a small set of appearance families, while rarity, material accents and detail variants distinguish them. The equipped item remains the only source of its appearance; there is no transmog system.
