@@ -417,16 +417,33 @@ try {
     await page.getByRole('button', { name: check.name }).first().click();
     await page.locator('.exp-avatar.has-' + check.visual).waitFor({ timeout: 5000 });
     await page.waitForTimeout(180);
-    const portrait = await page.locator('.exp-gear-' + check.slot).evaluate((node) => ({
-      opacity:getComputedStyle(node).opacity,
-      bg:getComputedStyle(node).backgroundImage,
-    }));
-    const world = await page.locator('.exp-world-gear-' + check.slot).evaluate((node) => ({
-      opacity:getComputedStyle(node).opacity,
-      bg:getComputedStyle(node).backgroundImage,
-    }));
+    const portrait = await page.locator('.exp-gear-' + check.slot).evaluate((node) => {
+      const r = node.getBoundingClientRect();
+      const host = node.closest('.exp-avatar').getBoundingClientRect();
+      return {
+        opacity:getComputedStyle(node).opacity,
+        bg:getComputedStyle(node).backgroundImage,
+        center:r.left + r.width / 2,
+        hostCenter:host.left + host.width / 2,
+      };
+    });
+    const world = await page.locator('.exp-world-gear-' + check.slot).evaluate((node) => {
+      const r = node.getBoundingClientRect();
+      const host = node.closest('.exp-world-hero').getBoundingClientRect();
+      return {
+        opacity:getComputedStyle(node).opacity,
+        bg:getComputedStyle(node).backgroundImage,
+        center:r.left + r.width / 2,
+        hostCenter:host.left + host.width / 2,
+        width:r.width,
+        hostWidth:host.width,
+      };
+    });
     assert(Number(portrait.opacity) > .8, check.visual + ' must appear on the portrait');
     assert(Number(world.opacity) > .8, check.visual + ' must appear on the world hero');
+    assert(Math.abs(portrait.center - portrait.hostCenter) <= 2, check.visual + ' portrait layer must stay centered on the rig');
+    assert(Math.abs(world.center - world.hostCenter) <= 2, check.visual + ' world layer must stay centered on the base hero');
+    assert(world.width <= world.hostWidth * .68 && world.width >= world.hostWidth * .62, check.visual + ' world layer must preserve the narrow paper-doll aspect');
     assert(portrait.bg.includes('data:image/webp;base64,') && world.bg.includes('data:image/webp;base64,'), check.visual + ' must use the synchronized high-detail paper-doll art');
   }
   await page.screenshot({ path: output + '/expedition-alpha-v010-mixed-kit-1720x900.png', fullPage: true });
