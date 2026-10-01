@@ -2991,3 +2991,32 @@
 @media(max-width:1480px) and (min-width:1281px){
   .exp-world-hero .exp-world-gear{width:65.5%!important}
 }
+
+
+/* Stage 2 final cleanup: old v0.2/v0.4 overlay effects must not render on top of
+   the real modular paper-doll. They were the source of detached shoulder ovals,
+   duplicate chest blocks and the blue trapezoid visible in portrait QA. */
+.exp-avatar-overlay,
+.exp-avatar.has-shoulders .exp-avatar-overlay,
+.exp-avatar.has-sword .exp-avatar-overlay,
+.exp-avatar.has-sword-blue .exp-avatar-overlay,
+.exp-avatar.has-spear .exp-avatar-overlay,
+.exp-avatar.has-hammer .exp-avatar-overlay,
+.exp-avatar.has-relic .exp-avatar-overlay,
+.exp-avatar.has-relic-epic .exp-avatar-overlay{
+  background:none!important;
+  box-shadow:none!important;
+  filter:none!important;
+}
+.exp-avatar-overlay::before,
+.exp-avatar-overlay::after,
+.exp-avatar.has-cloak .exp-avatar-overlay::before,
+.exp-avatar.has-cloak-blue .exp-avatar-overlay::before,
+.exp-avatar.has-chest .exp-avatar-overlay::after,
+.exp-avatar.has-chest-guard .exp-avatar-overlay::after,
+.exp-avatar.has-chest-epic .exp-avatar-overlay::after{
+  content:none!important;
+  display:none!important;
+  background:none!important;
+  box-shadow:none!important;
+}
