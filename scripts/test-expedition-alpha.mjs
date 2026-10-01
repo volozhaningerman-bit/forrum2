@@ -457,7 +457,7 @@ try {
     worldLayers:[...document.querySelectorAll('.exp-world-hero .exp-world-gear')].filter((node) => {
       const s=getComputedStyle(node); return Number(s.opacity) > .1 && s.visibility !== 'hidden';
     }).length,
-    equippedSlots:[...document.querySelectorAll('.exp-slot')].filter((node) => node.textContent && !node.textContent.includes('—')).length,
+    equippedSlots:document.querySelectorAll('.exp-slots button.equipped').length,
   }));
   assert.equal(cleanEquippedHero.portraitLayers, 0, 'working alpha must not show misregistered portrait clothing');
   assert.equal(cleanEquippedHero.worldLayers, 0, 'working alpha must not show misregistered world clothing');
