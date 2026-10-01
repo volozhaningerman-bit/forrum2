@@ -154,13 +154,14 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
     {important && <span className="forum-topic-pinned" title="Закреплено форумом"><Icon name="paperclip"/></span>}
     {important && <span className="forum-topic-important">Важно</span>}
    </div>
-   <div className="forum-topic-context" aria-label="Автор, раздел и метки темы">
+   <div className="forum-topic-context" aria-label="Автор и метки темы">
     <Link className="forum-topic-author" href={`/u/${item.author.username}`}>{item.author.displayName}</Link>
-    <span className="forum-topic-meta-dot" aria-hidden="true">·</span>
-    <Link className="forum-topic-category-chip" style={categoryStyle(item.community.slug,category?.accentColor ?? item.community.accentColor)} href={`/communities/${item.community.slug}`} title={categoryLabel}>{communityLabel(item.community.name)}</Link>
     {item.tags?.slice(0,2).map(tag=><Link className="forum-tag" href={`/tags/${tag.slug}`} key={tag.id}>#{tag.label}</Link>)}
     {readState==='updated' && <Link className="forum-new-replies" href={`/p/${item.slug}#new-replies`}>Новые ответы</Link>}
    </div>
+  </div>
+  <div className="forum-topic-category-cell" aria-label="Раздел темы">
+    <Link className="forum-topic-category-chip" style={categoryStyle(item.community.slug,category?.accentColor ?? item.community.accentColor)} href={`/communities/${item.community.slug}`} title={categoryLabel}>{communityLabel(item.community.name)}</Link>
   </div>
   <div className="forum-topic-stats" aria-label="Статистика темы">
    <Link className="forum-topic-metric forum-reply-count" href={`/p/${item.slug}#discussion`} aria-label={`Ответы: ${item.commentCount}`} title="Ответы"><Icon name="comment"/><span>{formatCount(item.commentCount)}</span></Link>

@@ -121,7 +121,7 @@ try {
  assert.equal(await page.locator('.forum-home').getAttribute('data-home-reference'),'v49');
  assert.equal(await page.locator('.forum-important').count(),1);
  assert.equal(await page.locator('.forum-topic-columns').count(),0);
- assert.equal(await page.locator('.forum-topic-category-cell').count(),0);
+ assert.equal(await page.locator('.forum-topic-category-cell').count(),20);
  assert.equal(await page.locator('.forum-topic-excerpt').count(),0);
  assert.equal(await page.locator('.forum-topic-category-chip').count(),20);
  assert.equal(await page.locator('.forum-topic-stats').count(),20);
@@ -255,7 +255,10 @@ try {
  assert.equal(await firstTopic.locator('.forum-topic-avatar img').count(),1,'Topic feed should render a visual avatar, not a category initial');
  assert((await firstTopic.locator('.forum-topic-avatar img').getAttribute('src'))?.includes('/forrum-assets/avatar-'),'Fallback profile avatar should use the approved visual avatar set');
  assert.equal(await firstTopic.locator('.forum-topic-metric').count(),3,'Topic row keeps replies, views and bookmarks together');
- assert.equal(await firstTopic.locator('.forum-topic-category-cell').count(),0,'Category must live under the title, not in a separate table column');
+ assert.equal(await firstTopic.locator('.forum-topic-category-cell').count(),1,'Category needs its own column');
+ const categoryBox=await firstTopic.locator('.forum-topic-category-cell').boundingBox();
+ const contentBox=await firstTopic.locator('.forum-topic-content').boundingBox();
+ assert(categoryBox && contentBox && categoryBox.x>=contentBox.x+contentBox.width-1,'Category column must follow the title column');
  const titleBox=await firstTopic.locator('.forum-topic-title-line').boundingBox();
  const contextBox=await firstTopic.locator('.forum-topic-context').boundingBox();
  assert(titleBox && contextBox && contextBox.y>=titleBox.y+titleBox.height-1,'Author/category metadata must sit below the title');
