@@ -3130,3 +3130,14 @@
   -webkit-mask-image:radial-gradient(ellipse 18% 9% at 50% 13.5%,transparent 0 82%,rgba(0,0,0,.18) 90%,#000 100%)!important;
   mask-image:radial-gradient(ellipse 18% 9% at 50% 13.5%,transparent 0 82%,rgba(0,0,0,.18) 90%,#000 100%)!important;
 }
+
+
+/* The current world head cells contain an opaque placeholder where the face
+   should be. Until a dedicated world-head master is exported, never cover the
+   actual hero face in the scene. The equipped state remains visible in the
+   slot and portrait; all other world equipment continues to render. */
+.exp-world-hero.has-hood .exp-world-gear-head,
+.exp-world-hero.has-helm .exp-world-gear-head,
+.exp-world-hero.has-consul-mask .exp-world-gear-head{
+  opacity:0!important;
+}
