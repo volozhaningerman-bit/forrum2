@@ -3492,3 +3492,13 @@
     height:calc(100% - 50px)!important;
   }
 }
+
+
+/* 0.13 final QA: the alternate female base uses a different silhouette.
+   Keep that base clean until a dedicated female equipment atlas is authored;
+   never stretch the male rig over it. */
+.exp-alpha[data-character-body="female"] .exp-avatar .exp-gear,
+.exp-alpha[data-character-body="female"] .exp-world-hero .exp-world-gear{
+  opacity:0!important;
+  visibility:hidden!important;
+}
