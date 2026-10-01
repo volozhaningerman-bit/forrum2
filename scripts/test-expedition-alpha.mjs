@@ -510,16 +510,20 @@ try {
   const gloveLayer = await page.locator('.exp-gear-gloves').evaluate((node) => ({
     opacity: getComputedStyle(node).opacity,
     display: getComputedStyle(node).display,
+    visibility: getComputedStyle(node).visibility,
     backgroundImage: getComputedStyle(node).backgroundImage,
   }));
   const worldGloveLayer = await page.locator('.exp-world-gear-gloves').evaluate((node) => ({
     opacity: getComputedStyle(node).opacity,
+    visibility: getComputedStyle(node).visibility,
     backgroundImage: getComputedStyle(node).backgroundImage,
   }));
-  assert.equal(gloveLayer.display === 'none', false, 'paper-doll glove layer must exist');
-  assert(Number(gloveLayer.opacity) > 0.8, 'equipped gloves must visibly activate portrait paper-doll layer');
-  assert(Number(worldGloveLayer.opacity) > 0.8, 'equipped gloves must visibly activate synchronized world layer');
-  assert(gloveLayer.backgroundImage.includes('data:image/webp;base64,') && worldGloveLayer.backgroundImage.includes('data:image/webp;base64,'), 'gloves must use the shared high-detail stage two paper-doll art');
+  assert.equal(gloveLayer.display === 'none', false, 'paper-doll glove layer must remain in the DOM for future rig art');
+  assert(Number(gloveLayer.opacity) < 0.1 && gloveLayer.visibility === 'hidden', 'stable alpha must hide misregistered portrait glove art');
+  assert(Number(worldGloveLayer.opacity) < 0.1 && worldGloveLayer.visibility === 'hidden', 'stable alpha must hide misregistered world glove art');
+  assert(gloveLayer.backgroundImage.includes('data:image/webp;base64,') && worldGloveLayer.backgroundImage.includes('data:image/webp;base64,'), 'glove art source must remain wired for the future rig-matched replacement');
+  const equippedGloveSlot = page.locator('.exp-slots button.equipped').filter({ hasText: 'Перчатки Сервомастера' });
+  assert(await equippedGloveSlot.count() >= 1, 'equipped gloves must remain visibly represented in the equipment grid');
   const legacyGlove = await page.locator('.exp-avatar.has-gloves').evaluate((node) => getComputedStyle(node, '::before').content);
   assert(['none', 'normal', '""'].includes(legacyGlove), 'legacy glove pseudo must not render duplicate side bars');
   const socialArt = await page.evaluate(() => ({
