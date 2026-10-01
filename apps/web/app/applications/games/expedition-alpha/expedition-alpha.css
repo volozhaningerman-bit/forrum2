@@ -3210,3 +3210,295 @@
   opacity:0!important;
   visibility:hidden!important;
 }
+
+
+/* ==========================================================================
+   EXPEDITION ALPHA 0.13 — RIG-MATCHED EQUIPMENT
+   v13 replaces the narrow 260×739 body atlas with cells authored on the same
+   1024×1536 (2:3) canvas as the production hero. The overlay surface is sized
+   to the *rendered* hero, not to the containing card, so portrait and world
+   equipment share one coordinate system and cannot drift independently.
+   ========================================================================== */
+.exp-avatar .exp-gear{
+  position:absolute!important;
+  left:50%!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:34px!important;
+  height:calc(100% - 38px)!important;
+  width:auto!important;
+  aspect-ratio:2/3!important;
+  margin:0!important;
+  transform:translateX(-50%)!important;
+  background-image:url('/games/expedition-alpha/equipment-rig-v13.svg')!important;
+  background-repeat:no-repeat!important;
+  background-size:500% 500%!important;
+  background-color:transparent!important;
+  clip-path:none!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  filter:drop-shadow(0 5px 5px rgba(0,0,0,.28))!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}
+.exp-world-hero .exp-world-gear{
+  position:absolute!important;
+  left:0!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:0!important;
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:2/3!important;
+  margin:0!important;
+  transform:none!important;
+  background-image:url('/games/expedition-alpha/equipment-rig-v13.svg')!important;
+  background-repeat:no-repeat!important;
+  background-size:500% 500%!important;
+  background-color:transparent!important;
+  clip-path:none!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  filter:drop-shadow(0 5px 5px rgba(0,0,0,.24))!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}
+@media(max-width:1280px){
+  .exp-avatar .exp-gear{
+    bottom:42px!important;
+    height:calc(100% - 50px)!important;
+  }
+}
+
+.exp-avatar.has-hood .exp-gear-head,
+.exp-avatar.has-helm .exp-gear-head,
+.exp-avatar.has-consul-mask .exp-gear-head,
+.exp-avatar.has-neck .exp-gear-neck,
+.exp-avatar.has-neck-eye .exp-gear-neck,
+.exp-avatar.has-shoulders .exp-gear-shoulders,
+.exp-avatar.has-cloak .exp-gear-cloak,
+.exp-avatar.has-cloak-blue .exp-gear-cloak,
+.exp-avatar.has-chest .exp-gear-chest,
+.exp-avatar.has-chest-guard .exp-gear-chest,
+.exp-avatar.has-chest-epic .exp-gear-chest,
+.exp-avatar.has-wrists .exp-gear-wrists,
+.exp-avatar.has-gloves .exp-gear-gloves,
+.exp-avatar.has-belt .exp-gear-belt,
+.exp-avatar.has-legs .exp-gear-legs,
+.exp-avatar.has-boots .exp-gear-boots,
+.exp-avatar.has-ring .exp-gear-ring1,
+.exp-avatar.has-ring-blue .exp-gear-ring2,
+.exp-avatar.has-relic .exp-gear-relic1,
+.exp-avatar.has-relic-epic .exp-gear-relic2,
+.exp-avatar.has-sword .exp-gear-mainhand,
+.exp-avatar.has-spear .exp-gear-mainhand,
+.exp-avatar.has-sword-blue .exp-gear-mainhand,
+.exp-avatar.has-hammer .exp-gear-mainhand,
+.exp-avatar.has-shield .exp-gear-offhand,
+.exp-world-hero.has-hood .exp-world-gear-head,
+.exp-world-hero.has-helm .exp-world-gear-head,
+.exp-world-hero.has-consul-mask .exp-world-gear-head,
+.exp-world-hero.has-neck .exp-world-gear-neck,
+.exp-world-hero.has-neck-eye .exp-world-gear-neck,
+.exp-world-hero.has-shoulders .exp-world-gear-shoulders,
+.exp-world-hero.has-cloak .exp-world-gear-cloak,
+.exp-world-hero.has-cloak-blue .exp-world-gear-cloak,
+.exp-world-hero.has-chest .exp-world-gear-chest,
+.exp-world-hero.has-chest-guard .exp-world-gear-chest,
+.exp-world-hero.has-chest-epic .exp-world-gear-chest,
+.exp-world-hero.has-wrists .exp-world-gear-wrists,
+.exp-world-hero.has-gloves .exp-world-gear-gloves,
+.exp-world-hero.has-belt .exp-world-gear-belt,
+.exp-world-hero.has-legs .exp-world-gear-legs,
+.exp-world-hero.has-boots .exp-world-gear-boots,
+.exp-world-hero.has-ring .exp-world-gear-ring1,
+.exp-world-hero.has-ring-blue .exp-world-gear-ring2,
+.exp-world-hero.has-relic .exp-world-gear-relic1,
+.exp-world-hero.has-relic-epic .exp-world-gear-relic2,
+.exp-world-hero.has-sword .exp-world-gear-mainhand,
+.exp-world-hero.has-spear .exp-world-gear-mainhand,
+.exp-world-hero.has-sword-blue .exp-world-gear-mainhand,
+.exp-world-hero.has-hammer .exp-world-gear-mainhand,
+.exp-world-hero.has-shield .exp-world-gear-offhand{
+  opacity:1!important;
+  visibility:visible!important;
+  background-image:url('/games/expedition-alpha/equipment-rig-v13.svg')!important;
+  background-repeat:no-repeat!important;
+  background-size:500% 500%!important;
+  background-color:transparent!important;
+}
+
+.exp-avatar.has-hood .exp-gear-head,.exp-world-hero.has-hood .exp-world-gear-head{background-position:0% 0%!important}
+.exp-avatar.has-helm .exp-gear-head,.exp-world-hero.has-helm .exp-world-gear-head{background-position:25% 0%!important}
+.exp-avatar.has-consul-mask .exp-gear-head,.exp-world-hero.has-consul-mask .exp-world-gear-head{background-position:50% 0%!important}
+.exp-avatar.has-neck .exp-gear-neck,.exp-world-hero.has-neck .exp-world-gear-neck{background-position:75% 0%!important}
+.exp-avatar.has-neck-eye .exp-gear-neck,.exp-world-hero.has-neck-eye .exp-world-gear-neck{background-position:100% 0%!important}
+.exp-avatar.has-shoulders .exp-gear-shoulders,.exp-world-hero.has-shoulders .exp-world-gear-shoulders{background-position:0% 25%!important}
+.exp-avatar.has-cloak .exp-gear-cloak,.exp-world-hero.has-cloak .exp-world-gear-cloak{background-position:25% 25%!important}
+.exp-avatar.has-cloak-blue .exp-gear-cloak,.exp-world-hero.has-cloak-blue .exp-world-gear-cloak{background-position:50% 25%!important}
+.exp-avatar.has-chest .exp-gear-chest,.exp-world-hero.has-chest .exp-world-gear-chest{background-position:75% 25%!important}
+.exp-avatar.has-chest-guard .exp-gear-chest,.exp-world-hero.has-chest-guard .exp-world-gear-chest{background-position:100% 25%!important}
+.exp-avatar.has-chest-epic .exp-gear-chest,.exp-world-hero.has-chest-epic .exp-world-gear-chest{background-position:0% 50%!important}
+.exp-avatar.has-wrists .exp-gear-wrists,.exp-world-hero.has-wrists .exp-world-gear-wrists{background-position:25% 50%!important}
+.exp-avatar.has-gloves .exp-gear-gloves,.exp-world-hero.has-gloves .exp-world-gear-gloves{background-position:50% 50%!important}
+.exp-avatar.has-belt .exp-gear-belt,.exp-world-hero.has-belt .exp-world-gear-belt{background-position:75% 50%!important}
+.exp-avatar.has-legs .exp-gear-legs,.exp-world-hero.has-legs .exp-world-gear-legs{background-position:100% 50%!important}
+.exp-avatar.has-boots .exp-gear-boots,.exp-world-hero.has-boots .exp-world-gear-boots{background-position:0% 75%!important}
+.exp-avatar.has-ring .exp-gear-ring1,.exp-world-hero.has-ring .exp-world-gear-ring1{background-position:25% 75%!important}
+.exp-avatar.has-ring-blue .exp-gear-ring2,.exp-world-hero.has-ring-blue .exp-world-gear-ring2{background-position:50% 75%!important}
+.exp-avatar.has-relic .exp-gear-relic1,.exp-world-hero.has-relic .exp-world-gear-relic1{background-position:75% 75%!important}
+.exp-avatar.has-relic-epic .exp-gear-relic2,.exp-world-hero.has-relic-epic .exp-world-gear-relic2{background-position:100% 75%!important}
+.exp-avatar.has-sword .exp-gear-mainhand,.exp-world-hero.has-sword .exp-world-gear-mainhand{background-position:0% 100%!important}
+.exp-avatar.has-spear .exp-gear-mainhand,.exp-world-hero.has-spear .exp-world-gear-mainhand{background-position:25% 100%!important}
+.exp-avatar.has-sword-blue .exp-gear-mainhand,.exp-world-hero.has-sword-blue .exp-world-gear-mainhand{background-position:50% 100%!important}
+.exp-avatar.has-hammer .exp-gear-mainhand,.exp-world-hero.has-hammer .exp-world-gear-mainhand{background-position:75% 100%!important}
+.exp-avatar.has-shield .exp-gear-offhand,.exp-world-hero.has-shield .exp-world-gear-offhand{background-position:100% 100%!important}
+
+.exp-avatar .exp-gear-cloak,.exp-world-hero .exp-world-gear-cloak{z-index:2!important}
+.exp-avatar-art,.exp-world-hero-base{z-index:3!important}
+.exp-avatar .exp-gear-legs,.exp-world-hero .exp-world-gear-legs{z-index:4!important}
+.exp-avatar .exp-gear-chest,.exp-world-hero .exp-world-gear-chest{z-index:5!important}
+.exp-avatar .exp-gear-shoulders,.exp-world-hero .exp-world-gear-shoulders{z-index:6!important}
+.exp-avatar .exp-gear-head,.exp-avatar .exp-gear-neck,.exp-avatar .exp-gear-wrists,.exp-avatar .exp-gear-gloves,.exp-avatar .exp-gear-belt,.exp-avatar .exp-gear-boots,
+.exp-world-hero .exp-world-gear-head,.exp-world-hero .exp-world-gear-neck,.exp-world-hero .exp-world-gear-wrists,.exp-world-hero .exp-world-gear-gloves,.exp-world-hero .exp-world-gear-belt,.exp-world-hero .exp-world-gear-boots{z-index:7!important}
+.exp-avatar .exp-gear-ring1,.exp-avatar .exp-gear-ring2,.exp-avatar .exp-gear-relic1,.exp-avatar .exp-gear-relic2,
+.exp-world-hero .exp-world-gear-ring1,.exp-world-hero .exp-world-gear-ring2,.exp-world-hero .exp-world-gear-relic1,.exp-world-hero .exp-world-gear-relic2{z-index:9!important}
+.exp-avatar .exp-gear-mainhand,.exp-avatar .exp-gear-offhand,.exp-world-hero .exp-world-gear-mainhand,.exp-world-hero .exp-world-gear-offhand{z-index:10!important}
+
+
+/* 0.13 rig geometry override.
+   Older active-slot selectors carried 0.10 dimensions with higher specificity.
+   Reset them on the active selectors themselves so every cell is the exact
+   2:3 rendered hero canvas. */
+.exp-avatar.has-hood .exp-gear-head,
+.exp-avatar.has-helm .exp-gear-head,
+.exp-avatar.has-consul-mask .exp-gear-head,
+.exp-avatar.has-neck .exp-gear-neck,
+.exp-avatar.has-neck-eye .exp-gear-neck,
+.exp-avatar.has-shoulders .exp-gear-shoulders,
+.exp-avatar.has-cloak .exp-gear-cloak,
+.exp-avatar.has-cloak-blue .exp-gear-cloak,
+.exp-avatar.has-chest .exp-gear-chest,
+.exp-avatar.has-chest-guard .exp-gear-chest,
+.exp-avatar.has-chest-epic .exp-gear-chest,
+.exp-avatar.has-wrists .exp-gear-wrists,
+.exp-avatar.has-gloves .exp-gear-gloves,
+.exp-avatar.has-belt .exp-gear-belt,
+.exp-avatar.has-legs .exp-gear-legs,
+.exp-avatar.has-boots .exp-gear-boots,
+.exp-avatar.has-ring .exp-gear-ring1,
+.exp-avatar.has-ring-blue .exp-gear-ring2,
+.exp-avatar.has-relic .exp-gear-relic1,
+.exp-avatar.has-relic-epic .exp-gear-relic2,
+.exp-avatar.has-sword .exp-gear-mainhand,
+.exp-avatar.has-spear .exp-gear-mainhand,
+.exp-avatar.has-sword-blue .exp-gear-mainhand,
+.exp-avatar.has-hammer .exp-gear-mainhand,
+.exp-avatar.has-shield .exp-gear-offhand{
+  inset:auto!important;
+  left:50%!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:34px!important;
+  height:calc(100% - 38px)!important;
+  width:auto!important;
+  aspect-ratio:2/3!important;
+  margin:0!important;
+  transform:translateX(-50%)!important;
+  clip-path:none!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}
+.exp-world-hero.has-hood .exp-world-gear-head,
+.exp-world-hero.has-helm .exp-world-gear-head,
+.exp-world-hero.has-consul-mask .exp-world-gear-head,
+.exp-world-hero.has-neck .exp-world-gear-neck,
+.exp-world-hero.has-neck-eye .exp-world-gear-neck,
+.exp-world-hero.has-shoulders .exp-world-gear-shoulders,
+.exp-world-hero.has-cloak .exp-world-gear-cloak,
+.exp-world-hero.has-cloak-blue .exp-world-gear-cloak,
+.exp-world-hero.has-chest .exp-world-gear-chest,
+.exp-world-hero.has-chest-guard .exp-world-gear-chest,
+.exp-world-hero.has-chest-epic .exp-world-gear-chest,
+.exp-world-hero.has-wrists .exp-world-gear-wrists,
+.exp-world-hero.has-gloves .exp-world-gear-gloves,
+.exp-world-hero.has-belt .exp-world-gear-belt,
+.exp-world-hero.has-legs .exp-world-gear-legs,
+.exp-world-hero.has-boots .exp-world-gear-boots,
+.exp-world-hero.has-ring .exp-world-gear-ring1,
+.exp-world-hero.has-ring-blue .exp-world-gear-ring2,
+.exp-world-hero.has-relic .exp-world-gear-relic1,
+.exp-world-hero.has-relic-epic .exp-world-gear-relic2,
+.exp-world-hero.has-sword .exp-world-gear-mainhand,
+.exp-world-hero.has-spear .exp-world-gear-mainhand,
+.exp-world-hero.has-sword-blue .exp-world-gear-mainhand,
+.exp-world-hero.has-hammer .exp-world-gear-mainhand,
+.exp-world-hero.has-shield .exp-world-gear-offhand{
+  inset:auto!important;
+  left:0!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:0!important;
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:2/3!important;
+  margin:0!important;
+  transform:none!important;
+  clip-path:none!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+}
+@media(max-width:1280px){
+  .exp-avatar.has-hood .exp-gear-head,
+  .exp-avatar.has-helm .exp-gear-head,
+  .exp-avatar.has-consul-mask .exp-gear-head,
+  .exp-avatar.has-neck .exp-gear-neck,
+  .exp-avatar.has-neck-eye .exp-gear-neck,
+  .exp-avatar.has-shoulders .exp-gear-shoulders,
+  .exp-avatar.has-cloak .exp-gear-cloak,
+  .exp-avatar.has-cloak-blue .exp-gear-cloak,
+  .exp-avatar.has-chest .exp-gear-chest,
+  .exp-avatar.has-chest-guard .exp-gear-chest,
+  .exp-avatar.has-chest-epic .exp-gear-chest,
+  .exp-avatar.has-wrists .exp-gear-wrists,
+  .exp-avatar.has-gloves .exp-gear-gloves,
+  .exp-avatar.has-belt .exp-gear-belt,
+  .exp-avatar.has-legs .exp-gear-legs,
+  .exp-avatar.has-boots .exp-gear-boots,
+  .exp-avatar.has-ring .exp-gear-ring1,
+  .exp-avatar.has-ring-blue .exp-gear-ring2,
+  .exp-avatar.has-relic .exp-gear-relic1,
+  .exp-avatar.has-relic-epic .exp-gear-relic2,
+  .exp-avatar.has-sword .exp-gear-mainhand,
+  .exp-avatar.has-spear .exp-gear-mainhand,
+  .exp-avatar.has-sword-blue .exp-gear-mainhand,
+  .exp-avatar.has-hammer .exp-gear-mainhand,
+  .exp-avatar.has-shield .exp-gear-offhand{
+    bottom:42px!important;
+    height:calc(100% - 50px)!important;
+  }
+}
+
+
+/* 0.13 final QA: the alternate female base uses a different silhouette.
+   Keep that base clean until a dedicated female equipment atlas is authored;
+   never stretch the male rig over it. */
+.exp-alpha[data-character-body="female"] .exp-avatar .exp-gear,
+.exp-alpha[data-character-body="female"] .exp-world-hero .exp-world-gear{
+  opacity:0!important;
+  visibility:hidden!important;
+}
