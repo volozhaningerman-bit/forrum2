@@ -446,6 +446,16 @@ try {
     assert(world.width <= world.hostWidth * .68 && world.width >= world.hostWidth * .62, check.visual + ' world layer must preserve the narrow paper-doll aspect');
     assert(portrait.bg.includes('data:image/webp;base64,') && world.bg.includes('data:image/webp;base64,'), check.visual + ' must use the synchronized high-detail paper-doll art');
   }
+  const legacyOverlay = await page.locator('.exp-avatar-overlay').evaluate((node) => ({
+    backgroundImage:getComputedStyle(node).backgroundImage,
+    backgroundColor:getComputedStyle(node).backgroundColor,
+    before:getComputedStyle(node, '::before').content,
+    after:getComputedStyle(node, '::after').content,
+  }));
+  assert.equal(legacyOverlay.backgroundImage, 'none', 'legacy avatar overlay must not add detached equipment art');
+  assert(['none', 'normal', '""'].includes(legacyOverlay.before), 'legacy avatar overlay ::before must be disabled');
+  assert(['none', 'normal', '""'].includes(legacyOverlay.after), 'legacy avatar overlay ::after must be disabled');
+
   await page.screenshot({ path: output + '/expedition-alpha-v010-mixed-kit-1720x900.png', fullPage: true });
 
   const femaleToggle = page.getByRole('button', { name: 'Женский герой' });
