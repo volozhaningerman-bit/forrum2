@@ -3020,3 +3020,15 @@
   background:none!important;
   box-shadow:none!important;
 }
+
+
+/* Expedition 0.10.1 — reference QA: the starter hood must frame the face.
+   The authored hood is intentionally kept as one atlas layer; a soft alpha
+   window reveals the base portrait instead of painting an opaque sack over it. */
+.exp-avatar.has-hood .exp-gear-head,
+.exp-world-hero.has-hood .exp-world-gear-head{
+  -webkit-mask-image:radial-gradient(ellipse 24% 15% at 50% 15.5%,transparent 0 64%,rgba(0,0,0,.22) 70%,#000 79%)!important;
+  mask-image:radial-gradient(ellipse 24% 15% at 50% 15.5%,transparent 0 64%,rgba(0,0,0,.22) 70%,#000 79%)!important;
+  -webkit-mask-repeat:no-repeat!important;
+  mask-repeat:no-repeat!important;
+}

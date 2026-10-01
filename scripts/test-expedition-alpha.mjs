@@ -420,9 +420,11 @@ try {
     const portrait = await page.locator('.exp-gear-' + check.slot).evaluate((node) => {
       const r = node.getBoundingClientRect();
       const host = node.closest('.exp-avatar').getBoundingClientRect();
+      const style = getComputedStyle(node);
       return {
-        opacity:getComputedStyle(node).opacity,
-        bg:getComputedStyle(node).backgroundImage,
+        opacity:style.opacity,
+        bg:style.backgroundImage,
+        mask:style.maskImage || style.webkitMaskImage || '',
         center:r.left + r.width / 2,
         hostCenter:host.left + host.width / 2,
       };
@@ -442,6 +444,7 @@ try {
     assert(Number(portrait.opacity) > .8, check.visual + ' must appear on the portrait');
     assert(Number(world.opacity) > .8, check.visual + ' must appear on the world hero');
     assert(Math.abs(portrait.center - portrait.hostCenter) <= 2, check.visual + ' portrait layer must stay centered on the rig');
+    if (check.visual === 'hood') assert(portrait.mask.includes('radial-gradient'), 'starter hood must preserve a visible face opening');
     assert(Math.abs(world.center - world.hostCenter) <= 2, check.visual + ' world layer must stay centered on the base hero');
     assert(world.width <= world.hostWidth * .68 && world.width >= world.hostWidth * .62, check.visual + ' world layer must preserve the narrow paper-doll aspect');
     assert(portrait.bg.includes('data:image/webp;base64,') && world.bg.includes('data:image/webp;base64,'), check.visual + ' must use the synchronized high-detail paper-doll art');
@@ -531,4 +534,4 @@ try {
   upstream.close();
 }
 
-console.log(`Expedition alpha v0.10 Stage 2 checks passed. Item templates covered: ${itemCount}; all 16 equipment slots exercised.`);
+console.log(`Expedition alpha v0.10.1 Stage 2 checks passed. Item templates covered: ${itemCount}; all 16 equipment slots exercised.`);
