@@ -359,7 +359,10 @@ try {
   assert.notEqual(metrics.championArtDisplay, 'none', 'Champion art must be rendered');
   assert.notEqual(metrics.relicArtDisplay, 'none', 'Ark Core art must be rendered');
   assert.equal(metrics.slots, 16, 'all 16 equipment slots must remain available');
-  assert(metrics.locationHeight >= 400, `game world too small for alpha reference: ${metrics.locationHeight}px`);\n  assert(metrics.itemFontSize >= 9, `inventory typography too small: ${metrics.itemFontSize}px`);\n  assert(metrics.slotFontSize >= 8, `equipment typography too small: ${metrics.slotFontSize}px`);\n  assert(metrics.depthLabelVisible, 'expedition depth control group must have an explicit label');
+  assert(metrics.locationHeight >= 400, `game world too small for alpha reference: ${metrics.locationHeight}px`);
+  assert(metrics.itemFontSize >= 9, `inventory typography too small: ${metrics.itemFontSize}px`);
+  assert(metrics.slotFontSize >= 8, `equipment typography too small: ${metrics.slotFontSize}px`);
+  assert(metrics.depthLabelVisible, 'expedition depth control group must have an explicit label');
   assert(metrics.inventoryActionCount >= 1, 'inventory items must expose an equip affordance');
   assert.equal(metrics.slotAffordanceCount, 16, 'all equipment slots must expose an empty/remove affordance');
   assert(metrics.layoutHeight <= 830, `1720 desktop composition is too tall: ${metrics.layoutHeight}px`);
