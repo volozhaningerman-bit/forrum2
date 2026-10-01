@@ -133,7 +133,7 @@ try {
  await page.locator('.forum-topic').first().hover(); await page.waitForTimeout(160);
  const afterHover=await page.locator('.forum-topic').first().boundingBox();
  assert.deepEqual(afterHover,beforeHover,'Hover must not move or scale the row');
- assert.equal(await page.getByRole('button',{name:'Последние — новые темы',exact:true}).getAttribute('aria-pressed'),'true');
+ assert.equal(await page.getByRole('button',{name:'Новые темы',exact:true}).getAttribute('aria-pressed'),'true');
  assert(requests.some(r=>r.path==='/v1/feed'&&r.cookie?.includes('forrum_test=viewer')));
  const bookmarkCalls=requests.filter(r=>r.path==='/v1/publications/topic-0/bookmark').length;
  const hostile=await page.request.post('http://127.0.0.1:'+port+'/api/publications/topic-0/bookmark',{headers:{Origin:'https://evil.example'}});
@@ -175,7 +175,7 @@ try {
  assert.equal(await page.locator('.forum-filter-menu').getAttribute('open'),null);
  assert(await page.locator('summary[aria-label="Выбрать сообщество"]').evaluate(el=>el===document.activeElement));
  await page.locator('summary[aria-label="Выбрать сообщество"]').click();await page.getByRole('menuitemradio',{name:'Разработка',exact:true}).click();await page.waitForTimeout(400);assert(requests.some(r=>r.query.includes('community=category-0')));
- failFeed=true;await page.getByRole('button',{name:'Популярные — активные темы за 24 часа',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
+ failFeed=true;await page.getByRole('button',{name:'Активные темы за 24 часа',exact:true}).click();await page.getByText('Не удалось загрузить обсуждения. Попробуйте ещё раз.',{exact:true}).waitFor();failFeed=false;await page.getByRole('button',{name:'Попробовать снова',exact:true}).click();await first.waitFor();
  await page.goto('http://127.0.0.1:'+port+'/applications',{waitUntil:'networkidle'});assert.equal(await page.locator('.applications-grid article').count(),4);
  await page.goto('http://127.0.0.1:'+port+'/digital-services',{waitUntil:'domcontentloaded'});
  await page.getByRole('heading',{name:'Цифровые сервисы'}).waitFor();
@@ -245,7 +245,11 @@ try {
  assert(Math.abs(boxes['.forum-search-hero'].width-974)<=5);
  assert(Math.abs(boxes['.forum-right'].x-1307)<=3);
  assert(Math.abs(boxes['.forum-feed-toolbar'].y-487)<=8);
- assert(boxes['.forum-topic'].height>=49 && boxes['.forum-topic'].height<=52,`Compact topic row drifted: ${boxes['.forum-topic'].height}px`);
+ assert(boxes['.forum-topic'].height>=45 && boxes['.forum-topic'].height<=48,`Compact topic row drifted: ${boxes['.forum-topic'].height}px`);
+ assert.equal(await page.locator('.forum-feed-title').textContent(),'Обсуждения');
+ assert.equal(await page.locator('.forum-feed-title').evaluate(el=>getComputedStyle(el).textTransform),'none');
+ assert.equal(await page.locator('.forum-feed-create>span').evaluate(el=>getComputedStyle(el).display),'inline');
+ assert.match(await page.locator('.forum-feed-create').evaluate(el=>getComputedStyle(el).backgroundColor),/^rgb\(/);
  const firstTopic=page.locator('.forum-topic').first();
  assert.match(await firstTopic.locator('.forum-topic-avatar').getAttribute('href') ?? '',/^\/u\/[^/]+$/,'Topic avatar must lead to an author profile, not a community');
  assert.equal(await firstTopic.locator('.forum-topic-avatar img').count(),1,'Topic feed should render a visual avatar, not a category initial');
