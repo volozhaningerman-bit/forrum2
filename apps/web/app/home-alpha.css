@@ -653,3 +653,18 @@ body:has(.forum-home) .site-footer {display:none;}
  }
  .forum-home .forum-more-trigger {width:44px;height:44px;}
 }
+
+
+/* WCAG 2.2 touch targets for the compact mobile topic layout. */
+@media (max-width:760px) {
+ .forum-home .forum-topic h2 .forum-topic-main-link {
+  min-height:24px;
+  padding-block:3px;
+  margin-block:-3px;
+ }
+ .forum-home .forum-topic-category-chip {
+  min-height:24px;
+  padding-block:3px;
+ }
+ .forum-home .forum-topic-context {min-height:24px;}
+}
