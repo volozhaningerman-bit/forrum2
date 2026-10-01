@@ -951,3 +951,13 @@ body:has(.forum-home) .site-footer {display:none;}
   color:#d4dde1;
  }
 }
+
+
+/* v78.1: keep the compact title visually small but expose a 24px pointer target. */
+@media (min-width:761px) {
+ .forum-home .forum-topic h2 {line-height:24px;}
+ .forum-home .forum-topic h2 .forum-topic-main-link {
+  min-height:24px;
+  line-height:24px;
+ }
+}
