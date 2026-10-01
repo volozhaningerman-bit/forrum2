@@ -1530,6 +1530,7 @@ enum ExpeditionItemRarity {
   UNCOMMON
   RARE
   EPIC
+  RELIC
 }
 
 enum ExpeditionEquipmentSlot {
