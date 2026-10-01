@@ -73,6 +73,11 @@ if (highPriorityImages !== 1) failures.push(`homepage: expected exactly one high
 if (!/skipInitialDefaultFeed\.current/.test(homeSource)) failures.push('homepage: hydration should not immediately refetch the server-rendered default feed');
 const homePage = readFileSync('apps/web/app/page.tsx', 'utf8');
 if (/publicApi<HomeInitialData\['events'\]>\('\/events'\)/.test(homePage)) failures.push('homepage: unused events API request reintroduced');
+const homeRevision = homeSource.match(/data-home-revision="([^"\s]+)"/)?.[1];
+for (const workflow of ['.github/workflows/deploy-firstvds-web.yml', '.github/workflows/production-deploy-verify.yml']) {
+  const expectedRevision = readFileSync(workflow, 'utf8').match(/EXPECTED_HOME_REVISION:\s*(\S+)/)?.[1];
+  if (!homeRevision || expectedRevision !== homeRevision) failures.push(`${workflow}: expected homepage revision must match rendered ${homeRevision}`);
+}
 const homeCss = readFileSync('apps/web/app/home-alpha.css', 'utf8');
 if (!/@media \(prefers-reduced-data:reduce\)/.test(homeCss)) failures.push('homepage: reduced-data preference fallback is missing');
 if (!/@media \(forced-colors:active\)/.test(homeCss)) failures.push('homepage: forced-colors keyboard/structure support is missing');
