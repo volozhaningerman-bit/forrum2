@@ -73,6 +73,12 @@ function categoryIcon(name: string): Glyph {
  return 'code';
 }
 
+function topicIcon(title: string | null, categoryName: string): Glyph {
+ if (/linux|линукс/i.test(title ?? '')) return 'cube';
+ if (/\bии\b|нейросет|ai/i.test(title ?? '')) return 'code';
+ return categoryIcon(categoryName);
+}
+
 function topicBackdrop(slug: string, name: string) {
  const value = `${slug} ${name}`.toLowerCase();
  if (/gta|rp|игр/.test(value)) return '/forrum-assets/row-games-v72.webp';
@@ -125,7 +131,7 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
  } as CSSProperties;
  return <article className={`forum-topic is-${readState}`} style={style} data-reading-state={readState}>
   <Link className="forum-topic-avatar" href={`/communities/${item.community.slug}`} title={categoryLabel} aria-label={`Раздел: ${categoryLabel}`}>
-   <span className="forum-topic-category-icon"><Icon name={categoryIcon(item.community.name)}/></span>
+   <span className="forum-topic-category-icon"><Icon name={topicIcon(item.title,item.community.name)}/></span>
   </Link>
   <div className="forum-topic-content">
    <div className="forum-topic-title-line">
