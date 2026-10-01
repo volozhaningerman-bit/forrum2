@@ -4,7 +4,7 @@ export type ExpeditionAppearanceBody = 'male' | 'female';
 
 export type ExpeditionAppearanceItem = {
   slot: string;
-  rarity: 'common' | 'uncommon' | 'rare' | 'epic';
+  rarity: 'common' | 'uncommon' | 'rare' | 'legendary' | 'relic';
   visual: string;
   appearanceId: string;
 };
@@ -19,33 +19,48 @@ type Theme = {
 
 const themes: Record<ExpeditionAppearanceItem['rarity'], Theme> = {
   common: {
-    primary: '#6e4a32',
-    secondary: '#3c2b22',
-    edge: '#b47a48',
-    accent: '#d29a57',
-    glow: 'rgba(210,154,87,.28)',
+    primary: '#615d58',
+    secondary: '#393a3b',
+    edge: '#899198',
+    accent: '#b6bdc2',
+    glow: 'rgba(166,176,184,.18)',
   },
   uncommon: {
-    primary: '#73553b',
-    secondary: '#3a2e25',
-    edge: '#a77d4f',
-    accent: '#d0a45e',
-    glow: 'rgba(180,138,81,.28)',
+    primary: '#5d5b52',
+    secondary: '#383a33',
+    edge: '#55b875',
+    accent: '#7bdd96',
+    glow: 'rgba(85,184,117,.24)',
   },
   rare: {
-    primary: '#52636b',
-    secondary: '#2d3a40',
-    edge: '#8499a2',
-    accent: '#69c7df',
-    glow: 'rgba(83,165,196,.30)',
+    primary: '#5b5660',
+    secondary: '#36313c',
+    edge: '#9a69c7',
+    accent: '#c88bff',
+    glow: 'rgba(174,104,226,.27)',
   },
-  epic: {
-    primary: '#594c59',
-    secondary: '#302a35',
-    edge: '#9d7faa',
-    accent: '#e59455',
-    glow: 'rgba(164,110,190,.30)',
+  legendary: {
+    primary: '#625b4d',
+    secondary: '#3e3628',
+    edge: '#d0a33c',
+    accent: '#ffd96b',
+    glow: 'rgba(224,174,67,.30)',
   },
+  relic: {
+    primary: '#5b5a61',
+    secondary: '#31323b',
+    edge: '#7cecff',
+    accent: '#ff88d7',
+    glow: 'rgba(124,236,255,.34)',
+  },
+};
+
+const rarityOrder: Record<ExpeditionAppearanceItem['rarity'], number> = {
+  common: 0,
+  uncommon: 1,
+  rare: 2,
+  legendary: 3,
+  relic: 4,
 };
 
 const familyByVisual: Record<string, string> = {
@@ -69,6 +84,7 @@ const familyByVisual: Record<string, string> = {
   'ring-blue': 'effect.blue',
   relic: 'effect.relic',
   'relic-epic': 'effect.epic',
+  'relic-prismatic': 'effect.prismatic',
   sword: 'weapon.sword',
   spear: 'weapon.spear',
   'sword-blue': 'weapon.blade',
@@ -118,7 +134,7 @@ function HeadChannel({ item }: { item?: ExpeditionAppearanceItem }) {
 
   if (family === 'head.helmet') {
     return (
-      <g data-channel="head">
+      <g data-channel="head" data-rarity={item.rarity}>
         <path d="M400 315 Q404 180 512 145 Q620 180 624 315 L590 347 L574 289 Q512 250 450 289 L434 347 Z"
           fill={theme.secondary} stroke={theme.edge} strokeWidth="18" />
         <path d="M414 245 Q512 165 610 245" fill="none" stroke={theme.primary} strokeWidth="46" strokeLinecap="round" />
@@ -129,7 +145,7 @@ function HeadChannel({ item }: { item?: ExpeditionAppearanceItem }) {
 
   if (family === 'head.mask') {
     return (
-      <g data-channel="head">
+      <g data-channel="head" data-rarity={item.rarity}>
         <path d="M438 250 Q512 204 586 250 L575 337 Q512 380 449 337 Z"
           fill={theme.secondary} stroke={theme.edge} strokeWidth="16" />
         <path d="M468 286 H496 M528 286 H556" stroke={theme.accent} strokeWidth="14" strokeLinecap="round" />
@@ -139,7 +155,7 @@ function HeadChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   }
 
   return (
-    <g data-channel="head">
+    <g data-channel="head" data-rarity={item.rarity}>
       <path d="M414 337 Q384 260 412 204 Q449 138 512 137 Q575 138 612 204 Q640 260 610 337"
         fill="none" stroke={theme.secondary} strokeWidth="62" strokeLinecap="round" />
       <path d="M421 322 Q405 248 430 205 Q465 163 512 162 Q559 163 594 205 Q619 248 603 322"
@@ -152,7 +168,7 @@ function CloakChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   if (!item) return null;
   const theme = themeOf(item);
   return (
-    <g data-channel="cloak" opacity=".9">
+    <g data-channel="cloak" data-rarity={item.rarity} opacity=".9">
       <path d="M383 430 Q342 500 330 620 L305 1045 L357 1012 L390 1050 L421 690 L424 447 Z"
         fill={theme.secondary} fillOpacity=".82" stroke={theme.edge} strokeWidth="12" />
       <path d="M641 430 Q682 500 694 620 L719 1045 L667 1012 L634 1050 L603 690 L600 447 Z"
@@ -179,7 +195,7 @@ function TorsoChannel({
   const family = chest?.appearanceId ?? '';
 
   return (
-    <g data-channel="torso">
+    <g data-channel="torso" data-rarity={source.rarity}>
       {chest ? (
         family === 'torso.heavy' ? (
           <>
@@ -243,7 +259,7 @@ function ArmsChannel({
   if (!source) return null;
   const theme = themeOf(source);
   return (
-    <g data-channel="arms">
+    <g data-channel="arms" data-rarity={source.rarity}>
       {wrists ? (
         <>
           <path d="M316 690 L347 702 L333 770 L300 760 Z" fill={theme.primary} fillOpacity=".9" stroke={theme.edge} strokeWidth="9" />
@@ -264,7 +280,7 @@ function LegsChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   if (!item) return null;
   const theme = themeOf(item);
   return (
-    <g data-channel="legs">
+    <g data-channel="legs" data-rarity={item.rarity}>
       <path d="M411 925 Q448 942 484 931 L476 1010 Q443 1027 405 1014 Z"
         fill={theme.secondary} fillOpacity=".82" stroke={theme.edge} strokeWidth="10" />
       <path d="M613 925 Q576 942 540 931 L548 1010 Q581 1027 619 1014 Z"
@@ -279,7 +295,7 @@ function FeetChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   if (!item) return null;
   const theme = themeOf(item);
   return (
-    <g data-channel="feet">
+    <g data-channel="feet" data-rarity={item.rarity}>
       <path d="M389 1160 H480 L473 1303 Q434 1330 382 1313 L383 1252 Z"
         fill={theme.secondary} fillOpacity=".9" stroke={theme.edge} strokeWidth="11" />
       <path d="M635 1160 H544 L551 1303 Q590 1330 642 1313 L641 1252 Z"
@@ -296,7 +312,7 @@ function MainHandChannel({ item }: { item?: ExpeditionAppearanceItem }) {
 
   if (family === 'weapon.spear') {
     return (
-      <g data-channel="mainHand">
+      <g data-channel="mainHand" data-rarity={item.rarity}>
         <path d="M744 465 L653 1300" stroke={theme.secondary} strokeWidth="24" strokeLinecap="round" />
         <path d="M760 334 L802 478 L730 445 Z" fill={theme.edge} stroke={theme.secondary} strokeWidth="10" />
         <path d="M750 383 L773 447" stroke={theme.accent} strokeWidth="10" />
@@ -306,7 +322,7 @@ function MainHandChannel({ item }: { item?: ExpeditionAppearanceItem }) {
 
   if (family === 'weapon.hammer') {
     return (
-      <g data-channel="mainHand">
+      <g data-channel="mainHand" data-rarity={item.rarity}>
         <path d="M707 626 L649 1270" stroke={theme.secondary} strokeWidth="30" strokeLinecap="round" />
         <path d="M633 500 H826 V637 H633 Z" fill={theme.primary} stroke={theme.edge} strokeWidth="17" />
         <circle cx="730" cy="568" r="34" fill={theme.accent} opacity=".85" />
@@ -315,7 +331,7 @@ function MainHandChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   }
 
   return (
-    <g data-channel="mainHand">
+    <g data-channel="mainHand" data-rarity={item.rarity}>
       <path d="M690 708 L659 1224" stroke={theme.secondary} strokeWidth="28" strokeLinecap="round" />
       <path d="M707 515 L733 550 L681 1040 L649 1073 L653 1010 Z"
         fill={family === 'weapon.blade' ? theme.accent : '#d8e4e8'} stroke={theme.edge} strokeWidth="11" />
@@ -328,7 +344,7 @@ function OffHandChannel({ item }: { item?: ExpeditionAppearanceItem }) {
   if (!item) return null;
   const theme = themeOf(item);
   return (
-    <g data-channel="offHand">
+    <g data-channel="offHand" data-rarity={item.rarity}>
       <path d="M235 690 Q304 714 324 770 L307 956 Q278 1014 232 1046 Q186 1014 157 956 L140 770 Q160 714 235 690 Z"
         fill={theme.secondary} fillOpacity=".88" stroke={theme.edge} strokeWidth="13" />
       <path d="M235 742 Q279 757 291 792 L279 925 Q261 958 235 978 Q209 958 191 925 L179 792 Q191 757 235 742 Z"
@@ -343,15 +359,22 @@ function EffectChannel({ items }: { items: ExpeditionAppearanceItem[] }) {
     item.slot === 'ring1' || item.slot === 'ring2' || item.slot === 'relic1' || item.slot === 'relic2' || item.visual === 'neck-eye',
   );
   if (!effects.length) return null;
-  const strongest = [...effects].sort((a, b) => ['common','uncommon','rare','epic'].indexOf(b.rarity) - ['common','uncommon','rare','epic'].indexOf(a.rarity))[0];
+  const strongest = [...effects].sort((a, b) => rarityOrder[b.rarity] - rarityOrder[a.rarity])[0];
   const theme = themeOf(strongest);
   const intensity = Math.min(.42, .12 + effects.length * .07);
 
   return (
-    <g data-channel="effect" pointerEvents="none">
+    <g data-channel="effect" data-rarity={strongest.rarity} pointerEvents="none">
       <ellipse cx="512" cy="1398" rx="225" ry="48" fill={theme.glow} opacity={intensity + .18} />
       <circle cx="512" cy="615" r="31" fill={theme.accent} opacity={intensity + .18} />
       <circle cx="512" cy="615" r="58" fill="none" stroke={theme.accent} strokeWidth="9" opacity={intensity} />
+      {strongest.rarity === 'relic' ? (
+        <>
+          <circle cx="512" cy="615" r="76" fill="none" stroke="#7cecff" strokeWidth="7" opacity=".32" strokeDasharray="20 18" />
+          <circle cx="512" cy="615" r="91" fill="none" stroke="#ff88d7" strokeWidth="6" opacity=".28" strokeDasharray="12 24" />
+          <path d="M350 1040 Q512 1138 674 1040" fill="none" stroke="#ffd96b" strokeWidth="9" opacity=".30" strokeDasharray="16 22" />
+        </>
+      ) : null}
       {effects.length > 2 ? (
         <path d="M360 1035 Q512 1115 664 1035" fill="none" stroke={theme.accent} strokeWidth="10" opacity={intensity} strokeDasharray="18 24" />
       ) : null}
