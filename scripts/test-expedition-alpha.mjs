@@ -24,6 +24,8 @@ const files = {
   locationArt: path.join(root, 'apps/web/public/games/expedition-alpha/art-v09/rust-outskirts.webp'),
   bossArt: path.join(root, 'apps/web/public/games/expedition-alpha/art-v09/iron-shepherd.webp'),
   itemArt: path.join(root, 'apps/web/public/games/expedition-alpha/equipment-atlas.svg'),
+  stage2ItemArt: path.join(root, 'apps/web/public/games/expedition-alpha/equipment-icons-v10.svg'),
+  stage2PaperDollArt: path.join(root, 'apps/web/public/games/expedition-alpha/equipment-paperdoll-v10.svg'),
 };
 
 for (const [name, file] of Object.entries(files)) {
@@ -53,7 +55,9 @@ const staticChecks = [
   ['category and syndicate preview', gameSource.includes('Железный Герольд') && gameSource.includes('Ядро Ковчега')],
   ['live-safe art pack referenced', cssSource.includes('/games/expedition-alpha/art-v09/hero-base.webp') && cssSource.includes('/games/expedition-alpha/art-v09/rust-outskirts.webp') && cssSource.includes('/games/expedition-alpha/art-v09/iron-shepherd.webp') && cssSource.includes('/games/expedition-alpha/equipment-atlas.svg')],
   ['v0.6 reference composition', cssSource.includes('EXPEDITION ALPHA V0.6') && cssSource.includes('champion-herald-v06.svg') && cssSource.includes('ark-core-v06.svg')],
-  ['true paper-doll layers wired', gameSource.includes('exp-gear exp-gear-cloak') && gameSource.includes('exp-gear exp-gear-mainhand') && cssSource.includes('.exp-avatar.has-gloves .exp-gear-gloves')],
+  ['true paper-doll layers wired', gameSource.includes('exp-gear exp-gear-cloak') && gameSource.includes('exp-gear exp-gear-ring1') && gameSource.includes('exp-gear exp-gear-relic2') && gameSource.includes('exp-gear exp-gear-mainhand') && gameSource.includes('exp-world-gear exp-world-gear-head') && gameSource.includes('exp-world-gear exp-world-gear-offhand') && cssSource.includes('equipment-paperdoll-v10.svg')],
+  ['stage two item atlas wired', gameSource.includes('EXPEDITION_EQUIPMENT_ICONS_V12') && gameSource.includes('EXPEDITION_EQUIPMENT_PAPERDOLL_V12') && cssSource.includes('--exp-item-art') && cssSource.includes('--exp-paperdoll-art') && cssSource.includes('.art-24') && gameSource.includes("visual:'consul-mask', art:2") && gameSource.includes("visual:'shield', art:24")],
+  ['distinct visible neck art', serviceSource.includes("name: 'Око Архивариуса'") && serviceSource.includes("visualKey: 'neck-eye'") && gameSource.includes("'neck-eye': 4")],
   ['world hero uses live-safe art', gameSource.includes('exp-world-hero') && cssSource.includes('/games/expedition-alpha/art-v09/hero-base.webp')],
   ['male and female base heroes wired', gameSource.includes("characterBody") && gameSource.includes('EXPEDITION_FEMALE_HERO_V09') && femaleArtSource.includes('data:image/webp;base64,UklGR') && cssSource.includes('--exp-hero-art')],
   ['no civilization art dependency', !cssSource.includes('/games/civilization/')],
@@ -85,6 +89,23 @@ const starter = {
   equipped: false,
   acquiredAt: new Date().toISOString(),
 };
+
+const paperDollFixtures = [
+  { id:'item-neck-1', templateId:'exp_neck_traveler', name:'Печать Путника', slot:'NECK', rarity:'COMMON', serialNumber:2, circulation:8000, power:2, visualKey:'neck', equipped:false, acquiredAt:new Date().toISOString() },
+  { id:'item-shoulders-1', templateId:'exp_shoulders_border', name:'Наплечники Рубежа', slot:'SHOULDERS', rarity:'RARE', serialNumber:3, circulation:650, power:7, visualKey:'shoulders', equipped:false, acquiredAt:new Date().toISOString() },
+  { id:'item-cloak-1', templateId:'exp_cloak_blue', name:'Плащ Синего Знамени', slot:'CLOAK', rarity:'RARE', serialNumber:4, circulation:500, power:8, visualKey:'cloak-blue', equipped:false, acquiredAt:new Date().toISOString() },
+  { id:'item-chest-1', templateId:'exp_chest_guard', name:'Панцирь Старой Стражи', slot:'CHEST', rarity:'UNCOMMON', serialNumber:5, circulation:2500, power:5, visualKey:'chest-guard', equipped:false, acquiredAt:new Date().toISOString() },
+  { id:'item-wrists-1', templateId:'exp_wrists_seeker', name:'Наручи Искателя', slot:'WRISTS', rarity:'COMMON', serialNumber:6, circulation:6000, power:2, visualKey:'wrists', equipped:false, acquiredAt:new Date().toISOString() },
+  { id:'item-belt-1', templateId:'exp_belt_mechanic', name:'Пояс Механика', slot:'BELT', rarity:'UNCOMMON', serialNumber:7, circulation:3500, power:4, visualKey:'belt', equipped:false, acquiredAt:new Date().toISOString() },
+  { id:'item-legs-1', templateId:'exp_legs_dust', name:'Штаны Пыльной Тропы', slot:'LEGS', rarity:'COMMON', serialNumber:8, circulation:9000, power:2, visualKey:'legs', equipped:false, acquiredAt:new Date().toISOString() },
+  { id:'item-boots-1', templateId:'exp_boots_iron', name:'Сапоги Железного Шага', slot:'FEET', rarity:'UNCOMMON', serialNumber:9, circulation:3000, power:4, visualKey:'boots', equipped:false, acquiredAt:new Date().toISOString() },
+  { id:'item-ring-1', templateId:'exp_ring_alloy', name:'Кольцо Старого Сплава', slot:'RING_1', rarity:'COMMON', serialNumber:10, circulation:12000, power:2, visualKey:'ring', equipped:false, acquiredAt:new Date().toISOString() },
+  { id:'item-ring-2', templateId:'exp_ring_reactor', name:'Перстень Реакторщика', slot:'RING_2', rarity:'RARE', serialNumber:11, circulation:800, power:6, visualKey:'ring-blue', equipped:false, acquiredAt:new Date().toISOString() },
+  { id:'item-relic-1', templateId:'exp_relic_shard', name:'Осколок Реактора', slot:'RELIC_1', rarity:'UNCOMMON', serialNumber:12, circulation:3000, power:5, visualKey:'relic', equipped:false, acquiredAt:new Date().toISOString() },
+  { id:'item-relic-2', templateId:'exp_relic_beacon', name:'Сердце Маяка', slot:'RELIC_2', rarity:'EPIC', serialNumber:13, circulation:60, power:14, visualKey:'relic-epic', equipped:false, acquiredAt:new Date().toISOString() },
+  { id:'item-main-1', templateId:'exp_sword_contour', name:'Клинок Последнего Контура', slot:'MAIN_HAND', rarity:'RARE', serialNumber:14, circulation:400, power:11, visualKey:'sword-blue', equipped:false, acquiredAt:new Date().toISOString() },
+  { id:'item-off-1', templateId:'exp_shield_barrier', name:'Щит Заслона', slot:'OFF_HAND', rarity:'RARE', serialNumber:15, circulation:300, power:9, visualKey:'shield', equipped:false, acquiredAt:new Date().toISOString() },
+];
 
 const rewardItem = {
   id: 'item-gloves-17',
@@ -120,7 +141,7 @@ let state = {
     participantCount: 7,
     joined: false,
   },
-  inventory: [starter],
+  inventory: [starter, ...paperDollFixtures],
 };
 
 function json(res, status, data) {
@@ -299,6 +320,8 @@ try {
     '/games/expedition-alpha/art-v09/rust-outskirts.webp',
     '/games/expedition-alpha/art-v09/iron-shepherd.webp',
     '/games/expedition-alpha/equipment-atlas.svg',
+    '/games/expedition-alpha/equipment-icons-v10.svg',
+    '/games/expedition-alpha/equipment-paperdoll-v10.svg',
   ]) {
     const response = await fetch('http://127.0.0.1:' + port + asset);
     assert.equal(response.status, 200, `asset missing: ${asset}`);
@@ -343,6 +366,9 @@ try {
       locationHeight: location?.height ?? 0,
       inventoryActionCount: document.querySelectorAll('.exp-item-action').length,
       slotAffordanceCount: document.querySelectorAll('.exp-slots button i').length,
+      portraitGearLayers: document.querySelectorAll('.exp-avatar .exp-gear').length,
+      worldGearLayers: document.querySelectorAll('.exp-world-hero .exp-world-gear').length,
+      inventoryIconBg: getComputedStyle(document.querySelector('.exp-item-icon')).backgroundImage,
       characterRect: (() => { const r=document.querySelector('.exp-character')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
       centerRect: (() => { const el=document.querySelector('.exp-center'); if(!el) return null; const r=el.getBoundingClientRect(); return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,display:getComputedStyle(el).display}; })(),
       inventoryRect: (() => { const r=document.querySelector('.exp-inventory')?.getBoundingClientRect(); return r ? {left:r.left,right:r.right,top:r.top,bottom:r.bottom} : null; })(),
@@ -362,10 +388,75 @@ try {
   assert(metrics.locationHeight >= 420, `game world too small: ${metrics.locationHeight}px`);
   assert(metrics.inventoryActionCount >= 1, 'inventory items must expose an equip affordance');
   assert.equal(metrics.slotAffordanceCount, 16, 'all equipment slots must expose an empty/remove affordance');
+  assert.equal(metrics.portraitGearLayers, 16, 'portrait must expose all 16 paper-doll layers');
+  assert.equal(metrics.worldGearLayers, 16, 'world hero must expose all 16 synchronized layers');
+  assert(metrics.inventoryIconBg.includes('data:image/webp;base64,'), 'inventory must render the high-detail Stage 2 WebP atlas');
   assert(metrics.layoutHeight <= 790, `1720 desktop composition is too tall: ${metrics.layoutHeight}px`);
   assert(metrics.characterRect && metrics.inventoryRect && metrics.locationRect && metrics.inventoryRect.left <= metrics.characterRect.right + 2 && metrics.inventoryRect.right <= metrics.locationRect.left + 2, 'inventory must stay under the character in the left rail');
   assert(metrics.raidRect && metrics.locationRect && metrics.raidRect.left >= metrics.locationRect.right - 2, 'raid must stay in the right rail beside the world');
   assert(metrics.scrollWidth <= metrics.width + 2, `horizontal overflow ${metrics.scrollWidth}/${metrics.width}`);
+
+  const rigChecks = [
+    { name:/Капюшон Собирателя/, visual:'hood', slot:'head' },
+    { name:/Печать Путника/, visual:'neck', slot:'neck' },
+    { name:/Наплечники Рубежа/, visual:'shoulders', slot:'shoulders' },
+    { name:/Плащ Синего Знамени/, visual:'cloak-blue', slot:'cloak' },
+    { name:/Панцирь Старой Стражи/, visual:'chest-guard', slot:'chest' },
+    { name:/Наручи Искателя/, visual:'wrists', slot:'wrists' },
+    { name:/Пояс Механика/, visual:'belt', slot:'belt' },
+    { name:/Штаны Пыльной Тропы/, visual:'legs', slot:'legs' },
+    { name:/Сапоги Железного Шага/, visual:'boots', slot:'boots' },
+    { name:/Кольцо Старого Сплава/, visual:'ring', slot:'ring1' },
+    { name:/Перстень Реакторщика/, visual:'ring-blue', slot:'ring2' },
+    { name:/Осколок Реактора/, visual:'relic', slot:'relic1' },
+    { name:/Сердце Маяка/, visual:'relic-epic', slot:'relic2' },
+    { name:/Клинок Последнего Контура/, visual:'sword-blue', slot:'mainhand' },
+    { name:/Щит Заслона/, visual:'shield', slot:'offhand' },
+  ];
+  for (const check of rigChecks) {
+    await page.getByRole('button', { name: check.name }).first().click();
+    await page.locator('.exp-avatar.has-' + check.visual).waitFor({ timeout: 5000 });
+    await page.waitForTimeout(180);
+    const portrait = await page.locator('.exp-gear-' + check.slot).evaluate((node) => {
+      const r = node.getBoundingClientRect();
+      const host = node.closest('.exp-avatar').getBoundingClientRect();
+      return {
+        opacity:getComputedStyle(node).opacity,
+        bg:getComputedStyle(node).backgroundImage,
+        center:r.left + r.width / 2,
+        hostCenter:host.left + host.width / 2,
+      };
+    });
+    const world = await page.locator('.exp-world-gear-' + check.slot).evaluate((node) => {
+      const r = node.getBoundingClientRect();
+      const host = node.closest('.exp-world-hero').getBoundingClientRect();
+      return {
+        opacity:getComputedStyle(node).opacity,
+        bg:getComputedStyle(node).backgroundImage,
+        center:r.left + r.width / 2,
+        hostCenter:host.left + host.width / 2,
+        width:r.width,
+        hostWidth:host.width,
+      };
+    });
+    assert(Number(portrait.opacity) > .8, check.visual + ' must appear on the portrait');
+    assert(Number(world.opacity) > .8, check.visual + ' must appear on the world hero');
+    assert(Math.abs(portrait.center - portrait.hostCenter) <= 2, check.visual + ' portrait layer must stay centered on the rig');
+    assert(Math.abs(world.center - world.hostCenter) <= 2, check.visual + ' world layer must stay centered on the base hero');
+    assert(world.width <= world.hostWidth * .68 && world.width >= world.hostWidth * .62, check.visual + ' world layer must preserve the narrow paper-doll aspect');
+    assert(portrait.bg.includes('data:image/webp;base64,') && world.bg.includes('data:image/webp;base64,'), check.visual + ' must use the synchronized high-detail paper-doll art');
+  }
+  const legacyOverlay = await page.locator('.exp-avatar-overlay').evaluate((node) => ({
+    backgroundImage:getComputedStyle(node).backgroundImage,
+    backgroundColor:getComputedStyle(node).backgroundColor,
+    before:getComputedStyle(node, '::before').content,
+    after:getComputedStyle(node, '::after').content,
+  }));
+  assert.equal(legacyOverlay.backgroundImage, 'none', 'legacy avatar overlay must not add detached equipment art');
+  assert(['none', 'normal', '""'].includes(legacyOverlay.before), 'legacy avatar overlay ::before must be disabled');
+  assert(['none', 'normal', '""'].includes(legacyOverlay.after), 'legacy avatar overlay ::after must be disabled');
+
+  await page.screenshot({ path: output + '/expedition-alpha-v010-mixed-kit-1720x900.png', fullPage: true });
 
   const femaleToggle = page.getByRole('button', { name: 'Женский герой' });
   await femaleToggle.click();
@@ -376,11 +467,11 @@ try {
   }));
   assert(femaleHero.avatarBg.includes('data:image/webp;base64,'), 'female portrait must render from the approved WebP base');
   assert(femaleHero.worldBg.includes('data:image/webp;base64,'), 'female world hero must stay synchronized with the portrait');
-  await page.screenshot({ path: output + '/expedition-alpha-v091-female-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v010-female-1720x900.png', fullPage: true });
   await page.getByRole('button', { name: 'Мужской герой' }).click();
   await page.locator('[data-testid="expedition-alpha"][data-character-body="male"]').waitFor();
 
-  await page.screenshot({ path: output + '/expedition-alpha-v09-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v010-1720x900.png', fullPage: true });
 
   const raidJoin = page.getByRole('button', { name: 'Отправить персонажа' });
   await raidJoin.click();
@@ -401,9 +492,16 @@ try {
   const gloveLayer = await page.locator('.exp-gear-gloves').evaluate((node) => ({
     opacity: getComputedStyle(node).opacity,
     display: getComputedStyle(node).display,
+    backgroundImage: getComputedStyle(node).backgroundImage,
+  }));
+  const worldGloveLayer = await page.locator('.exp-world-gear-gloves').evaluate((node) => ({
+    opacity: getComputedStyle(node).opacity,
+    backgroundImage: getComputedStyle(node).backgroundImage,
   }));
   assert.equal(gloveLayer.display === 'none', false, 'paper-doll glove layer must exist');
-  assert(Number(gloveLayer.opacity) > 0.8, 'equipped gloves must visibly activate paper-doll layer');
+  assert(Number(gloveLayer.opacity) > 0.8, 'equipped gloves must visibly activate portrait paper-doll layer');
+  assert(Number(worldGloveLayer.opacity) > 0.8, 'equipped gloves must visibly activate synchronized world layer');
+  assert(gloveLayer.backgroundImage.includes('data:image/webp;base64,') && worldGloveLayer.backgroundImage.includes('data:image/webp;base64,'), 'gloves must use the shared high-detail stage two paper-doll art');
   const legacyGlove = await page.locator('.exp-avatar.has-gloves').evaluate((node) => getComputedStyle(node, '::before').content);
   assert(['none', 'normal', '""'].includes(legacyGlove), 'legacy glove pseudo must not render duplicate side bars');
   const socialArt = await page.evaluate(() => ({
@@ -413,10 +511,10 @@ try {
   assert.notEqual(socialArt.champion, 'none', 'champion art must be visible');
   assert.notEqual(socialArt.relic, 'none', 'relic art must be visible');
 
-  await page.screenshot({ path: output + '/expedition-alpha-v09-loot-equipped-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v010-loot-equipped-1720x900.png', fullPage: true });
 
   await page.setViewportSize({ width: 1366, height: 768 });
-  await page.screenshot({ path: output + '/expedition-alpha-v09-1366x768.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v010-1366x768.png', fullPage: true });
   const mobileish = await page.evaluate(() => ({
     width: innerWidth,
     scrollWidth: document.documentElement.scrollWidth,
@@ -433,4 +531,4 @@ try {
   upstream.close();
 }
 
-console.log(`Expedition alpha v0.9.1 Stage 1 checks passed. Item templates covered: ${itemCount}.`);
+console.log(`Expedition alpha v0.10 Stage 2 checks passed. Item templates covered: ${itemCount}; all 16 equipment slots exercised.`);
