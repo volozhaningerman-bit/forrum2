@@ -82,6 +82,29 @@ function topicBackdrop(slug: string, name: string) {
  return '/forrum-assets/row-code-v72.webp';
 }
 
+const topicAvatarPresets = [
+ '/forrum-assets/avatar-friend.svg',
+ '/forrum-assets/avatar-nora.svg',
+ '/forrum-assets/avatar-pixel.svg',
+ '/forrum-assets/avatar-volog.svg',
+ '/forrum-assets/avatar-maxstream.svg',
+ '/forrum-assets/avatar-workspace.svg',
+ '/forrum-assets/avatar-sculpture.svg',
+ '/forrum-assets/avatar-owner.svg',
+] as const;
+
+function topicAvatarUrl(author: PublicationCardData['author']) {
+ if (author.avatarUrl) return author.avatarUrl;
+ const identity = `${author.username} ${author.displayName}`.toLowerCase();
+ if (/maxstream|макс\s+стрим/.test(identity)) return '/forrum-assets/avatar-maxstream.svg';
+ if (/nora|нора\s+веб/.test(identity)) return '/forrum-assets/avatar-nora.svg';
+ if (/pixel|пиксел/.test(identity)) return '/forrum-assets/avatar-pixel.svg';
+ if (/volog/.test(identity)) return '/forrum-assets/avatar-volog.svg';
+ let hash = 0;
+ for (const char of author.username || author.displayName) hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+ return topicAvatarPresets[hash % topicAvatarPresets.length];
+}
+
 function Categories({ items: sourceItems, selected }: { items: Community[]; selected: string }) {
  // Flatten retired navigation groups only; their publications and URLs stay intact.
  const hidden = new Set(sourceItems.filter(item => /^(мастерская|медиа)$/i.test(item.name.trim())).map(item => item.slug));
@@ -122,8 +145,8 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
    '--topic-image':cover ? `url("${cover}")` : 'none',
  } as CSSProperties;
  return <article className={`forum-topic is-${readState}`} style={style} data-reading-state={readState}>
-  <Link className="forum-topic-avatar" href={`/communities/${item.community.slug}`} title={communityLabel(item.community.name)} aria-label={`Раздел: ${communityLabel(item.community.name)}`}>
-   <Avatar name={communityLabel(item.community.name)} url={item.community.avatarUrl ?? item.author.avatarUrl} size={38}/>
+  <Link className="forum-topic-avatar" href={`/u/${item.author.username}`} title={item.author.displayName} aria-label={`Профиль: ${item.author.displayName}`}>
+   <Avatar name={item.author.displayName} url={topicAvatarUrl(item.author)} size={38}/>
   </Link>
   <div className="forum-topic-content">
    <div className="forum-topic-title-line">
