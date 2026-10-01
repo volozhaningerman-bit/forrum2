@@ -114,7 +114,7 @@ try {
  assert(heroBox && heroBox.height>=160 && heroBox.height<=163,`Hero must stay compact, got ${heroBox?.height}`);
  assert.equal(await page.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(13, 16, 18)');
  assert.equal((await page.locator('.forum-brand').textContent())?.replace(/\s/g,''),'4RRUM');
- assert.equal(await page.locator('.forum-hero-copy h1').evaluate(el=>getComputedStyle(el).color),'rgb(241, 243, 244)');
+ assert.equal(await page.locator('.forum-hero-copy h1').evaluate(el=>getComputedStyle(el).color),'rgb(236, 238, 239)');
  assert.equal(await page.locator('[aria-label*="светлую тему"],[aria-label*="тёмную тему"]').count(),0);
  assert.deepEqual(await page.locator('.forum-primary a').allTextContents(),['Главная','Сообщества','Приложения','Сервисы','Услуги']);
  assert.equal(await page.getByRole('search').count(),1);
