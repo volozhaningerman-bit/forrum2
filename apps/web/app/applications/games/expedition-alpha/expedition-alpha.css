@@ -3032,3 +3032,45 @@
   -webkit-mask-repeat:no-repeat!important;
   mask-repeat:no-repeat!important;
 }
+
+
+/* ==========================================================================
+   EXPEDITION ALPHA 0.11 — WORKING PAPER-DOLL RIG
+   The production base hero already contains the common scarf, border jacket and
+   mechanic belt. Painting those starter pieces a second time made the character
+   look like two misregistered bodies. Treat them as the baked starter outfit;
+   upgraded variants still render as real overlays.
+   ========================================================================== */
+.exp-avatar.has-neck .exp-gear-neck,
+.exp-avatar.has-chest .exp-gear-chest,
+.exp-avatar.has-belt .exp-gear-belt,
+.exp-world-hero.has-neck .exp-world-gear-neck,
+.exp-world-hero.has-chest .exp-world-gear-chest,
+.exp-world-hero.has-belt .exp-world-gear-belt{
+  opacity:0!important;
+}
+
+/* Head art is authored with a dark placeholder inside the hood/helmet opening.
+   Cut a rig-relative face window instead of covering the actual hero face. The
+   same percentages work in portrait and world because both layers use the same
+   260:739 authored aspect ratio. */
+.exp-avatar.has-hood .exp-gear-head,
+.exp-avatar.has-helm .exp-gear-head,
+.exp-avatar.has-consul-mask .exp-gear-head,
+.exp-world-hero.has-hood .exp-world-gear-head,
+.exp-world-hero.has-helm .exp-world-gear-head,
+.exp-world-hero.has-consul-mask .exp-world-gear-head{
+  -webkit-mask-image:radial-gradient(ellipse 13% 6% at 50% 13%,transparent 0 78%,rgba(0,0,0,.22) 88%,#000 100%)!important;
+  mask-image:radial-gradient(ellipse 13% 6% at 50% 13%,transparent 0 78%,rgba(0,0,0,.22) 88%,#000 100%)!important;
+  -webkit-mask-repeat:no-repeat!important;
+  mask-repeat:no-repeat!important;
+}
+
+/* Stage 5 owns character idle animation. For Stage 2 keep base and gear locked
+   to one frame so equipment cannot drift a few pixels away from the body. */
+.exp-avatar-art,
+.exp-world-hero-base,
+.exp-avatar .exp-gear,
+.exp-world-hero .exp-world-gear{
+  animation:none!important;
+}
