@@ -444,7 +444,14 @@ try {
     assert(Number(portrait.opacity) > .8, check.visual + ' must appear on the portrait');
     assert(Number(world.opacity) > .8, check.visual + ' must appear on the world hero');
     assert(Math.abs(portrait.center - portrait.hostCenter) <= 2, check.visual + ' portrait layer must stay centered on the rig');
-    if (check.visual === 'hood') assert(portrait.mask.includes('radial-gradient'), 'starter hood must preserve a visible face opening');
+    if (check.visual === 'hood') {
+      assert(portrait.mask.includes('radial-gradient'), 'starter hood must preserve a visible portrait face opening');
+      const worldMask = await page.locator('.exp-world-gear-head').evaluate((node) => {
+        const style = getComputedStyle(node);
+        return style.maskImage || style.webkitMaskImage || '';
+      });
+      assert(worldMask.includes('22.5%'), 'world hood opening must follow the world hero face position');
+    }
     assert(Math.abs(world.center - world.hostCenter) <= 2, check.visual + ' world layer must stay centered on the base hero');
     assert(world.width <= world.hostWidth * .68 && world.width >= world.hostWidth * .62, check.visual + ' world layer must preserve the narrow paper-doll aspect');
     assert(portrait.bg.includes('data:image/webp;base64,') && world.bg.includes('data:image/webp;base64,'), check.visual + ' must use the synchronized high-detail paper-doll art');
@@ -534,4 +541,4 @@ try {
   upstream.close();
 }
 
-console.log(`Expedition alpha v0.10.1 Stage 2 checks passed. Item templates covered: ${itemCount}; all 16 equipment slots exercised.`);
+console.log(`Expedition alpha v0.10.2 Stage 2 checks passed. Item templates covered: ${itemCount}; all 16 equipment slots exercised.`);
