@@ -317,3 +317,22 @@ A new user should understand within minutes:
 > spend energy → send expedition → get loot → equip it → look stronger/different → go deeper → see why other players matter.
 
 If that loop is not satisfying, do not expand the meta systems yet.
+
+
+## Appearance system (Alpha 0.14)
+
+The equipment model and the visible character appearance are deliberately separated.
+
+- Every item still owns its gameplay slot, stats, rarity, serial number and circulation.
+- The client derives an `appearanceId` from the item's visual key and slot.
+- Many different items may reuse the same appearance family. New loot therefore does not require a unique body sprite for every item.
+- The hero is composed through a bounded set of visual channels instead of one body overlay per equipment slot:
+  `head`, `torso`, `arms`, `cloak`, `legs`, `feet`, `mainHand`, `offHand`, `effect`.
+- Neck, shoulders and belt are composed into the torso channel.
+- Wrists and gloves share the arms channel.
+- Rings and relics affect the `effect` channel rather than being drawn as tiny literal objects on the body.
+- Portrait and world hero use the same normalized 2:3 compositor geometry.
+- The female base stays clean until its own geometry is authored; the male compositor must never be stretched over the female silhouette.
+- There is **no transmog / cosmetic override system**. The appearance is always derived from the actually equipped items.
+
+This architecture is intended to scale to hundreds of item instances and many item templates without adding hundreds of simultaneously mounted DOM/paper-doll layers.

@@ -3502,3 +3502,53 @@
   opacity:0!important;
   visibility:hidden!important;
 }
+
+
+/* ==========================================================================
+   EXPEDITION ALPHA 0.14 — SCALABLE APPEARANCE COMPOSITOR
+   Equipment no longer allocates one DOM/paper-doll layer per slot or per item.
+   One normalized 2:3 vector surface composes a small number of visual channels:
+   head, torso, arms, cloak, legs, feet, main hand, off hand and effects.
+   Item stats remain independent; appearanceId selects a reusable visual family.
+   Rings/relics intentionally render as effects rather than tiny body geometry.
+   ========================================================================== */
+.exp-appearance-compositor{
+  position:absolute!important;
+  display:block!important;
+  pointer-events:none!important;
+  overflow:visible!important;
+  z-index:8!important;
+  filter:drop-shadow(0 5px 5px rgba(0,0,0,.24));
+}
+.exp-appearance-compositor--portrait{
+  left:50%!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:34px!important;
+  height:calc(100% - 38px)!important;
+  width:auto!important;
+  aspect-ratio:2/3!important;
+  transform:translateX(-50%)!important;
+}
+.exp-appearance-compositor--world{
+  left:0!important;
+  right:auto!important;
+  top:auto!important;
+  bottom:0!important;
+  width:100%!important;
+  height:auto!important;
+  aspect-ratio:2/3!important;
+  transform:none!important;
+}
+.exp-avatar-art{z-index:3!important}
+.exp-world-hero-base{z-index:3!important}
+.exp-avatar-label{z-index:12!important}
+.exp-appearance-compositor [data-channel="effect"]{
+  mix-blend-mode:screen;
+}
+@media(max-width:1280px){
+  .exp-appearance-compositor--portrait{
+    bottom:42px!important;
+    height:calc(100% - 50px)!important;
+  }
+}
