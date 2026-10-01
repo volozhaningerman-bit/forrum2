@@ -419,7 +419,7 @@ try {
   await page.screenshot({ path: output + '/expedition-alpha-v011-clean-starter-1720x900.png', fullPage: true });
 
   const rigChecks = [
-    { name:/Капюшон Собирателя/, visual:'hood', slot:'head' },
+    { name:/Капюшон Собирателя/, visual:'hood', slot:'head', worldSuppressed:true },
     { name:/Печать Путника/, visual:'neck', slot:'neck', baked:true },
     { name:/Наплечники Рубежа/, visual:'shoulders', slot:'shoulders' },
     { name:/Плащ Синего Знамени/, visual:'cloak-blue', slot:'cloak' },
@@ -468,7 +468,11 @@ try {
       assert(Number(world.opacity) < .1, check.visual + ' common starter art must not double-paint the world hero');
     } else {
       assert(Number(portrait.opacity) > .8, check.visual + ' must appear on the portrait');
-      assert(Number(world.opacity) > .8, check.visual + ' must appear on the world hero');
+      if (check.worldSuppressed) {
+        assert(Number(world.opacity) < .1, check.visual + ' must not cover the world hero face with placeholder art');
+      } else {
+        assert(Number(world.opacity) > .8, check.visual + ' must appear on the world hero');
+      }
     }
     assert(Math.abs(portrait.center - portrait.hostCenter) <= 2, check.visual + ' portrait layer must stay centered on the rig');
     if (check.visual === 'hood') assert(portrait.mask.includes('18%') && portrait.mask.includes('radial-gradient'), 'starter hood must expose the base hero face');
