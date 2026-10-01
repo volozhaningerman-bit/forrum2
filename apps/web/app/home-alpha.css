@@ -339,7 +339,8 @@ body:has(.forum-home) .site-footer {display:none;}
 .forum-home :is(.forum-topic h2,.forum-important-text strong,.forum-popular-today strong) {color:#eceeef;}
 .forum-home :is(.forum-eyebrow,.forum-side-stats h2,.forum-panel h2,.forum-feed-title,.forum-important>header h2) {font-weight:500;letter-spacing:.35px;}
 .forum-home .forum-primary a {font-weight:500;}
-.forum-home .forum-important-text strong {font-size:15px;line-height:1.3;}
+.forum-home .forum-important-row {padding:4px 6px;}
+.forum-home .forum-important-text strong {font-size:15px;line-height:1.3;margin-bottom:3px;}
 .forum-home .forum-important-text>span {font-size:13px;line-height:1.4;color:#b5babe;}
 .forum-home .forum-popular-today strong {font-size:14px;font-weight:400;line-height:1.35;}
 .forum-home .forum-popular-today small {color:#b5babe;font-size:12px;line-height:1.4;}
