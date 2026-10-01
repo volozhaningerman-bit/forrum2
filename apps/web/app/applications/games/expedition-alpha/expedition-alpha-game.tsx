@@ -722,7 +722,14 @@ export function ExpeditionAlphaGame() {
 
           <div className="exp-items">
             {inventory.map((item) => {
-              const isEquipped = equipped[item.slot]?.id === item.id;
+              const equippedInSlot = equipped[item.slot];
+              const isEquipped = equippedInSlot?.id === item.id;
+              const powerDelta = item.power - (equippedInSlot?.power ?? 0);
+              const comparison = isEquipped
+                ? `Надето · +${item.power} силы`
+                : equippedInSlot
+                  ? `${powerDelta >= 0 ? '+' : ''}${powerDelta} к надетому`
+                  : `+${item.power} силы`;
               return (
                 <button
                   type="button"
@@ -733,10 +740,11 @@ export function ExpeditionAlphaGame() {
                   onClick={() => isEquipped ? unequip(item.slot) : equip(item)}
                 >
                   <span className={`exp-item-icon art-${item.art}`} />
-                  <small>{slotLabel[item.slot]}</small>
+                  <small>{slotLabel[item.slot]} · {rarityLabel[item.rarity]}</small>
                   <b>{item.name}</b>
                   <em>№{item.serial}/{item.circulation}</em>
                   <strong>+{item.power}</strong>
+                  <span className="exp-item-compare">{comparison}</span>
                   <span className="exp-item-action">{isEquipped ? 'Снять' : 'Надеть'}</span>
                 </button>
               );
