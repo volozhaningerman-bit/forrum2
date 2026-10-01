@@ -17,7 +17,7 @@ const itemTemplates = [
   { id: 'exp_head_consul', slug: 'rust-consul-mask', name: 'Маска Ржавого Консула', slot: 'HEAD', rarity: 'EPIC', circulationCap: 80, power: 13, visualKey: 'consul-mask', minDepth: 5 },
 
   { id: 'exp_neck_traveler', slug: 'traveler-seal', name: 'Печать Путника', slot: 'NECK', rarity: 'COMMON', circulationCap: 8000, power: 2, visualKey: 'neck', minDepth: 1 },
-  { id: 'exp_neck_archivist', slug: 'archivist-eye', name: 'Око Архивариуса', slot: 'NECK', rarity: 'RARE', circulationCap: 500, power: 7, visualKey: 'neck', minDepth: 3 },
+  { id: 'exp_neck_archivist', slug: 'archivist-eye', name: 'Око Архивариуса', slot: 'NECK', rarity: 'RARE', circulationCap: 500, power: 7, visualKey: 'neck-eye', minDepth: 3 },
 
   { id: 'exp_shoulders_border', slug: 'border-shoulders', name: 'Наплечники Рубежа', slot: 'SHOULDERS', rarity: 'RARE', circulationCap: 650, power: 7, visualKey: 'shoulders', minDepth: 2 },
   { id: 'exp_cloak_ash', slug: 'ash-road-cloak', name: 'Плащ Пепельной Дороги', slot: 'CLOAK', rarity: 'COMMON', circulationCap: 7000, power: 3, visualKey: 'cloak', minDepth: 1 },
