@@ -2619,3 +2619,28 @@
     height:101px!important;
   }
 }
+
+
+
+/* v0.8.2 — social cards must fit their complete alpha copy at 1720×900. */
+@media(min-width:1561px){
+  .exp-community-card{
+    overflow:hidden!important;
+  }
+  .exp-champion,
+  .exp-relic{
+    height:88px!important;
+  }
+  .exp-champion::before,
+  .exp-relic::before{
+    inset:2px 2px 18px!important;
+  }
+  .exp-community-card p{
+    margin-top:4px!important;
+    line-height:1.2!important;
+  }
+  .exp-system-note{
+    margin-top:2px!important;
+    line-height:1.15!important;
+  }
+}
