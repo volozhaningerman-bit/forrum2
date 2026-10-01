@@ -83,31 +83,32 @@ const depths: Depth[] = [
 const allItems: Item[] = [
   { id:'hood-1843', name:'Капюшон Собирателя', slot:'head', rarity:'common', serial:1843, circulation:5000, power:2, visual:'hood', art:0 },
   { id:'helm-481', name:'Шлем Дозорного', slot:'head', rarity:'uncommon', serial:481, circulation:2400, power:4, visual:'helm', art:1 },
-  { id:'seal-932', name:'Печать Путника', slot:'neck', rarity:'common', serial:932, circulation:8000, power:2, visual:'neck', art:2 },
-  { id:'eye-117', name:'Око Архивариуса', slot:'neck', rarity:'rare', serial:117, circulation:500, power:7, visual:'neck', art:3 },
-  { id:'shoulders-206', name:'Наплечники Рубежа', slot:'shoulders', rarity:'rare', serial:206, circulation:650, power:7, visual:'shoulders', art:4 },
-  { id:'cloak-903', name:'Плащ Пепельной Дороги', slot:'cloak', rarity:'common', serial:903, circulation:7000, power:3, visual:'cloak', art:5 },
-  { id:'cloak-85', name:'Плащ Синего Знамени', slot:'cloak', rarity:'rare', serial:85, circulation:500, power:8, visual:'cloak-blue', art:6 },
-  { id:'jacket-1388', name:'Куртка Пограничника', slot:'chest', rarity:'common', serial:1388, circulation:10000, power:3, visual:'chest', art:7 },
-  { id:'chest-317', name:'Панцирь Старой Стражи', slot:'chest', rarity:'uncommon', serial:317, circulation:2500, power:5, visual:'chest-guard', art:8 },
-  { id:'consul-23', name:'Кираса Ржавого Консула', slot:'chest', rarity:'epic', serial:23, circulation:80, power:14, visual:'chest-epic', art:9 },
-  { id:'wrists-761', name:'Наручи Искателя', slot:'wrists', rarity:'common', serial:761, circulation:6000, power:2, visual:'wrists', art:10 },
-  { id:'gloves-1188', name:'Перчатки Сервомастера', slot:'gloves', rarity:'uncommon', serial:1188, circulation:4000, power:4, visual:'gloves', art:11 },
-  { id:'belt-611', name:'Пояс Механика', slot:'belt', rarity:'uncommon', serial:611, circulation:3500, power:4, visual:'belt', art:0 },
-  { id:'legs-901', name:'Штаны Пыльной Тропы', slot:'legs', rarity:'common', serial:901, circulation:9000, power:2, visual:'legs', art:1 },
-  { id:'boots-741', name:'Сапоги Железного Шага', slot:'feet', rarity:'uncommon', serial:741, circulation:3000, power:4, visual:'boots', art:2 },
-  { id:'ring-4321', name:'Кольцо Старого Сплава', slot:'ring1', rarity:'common', serial:4321, circulation:12000, power:2, visual:'ring', art:3 },
-  { id:'ring-144', name:'Перстень Реакторщика', slot:'ring2', rarity:'rare', serial:144, circulation:800, power:6, visual:'ring-blue', art:4 },
-  { id:'shard-933', name:'Осколок Реактора', slot:'relic1', rarity:'uncommon', serial:933, circulation:3000, power:5, visual:'relic', art:5 },
-  { id:'relic-17', name:'Сердце Маяка', slot:'relic2', rarity:'epic', serial:17, circulation:60, power:14, visual:'relic-epic', art:6 },
-  { id:'sword-2166', name:'Меч Пыльной Стражи', slot:'mainHand', rarity:'common', serial:2166, circulation:10000, power:5, visual:'sword', art:7 },
-  { id:'spear-608', name:'Копьё Руинного Охотника', slot:'mainHand', rarity:'uncommon', serial:608, circulation:3000, power:7, visual:'spear', art:8 },
-  { id:'blade-91', name:'Клинок Последнего Контура', slot:'mainHand', rarity:'rare', serial:91, circulation:400, power:11, visual:'sword-blue', art:9 },
-  { id:'hammer-12', name:'Молот Стального Приора', slot:'mainHand', rarity:'epic', serial:12, circulation:45, power:16, visual:'hammer', art:10 },
-  { id:'shield-42', name:'Щит Заслона', slot:'offHand', rarity:'rare', serial:42, circulation:300, power:9, visual:'shield', art:11 },
+  { id:'mask-23', name:'Маска Ржавого Консула', slot:'head', rarity:'epic', serial:23, circulation:80, power:13, visual:'consul-mask', art:2 },
+  { id:'seal-932', name:'Печать Путника', slot:'neck', rarity:'common', serial:932, circulation:8000, power:2, visual:'neck', art:3 },
+  { id:'eye-117', name:'Око Архивариуса', slot:'neck', rarity:'rare', serial:117, circulation:500, power:7, visual:'neck-eye', art:4 },
+  { id:'shoulders-206', name:'Наплечники Рубежа', slot:'shoulders', rarity:'rare', serial:206, circulation:650, power:7, visual:'shoulders', art:5 },
+  { id:'cloak-903', name:'Плащ Пепельной Дороги', slot:'cloak', rarity:'common', serial:903, circulation:7000, power:3, visual:'cloak', art:6 },
+  { id:'cloak-85', name:'Плащ Синего Знамени', slot:'cloak', rarity:'rare', serial:85, circulation:500, power:8, visual:'cloak-blue', art:7 },
+  { id:'jacket-1388', name:'Куртка Пограничника', slot:'chest', rarity:'common', serial:1388, circulation:10000, power:3, visual:'chest', art:8 },
+  { id:'chest-317', name:'Панцирь Старой Стражи', slot:'chest', rarity:'uncommon', serial:317, circulation:2500, power:5, visual:'chest-guard', art:9 },
+  { id:'consul-23', name:'Кираса Ржавого Консула', slot:'chest', rarity:'epic', serial:23, circulation:80, power:14, visual:'chest-epic', art:10 },
+  { id:'wrists-761', name:'Наручи Искателя', slot:'wrists', rarity:'common', serial:761, circulation:6000, power:2, visual:'wrists', art:11 },
+  { id:'gloves-1188', name:'Перчатки Сервомастера', slot:'gloves', rarity:'uncommon', serial:1188, circulation:4000, power:4, visual:'gloves', art:12 },
+  { id:'belt-611', name:'Пояс Механика', slot:'belt', rarity:'uncommon', serial:611, circulation:3500, power:4, visual:'belt', art:13 },
+  { id:'legs-901', name:'Штаны Пыльной Тропы', slot:'legs', rarity:'common', serial:901, circulation:9000, power:2, visual:'legs', art:14 },
+  { id:'boots-741', name:'Сапоги Железного Шага', slot:'feet', rarity:'uncommon', serial:741, circulation:3000, power:4, visual:'boots', art:15 },
+  { id:'ring-4321', name:'Кольцо Старого Сплава', slot:'ring1', rarity:'common', serial:4321, circulation:12000, power:2, visual:'ring', art:16 },
+  { id:'ring-144', name:'Перстень Реакторщика', slot:'ring2', rarity:'rare', serial:144, circulation:800, power:6, visual:'ring-blue', art:17 },
+  { id:'shard-933', name:'Осколок Реактора', slot:'relic1', rarity:'uncommon', serial:933, circulation:3000, power:5, visual:'relic', art:18 },
+  { id:'relic-17', name:'Сердце Маяка', slot:'relic2', rarity:'epic', serial:17, circulation:60, power:14, visual:'relic-epic', art:19 },
+  { id:'sword-2166', name:'Меч Пыльной Стражи', slot:'mainHand', rarity:'common', serial:2166, circulation:10000, power:5, visual:'sword', art:20 },
+  { id:'spear-608', name:'Копьё Руинного Охотника', slot:'mainHand', rarity:'uncommon', serial:608, circulation:3000, power:7, visual:'spear', art:21 },
+  { id:'blade-91', name:'Клинок Последнего Контура', slot:'mainHand', rarity:'rare', serial:91, circulation:400, power:11, visual:'sword-blue', art:22 },
+  { id:'hammer-12', name:'Молот Стального Приора', slot:'mainHand', rarity:'epic', serial:12, circulation:45, power:16, visual:'hammer', art:23 },
+  { id:'shield-42', name:'Щит Заслона', slot:'offHand', rarity:'rare', serial:42, circulation:300, power:9, visual:'shield', art:24 },
 ];
 
-const starterInventory = allItems.filter((item) =>
+const starterInventoryconst starterInventory = allItems.filter((item) =>
   ['hood-1843','jacket-1388','belt-611','boots-741','sword-2166','seal-932'].includes(item.id),
 );
 
@@ -116,7 +117,7 @@ const lootPools: Record<number, string[]> = {
   2: ['gloves-1188','helm-481','shard-933'],
   3: ['shoulders-206','eye-117','cloak-85'],
   4: ['blade-91','ring-144','shield-42'],
-  5: ['consul-23','hammer-12','relic-17'],
+  5: ['consul-23','mask-23','hammer-12','relic-17'],
 };
 
 const slotLabel = Object.fromEntries(slots.map((slot) => [slot.id, slot.label])) as Record<Slot, string>;
@@ -150,31 +151,32 @@ const serverRarityMap: Record<string, Rarity> = {
 const visualArtMap: Record<string, number> = {
   hood: 0,
   helm: 1,
-  neck: 2,
-  'consul-mask': 3,
-  shoulders: 4,
-  cloak: 5,
-  'cloak-blue': 6,
-  chest: 7,
-  'chest-guard': 8,
-  'chest-epic': 9,
-  wrists: 10,
-  gloves: 11,
-  belt: 0,
-  legs: 1,
-  boots: 2,
-  ring: 3,
-  'ring-blue': 4,
-  relic: 5,
-  'relic-epic': 6,
-  sword: 7,
-  spear: 8,
-  'sword-blue': 9,
-  hammer: 10,
-  shield: 11,
+  'consul-mask': 2,
+  neck: 3,
+  'neck-eye': 4,
+  shoulders: 5,
+  cloak: 6,
+  'cloak-blue': 7,
+  chest: 8,
+  'chest-guard': 9,
+  'chest-epic': 10,
+  wrists: 11,
+  gloves: 12,
+  belt: 13,
+  legs: 14,
+  boots: 15,
+  ring: 16,
+  'ring-blue': 17,
+  relic: 18,
+  'relic-epic': 19,
+  sword: 20,
+  spear: 21,
+  'sword-blue': 22,
+  hammer: 23,
+  shield: 24,
 };
 
-function mapServerItem(item: ExpeditionServerItem): Item {
+function mapServerItemfunction mapServerItem(item: ExpeditionServerItem): Item {
   return {
     id: item.id,
     name: item.name,
@@ -480,7 +482,7 @@ export function ExpeditionAlphaGame() {
     >
       <header className="exp-topbar">
         <div>
-          <span className="exp-kicker">4rrum · alpha 0.9</span>
+          <span className="exp-kicker">4rrum · alpha 0.10</span>
           <div className="exp-title-row">
             <h1>Экспедиция</h1>
             <span className={`exp-mode exp-mode-${serverMode}`}>
@@ -534,17 +536,19 @@ export function ExpeditionAlphaGame() {
             <div className="exp-avatar-art" />
             <div className="exp-avatar-overlay" />
             <i className="exp-gear exp-gear-cloak" />
+            <i className="exp-gear exp-gear-legs" />
             <i className="exp-gear exp-gear-chest" />
             <i className="exp-gear exp-gear-shoulders" />
-            <i className="exp-gear exp-gear-hood" />
+            <i className="exp-gear exp-gear-head" />
             <i className="exp-gear exp-gear-neck" />
             <i className="exp-gear exp-gear-wrists" />
             <i className="exp-gear exp-gear-gloves" />
             <i className="exp-gear exp-gear-belt" />
-            <i className="exp-gear exp-gear-legs" />
             <i className="exp-gear exp-gear-boots" />
-            <i className="exp-gear exp-gear-ring" />
-            <i className="exp-gear exp-gear-relic" />
+            <i className="exp-gear exp-gear-ring1" />
+            <i className="exp-gear exp-gear-ring2" />
+            <i className="exp-gear exp-gear-relic1" />
+            <i className="exp-gear exp-gear-relic2" />
             <i className="exp-gear exp-gear-mainhand" />
             <i className="exp-gear exp-gear-offhand" />
             <div className="exp-avatar-label">
@@ -565,7 +569,8 @@ export function ExpeditionAlphaGame() {
                   disabled={busy}
                   onClick={() => item && unequip(slot.id)}
                 >
-                  <span>{slot.label}</span>
+                  <span className="exp-slot-label">{slot.label}</span>
+                  {item ? <span className={`exp-slot-item-icon exp-item-icon art-${item.art}`} aria-hidden="true" /> : null}
                   <b>{item ? item.name : '—'}</b>
                   <i>{item ? 'Снять' : 'Пусто'}</i>
                 </button>
@@ -578,8 +583,23 @@ export function ExpeditionAlphaGame() {
           <article className="exp-panel exp-location">
             <div className="exp-location-art">
               <div className={`exp-world-hero ${appearanceClasses}`} aria-hidden="true">
+                <i className="exp-world-gear exp-world-gear-cloak" />
                 <span className="exp-world-hero-base" />
-                <span className="exp-world-hero-gear" />
+                <i className="exp-world-gear exp-world-gear-legs" />
+                <i className="exp-world-gear exp-world-gear-chest" />
+                <i className="exp-world-gear exp-world-gear-shoulders" />
+                <i className="exp-world-gear exp-world-gear-head" />
+                <i className="exp-world-gear exp-world-gear-neck" />
+                <i className="exp-world-gear exp-world-gear-wrists" />
+                <i className="exp-world-gear exp-world-gear-gloves" />
+                <i className="exp-world-gear exp-world-gear-belt" />
+                <i className="exp-world-gear exp-world-gear-boots" />
+                <i className="exp-world-gear exp-world-gear-ring1" />
+                <i className="exp-world-gear exp-world-gear-ring2" />
+                <i className="exp-world-gear exp-world-gear-relic1" />
+                <i className="exp-world-gear exp-world-gear-relic2" />
+                <i className="exp-world-gear exp-world-gear-mainhand" />
+                <i className="exp-world-gear exp-world-gear-offhand" />
               </div>
               <div className="exp-location-copy">
                 <span>Локация 01</span>
@@ -701,22 +721,26 @@ export function ExpeditionAlphaGame() {
           </div>
 
           <div className="exp-items">
-            {inventory.map((item) => (
-              <button
-                type="button"
-                key={item.id}
-                className={`exp-item rarity-${item.rarity}`}
-                disabled={busy}
-                onClick={() => equip(item)}
-              >
-                <span className={`exp-item-icon art-${item.art}`} />
-                <small>{slotLabel[item.slot]}</small>
-                <b>{item.name}</b>
-                <em>№{item.serial}/{item.circulation}</em>
-                <strong>+{item.power}</strong>
-                <span className="exp-item-action">{equipped[item.slot]?.id === item.id ? 'Надето' : 'Надеть'}</span>
-              </button>
-            ))}
+            {inventory.map((item) => {
+              const isEquipped = equipped[item.slot]?.id === item.id;
+              return (
+                <button
+                  type="button"
+                  key={item.id}
+                  className={`exp-item rarity-${item.rarity} ${isEquipped ? 'is-equipped' : ''}`}
+                  disabled={busy}
+                  aria-pressed={isEquipped}
+                  onClick={() => isEquipped ? unequip(item.slot) : equip(item)}
+                >
+                  <span className={`exp-item-icon art-${item.art}`} />
+                  <small>{slotLabel[item.slot]}</small>
+                  <b>{item.name}</b>
+                  <em>№{item.serial}/{item.circulation}</em>
+                  <strong>+{item.power}</strong>
+                  <span className="exp-item-action">{isEquipped ? 'Снять' : 'Надеть'}</span>
+                </button>
+              );
+            })}
           </div>
 
           <div className="exp-inventory-hint">
