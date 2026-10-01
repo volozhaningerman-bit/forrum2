@@ -2298,3 +2298,17 @@
   .exp-world-hero{height:400px!important;width:215px!important}
   .exp-raid{grid-template-rows:250px 1fr!important}.exp-raid-art{height:250px!important;min-height:250px!important}
 }
+
+
+/* v0.8.2 readability pass — keep compact geometry without sub-legible UI text. */
+@media (min-width:1281px){
+  .exp-slots button span{font-size:7.5px!important}.exp-slots button b{font-size:8.5px!important}
+  .exp-rarity-key span{font-size:7.2px!important}
+  .exp-item small{font-size:7px!important}.exp-item b{font-size:8.5px!important;line-height:1.1!important}.exp-item em{font-size:6.8px!important}.exp-item strong{font-size:7px!important}
+  .exp-inventory-hint b{font-size:8px!important}.exp-inventory-hint span{font-size:6.8px!important;line-height:1.3!important}
+  .exp-depths button small{font-size:7.4px!important}.exp-depths button b{font-size:9px!important}.exp-depths button span{font-size:7.3px!important}
+  .exp-run-card p,.exp-run-card em{font-size:8px!important}
+  .exp-raid-copy>small{font-size:7.4px!important}.exp-raid-copy p{font-size:9.3px!important}.exp-raid-meta small{font-size:7px!important}
+  .exp-community-card>small{font-size:7.4px!important}.exp-community-card p{font-size:7.4px!important}.exp-system-note{font-size:7px!important}
+  .exp-footer{display:none!important}
+}
