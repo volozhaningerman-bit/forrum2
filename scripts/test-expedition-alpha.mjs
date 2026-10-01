@@ -404,6 +404,7 @@ try {
     worldChest:getComputedStyle(document.querySelector('.exp-world-gear-chest')).opacity,
     worldBelt:getComputedStyle(document.querySelector('.exp-world-gear-belt')).opacity,
     avatarAnimation:getComputedStyle(document.querySelector('.exp-avatar-art')).animationName,
+    avatarTransform:getComputedStyle(document.querySelector('.exp-avatar-art')).transform,
     worldAnimation:getComputedStyle(document.querySelector('.exp-world-hero-base')).animationName,
   }));
   assert.equal(starterLayerState.portraitNeck, '0', 'base scarf must not be painted twice');
@@ -413,6 +414,7 @@ try {
   assert.equal(starterLayerState.worldChest, '0', 'world jacket must not be painted twice');
   assert.equal(starterLayerState.worldBelt, '0', 'world belt must not be painted twice');
   assert.equal(starterLayerState.avatarAnimation, 'none', 'portrait base and equipment must stay on one rig frame in Stage 2');
+  assert.equal(starterLayerState.avatarTransform, 'none', 'portrait base must not retain the obsolete half-width translation');
   assert.equal(starterLayerState.worldAnimation, 'none', 'world base and equipment must stay on one rig frame in Stage 2');
   await page.screenshot({ path: output + '/expedition-alpha-v011-clean-starter-1720x900.png', fullPage: true });
 
@@ -469,7 +471,7 @@ try {
       assert(Number(world.opacity) > .8, check.visual + ' must appear on the world hero');
     }
     assert(Math.abs(portrait.center - portrait.hostCenter) <= 2, check.visual + ' portrait layer must stay centered on the rig');
-    if (check.visual === 'hood') assert(portrait.mask.includes('13%') && portrait.mask.includes('radial-gradient'), 'starter hood must expose the base hero face');
+    if (check.visual === 'hood') assert(portrait.mask.includes('18%') && portrait.mask.includes('radial-gradient'), 'starter hood must expose the base hero face');
     assert(Math.abs(world.center - world.hostCenter) <= 2, check.visual + ' world layer must stay centered on the base hero');
     assert(world.width <= world.hostWidth * .68 && world.width >= world.hostWidth * .62, check.visual + ' world layer must preserve the narrow paper-doll aspect');
     assert(portrait.bg.includes('data:image/webp;base64,') && world.bg.includes('data:image/webp;base64,'), check.visual + ' must use the synchronized high-detail paper-doll art');
