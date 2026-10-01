@@ -1,6 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
-  <rect x="2" y="2" width="124" height="124" rx="12" fill="#f5f5f3" stroke="#cfcfcb" stroke-width="4"/>
-  <path d="M20 92h88M20 36h88" stroke="#665c78" stroke-width="4"/>
-  <circle cx="26" cy="26" r="5" fill="#665c78"/>
-  <text x="64" y="79" text-anchor="middle" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#242424">ПУ</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Горный пейзаж">
+<defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#9fd8ef"/><stop offset=".54" stop-color="#f3b76d"/><stop offset="1" stop-color="#263746"/></linearGradient><linearGradient id="m" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#567f93"/><stop offset="1" stop-color="#223b4a"/></linearGradient></defs>
+<circle cx="64" cy="64" r="62" fill="url(#s)"/><circle cx="92" cy="28" r="14" fill="#fff2bd" opacity=".72"/>
+<path d="M-4 96 28 56l17 21 17-33 24 37 16-20 30 39v32H-4Z" fill="url(#m)"/><path d="m28 56 8 10 9 11 17-33 10 16-10 3-7-8-9 26Z" fill="#e8f1ef" opacity=".88"/>
+<path d="M0 95c23-8 44-5 63 1 25 8 46 4 69-5v39H0Z" fill="#163241" opacity=".86"/></svg>

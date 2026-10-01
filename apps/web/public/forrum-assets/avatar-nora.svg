@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="Нора Веб">
-  <rect width="128" height="128" rx="64" fill="#C2415D"/>
-  <circle cx="96" cy="28" r="20" fill="#fff" opacity=".16"/>
-  <text x="64" y="76" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="800" fill="#fff">НВ</text>
-</svg>
+<defs><linearGradient id="g" x1=".2" y1="0" x2=".8" y2="1"><stop stop-color="#ffcf58"/><stop offset=".42" stop-color="#ff6b3d"/><stop offset="1" stop-color="#5b1f65"/></linearGradient></defs>
+<circle cx="64" cy="64" r="62" fill="url(#g)"/><circle cx="88" cy="30" r="19" fill="#ffd977" opacity=".8"/>
+<path d="M0 93c18-13 35-16 49-12 16 5 27 3 39-8 11-10 25-9 40-3v58H0Z" fill="#25182e" opacity=".88"/>
+<circle cx="60" cy="55" r="12" fill="#17171d"/><path d="M43 93c2-21 9-31 17-31s16 10 18 31Z" fill="#17171d"/>
+<path d="M26 74c8-6 17-7 27-2" stroke="#ffd19b" stroke-width="3" stroke-linecap="round" opacity=".7"/></svg>
