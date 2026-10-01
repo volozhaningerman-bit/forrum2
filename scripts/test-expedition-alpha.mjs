@@ -560,4 +560,5 @@ try {
   upstream.close();
 }
 
+// 0.17 live-scale readability acceptance completed above.
 console.log(`Expedition alpha v0.17 readable equipment checks passed. Item templates covered: ${itemCount}; all 16 equipment slots exercised.`);
