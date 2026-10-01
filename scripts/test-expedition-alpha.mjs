@@ -322,6 +322,7 @@ try {
     '/games/expedition-alpha/equipment-atlas.svg',
     '/games/expedition-alpha/equipment-icons-v10.svg',
     '/games/expedition-alpha/equipment-paperdoll-v10.svg',
+    '/games/expedition-alpha/equipment-rig-v13.svg',
   ]) {
     const response = await fetch('http://127.0.0.1:' + port + asset);
     assert.equal(response.status, 200, `asset missing: ${asset}`);
@@ -406,15 +407,15 @@ try {
     avatarAnimation:getComputedStyle(document.querySelector('.exp-avatar-art')).animationName,
     worldAnimation:getComputedStyle(document.querySelector('.exp-world-hero-base')).animationName,
   }));
-  assert(Number(starterLayerState.portraitNeck) > .8, 'starter neck item must render on the portrait');
-  assert(Number(starterLayerState.portraitChest) > .8, 'starter chest item must render on the portrait');
-  assert(Number(starterLayerState.portraitBelt) > .8, 'starter belt must render on the portrait');
-  assert(Number(starterLayerState.worldNeck) > .8, 'starter neck item must render on the world hero');
-  assert(Number(starterLayerState.worldChest) > .8, 'starter chest item must render on the world hero');
-  assert(Number(starterLayerState.worldBelt) > .8, 'starter belt must render on the world hero');
+  assert(Number(starterLayerState.portraitNeck) < .1, 'unequipped neck layer must stay hidden');
+  assert(Number(starterLayerState.portraitChest) < .1, 'unequipped chest layer must stay hidden');
+  assert(Number(starterLayerState.portraitBelt) < .1, 'unequipped belt layer must stay hidden');
+  assert(Number(starterLayerState.worldNeck) < .1, 'unequipped world neck layer must stay hidden');
+  assert(Number(starterLayerState.worldChest) < .1, 'unequipped world chest layer must stay hidden');
+  assert(Number(starterLayerState.worldBelt) < .1, 'unequipped world belt layer must stay hidden');
   assert.equal(starterLayerState.avatarAnimation, 'none', 'portrait base and equipment must stay on one rig frame in Stage 2');
   assert.equal(starterLayerState.worldAnimation, 'none', 'world base and equipment must stay on one rig frame in Stage 2');
-  await page.screenshot({ path: output + '/expedition-alpha-v013-starter-rig-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v013-clean-base-1720x900.png', fullPage: true });
 
   const rigChecks = [
     { name:/Капюшон Собирателя/, visual:'hood', slot:'head' },
