@@ -3697,3 +3697,19 @@
 .exp-appearance-compositor--world{
   filter:drop-shadow(0 3px 3px rgba(0,0,0,.18))!important;
 }
+
+
+/* ==========================================================================
+   EXPEDITION ALPHA 0.17 — READABLE EQUIPMENT ACCENTS
+   Live 0.16 QA showed the scalable accents were safe but too faint at actual
+   play size. Important silhouette channels now stay readable without returning
+   to opaque full-body garments.
+   ========================================================================== */
+.exp-appearance-compositor [data-channel="head"]{opacity:.86!important}
+.exp-appearance-compositor [data-channel="torso"]{opacity:.76!important}
+.exp-appearance-compositor [data-channel="feet"]{opacity:.78!important}
+.exp-appearance-compositor [data-channel="mainHand"],
+.exp-appearance-compositor [data-channel="offHand"]{opacity:.98!important}
+.exp-appearance-compositor [data-channel="mainHand"]{
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.5)) drop-shadow(0 0 2px rgba(218,232,236,.24))!important;
+}
