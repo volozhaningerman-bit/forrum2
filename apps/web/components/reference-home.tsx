@@ -115,7 +115,6 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
  const categoryLabel=category?.parent ? `${communityLabel(category.parent.name)} › ${communityLabel(item.community.name)}` : communityLabel(item.community.name);
  const readState=topicReadState(history,item.id,item.lastComment?.createdAt);
  const important=Boolean(item.isOfficial && item.pinnedUntil && Date.parse(item.pinnedUntil)>Date.now());
- const lastAuthor=item.lastComment?.author ?? item.author;
  const lastAt=item.lastComment?.createdAt ?? item.lastActivityAt ?? item.createdAt;
  const cover=topicBackdrop(item.community.slug,item.community.name);
  const style={
@@ -123,22 +122,28 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
    '--topic-image':cover ? `url("${cover}")` : 'none',
  } as CSSProperties;
  return <article className={`forum-topic is-${readState}`} style={style} data-reading-state={readState}>
-  <Link className="forum-topic-avatar" href={`/communities/${item.community.slug}`} title={communityLabel(item.community.name)} aria-label={`Раздел: ${communityLabel(item.community.name)}`}><span className="forum-topic-category-icon"><Icon name={categoryIcon(item.community.name)}/></span></Link>
+  <Link className="forum-topic-avatar" href={`/communities/${item.community.slug}`} title={communityLabel(item.community.name)} aria-label={`Раздел: ${communityLabel(item.community.name)}`}>
+   <Avatar name={communityLabel(item.community.name)} url={item.community.avatarUrl ?? item.author.avatarUrl} size={38}/>
+  </Link>
   <div className="forum-topic-content">
-   <h2>{important && <span className="forum-topic-pinned" title="Закреплено форумом"><Icon name="paperclip"/></span>}{important && <span className="forum-topic-important">Важно</span>}<Link className="forum-topic-main-link" href={`/p/${item.slug}`}>{item.title?.trim().replace(/FORRUM/g,'4rrum') || 'Запись без заголовка'}</Link></h2>
-   <p className="forum-topic-excerpt">{item.excerpt || 'Откройте тему, чтобы прочитать обсуждение и присоединиться.'}</p>
-   <div className="forum-topic-context" aria-label="Автор и метки темы">
+   <div className="forum-topic-title-line">
+    <h2><Link className="forum-topic-main-link" href={`/p/${item.slug}`}>{item.title?.trim().replace(/FORRUM/g,'4rrum') || 'Запись без заголовка'}</Link></h2>
+    {important && <span className="forum-topic-pinned" title="Закреплено форумом"><Icon name="paperclip"/></span>}
+    {important && <span className="forum-topic-important">Важно</span>}
+   </div>
+   <div className="forum-topic-context" aria-label="Автор, раздел и метки темы">
     <Link className="forum-topic-author" href={`/u/${item.author.username}`}>{item.author.displayName}</Link>
+    <span className="forum-topic-meta-dot" aria-hidden="true">·</span>
+    <Link className="forum-topic-category-chip" style={categoryStyle(item.community.slug,category?.accentColor ?? item.community.accentColor)} href={`/communities/${item.community.slug}`} title={categoryLabel}>{communityLabel(item.community.name)}</Link>
     {item.tags?.slice(0,2).map(tag=><Link className="forum-tag" href={`/tags/${tag.slug}`} key={tag.id}>#{tag.label}</Link>)}
     {readState==='updated' && <Link className="forum-new-replies" href={`/p/${item.slug}#new-replies`}>Новые ответы</Link>}
    </div>
   </div>
-  <div className="forum-topic-category-cell"><Link style={categoryStyle(item.community.slug,category?.accentColor ?? item.community.accentColor)} href={`/communities/${item.community.slug}`} title={categoryLabel}>{communityLabel(item.community.name)}</Link></div>
-  <Link className="forum-topic-metric forum-reply-count" href={`/p/${item.slug}#discussion`} aria-label={`Ответы: ${item.commentCount}`} title="Ответы"><Icon name="comment"/><span>{formatCount(item.commentCount)}</span></Link>
-  <span className="forum-topic-metric forum-view-count" title="Просмотры" aria-label={`Просмотры: ${item.viewCount ?? 0}`}><Icon name="eye"/><span>{formatCount(item.viewCount)}</span></span>
-  <div className="forum-topic-last">
-   <Avatar name={lastAuthor.displayName} url={lastAuthor.avatarUrl} size={36}/>
-   <span><strong title={lastAuthor.displayName}>{lastAuthor.displayName}</strong><ForumTime value={lastAt}/></span>
+  <div className="forum-topic-stats" aria-label="Статистика темы">
+   <Link className="forum-topic-metric forum-reply-count" href={`/p/${item.slug}#discussion`} aria-label={`Ответы: ${item.commentCount}`} title="Ответы"><Icon name="comment"/><span>{formatCount(item.commentCount)}</span></Link>
+   <span className="forum-topic-metric forum-view-count" title="Просмотры" aria-label={`Просмотры: ${item.viewCount ?? 0}`}><Icon name="eye"/><span>{formatCount(item.viewCount)}</span></span>
+   <span className="forum-topic-metric forum-bookmark-count" title="Закладки" aria-label={`Закладки: ${item.bookmarkCount ?? 0}`}><Icon name="bookmark"/><span>{formatCount(item.bookmarkCount ?? 0)}</span></span>
+   <span className="forum-topic-date"><ForumTime value={lastAt} absolute compact/></span>
   </div>
   <div className="forum-topic-menu"><TopicActions item={item} demo={demo} guest={guest}/></div>
  </article>;
@@ -325,7 +330,6 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
    </div>}
    {community && <div className="forum-active-filter">{communityLabel(communities.find(item=>item.slug===community)?.name || community)}<button type="button" onClick={()=>choose(tab,'')} aria-label="Сбросить выбранное сообщество">×</button></div>}
    {pendingTopics && !loading && <button type="button" className="forum-feed-update" onClick={() => {setTopics(pendingTopics.slice(0,20));setHasMore(pendingTopics.length>20);setOffset(20);setPendingTopics(null);}}>Есть обновления в ленте · Показать</button>}
-   <div className="forum-topic-columns" aria-hidden="true"><span>Тема</span><span>Категория</span><span>Ответы</span><span>Просм.</span><span>Активность</span><span/></div>
    <section className="forum-feed" aria-label="Темы форума" aria-busy={loading} aria-live="polite">{loading ? <div className="forum-empty" role="status">Загружаем темы…</div> : error ? <div className="forum-empty" role="alert"><p>{error}</p><button type="button" className="forum-button" onClick={() => setRetry(value => value + 1)}>Попробовать снова</button></div> : visible.length ? visible.map(item => <Topic key={`${tab}-${item.id}`} item={item} history={history} communities={communities} demo={demo} guest={viewer === 'guest'}/>) : <div className="forum-empty"><strong>{tab==='popular'?'За сутки новых ответов пока нет':tab==='unanswered'?'Вопросов без ответа пока нет':'Здесь пока нет тем'}</strong><p>Выберите другую подборку или начните своё обсуждение.</p><Link className="forum-button" href="/create">Создать тему</Link></div>}</section>
    {!loading && !error && hasMore && !demo && <div className="forum-load-more"><button className="forum-button" type="button" disabled={loadingMore} onClick={()=>void loadMore()}>{loadingMore?'Загружаем…':'Показать ещё обсуждения'}</button></div>}
    {!loading && !error && !hasMore && visible.length > 0 && <footer className="forum-feed-end"><span>Вы просмотрели все обсуждения в этой подборке</span><a href="#top">Наверх ↑</a></footer>}

@@ -120,9 +120,12 @@ try {
  assert.equal(await page.getByRole('search').count(),1);
  assert.equal(await page.locator('.forum-home').getAttribute('data-home-reference'),'v49');
  assert.equal(await page.locator('.forum-important').count(),1);
- assert.equal(await page.locator('.forum-topic-columns').count(),1);
- assert.equal(await page.locator('.forum-topic-category-cell').count(),20);
- assert.equal(await page.locator('.forum-topic-excerpt').first().textContent(),excerpts[0]);
+ assert.equal(await page.locator('.forum-topic-columns').count(),0);
+ assert.equal(await page.locator('.forum-topic-category-cell').count(),0);
+ assert.equal(await page.locator('.forum-topic-excerpt').count(),0);
+ assert.equal(await page.locator('.forum-topic-category-chip').count(),20);
+ assert.equal(await page.locator('.forum-topic-stats').count(),20);
+ assert.equal(await page.locator('.forum-bookmark-count').count(),20);
  assert.equal(await page.locator('.forum-topic-menu .forum-more-trigger').count(),20);
  const unreadStrip=await page.locator('.forum-topic').first().evaluate(el=>getComputedStyle(el,'::before').width);
  assert.equal(unreadStrip,'3px');
@@ -242,7 +245,7 @@ try {
  assert(Math.abs(boxes['.forum-search-hero'].width-974)<=5);
  assert(Math.abs(boxes['.forum-right'].x-1307)<=3);
  assert(Math.abs(boxes['.forum-feed-toolbar'].y-487)<=8);
- assert(boxes['.forum-topic'].height>=60 && boxes['.forum-topic'].height<=72);
+ assert(boxes['.forum-topic'].height>=50 && boxes['.forum-topic'].height<=60);
  await writeFile(output+'/reference-geometry.json',JSON.stringify(boxes,null,2));
  await page.screenshot({path:output+'/reference-preview.png'});
  const {checkHomeSnapshot}=await import('./home-visual-check.mjs');
