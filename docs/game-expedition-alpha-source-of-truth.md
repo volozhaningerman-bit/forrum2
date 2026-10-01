@@ -86,14 +86,15 @@ Highly visible slots must visibly alter the avatar. Small slots such as rings ma
 
 ## 5. Item rarity
 
-Exactly four rarity tiers in the alpha:
+Five rarity tiers are used:
 
-1. Common
-2. Uncommon
-3. Rare
-4. Epic
+1. Common — grey
+2. Uncommon — green
+3. Rare — purple
+4. Legendary — gold
+5. Relic — prismatic / iridescent
 
-Rarity must not be communicated only by border color. Shape language, material quality, technological detail and silhouette should become more distinctive with rarity.
+Rarity must not be communicated only by border color. Reusable appearance templates keep a neutral material base while rarity decorates a limited part of the item through edging, fittings, runes, inserts, glow and effects. The rarity accent should normally occupy a minority of the visible item rather than recolouring the whole garment. Relic items are intentionally extremely scarce and may receive bespoke prismatic effects or unique art.
 
 ## 6. Numbered item instances
 
@@ -298,7 +299,7 @@ The first code milestone should prove only the core feeling:
 
 - base character in rags;
 - 16 visible equipment slots in UI;
-- four rarity tiers;
+- five rarity tiers;
 - one location with at least three selectable depths;
 - energy spend;
 - expedition state;
@@ -336,3 +337,18 @@ The equipment model and the visible character appearance are deliberately separa
 - There is **no transmog / cosmetic override system**. The appearance is always derived from the actually equipped items.
 
 This architecture is intended to scale to hundreds of item instances and many item templates without adding hundreds of simultaneously mounted DOM/paper-doll layers.
+
+
+## Rarity-driven appearance (Alpha 0.15)
+
+Rarity is part of the scalable appearance constructor, not a requirement for a unique body sprite.
+
+- Common: grey / restrained material accents.
+- Uncommon: green accents.
+- Rare: purple accents.
+- Legendary: gold accents.
+- Relic: prismatic accents and restrained multi-colour effects.
+- The large reusable shape comes from the item's appearance family.
+- Rarity changes trim, fittings, inserts, runes and effects rather than repainting the entire item.
+- A very small number of Relic items may use bespoke art.
+- The equipped item always owns the visible appearance; there is no transmog or cosmetic override.

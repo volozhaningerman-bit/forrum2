@@ -17,7 +17,7 @@ import { EXPEDITION_FEMALE_HERO_V09 } from './expedition-art-v09';
 import { EXPEDITION_EQUIPMENT_ICONS_V12 } from './expedition-equipment-icons-v12';
 import { ExpeditionAppearanceCompositor, expeditionAppearanceId } from './expedition-appearance';
 
-type Rarity = 'common' | 'uncommon' | 'rare' | 'epic';
+type Rarity = 'common' | 'uncommon' | 'rare' | 'legendary' | 'relic';
 type Slot =
   | 'head' | 'neck' | 'shoulders' | 'cloak' | 'chest' | 'wrists' | 'gloves' | 'belt'
   | 'legs' | 'feet' | 'ring1' | 'ring2' | 'relic1' | 'relic2' | 'mainHand' | 'offHand';
@@ -53,7 +53,8 @@ const rarityLabel: Record<Rarity, string> = {
   common: 'Обычный',
   uncommon: 'Необычный',
   rare: 'Редкий',
-  epic: 'Эпический',
+  legendary: 'Легендарный',
+  relic: 'Реликтовый',
 };
 
 const slots: Array<{ id: Slot; label: string }> = [
@@ -80,13 +81,13 @@ const depths: Depth[] = [
   { id: 2, name: 'Ломовые дворы', energy: 2, recommended: 4, reward: 'Старые детали · необычные вещи', flavor: 'Завалы машин, древние краны и охотники за железом.' },
   { id: 3, name: 'Старые кварталы', energy: 2, recommended: 7, reward: 'Редкие находки · фрагменты', flavor: 'Жилые башни, давно переделанные под укрепления.' },
   { id: 4, name: 'Промышленный двор', energy: 3, recommended: 10, reward: 'Технореликты · редкий лут', flavor: 'Здесь до сих пор слышно, как что-то работает под землёй.' },
-  { id: 5, name: 'Реакторная зона', energy: 4, recommended: 14, reward: 'Эпический шанс · рейд', flavor: 'Запретная часть старого комплекса. Там видели Пастыря.' },
+  { id: 5, name: 'Реакторная зона', energy: 4, recommended: 14, reward: 'Легендарный лут · реликтовый шанс', flavor: 'Запретная часть старого комплекса. Там видели Пастыря.' },
 ];
 
 const allItemSeeds: Array<Omit<Item, 'appearanceId'>> = [
   { id:'hood-1843', name:'Капюшон Собирателя', slot:'head', rarity:'common', serial:1843, circulation:5000, power:2, visual:'hood', art:0 },
   { id:'helm-481', name:'Шлем Дозорного', slot:'head', rarity:'uncommon', serial:481, circulation:2400, power:4, visual:'helm', art:1 },
-  { id:'mask-23', name:'Маска Ржавого Консула', slot:'head', rarity:'epic', serial:23, circulation:80, power:13, visual:'consul-mask', art:2 },
+  { id:'mask-23', name:'Маска Ржавого Консула', slot:'head', rarity:'legendary', serial:23, circulation:80, power:13, visual:'consul-mask', art:2 },
   { id:'seal-932', name:'Печать Путника', slot:'neck', rarity:'common', serial:932, circulation:8000, power:2, visual:'neck', art:3 },
   { id:'eye-117', name:'Око Архивариуса', slot:'neck', rarity:'rare', serial:117, circulation:500, power:7, visual:'neck-eye', art:4 },
   { id:'shoulders-206', name:'Наплечники Рубежа', slot:'shoulders', rarity:'rare', serial:206, circulation:650, power:7, visual:'shoulders', art:5 },
@@ -94,7 +95,7 @@ const allItemSeeds: Array<Omit<Item, 'appearanceId'>> = [
   { id:'cloak-85', name:'Плащ Синего Знамени', slot:'cloak', rarity:'rare', serial:85, circulation:500, power:8, visual:'cloak-blue', art:7 },
   { id:'jacket-1388', name:'Куртка Пограничника', slot:'chest', rarity:'common', serial:1388, circulation:10000, power:3, visual:'chest', art:8 },
   { id:'chest-317', name:'Панцирь Старой Стражи', slot:'chest', rarity:'uncommon', serial:317, circulation:2500, power:5, visual:'chest-guard', art:9 },
-  { id:'consul-23', name:'Кираса Ржавого Консула', slot:'chest', rarity:'epic', serial:23, circulation:80, power:14, visual:'chest-epic', art:10 },
+  { id:'consul-23', name:'Кираса Ржавого Консула', slot:'chest', rarity:'legendary', serial:23, circulation:80, power:14, visual:'chest-epic', art:10 },
   { id:'wrists-761', name:'Наручи Искателя', slot:'wrists', rarity:'common', serial:761, circulation:6000, power:2, visual:'wrists', art:11 },
   { id:'gloves-1188', name:'Перчатки Сервомастера', slot:'gloves', rarity:'uncommon', serial:1188, circulation:4000, power:4, visual:'gloves', art:12 },
   { id:'belt-611', name:'Пояс Механика', slot:'belt', rarity:'uncommon', serial:611, circulation:3500, power:4, visual:'belt', art:13 },
@@ -103,11 +104,12 @@ const allItemSeeds: Array<Omit<Item, 'appearanceId'>> = [
   { id:'ring-4321', name:'Кольцо Старого Сплава', slot:'ring1', rarity:'common', serial:4321, circulation:12000, power:2, visual:'ring', art:16 },
   { id:'ring-144', name:'Перстень Реакторщика', slot:'ring2', rarity:'rare', serial:144, circulation:800, power:6, visual:'ring-blue', art:17 },
   { id:'shard-933', name:'Осколок Реактора', slot:'relic1', rarity:'uncommon', serial:933, circulation:3000, power:5, visual:'relic', art:18 },
-  { id:'relic-17', name:'Сердце Маяка', slot:'relic2', rarity:'epic', serial:17, circulation:60, power:14, visual:'relic-epic', art:19 },
+  { id:'relic-17', name:'Сердце Маяка', slot:'relic2', rarity:'legendary', serial:17, circulation:60, power:14, visual:'relic-epic', art:19 },
+  { id:'prism-3', name:'Призматический Осколок Рассвета', slot:'relic2', rarity:'relic', serial:3, circulation:7, power:22, visual:'relic-prismatic', art:19 },
   { id:'sword-2166', name:'Меч Пыльной Стражи', slot:'mainHand', rarity:'common', serial:2166, circulation:10000, power:5, visual:'sword', art:20 },
   { id:'spear-608', name:'Копьё Руинного Охотника', slot:'mainHand', rarity:'uncommon', serial:608, circulation:3000, power:7, visual:'spear', art:21 },
   { id:'blade-91', name:'Клинок Последнего Контура', slot:'mainHand', rarity:'rare', serial:91, circulation:400, power:11, visual:'sword-blue', art:22 },
-  { id:'hammer-12', name:'Молот Стального Приора', slot:'mainHand', rarity:'epic', serial:12, circulation:45, power:16, visual:'hammer', art:23 },
+  { id:'hammer-12', name:'Молот Стального Приора', slot:'mainHand', rarity:'legendary', serial:12, circulation:45, power:16, visual:'hammer', art:23 },
   { id:'shield-42', name:'Щит Заслона', slot:'offHand', rarity:'rare', serial:42, circulation:300, power:9, visual:'shield', art:24 },
 ];
 
@@ -125,7 +127,7 @@ const lootPools: Record<number, string[]> = {
   2: ['gloves-1188','helm-481','shard-933'],
   3: ['shoulders-206','eye-117','cloak-85'],
   4: ['blade-91','ring-144','shield-42'],
-  5: ['consul-23','mask-23','hammer-12','relic-17'],
+  5: ['consul-23','mask-23','hammer-12','relic-17','prism-3'],
 };
 
 const slotLabel = Object.fromEntries(slots.map((slot) => [slot.id, slot.label])) as Record<Slot, string>;
@@ -153,7 +155,8 @@ const serverRarityMap: Record<string, Rarity> = {
   COMMON: 'common',
   UNCOMMON: 'uncommon',
   RARE: 'rare',
-  EPIC: 'epic',
+  EPIC: 'legendary',
+  RELIC: 'relic',
 };
 
 const visualArtMap: Record<string, number> = {
@@ -177,6 +180,7 @@ const visualArtMap: Record<string, number> = {
   'ring-blue': 17,
   relic: 18,
   'relic-epic': 19,
+  'relic-prismatic': 19,
   sword: 20,
   spear: 21,
   'sword-blue': 22,
@@ -493,7 +497,7 @@ export function ExpeditionAlphaGame() {
     >
       <header className="exp-topbar">
         <div>
-          <span className="exp-kicker">4rrum · alpha 0.14</span>
+          <span className="exp-kicker">4rrum · alpha 0.15</span>
           <div className="exp-title-row">
             <h1>Экспедиция</h1>
             <span className={`exp-mode exp-mode-${serverMode}`}>

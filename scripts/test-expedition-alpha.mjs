@@ -48,7 +48,7 @@ const itemCount = (gameSource.match(/circulation:/g) ?? []).length;
 const staticChecks = [
   ['hidden route noindex', pageSource.includes('index: false') && pageSource.includes('follow: false')],
   ['16 equipment slots', (gameSource.match(/label: '/g) ?? []).length >= 16],
-  ['four rarity tiers', ['common', 'uncommon', 'rare', 'epic'].every((value) => gameSource.includes(value))],
+  ['five rarity tiers', ['common', 'uncommon', 'rare', 'legendary', 'relic'].every((value) => gameSource.includes(value)) && gameSource.includes('Легендарный') && gameSource.includes('Реликтовый')],
   ['20+ numbered items', itemCount >= 20 && gameSource.includes('serial:') && gameSource.includes('circulation:')],
   ['server loot covers all 16 slots', (serviceSource.match(/slot: '/g) ?? []).length >= 16 && ['HEAD','NECK','SHOULDERS','CLOAK','CHEST','WRISTS','GLOVES','BELT','LEGS','FEET','RING_1','RING_2','RELIC_1','RELIC_2','MAIN_HAND','OFF_HAND'].every((slot) => serviceSource.includes(`slot: '${slot}'`))],
   ['energy expedition flow', gameSource.includes('sendExpedition') && gameSource.includes('collectReturn') && gameSource.includes('endsAt')],
@@ -61,6 +61,8 @@ const staticChecks = [
   ['single compositor replaces per-slot body layers', !gameSource.includes('exp-gear exp-gear-cloak') && !gameSource.includes('exp-world-gear exp-world-gear-head') && cssSource.includes('EXPEDITION ALPHA 0.14 — SCALABLE APPEARANCE COMPOSITOR')],
   ['stage two inventory icon atlas retained', gameSource.includes('EXPEDITION_EQUIPMENT_ICONS_V12') && cssSource.includes('--exp-item-art') && cssSource.includes('.art-24') && gameSource.includes("visual:'consul-mask', art:2") && gameSource.includes("visual:'shield', art:24")],
   ['appearance families are reusable and slot-fallback safe', appearanceSource.includes("head.hood") && appearanceSource.includes("torso.light") && appearanceSource.includes("weapon.sword") && appearanceSource.includes("defaultFamilyBySlot")],
+  ['rarity decorates reusable appearance families', appearanceSource.includes("legendary:") && appearanceSource.includes("relic:") && appearanceSource.includes("data-rarity") && cssSource.includes('EXPEDITION ALPHA 0.15 — RARITY-DRIVEN APPEARANCE')],
+  ['server supports scarce relic tier', schemaSource.includes('RELIC') && serviceSource.includes("rarity: 'RELIC'") && serviceSource.includes("circulationCap: 7")],
   ['no transmog system', !gameSource.toLowerCase().includes('transmog') && !appearanceSource.toLowerCase().includes('transmog')],
   ['distinct visible neck art', serviceSource.includes("name: 'Око Архивариуса'") && serviceSource.includes("visualKey: 'neck-eye'") && gameSource.includes("'neck-eye': 4")],
   ['world hero uses live-safe art', gameSource.includes('exp-world-hero') && cssSource.includes('/games/expedition-alpha/art-v09/hero-base.webp')],
@@ -108,6 +110,7 @@ const paperDollFixtures = [
   { id:'item-ring-2', templateId:'exp_ring_reactor', name:'Перстень Реакторщика', slot:'RING_2', rarity:'RARE', serialNumber:11, circulation:800, power:6, visualKey:'ring-blue', equipped:false, acquiredAt:new Date().toISOString() },
   { id:'item-relic-1', templateId:'exp_relic_shard', name:'Осколок Реактора', slot:'RELIC_1', rarity:'UNCOMMON', serialNumber:12, circulation:3000, power:5, visualKey:'relic', equipped:false, acquiredAt:new Date().toISOString() },
   { id:'item-relic-2', templateId:'exp_relic_beacon', name:'Сердце Маяка', slot:'RELIC_2', rarity:'EPIC', serialNumber:13, circulation:60, power:14, visualKey:'relic-epic', equipped:false, acquiredAt:new Date().toISOString() },
+  { id:'item-prism-1', templateId:'exp_relic_prism', name:'Призматический Осколок Рассвета', slot:'RELIC_2', rarity:'RELIC', serialNumber:3, circulation:7, power:22, visualKey:'relic-prismatic', equipped:false, acquiredAt:new Date().toISOString() },
   { id:'item-main-1', templateId:'exp_sword_contour', name:'Клинок Последнего Контура', slot:'MAIN_HAND', rarity:'RARE', serialNumber:14, circulation:400, power:11, visualKey:'sword-blue', equipped:false, acquiredAt:new Date().toISOString() },
   { id:'item-off-1', templateId:'exp_shield_barrier', name:'Щит Заслона', slot:'OFF_HAND', rarity:'RARE', serialNumber:15, circulation:300, power:9, visualKey:'shield', equipped:false, acquiredAt:new Date().toISOString() },
 ];
@@ -368,6 +371,7 @@ try {
       championArtDisplay: getComputedStyle(document.querySelector('.exp-champion'),'::before').display,
       relicArtDisplay: getComputedStyle(document.querySelector('.exp-relic'),'::before').display,
       slots: document.querySelectorAll('.exp-slots button').length,
+      rarityKeys: document.querySelectorAll('.exp-rarity-key > span').length,
       layoutHeight: layout?.height ?? 9999,
       locationHeight: location?.height ?? 0,
       inventoryActionCount: document.querySelectorAll('.exp-item-action').length,
@@ -393,6 +397,7 @@ try {
   assert.notEqual(metrics.championArtDisplay, 'none', 'Champion art must be rendered');
   assert.notEqual(metrics.relicArtDisplay, 'none', 'Ark Core art must be rendered');
   assert.equal(metrics.slots, 16, 'all 16 equipment slots must remain available');
+  assert.equal(metrics.rarityKeys, 5, 'inventory must expose all five rarity tiers');
   assert(metrics.locationHeight >= 420, `game world too small: ${metrics.locationHeight}px`);
   assert(metrics.inventoryActionCount >= 1, 'inventory items must expose an equip affordance');
   assert.equal(metrics.slotAffordanceCount, 16, 'all equipment slots must expose an empty/remove affordance');
@@ -416,7 +421,7 @@ try {
   assert.equal(starterLayerState.worldCompositor, 0, 'clean starter must not allocate a world appearance surface');
   assert.equal(starterLayerState.avatarAnimation, 'none', 'portrait base and appearance compositor must stay on one rig frame');
   assert.equal(starterLayerState.worldAnimation, 'none', 'world base and appearance compositor must stay on one rig frame');
-  await page.screenshot({ path: output + '/expedition-alpha-v014-clean-base-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v015-clean-base-1720x900.png', fullPage: true });
 
   const rigChecks = [
     { name:/Капюшон Собирателя/, channel:'head' },
@@ -432,6 +437,7 @@ try {
     { name:/Перстень Реакторщика/, channel:'effect' },
     { name:/Осколок Реактора/, channel:'effect' },
     { name:/Сердце Маяка/, channel:'effect' },
+    { name:/Призматический Осколок Рассвета/, channel:'effect' },
     { name:/Клинок Последнего Контура/, channel:'mainHand' },
     { name:/Щит Заслона/, channel:'offHand' },
   ];
@@ -462,6 +468,7 @@ try {
       worldRatio:worldRect ? worldRect.width / worldRect.height : 0,
       equippedSlots:document.querySelectorAll('.exp-slots button.equipped').length,
       legacyLayers:document.querySelectorAll('.exp-gear,.exp-world-gear').length,
+      relicEffectRarity:document.querySelector('.exp-world-hero .exp-appearance-compositor [data-channel="effect"]')?.getAttribute('data-rarity') ?? '',
     };
   });
   assert.equal(equippedHero.portraitCompositors, 1, 'portrait must use one composite appearance surface');
@@ -472,7 +479,8 @@ try {
   assert(Math.abs(equippedHero.worldRatio-(2/3)) < .03, 'world compositor must preserve the 2:3 hero canvas');
   assert(equippedHero.equippedSlots >= 10, 'equipment must remain represented in the 16-slot grid');
   assert.equal(equippedHero.legacyLayers, 0, 'legacy per-slot body overlays must not return');
-  await page.screenshot({ path: output + '/expedition-alpha-v014-mixed-kit-1720x900.png', fullPage: true });
+  assert.equal(equippedHero.relicEffectRarity, 'relic', 'prismatic relic must drive the effect channel rarity');
+  await page.screenshot({ path: output + '/expedition-alpha-v015-mixed-kit-1720x900.png', fullPage: true });
 
   const femaleToggle = page.getByRole('button', { name: 'Женский герой' });
   await femaleToggle.click();
@@ -489,11 +497,11 @@ try {
   }));
   assert.equal(femaleRig.portrait, 0, 'female base must stay clean until a dedicated female appearance geometry exists');
   assert.equal(femaleRig.world, 0, 'female world hero must stay clean until a dedicated female appearance geometry exists');
-  await page.screenshot({ path: output + '/expedition-alpha-v014-female-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v015-female-1720x900.png', fullPage: true });
   await page.getByRole('button', { name: 'Мужской герой' }).click();
   await page.locator('[data-testid="expedition-alpha"][data-character-body="male"]').waitFor();
 
-  await page.screenshot({ path: output + '/expedition-alpha-v014-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v015-1720x900.png', fullPage: true });
 
   const raidJoin = page.getByRole('button', { name: 'Отправить персонажа' });
   await raidJoin.click();
@@ -523,10 +531,10 @@ try {
   assert.notEqual(socialArt.champion, 'none', 'champion art must be visible');
   assert.notEqual(socialArt.relic, 'none', 'relic art must be visible');
 
-  await page.screenshot({ path: output + '/expedition-alpha-v014-loot-equipped-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v015-loot-equipped-1720x900.png', fullPage: true });
 
   await page.setViewportSize({ width: 1366, height: 768 });
-  await page.screenshot({ path: output + '/expedition-alpha-v014-1366x768.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v015-1366x768.png', fullPage: true });
   const mobileish = await page.evaluate(() => ({
     width: innerWidth,
     scrollWidth: document.documentElement.scrollWidth,
@@ -543,4 +551,4 @@ try {
   upstream.close();
 }
 
-console.log(`Expedition alpha v0.14 appearance compositor checks passed. Item templates covered: ${itemCount}; all 16 equipment slots exercised.`);
+console.log(`Expedition alpha v0.15 rarity appearance checks passed. Item templates covered: ${itemCount}; all 16 equipment slots exercised.`);
