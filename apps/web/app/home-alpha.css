@@ -668,3 +668,11 @@ body:has(.forum-home) .site-footer {display:none;}
  }
  .forum-home .forum-topic-context {min-height:24px;}
 }
+
+@media (max-width:760px) {
+ .forum-home .forum-topic-stats .forum-topic-metric,
+ .forum-home .forum-topic-stats .forum-topic-date {
+  grid-column:auto;
+  grid-row:auto;
+ }
+}
