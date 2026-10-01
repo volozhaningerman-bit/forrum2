@@ -108,7 +108,7 @@ const allItems: Item[] = [
   { id:'shield-42', name:'Щит Заслона', slot:'offHand', rarity:'rare', serial:42, circulation:300, power:9, visual:'shield', art:24 },
 ];
 
-const starterInventoryconst starterInventory = allItems.filter((item) =>
+const starterInventory = allItems.filter((item) =>
   ['hood-1843','jacket-1388','belt-611','boots-741','sword-2166','seal-932'].includes(item.id),
 );
 
@@ -176,7 +176,7 @@ const visualArtMap: Record<string, number> = {
   shield: 24,
 };
 
-function mapServerItemfunction mapServerItem(item: ExpeditionServerItem): Item {
+function mapServerItem(item: ExpeditionServerItem): Item {
   return {
     id: item.id,
     name: item.name,
