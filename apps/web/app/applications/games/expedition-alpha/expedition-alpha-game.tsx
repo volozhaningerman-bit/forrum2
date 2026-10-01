@@ -15,7 +15,7 @@ import {
 } from './expedition-client';
 import { EXPEDITION_FEMALE_HERO_V09 } from './expedition-art-v09';
 import { EXPEDITION_EQUIPMENT_ICONS_V12 } from './expedition-equipment-icons-v12';
-import { EXPEDITION_EQUIPMENT_PAPERDOLL_V12 } from './expedition-equipment-paperdoll-v12';
+import { ExpeditionAppearanceCompositor, expeditionAppearanceId } from './expedition-appearance';
 
 type Rarity = 'common' | 'uncommon' | 'rare' | 'epic';
 type Slot =
@@ -32,6 +32,7 @@ type Item = {
   power: number;
   visual: string;
   art: number;
+  appearanceId: string;
 };
 
 type Depth = {
@@ -82,7 +83,7 @@ const depths: Depth[] = [
   { id: 5, name: 'Реакторная зона', energy: 4, recommended: 14, reward: 'Эпический шанс · рейд', flavor: 'Запретная часть старого комплекса. Там видели Пастыря.' },
 ];
 
-const allItems: Item[] = [
+const allItemSeeds: Array<Omit<Item, 'appearanceId'>> = [
   { id:'hood-1843', name:'Капюшон Собирателя', slot:'head', rarity:'common', serial:1843, circulation:5000, power:2, visual:'hood', art:0 },
   { id:'helm-481', name:'Шлем Дозорного', slot:'head', rarity:'uncommon', serial:481, circulation:2400, power:4, visual:'helm', art:1 },
   { id:'mask-23', name:'Маска Ржавого Консула', slot:'head', rarity:'epic', serial:23, circulation:80, power:13, visual:'consul-mask', art:2 },
@@ -109,6 +110,11 @@ const allItems: Item[] = [
   { id:'hammer-12', name:'Молот Стального Приора', slot:'mainHand', rarity:'epic', serial:12, circulation:45, power:16, visual:'hammer', art:23 },
   { id:'shield-42', name:'Щит Заслона', slot:'offHand', rarity:'rare', serial:42, circulation:300, power:9, visual:'shield', art:24 },
 ];
+
+const allItems: Item[] = allItemSeeds.map((item) => ({
+  ...item,
+  appearanceId: expeditionAppearanceId(item.slot, item.visual),
+}));
 
 const starterInventory = allItems.filter((item) =>
   ['hood-1843','jacket-1388','belt-611','boots-741','sword-2166','seal-932'].includes(item.id),
@@ -189,6 +195,7 @@ function mapServerItem(item: ExpeditionServerItem): Item {
     power: item.power,
     visual: item.visualKey,
     art: visualArtMap[item.visualKey] ?? 0,
+    appearanceId: expeditionAppearanceId(serverSlotMap[item.slot] ?? 'relic1', item.visualKey),
   };
 }
 
@@ -352,12 +359,10 @@ export function ExpeditionAlphaGame() {
   const heroArtStyle = {
     '--exp-hero-art': `url("${heroArtSource}")`,
     '--exp-item-art': `url("data:image/webp;base64,${EXPEDITION_EQUIPMENT_ICONS_V12}")`,
-    '--exp-paperdoll-art': `url("data:image/webp;base64,${EXPEDITION_EQUIPMENT_PAPERDOLL_V12}")`,
   } as CSSProperties;
 
-  const appearanceClasses = Object.values(equipped)
-    .map((item) => item?.visual ? `has-${item.visual}` : '')
-    .join(' ');
+  const appearanceItems = Object.values(equipped)
+    .filter((item): item is Item => Boolean(item));
 
   async function sendExpedition() {
     if (busy || run || readyRun || energy < depth.energy || depth.id > unlockedDepth) return;
@@ -488,7 +493,7 @@ export function ExpeditionAlphaGame() {
     >
       <header className="exp-topbar">
         <div>
-          <span className="exp-kicker">4rrum · alpha 0.13</span>
+          <span className="exp-kicker">4rrum · alpha 0.14</span>
           <div className="exp-title-row">
             <h1>Экспедиция</h1>
             <span className={`exp-mode exp-mode-${serverMode}`}>
@@ -538,25 +543,13 @@ export function ExpeditionAlphaGame() {
             </div>
           </div>
 
-          <div className={`exp-avatar ${appearanceClasses}`}>
+          <div className="exp-avatar">
             <div className="exp-avatar-art" />
-            <div className="exp-avatar-overlay" />
-            <i className="exp-gear exp-gear-cloak" />
-            <i className="exp-gear exp-gear-legs" />
-            <i className="exp-gear exp-gear-chest" />
-            <i className="exp-gear exp-gear-shoulders" />
-            <i className="exp-gear exp-gear-head" />
-            <i className="exp-gear exp-gear-neck" />
-            <i className="exp-gear exp-gear-wrists" />
-            <i className="exp-gear exp-gear-gloves" />
-            <i className="exp-gear exp-gear-belt" />
-            <i className="exp-gear exp-gear-boots" />
-            <i className="exp-gear exp-gear-ring1" />
-            <i className="exp-gear exp-gear-ring2" />
-            <i className="exp-gear exp-gear-relic1" />
-            <i className="exp-gear exp-gear-relic2" />
-            <i className="exp-gear exp-gear-mainhand" />
-            <i className="exp-gear exp-gear-offhand" />
+            <ExpeditionAppearanceCompositor
+              items={appearanceItems}
+              body={characterBody}
+              className="exp-appearance-compositor--portrait"
+            />
             <div className="exp-avatar-label">
               <b>{power} силы</b>
               <span>{Object.keys(equipped).length}/16 предметов</span>
@@ -588,24 +581,13 @@ export function ExpeditionAlphaGame() {
         <section className="exp-center">
           <article className="exp-panel exp-location">
             <div className="exp-location-art">
-              <div className={`exp-world-hero ${appearanceClasses}`} aria-hidden="true">
-                <i className="exp-world-gear exp-world-gear-cloak" />
+              <div className="exp-world-hero" aria-hidden="true">
                 <span className="exp-world-hero-base" />
-                <i className="exp-world-gear exp-world-gear-legs" />
-                <i className="exp-world-gear exp-world-gear-chest" />
-                <i className="exp-world-gear exp-world-gear-shoulders" />
-                <i className="exp-world-gear exp-world-gear-head" />
-                <i className="exp-world-gear exp-world-gear-neck" />
-                <i className="exp-world-gear exp-world-gear-wrists" />
-                <i className="exp-world-gear exp-world-gear-gloves" />
-                <i className="exp-world-gear exp-world-gear-belt" />
-                <i className="exp-world-gear exp-world-gear-boots" />
-                <i className="exp-world-gear exp-world-gear-ring1" />
-                <i className="exp-world-gear exp-world-gear-ring2" />
-                <i className="exp-world-gear exp-world-gear-relic1" />
-                <i className="exp-world-gear exp-world-gear-relic2" />
-                <i className="exp-world-gear exp-world-gear-mainhand" />
-                <i className="exp-world-gear exp-world-gear-offhand" />
+                <ExpeditionAppearanceCompositor
+                  items={appearanceItems}
+                  body={characterBody}
+                  className="exp-appearance-compositor--world"
+                />
               </div>
               <div className="exp-location-copy">
                 <span>Локация 01</span>
