@@ -9,6 +9,7 @@ assert.deepEqual(mixed.map(row => row.id).sort((a,b) => a-b), clustered.map(row 
 for (const slug of ['a', 'b', 'c']) {
   assert.deepEqual(mixed.filter(row => row.community.slug === slug), clustered.filter(row => row.community.slug === slug));
 }
+assert.deepEqual(diverseTopics(rows(['a-1','a-2','b']), item => item.community.slug[0]).map(row => row.community.slug), ['a-1','b','a-2'], 'Sibling categories sharing an illustration must not form a repeated cover band');
 assert.deepEqual(diverseTopics([]), []);
 assert.deepEqual(diverseTopics(rows(['a', 'a'])), rows(['a', 'a']));
 const firstPage = rows(Array(10).fill('a').concat(Array(10).fill('b')));

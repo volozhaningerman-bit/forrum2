@@ -254,7 +254,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
   finally{if(!controller.signal.aborted)setLoadingMore(false);}
  }
  const matchingTopics = demo ? topics.filter(item=>item.format==='TOPIC' && (tab!=='unanswered'||!item.commentCount) && (!community||item.community.slug===community)) : topics;
- const visible = tab === 'new' && !community ? diverseTopics(matchingTopics) : matchingTopics;
+ const visible = tab === 'new' && !community ? diverseTopics(matchingTopics, item => topicBackdrop(item.community.slug, item.community.name)) : matchingTopics;
  const news = initialData.announcements?.slice(0, 4) ?? [];
  const important = [...news.slice(0,2), ...topics.filter(item => item.isOfficial && item.pinnedUntil && Date.parse(item.pinnedUntil)>Date.now() && !news.some(row => row.id === item.id))].slice(0,2);
  return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v82" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
