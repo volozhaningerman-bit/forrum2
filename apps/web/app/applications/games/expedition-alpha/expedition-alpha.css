@@ -2809,3 +2809,37 @@
 @media(prefers-reduced-motion:reduce){
   .exp-avatar .exp-gear{transition:none!important}
 }
+
+
+/* Stage 2 inventory acceptance: a growing backpack scrolls locally instead of
+   increasing the whole forum page. Comparison copy stays compact but readable. */
+.exp-inventory{display:flex!important;flex-direction:column!important}
+.exp-items{
+  min-height:0!important;
+  max-height:204px!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  scrollbar-width:thin!important;
+  scrollbar-color:#31515a #091216!important;
+}
+.exp-items::-webkit-scrollbar{width:7px}
+.exp-items::-webkit-scrollbar-track{background:#091216;border-radius:8px}
+.exp-items::-webkit-scrollbar-thumb{background:#31515a;border-radius:8px}
+.exp-item{
+  grid-template-rows:34px auto auto auto auto auto!important;
+}
+.exp-item-compare{
+  display:block!important;
+  margin-top:2px!important;
+  color:#8fa2aa!important;
+  font-size:6.6px!important;
+  line-height:1.2!important;
+}
+.exp-item.is-equipped .exp-item-compare{color:#76d7c5!important}
+@media(max-width:1180px){
+  .exp-items{max-height:360px!important}
+}
+@media(max-width:820px){
+  .exp-items{max-height:420px!important}
+  .exp-item-compare{font-size:7px!important}
+}
