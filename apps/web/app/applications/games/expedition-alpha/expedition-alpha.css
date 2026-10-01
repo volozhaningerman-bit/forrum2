@@ -3110,3 +3110,23 @@
 .exp-world-hero .exp-world-gear{
   animation:none!important;
 }
+
+
+/* 0.11 rig QA follow-up: old v0.4 left:50% positioning left a stale
+   translateX(-50%) on the base portrait after later rules switched to inset.
+   Remove that transform so the base and the centered paper-doll share one axis. */
+.exp-avatar-art{
+  transform:none!important;
+}
+
+/* Make the head opening large enough to expose the actual base face at both
+   render scales. The hood/helmet remains around the hair and jaw. */
+.exp-avatar.has-hood .exp-gear-head,
+.exp-avatar.has-helm .exp-gear-head,
+.exp-avatar.has-consul-mask .exp-gear-head,
+.exp-world-hero.has-hood .exp-world-gear-head,
+.exp-world-hero.has-helm .exp-world-gear-head,
+.exp-world-hero.has-consul-mask .exp-world-gear-head{
+  -webkit-mask-image:radial-gradient(ellipse 18% 9% at 50% 13.5%,transparent 0 82%,rgba(0,0,0,.18) 90%,#000 100%)!important;
+  mask-image:radial-gradient(ellipse 18% 9% at 50% 13.5%,transparent 0 82%,rgba(0,0,0,.18) 90%,#000 100%)!important;
+}
