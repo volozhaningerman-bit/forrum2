@@ -3032,3 +3032,17 @@
   -webkit-mask-repeat:no-repeat!important;
   mask-repeat:no-repeat!important;
 }
+
+
+/* Expedition 0.10.2 — world-rig hood face window.
+   The portrait and the world hero use different rendered aspect ratios, so the
+   same mask center cannot be shared. Keep the portrait opening unchanged and
+   lower the world opening to the actual face position on the scene rig. */
+.exp-avatar.has-hood .exp-gear-head{
+  -webkit-mask-image:radial-gradient(ellipse 24% 15% at 50% 15.5%,transparent 0 64%,rgba(0,0,0,.22) 70%,#000 79%)!important;
+  mask-image:radial-gradient(ellipse 24% 15% at 50% 15.5%,transparent 0 64%,rgba(0,0,0,.22) 70%,#000 79%)!important;
+}
+.exp-world-hero.has-hood .exp-world-gear-head{
+  -webkit-mask-image:radial-gradient(ellipse 25% 16% at 50% 22.5%,transparent 0 64%,rgba(0,0,0,.20) 70%,#000 80%)!important;
+  mask-image:radial-gradient(ellipse 25% 16% at 50% 22.5%,transparent 0 64%,rgba(0,0,0,.20) 70%,#000 80%)!important;
+}
