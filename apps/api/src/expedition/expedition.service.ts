@@ -37,6 +37,7 @@ const itemTemplates = [
   { id: 'exp_ring_reactor', slug: 'reactor-worker-ring', name: 'Перстень Реакторщика', slot: 'RING_2', rarity: 'RARE', circulationCap: 800, power: 6, visualKey: 'ring-blue', minDepth: 3 },
   { id: 'exp_relic_shard', slug: 'reactor-shard', name: 'Осколок Реактора', slot: 'RELIC_1', rarity: 'UNCOMMON', circulationCap: 3000, power: 5, visualKey: 'relic', minDepth: 2 },
   { id: 'exp_relic_beacon', slug: 'beacon-heart', name: 'Сердце Маяка', slot: 'RELIC_2', rarity: 'EPIC', circulationCap: 60, power: 14, visualKey: 'relic-epic', minDepth: 4 },
+  { id: 'exp_relic_prism', slug: 'dawn-prismatic-shard', name: 'Призматический Осколок Рассвета', slot: 'RELIC_2', rarity: 'RELIC', circulationCap: 7, power: 22, visualKey: 'relic-prismatic', minDepth: 5 },
 
   { id: 'exp_sword_dust', slug: 'dust-guard-sword', name: 'Меч Пыльной Стражи', slot: 'MAIN_HAND', rarity: 'COMMON', circulationCap: 10000, power: 5, visualKey: 'sword', minDepth: 1 },
   { id: 'exp_spear_ruins', slug: 'ruin-hunter-spear', name: 'Копьё Руинного Охотника', slot: 'MAIN_HAND', rarity: 'UNCOMMON', circulationCap: 3000, power: 7, visualKey: 'spear', minDepth: 2 },
