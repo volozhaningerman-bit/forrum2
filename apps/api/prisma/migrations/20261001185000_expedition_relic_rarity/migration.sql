@@ -1,0 +1,1 @@
+ALTER TYPE "ExpeditionItemRarity" ADD VALUE IF NOT EXISTS 'RELIC';
