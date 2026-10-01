@@ -47,6 +47,15 @@ const itemTemplates = [
   { id: 'exp_shield_barrier', slug: 'barrier-shield', name: 'Щит Заслона', slot: 'OFF_HAND', rarity: 'RARE', circulationCap: 300, power: 9, visualKey: 'shield', minDepth: 3 },
 ] as const;
 
+const STARTER_TEMPLATE_IDS = [
+  'exp_head_hood',
+  'exp_neck_traveler',
+  'exp_chest_border',
+  'exp_belt_mechanic',
+  'exp_boots_iron',
+  'exp_sword_dust',
+] as const;
+
 @Injectable()
 export class ExpeditionService {
   constructor(private readonly prisma: PrismaService) {}
@@ -54,6 +63,7 @@ export class ExpeditionService {
   async state(actorId: string) {
     await this.ensureTemplates();
     const profile = await this.ensureProfile(actorId);
+    await this.ensureStarterItems(actorId);
     const synced = await this.syncEnergy(profile.id);
     await this.prisma.expeditionRun.updateMany({
       where: {
@@ -363,6 +373,55 @@ export class ExpeditionService {
     });
 
     return this.state(actorId);
+  }
+
+  private async ensureStarterItems(actorId: string) {
+    for (const templateId of STARTER_TEMPLATE_IDS) {
+      const sourceKey = `starter:${actorId}:${templateId}`;
+      const existing = await this.prisma.expeditionItemInstance.findUnique({
+        where: { sourceKey },
+        select: { id: true },
+      });
+      if (existing) continue;
+
+      try {
+        await this.prisma.$transaction(async (tx) => {
+          const createdInside = await tx.expeditionItemInstance.findUnique({
+            where: { sourceKey },
+            select: { id: true },
+          });
+          if (createdInside) return;
+
+          const serialRows = await tx.$queryRawUnsafe<Array<{ issuedCount: number }>>(
+            `UPDATE "ExpeditionItemTemplate"
+             SET "issuedCount" = "issuedCount" + 1, "updatedAt" = NOW()
+             WHERE "id" = $1
+               AND "issuedCount" < "circulationCap"
+             RETURNING "issuedCount"`,
+            templateId,
+          );
+          const serialNumber = serialRows[0]?.issuedCount;
+          if (!serialNumber) {
+            throw new ConflictException('Тираж стартового снаряжения исчерпан');
+          }
+
+          await tx.expeditionItemInstance.create({
+            data: {
+              templateId,
+              ownerId: actorId,
+              serialNumber,
+              sourceKey,
+            },
+          });
+        }, { isolationLevel: 'Serializable' });
+      } catch (cause) {
+        const createdByRace = await this.prisma.expeditionItemInstance.findUnique({
+          where: { sourceKey },
+          select: { id: true },
+        });
+        if (!createdByRace) throw cause;
+      }
+    }
   }
 
   private async ensureRaid() {

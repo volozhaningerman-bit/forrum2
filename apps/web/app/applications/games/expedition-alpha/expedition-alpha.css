@@ -3633,3 +3633,25 @@
 @media(prefers-reduced-motion:reduce){
   .exp-appearance-compositor [data-rarity="relic"][data-channel="effect"]{animation:none}
 }
+
+
+/* ==========================================================================
+   EXPEDITION ALPHA 0.15.1 — PRODUCTION QA HOTFIX
+   The approved female raster is much narrower than the normalized 2:3 rig and
+   includes visible edge haze. Feather the source canvas into the panel until a
+   dedicated transparent 2:3 female export is authored.
+   ========================================================================== */
+.exp-alpha[data-character-body="female"] .exp-avatar-art,
+.exp-alpha[data-character-body="female"] .exp-world-hero-base{
+  background-color:transparent!important;
+  background-size:contain!important;
+  background-position:center bottom!important;
+  -webkit-mask-image:radial-gradient(ellipse 48% 55% at 50% 48%,#000 0 58%,rgba(0,0,0,.96) 66%,rgba(0,0,0,.62) 78%,transparent 96%)!important;
+  mask-image:radial-gradient(ellipse 48% 55% at 50% 48%,#000 0 58%,rgba(0,0,0,.96) 66%,rgba(0,0,0,.62) 78%,transparent 96%)!important;
+}
+.exp-alpha[data-character-body="female"] .exp-avatar-art{
+  filter:drop-shadow(0 18px 14px rgba(0,0,0,.42)) saturate(1.04) contrast(1.05)!important;
+}
+.exp-alpha[data-character-body="female"] .exp-world-hero-base{
+  filter:drop-shadow(0 14px 12px rgba(0,0,0,.34)) saturate(1.04) contrast(1.05)!important;
+}
