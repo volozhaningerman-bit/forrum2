@@ -416,16 +416,16 @@ try {
   assert.equal(starterLayerState.avatarAnimation, 'none', 'portrait base and equipment must stay on one rig frame in Stage 2');
   assert.equal(starterLayerState.avatarTransform, 'none', 'portrait base must not retain the obsolete half-width translation');
   assert.equal(starterLayerState.worldAnimation, 'none', 'world base and equipment must stay on one rig frame in Stage 2');
-  await page.screenshot({ path: output + '/expedition-alpha-v011-clean-starter-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v012-clean-starter-1720x900.png', fullPage: true });
 
   const rigChecks = [
-    { name:/Капюшон Собирателя/, visual:'hood', slot:'head', worldSuppressed:true },
-    { name:/Печать Путника/, visual:'neck', slot:'neck', baked:true },
+    { name:/Капюшон Собирателя/, visual:'hood', slot:'head' },
+    { name:/Печать Путника/, visual:'neck', slot:'neck' },
     { name:/Наплечники Рубежа/, visual:'shoulders', slot:'shoulders' },
     { name:/Плащ Синего Знамени/, visual:'cloak-blue', slot:'cloak' },
     { name:/Панцирь Старой Стражи/, visual:'chest-guard', slot:'chest' },
     { name:/Наручи Искателя/, visual:'wrists', slot:'wrists' },
-    { name:/Пояс Механика/, visual:'belt', slot:'belt', baked:true },
+    { name:/Пояс Механика/, visual:'belt', slot:'belt' },
     { name:/Штаны Пыльной Тропы/, visual:'legs', slot:'legs' },
     { name:/Сапоги Железного Шага/, visual:'boots', slot:'boots' },
     { name:/Кольцо Старого Сплава/, visual:'ring', slot:'ring1' },
@@ -438,48 +438,32 @@ try {
   for (const check of rigChecks) {
     await page.getByRole('button', { name: check.name }).first().click();
     await page.locator('.exp-avatar.has-' + check.visual).waitFor({ timeout: 5000 });
-    await page.waitForTimeout(180);
+    await page.waitForTimeout(120);
     const portrait = await page.locator('.exp-gear-' + check.slot).evaluate((node) => {
-      const r = node.getBoundingClientRect();
-      const host = node.closest('.exp-avatar').getBoundingClientRect();
       const style = getComputedStyle(node);
-      return {
-        opacity:style.opacity,
-        bg:style.backgroundImage,
-        mask:style.maskImage || style.webkitMaskImage || '',
-        center:r.left + r.width / 2,
-        hostCenter:host.left + host.width / 2,
-      };
+      return { opacity:style.opacity, visibility:style.visibility };
     });
     const world = await page.locator('.exp-world-gear-' + check.slot).evaluate((node) => {
-      const r = node.getBoundingClientRect();
-      const host = node.closest('.exp-world-hero').getBoundingClientRect();
-      return {
-        opacity:getComputedStyle(node).opacity,
-        bg:getComputedStyle(node).backgroundImage,
-        center:r.left + r.width / 2,
-        hostCenter:host.left + host.width / 2,
-        width:r.width,
-        hostWidth:host.width,
-      };
+      const style = getComputedStyle(node);
+      return { opacity:style.opacity, visibility:style.visibility };
     });
-    if (check.baked) {
-      assert(Number(portrait.opacity) < .1, check.visual + ' common starter art must not double-paint the portrait');
-      assert(Number(world.opacity) < .1, check.visual + ' common starter art must not double-paint the world hero');
-    } else {
-      assert(Number(portrait.opacity) > .8, check.visual + ' must appear on the portrait');
-      if (check.worldSuppressed) {
-        assert(Number(world.opacity) < .1, check.visual + ' must not cover the world hero face with placeholder art');
-      } else {
-        assert(Number(world.opacity) > .8, check.visual + ' must appear on the world hero');
-      }
-    }
-    assert(Math.abs(portrait.center - portrait.hostCenter) <= 2, check.visual + ' portrait layer must stay centered on the rig');
-    if (check.visual === 'hood') assert(portrait.mask.includes('18%') && portrait.mask.includes('radial-gradient'), 'starter hood must expose the base hero face');
-    assert(Math.abs(world.center - world.hostCenter) <= 2, check.visual + ' world layer must stay centered on the base hero');
-    assert(world.width <= world.hostWidth * .68 && world.width >= world.hostWidth * .62, check.visual + ' world layer must preserve the narrow paper-doll aspect');
-    assert(portrait.bg.includes('data:image/webp;base64,') && world.bg.includes('data:image/webp;base64,'), check.visual + ' must use the synchronized high-detail paper-doll art');
+    assert(Number(portrait.opacity) < .1 && portrait.visibility === 'hidden', check.visual + ' portrait overlay must stay hidden until rig-matched art exists');
+    assert(Number(world.opacity) < .1 && world.visibility === 'hidden', check.visual + ' world overlay must stay hidden until rig-matched art exists');
   }
+  const cleanEquippedHero = await page.evaluate(() => ({
+    portraitLayers:[...document.querySelectorAll('.exp-avatar .exp-gear')].filter((node) => {
+      const s=getComputedStyle(node); return Number(s.opacity) > .1 && s.visibility !== 'hidden';
+    }).length,
+    worldLayers:[...document.querySelectorAll('.exp-world-hero .exp-world-gear')].filter((node) => {
+      const s=getComputedStyle(node); return Number(s.opacity) > .1 && s.visibility !== 'hidden';
+    }).length,
+    equippedSlots:[...document.querySelectorAll('.exp-slot')].filter((node) => node.textContent && !node.textContent.includes('—')).length,
+  }));
+  assert.equal(cleanEquippedHero.portraitLayers, 0, 'working alpha must not show misregistered portrait clothing');
+  assert.equal(cleanEquippedHero.worldLayers, 0, 'working alpha must not show misregistered world clothing');
+  assert(cleanEquippedHero.equippedSlots >= 10, 'equipment must remain functionally represented in the slot grid');
+  await page.screenshot({ path: output + '/expedition-alpha-v012-stable-equipment-1720x900.png', fullPage: true });
+
   const legacyOverlay = await page.locator('.exp-avatar-overlay').evaluate((node) => ({
     backgroundImage:getComputedStyle(node).backgroundImage,
     backgroundColor:getComputedStyle(node).backgroundColor,
@@ -490,7 +474,7 @@ try {
   assert(['none', 'normal', '""'].includes(legacyOverlay.before), 'legacy avatar overlay ::before must be disabled');
   assert(['none', 'normal', '""'].includes(legacyOverlay.after), 'legacy avatar overlay ::after must be disabled');
 
-  await page.screenshot({ path: output + '/expedition-alpha-v011-mixed-kit-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v012-mixed-kit-1720x900.png', fullPage: true });
 
   const femaleToggle = page.getByRole('button', { name: 'Женский герой' });
   await femaleToggle.click();
@@ -501,11 +485,11 @@ try {
   }));
   assert(femaleHero.avatarBg.includes('data:image/webp;base64,'), 'female portrait must render from the approved WebP base');
   assert(femaleHero.worldBg.includes('data:image/webp;base64,'), 'female world hero must stay synchronized with the portrait');
-  await page.screenshot({ path: output + '/expedition-alpha-v011-female-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v012-female-1720x900.png', fullPage: true });
   await page.getByRole('button', { name: 'Мужской герой' }).click();
   await page.locator('[data-testid="expedition-alpha"][data-character-body="male"]').waitFor();
 
-  await page.screenshot({ path: output + '/expedition-alpha-v011-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v012-1720x900.png', fullPage: true });
 
   const raidJoin = page.getByRole('button', { name: 'Отправить персонажа' });
   await raidJoin.click();
@@ -545,10 +529,10 @@ try {
   assert.notEqual(socialArt.champion, 'none', 'champion art must be visible');
   assert.notEqual(socialArt.relic, 'none', 'relic art must be visible');
 
-  await page.screenshot({ path: output + '/expedition-alpha-v011-loot-equipped-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v012-loot-equipped-1720x900.png', fullPage: true });
 
   await page.setViewportSize({ width: 1366, height: 768 });
-  await page.screenshot({ path: output + '/expedition-alpha-v011-1366x768.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v012-1366x768.png', fullPage: true });
   const mobileish = await page.evaluate(() => ({
     width: innerWidth,
     scrollWidth: document.documentElement.scrollWidth,
@@ -565,4 +549,4 @@ try {
   upstream.close();
 }
 
-console.log(`Expedition alpha v0.11 Stage 2 rig checks passed. Item templates covered: ${itemCount}; all 16 equipment slots exercised.`);
+console.log(`Expedition alpha v0.12 stable equipment checks passed. Item templates covered: ${itemCount}; all 16 equipment slots exercised.`);
