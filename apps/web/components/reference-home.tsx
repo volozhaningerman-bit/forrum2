@@ -217,7 +217,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
   // The server already rendered the default newest feed. Avoid immediately
   // downloading the same list again after hydration; filtered/deep-linked
   // views still fetch as soon as their URL state is restored.
-  if (skipInitialDefaultFeed.current && tab === 'new' && !community && retry === 0) {
+  if (skipInitialDefaultFeed.current && initialData.feed !== undefined && tab === 'new' && !community && retry === 0) {
     skipInitialDefaultFeed.current = false;
     return;
   }
@@ -298,7 +298,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
 
    <div className="forum-feed-toolbar">
     <h2 className="forum-feed-title"><Icon name="comment"/>Обсуждения</h2>
-    <div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-label={item.id==='new'?'Новые':item.id==='popular'?'Активные':'Без ответов'} aria-pressed={item.id === tab} key={item.id} title={item.id === 'popular' ? 'Темы с ответами за последние 24 часа' : undefined} onClick={() => choose(item.id, community)}>{item.label}</button>)}</div>
+    <div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-label={item.id==='new'?'Последние — новые темы':item.id==='popular'?'Популярные — активные темы за 24 часа':'Без ответа — темы без ответов'} aria-pressed={item.id === tab} key={item.id} title={item.id === 'popular' ? 'Темы с ответами за последние 24 часа' : undefined} onClick={() => choose(item.id, community)}>{item.label}</button>)}</div>
     <Link className="forum-feed-create" href="/create" aria-label="Создать тему" title="Создать тему"><Icon name="plus"/><span>Создать тему</span></Link>
     <button type="button" className="forum-filter-toggle" aria-label="Фильтры" aria-expanded={filters} onClick={() => setFilters(value => !value)}><Icon name="filter"/></button>
    </div>
@@ -325,10 +325,11 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
    </div>}
    {community && <div className="forum-active-filter">{communityLabel(communities.find(item=>item.slug===community)?.name || community)}<button type="button" onClick={()=>choose(tab,'')} aria-label="Сбросить выбранное сообщество">×</button></div>}
    {pendingTopics && !loading && <button type="button" className="forum-feed-update" onClick={() => {setTopics(pendingTopics.slice(0,20));setHasMore(pendingTopics.length>20);setOffset(20);setPendingTopics(null);}}>Есть обновления в ленте · Показать</button>}
-   <div className="forum-topic-columns" aria-hidden="true"><span>Тема</span><span>Категория</span><span>Ответы</span><span>Просмотры</span><span>Последнее сообщение</span><span/></div>
+   <div className="forum-topic-columns" aria-hidden="true"><span>Тема</span><span>Категория</span><span>Ответы</span><span>Просм.</span><span>Активность</span><span/></div>
    <section className="forum-feed" aria-label="Темы форума" aria-busy={loading} aria-live="polite">{loading ? <div className="forum-empty" role="status">Загружаем темы…</div> : error ? <div className="forum-empty" role="alert"><p>{error}</p><button type="button" className="forum-button" onClick={() => setRetry(value => value + 1)}>Попробовать снова</button></div> : visible.length ? visible.map(item => <Topic key={`${tab}-${item.id}`} item={item} history={history} communities={communities} demo={demo} guest={viewer === 'guest'}/>) : <div className="forum-empty"><strong>{tab==='popular'?'За сутки новых ответов пока нет':tab==='unanswered'?'Вопросов без ответа пока нет':'Здесь пока нет тем'}</strong><p>Выберите другую подборку или начните своё обсуждение.</p><Link className="forum-button" href="/create">Создать тему</Link></div>}</section>
    {!loading && !error && hasMore && !demo && <div className="forum-load-more"><button className="forum-button" type="button" disabled={loadingMore} onClick={()=>void loadMore()}>{loadingMore?'Загружаем…':'Показать ещё обсуждения'}</button></div>}
-   {!loading && !error && !hasMore && visible.length > 0 && <footer className="forum-feed-end"><span>Вы просмотрели все загруженные обсуждения</span><a href="#top">Наверх ↑</a></footer>}
+   {!loading && !error && !hasMore && visible.length > 0 && <footer className="forum-feed-end"><span>Вы просмотрели все обсуждения в этой подборке</span><a href="#top">Наверх ↑</a></footer>}
+   <section className="forum-alpha-help" aria-label="Участие в альфе"><span><strong>Закрытая альфа</strong> · Проверяем форум вместе. Нашли неудобство или ошибку?</span><Link href="/support#alpha">Сообщить о проблеме →</Link></section>
    {moreError && <p className="forum-action-error" role="alert">{moreError}</p>}
   </div>
   <CommunityPanels demo={demo} overview={overview} unavailable={activityError || !overview} news={news} events={initialData.events} feed={topics}/>

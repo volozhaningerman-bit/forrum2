@@ -19,8 +19,8 @@ export function SiteFooter() {
 
         <nav className="site-footer-nav" aria-label="Ссылки в подвале">
           <Link href="/rules">Правила</Link>
-          <Link href="/#propose-section">Предложить раздел</Link>
-          <Link href="/#become-curator">Стать куратором</Link>
+          <Link href="/communities/proposals">Предложить раздел</Link>
+          <Link href="/communities/curators">Стать куратором</Link>
           <Link href="/support">Обратная связь</Link>
         </nav>
       </div>

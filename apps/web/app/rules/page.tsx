@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function RulesPage() {
   return (
-    <main className="forrum-info-page">
+    <div className="forrum-info-page">
       <article className="forrum-info-document">
         <header>
           <span className="forrum-info-kicker">FORRUM</span>
@@ -81,6 +81,6 @@ export default function RulesPage() {
           <Link href="/support">Поддержка →</Link>
         </footer>
       </article>
-    </main>
+    </div>
   );
 }

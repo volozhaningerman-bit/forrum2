@@ -300,3 +300,24 @@ body:has(.forum-home) .site-footer {display:none;}
 .forum-home .forum-category-heading:has(.forum-category-toggle)>a {max-width:calc(100% - 48px);}
 .forum-home .forum-category-heading:has(.forum-category-toggle) .forum-category-counts {min-width:18px;}
 .forum-home .forum-feed-toolbar {background-image:linear-gradient(90deg,#ffffff04,transparent),linear-gradient(#ffffff03 1px,transparent 1px);background-size:auto,24px 24px;}
+
+/* Alpha ergonomics: clearer actions and comfortable compact text. */
+.forum-home .forum-feed-create {width:auto;min-width:36px;min-height:36px;padding:0 8px;display:flex;gap:6px;}
+.forum-home .forum-feed-create>span {display:inline;font-size:12px;white-space:nowrap;}
+.forum-home .forum-filter-toggle {min-width:36px;min-height:36px;}
+.forum-home .forum-topic-columns {font-size:10px;}
+.forum-home .forum-topic-excerpt {line-height:1.45;}
+.forum-home .forum-alpha-help {display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px 18px;margin-top:20px;padding:14px;border:1px solid #596065;background:#24282b;font-size:13px;line-height:1.5;color:#c2c8cc;}
+.forum-home .forum-alpha-help strong {color:#f1f3f4;}
+.forum-home .forum-alpha-help a {color:#cee9df;min-height:32px;display:flex;align-items:center;}
+@media (min-width:1051px) and (max-width:1450px) {.forum-home .forum-feed-create>span {display:none;}.forum-home .forum-topic-columns {font-size:9px;}}
+@media (max-width:760px) {
+  .forum-home .forum-feed-create {min-height:44px;}
+  .forum-home .forum-feed-create>span {display:none;}
+  .forum-home .forum-tabs button {min-height:44px;font-size:12px;}
+  .forum-home .auth-actions a {min-height:44px;font-size:11px;}
+  .forum-home .forum-topic-excerpt {font-size:13px;}
+  .forum-home .forum-ranking-tabs button,.forum-home .forum-ranking-period button {min-height:44px;font-size:12px;}
+  .forum-home .forum-hero-kicker {font-size:10px;}
+  .forum-home .forum-alpha-help a {min-height:44px;}
+}

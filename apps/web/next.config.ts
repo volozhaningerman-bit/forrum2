@@ -67,6 +67,10 @@ const nextConfig: NextConfig = {
       { source: '/interactions/:path*', headers: noIndexHeaders },
       { source: '/login', headers: noIndexHeaders },
       { source: '/register', headers: noIndexHeaders },
+      { source: '/create', headers: noIndexHeaders },
+      { source: '/forgot-password', headers: noIndexHeaders },
+      { source: '/reset-password', headers: noIndexHeaders },
+      { source: '/communities/curators', headers: noIndexHeaders },
       { source: '/verify-email', headers: noIndexHeaders },
       { source: '/welcome', headers: noIndexHeaders },
     ];

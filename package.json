@@ -20,7 +20,7 @@
     "db:seed": "npm run db:seed -w @forrum/api",
     "setup": "npm run db:generate && npm run db:push && npm run db:seed",
     "validate:static": "node scripts/static-check.mjs",
-    "test:pure": "node --experimental-strip-types --experimental-loader ./scripts/local-ts-loader.mjs --test apps/api/test/*.test.ts",
+    "test:pure": "node --test --import tsx apps/api/test/*.test.ts",
     "db:validate": "npm run db:validate -w @forrum/api",
     "validate:ux": "node scripts/ux-check.mjs",
     "validate:a11y": "node scripts/accessibility-check.mjs",

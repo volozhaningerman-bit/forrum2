@@ -110,6 +110,17 @@ function dateLabel(value: string) {
   }).format(new Date(value));
 }
 
+function PublicationTime({ value, prefix = '' }: { value: string; prefix?: string }) {
+  const [local, setLocal] = useState(false);
+  useEffect(() => setLocal(true), []);
+  const valid = Number.isFinite(Date.parse(value));
+  if (!valid) return <time>—</time>;
+  // The first client render must match SSR even with different time zones/ICU data.
+  const iso = new Date(value).toISOString();
+  const initial = `${iso.slice(8,10)}.${iso.slice(5,7)}.${iso.slice(0,4)} ${iso.slice(11,16)} UTC`;
+  return <time dateTime={value}>{prefix}{local ? dateLabel(value) : initial}</time>;
+}
+
 // FORRUM_TOPIC_PAGE_FRAME_V15_4
 // FORRUM_TOPIC_REPLY_EDITOR_V15_6
 export function PublicationClient({
@@ -143,6 +154,8 @@ export function PublicationClient({
   const [error, setError] = useState('');
   const [replyTo, setReplyTo] = useState<Comment | null>(null);
   const [replyText, setReplyText] = useState('');
+  const [sendingReply, setSendingReply] = useState(false);
+  const replyInFlight = useRef(false);
   const [editing, setEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editBody, setEditBody] = useState('');
@@ -204,6 +217,7 @@ export function PublicationClient({
   }, [item, commentOrder]);
 
   function chooseReply(comment: Comment) {
+    if (viewer === 'guest') { router.push(`/login?next=${encodeURIComponent(`/p/${slug}#discussion`)}`); return; }
     setReplyTo(comment);
     requestAnimationFrame(() => {
       replyEditorRef.current?.focus();
@@ -213,17 +227,25 @@ export function PublicationClient({
 
   async function sendComment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (replyInFlight.current || replyText.trim().length < 2) return;
+    replyInFlight.current = true;
+    setSendingReply(true);
+    const submittedText = replyText;
+    const submittedParent = replyTo?.id;
     setError('');
     try {
       await api(`/publications/${slug}/comments`, {
         method: 'POST',
-        body: JSON.stringify({ body: replyText, parentId: replyTo?.id }),
+        body: JSON.stringify({ body: submittedText, parentId: submittedParent }),
       });
-      setReplyText('');
-      setReplyTo(null);
+      setReplyText(current => current === submittedText ? '' : current);
+      setReplyTo(current => current?.id === submittedParent ? null : current);
       await load();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : 'Не удалось отправить ответ');
+    } finally {
+      replyInFlight.current = false;
+      setSendingReply(false);
     }
   }
 
@@ -407,9 +429,7 @@ export function PublicationClient({
                   @{item.author.username}
                 </Link>
                 <span aria-hidden="true">·</span>
-                <time dateTime={item.createdAt}>
-                  {dateLabel(item.createdAt)}
-                </time>
+                <PublicationTime value={item.createdAt}/>
                 <span aria-hidden="true">·</span>
                 <span>{item.viewCount} просмотров</span>
               </div>
@@ -455,8 +475,8 @@ export function PublicationClient({
             {item.title && <h1>{item.title}</h1>}
             {!item.title && <p className="post-lead">Публикация пользователя в сообществе {item.community.name}</p>}
             <div className="publication-meta-line">
-              <span>{dateLabel(item.createdAt)}</span>
-              {updated && <span>обновлено {dateLabel(item.updatedAt)}</span>}
+              <PublicationTime value={item.createdAt}/>
+              {updated && <PublicationTime value={item.updatedAt} prefix="обновлено "/>}
               <span><EyeIcon/> {item.viewCount}</span>
             </div>
           </header>
@@ -510,7 +530,7 @@ export function PublicationClient({
             <div id="discussion" className="discussion-tools"><label>Порядок<select value={commentOrder} onChange={(event) => setCommentOrder(event.target.value as 'oldest' | 'newest')}><option value="oldest">Сначала ранние</option><option value="newest">Сначала новые</option></select></label><span className="discussion-count">{item.comments.length}</span></div>
           </div>
 
-          <form
+          {viewer === 'guest' ? <div className="topic-guest-reply"><h3>Присоединиться к обсуждению</h3><p>Для ответа войдите в аккаунт. После входа вы вернётесь в эту тему.</p><Link className="button" href={`/login?next=${encodeURIComponent(`/p/${slug}#discussion`)}`}>Войти и ответить</Link></div> : !viewer ? <p role="status">Проверяем доступ к ответам…</p> : <form
             className="reply-composer topic-reply-composer-v15-6"
             onSubmit={sendComment}
           >
@@ -536,9 +556,9 @@ export function PublicationClient({
             />
             <div className="composer-footer">
               <span>{replyText.length}/8000</span>
-              <button className="button" disabled={replyText.trim().length < 2}>Отправить ответ</button>
+              <button className="button" disabled={sendingReply || replyText.trim().length < 2}>{sendingReply ? 'Отправляем…' : 'Отправить ответ'}</button>
             </div>
-          </form>
+          </form>}
 
           <div className="threaded-comments">
             {comments.map((comment) => <CommentThread key={comment.id} comment={comment} onReply={chooseReply} onReact={reactComment} onReport={reportComment}/>)}
@@ -620,7 +640,7 @@ function CommentCard({ comment, onReply, onReact, onReport }: { comment: Comment
           <Link href={`/u/${comment.author.username}`}><strong>{comment.author.displayName}</strong></Link>
           {comment.author.emailVerified && <span className="comment-verified">✓</span>}
           <span>@{comment.author.username}</span>
-          <time>{dateLabel(comment.createdAt)}</time>
+          <PublicationTime value={comment.createdAt}/>
         </header>
         <BbcodeContent source={comment.body} className="content-body"/>
         <footer>

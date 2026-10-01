@@ -545,7 +545,7 @@ export function CommunitiesClient({
               </Link>
               <Link
                 className="communities-v12-hero-secondary"
-                href="/#become-curator"
+                href="/communities/curators"
               >
                 Стать куратором
                 <span aria-hidden="true">→</span>
