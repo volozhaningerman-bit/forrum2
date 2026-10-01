@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import {
   claimExpedition,
   equipExpeditionItem,
@@ -13,6 +13,7 @@ import {
   type ExpeditionServerRaid,
   type ExpeditionServerState,
 } from './expedition-client';
+import { EXPEDITION_FEMALE_HERO_V09 } from './expedition-art-v09';
 
 type Rarity = 'common' | 'uncommon' | 'rare' | 'epic';
 type Slot =
@@ -212,6 +213,7 @@ export function ExpeditionAlphaGame() {
   const [serverRunId, setServerRunId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
+  const [characterBody, setCharacterBody] = useState<'male' | 'female'>('male');
 
   const applyServerState = useCallback((state: ExpeditionServerState) => {
     const mappedItems = state.inventory.map(mapServerItem);
@@ -340,6 +342,11 @@ export function ExpeditionAlphaGame() {
     ? new Intl.DateTimeFormat('ru-RU', { hour: '2-digit', minute: '2-digit' }).format(new Date(serverRaid.startsAt))
     : '21:00';
 
+  const heroArtSource = characterBody === 'female'
+    ? EXPEDITION_FEMALE_HERO_V09
+    : '/games/expedition-alpha/art-v09/hero-base.webp';
+  const heroArtStyle = { '--exp-hero-art': `url("${heroArtSource}")` } as CSSProperties;
+
   const appearanceClasses = Object.values(equipped)
     .map((item) => item?.visual ? `has-${item.visual}` : '')
     .join(' ');
@@ -465,7 +472,12 @@ export function ExpeditionAlphaGame() {
   }
 
   return (
-    <main className="exp-alpha" data-testid="expedition-alpha">
+    <main
+      className="exp-alpha"
+      data-testid="expedition-alpha"
+      data-character-body={characterBody}
+      style={heroArtStyle}
+    >
       <header className="exp-topbar">
         <div>
           <span className="exp-kicker">4rrum · alpha 0.9</span>
@@ -495,7 +507,27 @@ export function ExpeditionAlphaGame() {
         <aside className="exp-panel exp-character">
           <div className="exp-panel-title">
             <div><span>Персонаж</span><strong>Искатель</strong></div>
-            <em>{Object.keys(equipped).length ? 'снаряжён' : 'в лохмотьях'}</em>
+            <div className="exp-character-heading-actions">
+              <div className="exp-body-toggle" role="group" aria-label="Базовый персонаж">
+                <button
+                  type="button"
+                  aria-label="Мужской герой"
+                  aria-pressed={characterBody === 'male'}
+                  onClick={() => setCharacterBody('male')}
+                >
+                  М
+                </button>
+                <button
+                  type="button"
+                  aria-label="Женский герой"
+                  aria-pressed={characterBody === 'female'}
+                  onClick={() => setCharacterBody('female')}
+                >
+                  Ж
+                </button>
+              </div>
+              <em>{Object.keys(equipped).length ? 'снаряжён' : 'в лохмотьях'}</em>
+            </div>
           </div>
 
           <div className={`exp-avatar ${appearanceClasses}`}>
