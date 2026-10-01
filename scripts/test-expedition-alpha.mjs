@@ -57,6 +57,7 @@ const staticChecks = [
   ['v0.6 reference composition', cssSource.includes('EXPEDITION ALPHA V0.6') && cssSource.includes('champion-herald-v06.svg') && cssSource.includes('ark-core-v06.svg')],
   ['true paper-doll layers wired', gameSource.includes('exp-gear exp-gear-cloak') && gameSource.includes('exp-gear exp-gear-ring1') && gameSource.includes('exp-gear exp-gear-relic2') && gameSource.includes('exp-gear exp-gear-mainhand') && gameSource.includes('exp-world-gear exp-world-gear-head') && gameSource.includes('exp-world-gear exp-world-gear-offhand') && cssSource.includes('equipment-paperdoll-v10.svg')],
   ['stage two item atlas wired', gameSource.includes('EXPEDITION_EQUIPMENT_ICONS_V12') && gameSource.includes('EXPEDITION_EQUIPMENT_PAPERDOLL_V12') && cssSource.includes('--exp-item-art') && cssSource.includes('--exp-paperdoll-art') && cssSource.includes('.art-24') && gameSource.includes("visual:'consul-mask', art:2") && gameSource.includes("visual:'shield', art:24")],
+  ['stage two live rig fit', cssSource.includes('Final 0.10.2 head-slot composition') && cssSource.includes('z-index:2!important') && cssSource.includes('translate(-50%,38px)') && cssSource.includes('translate(-50%,48px)') && cssSource.includes('translate(-50%,11px)') && cssSource.includes('translate(-50%,14px)')],
   ['distinct visible neck art', serviceSource.includes("name: 'Око Архивариуса'") && serviceSource.includes("visualKey: 'neck-eye'") && gameSource.includes("'neck-eye': 4")],
   ['world hero uses live-safe art', gameSource.includes('exp-world-hero') && cssSource.includes('/games/expedition-alpha/art-v09/hero-base.webp')],
   ['male and female base heroes wired', gameSource.includes("characterBody") && gameSource.includes('EXPEDITION_FEMALE_HERO_V09') && femaleArtSource.includes('data:image/webp;base64,UklGR') && cssSource.includes('--exp-hero-art')],
@@ -425,6 +426,7 @@ try {
         opacity:style.opacity,
         bg:style.backgroundImage,
         mask:style.maskImage || style.webkitMaskImage || '',
+        zIndex:style.zIndex,
         center:r.left + r.width / 2,
         hostCenter:host.left + host.width / 2,
       };
@@ -435,6 +437,7 @@ try {
       return {
         opacity:getComputedStyle(node).opacity,
         bg:getComputedStyle(node).backgroundImage,
+        zIndex:getComputedStyle(node).zIndex,
         center:r.left + r.width / 2,
         hostCenter:host.left + host.width / 2,
         width:r.width,
@@ -444,7 +447,10 @@ try {
     assert(Number(portrait.opacity) > .8, check.visual + ' must appear on the portrait');
     assert(Number(world.opacity) > .8, check.visual + ' must appear on the world hero');
     assert(Math.abs(portrait.center - portrait.hostCenter) <= 2, check.visual + ' portrait layer must stay centered on the rig');
-    if (check.visual === 'hood') assert(portrait.mask.includes('radial-gradient'), 'starter hood must preserve a visible face opening');
+    if (check.visual === 'hood') {
+      assert.equal(portrait.zIndex, '2', 'starter hood must sit behind the portrait face/hair');
+      assert.equal(world.zIndex, '2', 'starter hood must sit behind the world face/hair');
+    }
     assert(Math.abs(world.center - world.hostCenter) <= 2, check.visual + ' world layer must stay centered on the base hero');
     assert(world.width <= world.hostWidth * .68 && world.width >= world.hostWidth * .62, check.visual + ' world layer must preserve the narrow paper-doll aspect');
     assert(portrait.bg.includes('data:image/webp;base64,') && world.bg.includes('data:image/webp;base64,'), check.visual + ' must use the synchronized high-detail paper-doll art');
@@ -534,4 +540,4 @@ try {
   upstream.close();
 }
 
-console.log(`Expedition alpha v0.10.1 Stage 2 checks passed. Item templates covered: ${itemCount}; all 16 equipment slots exercised.`);
+console.log(`Expedition alpha v0.10.2 Stage 2 checks passed. Item templates covered: ${itemCount}; all 16 equipment slots exercised.`);
