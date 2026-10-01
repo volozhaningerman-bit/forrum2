@@ -730,3 +730,17 @@ body:has(.forum-home) .site-footer {display:none;}
  .forum-home .forum-topic-avatar .avatar {border-color:#526169;box-shadow:0 1px 3px #0008;}
  .forum-home .forum-topic::after {opacity:.13;}
 }
+
+/* Keep compact metadata visually small while retaining WCAG 2.2 pointer targets. */
+@media (min-width:761px) {
+ .forum-home .forum-topic-context {height:24px;line-height:16px;}
+ .forum-home .forum-topic-author,
+ .forum-home .forum-topic-category-chip,
+ .forum-home .forum-tag,
+ .forum-home .forum-new-replies {
+  min-height:24px;
+  display:inline-flex;
+  align-items:center;
+ }
+ .forum-home .forum-topic-category-chip {padding-block:4px;}
+}
