@@ -2316,7 +2316,10 @@
 /* Production art v0.9. Shared assets keep the portrait and world identity in sync.
    Equipment remains the existing functional paper-doll until the modular art pass. */
 .exp-avatar-art,.exp-world-hero-base{
-  background-image:url('/games/expedition-alpha/art-v09/hero-base.webp')!important;
+  background-image:var(--exp-hero-art,url('/games/expedition-alpha/art-v09/hero-base.webp'))!important;
+  background-repeat:no-repeat!important;
+  background-position:center bottom!important;
+  background-size:contain!important;
   filter:drop-shadow(0 10px 9px rgba(0,0,0,.3))!important;
 }
 .exp-location-art{
@@ -2354,4 +2357,54 @@
     background:radial-gradient(ellipse 8px 11px at 8% 48%,#704934 0 62%,#3b2922 66% 78%,transparent 81%),radial-gradient(ellipse 8px 11px at 92% 48%,#704934 0 62%,#3b2922 66% 78%,transparent 81%)!important;
   }
   .exp-avatar.has-wrists .exp-gear-wrists{top:133px!important;width:95px!important;height:11px!important}
+}
+
+
+/* Expedition alpha v0.9.1 — Stage 1 closure.
+   Both approved base bodies use the same fixed rig surface in the character panel
+   and in the world scene. The selector is intentionally compact; equipment art
+   remains Stage 2. */
+.exp-character-heading-actions{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:6px!important;
+  min-width:0!important;
+}
+.exp-body-toggle{
+  display:inline-flex!important;
+  align-items:center!important;
+  padding:2px!important;
+  gap:2px!important;
+  border:1px solid #334b55!important;
+  border-radius:7px!important;
+  background:#071116!important;
+}
+.exp-body-toggle button{
+  width:25px!important;
+  height:22px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:5px!important;
+  background:transparent!important;
+  color:#81939b!important;
+  font:700 9px/1 system-ui,sans-serif!important;
+  cursor:pointer!important;
+}
+.exp-body-toggle button[aria-pressed="true"]{
+  background:#18312f!important;
+  color:#9ff1df!important;
+  box-shadow:inset 0 0 0 1px #3b756c!important;
+}
+.exp-body-toggle button:focus-visible{
+  outline:2px solid #76d9d0!important;
+  outline-offset:2px!important;
+}
+.exp-alpha[data-character-body="female"] .exp-avatar-art,
+.exp-alpha[data-character-body="female"] .exp-world-hero-base{
+  background-position:center bottom!important;
+}
+@media(max-width:820px){
+  .exp-character-heading-actions{gap:4px!important}
+  .exp-body-toggle button{width:28px!important;height:26px!important}
 }
