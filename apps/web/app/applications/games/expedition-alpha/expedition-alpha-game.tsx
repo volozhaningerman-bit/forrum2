@@ -468,7 +468,7 @@ export function ExpeditionAlphaGame() {
     <main className="exp-alpha" data-testid="expedition-alpha">
       <header className="exp-topbar">
         <div>
-          <span className="exp-kicker">4rrum · alpha 0.7</span>
+          <span className="exp-kicker">4rrum · alpha 0.8</span>
           <div className="exp-title-row">
             <h1>Экспедиция</h1>
             <span className={`exp-mode exp-mode-${serverMode}`}>
@@ -556,7 +556,7 @@ export function ExpeditionAlphaGame() {
               </div>
             </div>
 
-            <div className="exp-depths">
+            <div className="exp-depth-label"><span>Глубина экспедиции</span><b>{selectedDepth}/5</b></div>\n            <div className="exp-depths">
               {depths.map((entry) => {
                 const locked = entry.id > unlockedDepth;
                 return (
@@ -575,7 +575,7 @@ export function ExpeditionAlphaGame() {
               })}
             </div>
 
-            <div className="exp-run-card">
+            <div className="exp-run-card" aria-live="polite" aria-busy={Boolean(run)}>
               <div>
                 <small>Выбрано</small>
                 <h3>Глубина {depth.id} · {depth.name}</h3>
@@ -600,7 +600,7 @@ export function ExpeditionAlphaGame() {
             </div>
 
             {lastDrops.length ? (
-              <div className="exp-result">
+              <div className="exp-result" role="status" aria-live="polite">
                 <span>Последняя экспедиция</span>
                 <div className="exp-result-grid">
                   {lastDrops.map((item) => (
@@ -658,7 +658,7 @@ export function ExpeditionAlphaGame() {
 
         <aside className="exp-panel exp-inventory">
           <div className="exp-panel-title">
-            <div><span>Инвентарь</span><strong>{inventory.length} предметов</strong></div>
+            <div><span>Рюкзак</span><strong>{inventory.length} предметов</strong></div>
             <em>{resources.scrap} лом · {resources.oldParts} детали</em>
           </div>
 
@@ -696,7 +696,7 @@ export function ExpeditionAlphaGame() {
 
       <footer className="exp-footer">
         <span>Alpha · Ржавые окраины</span>
-        <span>{serverMode === 'server' ? 'Прогресс, энергия и серийные предметы сохраняются на сервере.' : 'Гостевой демо-режим: прогресс не сохраняется.'}</span>
+        <span>{serverMode === 'server' ? 'Прогресс, энергия и серийные предметы сохраняются на сервере.' : 'Гостевой режим: прогресс не сохраняется — войдите, чтобы продолжить с этого места.'}</span>
       </footer>
     </main>
   );
