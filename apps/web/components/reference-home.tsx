@@ -172,7 +172,7 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
  </article>;
 }
 
-const tabs = [{ id: 'new', label: 'Последние', mode: 'new' }, { id: 'popular', label: 'Популярные', mode: 'popular' }, { id: 'unanswered', label: 'Без ответа', mode: 'all' }] as const;
+const tabs = [{ id: 'new', label: 'Новые', mode: 'new' }, { id: 'popular', label: 'Активные', mode: 'popular' }, { id: 'unanswered', label: 'Без ответов', mode: 'all' }] as const;
 type Tab = typeof tabs[number]['id'];
 export function HomeDashboard({ initialData, demo = false }: { initialData: HomeInitialData; demo?: boolean }) {
  const reading = useTopicReading();
@@ -325,8 +325,8 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
    </section>}
 
    <div className="forum-feed-toolbar">
-    <h2 className="forum-feed-title"><Icon name="comment"/>Обсуждения</h2>
-    <div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-label={item.id==='new'?'Последние — новые темы':item.id==='popular'?'Популярные — активные темы за 24 часа':'Без ответа — темы без ответов'} aria-pressed={item.id === tab} key={item.id} title={item.id === 'popular' ? 'Темы с ответами за последние 24 часа' : undefined} onClick={() => choose(item.id, community)}>{item.label}</button>)}</div>
+    <h2 className="forum-feed-title">Обсуждения</h2>
+    <div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-label={item.id==='new'?'Новые темы':item.id==='popular'?'Активные темы за 24 часа':'Темы без ответов'} aria-pressed={item.id === tab} key={item.id} title={item.id === 'popular' ? 'Темы с ответами за последние 24 часа' : undefined} onClick={() => choose(item.id, community)}>{item.label}</button>)}</div>
     <Link className="forum-feed-create" href="/create" aria-label="Создать тему" title="Создать тему"><Icon name="plus"/><span>Создать тему</span></Link>
     <button type="button" className="forum-filter-toggle" aria-label="Фильтры" aria-expanded={filters} onClick={() => setFilters(value => !value)}><Icon name="filter"/></button>
    </div>
