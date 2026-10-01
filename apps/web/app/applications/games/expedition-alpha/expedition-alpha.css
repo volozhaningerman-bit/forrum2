@@ -3032,3 +3032,22 @@
   -webkit-mask-repeat:no-repeat!important;
   mask-repeat:no-repeat!important;
 }
+
+
+/* Expedition 0.10.2 — Stage 2 rig-fit correction after live reference QA.
+   The previous face mask used percentages sized against the full 260x739 rig
+   and erased most of the hood, while the neck cell sat ~25 source pixels high.
+   Keep the face/hair visible and put the traveler scarf back on the neck. */
+.exp-avatar.has-hood .exp-gear-head,
+.exp-world-hero.has-hood .exp-world-gear-head{
+  -webkit-mask-image:radial-gradient(ellipse 14% 6% at 50% 13.3%,transparent 0 72%,rgba(0,0,0,.3) 82%,#000 100%)!important;
+  mask-image:radial-gradient(ellipse 14% 6% at 50% 13.3%,transparent 0 72%,rgba(0,0,0,.3) 82%,#000 100%)!important;
+  -webkit-mask-repeat:no-repeat!important;
+  mask-repeat:no-repeat!important;
+}
+.exp-avatar.has-neck .exp-gear-neck{
+  transform:translate(-50%,11px)!important;
+}
+.exp-world-hero.has-neck .exp-world-gear-neck{
+  transform:translate(-50%,14px)!important;
+}
