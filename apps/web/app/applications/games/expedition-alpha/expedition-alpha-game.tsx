@@ -556,7 +556,8 @@ export function ExpeditionAlphaGame() {
               </div>
             </div>
 
-            <div className="exp-depth-label"><span>Глубина экспедиции</span><b>{selectedDepth}/5</b></div>\n            <div className="exp-depths">
+            <div className="exp-depth-label"><span>Глубина экспедиции</span><b>{selectedDepth}/5</b></div>
+            <div className="exp-depths">
               {depths.map((entry) => {
                 const locked = entry.id > unlockedDepth;
                 return (
