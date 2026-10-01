@@ -17,8 +17,9 @@ export function categoryStyle(slug: string, accent?: string, name = ''): CSSProp
 
   const semantic = `${slug} ${name}`.toLowerCase();
   const referenceAccent = /дизайн|design|медиа/.test(semantic) ? '#a24c7c'
-    : /gta|игр|gaming/.test(semantic) ? '#7953ac'
-    : /желез|hardware|продвиж|promotion|маркет|seo|бизнес/.test(semantic) ? '#a17748'
+    : /gta|игр|gaming/.test(semantic) ? '#8a6cb0'
+    : /продвиж|promotion|маркет|seo|бизнес/.test(semantic) ? '#bfa178'
+    : /желез|hardware/.test(semantic) ? '#aa8055'
     : /софт|сервер|сет|telegram/.test(semantic) ? '#3d8b78'
     : /технолог|backend|разработ|ai|нейро/.test(semantic) ? '#477caf' : undefined;
 

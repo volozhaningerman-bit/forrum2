@@ -12,6 +12,7 @@ import { AuthActions } from './auth-actions';
 import { HeaderSearch } from './header-search';
 import { mainLinks } from './main-nav';
 import { TopicActions } from './home/topic-actions';
+import { diverseTopics } from './home/diverse-topics';
 import { categoryStyle } from './home/category-style';
 import { formatCount } from './home/utils';
 import { ForumTime } from './home/forum-time';
@@ -81,12 +82,13 @@ function topicIcon(title: string | null, categoryName: string): Glyph {
 
 function topicBackdrop(slug: string, name: string) {
  const value = `${slug} ${name}`.toLowerCase();
- if (/gta|rp|игр/.test(value)) return '/forrum-assets/row-games-v72.webp';
- if (/желез|hardware|компьютер|продвиж|promotion|маркет|seo/.test(value)) return '/forrum-assets/row-hardware-v72.webp';
- if (/дизайн|design|медиа/.test(value)) return '/forrum-assets/row-design-v72.webp';
- if (/интернет|сет|сервер|telegram/.test(value) && !/проект/.test(value)) return '/forrum-assets/row-network-v72.webp';
- if (/софт|linux|технолог|ai/.test(value)) return '/forrum-assets/row-tech-v72.webp';
- return '/forrum-assets/row-code-v72.webp';
+ if (/gta|rp|игр/.test(value)) return '/forrum-assets/row-gta-v82.webp';
+ if (/продвиж|promotion|маркет|seo|бизнес/.test(value)) return '/forrum-assets/row-promotion-v82.webp';
+ if (/желез|hardware|компьютер/.test(value)) return '/forrum-assets/row-hardware-v82.webp';
+ if (/дизайн|design|медиа/.test(value)) return '/forrum-assets/row-design-v82.webp';
+ if (/сет|сервер|telegram/.test(value) && !/проект/.test(value)) return '/forrum-assets/row-network-v82.webp';
+ if (/софт|linux|технолог|ai|нейро/.test(value)) return '/forrum-assets/row-tech-v82.webp';
+ return '/forrum-assets/row-code-v82.webp';
 }
 
 function Categories({ items: sourceItems, selected }: { items: Community[]; selected: string }) {
@@ -128,6 +130,7 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
  const style={
    ...categoryStyle(item.community.slug, category?.accentColor ?? item.community.accentColor, item.community.name),
    '--topic-image':`url("${cover}")`,
+   '--topic-image-y':cover.includes('row-gta-') ? '66%' : '50%',
  } as CSSProperties;
  return <article className={`forum-topic is-${readState}`} style={style} data-reading-state={readState}>
   <Link className="forum-topic-avatar" href={`/communities/${item.community.slug}`} title={categoryLabel} aria-label={`Раздел: ${categoryLabel}`}>
@@ -154,7 +157,7 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
  </article>;
 }
 
-const tabs = [{ id: 'new', label: 'Последние', mode: 'new' }, { id: 'popular', label: 'Популярные', mode: 'popular' }, { id: 'unanswered', label: 'Без ответа', mode: 'all' }] as const;
+const tabs = [{ id: 'new', label: 'Обзор', mode: 'new' }, { id: 'popular', label: 'Популярные', mode: 'popular' }, { id: 'unanswered', label: 'Без ответа', mode: 'all' }] as const;
 type Tab = typeof tabs[number]['id'];
 export function HomeDashboard({ initialData, demo = false }: { initialData: HomeInitialData; demo?: boolean }) {
  const reading = useTopicReading();
@@ -250,10 +253,11 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
   catch{if(!controller.signal.aborted)setMoreError('Не удалось загрузить следующую страницу. Попробуйте ещё раз.');}
   finally{if(!controller.signal.aborted)setLoadingMore(false);}
  }
- const visible = demo ? topics.filter(item=>item.format==='TOPIC' && (tab!=='unanswered'||!item.commentCount) && (!community||item.community.slug===community)) : topics;
+ const matchingTopics = demo ? topics.filter(item=>item.format==='TOPIC' && (tab!=='unanswered'||!item.commentCount) && (!community||item.community.slug===community)) : topics;
+ const visible = tab === 'new' && !community ? diverseTopics(matchingTopics) : matchingTopics;
  const news = initialData.announcements?.slice(0, 4) ?? [];
  const important = [...news.slice(0,2), ...topics.filter(item => item.isOfficial && item.pinnedUntil && Date.parse(item.pinnedUntil)>Date.now() && !news.some(row => row.id === item.id))].slice(0,2);
- return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v81" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
+ return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v82" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
   {!demo && <HomeWebVitals/>}
   <aside ref={sidebarRef} className={`forum-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="Навигация форума">
    <button type="button" className="forum-sidebar-close" onClick={()=>setSidebar(false)} aria-label="Закрыть меню"><Icon name="close"/></button>
@@ -308,7 +312,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
 
    <div className="forum-feed-toolbar">
     <h2 className="forum-feed-title"><Icon name="comment"/>Обсуждения</h2>
-    <div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-label={item.id==='new'?'Новые темы':item.id==='popular'?'Активные темы за 24 часа':'Темы без ответов'} aria-pressed={item.id === tab} key={item.id} title={item.id === 'popular' ? 'Темы с ответами за последние 24 часа' : undefined} onClick={() => choose(item.id, community)}>{item.label}</button>)}</div>
+    <div className="forum-tabs" role="group" aria-label="Выбор ленты">{tabs.map(item => <button type="button" aria-label={item.id==='new'?'Обзор разных разделов':item.id==='popular'?'Активные темы за 24 часа':'Темы без ответов'} aria-pressed={item.id === tab} key={item.id} title={item.id === 'popular' ? 'Темы с ответами за последние 24 часа' : item.id === 'new' ? 'Новые темы с чередованием разделов' : undefined} onClick={() => choose(item.id, community)}>{item.label}</button>)}</div>
     <details className="forum-feed-options" onKeyDown={event=>{if(event.key==='Escape'){event.currentTarget.open=false;event.currentTarget.querySelector('summary')?.focus();}}}>
      <summary aria-label="Действия ленты"><Icon name="plus"/></summary>
      <div className="forum-feed-options-menu">

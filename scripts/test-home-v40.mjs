@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import './test-home-diversity.mjs';
 import { createServer } from 'node:http';
 import { spawn } from 'node:child_process';
 import { copyFile, mkdir, writeFile } from 'node:fs/promises';
@@ -133,7 +134,7 @@ try {
  await page.locator('.forum-topic').first().hover(); await page.waitForTimeout(160);
  const afterHover=await page.locator('.forum-topic').first().boundingBox();
  assert.deepEqual(afterHover,beforeHover,'Hover must not move or scale the row');
- assert.equal(await page.getByRole('button',{name:'Новые темы',exact:true}).getAttribute('aria-pressed'),'true');
+ assert.equal(await page.getByRole('button',{name:'Обзор разных разделов',exact:true}).getAttribute('aria-pressed'),'true');
  assert(requests.some(r=>r.path==='/v1/feed'&&r.cookie?.includes('forrum_test=viewer')));
  const bookmarkCalls=requests.filter(r=>r.path==='/v1/publications/topic-0/bookmark').length;
  const hostile=await page.request.post('http://127.0.0.1:'+port+'/api/publications/topic-0/bookmark',{headers:{Origin:'https://evil.example'}});
@@ -265,6 +266,8 @@ try {
  assert(typography.titleSize>typography.excerptSize,'Title must be larger than the excerpt');
  assert.notEqual(typography.titleColor,typography.excerptColor,'Title and excerpt need distinct colors');
  assert.notEqual(typography.art,'none','Reference illustrated background is visible');
+ assert(await page.evaluate(()=>document.fonts.check('500 14px ForumCondensed') && document.fonts.check('600 39px ForumDisplay')), 'Reference fonts must load locally');
+ for(const cover of ['gta','promotion','code','network','hardware','design','tech']) assert((await page.request.get(`http://127.0.0.1:${port}/forrum-assets/row-${cover}-v82.webp`)).ok(), `Missing optimized cover: ${cover}`);
  await writeFile(output+'/reference-geometry.json',JSON.stringify(boxes,null,2));
  await page.screenshot({path:output+'/reference-preview.png'});
  const {checkHomeSnapshot}=await import('./home-visual-check.mjs');
