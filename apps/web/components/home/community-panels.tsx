@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { api } from '@/lib/api';
 import type { WeeklyUser } from './types';
 import { Avatar } from '../avatar';
+import { topicAvatarUrl } from './topic-avatar';
 import { formatCount, formatCountLabel } from './utils';
 import type { HomeInitialData, HomeOverview } from './types';
 import type { PublicationCardData } from '@/lib/types';
@@ -85,7 +86,7 @@ export function CommunityPanels({
           : authors.length
             ? <ol className="forum-author-ranking">{authors.map((person,index)=><li key={person.username}>
                 <span className={"forum-rank"+(index<3?` is-medal is-medal-${index+1}`:'')}>{index<3?<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m3 6 5 5 4-8 4 8 5-5-2 13H5ZM5 21h14v-2H5Z"/></svg>:index+1}</span>
-                <Link href={`/u/${person.username}`}><Avatar name={person.displayName} url={person.avatarUrl} size={28}/><strong>{person.displayName}</strong></Link>
+                <Link href={`/u/${person.username}`}><Avatar name={person.displayName} url={topicAvatarUrl(person)} size={28}/><strong>{person.displayName}</strong></Link>
                 <small title={mode==='likes'?'Симпатии к темам':'Темы и ответы'}>{formatCount(mode==='likes'?person.reactionCount:person.topicCount+person.commentCount)}</small>
               </li>)}</ol>
             : <div className="forum-ranking-empty">
