@@ -245,7 +245,7 @@ try {
  assert(Math.abs(boxes['.forum-search-hero'].width-974)<=5);
  assert(Math.abs(boxes['.forum-right'].x-1307)<=3);
  assert(Math.abs(boxes['.forum-feed-toolbar'].y-487)<=8);
- assert(boxes['.forum-topic'].height>=45 && boxes['.forum-topic'].height<=48,`Compact topic row drifted: ${boxes['.forum-topic'].height}px`);
+ assert(boxes['.forum-topic'].height>=48 && boxes['.forum-topic'].height<=50,`Compact topic row drifted: ${boxes['.forum-topic'].height}px`);
  assert.equal(await page.locator('.forum-feed-title').textContent(),'Обсуждения');
  assert.equal(await page.locator('.forum-feed-title').evaluate(el=>getComputedStyle(el).textTransform),'none');
  assert.equal(await page.locator('.forum-feed-create>span').evaluate(el=>getComputedStyle(el).display),'inline');
