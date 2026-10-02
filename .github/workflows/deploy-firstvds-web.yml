@@ -53,7 +53,7 @@ jobs:
         env:
           EXPECTED_SHA: ${{ env.VERIFIED_SHA }}
           EXPECTED_HOME_REFERENCE: v49
-          EXPECTED_HOME_REVISION: v85
+          EXPECTED_HOME_REVISION: v86
           REQUIRE_EXACT_SHA: 'true'
           PRODUCTION_VERIFY_TIMEOUT_MS: '600000'
         run: node scripts/verify-production.mjs
