@@ -10,7 +10,7 @@ await mkdir(output, { recursive: true });
 await copyFile(root + 'docs/design-reference/home-approved.png', output + '/approved.png');
 const fixtureNow=Date.parse('2026-09-30T12:00:00Z');
 const names = ['Алексей Петров', 'Мария Кузнецова', 'Иван Соколов', 'Дмитрий Волков', 'Елена Смирнова', 'Артём Орлов', 'Кира Белова', 'Михаил Серов', 'Лина Романова', 'Олег Миронов'];
-const categories = ['Разработка', 'Backend', 'Дизайн', 'Бизнес', 'Карьера', 'AI и данные', 'Маркетинг', 'Общество', 'Разное'];
+const categories = ['Разработка', 'Backend', 'Дизайн', 'Бизнес', 'Дизайн и визуальные проекты', 'AI и данные', 'Маркетинг', 'Общество', 'Разное'];
 const communities = categories.map((name, i) => ({ id: String(i), slug: 'category-' + i, name, parent: i === 1 ? { slug: 'category-0', name: categories[0] } : null, subscriberCount: 120, publicationCount: 5, onlineCount: 3, description: '' }));
 communities.push({id:'retired',slug:'workshop',name:'Мастерская',parent:null,subscriberCount:0,onlineCount:0,publicationCount:0,description:''});
 communities[2].parent={slug:'workshop',name:'Мастерская'};
@@ -160,6 +160,8 @@ try {
   for(const width of [1920,1648,1600,1280,1024,760,390,320]){
    await page.setViewportSize({width,height:width===1648?926:1000});await page.waitForTimeout(100);
    const size=await page.evaluate(()=>({w:innerWidth,scroll:document.documentElement.scrollWidth}));if(size.scroll>size.w+1)console.log(await page.evaluate(()=>Array.from(document.querySelectorAll('body *')).filter(el=>{const r=el.getBoundingClientRect();return r.width&&r.right>innerWidth+1}).slice(0,15).map(el=>({tag:el.tagName,cls:el.className,width:el.getBoundingClientRect().width,right:el.getBoundingClientRect().right}))));assert(size.scroll<=size.w+1,`${theme} ${width}: overflow ${size.scroll}`);
+   const clippedBadges=await page.locator('.forum-topic-category-chip').evaluateAll(nodes=>nodes.filter(el=>el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1).map(el=>el.textContent));
+   assert.deepEqual(clippedBadges,[],`Category badges must show their full labels at ${width}px`);
    if(width<=760){const tabsFit=await page.locator('.forum-tabs').evaluate(el=>el.scrollWidth<=el.clientWidth+1);assert(tabsFit,`Filters must fit at ${width}px`);}
    if(width===390){const mobileAxe=await new AxeBuilder({page}).include('.forum-home').withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();await writeFile(output+'/axe-mobile.json',JSON.stringify(mobileAxe.violations,null,2));assert.deepEqual(mobileAxe.violations.filter(v=>['critical','serious'].includes(v.impact)).map(v=>v.id),[]);}
    if([1648,1600,390].includes(width)){await page.evaluate(()=>{window.scrollTo({top:0,behavior:"instant"});document.activeElement?.blur();});await page.screenshot({path:`${output}/${theme}-${width}.png`});}
