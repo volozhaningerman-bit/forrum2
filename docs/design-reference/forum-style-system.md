@@ -1,4 +1,4 @@
-# Shared forum style (v88)
+# Shared forum style (v89)
 
 The approved homepage v87 is the visual baseline. Other routes use
 `apps/web/app/forum-system.css`, loaded by the root layout after legacy utility
@@ -8,9 +8,11 @@ Homepage geometry and its visual snapshots remain unchanged.
 ## Materials
 
 - Page: #0d1012, subtle 24px grid.
-- Panel: #24282b, square border #596065, restrained inset highlight and shadow.
+- Panel: exact shared `--forum-panel-material` from the homepage final CSS: translucent #111416 / #090b0d gradient, 12px grid, frame dots and a faint top highlight. Border #868b90, four silver corner brackets from `--forum-panel-corners`.
+- Nested rows: dark #16191c / #0e1012 gradient, #32363b border; no corner brackets.
 - Important section heading: subdued red gradient, border #8d6569.
-- Heading: #f1f3f4; supporting text: #b2b9bd.
+- Heading: #f1f3f4; supporting text: #b2b9bd. Section labels are compact 16px uppercase; long topic and document titles retain their own hierarchy.
+- Route header follows homepage navigation, logo, search and framed authentication actions. Responsive navigation preserves all destinations; Ctrl/Cmd+K focuses search.
 - Compact item title: 14px / 18px, weight 500; excerpt: 12px / 16px.
 - Primary action: off-white, dark text; secondary action: graphite, silver border.
 - Red is reserved for section identity and destructive actions. Success,

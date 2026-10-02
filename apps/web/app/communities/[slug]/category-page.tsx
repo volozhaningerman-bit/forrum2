@@ -713,7 +713,8 @@ export function CategoryPage({
           {treeLoading ? (
             <div
               className="section-tree-loading"
-              aria-label="Загружаем категории"
+              role="status"
+          aria-label="Загружаем категории"
             >
               {Array.from({ length: 6 }).map((_, index) => (
                 <span key={index} />

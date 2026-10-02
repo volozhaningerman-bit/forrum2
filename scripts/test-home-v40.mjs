@@ -207,6 +207,15 @@ try {
    await page.setViewportSize({width,height:900});
    assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`${route} overflows at ${width}: ${JSON.stringify(await page.evaluate(()=>[...document.querySelectorAll('body *')].filter(e=>e.getBoundingClientRect().right>innerWidth+1).map(e=>({class:e.className,width:e.getBoundingClientRect().width})).slice(0,12)))}`);
   }
+  if(route==='/communities') {
+   await page.keyboard.press('Control+k');
+   assert(await page.locator('[data-forrum-shell="header"] input[name=q]').evaluate(e=>e===document.activeElement),'Route search shortcut focuses the input');
+   await page.locator('.forum-route-more summary').click();
+   await page.locator('.forum-route-more').getByRole('link',{name:'Приложения',exact:true}).click();
+   await page.waitForURL('**/applications');
+   assert.equal(await page.locator('.forum-route-more').getAttribute('open'),null,'More menu closes after navigation');
+   await page.goto('http://127.0.0.1:'+port+route,{waitUntil:'networkidle'});
+  }
   const results=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
   await writeFile(output+'/axe-alpha-'+route.split('?')[0].replaceAll('/','')+'.json',JSON.stringify(results.violations,null,2));
   assert.deepEqual(results.violations.filter(v=>['critical','serious'].includes(v.impact)).map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)})),[],`Accessibility: ${route}`);
