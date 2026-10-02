@@ -35,10 +35,10 @@
 
 .featured {
   position: relative;
-  min-height: 320px;
+  min-height: 300px;
   overflow: hidden;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr);
+  grid-template-columns: minmax(0, 1.05fr) minmax(280px, .95fr);
   border: 1px solid var(--fvt-line, var(--line));
   border-radius: 12px;
   background: var(--fvt-panel, var(--surface));
@@ -46,10 +46,36 @@
 }
 
 .featuredArt {
-  min-height: 320px;
+  position: relative;
+  min-height: 300px;
   background:
-    linear-gradient(90deg, rgba(7,13,16,.06), rgba(7,13,16,.2)),
-    url('/games/expedition-alpha/rust-outskirts.webp') center / cover no-repeat;
+    radial-gradient(circle at 32% 36%, color-mix(in srgb, var(--fvt-accent, #5f83ff) 24%, transparent), transparent 34%),
+    radial-gradient(circle at 68% 68%, rgba(231,173,82,.12), transparent 30%),
+    linear-gradient(145deg, #11171b 0%, #1b2227 52%, #0d1114 100%);
+}
+
+.featuredArt::before,
+.featuredArt::after {
+  content: '';
+  position: absolute;
+  border: 1px solid color-mix(in srgb, var(--fvt-line, #38434b) 72%, transparent);
+  background: color-mix(in srgb, var(--fvt-panel, #20262a) 68%, transparent);
+  transform: rotate(-8deg);
+}
+
+.featuredArt::before {
+  width: 42%;
+  height: 42%;
+  left: 18%;
+  top: 23%;
+}
+
+.featuredArt::after {
+  width: 28%;
+  height: 28%;
+  right: 17%;
+  bottom: 18%;
+  transform: rotate(12deg);
 }
 
 .featuredCopy {
@@ -74,7 +100,7 @@
 }
 
 .badge,
-.alphaBadge {
+.statusBadge {
   display: inline-flex;
   align-items: center;
   min-height: 24px;
@@ -92,7 +118,7 @@
   background: var(--fvt-accent-soft, rgba(57,124,255,.1));
 }
 
-.alphaBadge {
+.statusBadge {
   color: #e7ad52;
   border-color: color-mix(in srgb, #e7ad52 45%, var(--fvt-line, #3b444a));
   background: color-mix(in srgb, #e7ad52 8%, transparent);
@@ -121,25 +147,17 @@
   font-size: 11px;
 }
 
-.openButton {
+.gameStatus {
   align-self: flex-start;
   display: inline-flex;
+  min-height: 36px;
   align-items: center;
-  justify-content: center;
-  min-height: 40px;
-  padding: 9px 14px;
-  border: 1px solid var(--fvt-accent, var(--accent));
+  padding: 8px 11px;
+  border: 1px dashed var(--fvt-line-strong, var(--line));
   border-radius: 4px;
-  background: var(--fvt-accent, var(--accent));
-  color: white !important;
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.openButton:hover,
-.openButton:focus-visible {
-  filter: brightness(.96);
-  color: white !important;
+  color: var(--fvt-muted, var(--muted));
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .grid {
@@ -210,7 +228,7 @@
   }
 
   .featuredArt {
-    min-height: 240px;
+    min-height: 220px;
   }
 
   .featuredCopy {
@@ -228,6 +246,6 @@
   }
 
   .featuredArt {
-    min-height: 200px;
+    min-height: 180px;
   }
 }

@@ -29,42 +29,36 @@ export default function Applications() {
       </header>
 
       <div className="applications-grid">
-      <article className={styles.featured}>
-        <div className={styles.featuredArt} aria-hidden="true" />
-        <div className={styles.featuredCopy}>
-          <div className={styles.badges}>
-            <span className={styles.badge}>Игра</span>
-            <span className={styles.alphaBadge}>Alpha</span>
+        <article className={styles.featured}>
+          <div className={styles.featuredArt} aria-hidden="true" />
+          <div className={styles.featuredCopy}>
+            <div className={styles.badges}>
+              <span className={styles.badge}>Игра</span>
+              <span className={styles.statusBadge}>В разработке</span>
+            </div>
+            <h2>Новая игра 4rrum</h2>
+            <p>
+              Готовим новый игровой проект 4rrum. Публичной альфы пока нет:
+              сначала фиксируем основной игровой цикл, механику и визуальное направление.
+            </p>
+            <div className={styles.gameFacts}>
+              <span>Новая концепция</span>
+              <span>•</span>
+              <span>Чистый прототип</span>
+            </div>
+            <span className={styles.gameStatus}>Публичная версия пока недоступна</span>
           </div>
-          <h2>Экспедиция</h2>
-          <p>
-            Социальная RPG о мире после падения высоких технологий. Отправляй героя
-            в экспедиции, находи серийные предметы, меняй внешний вид экипировкой
-            и собирайся с другими игроками на совместных боссов.
-          </p>
-          <div className={styles.gameFacts}>
-            <span>Экспедиции</span>
-            <span>•</span>
-            <span>Серийный лут</span>
-            <span>•</span>
-            <span>Совместные боссы</span>
-          </div>
-          <Link className={styles.openButton} href="/applications/games/expedition-alpha">
-            Открыть альфу
-          </Link>
+        </article>
+
+        <div className={styles.grid}>
+          {secondarySections.map((item) => (
+            <article className={styles.card} key={item.name}>
+              <h2>{item.name}</h2>
+              <p>{item.description}</p>
+              <small>Приложений пока нет</small>
+            </article>
+          ))}
         </div>
-      </article>
-
-      <div className={styles.grid}>
-        {secondarySections.map((item) => (
-          <article className={styles.card} key={item.name}>
-            <h2>{item.name}</h2>
-            <p>{item.description}</p>
-            <small>Приложений пока нет</small>
-          </article>
-        ))}
-      </div>
-
       </div>
 
       <div className={styles.footerAction}>

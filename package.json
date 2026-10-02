@@ -25,8 +25,7 @@
     "validate:ux": "node scripts/ux-check.mjs",
     "validate:a11y": "node scripts/accessibility-check.mjs",
     "test:home": "node scripts/test-home-v40.mjs",
-    "validate:site": "node scripts/site-audit-check.mjs",
-    "test:expedition": "node scripts/test-expedition-alpha.mjs"
+    "validate:site": "node scripts/site-audit-check.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
