@@ -1,4 +1,5 @@
 'use client';
+import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { HeaderSearch } from './header-search';
@@ -14,6 +15,8 @@ import { NavCounters } from './nav-counters';
 import { MainNav } from './main-nav';
 export function SiteHeader() {
   const pathname = usePathname();
+  const searchInput=useRef<HTMLInputElement>(null);
+  useEffect(()=>{const focus=(event:KeyboardEvent)=>{if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==='k'){event.preventDefault();searchInput.current?.focus();}};window.addEventListener('keydown',focus);return()=>window.removeEventListener('keydown',focus);},[]);
   if (pathname === '/' || pathname === '/preview/home') return null;
   return (
     <>
@@ -21,11 +24,11 @@ export function SiteHeader() {
         <div className="shell nav">
           <Link className="reference-site-brand" href="/" aria-label="4rrum — главная"><img src="/forrum-assets/brand-4rrum.svg" alt="" width="160" height="45"/></Link>
 
-          <MainNav />
+          <MainNav forum />
 
           <span className="grow" />
 
-          <HeaderSearch />
+          <HeaderSearch inputRef={searchInput}/>
 
           <nav
             className="icon-links"

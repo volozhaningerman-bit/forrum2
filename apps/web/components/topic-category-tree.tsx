@@ -427,6 +427,7 @@ export function TopicCategoryTree({
       {loading ? (
         <div
           className="section-tree-loading"
+          role="status"
           aria-label="Загружаем категории"
         >
           {Array.from({ length: 6 }).map((_, index) => (

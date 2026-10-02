@@ -22,7 +22,7 @@
 .header h1 {
   margin: 0;
   color: var(--fvt-text, var(--text));
-  font-size: 26px;
+  font-size: 22px;
   line-height: 1.02;
   letter-spacing: -.04em;
 }
@@ -252,6 +252,8 @@
 
 /* The applications directory uses the approved forum panel materials. */
 .header {padding:18px 22px;border:1px solid #8d6569;background:radial-gradient(ellipse at 18% 0,#b5444438,transparent 68%),linear-gradient(120deg,#261619f5,#111315f2 75%);box-shadow:inset 0 1px #f6b8b81c;}
-.featured,.card {border-color:#596065;background:linear-gradient(125deg,#ffffff03,transparent 45%),#24282b;box-shadow:inset 0 1px #ffffff10,0 4px 18px #0005;}
+.featured,.card {border-color:#868b90;background:var(--forum-panel-material);box-shadow:inset 0 1px #ffffff10,0 4px 18px #0005;}
 .featuredArt {background:radial-gradient(ellipse at 18% 20%,#b5444424,transparent 65%),linear-gradient(145deg,#191e21,#24282b 52%,#111518);}
 .featuredCopy {background:linear-gradient(120deg,#191719e8,#111518df 75%);}
+.featured,.card {position:relative;}
+.featured::before,.card::before {content:'';position:absolute;inset:0;z-index:1;pointer-events:none;background:var(--forum-panel-corners);}
