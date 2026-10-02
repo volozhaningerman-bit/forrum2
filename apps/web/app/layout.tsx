@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import './forum-fonts.css';
 import './alpha-ui.css';
+import './forum-system.css';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 
@@ -61,7 +63,7 @@ const websiteJsonLd = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="ru" className="dark" data-forrum-theme="graphite" style={{colorScheme: 'dark'}}>
+  return <html lang="ru" className="dark" data-forrum-theme="graphite" data-ui-revision="v88" style={{colorScheme: 'dark'}}>
     <body>
       <a className="skip-link" href="#main-content">Перейти к содержимому</a>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />

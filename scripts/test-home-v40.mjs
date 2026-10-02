@@ -201,11 +201,11 @@ try {
  await page.setViewportSize({width:800,height:600});
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
  // Alpha journeys: public utility screens must remain usable in the graphite theme.
- for (const route of ['/search?q=Rust','/login','/register','/forgot-password','/verify-email','/support','/rules','/digital-services','/services','/projects','/not-a-real-page']) {
+ for (const route of ['/communities','/applications','/users','/events','/search?q=Rust','/login','/register','/forgot-password','/verify-email','/support','/rules','/digital-services','/services','/projects','/not-a-real-page']) {
   await page.goto('http://127.0.0.1:'+port+route,{waitUntil:'networkidle'});
   for (const width of [320,390,760,1280]) {
    await page.setViewportSize({width,height:900});
-   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`${route} overflows at ${width}`);
+   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`${route} overflows at ${width}: ${JSON.stringify(await page.evaluate(()=>[...document.querySelectorAll('body *')].filter(e=>e.getBoundingClientRect().right>innerWidth+1).map(e=>({class:e.className,width:e.getBoundingClientRect().width})).slice(0,12)))}`);
   }
   const results=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();
   await writeFile(output+'/axe-alpha-'+route.split('?')[0].replaceAll('/','')+'.json',JSON.stringify(results.violations,null,2));
