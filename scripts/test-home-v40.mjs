@@ -124,6 +124,9 @@ try {
  assert.equal(await page.locator('.forum-topic-columns').count(),1);
  assert.equal(await page.locator('.forum-topic-category-cell').count(),20);
  assert.equal(await page.locator('.forum-topic-excerpt').count(),20);
+ assert.equal(await page.locator('.forum-topic').first().locator('.forum-topic-category-chip').textContent(),'Разработка','Child topic badge shows its root category');
+ assert.equal(await page.locator('.forum-topic').first().locator('.forum-topic-path a').allTextContents().then(rows=>rows.join(' › ')),'Разработка › Backend','Child category remains visible in the full path');
+
  assert.equal(await page.locator('.forum-topic-category-chip').count(),20);
  assert.equal(await page.locator('.forum-topic-last').count(),20);
  assert.equal(await page.locator('.forum-bookmark-count').count(),0);
@@ -187,7 +190,7 @@ try {
  assert.equal(await page.getByRole('group',{name:'Период рейтинга'}).getByRole('button',{name:'За всё время',exact:true}).getAttribute('aria-pressed'),'true');
  assert(requests.some(r=>r.path==='/v1/home/ranking'&&r.query.includes('period=all')));
  await page.locator('.forum-topic').first().getByRole('button',{name:/Действия с темой/}).click();
- await page.getByRole('link',{name:'Войти, чтобы сохранить или пожаловаться'}).waitFor();
+ await page.getByRole('link',{name:'Войти в аккаунт Избранное и жалобы'}).waitFor();
  assert.equal(await page.getByRole('button',{name:'Пожаловаться',exact:true}).count(),0);
  await page.keyboard.press('Escape');
  await page.getByRole('heading',{name:'Популярные темы',exact:true}).waitFor();
@@ -265,7 +268,8 @@ try {
  const typography=await firstTopic.evaluate(el=>{const title=getComputedStyle(el.querySelector('h2'));const excerpt=getComputedStyle(el.querySelector('.forum-topic-excerpt'));return {titleSize:parseFloat(title.fontSize),excerptSize:parseFloat(excerpt.fontSize),titleColor:title.color,excerptColor:excerpt.color,art:getComputedStyle(el,'::after').display};});
  assert(typography.titleSize>typography.excerptSize,'Title must be larger than the excerpt');
  assert.notEqual(typography.titleColor,typography.excerptColor,'Title and excerpt need distinct colors');
- assert.notEqual(typography.art,'none','Reference illustrated background is visible');
+ assert.equal(await firstTopic.locator('.forum-topic-excerpt').evaluate(el=>getComputedStyle(el).whiteSpace),'nowrap','Excerpt stays on one line');
+ assert.notEqual(typography.art,'none' ,'Reference illustrated background is visible');
  assert(await page.evaluate(()=>document.fonts.check('500 14px ForumCondensed') && document.fonts.check('600 39px ForumDisplay')), 'Reference fonts must load locally');
  for(const cover of ['gta','promotion','code','network','hardware','design','tech']) assert((await page.request.get(`http://127.0.0.1:${port}/forrum-assets/row-${cover}-v82.webp`)).ok(), `Missing optimized cover: ${cover}`);
  await writeFile(output+'/reference-geometry.json',JSON.stringify(boxes,null,2));
