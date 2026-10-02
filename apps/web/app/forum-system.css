@@ -279,4 +279,4 @@ body:not(:has(.forum-home)) .forum-route-more:not([open])>div {display:none;}
  body:not(:has(.forum-home)) [data-forrum-shell="header"] .forum-route-primary>a[aria-current="page"] {padding-inline:2px;}
 }
 /* Keep panel contrast stable over optional personal profile backgrounds. */
-body:not(:has(.forum-home)) .shell.main .profile-inventory-shell :is(.profile-main-card,.profile-info-card,.profile-section-card,.profile-wall-card,.card,.profile-tabs,.inventory-item-card) {background-color:#0d1012!important;}
+html body:not(:has(.forum-home)) .shell.main .profile-inventory-shell :is(.profile-main-card,.profile-info-card,.profile-section-card,.profile-wall-card,.card,.profile-tabs,.inventory-item-card) {background-color:#0d1012!important;}
