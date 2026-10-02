@@ -3697,3 +3697,29 @@
 .exp-appearance-compositor--world{
   filter:drop-shadow(0 3px 3px rgba(0,0,0,.18))!important;
 }
+
+
+/* ==========================================================================
+   EXPEDITION ALPHA 0.17 — EQUIPMENT READABILITY
+   0.16 removed the broken opaque overlays, but live QA showed starter gear had
+   become too subtle to read at normal play scale. Keep the fitted accent
+   geometry, increase only the safe channels and leave the base hero dominant.
+   ========================================================================== */
+.exp-appearance-compositor [data-rarity="common"]:not([data-channel="effect"]){opacity:.76!important}
+.exp-appearance-compositor [data-rarity="uncommon"]:not([data-channel="effect"]){opacity:.82!important}
+.exp-appearance-compositor [data-rarity="rare"]:not([data-channel="effect"]){opacity:.88!important}
+.exp-appearance-compositor [data-rarity="legendary"]:not([data-channel="effect"]){opacity:.94!important}
+.exp-appearance-compositor [data-rarity="relic"]:not([data-channel="effect"]){opacity:1!important}
+
+.exp-appearance-compositor [data-channel="head"],
+.exp-appearance-compositor [data-channel="torso"],
+.exp-appearance-compositor [data-channel="feet"],
+.exp-appearance-compositor [data-channel="mainHand"]{
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.55)) drop-shadow(0 0 2px rgba(255,255,255,.06));
+}
+.exp-appearance-compositor [data-channel="mainHand"]{
+  opacity:.94!important;
+}
+.exp-appearance-compositor--world{
+  filter:drop-shadow(0 4px 4px rgba(0,0,0,.22))!important;
+}
