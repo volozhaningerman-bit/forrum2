@@ -31,7 +31,7 @@ jobs:
         env:
           EXPECTED_SHA: ${{ github.sha }}
           EXPECTED_HOME_REFERENCE: v49
-          EXPECTED_HOME_REVISION: v83
+          EXPECTED_HOME_REVISION: v84
           REQUIRE_EXACT_SHA: "true"
           PRODUCTION_WEB_URL: https://4rrum.ru
           PRODUCTION_API_URL: https://api.4rrum.ru
