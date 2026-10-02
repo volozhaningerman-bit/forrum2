@@ -155,7 +155,7 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
    <p className="forum-topic-excerpt">{item.excerpt}</p>
   </div>
   <div className="forum-topic-category-cell" aria-label="Раздел темы">
-   <Link className="forum-topic-category-chip" href={`/communities/${primaryCategory.slug}`} title={communityLabel(primaryCategory.name)}>{communityLabel(primaryCategory.name)}</Link>
+   <Link className={`forum-topic-category-chip${primaryCategory.name.length > 18 ? ' is-long' : ''}`} href={`/communities/${primaryCategory.slug}`} title={communityLabel(primaryCategory.name)}>{communityLabel(primaryCategory.name)}</Link>
   </div>
   <Link className="forum-topic-metric forum-reply-count" href={`/p/${item.slug}#discussion`} aria-label={`Ответы: ${item.commentCount}`} title="Ответы"><Icon name="comment"/><span>{formatCount(item.commentCount)}</span></Link>
   <span className="forum-topic-metric forum-view-count" title="Просмотры" aria-label={`Просмотры: ${item.viewCount ?? 0}`}><Icon name="eye"/><span>{formatCount(item.viewCount)}</span></span>

@@ -451,6 +451,7 @@ body:has(.forum-home) {background-color:#080a0b!important;background-image:linea
 @media (prefers-reduced-data:reduce) {.forum-home .forum-topic::after {display:none;}}
 @media (forced-colors:active) {.forum-home .forum-topic::after {display:none;}.forum-home :is(.forum-topic,.forum-panel,.forum-important,.forum-categories,.forum-side-stats) {border-color:CanvasText;}}
 
+.forum-home .forum-topic-category-cell .forum-topic-category-chip.is-long {font-size:11px;line-height:12px;padding:4px 7px;}
 .forum-home .forum-topic-content:has(.forum-topic-path) .forum-topic-title-line {margin-bottom:4px;}
 /* Category hierarchy stays secondary; root-only topics retain the same row height. */
 .forum-home .forum-topic-path {font:400 10px/11px ForumRoboto,Arial,sans-serif;color:#a6a6aa;margin:0 0 1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
