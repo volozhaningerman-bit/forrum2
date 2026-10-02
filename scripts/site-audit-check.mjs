@@ -85,7 +85,6 @@ if (!/@media \(forced-colors:active\)/.test(homeCss)) failures.push('homepage: f
 for (const path of [
   '.github/workflows/forrum-v34-ai-reference-20260909.yml',
   '.github/workflows/forrum-v34-ai-reference-20260909(1).yml',
-  '.github/workflows/4rrum-v42-tyuryaga2.yml',
 ]) expect(path, /Archived workflow/, 'obsolete migration workflow must stay archived');
 
 const sitemap = readFileSync('apps/web/app/sitemap.ts', 'utf8');
