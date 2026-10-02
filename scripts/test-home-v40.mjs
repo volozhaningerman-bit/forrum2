@@ -10,7 +10,7 @@ await mkdir(output, { recursive: true });
 await copyFile(root + 'docs/design-reference/home-approved.png', output + '/approved.png');
 const fixtureNow=Date.parse('2026-09-30T12:00:00Z');
 const names = ['Алексей Петров', 'Мария Кузнецова', 'Иван Соколов', 'Дмитрий Волков', 'Елена Смирнова', 'Артём Орлов', 'Кира Белова', 'Михаил Серов', 'Лина Романова', 'Олег Миронов'];
-const categories = ['Разработка', 'Backend', 'Дизайн', 'Бизнес', 'Карьера', 'AI и данные', 'Маркетинг', 'Общество', 'Разное'];
+const categories = ['Разработка', 'Backend', 'Дизайн', 'Бизнес', 'Дизайн и визуальные проекты', 'AI и данные', 'Маркетинг', 'Общество', 'Разное'];
 const communities = categories.map((name, i) => ({ id: String(i), slug: 'category-' + i, name, parent: i === 1 ? { slug: 'category-0', name: categories[0] } : null, subscriberCount: 120, publicationCount: 5, onlineCount: 3, description: '' }));
 communities.push({id:'retired',slug:'workshop',name:'Мастерская',parent:null,subscriberCount:0,onlineCount:0,publicationCount:0,description:''});
 communities[2].parent={slug:'workshop',name:'Мастерская'};
@@ -124,6 +124,9 @@ try {
  assert.equal(await page.locator('.forum-topic-columns').count(),1);
  assert.equal(await page.locator('.forum-topic-category-cell').count(),20);
  assert.equal(await page.locator('.forum-topic-excerpt').count(),20);
+ assert.equal(await page.locator('.forum-topic').first().locator('.forum-topic-category-chip').textContent(),'Разработка','Child topic badge shows its root category');
+ assert.equal(await page.locator('.forum-topic').first().locator('.forum-topic-path a').allTextContents().then(rows=>rows.join(' › ')),'Разработка › Backend','Child category remains visible in the full path');
+
  assert.equal(await page.locator('.forum-topic-category-chip').count(),20);
  assert.equal(await page.locator('.forum-topic-last').count(),20);
  assert.equal(await page.locator('.forum-bookmark-count').count(),0);
@@ -157,6 +160,8 @@ try {
   for(const width of [1920,1648,1600,1280,1024,760,390,320]){
    await page.setViewportSize({width,height:width===1648?926:1000});await page.waitForTimeout(100);
    const size=await page.evaluate(()=>({w:innerWidth,scroll:document.documentElement.scrollWidth}));if(size.scroll>size.w+1)console.log(await page.evaluate(()=>Array.from(document.querySelectorAll('body *')).filter(el=>{const r=el.getBoundingClientRect();return r.width&&r.right>innerWidth+1}).slice(0,15).map(el=>({tag:el.tagName,cls:el.className,width:el.getBoundingClientRect().width,right:el.getBoundingClientRect().right}))));assert(size.scroll<=size.w+1,`${theme} ${width}: overflow ${size.scroll}`);
+   const clippedBadges=await page.locator('.forum-topic-category-chip').evaluateAll(nodes=>nodes.filter(el=>el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1).map(el=>el.textContent));
+   assert.deepEqual(clippedBadges,[],`Category badges must show their full labels at ${width}px`);
    if(width<=760){const tabsFit=await page.locator('.forum-tabs').evaluate(el=>el.scrollWidth<=el.clientWidth+1);assert(tabsFit,`Filters must fit at ${width}px`);}
    if(width===390){const mobileAxe=await new AxeBuilder({page}).include('.forum-home').withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();await writeFile(output+'/axe-mobile.json',JSON.stringify(mobileAxe.violations,null,2));assert.deepEqual(mobileAxe.violations.filter(v=>['critical','serious'].includes(v.impact)).map(v=>v.id),[]);}
    if([1648,1600,390].includes(width)){await page.evaluate(()=>{window.scrollTo({top:0,behavior:"instant"});document.activeElement?.blur();});await page.screenshot({path:`${output}/${theme}-${width}.png`});}
@@ -187,7 +192,7 @@ try {
  assert.equal(await page.getByRole('group',{name:'Период рейтинга'}).getByRole('button',{name:'За всё время',exact:true}).getAttribute('aria-pressed'),'true');
  assert(requests.some(r=>r.path==='/v1/home/ranking'&&r.query.includes('period=all')));
  await page.locator('.forum-topic').first().getByRole('button',{name:/Действия с темой/}).click();
- await page.getByRole('link',{name:'Войти, чтобы сохранить или пожаловаться'}).waitFor();
+ await page.getByRole('link',{name:'Войти в аккаунт Избранное и жалобы'}).waitFor();
  assert.equal(await page.getByRole('button',{name:'Пожаловаться',exact:true}).count(),0);
  await page.keyboard.press('Escape');
  await page.getByRole('heading',{name:'Популярные темы',exact:true}).waitFor();
@@ -265,7 +270,8 @@ try {
  const typography=await firstTopic.evaluate(el=>{const title=getComputedStyle(el.querySelector('h2'));const excerpt=getComputedStyle(el.querySelector('.forum-topic-excerpt'));return {titleSize:parseFloat(title.fontSize),excerptSize:parseFloat(excerpt.fontSize),titleColor:title.color,excerptColor:excerpt.color,art:getComputedStyle(el,'::after').display};});
  assert(typography.titleSize>typography.excerptSize,'Title must be larger than the excerpt');
  assert.notEqual(typography.titleColor,typography.excerptColor,'Title and excerpt need distinct colors');
- assert.notEqual(typography.art,'none','Reference illustrated background is visible');
+ assert.equal(await firstTopic.locator('.forum-topic-excerpt').evaluate(el=>getComputedStyle(el).whiteSpace),'nowrap','Excerpt stays on one line');
+ assert.notEqual(typography.art,'none' ,'Reference illustrated background is visible');
  assert(await page.evaluate(()=>document.fonts.check('500 14px ForumCondensed') && document.fonts.check('600 39px ForumDisplay')), 'Reference fonts must load locally');
  for(const cover of ['gta','promotion','code','network','hardware','design','tech']) assert((await page.request.get(`http://127.0.0.1:${port}/forrum-assets/row-${cover}-v82.webp`)).ok(), `Missing optimized cover: ${cover}`);
  await writeFile(output+'/reference-geometry.json',JSON.stringify(boxes,null,2));

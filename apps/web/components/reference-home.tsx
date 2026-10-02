@@ -121,7 +121,16 @@ function Categories({ items: sourceItems, selected }: { items: Community[]; sele
 
 function Topic({ item, history, communities, demo, guest }: { item: PublicationCardData; history: ReadHistory | null; communities: Community[]; demo: boolean; guest: boolean }) {
  const category=communities.find(row=>row.slug===item.community.slug);
- const categoryLabel=category?.parent ? `${communityLabel(category.parent.name)} › ${communityLabel(item.community.name)}` : communityLabel(item.community.name);
+ const categoryTrail: {slug:string;name:string}[] = [{slug:item.community.slug,name:item.community.name}];
+ const visited = new Set([item.community.slug]);
+ let parent = category?.parent;
+ while (parent && !visited.has(parent.slug)) {
+  visited.add(parent.slug);
+  if (!/^(мастерская|медиа)$/i.test(parent.name.trim())) categoryTrail.unshift(parent);
+  parent = communities.find(row=>row.slug===parent!.slug)?.parent;
+ }
+ const primaryCategory = categoryTrail[0];
+ const categoryLabel = categoryTrail.map(row=>communityLabel(row.name)).join(' › ');
  const readState=topicReadState(history,item.id,item.lastComment?.createdAt);
  const important=Boolean(item.isOfficial && item.pinnedUntil && Date.parse(item.pinnedUntil)>Date.now());
  const lastAuthor=item.lastComment?.author ?? item.author;
@@ -137,6 +146,7 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
    <span className="forum-topic-category-icon"><Icon name={topicIcon(item.title,item.community.name)}/></span>
   </Link>
   <div className="forum-topic-content">
+   {categoryTrail.length > 1 && <nav className="forum-topic-path" aria-label="Путь категории" title={categoryLabel}>{categoryTrail.map((row,index)=><span key={row.slug}>{index > 0 && <span className="forum-topic-path-separator" aria-hidden="true">›</span>}<Link href={`/communities/${row.slug}`}>{communityLabel(row.name)}</Link></span>)}</nav>}
    <div className="forum-topic-title-line">
     <h2><Link className="forum-topic-main-link" href={`/p/${item.slug}`}>{item.title?.trim().replace(/FORRUM/g,'4rrum') || 'Запись без заголовка'}</Link></h2>
     {important && <span className="forum-topic-pinned" title="Закреплено форумом"><Icon name="paperclip"/></span>}
@@ -145,7 +155,7 @@ function Topic({ item, history, communities, demo, guest }: { item: PublicationC
    <p className="forum-topic-excerpt">{item.excerpt}</p>
   </div>
   <div className="forum-topic-category-cell" aria-label="Раздел темы">
-   <Link className="forum-topic-category-chip" href={`/communities/${item.community.slug}`} title={categoryLabel}>{communityLabel(item.community.name)}</Link>
+   <Link className={`forum-topic-category-chip${primaryCategory.name.length > 18 ? ' is-long' : ''}`} href={`/communities/${primaryCategory.slug}`} title={communityLabel(primaryCategory.name)}>{communityLabel(primaryCategory.name)}</Link>
   </div>
   <Link className="forum-topic-metric forum-reply-count" href={`/p/${item.slug}#discussion`} aria-label={`Ответы: ${item.commentCount}`} title="Ответы"><Icon name="comment"/><span>{formatCount(item.commentCount)}</span></Link>
   <span className="forum-topic-metric forum-view-count" title="Просмотры" aria-label={`Просмотры: ${item.viewCount ?? 0}`}><Icon name="eye"/><span>{formatCount(item.viewCount)}</span></span>
@@ -257,7 +267,7 @@ export function HomeDashboard({ initialData, demo = false }: { initialData: Home
  const visible = tab === 'new' && !community ? diverseTopics(matchingTopics, item => topicBackdrop(item.community.slug, item.community.name)) : matchingTopics;
  const news = initialData.announcements?.slice(0, 4) ?? [];
  const important = [...news.slice(0,2), ...topics.filter(item => item.isOfficial && item.pinnedUntil && Date.parse(item.pinnedUntil)>Date.now() && !news.some(row => row.id === item.id))].slice(0,2);
- return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v82" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
+ return <div id="top" className={`forum-home ${viewer === 'guest' ? 'is-guest' : ''}`} data-home-reference="v49" data-home-revision="v83" onClickCapture={demo ? event=>{const link=(event.target as HTMLElement).closest('a');if(link && link.getAttribute('href')!=='/')event.preventDefault();} : undefined}>
   {!demo && <HomeWebVitals/>}
   <aside ref={sidebarRef} className={`forum-sidebar ${sidebar ? 'is-open' : ''}`} aria-label="Навигация форума">
    <button type="button" className="forum-sidebar-close" onClick={()=>setSidebar(false)} aria-label="Закрыть меню"><Icon name="close"/></button>
