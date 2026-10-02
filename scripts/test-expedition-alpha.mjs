@@ -63,6 +63,7 @@ const staticChecks = [
   ['appearance families are reusable and slot-fallback safe', appearanceSource.includes("head.hood") && appearanceSource.includes("torso.light") && appearanceSource.includes("weapon.sword") && appearanceSource.includes("defaultFamilyBySlot")],
   ['rarity decorates reusable appearance families', appearanceSource.includes("legendary:") && appearanceSource.includes("relic:") && appearanceSource.includes("data-rarity") && cssSource.includes('EXPEDITION ALPHA 0.15 — RARITY-DRIVEN APPEARANCE')],
   ['accent compositor avoids opaque starter garments', gameSource.includes('alpha 0.16') && cssSource.includes('EXPEDITION ALPHA 0.16 — ACCENT COMPOSITOR') && appearanceSource.includes('strokeWidth="9"') && appearanceSource.includes('fill="none"')],
+  ['starter gear remains readable after accent pass', gameSource.includes('alpha 0.17') && cssSource.includes('EXPEDITION ALPHA 0.17 — EQUIPMENT READABILITY') && cssSource.includes('opacity:.76!important') && cssSource.includes('data-channel="mainHand"')],
   ['server supports scarce relic tier', schemaSource.includes('RELIC') && serviceSource.includes("rarity: 'RELIC'") && serviceSource.includes("circulationCap: 7")],
   ['server grants starter inventory idempotently', serviceSource.includes('STARTER_TEMPLATE_IDS') && serviceSource.includes('ensureStarterItems(actorId)') && serviceSource.includes('starter:${actorId}:${templateId}') && serviceSource.includes("isolationLevel: 'Serializable'")],
   ['female raster edges are feathered', cssSource.includes('EXPEDITION ALPHA 0.15.1 — PRODUCTION QA HOTFIX') && cssSource.includes('data-character-body="female"') && cssSource.includes('mask-image:radial-gradient')],
@@ -425,7 +426,7 @@ try {
   assert.equal(starterLayerState.worldCompositor, 0, 'clean starter must not allocate a world appearance surface');
   assert.equal(starterLayerState.avatarAnimation, 'none', 'portrait base and appearance compositor must stay on one rig frame');
   assert.equal(starterLayerState.worldAnimation, 'none', 'world base and appearance compositor must stay on one rig frame');
-  await page.screenshot({ path: output + '/expedition-alpha-v016-clean-base-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v017-clean-base-1720x900.png', fullPage: true });
 
   const rigChecks = [
     { name:/Капюшон Собирателя/, channel:'head' },
@@ -484,7 +485,7 @@ try {
   assert(equippedHero.equippedSlots >= 10, 'equipment must remain represented in the 16-slot grid');
   assert.equal(equippedHero.legacyLayers, 0, 'legacy per-slot body overlays must not return');
   assert.equal(equippedHero.relicEffectRarity, 'relic', 'prismatic relic must drive the effect channel rarity');
-  await page.screenshot({ path: output + '/expedition-alpha-v016-mixed-kit-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v017-mixed-kit-1720x900.png', fullPage: true });
 
   const femaleToggle = page.getByRole('button', { name: 'Женский герой' });
   await femaleToggle.click();
@@ -501,11 +502,11 @@ try {
   }));
   assert.equal(femaleRig.portrait, 0, 'female base must stay clean until a dedicated female appearance geometry exists');
   assert.equal(femaleRig.world, 0, 'female world hero must stay clean until a dedicated female appearance geometry exists');
-  await page.screenshot({ path: output + '/expedition-alpha-v016-female-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v017-female-1720x900.png', fullPage: true });
   await page.getByRole('button', { name: 'Мужской герой' }).click();
   await page.locator('[data-testid="expedition-alpha"][data-character-body="male"]').waitFor();
 
-  await page.screenshot({ path: output + '/expedition-alpha-v016-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v017-1720x900.png', fullPage: true });
 
   const raidJoin = page.getByRole('button', { name: 'Отправить персонажа' });
   await raidJoin.click();
@@ -535,10 +536,10 @@ try {
   assert.notEqual(socialArt.champion, 'none', 'champion art must be visible');
   assert.notEqual(socialArt.relic, 'none', 'relic art must be visible');
 
-  await page.screenshot({ path: output + '/expedition-alpha-v016-loot-equipped-1720x900.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v017-loot-equipped-1720x900.png', fullPage: true });
 
   await page.setViewportSize({ width: 1366, height: 768 });
-  await page.screenshot({ path: output + '/expedition-alpha-v016-1366x768.png', fullPage: true });
+  await page.screenshot({ path: output + '/expedition-alpha-v017-1366x768.png', fullPage: true });
   const mobileish = await page.evaluate(() => ({
     width: innerWidth,
     scrollWidth: document.documentElement.scrollWidth,
@@ -555,4 +556,4 @@ try {
   upstream.close();
 }
 
-console.log(`Expedition alpha v0.16 accent compositor checks passed. Item templates covered: ${itemCount}; all 16 equipment slots exercised.`);
+console.log(`Expedition alpha v0.17 readable accent compositor checks passed. Item templates covered: ${itemCount}; all 16 equipment slots exercised.`);
